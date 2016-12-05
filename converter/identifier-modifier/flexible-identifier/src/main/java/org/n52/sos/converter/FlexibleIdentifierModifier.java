@@ -42,6 +42,7 @@ import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.sos.convert.AbstractIdentifierModifier;
@@ -443,6 +444,11 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
             return getCache().getProcedureHumanReadableNameForIdentifier(identifier);
         }
         return identifier;
+    }
+
+    @Override
+    protected ReferenceType checkProcedureIdentifier(ReferenceType procedure) {
+        return new ReferenceType(checkProcedureIdentifier(procedure.getHref()));
     }
 
     @Override

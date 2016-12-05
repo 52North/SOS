@@ -41,6 +41,7 @@ import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
@@ -113,19 +114,22 @@ public class RestEncoder implements Constructable, SchemaAwareEncoder<ServiceRes
     @Override
     public ServiceResponse encode(final RestResponse restResponse)
             throws EncodingException {
+        try {
+            // 0 variables
+            ServiceResponse encodedResponse;
 
-        // 0 variables
-        ServiceResponse encodedResponse;
+            // 1 get decoder for response
+            final ResourceEncoder encoder = getRestEncoderForBindingResponse(restResponse);
+            LOGGER.debug("RestEncoder found for RestResponse {}: {}", restResponse.getClass().getName(), encoder.getClass()
+                         .getName());
+            // 2 decode
+            encodedResponse = encoder.encodeRestResponse(restResponse);
 
-        // 1 get decoder for response
-        final ResourceEncoder encoder = getRestEncoderForBindingResponse(restResponse);
-        LOGGER.debug("RestEncoder found for RestResponse {}: {}", restResponse.getClass().getName(), encoder.getClass()
-                     .getName());
-        // 2 decode
-        encodedResponse = encoder.encodeRestResponse(restResponse);
-
-        // 3 return the results
-        return encodedResponse;
+            // 3 return the results
+            return encodedResponse;
+        } catch (OwsExceptionReport owse) {
+           throw new EncodingException(owse);
+        }
     }
 
     private ResourceEncoder getRestEncoderForBindingResponse(final RestResponse restResponse) throws EncodingException {
@@ -161,7 +165,7 @@ public class RestEncoder implements Constructable, SchemaAwareEncoder<ServiceRes
                         restResponse != null ? restResponse.getClass().getName() : "null",
                         this.getClass().getName());
         LOGGER.debug(exceptionText);
-        throw new NoEncoderForResponseException().withMessage(exceptionText);
+        throw new EncodingException(exceptionText);
     }
 
     protected boolean isFeatureResponse(final RestResponse restResponse) {

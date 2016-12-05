@@ -52,6 +52,7 @@ import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.ogc.ows.ServiceProviderFactory;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
@@ -110,7 +111,6 @@ import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
-import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
 import org.n52.sos.response.GetObservationResponse;
@@ -245,8 +245,9 @@ public class InsertDAOTest extends HibernateTestCase {
         req.setMetadata(meta);
         System system = new System();
         system.setIdentifier(procedure);
+        SosProcedureDescription<?> pd = new SosProcedureDescription<AbstractFeature>(system);
         if (parentProcedure != null) {
-            system.addParentProcedure(parentProcedure);
+            pd.setParentProcedure(new ReferenceType(parentProcedure, parentProcedure));
             for (String hierarchyParentProc : getCache().getParentProcedures(parentProcedure, true, true)) {
                 for (String parentProcOffering : getCache().getOfferingsForProcedure(hierarchyParentProc)) {
                     SosOffering sosOffering = new SosOffering(parentProcOffering, parentProcOffering);
@@ -257,8 +258,8 @@ public class InsertDAOTest extends HibernateTestCase {
         }
         SystemDocument xbSystemDoc = SystemDocument.Factory.newInstance();
         xbSystemDoc.addNewSystem().set(CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, system));
-        system.setSensorDescriptionXmlString(xbSystemDoc.xmlText());
-        req.setProcedureDescription(system);
+        system.setXml(xbSystemDoc.xmlText());
+        req.setProcedureDescription(pd);
         req.setAssignedOfferings(assignedOfferings);
         InsertSensorResponse resp = insertSensorDAO.insertSensor(req);
         this.serviceEventBus.submit(new SensorInsertion(req, resp));
@@ -630,10 +631,7 @@ public class InsertDAOTest extends HibernateTestCase {
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
-        if (omObservation.getValue() instanceof StreamingObservation) {
-            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
-        } else if (omObservation.getValue() instanceof StreamingValue) {
+        if (omObservation.getValue() instanceof StreamingValue) {
             assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
             omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
         }
@@ -682,10 +680,7 @@ public class InsertDAOTest extends HibernateTestCase {
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
-        if (omObservation.getValue() instanceof StreamingObservation) {
-            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
-        } else if (omObservation.getValue() instanceof StreamingValue) {
+        if (omObservation.getValue() instanceof StreamingValue) {
             assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
             omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
         }
@@ -745,10 +740,7 @@ public class InsertDAOTest extends HibernateTestCase {
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
-        if (omObservation.getValue() instanceof StreamingObservation) {
-            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
-        } else if (omObservation.getValue() instanceof StreamingValue) {
+        if (omObservation.getValue() instanceof StreamingValue) {
             assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
             omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
         }
@@ -788,10 +780,7 @@ public class InsertDAOTest extends HibernateTestCase {
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
-        if (omObservation.getValue() instanceof StreamingObservation) {
-            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
-        } else if (omObservation.getValue() instanceof StreamingValue) {
+        if (omObservation.getValue() instanceof StreamingValue) {
             assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
             omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
         }
@@ -915,29 +904,7 @@ public class InsertDAOTest extends HibernateTestCase {
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
-        if (omObservation.getValue() instanceof StreamingObservation) {
-            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
-            assertThat(omObservation.getObservationConstellation(), notNullValue());
-            OmObservationConstellation obsConst = omObservation.getObservationConstellation();
-            assertThat(obsConst.getProcedure().getIdentifier(), is(obsProcedure));
-            assertThat(obsConst.getObservableProperty().getIdentifier(), is(obsObsProp));
-
-            // TODO this fails
-            // assertThat(obsConst.getFeatureOfInterest().getIdentifier().getValue(),
-            // is(obsFeature));
-
-            assertThat(omObservation.getValue(), notNullValue());
-            ObservationValue<?> value = omObservation.getValue();
-            assertThat(value.getValue(), instanceOf(QuantityValue.class));
-            assertThat(value.getPhenomenonTime(), instanceOf(TimeInstant.class));
-            TimeInstant timeInstant = (TimeInstant) value.getPhenomenonTime();
-            assertThat(timeInstant.getValue().toDate(), is(time.toDate()));
-            QuantityValue quantityValue = (QuantityValue) value.getValue();
-            assertThat(quantityValue.getValue(), is(obsVal));
-            assertThat(quantityValue.getUnit(), is(obsUnit));
-            // TODO
-        } else if (omObservation.getValue() instanceof StreamingValue) {
+        if (omObservation.getValue() instanceof StreamingValue) {
             assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
             omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
             assertThat(omObservation.getObservationConstellation(), notNullValue());

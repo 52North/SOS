@@ -46,6 +46,7 @@ import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -59,7 +60,7 @@ public class ObservationsGetRequestHandler extends RequestHandler {
     public RestResponse handleRequest(RestRequest observationsHttpGetRequest) throws OwsExceptionReport, XmlException, IOException
     {
         if (observationsHttpGetRequest != null) {
-
+            try {
             if (observationsHttpGetRequest instanceof ObservationsGetRequest) {
                 // Case A: with ID
                 return handleObservationsGetRequest((ObservationsGetRequest)observationsHttpGetRequest);
@@ -71,12 +72,14 @@ public class ObservationsGetRequestHandler extends RequestHandler {
                 // Case C: Atom Feed
                 return handleObservationsFeedRequest((ObservationsFeedRequest)observationsHttpGetRequest);
             }*/
-
+            } catch (EncodingException ee) {
+                throw new NoApplicableCodeException().causedBy(ee);
+            }
         }
         throw logRequestTypeNotSupportedByThisHandlerAndCreateException(observationsHttpGetRequest,this.getClass().getName());
     }
 
-    private RestResponse handleObservationsGetRequest(ObservationsGetRequest req) throws OwsExceptionReport, XmlException, IOException
+    private RestResponse handleObservationsGetRequest(ObservationsGetRequest req) throws OwsExceptionReport, XmlException, IOException, EncodingException
     {
         String procedureId = null;
         OMObservationType xb_observation = null;
@@ -121,7 +124,7 @@ public class ObservationsGetRequestHandler extends RequestHandler {
         }
     }
 
-    private RestResponse handleObservationsSearchRequest(ObservationsSearchRequest req) throws OwsExceptionReport, XmlException
+    private RestResponse handleObservationsSearchRequest(ObservationsSearchRequest req) throws OwsExceptionReport, XmlException, EncodingException
     {
         // 0 submit request to core
         XmlObject xb_getObservationResponse = executeSosRequest(req.getGetObservationRequest());

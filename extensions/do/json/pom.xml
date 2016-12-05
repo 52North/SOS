@@ -16,18 +16,18 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
-         <dependency>
-            <groupId>org.n52.iceland</groupId>
-            <artifactId>iceland</artifactId>
-        </dependency>
         <dependency>
+            <groupId>org.n52.shetland</groupId>
+            <artifactId>shetland</artifactId>
+         </dependency>
+         <dependency>
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard</artifactId>
          </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

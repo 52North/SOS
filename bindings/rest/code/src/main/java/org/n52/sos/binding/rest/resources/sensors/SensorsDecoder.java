@@ -37,13 +37,14 @@ import net.opengis.sensorML.x101.AbstractProcessType;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.IoComponentPropertyType;
 import net.opengis.sensorML.x101.SystemType;
+import net.opengis.sos.x20.impl.SosInsertionMetadataPropertyTypeImpl;
 import net.opengis.sosREST.x10.SensorDocument;
 import net.opengis.sosREST.x10.SensorType;
 import net.opengis.swe.x101.AnyScalarPropertyType;
 import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.apache.xmlbeans.XmlObject;
-
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
@@ -131,7 +132,7 @@ public class SensorsDecoder extends ResourceDecoder {
 
                 SystemType xb_system = (SystemType) xb_ProcessRest.substitute(SensorMLConstants.SYSTEM_QNAME, SystemType.type);
 
-                SosProcedureDescription procedureDescription = createSosProcedureDescriptionFromSmlSystem(xb_system);
+                SosProcedureDescription<?> procedureDescription = createSosProcedureDescriptionFromSmlSystem(xb_system);
 
                 insertSensorRequest.setProcedureDescription(procedureDescription);
 
@@ -243,13 +244,13 @@ public class SensorsDecoder extends ResourceDecoder {
         return xb_system.isSetInputs() && xb_system.getInputs().isSetInputList() && xb_system.getInputs().getInputList().getInputArray().length > 0;
     }
 
-    private AbstractSensorML createSosProcedureDescriptionFromSmlSystem(SystemType xb_system) throws DecodingException
+    private SosProcedureDescription<?> createSosProcedureDescriptionFromSmlSystem(SystemType xb_system) throws DecodingException
     {
         // TODO add some error handling
         Object decodedObject = decodeXmlObject(xb_system);
         if (decodedObject instanceof AbstractSensorML)
         {
-            return (AbstractSensorML) decodedObject;
+            return new SosProcedureDescription<AbstractFeature>((AbstractSensorML) decodedObject);
         }
         throw new DecodingException(
                 new IllegalArgumentException(

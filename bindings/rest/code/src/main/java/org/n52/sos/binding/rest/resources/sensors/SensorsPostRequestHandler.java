@@ -36,10 +36,11 @@ import net.opengis.swes.x20.InsertSensorResponseType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -51,16 +52,19 @@ public class SensorsPostRequestHandler extends SensorsRequestHandler {
     public RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException
     {
         if (request != null && request instanceof SensorsPostRequest) {
-            // submit request to core
-            XmlObject xb_ServiceResponse = executeSosRequest(((SensorsPostRequest)request).getInsertSensorRequest());
+            try {
+                // submit request to core
+                XmlObject xb_ServiceResponse = executeSosRequest(((SensorsPostRequest)request).getInsertSensorRequest());
+                if(xb_ServiceResponse instanceof InsertSensorResponseDocument) {
+                    InsertSensorResponseDocument xb_InsertSensorResponseDoc = (InsertSensorResponseDocument) xb_ServiceResponse;
+                    InsertSensorResponseType xb_InsertSensorResponse = xb_InsertSensorResponseDoc.getInsertSensorResponse();
+                    String procedureId = xb_InsertSensorResponse.getAssignedProcedure();
+                    SystemType xb_SensorDescription = ((TransactionalSensorRequest)request).getXb_smlSystem();
 
-            if(xb_ServiceResponse instanceof InsertSensorResponseDocument) {
-                InsertSensorResponseDocument xb_InsertSensorResponseDoc = (InsertSensorResponseDocument) xb_ServiceResponse;
-                InsertSensorResponseType xb_InsertSensorResponse = xb_InsertSensorResponseDoc.getInsertSensorResponse();
-                String procedureId = xb_InsertSensorResponse.getAssignedProcedure();
-                SystemType xb_SensorDescription = ((TransactionalSensorRequest)request).getXb_smlSystem();
-
-                return new SensorsPostResponse(procedureId, xb_SensorDescription);
+                    return new SensorsPostResponse(procedureId, xb_SensorDescription);
+                }
+            } catch (EncodingException ee) {
+               throw new NoApplicableCodeException().causedBy(ee);
             }
         }
         throw logRequestTypeNotSupportedByThisHandlerAndCreateException(request, getClass().getName());

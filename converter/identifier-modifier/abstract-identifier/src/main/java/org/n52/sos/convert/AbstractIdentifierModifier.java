@@ -46,6 +46,7 @@ import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
@@ -66,6 +67,7 @@ import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.ProcessMethod;
 import org.n52.shetland.ogc.sensorML.ProcessModel;
+import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
@@ -122,6 +124,8 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     protected abstract String checkObservablePropertyIdentifier(String identifier);
 
     protected abstract String checkProcedureIdentifier(String identifier);
+
+    protected abstract ReferenceType checkProcedureIdentifier(ReferenceType procedure);
 
     protected abstract String checkOfferingIdentifier(String identifier);
 
@@ -369,48 +373,52 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return response;
     }
 
-    private void checkAndChangeProcedure(SosProcedureDescription procedure) {
-        checkAndChangeProcedureIdentifier(procedure);
-        if (procedure.isSetFeaturesOfInterest()) {
-            procedure.setFeaturesOfInterest(checkFeatureOfInterestIdentifier(procedure.getFeaturesOfInterest()));
-        }
-        if (procedure.isSetFeaturesOfInterestMap()) {
-            Map<String, AbstractFeature> checkedFeatures = Maps.newHashMap();
-            for (AbstractFeature feature : procedure.getFeaturesOfInterestMap().values()) {
-                checkAndChangeFeatureOfInterestIdentifier(feature);
-                checkedFeatures.put(feature.getIdentifier(), feature);
+    private void checkAndChangeProcedure(AbstractFeature abstractFeature) {
+        if (abstractFeature instanceof SosProcedureDescription){
+            SosProcedureDescription procedure = (SosProcedureDescription)abstractFeature;
+            checkAndChangeProcedureIdentifier(procedure);
+            if (procedure.isSetFeaturesOfInterest()) {
+                procedure.setFeaturesOfInterest(checkFeatureOfInterestIdentifier(procedure.getFeaturesOfInterest()));
             }
-            procedure.setFeaturesOfInterest(checkedFeatures);
-        }
-        if (procedure.isSetOfferings()) {
-            procedure.getOfferings().forEach(this::checkAndChangOfferingIdentifier);
-        }
-        if (procedure.isSetPhenomenon()) {
-            procedure.setPhenomenon(procedure.getPhenomenon().values().stream()
-                    .map(phen -> {
-                        checkAndChangeObservablePropertyIdentifier(phen);
-                        return phen;
-                    })
-                    .collect(toMap(AbstractPhenomenon::getIdentifier, identity())));
-        }
-        if (procedure.isSetParentProcedures()) {
-            procedure.setParentProcedures(checkProcedureIdentifier(procedure.getParentProcedures()));
-        }
-        if (procedure instanceof AbstractSensorML) {
-            if (((AbstractSensorML) procedure).isSetKeywords()) {
-                ((AbstractSensorML) procedure)
-                        .setKeywords(checkKeywords(((AbstractSensorML) procedure).getKeywords()));
+            if (procedure.isSetFeaturesOfInterestMap()) {
+                Map<String, AbstractFeature> checkedFeatures = Maps.newHashMap();
+                for (AbstractFeature feature : (Collection<AbstractFeature>)procedure.getFeaturesOfInterestMap().values()) {
+                    checkAndChangeFeatureOfInterestIdentifier(feature);
+                    checkedFeatures.put(feature.getIdentifier(), feature);
+                }
+                procedure.setFeaturesOfInterestMap(checkedFeatures);
+            }
+            if (procedure.isSetOfferings()) {
+                procedure.getOfferings().forEach(off -> checkAndChangOfferingIdentifier((SosOffering)off));
+            }
+            if (procedure.isSetPhenomenon()) {
+                procedure.setPhenomenon((Map<String, AbstractFeature>)procedure.getPhenomenon().values().stream()
+                        .map(phen -> {
+                            checkAndChangeObservablePropertyIdentifier((AbstractFeature)phen);
+                            return phen;
+                        })
+                        .collect(toMap(AbstractPhenomenon::getIdentifier, identity())));
+            }
+            if (procedure.isSetParentProcedure()) {
+                procedure.setParentProcedure(checkProcedureIdentifier(procedure.getParentProcedure()));
+            }
+            if (procedure.getProcedureDescription() instanceof AbstractSensorML) {
+                AbstractSensorML abstractSensorML = (AbstractSensorML)procedure.getProcedureDescription();
+                if (abstractSensorML.isSetKeywords()) {
+                    abstractSensorML
+                            .setKeywords(checkKeywords(abstractSensorML.getKeywords()));
 
-            }
-            if (procedure instanceof SensorML) {
-                checkSensorML((SensorML) procedure);
+                }
+                if (abstractSensorML instanceof SensorML) {
+                    checkSensorML((SensorML) abstractSensorML);
 
-            } else if (procedure instanceof AbstractProcess) {
-                checkAbstractProcess((AbstractProcess) procedure);
+                } else if (abstractSensorML instanceof AbstractProcess) {
+                    checkAbstractProcess((AbstractProcess) abstractSensorML);
+                }
             }
-        }
-        if (procedure.isSetChildProcedures()) {
-            procedure.getChildProcedures().forEach(this::checkAndChangeProcedure);
+            if (procedure.isSetChildProcedures()) {
+                procedure.getChildProcedures().forEach(child -> checkAndChangeProcedure((AbstractFeature)child));
+            }
         }
     }
 
@@ -500,6 +508,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
                                     .map(elem -> (SweText) elem)
                                     .forEach(elem -> elem.setValue(checkFeatureOfInterestIdentifier(elem.getValue())));
                             break;
+                       default: break;
                     }
                 }
             }

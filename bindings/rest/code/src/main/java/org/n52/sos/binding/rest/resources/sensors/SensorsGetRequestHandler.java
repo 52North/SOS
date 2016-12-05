@@ -53,6 +53,7 @@ import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
 import org.n52.sos.service.Configurator;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -99,19 +100,16 @@ public class SensorsGetRequestHandler extends SensorsRequestHandler {
         {
             xb_describeSensorResponse = executeSosRequest(req.getDescribeSensorRequest());
         }
-        catch (final OwsExceptionReport oer) {
-            if (!oer.getExceptions().isEmpty())
-            {
-                for (final CodedException owsE : oer.getExceptions())
+        catch (final OwsExceptionReport | EncodingException ee) {
+            if (ee.getCause() != null && ee.getCause() instanceof CodedException) {
+                CodedException owsE = (CodedException)ee.getCause();
+                if (owsE.getCode().equals(OwsExceptionCode.InvalidParameterValue) &&
+                        owsE.getLocator().equals(SosConstants.DescribeSensorParams.procedure.toString()))
                 {
-                    if (owsE.getCode().equals(OwsExceptionCode.InvalidParameterValue) &&
-                            owsE.getLocator().equals(SosConstants.DescribeSensorParams.procedure.toString()))
-                    {
-                        return new ResourceNotFoundResponse(bindingConstants.getResourceSensors(), procedureId);
-                    }
+                    return new ResourceNotFoundResponse(bindingConstants.getResourceSensors(), procedureId);
                 }
             }
-            throw oer;
+            throw new NoApplicableCodeException().causedBy(ee);
         }
 
 

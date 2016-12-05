@@ -34,7 +34,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.n52.janmayen.http.HTTPMethods;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.RestRequest;
@@ -72,7 +71,7 @@ public class CapabilitiesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.DELETE,
                 bindingConstants.getResourceCapabilities());
@@ -80,7 +79,7 @@ public class CapabilitiesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePostRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.POST,
                 bindingConstants.getResourceCapabilities());
@@ -88,7 +87,7 @@ public class CapabilitiesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT,
                 bindingConstants.getResourceCapabilities());

@@ -290,6 +290,11 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     }
 
     @Override
+    protected ReferenceType checkProcedureIdentifier(ReferenceType procedure) {
+        return new ReferenceType(checkProcedureIdentifier(procedure.getHref()));
+    }
+
+    @Override
     protected String checkOfferingIdentifier(String identifier) {
         if (getEReportingPrefixedIdentifierHelper().isSetOfferingPrefix()) {
             return checkNamespacePrefix(getEReportingPrefixedIdentifierHelper().getOfferingPrefix() + identifier);

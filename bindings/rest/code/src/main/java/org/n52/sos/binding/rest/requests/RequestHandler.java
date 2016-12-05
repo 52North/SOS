@@ -98,11 +98,9 @@ public abstract class RequestHandler {
     protected Offering[] getOfferingsFromSosCore(GetCapabilitiesRequest req) throws OwsExceptionReport, XmlException
     {
         // if response is an OWSException report -> cancel whole process and throw it
-
-        final XmlObject xb_getCapabilitiesResponse = executeSosRequest(req);
-
-        if (xb_getCapabilitiesResponse instanceof CapabilitiesDocument)
-        {
+        try {
+        XmlObject xb_getCapabilitiesResponse = executeSosRequest(req);
+        if (xb_getCapabilitiesResponse instanceof CapabilitiesDocument) {
             final CapabilitiesDocument xb_capabilitiesDocument = (CapabilitiesDocument) xb_getCapabilitiesResponse;
             final CapabilitiesType xb_capabilities = xb_capabilitiesDocument.getCapabilities();
 
@@ -118,6 +116,9 @@ public abstract class RequestHandler {
                     xb_getCapabilitiesResponse.getClass().getName());
             LOGGER.debug(exceptionText);
             throw new NoApplicableCodeException().withMessage(exceptionText);
+        }
+        } catch (EncodingException ee) {
+            throw new NoApplicableCodeException().causedBy(ee);
         }
     }
 

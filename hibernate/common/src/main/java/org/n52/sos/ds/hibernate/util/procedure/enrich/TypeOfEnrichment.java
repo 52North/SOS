@@ -108,7 +108,7 @@ public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
     private boolean isSetTypeOfFormat() {
         return !Strings.isNullOrEmpty(getTypeOfFormat());
     }
-    
+
     private String createKvpDescribeSensorOrReturnIdentifier(String identifier, String format) throws CodedException {
         String href = identifier;
         if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
@@ -121,7 +121,7 @@ public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
                         SosHelper.getDescribeSensorUrl(version, ServiceConfiguration.getInstance().getServiceURL(),
                                 identifier, BindingConstants.KVP_BINDING_ENDPOINT, format).toString();
             } catch (MalformedURLException murle) {
-               LOGGER.error("Error while encoding DescribeSensor URL!", murle); 
+               LOGGER.error("Error while encoding DescribeSensor URL!", murle);
             }
         }
         return href;

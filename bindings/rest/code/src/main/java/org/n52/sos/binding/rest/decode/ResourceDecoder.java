@@ -90,7 +90,7 @@ public abstract class ResourceDecoder extends RestDecoder {
 
     protected abstract RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload);
 
-    protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws DecodingException, OwsExceptionReport
+    protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws DecodingException
     {
         String resourceType = null;
         String pathPayload = null;
@@ -108,7 +108,7 @@ public abstract class ResourceDecoder extends RestDecoder {
             }
 
             LOGGER.debug("resourceType: {}; pathPayload: {} ",resourceType,pathPayload);
-
+            try {
             // delegate to HTTP method specific decoders for parsing this resource's request
             if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.GET) ||
                 httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.HEAD)) {
@@ -122,13 +122,16 @@ public abstract class ResourceDecoder extends RestDecoder {
             } else if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.OPTIONS)) {
                 return decodeOptionsRequest(httpRequest,pathPayload);
             }
+            } catch (OwsExceptionReport owse) {
+                throw new DecodingException(owse);
+            }
         }
 
         final String exceptionText = String.format("The resource type \"%s\" via HTTP method \"%s\" is not supported by this IDecoder implementiation.",
                 resourceType,
                 httpRequest.getMethod());
         LOGGER.debug(exceptionText);
-        throw new OperationNotSupportedException(resourceType);
+        throw new DecodingException(resourceType);
 
     }
 
@@ -167,14 +170,14 @@ public abstract class ResourceDecoder extends RestDecoder {
     }
 
     // TODO use this to return operation not allowed response
-    protected OwsExceptionReport createHttpMethodForThisResourceNotSupportedException(final String httpMethod, final String resourceType)
+    protected DecodingException createHttpMethodForThisResourceNotSupportedException(final String httpMethod, final String resourceType)
     {
         final String exceptionText = String.format("The HTTP-%s %s \"%s\"!",
                 httpMethod,
                 bindingConstants.getHttpOperationNotAllowedForResourceTypeMessagePart(),
                 resourceType);
         final OperationNotSupportedException onse = new OperationNotSupportedException(exceptionText);
-        return onse;
+        return new DecodingException(onse);
     }
 
     protected Map<String, String> getKvPEncodedParameters(final HttpServletRequest httpRequest)
@@ -194,9 +197,9 @@ public abstract class ResourceDecoder extends RestDecoder {
         if (!parameterValue.isEmpty() && (parameterValue.split(",").length == 1)) {
             return parameterValue;
         } else {
-            final InvalidParameterValueException ipve = new InvalidParameterValueException(parameterName, parameterValue);
-            LOGGER.debug(ipve.getMessage());
-            throw ipve;
+            final DecodingException de = new DecodingException(parameterName, parameterValue);
+            LOGGER.debug(de.getMessage());
+            throw de;
         }
     }
 
@@ -331,7 +334,7 @@ public abstract class ResourceDecoder extends RestDecoder {
         {
             final String errorMessage = "HTTP header 'Content-Type'";
             LOGGER.debug("{} is missing", errorMessage);
-            throw new MissingParameterValueException(errorMessage);
+            throw new DecodingException(errorMessage);
         }
         if (!httpRequest.getContentType().contains(bindingConstants.getContentTypeDefault().toString()))
         {

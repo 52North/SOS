@@ -88,6 +88,7 @@ import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -524,13 +525,14 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         if (feature.isSetGeometry()) {
             return getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeom());
         } else if (feature.isSetLongLat()) {
+            try {
             int epsg = getStorageEPSG();
             if (feature.isSetSrid()) {
                 epsg = feature.getSrid();
             }
             final String wktString =
                     getGeometryHandler().getWktString(feature.getLongitude(), feature.getLatitude(), epsg);
-            final Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
+            Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
             if (feature.isSetAltitude()) {
                 geom.getCoordinate().z = JavaHelper.asDouble(feature.getAltitude());
                 if (geom.getSRID() == getStorage3DEPSG()) {
@@ -538,6 +540,9 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 }
             }
             return geom;
+            } catch (DecodingException de) {
+                throw new NoApplicableCodeException().causedBy(de);
+            }
             // return
             // getGeometryHandler().switchCoordinateAxisOrderIfNeeded(geom);
         } else {

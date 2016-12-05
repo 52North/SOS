@@ -32,12 +32,13 @@ import net.opengis.sos.x20.InsertObservationResponseDocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -49,19 +50,23 @@ public class ObservationsPostRequestHandler extends RequestHandler {
     public RestResponse handleRequest(RestRequest req) throws OwsExceptionReport, XmlException
     {
         if (req != null && req instanceof ObservationsPostRequest) {
-            InsertObservationRequest ioReq = ((ObservationsPostRequest) req).getInsertObservationRequest();
+            try {
+                InsertObservationRequest ioReq = ((ObservationsPostRequest) req).getInsertObservationRequest();
 
-            // 2 handle core response
-            XmlObject xb_InsertObservationResponse = executeSosRequest(ioReq);
+                // 2 handle core response
+                XmlObject xb_InsertObservationResponse = executeSosRequest(ioReq);
 
-            if (xb_InsertObservationResponse instanceof InsertObservationResponseDocument) {
-                // 3 return response
-                // no interesting content, just check the class to be sure that the insertion was successful
-                // the restful response requires the link to the newly created observation
-                // FIXME we are always using only the first observation in the list without checking
-                return new ObservationsPostResponse(
-                        ioReq.getObservations().get(0).getIdentifierCodeWithAuthority().getValue(),
-                        ((ObservationsPostRequest) req).getXb_OMObservation());
+                if (xb_InsertObservationResponse instanceof InsertObservationResponseDocument) {
+                    // 3 return response
+                    // no interesting content, just check the class to be sure that the insertion was successful
+                    // the restful response requires the link to the newly created observation
+                    // FIXME we are always using only the first observation in the list without checking
+                    return new ObservationsPostResponse(
+                            ioReq.getObservations().get(0).getIdentifierCodeWithAuthority().getValue(),
+                            ((ObservationsPostRequest) req).getXb_OMObservation());
+                }
+            } catch (EncodingException ee) {
+                throw new NoApplicableCodeException().causedBy(ee);
             }
         }
         throw logRequestTypeNotSupportedByThisHandlerAndCreateException(req,this.getClass().getName());

@@ -36,6 +36,8 @@ import java.util.Set;
 
 import org.n52.shetland.util.StringHelper;
 
+import com.google.common.base.Strings;
+
 /**
  * MS SQL Server datasource
  *

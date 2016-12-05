@@ -73,6 +73,6 @@ public class XmlStringDescriptionCreationStrategy
         } catch (DecodingException e) {
            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating procedure description from XML string");
         }
-        
+
     }
 }

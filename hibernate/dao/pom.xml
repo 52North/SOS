@@ -23,10 +23,17 @@
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.shetland</groupId>
+            <artifactId>shetland</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.janmayen</groupId>
+            <artifactId>janmayen</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -94,10 +101,12 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-spatial</artifactId>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.hibernate.common</groupId>
             <artifactId>hibernate-commons-annotations</artifactId>
         </dependency>
+         -->
         <!-- TODO remove after changing from document to type saving in resultTemplate -->
         <dependency>
             <groupId>${project.groupId}</groupId>

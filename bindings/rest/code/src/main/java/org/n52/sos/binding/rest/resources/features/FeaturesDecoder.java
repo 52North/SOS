@@ -60,7 +60,7 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport, DateTimeException
+            String pathPayload) throws OwsExceptionReport, DateTimeException, DecodingException
     {
         // variables
         RestRequest result = null;
@@ -106,7 +106,7 @@ public class FeaturesDecoder extends ResourceDecoder {
         return new FeaturesRequest(createBasicGetFeatureOfInterestRequest());
     }
 
-    private FeaturesRequest decodeFeaturesSearchRequest(HttpServletRequest httpRequest) throws OwsExceptionReport, DateTimeException
+    private FeaturesRequest decodeFeaturesSearchRequest(HttpServletRequest httpRequest) throws OwsExceptionReport, DateTimeException, DecodingException
     {
         GetFeatureOfInterestRequest featureOfInterestRequest = createBasicGetFeatureOfInterestRequest();
 
@@ -168,7 +168,7 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     }
 
-    private List<SpatialFilter> parseSpatialFilters(List<String> splitKvpParameterValueToList, String parameterName) throws OwsExceptionReport
+    private List<SpatialFilter> parseSpatialFilters(List<String> splitKvpParameterValueToList, String parameterName) throws OwsExceptionReport, DecodingException
     {
         List<SpatialFilter> spatialFilters = new ArrayList<SpatialFilter>(1);
 
@@ -200,7 +200,7 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws OwsExceptionReport, DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.DELETE,
                 bindingConstants.getResourceFeatures());
@@ -216,7 +216,7 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws OwsExceptionReport, DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT,
                 bindingConstants.getResourceFeatures());

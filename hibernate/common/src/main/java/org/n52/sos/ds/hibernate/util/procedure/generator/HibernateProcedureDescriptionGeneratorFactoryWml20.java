@@ -33,7 +33,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.TextValue;
@@ -42,6 +42,9 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.wml.ObservationProcess;
+
+import net.opengis.sos.x20.impl.SosInsertionMetadataPropertyTypeImpl;
+
 import org.n52.shetland.ogc.wml.WaterMLConstants;
 
 /**
@@ -65,8 +68,8 @@ public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
 
     @Override
     public SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-        return new HibernateProcedureDescriptionGeneratorWml20()
-                .generateProcedureDescription(procedure, i18n, session);
+        return new SosProcedureDescription<AbstractFeature>(new HibernateProcedureDescriptionGeneratorWml20()
+                .generateProcedureDescription(procedure, i18n, session));
     }
 
     private class HibernateProcedureDescriptionGeneratorWml20 extends AbstractHibernateProcedureDescriptionGenerator {
@@ -85,14 +88,14 @@ public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
          * @throws OwsExceptionReport
          *             If an error occurs
          */
-        public ObservationProcess generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
+        public SosProcedureDescription<AbstractFeature> generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
                 throws OwsExceptionReport {
             setLocale(i18n);
             final ObservationProcess op = new ObservationProcess();
             setCommonData(procedure, op, session);
             addName(procedure, op);
             op.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_ALGORITHM));
-            return op;
+            return new SosProcedureDescription<AbstractFeature>(op);
         }
 
         private void addName(Procedure procedure, ObservationProcess op) {

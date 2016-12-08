@@ -77,6 +77,7 @@ import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class AqdEncoder extends AbstractXmlEncoder<XmlObject, Object> implements ObservationEncoder<XmlObject, Object> {
@@ -130,6 +131,11 @@ public class AqdEncoder extends AbstractXmlEncoder<XmlObject, Object> implements
           return Sets.newHashSet(AqdConstants.AQD_CONTENT_TYPE.toString());
         }
         return Sets.newHashSet(AqdConstants.NS_AQD);
+    }
+
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
+        return Maps.newHashMap();
     }
 
     @Override

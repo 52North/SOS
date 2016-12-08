@@ -42,23 +42,65 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
-
-import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.event.ServiceEventBus;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.ServiceProviderFactory;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.features.SfConstants;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosInsertionMetadata;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
+import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.sos.response.InsertResultResponse;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.ogc.swes.SwesExtensions;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.ds.hibernate.dao.GetObservationDao;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
@@ -68,50 +110,12 @@ import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.System;
-import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.request.InsertResultRequest;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
-import org.n52.sos.response.DeleteSensorResponse;
 import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.response.InsertObservationResponse;
-import org.n52.sos.response.InsertResultResponse;
-import org.n52.sos.response.InsertResultTemplateResponse;
-import org.n52.sos.response.InsertSensorResponse;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -234,7 +238,7 @@ public class InsertDAOTest extends HibernateTestCase {
     private final InsertObservationDAO insertObservationDAO = new InsertObservationDAO();
     private final InsertResultTemplateDAO insertResultTemplateDAO = new InsertResultTemplateDAO();
     private final InsertResultDAO insertResultDAO = new InsertResultDAO();
-    private final GetObservationDAO getObsDAO = new GetObservationDAO();
+    private final GetObservationDao getObsDAO = new GetObservationDao();
     private final SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
 
     // optionally run these tests multiple times to expose intermittent faults
@@ -251,7 +255,7 @@ public class InsertDAOTest extends HibernateTestCase {
     }
 
     @Before
-    public void setUp() throws OwsExceptionReport, ConverterException {
+    public void setUp() throws OwsExceptionReport, ConverterException, EncodingException {
 
         Session session = getSession();
         insertSensor(PROCEDURE1, OFFERING1, OBSPROP1, null);
@@ -272,7 +276,7 @@ public class InsertDAOTest extends HibernateTestCase {
     }
 
     private void insertSensor(String procedure, String offering, String obsProp, String parentProcedure)
-            throws OwsExceptionReport {
+            throws OwsExceptionReport, EncodingException {
         InsertSensorRequest req = new InsertSensorRequest();
         req.setAssignedProcedureIdentifier(procedure);
         List<SosOffering> assignedOfferings = Lists.newLinkedList();
@@ -283,10 +287,13 @@ public class InsertDAOTest extends HibernateTestCase {
         meta.setObservationTypes(Sets.newHashSet(OmConstants.OBS_TYPE_MEASUREMENT));
         meta.setFeatureOfInterestTypes(Sets.newHashSet(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT));
         req.setMetadata(meta);
-        System system = new System();
+
+        org.n52.shetland.ogc.sensorML.System system = new org.n52.shetland.ogc.sensorML.System();
+        SosProcedureDescription procedureDescription = new SosProcedureDescription(system);
         system.setIdentifier(procedure);
+        procedureDescription.setIdentifier(procedure);
         if (parentProcedure != null) {
-            system.addParentProcedure(parentProcedure);
+            procedureDescription.setParentProcedure(new ReferenceType(procedure, procedure));
             for (String hierarchyParentProc : getCache().getParentProcedures(parentProcedure, true, true)) {
                 for (String parentProcOffering : getCache().getOfferingsForProcedure(hierarchyParentProc)) {
                     SosOffering sosOffering = new SosOffering(parentProcOffering, parentProcOffering);
@@ -297,8 +304,8 @@ public class InsertDAOTest extends HibernateTestCase {
         }
         SystemDocument xbSystemDoc = SystemDocument.Factory.newInstance();
         xbSystemDoc.addNewSystem().set(CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, system));
-        system.setSensorDescriptionXmlString(xbSystemDoc.xmlText());
-        req.setProcedureDescription(system);
+        system.setXml(xbSystemDoc.xmlText());
+        req.setProcedureDescription(procedureDescription);
         req.setAssignedOfferings(assignedOfferings);
         InsertSensorResponse resp = insertSensorDAO.insertSensor(req);
         this.serviceEventBus.submit(new SensorInsertion(req, resp));
@@ -313,7 +320,7 @@ public class InsertDAOTest extends HibernateTestCase {
     }
 
     private void insertResultTemplate(String identifier, String procedureId, String offeringId, String obsPropId,
-            String featureId, Session session) throws OwsExceptionReport, ConverterException {
+            String featureId, Session session) throws OwsExceptionReport, ConverterException, EncodingException {
         InsertResultTemplateRequest req = new InsertResultTemplateRequest();
         req.setIdentifier(identifier);
         req.setObservationTemplate(getOmObsConst(procedureId, obsPropId, TEMP_UNIT, offeringId, featureId,
@@ -324,12 +331,7 @@ public class InsertDAOTest extends HibernateTestCase {
         textEncoding.setDecimalSeparator(DECIMAL_SEPARATOR);
         textEncoding.setTokenSeparator(TOKEN_SEPARATOR);
         textEncoding.setBlockSeparator(BLOCK_SEPARATOR);
-        SosResultEncoding resultEncoding = new SosResultEncoding();
-        resultEncoding.setEncoding(textEncoding);
-        TextEncodingDocument xbTextEncDoc = TextEncodingDocument.Factory.newInstance();
-        xbTextEncDoc.addNewTextEncoding().set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, textEncoding));
-        resultEncoding.getEncoding().setXml(xbTextEncDoc.xmlText());
-        req.setResultEncoding(resultEncoding);
+        SosResultEncoding resultEncoding = createResultEncoding(textEncoding);
 
         SweDataRecord dataRecord = new SweDataRecord();
         SweTime sweTime = new SweTime();
@@ -340,14 +342,22 @@ public class InsertDAOTest extends HibernateTestCase {
         airTemp.setDefinition(obsPropId);
         airTemp.setUom(TEMP_UNIT);
         dataRecord.addField(new SweField("air_temperature", airTemp));
-        SosResultStructure resultStructure = new SosResultStructure();
-        resultStructure.setResultStructure(dataRecord);
-        DataRecordDocument xbDataRecordDoc = DataRecordDocument.Factory.newInstance();
-        xbDataRecordDoc.addNewDataRecord().set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord));
-        resultStructure.getResultStructure().setXml(xbDataRecordDoc.xmlText());
+        SosResultStructure resultStructure = createResultStructure(dataRecord);
         req.setResultStructure(resultStructure);
         InsertResultTemplateResponse resp = insertResultTemplateDAO.insertResultTemplate(req);
         this.serviceEventBus.submit(new ResultTemplateInsertion(req, resp));
+    }
+
+    private SosResultEncoding createResultEncoding(SweTextEncoding textEncoding) throws EncodingException {
+        TextEncodingDocument xbTextEncDoc = TextEncodingDocument.Factory.newInstance();
+        xbTextEncDoc.addNewTextEncoding().set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, textEncoding));
+        return new SosResultEncoding(textEncoding, xbTextEncDoc.xmlText());
+    }
+
+    private SosResultStructure createResultStructure(SweDataRecord dataRecord) throws EncodingException {
+        DataRecordDocument xbDataRecordDoc = DataRecordDocument.Factory.newInstance();
+        xbDataRecordDoc.addNewDataRecord().set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord));
+        return new SosResultStructure(dataRecord, xbDataRecordDoc.xmlText());
     }
 
     private SosContentCache getCache() {
@@ -570,7 +580,7 @@ public class InsertDAOTest extends HibernateTestCase {
                 OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION, session));
         returnSession(session);
 
-        obs.setResultTime(new TimeInstant(null, TimeIndeterminateValue.template));
+        obs.setResultTime(new TimeInstant(null, IndeterminateValue.TEMPLATE));
         SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
         SweDataArray sweDataArray = new SweDataArray();
         sweDataArray.setElementCount(new SweCount().setValue(3));
@@ -604,7 +614,7 @@ public class InsertDAOTest extends HibernateTestCase {
         sweDataArrayValue.setValue(sweDataArray);
 
         SingleObservationValue<SweDataArray> obsVal = new SingleObservationValue<SweDataArray>();
-        obsVal.setPhenomenonTime(new TimeInstant(null, TimeIndeterminateValue.template));
+        obsVal.setPhenomenonTime(new TimeInstant(null, IndeterminateValue.TEMPLATE));
         obsVal.setValue(sweDataArrayValue);
         obs.setValue(obsVal);
         req.setObservation(Lists.newArrayList(obs));
@@ -656,34 +666,6 @@ public class InsertDAOTest extends HibernateTestCase {
         checkSamplingGeometry(OFFERING1, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_SP);
     }
 
-    private NamedValue<?> createSamplingGeometry() {
-        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-        final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
-        namedValue.setName(referenceType);
-        // TODO add lat/long version
-        namedValue.setValue(new org.n52.sos.ogc.om.values.GeometryValue(geometry));
-        return namedValue;
-    }
-
-
-    private void checkSamplingGeometry(String offering, String procedure, String obsprop, String feature, DateTime time) throws OwsExceptionReport {
-        GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
-        GetObservationResponse getObsResponse = getObsDAO.queryObservationData(getObsReq);
-        assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
-        if (omObservation.getValue() instanceof StreamingObservation) {
-            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
-        } else if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
-        }
-        assertThat(omObservation.isSetParameter(), is(true));
-        assertThat(omObservation.isSetSpatialFilteringProfileParameter(), is(true));
-        checkNamedValue(omObservation.getSpatialFilteringProfileParameter(), OmConstants.PARAM_NAME_SAMPLING_GEOMETRY, geometry, null);
-    }
-
     @Test
     public void testInsertObservationWithOmParameter() throws OwsExceptionReport, ConverterException, InterruptedException {
         InsertObservationRequest req = new InsertObservationRequest();
@@ -707,47 +689,6 @@ public class InsertDAOTest extends HibernateTestCase {
         this.serviceEventBus.submit(new ObservationInsertion(req, resp));
         assertInsertionAftermathBeforeAndAfterCacheReload();
         checkOmParameter(OFFERING1, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_PARAM);
-    }
-
-    private void addParameter(OmObservation obs) {
-       obs.addParameter(createBooleanParameter(BOOLEAN_PARAM_NAME, BOOLEAN_PARAM_VALUE));
-       obs.addParameter(createCategoryParameter(CATEGORY_PARAM_NAME, CATEGORY_PARAM_VALUE, CATEGORY_PARAM_UNIT));
-       obs.addParameter(createCountParameter(COUNT_PARAM_NAME, COUNT_PARAM_VALUE));
-       obs.addParameter(createQuantityParameter(QUANTITY_PARAM_NAME, QUANTITY_PARAM_VALUE, QUANTITY_PARAM_UNIT));
-       obs.addParameter(createTextParameter(TEXT_PARAM_NAME, TEXT_PARAM_VALUE));
-    }
-
-    private void checkOmParameter(String offering, String procedure, String obsprop, String feature,
-            DateTime obsTimeParam) throws OwsExceptionReport {
-        GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, obsTimeParam, feature);
-        GetObservationResponse getObsResponse = getObsDAO.queryObservationData(getObsReq);
-        assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
-        if (omObservation.getValue() instanceof StreamingObservation) {
-            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
-        } else if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
-        }
-        assertThat(omObservation.isSetParameter(), is(true));
-        assertThat(omObservation.getParameter().size(), is(5));
-        for (NamedValue<?> namedValue : omObservation.getParameter()) {
-            assertThat(namedValue.isSetName(), is(true));
-            assertThat(namedValue.getName().isSetHref(), is(true));
-            if (BOOLEAN_PARAM_NAME.equals(namedValue.getName().getHref())) {
-                checkNamedValue(namedValue, BOOLEAN_PARAM_NAME, BOOLEAN_PARAM_VALUE, null);
-            } else if (CATEGORY_PARAM_NAME.equals(namedValue.getName().getHref())) {
-                checkNamedValue(namedValue, CATEGORY_PARAM_NAME, CATEGORY_PARAM_VALUE, CATEGORY_PARAM_UNIT);
-            } else if (COUNT_PARAM_NAME.equals(namedValue.getName().getHref())) {
-                checkNamedValue(namedValue, COUNT_PARAM_NAME, COUNT_PARAM_VALUE, null);
-            } else if (QUANTITY_PARAM_NAME.equals(namedValue.getName().getHref())) {
-                checkNamedValue(namedValue, QUANTITY_PARAM_NAME, QUANTITY_PARAM_VALUE, QUANTITY_PARAM_UNIT);
-            } else if (TEXT_PARAM_NAME.equals(namedValue.getName().getHref())) {
-                checkNamedValue(namedValue, TEXT_PARAM_NAME, TEXT_PARAM_VALUE, null);
-            }
-        }
     }
 
     @Test
@@ -775,24 +716,6 @@ public class InsertDAOTest extends HibernateTestCase {
         checkHeightParameter(OFFERING1, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_HEIGHT);
     }
 
-    private void checkHeightParameter(String offering, String procedure, String obsprop, String feature, DateTime time) throws OwsExceptionReport {
-        GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
-        GetObservationResponse getObsResponse = getObsDAO.queryObservationData(getObsReq);
-        assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
-        if (omObservation.getValue() instanceof StreamingObservation) {
-            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
-        } else if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
-        }
-        assertThat(omObservation.isSetParameter(), is(true));
-        assertThat(omObservation.isSetHeightParameter(), is(true));
-        checkNamedValue(omObservation.getHeightParameter(), OmConstants.PARAMETER_NAME_HEIGHT, HEIGHT_DEPTH_VALUE, HEIGHT_DEPTH_UNIT);
-    }
-
     @Test
     public void testInsertObservationWithDepthParameter() throws OwsExceptionReport, ConverterException, InterruptedException {
         InsertObservationRequest req = new InsertObservationRequest();
@@ -816,24 +739,6 @@ public class InsertDAOTest extends HibernateTestCase {
         this.serviceEventBus.submit(new ObservationInsertion(req, resp));
         assertInsertionAftermathBeforeAndAfterCacheReload();
         checkDepthParameter(OFFERING1, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_DEPTH);
-    }
-
-    private void checkDepthParameter(String offering, String procedure, String obsprop, String feature, DateTime time) throws OwsExceptionReport {
-        GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
-        GetObservationResponse getObsResponse = getObsDAO.queryObservationData(getObsReq);
-        assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
-        if (omObservation.getValue() instanceof StreamingObservation) {
-            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
-        } else if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
-        }
-        assertThat(omObservation.isSetParameter(), is(true));
-        assertThat(omObservation.isSetDepthParameter(), is(true));
-        checkNamedValue(omObservation.getDepthParameter(), OmConstants.PARAMETER_NAME_DEPTH, HEIGHT_DEPTH_VALUE, HEIGHT_DEPTH_UNIT);
     }
 
     @Test(expected=OwsExceptionReport.class)
@@ -917,6 +822,102 @@ public class InsertDAOTest extends HibernateTestCase {
         assertInsertionAftermathBeforeAndAfterCacheReload();
     }
 
+    private void addParameter(OmObservation obs) {
+       obs.addParameter(createBooleanParameter(BOOLEAN_PARAM_NAME, BOOLEAN_PARAM_VALUE));
+       obs.addParameter(createCategoryParameter(CATEGORY_PARAM_NAME, CATEGORY_PARAM_VALUE, CATEGORY_PARAM_UNIT));
+       obs.addParameter(createCountParameter(COUNT_PARAM_NAME, COUNT_PARAM_VALUE));
+       obs.addParameter(createQuantityParameter(QUANTITY_PARAM_NAME, QUANTITY_PARAM_VALUE, QUANTITY_PARAM_UNIT));
+       obs.addParameter(createTextParameter(TEXT_PARAM_NAME, TEXT_PARAM_VALUE));
+    }
+
+    private void checkOmParameter(String offering, String procedure, String obsprop, String feature,
+            DateTime obsTimeParam) throws OwsExceptionReport {
+        GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, obsTimeParam, feature);
+        GetObservationResponse getObsResponse = new GetObservationResponse(getObsReq.getService(), getObsReq.getVersion());
+        getObsResponse = getObsDAO.queryObservationData(getObsReq, getObsResponse);
+        assertThat(getObsResponse, notNullValue());
+        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
+        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        if (omObservation.getValue() instanceof StreamingValue) {
+            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+        }
+        assertThat(omObservation.isSetParameter(), is(true));
+        assertThat(omObservation.getParameter().size(), is(5));
+        for (NamedValue<?> namedValue : omObservation.getParameter()) {
+            assertThat(namedValue.isSetName(), is(true));
+            assertThat(namedValue.getName().isSetHref(), is(true));
+            if (BOOLEAN_PARAM_NAME.equals(namedValue.getName().getHref())) {
+                checkNamedValue(namedValue, BOOLEAN_PARAM_NAME, BOOLEAN_PARAM_VALUE, null);
+            } else if (CATEGORY_PARAM_NAME.equals(namedValue.getName().getHref())) {
+                checkNamedValue(namedValue, CATEGORY_PARAM_NAME, CATEGORY_PARAM_VALUE, CATEGORY_PARAM_UNIT);
+            } else if (COUNT_PARAM_NAME.equals(namedValue.getName().getHref())) {
+                checkNamedValue(namedValue, COUNT_PARAM_NAME, COUNT_PARAM_VALUE, null);
+            } else if (QUANTITY_PARAM_NAME.equals(namedValue.getName().getHref())) {
+                checkNamedValue(namedValue, QUANTITY_PARAM_NAME, QUANTITY_PARAM_VALUE, QUANTITY_PARAM_UNIT);
+            } else if (TEXT_PARAM_NAME.equals(namedValue.getName().getHref())) {
+                checkNamedValue(namedValue, TEXT_PARAM_NAME, TEXT_PARAM_VALUE, null);
+            }
+        }
+    }
+
+    private void checkHeightParameter(String offering, String procedure, String obsprop, String feature, DateTime time) throws OwsExceptionReport {
+        GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
+        GetObservationResponse getObsResponse = new GetObservationResponse(getObsReq.getService(), getObsReq.getVersion());
+        getObsResponse = getObsDAO.queryObservationData(getObsReq, getObsResponse);
+        assertThat(getObsResponse, notNullValue());
+        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
+        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        if (omObservation.getValue() instanceof StreamingValue) {
+            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+        }
+        assertThat(omObservation.isSetParameter(), is(true));
+        assertThat(omObservation.isSetHeightParameter(), is(true));
+        checkNamedValue(omObservation.getHeightParameter(), OmConstants.PARAMETER_NAME_HEIGHT, HEIGHT_DEPTH_VALUE, HEIGHT_DEPTH_UNIT);
+    }
+
+    private void checkDepthParameter(String offering, String procedure, String obsprop, String feature, DateTime time) throws OwsExceptionReport {
+        GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
+        GetObservationResponse getObsResponse = new GetObservationResponse(getObsReq.getService(), getObsReq.getVersion());
+        getObsResponse = getObsDAO.queryObservationData(getObsReq, getObsResponse);
+        assertThat(getObsResponse, notNullValue());
+        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
+        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        if (omObservation.getValue() instanceof StreamingValue) {
+            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+        }
+        assertThat(omObservation.isSetParameter(), is(true));
+        assertThat(omObservation.isSetDepthParameter(), is(true));
+        checkNamedValue(omObservation.getDepthParameter(), OmConstants.PARAMETER_NAME_DEPTH, HEIGHT_DEPTH_VALUE, HEIGHT_DEPTH_UNIT);
+    }
+
+    private NamedValue<?> createSamplingGeometry() {
+        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
+        final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
+        namedValue.setName(referenceType);
+        // TODO add lat/long version
+        namedValue.setValue(new GeometryValue(geometry));
+        return namedValue;
+    }
+
+    private void checkSamplingGeometry(String offering, String procedure, String obsprop, String feature, DateTime time) throws OwsExceptionReport {
+        GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
+        GetObservationResponse getObsResponse = new GetObservationResponse(getObsReq.getService(), getObsReq.getVersion());
+        getObsResponse = getObsDAO.queryObservationData(getObsReq, getObsResponse);
+        assertThat(getObsResponse, notNullValue());
+        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
+        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        if (omObservation.getValue() instanceof StreamingValue) {
+            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+        }
+        assertThat(omObservation.isSetParameter(), is(true));
+        assertThat(omObservation.isSetSpatialFilteringProfileParameter(), is(true));
+        checkNamedValue(omObservation.getSpatialFilteringProfileParameter(), OmConstants.PARAM_NAME_SAMPLING_GEOMETRY, geometry, null);
+    }
+
     private NamedValue<?> createHeight(double value) {
         return createQuantityParameter(OmConstants.PARAMETER_NAME_HEIGHT, value, HEIGHT_DEPTH_UNIT);
     }
@@ -947,33 +948,12 @@ public class InsertDAOTest extends HibernateTestCase {
             throws OwsExceptionReport {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(reqOffering, reqProcedure, reqObsProp, time,
             obsFeature);
-        GetObservationResponse getObsResponse = getObsDAO.queryObservationData(getObsReq);
+        GetObservationResponse getObsResponse = new GetObservationResponse(getObsReq.getService(), getObsReq.getVersion());
+        getObsResponse = getObsDAO.queryObservationData(getObsReq, getObsResponse);
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
-        if (omObservation.getValue() instanceof StreamingObservation) {
-            assertThat(((StreamingObservation)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingObservation)omObservation.getValue()).nextSingleObservation();
-            assertThat(omObservation.getObservationConstellation(), notNullValue());
-            OmObservationConstellation obsConst = omObservation.getObservationConstellation();
-            assertThat(obsConst.getProcedure().getIdentifier(), is(obsProcedure));
-            assertThat(obsConst.getObservableProperty().getIdentifier(), is(obsObsProp));
-
-            // TODO this fails
-            // assertThat(obsConst.getFeatureOfInterest().getIdentifier().getValue(),
-            // is(obsFeature));
-
-            assertThat(omObservation.getValue(), notNullValue());
-            ObservationValue<?> value = omObservation.getValue();
-            assertThat(value.getValue(), instanceOf(QuantityValue.class));
-            assertThat(value.getPhenomenonTime(), instanceOf(TimeInstant.class));
-            TimeInstant timeInstant = (TimeInstant) value.getPhenomenonTime();
-            assertThat(timeInstant.getValue().toDate(), is(time.toDate()));
-            QuantityValue quantityValue = (QuantityValue) value.getValue();
-            assertThat(quantityValue.getValue().doubleValue(), is(obsVal));
-            assertThat(quantityValue.getUnit(), is(obsUnit));
-            // TODO
-        } else if (omObservation.getValue() instanceof StreamingValue) {
+        if (omObservation.getValue() instanceof StreamingValue) {
             assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
             omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
             assertThat(omObservation.getObservationConstellation(), notNullValue());
@@ -1033,7 +1013,7 @@ public class InsertDAOTest extends HibernateTestCase {
         final NamedValue<Boolean> namedValue = new NamedValue<Boolean>();
         final ReferenceType referenceType = new ReferenceType(name);
         namedValue.setName(referenceType);
-        namedValue.setValue(new org.n52.sos.ogc.om.values.BooleanValue(value));
+        namedValue.setValue(new BooleanValue(value));
         return namedValue;
     }
 
@@ -1041,7 +1021,7 @@ public class InsertDAOTest extends HibernateTestCase {
         final NamedValue<String> namedValue = new NamedValue<String>();
         final ReferenceType referenceType = new ReferenceType(name);
         namedValue.setName(referenceType);
-        namedValue.setValue(new org.n52.sos.ogc.om.values.CategoryValue(value, unit));
+        namedValue.setValue(new CategoryValue(value, unit));
         return namedValue;
     }
 
@@ -1049,7 +1029,7 @@ public class InsertDAOTest extends HibernateTestCase {
         final NamedValue<Integer> namedValue = new NamedValue<Integer>();
         final ReferenceType referenceType = new ReferenceType(name);
         namedValue.setName(referenceType);
-        namedValue.setValue(new org.n52.sos.ogc.om.values.CountValue(value));
+        namedValue.setValue(new CountValue(value));
         return namedValue;
     }
 
@@ -1057,7 +1037,7 @@ public class InsertDAOTest extends HibernateTestCase {
         final NamedValue<Double> namedValue = new NamedValue<Double>();
         final ReferenceType referenceType = new ReferenceType(name);
         namedValue.setName(referenceType);
-        namedValue.setValue(new org.n52.sos.ogc.om.values.QuantityValue(value, unit));
+        namedValue.setValue(new QuantityValue(value, unit));
         return namedValue;
     }
 
@@ -1065,7 +1045,7 @@ public class InsertDAOTest extends HibernateTestCase {
         final NamedValue<String> namedValue = new NamedValue<String>();
         final ReferenceType referenceType = new ReferenceType(name);
         namedValue.setName(referenceType);
-        namedValue.setValue(new org.n52.sos.ogc.om.values.TextValue(value));
+        namedValue.setValue(new TextValue(value));
         return namedValue;
     }
 }

@@ -94,16 +94,4 @@ public class FeatureQueryHandlerMock implements FeatureQueryHandler {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
-    @Override
-    public int getDefaultResponseEPSG() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int getDefaultResponse3DEPSG() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
 }

@@ -29,14 +29,10 @@
 package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyOfferingDao;
@@ -45,13 +41,11 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,8 +74,8 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
         this.datasets = datasets;
         this.offeringDAO = new ProxyOfferingDao(getSession());
     }
-    
-    
+
+
 
     protected void getProcedureInformationFromDbAndAddItToCacheMaps() throws OwsExceptionReport {
         try {
@@ -98,11 +92,11 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
             if (procedure.hasParents()) {
                 getCache().addParentProcedures(identifier, getParents(procedure));
             }
-            
-            
-            
+
+
+
             List<OfferingEntity> offerings = offeringDAO.getAllInstances(createDatasetDbQuery(procedure));
-           
+
             TimePeriod phenomenonTime = new TimePeriod();
             for (OfferingEntity offering : offerings) {
                 phenomenonTime.extendToContain(
@@ -126,7 +120,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
         }
         return parentProcedures;
     }
-    
+
     private DbQuery createDatasetDbQuery(ProcedureEntity procedure) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         rsps.addParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));

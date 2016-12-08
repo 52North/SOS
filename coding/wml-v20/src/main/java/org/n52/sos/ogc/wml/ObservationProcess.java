@@ -98,11 +98,14 @@ public class ObservationProcess extends AbstractFeature {
      */
     private final List<NamedValue<?>> parameters = new ArrayList<>(0);
 
+    public ObservationProcess() {
+        super("");
+    }
 
     public ObservationProcess(String identifier) {
         super(identifier);
     }
-    
+
     public ObservationProcess(CodeWithAuthority featureIdentifier) {
         super(featureIdentifier);
     }

@@ -352,7 +352,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<XmlObject, Object>
             xbField.setName(NcNameResolver.fixNcName(sweField.getName().getValue()));
         }
 
-        final XmlObject encodeObjectToXml = createAbstractDataComponent(sosElement, new HashMap<>());
+        final XmlObject encodeObjectToXml = createAbstractDataComponent(sosElement, EncodingContext.empty());
         XmlObject substituteElement =
                 XmlHelper.substituteElement(xbField.addNewAbstractDataComponent(), encodeObjectToXml);
         substituteElement.set(encodeObjectToXml);

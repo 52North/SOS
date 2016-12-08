@@ -33,14 +33,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.sos.SosEnvelope;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -74,8 +74,8 @@ public class FeatureQueryHandlerMock implements FeatureQueryHandler {
     }
 
     @Override
-    public SosEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
-        return new SosEnvelope(null, getStorageEPSG());
+    public ReferencedEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
+        return new ReferencedEnvelope(null, getStorageEPSG());
     }
 
     @Override
@@ -90,18 +90,6 @@ public class FeatureQueryHandlerMock implements FeatureQueryHandler {
 
     @Override
     public int getStorage3DEPSG() {
-        return 0;
-    }
-
-    @Override
-    public int getDefaultResponseEPSG() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int getDefaultResponse3DEPSG() {
-        // TODO Auto-generated method stub
         return 0;
     }
 }

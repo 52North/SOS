@@ -36,23 +36,23 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.LocalizedString;
-import org.n52.iceland.i18n.MultilingualString;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.DateTimeHelper;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
+import org.n52.shetland.i18n.LocalizedString;
+import org.n52.shetland.i18n.MultilingualString;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ogc.sos.SosEnvelope;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -136,7 +136,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
         // Spatial Envelope
         getCache().setEnvelopeForOffering(identifier, getEnvelopeForOffering(offering));
-        
+
         // Temporal extent
         getCache().setMinPhenomenonTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getPhenomenonTimeStart()));
         getCache().setMaxPhenomenonTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getPhenomenonTimeEnd()));
@@ -247,11 +247,11 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         }
     }
 
-    protected SosEnvelope getEnvelopeForOffering(OfferingEntity offering) throws OwsExceptionReport {
+    protected ReferencedEnvelope getEnvelopeForOffering(OfferingEntity offering) throws OwsExceptionReport {
         if (offering.hasEnvelope()) {
-            return new SosEnvelope(offering.getEnvelope().getEnvelopeInternal(), offering.getEnvelope().getSRID());
+            return new ReferencedEnvelope(offering.getEnvelope().getEnvelopeInternal(), offering.getEnvelope().getSRID());
         }
-        return new SosEnvelope();
+        return new ReferencedEnvelope();
     }
 
     @Override

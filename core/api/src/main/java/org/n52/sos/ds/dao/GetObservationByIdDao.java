@@ -30,10 +30,15 @@ package org.n52.sos.ds.dao;
 
 import java.util.Collection;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 
+/**
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 5.0.0
+ *
+ */
 public interface GetObservationByIdDao {
 
     Collection<OmObservation> queryObservationsById(GetObservationByIdRequest request) throws OwsExceptionReport;

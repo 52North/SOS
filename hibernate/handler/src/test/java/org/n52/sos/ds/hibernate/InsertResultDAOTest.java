@@ -32,12 +32,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 
 import com.google.common.collect.Sets;
 

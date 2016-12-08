@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -142,6 +143,16 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     public Set<String> getSupportedResponseFormats(String service, String version) {
         return SUPPORTED_RESPONSE_FORMATS.getOrDefault(service, Collections.emptyMap())
                 .getOrDefault(version, Collections.emptySet());
+    }
+
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
+        return Collections.singletonMap(WaterMLConstants.NS_WML_20,
+                (Set<String>) getSupportedTypes()
+                    .stream()
+                    .filter(sp -> sp instanceof ObservationType)
+                    .map(sp -> ((ObservationType)sp).getValue())
+                    .collect(Collectors.toSet()));
     }
 
     @Override

@@ -365,14 +365,14 @@ public abstract class AbstractOmEncoderv20
      * @throws EncodingException
      *             If an error occurs
      */
-    private void addProcedure(OMProcessPropertyType procedure, SosProcedureDescription<?> procedureDescription)
+    private void addProcedure(OMProcessPropertyType procedure, AbstractFeature procedureDescription)
             throws EncodingException {
         if (checkEncodProcedureForEncoderKeys()) {
-            SosProcedureDescription<?> procedureToEncode = null;
+            AbstractFeature procedureToEncode = null;
             // should the procedure be converted
             if (convertEncodedProcedure()) {
-                Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> converter =
-                        ConverterRepository.getInstance().getConverter(procedureDescription.getDescriptionFormat(),
+                Converter<AbstractFeature, AbstractFeature> converter =
+                        ConverterRepository.getInstance().getConverter(procedureDescription.getDefaultElementEncoding(),
                                                                        getDefaultProcedureEncodingNamspace());
                 if (converter != null) {
                     try {
@@ -382,14 +382,14 @@ public abstract class AbstractOmEncoderv20
                     }
                 } else {
                     throw new EncodingException("No converter (%s -> %s) found!", new Object[] {
-                        procedureDescription.getDescriptionFormat(), getDefaultProcedureEncodingNamspace() });
+                        procedureDescription.getDefaultElementEncoding(), getDefaultProcedureEncodingNamspace() });
                 }
             } else {
                 procedureToEncode = procedureDescription;
             }
             // encode procedure or add reference
             XmlObject encodedProcedure =
-                    encodeObjectToXml(procedureToEncode.getDescriptionFormat(), procedureToEncode);
+                    encodeObjectToXml(procedureToEncode.getDefaultElementEncoding(), procedureToEncode);
             if (encodedProcedure != null) {
                 procedure.set(encodedProcedure);
             } else {

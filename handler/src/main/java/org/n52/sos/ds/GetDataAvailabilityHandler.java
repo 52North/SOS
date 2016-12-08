@@ -36,18 +36,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.TemporalFilter;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.Extension;
-import org.n52.iceland.ogc.ows.Extensions;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyDatasetDao;
@@ -56,53 +46,64 @@ import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.FormatDescriptor;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ObservationFormatDescriptor;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ProcedureDescriptionFormatDescriptor;
 import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.ds.dao.GetDataAvailabilityDao;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.gda.AbstractGetDataAvailabilityHandler;
-import org.n52.sos.gda.GetDataAvailabilityConstants;
-import org.n52.sos.gda.GetDataAvailabilityRequest;
-import org.n52.sos.gda.GetDataAvailabilityResponse;
-import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
-import org.n52.sos.gda.GetDataAvailabilityResponse.FormatDescriptor;
-import org.n52.sos.gda.GetDataAvailabilityResponse.ObservationFormatDescriptor;
-import org.n52.sos.gda.GetDataAvailabilityResponse.ProcedureDescriptionFormatDescriptor;
-import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.svalbard.encode.Encoder;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandler {
-    
+
     private HibernateSessionStore sessionStore;
     private CodingRepository codingRepository;
     private GetDataAvailabilityDao dao;
-    
-    
+
+
     public GetDataAvailabilityHandler() {
         super(SosConstants.SOS);
     }
-    
+
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
         this.sessionStore = sessionStore;
     }
-    
+
     @Inject
     public void setCodingRepository(CodingRepository codingRepository) {
         this.codingRepository = codingRepository;
     }
-    
+
     @Inject
     public void setGetDataAvaolabilityDao(GetDataAvailabilityDao dao) {
         this.dao = dao;
     }
-    
+
     @Override
     public GetDataAvailabilityResponse getDataAvailability(GetDataAvailabilityRequest request)
             throws OwsExceptionReport {
-        GetDataAvailabilityResponse response = request.getResponse();
+        GetDataAvailabilityResponse response = new GetDataAvailabilityResponse();
+        response.setService(request.getService());
+        response.setVersion(request.getVersion());
+        response.setResponseFormat(request.getResponseFormat());
         for (DataAvailability da : queryDataAvailabilityValues(request)) {
             if (da != null) {
                 response.addDataAvailability(da);
@@ -133,7 +134,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             sessionStore.returnSession(session);
         }
     }
-    
+
     private DbQuery createDbQuery(GetDataAvailabilityRequest req) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         if (req.isSetFeaturesOfInterest()) {
@@ -151,7 +152,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         rsps.addParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));
     }
-    
+
     private DataAvailability defaultProcessDataAvailability(DatasetEntity<?> entity, GDARequestContext context, Session session) throws OwsExceptionReport {
             TimePeriod timePeriod = createTimePeriod(entity);
             if (timePeriod != null && !timePeriod.isEmpty()) {
@@ -172,7 +173,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
 
     /**
      * Get {@link DataAvailability}s for each series
-     * 
+     *
      * @param series
      *            Series to get {@link DataAvailability}s for
      * @param context
@@ -186,10 +187,10 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             context.addDataAvailability(dataAvailability);
         }
     }
-    
+
     /**
      * Get {@link DataAvailability}s for each offering of a series
-     * 
+     *
      * @param series
      *            Series to get {@link DataAvailability}s for
      * @param context
@@ -207,7 +208,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         }
         checkForParentOfferings(context, entity.getOffering());
     }
-    
+
     private TimePeriod createTimePeriod(DatasetEntity<?> entity) {
         return new TimePeriod(entity.getFirstValueAt(), entity.getLastValueAt());
     }
@@ -258,12 +259,12 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
       }
       return childs;
     }
-    
+
     private boolean checkForGDAv20(GetDataAvailabilityRequest request) {
         return (request.isSetResponseFormat() && GetDataAvailabilityConstants.NS_GDA_20.equals(request.getResponseFormat()))
                 || GetDataAvailabilityConstants.NS_GDA_20.equals(request.getNamespace()) || isForceGDAv20Response();
     }
-    
+
     private List<DataAvailability> checkForDuplictation(List<DataAvailability> dataAvailabilityValues) {
         List<DataAvailability> checked = Lists.newLinkedList();
         for (DataAvailability dataAvailability : dataAvailabilityValues) {
@@ -284,7 +285,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         }
         return checked;
     }
-    
+
     private ReferenceType getProcedureReference(DatasetEntity<?> entity, Map<String, ReferenceType> procedures) {
         String identifier = entity.getProcedure().getDomainId();
         if (!procedures.containsKey(identifier)) {
@@ -320,7 +321,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         }
         return featuresOfInterest.get(identifier);
     }
-    
+
     private ReferenceType getOfferingReference(DatasetEntity<?> entity, Map<String, ReferenceType> offerings){
         String identifier = entity.getOffering().getDomainId();
         if (!offerings.containsKey(identifier)) {
@@ -409,7 +410,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         }
         return formatDescriptors;
     }
-    
+
     private Set<String> getResponseFormatsForObservationType(String observationType, String service, String version) {
         Set<String> responseFormats = Sets.newHashSet();
         for (Encoder<?, ?> e : codingRepository.getEncoders()) {
@@ -439,7 +440,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         }
         return notContained;
     }
-    
+
     public class GDARequestContext {
         private GetDataAvailabilityRequest request;
         private List<DataAvailability> dataAvailabilityValues = Lists.newArrayList();
@@ -447,11 +448,11 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         private Map<String, ReferenceType> observableProperties = new HashMap<>();
         private Map<String, ReferenceType> featuresOfInterest = new HashMap<>();
         private Map<String, ReferenceType> offerings = new HashMap<>();
-        
+
         public GDARequestContext(GetDataAvailabilityRequest request) {
             this.request = request;
         }
-        
+
         public GetDataAvailabilityRequest getRequest() {
             return request;
         }
@@ -467,7 +468,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         public Map<String, ReferenceType> getProcedures() {
             return procedures;
         }
-        
+
         public Map<String, ReferenceType> getOfferings() {
             return offerings;
         }
@@ -494,7 +495,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         public List<DataAvailability> getDataAvailabilityList() {
             return Lists.newArrayList(dataAvailabilityValues);
         }
-        
+
         public boolean hasDataAvailability(String requestedOffering) {
             for (DataAvailability dataAvailability : dataAvailabilityValues) {
                 if (requestedOffering.equals(dataAvailability.getOfferingString())) {
@@ -515,8 +516,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         }
 
         public boolean isSetDataAvailabilityList() {
-            return CollectionHelper.isNotEmpty(getDataAvailabilityList());
+            return getDataAvailabilityList() != null && !getDataAvailabilityList().isEmpty();
         }
-        
+
     }
 }

@@ -39,7 +39,6 @@ import java.util.Iterator;
 import javax.xml.namespace.NamespaceContext;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
-import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.InsertObservationDocument;
 import net.opengis.sos.x20.InsertObservationResponseDocument;
@@ -63,6 +62,7 @@ import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -82,11 +82,13 @@ import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
@@ -417,8 +419,9 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         wrapper.addMember(sensorML);
         sensorML.addIdentifier(new SmlIdentifier(UNIQUE_ID_NAME, OGCConstants.URN_UNIQUE_IDENTIFIER, procedure));
         sensorML.addCapabilities(createOfferingCapabilities(offering));
-        sensorML.addPhenomenon(createCompositePhenomenon());
         wrapper.setIdentifier(new CodeWithAuthority(procedure, CODESPACE));
+        SosProcedureDescription<?> spd = new SosProcedureDescription<AbstractFeature>(wrapper);
+        spd.addPhenomenon(createCompositePhenomenon());
         return wrapper;
     }
 

@@ -28,7 +28,12 @@
  */
 package org.n52.sos.ds;
 
+
+import static java.util.stream.Collectors.toList;
+
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,8 +42,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,52 +55,29 @@ import javax.xml.namespace.QName;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.coding.decode.DecoderRepository;
-import org.n52.iceland.coding.encode.EncoderRepository;
-import org.n52.iceland.config.SettingsService;
-import org.n52.iceland.ds.OperationHandlerRepository;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.filter.FilterConstants.ConformanceClassConstraintNames;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.MergableExtension;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OfferingExtension;
-import org.n52.iceland.ogc.ows.OwsDomainType;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository;
-import org.n52.iceland.ogc.ows.OwsNoValues;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.ows.OwsOperationsMetadata;
-import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
-import org.n52.iceland.ogc.ows.OwsServiceIdentification;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.iceland.ogc.ows.StaticCapabilities;
-import org.n52.iceland.ogc.ows.StringBasedCapabilitiesExtension;
-import org.n52.iceland.ogc.sos.CapabilitiesExtension;
+import org.n52.iceland.ogc.ows.extension.OfferingExtension;
+import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProvider;
+import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderRepository;
+import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
+import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.OfferingExtensionProvider;
 import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.iceland.service.ConformanceClass;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.collections.MultiMaps;
 import org.n52.iceland.util.collections.SetMultiMap;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
+import org.n52.janmayen.Comparables;
+import org.n52.janmayen.function.Functions;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.OfferingEntity;
@@ -103,22 +87,54 @@ import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.OfferingDao;
 import org.n52.series.db.dao.PhenomenonDao;
 import org.n52.series.db.dao.ProcedureDao;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.filter.FilterCapabilities;
+import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.ConformanceClassConstraintNames;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
+import org.n52.shetland.ogc.ows.OwsAllowedValues;
+import org.n52.shetland.ogc.ows.OwsCapabilitiesExtension;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.OwsNoValues;
+import org.n52.shetland.ogc.ows.OwsOperation;
+import org.n52.shetland.ogc.ows.OwsOperationMetadataExtension;
+import org.n52.shetland.ogc.ows.OwsOperationsMetadata;
+import org.n52.shetland.ogc.ows.OwsServiceIdentification;
+import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.VersionNegotiationFailedException;
+import org.n52.shetland.ogc.ows.extension.MergableExtension;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosCapabilities;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosObservationOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.config.CapabilitiesExtensionService;
-import org.n52.sos.ogc.filter.FilterCapabilities;
-import org.n52.sos.ogc.sos.SosCapabilities;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -133,66 +149,43 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
     /* section flags (values are powers of 2) */
     private static final int SERVICE_IDENTIFICATION = 0x01;
-
     private static final int SERVICE_PROVIDER = 0x02;
-
     private static final int OPERATIONS_METADATA = 0x04;
-
     private static final int FILTER_CAPABILITIES = 0x08;
-
     private static final int CONTENTS = 0x10;
-
-    private static final int ALL =
-            0x20 | SERVICE_IDENTIFICATION | SERVICE_PROVIDER | OPERATIONS_METADATA | FILTER_CAPABILITIES | CONTENTS;
+    private static final int ALL = 0x20 | SERVICE_IDENTIFICATION | SERVICE_PROVIDER | OPERATIONS_METADATA |
+                                   FILTER_CAPABILITIES | CONTENTS;
 
     @Inject
     private HibernateSessionStore sessionStore;
-    
-    @Inject
-    private SettingsService settingsManager;
-
     @Inject
     private CapabilitiesExtensionService capabilitiesExtensionService;
-
     @Inject
     private EncoderRepository encoderRepository;
-
     @Inject
     private DecoderRepository decoderRepository;
-
     @Inject
     private OperationHandlerRepository operationHandlerRepository;
-
     @Inject
     private ProfileHandler profileHandler;
-
     @Inject
     private BindingRepository bindingRepository;
-
     @Inject
     private ServiceMetadataRepository serviceMetadataRepository;
-
     @Inject
     private RequestOperatorRepository requestOperatorRepository;
-
     @Inject
     private ServiceOperatorRepository serviceOperatorRepository;
-
     @Inject
     private ResponseFormatRepository responseFormatRepository;
-
     @Inject
     private GeometryHandler geometryHandler;
-
     @Inject
     private OwsExtendedCapabilitiesProviderRepository owsExtendedCapabilitiesProviderRepository;
-
     @Inject
     private OfferingExtensionRepository offeringExtensionRepository;
-
     @Inject
     private CapabilitiesExtensionRepository capabilitiesExtensionRepository;
-
     @Inject
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
 
@@ -201,142 +194,160 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
     }
 
     @Override
-    public GetCapabilitiesResponse getCapabilities(final GetCapabilitiesRequest request) throws OwsExceptionReport {
-        final GetCapabilitiesResponse response = request.getResponse();
+    public GetCapabilitiesResponse getCapabilities(GetCapabilitiesRequest request) throws OwsExceptionReport {
+        String capabilitiesId = request.getCapabilitiesId();
+        String service = request.getService();
+        String version = negotiateVersion(request);
 
-        final String scId = request.getCapabilitiesId();
-        if (scId == null) {
-            if (this.capabilitiesExtensionService.isStaticCapabilitiesActive()) {
-                response.setXmlString(this.capabilitiesExtensionService.getActiveStaticCapabilitiesDocument());
-                return response;
-            }
-        } else if (!scId
-                .equals(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.DYNAMIC_CAPABILITIES_IDENTIFIER)) {
-            final StaticCapabilities sc = this.capabilitiesExtensionService.getStaticCapabilities(scId);
-            if (sc == null) {
-                throw new InvalidParameterValueException(
-                        org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.CapabilitiesId, scId);
-            }
-            response.setXmlString(sc.getDocument());
-            return response;
+        GetCapabilitiesResponse response = new GetCapabilitiesResponse(service, version);
+
+        if (capabilitiesId == null && this.capabilitiesExtensionService.isStaticCapabilitiesActive()) {
+            createStaticCapabilities(request, response);
+        } else if (capabilitiesId != null && !capabilitiesId.equals(GetCapabilitiesParams.DYNAMIC_CAPABILITIES_IDENTIFIER)) {
+            createStaticCapabilitiesWithId(request, response);
+        } else {
+            createDynamicCapabilities(request, response);
         }
-
-        final Set<String> availableExtensionSections =
-                getExtensionSections(response.getService(), response.getVersion());
-        final Set<String> requestedExtensionSections = new HashSet<>(availableExtensionSections.size());
-        final int requestedSections =
-                identifyRequestedSections(request, response, availableExtensionSections, requestedExtensionSections);
-
-        final SosCapabilities sosCapabilities = new SosCapabilities(response.getVersion());
-
-        SectionSpecificContentObject sectionSpecificContentObject = new SectionSpecificContentObject()
-                .setRequest(request).setResponse(response).setRequestedExtensionSections(requestedExtensionSections)
-                .setRequestedSections(requestedSections).setSosCapabilities(sosCapabilities);
-        addSectionSpecificContent(sectionSpecificContentObject, request);
-        response.setCapabilities(sosCapabilities);
-
         return response;
     }
 
-    @Override
-    protected Set<String> getExtensionSections(String service, String version) throws OwsExceptionReport {
-        return getAndMergeExtensions(service, version).stream().map(CapabilitiesExtension::getSectionName)
-                .collect(Collectors.toSet());
+    private String negotiateVersion(GetCapabilitiesRequest request) throws OwsExceptionReport {
+        if (request.isSetVersion()) {
+            return request.getVersion();
+        } else {
+            String service = request.getService();
+            String version;
+
+            if (request.isSetAcceptVersions()) {
+                version = request.getAcceptVersions().stream()
+                        .filter(v -> this.serviceOperatorRepository.isVersionSupported(service, v))
+                        .findFirst()
+                        .orElseThrow(this::versionNegotiationFailed);
+            } else {
+                version = this.serviceOperatorRepository.getSupportedVersions(service).stream()
+                        .max(Comparables.version()).orElseThrow(() ->  new InvalidServiceParameterException(service));
+            }
+            request.setVersion(version);
+            return version;
+        }
     }
 
-    private void addSectionSpecificContent(final SectionSpecificContentObject sectionSpecificContentObject,
-            GetCapabilitiesRequest request) throws OwsExceptionReport {
+    private OwsExceptionReport versionNegotiationFailed() {
+        return new VersionNegotiationFailedException()
+                .withMessage("The requested '%s' values are not supported by this service!",
+                OWSConstants.GetCapabilitiesParams.AcceptVersions);
+    }
+
+    private void addSectionSpecificContent(SectionSpecificContentObject sectionSpecificContentObject,
+                                           GetCapabilitiesRequest request) throws OwsExceptionReport {
         String verion = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
         String service = sectionSpecificContentObject.getGetCapabilitiesResponse().getService();
+
+
+
         if (isServiceIdentificationSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             sectionSpecificContentObject.getSosCapabilities()
                     .setServiceIdentification(getServiceIdentification(request, service, verion));
         }
         if (isServiceProviderSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
-            sectionSpecificContentObject.getSosCapabilities()
-                    .setServiceProvider(this.serviceMetadataRepository.getServiceProviderFactory(service).get());
+            sectionSpecificContentObject.getSosCapabilities().setServiceProvider(this.serviceMetadataRepository
+                    .getServiceProviderFactory(service).get());
         }
         if (isOperationsMetadataSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             sectionSpecificContentObject.getSosCapabilities()
                     .setOperationsMetadata(getOperationsMetadataForOperations(request, service, verion));
         }
         if (isFilterCapabilitiesSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
-            sectionSpecificContentObject.getSosCapabilities().setFilterCapabilities(getFilterCapabilities());
+            sectionSpecificContentObject.getSosCapabilities().setFilterCapabilities(getFilterCapabilities(verion));
         }
         if (isContentsSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
-            sectionSpecificContentObject.getSosCapabilities().setContents(getContents(sectionSpecificContentObject));
+            if (isV2(sectionSpecificContentObject.getGetCapabilitiesResponse())) {
+                sectionSpecificContentObject.getSosCapabilities().setContents(getContentsForSosV2(sectionSpecificContentObject));
+//            } else {
+//                sectionSpecificContentObject.getSosCapabilities().setContents(getContents(sectionSpecificContentObject));
+            }
         }
 
-        if (sectionSpecificContentObject.getRequestedSections() == ALL) {
-            sectionSpecificContentObject.getSosCapabilities().setExensions(getAndMergeExtensions(service, verion));
-        } else if (!sectionSpecificContentObject.getRequestedExtensionSesctions().isEmpty()) {
-            sectionSpecificContentObject.getSosCapabilities().setExensions(
-                    getExtensions(sectionSpecificContentObject.getRequestedExtensionSesctions(), service, verion));
+        if (isV2(sectionSpecificContentObject.getGetCapabilitiesResponse())) {
+            if (sectionSpecificContentObject.getRequestedSections() == ALL) {
+                sectionSpecificContentObject.getSosCapabilities().setExtensions(getAndMergeExtensions(service, verion));
+            } else if (!sectionSpecificContentObject.getRequestedExtensionSesctions().isEmpty()) {
+                sectionSpecificContentObject.getSosCapabilities().setExtensions(
+                        getExtensions(sectionSpecificContentObject.getRequestedExtensionSesctions(), service, verion));
+            }
         }
     }
 
-    private int identifyRequestedSections(final GetCapabilitiesRequest request, final GetCapabilitiesResponse response,
-            final Set<String> availableExtensionSections, final Set<String> requestedExtensionSections)
+    private int identifyRequestedSections(GetCapabilitiesRequest request,
+                                          GetCapabilitiesResponse response,
+                                          Set<String> availableExtensionSections,
+                                          Set<String> requestedExtensionSections)
             throws OwsExceptionReport {
-        int sections = 0;
-        // handle sections array and set requested sections flag
+
         if (!request.isSetSections()) {
-            sections = ALL;
-        } else {
-            for (final String section : request.getSections()) {
-                if (section.isEmpty()) {
-                    LOGGER.warn("A {} element is empty! Check if operator checks for empty elements!",
-                            org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.Section.name());
-                    continue;
-                }
-                if (section.equals(SosConstants.CapabilitiesSections.All.name())) {
-                    sections = ALL;
-                    break;
-                } else if (section.equals(SosConstants.CapabilitiesSections.ServiceIdentification.name())) {
-                    sections |= SERVICE_IDENTIFICATION;
-                } else if (section.equals(SosConstants.CapabilitiesSections.ServiceProvider.name())) {
-                    sections |= SERVICE_PROVIDER;
-                } else if (section.equals(SosConstants.CapabilitiesSections.OperationsMetadata.name())) {
-                    sections |= OPERATIONS_METADATA;
-                } else if (section.equals(Sos2Constants.CapabilitiesSections.FilterCapabilities.name())) {
-                    sections |= FILTER_CAPABILITIES;
-                } else if (section.equals(SosConstants.CapabilitiesSections.Contents.name())) {
-                    sections |= CONTENTS;
-                } else if (availableExtensionSections.contains(section)) {
-                    requestedExtensionSections.add(section);
-                } else {
-                    throw new InvalidParameterValueException()
-                            .at(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.Section)
-                            .withMessage("The requested section '%s' does not exist or is not supported!", section);
-                }
+            // FIXME: requestedExtensionSections.addAll(availableExtensionSections)?
+            return ALL;
+        }
+
+        int sections = 0;
+        for (String section : request.getSections()) {
+            if (section.isEmpty()) {
+                LOGGER.warn("A section element is empty! Check if operator checks for empty elements!");
+            } else if (section.equals(SosConstants.CapabilitiesSections.All.name())) {
+                sections |= ALL;
+            } else if (section.equals(SosConstants.CapabilitiesSections.ServiceIdentification.name())) {
+                sections |= SERVICE_IDENTIFICATION;
+            } else if (section.equals(SosConstants.CapabilitiesSections.ServiceProvider.name())) {
+                sections |= SERVICE_PROVIDER;
+            } else if (section.equals(SosConstants.CapabilitiesSections.OperationsMetadata.name())) {
+                sections |= OPERATIONS_METADATA;
+            } else if (section.equals(Sos1Constants.CapabilitiesSections.Filter_Capabilities.name()) && isV1(response)) {
+                sections |= FILTER_CAPABILITIES;
+            } else if (section.equals(Sos2Constants.CapabilitiesSections.FilterCapabilities.name()) && isV2(response)) {
+                sections |= FILTER_CAPABILITIES;
+            } else if (section.equals(SosConstants.CapabilitiesSections.Contents.name())) {
+                sections |= CONTENTS;
+            } else if (availableExtensionSections.contains(section) && isV2(response)) {
+                requestedExtensionSections.add(section);
+            } else {
+                throw new InvalidParameterValueException()
+                        .at(GetCapabilitiesParams.Section)
+                        .withMessage("The requested section '%s' does not exist or is not supported!", section);
             }
         }
         return sections;
     }
 
     private OwsServiceIdentification getServiceIdentification(GetCapabilitiesRequest request, String service,
-            String version) throws OwsExceptionReport {
-        OwsServiceIdentification serviceIdentification = this.serviceMetadataRepository
-                .getServiceIdentificationFactory(service).get(request.getRequestedLocale());
+                                                              String version) throws OwsExceptionReport {
+        Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+        LocalizedProducer<OwsServiceIdentification> serviceIdentificationFactory
+                = this.serviceMetadataRepository.getServiceIdentificationFactory(service);
+        OwsServiceIdentification serviceIdentification = serviceIdentificationFactory.get(locale);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             serviceIdentification.setProfiles(getProfiles(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         }
         return serviceIdentification;
     }
 
-    private Set<String> getProfiles(String service, String version) {
+    private Set<URI> getProfiles(String service, String version) {
 
-        Set<String> profiles = Stream
-                .of(this.bindingRepository.getBindings().values(),
-                        this.requestOperatorRepository.getRequestOperators(), this.decoderRepository.getDecoders(),
-                        this.encoderRepository.getEncoders(),
-                        this.operationHandlerRepository.getOperationHandlers().values())
-                .flatMap(Collection::stream).map(c -> c.getConformanceClasses(service, version)).flatMap(Set::stream)
+        Set<URI> profiles = Stream.of(this.bindingRepository.getBindings().values(),
+                                         this.requestOperatorRepository.getRequestOperators(),
+                                         this.decoderRepository.getDecoders(),
+                                         this.encoderRepository.getEncoders(),
+                                         this.operationHandlerRepository.getOperationHandlers().values())
+                .flatMap(Collection::stream)
+                .filter(c -> c instanceof ConformanceClass)
+                .map(c -> (ConformanceClass) c)
+                .map(c -> c.getConformanceClasses(service, version))
+                .flatMap(Set::stream)
+                .map(URI::create)
                 .collect(Collectors.toSet());
 
         // FIXME additional profiles
         if ("hydrology".equalsIgnoreCase(this.profileHandler.getActiveProfile().getIdentifier())) {
-            profiles.add("http://www.opengis.net/spec/SOS_application-profile_hydrology/1.0/req/hydrosos");
+            profiles.add(URI.create("http://www.opengis.net/spec/SOS_application-profile_hydrology/1.0/req/hydrosos"));
         }
         return profiles;
     }
@@ -345,144 +356,190 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
      * Get the OperationsMetadat for all supported operations
      *
      * @param service
-     *            Requested service
+     *                Requested service
      * @param version
-     *            Requested service version
+     *                Requested service version
+     *
      * @return OperationsMetadata for all operations supported by the requested
      *         service and version
+     *
      * @throws OwsExceptionReport
-     *             If an error occurs
+     *                            If an error occurs
      */
-    private OwsOperationsMetadata getOperationsMetadataForOperations(final GetCapabilitiesRequest request,
-            final String service, final String version) throws OwsExceptionReport {
+    private OwsOperationsMetadata getOperationsMetadataForOperations(GetCapabilitiesRequest request,
+                                                                     String service, String version)
+            throws OwsExceptionReport {
 
-        final OwsOperationsMetadata operationsMetadata = new OwsOperationsMetadata();
-        operationsMetadata.addCommonValue(OWSConstants.RequestParams.service.name(),
-                new OwsParameterValuePossibleValues(SosConstants.SOS));
-        operationsMetadata.addCommonValue(OWSConstants.RequestParams.version.name(),
-                new OwsParameterValuePossibleValues(getServiceOperatorRepository().getSupportedVersions(service)));
-        // crs
-        operationsMetadata.addCommonValue(OWSConstants.AdditionalRequestParams.crs.name(),
-                new OwsParameterValuePossibleValues(this.geometryHandler.addOgcCrsPrefix(getCache().getEpsgCodes())));
-        // language
-        operationsMetadata.addCommonValue(OWSConstants.AdditionalRequestParams.language.name(),
-                new OwsParameterValuePossibleValues(
-                        Collections2.transform(getCache().getSupportedLanguages(), LocaleHelper.toStringFunction())));
-
-        // FIXME: OpsMetadata for InsertSensor, InsertObservation SOS 2.0
-        final Set<RequestOperatorKey> requestOperatorKeyTypes =
-                getRequestOperatorRepository().getActiveRequestOperatorKeys();
-        final List<OwsOperation> opsMetadata = new ArrayList<>(requestOperatorKeyTypes.size());
-        for (final RequestOperatorKey requestOperatorKey : requestOperatorKeyTypes) {
-            if (requestOperatorKey.getServiceOperatorKey().getVersion().equals(version)) {
-                OwsOperation operationMetadata = getRequestOperatorRepository().getRequestOperator(requestOperatorKey)
-                        .getOperationMetadata(service, version);
-                if (operationMetadata != null) {
-                    opsMetadata.add(operationMetadata);
-                }
-            }
-        }
-        operationsMetadata.setOperations(opsMetadata);
-
+        List<OwsDomain> parameters = getParameters(service, version);
+        List<OwsOperation> operations = getOperations(service, version);
+        List<OwsDomain> constraints = Collections.emptyList();
+        OwsOperationMetadataExtension owsExtendedCapabilities = null;
         /*
-         * check if an OwsExtendedCapabilities provider is available for this
-         * service and check if this provider provides OwsExtendedCapabilities
-         * for the request
+        * check if an OwsExtendedCapabilities provider is available for this
+        * service and check if this provider provides OwsExtendedCapabilities
+        * for the request
          */
-        if (owsExtendedCapabilitiesProviderRepository.hasExtendedCapabilitiesProvider(request)) {
-            OwsExtendedCapabilitiesProvider extendedCapabilitiesProvider =
-                    owsExtendedCapabilitiesProviderRepository.getExtendedCapabilitiesProvider(request);
-            if (extendedCapabilitiesProvider != null
-                    && extendedCapabilitiesProvider.hasExtendedCapabilitiesFor(request)) {
-                operationsMetadata
-                        .setExtendedCapabilities(extendedCapabilitiesProvider.getOwsExtendedCapabilities(request));
-            }
+        OwsExtendedCapabilitiesProvider provider = owsExtendedCapabilitiesProviderRepository.getExtendedCapabilitiesProvider(service, version);
+        if (provider != null && provider.hasExtendedCapabilitiesFor(request)) {
+            owsExtendedCapabilities = provider.getOwsExtendedCapabilities(request);
         }
-
-        return operationsMetadata;
+        return new OwsOperationsMetadata(operations, parameters, constraints, owsExtendedCapabilities);
     }
 
     /**
      * Get the FilterCapabilities
      *
      * @param version
-     *            Requested service version
+     *                Requested service version
+     *
      * @return FilterCapabilities
      */
-    private FilterCapabilities getFilterCapabilities() {
+    private FilterCapabilities getFilterCapabilities(final String version) {
         final FilterCapabilities filterCapabilities = new FilterCapabilities();
-        getConformance(filterCapabilities);
-        getSpatialFilterCapabilities(filterCapabilities);
-        getTemporalFilterCapabilities(filterCapabilities);
+        if (Sos2Constants.SERVICEVERSION.equals(version)) {
+            getConformance(filterCapabilities);
+        }
+        // !!! Modify methods addicted to your implementation !!!
+        if (version.equals(Sos1Constants.SERVICEVERSION)) {
+            getScalarFilterCapabilities(filterCapabilities);
+        }
+        getSpatialFilterCapabilities(filterCapabilities, version);
+        getTemporalFilterCapabilities(filterCapabilities, version);
 
         return filterCapabilities;
     }
 
-    private void getConformance(final FilterCapabilities filterCapabilities) {
-        // set Query conformance class
-        filterCapabilities.addConformance(
-                new OwsDomainType(ConformanceClassConstraintNames.ImplementsQuery.name(), new OwsNoValues(), FALSE));
-        // set Ad hoc query conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsAdHocQuery.name(), new OwsNoValues(), FALSE));
-        // set Functions conformance class
-        filterCapabilities.addConformance(new OwsDomainType(ConformanceClassConstraintNames.ImplementsFunctions.name(),
-                new OwsNoValues(), FALSE));
-        // set Resource Identification conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsResourceld.name(), new OwsNoValues(), FALSE));
-        // set Minimum Standard Filter conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsMinStandardFilter.name(), new OwsNoValues(), FALSE));
-        // set Standard Filter conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsStandardFilter.name(), new OwsNoValues(), FALSE));
-        // set Minimum Spatial Filter conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsMinSpatialFilter.name(), new OwsNoValues(), TRUE));
-        // set Spatial Filter conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsSpatialFilter.name(), new OwsNoValues(), TRUE));
-        // set Minimum Temporal Filter conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsMinTemporalFilter.name(), new OwsNoValues(), TRUE));
-        // set Temporal Filter conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsTemporalFilter.name(), new OwsNoValues(), TRUE));
-        // set Version navigation conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsVersionNav.name(), new OwsNoValues(), FALSE));
-        // set Sorting conformance class
-        filterCapabilities.addConformance(
-                new OwsDomainType(ConformanceClassConstraintNames.ImplementsSorting.name(), new OwsNoValues(), FALSE));
-        // set Extended Operators conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsExtendedOperators.name(), new OwsNoValues(), FALSE));
-        // set Minimum XPath conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsMinimumXPath.name(), new OwsNoValues(), FALSE));
-        // set Schema Element Function conformance class
-        filterCapabilities.addConformance(new OwsDomainType(
-                ConformanceClassConstraintNames.ImplementsSchemaElementFunc.name(), new OwsNoValues(), FALSE));
+    private void getConformance(FilterCapabilities filterCapabilities) {
+        OwsValue trueValue = new OwsValue("true");
+        OwsValue falseValue = new OwsValue("false");
+        OwsNoValues noValues = OwsNoValues.instance();
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsQuery, noValues, falseValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsAdHocQuery, noValues, falseValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsFunctions, noValues, falseValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsResourceld, noValues, falseValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinStandardFilter, noValues, falseValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsStandardFilter, noValues, falseValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinSpatialFilter, noValues, trueValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsSpatialFilter, noValues, trueValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinTemporalFilter, noValues, trueValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsTemporalFilter, noValues, trueValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsVersionNav, noValues, falseValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsSorting, noValues, falseValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsExtendedOperators, noValues, falseValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinimumXPath, noValues, falseValue));
+        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsSchemaElementFunc, noValues, falseValue));
     }
 
-    private SosEnvelope processObservedArea(Geometry geometry) throws CodedException {
-        // TODO Check transformation
-        // if (requestedSrid >= 0 && sosEnvelope.getSrid() != requestedSrid) {
-        // SosEnvelope tranformedEnvelope = new SosEnvelope();
-        // tranformedEnvelope.setSrid(requestedSrid);
-        // tranformedEnvelope.setEnvelope(GeometryHandler.getInstance().transformEnvelope(sosEnvelope.getEnvelope(),
-        // sosEnvelope.getSrid(), requestedSrid));
-        // return tranformedEnvelope;
-        // }
-        return new SosEnvelope(geometry.getEnvelopeInternal(), geometry.getSRID());
+//    /**
+//     * Get the contents for SOS 1.0.0 capabilities
+//     *
+//     * @param version
+//     *                Requested service version
+//     *
+//     * @return Offerings for contents
+//     *
+//     *
+//     * @throws OwsExceptionReport
+//     *             * If an error occurs
+//     */
+//    private List<SosObservationOffering> getContents(SectionSpecificContentObject sectionSpecificContentObject) throws
+//            OwsExceptionReport {
+//        String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
+//        final Collection<String> offerings = getCache().getOfferings();
+//        final List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
+//        for (final String offering : offerings) {
+//            final Collection<String> procedures = getProceduresForOffering(offering, version);
+//            final ReferencedEnvelope envelopeForOffering = getCache().getEnvelopeForOffering(offering);
+//            final Set<String> featuresForoffering = getFOI4offering(offering);
+//            final Collection<String> responseFormats = getResponseFormatRepository()
+//                    .getSupportedResponseFormats(SosConstants.SOS, Sos1Constants.SERVICEVERSION);
+//            if (checkOfferingValues(envelopeForOffering, featuresForoffering, responseFormats)) {
+//                final SosObservationOffering sosObservationOffering = new SosObservationOffering();
+//
+//                // insert observationTypes
+//                sosObservationOffering.setObservationTypes(getObservationTypes(offering));
+//
+//                // only if fois are contained for the offering set the values of
+//                // the envelope
+//                sosObservationOffering
+//                        .setObservedArea(processObservedArea(getCache().getEnvelopeForOffering(offering)));
+//
+//                // TODO: add intended application
+//                // xb_oo.addIntendedApplication("");
+//                // add offering name
+//                addSosOfferingToObservationOffering(offering, sosObservationOffering,
+//                                                    sectionSpecificContentObject.getGetCapabilitiesRequest());
+//
+//                // set up phenomena
+//                sosObservationOffering
+//                        .setObservableProperties(getCache().getObservablePropertiesForOffering(offering));
+//                sosObservationOffering.setCompositePhenomena(getCache().getCompositePhenomenonsForOffering(offering));
+//                final Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
+//                if (getCache().getCompositePhenomenonsForOffering(offering) != null) {
+//                    for (final String compositePhenomenon : getCache().getCompositePhenomenonsForOffering(offering)) {
+//                        phens4CompPhens.put(compositePhenomenon, getCache()
+//                                            .getObservablePropertiesForCompositePhenomenon(compositePhenomenon));
+//                    }
+//                }
+//                sosObservationOffering.setPhens4CompPhens(phens4CompPhens);
+//
+//                // set up time
+//                setUpTimeForOffering(offering, sosObservationOffering);
+//
+//                // add feature of interests
+//                if (this.profileHandler.getActiveProfile().isListFeatureOfInterestsInOfferings()) {
+//                    sosObservationOffering.setFeatureOfInterest(getFOI4offering(offering));
+//                }
+//
+//                // set procedures
+//                sosObservationOffering.setProcedures(procedures);
+//
+//                // insert result models
+//                final Collection<QName> resultModels = OMHelper.getQNamesForResultModel(getCache()
+//                        .getObservationTypesForOffering(offering));
+//                sosObservationOffering.setResultModels(resultModels);
+//
+//                // set response format
+//                sosObservationOffering.setResponseFormats(responseFormats);
+//
+//                // set response Mode
+//                sosObservationOffering.setResponseModes(SosConstants.RESPONSE_MODES);
+//
+//                sosOfferings.add(sosObservationOffering);
+//            }
+//        }
+//
+//        return sosOfferings;
+//    }
+
+//    private ReferencedEnvelope processObservedArea(ReferencedEnvelope sosEnvelope) throws CodedException {
+//        // TODO Check transformation
+//        // if (requestedSrid >= 0 && sosEnvelope.getSrid() != requestedSrid) {
+//        // ReferencedEnvelope tranformedEnvelope = new ReferencedEnvelope();
+//        // tranformedEnvelope.setSrid(requestedSrid);
+//        // tranformedEnvelope.setEnvelope(GeometryHandler.getInstance().transformEnvelope(sosEnvelope.getEnvelope(),
+//        // sosEnvelope.getSrid(), requestedSrid));
+//        // return tranformedEnvelope;
+//        // }
+//        return sosEnvelope;
+//    }
+
+    private ReferencedEnvelope processObservedArea(Geometry geometry) throws CodedException {
+        return new ReferencedEnvelope(geometry.getEnvelopeInternal(), geometry.getSRID());
     }
+
+//    private boolean checkOfferingValues(final ReferencedEnvelope envelopeForOffering, final Set<String> featuresForOffering,
+//                                        final Collection<String> responseFormats) {
+//        return ReferencedEnvelope.isNotNullOrEmpty(envelopeForOffering) && CollectionHelper.isNotEmpty(featuresForOffering) &&
+//                 CollectionHelper.isNotEmpty(responseFormats);
+//    }
 
     /**
      * Get the contents for SOS 2.0 capabilities
      *
      * @param version
-     *            Requested service version
+     *                Requested service version
+     *
      * @return Offerings for contents
      *
      *
@@ -491,82 +548,82 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
      */
     // FIXME why version parameter? The method signature cleary states which
     // version is supported by this!
-    private List<SosObservationOffering> getContents(SectionSpecificContentObject sectionSpecificContentObject)
+    private List<SosObservationOffering> getContentsForSosV2(SectionSpecificContentObject sectionSpecificContentObject)
             throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionStore.getSession();
-        String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
-        final Collection<OfferingEntity> offerings = new OfferingDao(session).getAllInstances(new DbQuery(IoParameters.createDefaults()));
-        final List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
-        final Map<String, List<OfferingExtension>> extensions =
-                this.capabilitiesExtensionService.getActiveOfferingExtensions();
+            String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
+            final Collection<OfferingEntity> offerings = new OfferingDao(session).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+            final List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
+            final Map<String, List<OfferingExtension>> extensions = this.capabilitiesExtensionService
+                    .getActiveOfferingExtensions();
 
-        if (CollectionHelper.isEmpty(offerings)) {
-            // Set empty offering to add empty Contents section to Capabilities
-            sosOfferings.add(new SosObservationOffering());
-        } else {
-            for (final OfferingEntity offering : offerings) {
-                final Collection<ProcedureEntity> procedures = getProceduresForOffering(offering, session);
-                if (!procedures.isEmpty()) {
-                    final Collection<String> observationTypes = offering.getObservationTypes();
-                    if (observationTypes != null && !observationTypes.isEmpty()) {
-                        // FIXME why a loop? We are in SOS 2.0 context -> offering 1
-                        // <-> 1 procedure!
-                        for (final ProcedureEntity procedure : procedures) {
-    
-                            final SosObservationOffering sosObservationOffering = new SosObservationOffering();
-    
-                            // insert observationTypes
-                            sosObservationOffering.setObservationTypes(observationTypes);
-    
-                            if (offering.hasEnvelope()) {
-                                sosObservationOffering.setObservedArea(processObservedArea(offering.getEnvelope()));
-                            }
-    
-                            sosObservationOffering.setProcedures(Collections.singletonList(procedure.getDomainId()));
-    
-                            // TODO: add intended application
-    
-                            // add offering to observation offering
-                            addSosOfferingToObservationOffering(offering, sosObservationOffering,
-                                    sectionSpecificContentObject.getGetCapabilitiesRequest());
-                            // add offering extension
-                            if (offeringExtensionRepository.hasOfferingExtensionProviderFor(
-                                    sectionSpecificContentObject.getGetCapabilitiesRequest())) {
-                                for (OfferingExtensionProvider provider : offeringExtensionRepository
-                                        .getOfferingExtensionProvider(
-                                                sectionSpecificContentObject.getGetCapabilitiesRequest())) {
-                                    if (provider != null && provider.hasExtendedOfferingFor(offering.getDomainId())) {
-                                        sosObservationOffering.addExtensions(provider.getOfferingExtensions(offering.getDomainId()));
+            if (CollectionHelper.isEmpty(offerings)) {
+                // Set empty offering to add empty Contents section to Capabilities
+                sosOfferings.add(new SosObservationOffering());
+            } else {
+                for (final OfferingEntity offering : offerings) {
+                    final Collection<ProcedureEntity> procedures = getProceduresForOffering(offering, session);
+                    if (!procedures.isEmpty()) {
+                        final Collection<String> observationTypes = offering.getObservationTypes();
+                        if (observationTypes != null && !observationTypes.isEmpty()) {
+                            // FIXME why a loop? We are in SOS 2.0 context -> offering 1
+                            // <-> 1 procedure!
+                            for (final ProcedureEntity procedure : procedures) {
+
+                                final SosObservationOffering sosObservationOffering = new SosObservationOffering();
+
+                                // insert observationTypes
+                                sosObservationOffering.setObservationTypes(observationTypes);
+
+                                if (offering.hasEnvelope()) {
+                                    sosObservationOffering.setObservedArea(processObservedArea(offering.getEnvelope()));
+                                }
+
+                                sosObservationOffering.setProcedures(Collections.singletonList(procedure.getDomainId()));
+
+                                // TODO: add intended application
+
+                                // add offering to observation offering
+                                addSosOfferingToObservationOffering(offering, sosObservationOffering,
+                                        sectionSpecificContentObject.getGetCapabilitiesRequest());
+                                // add offering extension
+                                if (offeringExtensionRepository.hasOfferingExtensionProviderFor(
+                                        sectionSpecificContentObject.getGetCapabilitiesRequest())) {
+                                    for (OfferingExtensionProvider provider : offeringExtensionRepository
+                                            .getOfferingExtensionProvider(
+                                                    sectionSpecificContentObject.getGetCapabilitiesRequest())) {
+                                        if (provider != null && provider.hasExtendedOfferingFor(offering.getDomainId())) {
+                                            sosObservationOffering.addExtensions(provider.getOfferingExtensions(offering.getDomainId()));
+                                        }
                                     }
                                 }
-                            }
-                            if (extensions.containsKey(sosObservationOffering.getOffering().getIdentifier())) {
-                                for (OfferingExtension offeringExtension : extensions
-                                        .get(sosObservationOffering.getOffering().getIdentifier())) {
-                                    sosObservationOffering.addExtension(
-                                            new SwesExtension<OfferingExtension>().setValue(offeringExtension));
+                                if (extensions.containsKey(sosObservationOffering.getOffering().getIdentifier())) {
+                                    for (OfferingExtension offeringExtension : extensions
+                                            .get(sosObservationOffering.getOffering().getIdentifier())) {
+                                        sosObservationOffering.addExtension(
+                                                new SwesExtension<OfferingExtension>().setValue(offeringExtension));
+                                    }
                                 }
+
+                                setUpPhenomenaForOffering(offering, procedure, sosObservationOffering, session);
+                                setUpTimeForOffering(offering, sosObservationOffering);
+                                setUpRelatedFeaturesForOffering(offering, sosObservationOffering);
+                                setUpFeatureOfInterestTypesForOffering(offering, sosObservationOffering);
+                                setUpProcedureDescriptionFormatForOffering(sosObservationOffering);
+                                setUpResponseFormatForOffering(sosObservationOffering);
+
+                                sosOfferings.add(sosObservationOffering);
                             }
-    
-                            setUpPhenomenaForOffering(offering, procedure, sosObservationOffering, session);
-                            setUpTimeForOffering(offering, sosObservationOffering);
-                            setUpRelatedFeaturesForOffering(offering, sosObservationOffering);
-                            setUpFeatureOfInterestTypesForOffering(offering, sosObservationOffering);
-                            setUpProcedureDescriptionFormatForOffering(sosObservationOffering);
-                            setUpResponseFormatForOffering(sosObservationOffering);
-    
-                            sosOfferings.add(sosObservationOffering);
                         }
+                    } else {
+                        LOGGER.error( "No procedures are contained in the database for the offering {}! Please contact the admin of this SOS.", offering.getDomainId());
                     }
-                } else {
-                    LOGGER.error( "No procedures are contained in the database for the offering {}! Please contact the admin of this SOS.", offering.getDomainId());
                 }
             }
-        }
 
-        return sosOfferings;
+            return sosOfferings;
         } catch (final HibernateException | DataAccessException e) {
             throw new NoApplicableCodeException().causedBy(e).withMessage(
                     "Error while querying data for DescribeSensor document!");
@@ -575,35 +632,68 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         }
     }
 
-    private void addSosOfferingToObservationOffering(OfferingEntity offering, SosObservationOffering sosObservationOffering,
-            GetCapabilitiesRequest request) throws CodedException {
+//    private void addSosOfferingToObservationOffering(String offering, SosObservationOffering sosObservationOffering,
+//                                                     GetCapabilitiesRequest request) throws CodedException {
+//        SosOffering sosOffering = new SosOffering(offering, false);
+//        sosObservationOffering.setOffering(sosOffering);
+//        // add offering name
+//        I18NHelper.addOfferingNames(sosOffering, request);
+//        // add offering description
+//        I18NHelper.addOfferingDescription(sosOffering, request);
+//    }
+
+    private void addSosOfferingToObservationOffering(OfferingEntity offering,
+            SosObservationOffering sosObservationOffering, GetCapabilitiesRequest request) throws CodedException {
         SosOffering sosOffering = new SosOffering(offering.getDomainId(), false);
         sosObservationOffering.setOffering(sosOffering);
         // add offering name
-        I18NHelper.addOfferingNames(getCache(), sosOffering, request.getRequestedLocale(), Locale.ROOT, false);
+        I18NHelper.addOfferingNames(getCache(), sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()), Locale.ROOT, false);
         // add offering description
-        I18NHelper.addOfferingDescription(sosOffering, request.getRequestedLocale(), Locale.ROOT, getCache());
+        I18NHelper.addOfferingDescription(sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()), Locale.ROOT, getCache());
     }
 
     /**
      * Set SpatialFilterCapabilities to FilterCapabilities
      *
      * @param filterCapabilities
-     *            FilterCapabilities
+     *                           FilterCapabilities
      * @param version
-     *            SOS version
+     *                           SOS version
      */
-    private void getSpatialFilterCapabilities(FilterCapabilities filterCapabilities) {
+    private void getSpatialFilterCapabilities(final FilterCapabilities filterCapabilities, final String version) {
 
         // set GeometryOperands
         final List<QName> operands = new LinkedList<>();
-        operands.add(GmlConstants.QN_ENVELOPE_32);
+        if (version.equals(Sos2Constants.SERVICEVERSION)) {
+            operands.add(GmlConstants.QN_ENVELOPE_32);
+        } else if (version.equals(Sos1Constants.SERVICEVERSION)) {
+            operands.add(GmlConstants.QN_ENVELOPE);
+            operands.add(GmlConstants.QN_POINT);
+            operands.add(GmlConstants.QN_LINESTRING);
+            operands.add(GmlConstants.QN_POLYGON);
+        }
 
         filterCapabilities.setSpatialOperands(operands);
 
         // set SpatialOperators
         final SetMultiMap<SpatialOperator, QName> ops = MultiMaps.newSetMultiMap(SpatialOperator.class);
-        ops.add(SpatialOperator.BBOX, GmlConstants.QN_ENVELOPE_32);
+        if (version.equals(Sos2Constants.SERVICEVERSION)) {
+            ops.add(SpatialOperator.BBOX, GmlConstants.QN_ENVELOPE_32);
+        } else if (version.equals(Sos1Constants.SERVICEVERSION)) {
+            ops.add(SpatialOperator.BBOX, GmlConstants.QN_ENVELOPE);
+            // set Contains
+            ops.add(SpatialOperator.Contains, GmlConstants.QN_POINT);
+            ops.add(SpatialOperator.Contains, GmlConstants.QN_LINESTRING);
+            ops.add(SpatialOperator.Contains, GmlConstants.QN_POLYGON);
+            // set Intersects
+            ops.add(SpatialOperator.Intersects, GmlConstants.QN_POINT);
+            ops.add(SpatialOperator.Intersects, GmlConstants.QN_LINESTRING);
+            ops.add(SpatialOperator.Intersects, GmlConstants.QN_POLYGON);
+            // set Overlaps
+            ops.add(SpatialOperator.Overlaps, GmlConstants.QN_POINT);
+            ops.add(SpatialOperator.Overlaps, GmlConstants.QN_LINESTRING);
+            ops.add(SpatialOperator.Overlaps, GmlConstants.QN_POLYGON);
+        }
 
         filterCapabilities.setSpatialOperators(ops);
     }
@@ -612,26 +702,115 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
      * Set TemporalFilterCapabilities to FilterCapabilities
      *
      * @param filterCapabilities
-     *            FilterCapabilities
+     *                           FilterCapabilities
      * @param version
-     *            SOS version
+     *                           SOS version
      */
-    private void getTemporalFilterCapabilities(FilterCapabilities filterCapabilities) {
+    private void getTemporalFilterCapabilities(final FilterCapabilities filterCapabilities, final String version) {
 
         // set TemporalOperands
         final List<QName> operands = new ArrayList<>(2);
-        operands.add(GmlConstants.QN_TIME_PERIOD_32);
-        operands.add(GmlConstants.QN_TIME_INSTANT_32);
+        switch (version) {
+            case Sos2Constants.SERVICEVERSION:
+                operands.add(GmlConstants.QN_TIME_PERIOD_32);
+                operands.add(GmlConstants.QN_TIME_INSTANT_32);
+                break;
+            case Sos1Constants.SERVICEVERSION:
+                operands.add(GmlConstants.QN_TIME_PERIOD);
+                operands.add(GmlConstants.QN_TIME_INSTANT);
+                break;
+            default:
+                LOGGER.trace("Not supported version '{}'", version);
+                break;
+        }
 
         filterCapabilities.setTemporalOperands(operands);
 
         // set TemporalOperators
         final SetMultiMap<TimeOperator, QName> ops = MultiMaps.newSetMultiMap(TimeOperator.class);
-        for (final TimeOperator op : TimeOperator.values()) {
-            ops.add(op, GmlConstants.QN_TIME_INSTANT_32);
-            ops.add(op, GmlConstants.QN_TIME_PERIOD_32);
+        switch (version) {
+            case Sos2Constants.SERVICEVERSION:
+                for (final TimeOperator op : TimeOperator.values()) {
+                    ops.add(op, GmlConstants.QN_TIME_INSTANT_32);
+                    ops.add(op, GmlConstants.QN_TIME_PERIOD_32);
+                }
+                break;
+            case Sos1Constants.SERVICEVERSION:
+                for (final TimeOperator op : TimeOperator.values()) {
+                    ops.add(op, GmlConstants.QN_TIME_INSTANT);
+                    ops.add(op, GmlConstants.QN_TIME_PERIOD);
+                }
+                break;
+            default:
+                LOGGER.trace("Not supported version '{}'", version);
+                break;
         }
         filterCapabilities.setTemporalOperators(ops);
+    }
+
+    /**
+     * Set ScalarFilterCapabilities to FilterCapabilities
+     *
+     * @param filterCapabilities
+     *                           FilterCapabilities
+     */
+    private void getScalarFilterCapabilities(final FilterCapabilities filterCapabilities) {
+        // TODO PropertyIsNil, PropertyIsNull? better:
+        // filterCapabilities.setComparisonOperators(Arrays.asList(ComparisonOperator.values()));
+        final List<ComparisonOperator> comparisonOperators = new ArrayList<>(8);
+        comparisonOperators.add(ComparisonOperator.PropertyIsBetween);
+        comparisonOperators.add(ComparisonOperator.PropertyIsEqualTo);
+        comparisonOperators.add(ComparisonOperator.PropertyIsNotEqualTo);
+        comparisonOperators.add(ComparisonOperator.PropertyIsLessThan);
+        comparisonOperators.add(ComparisonOperator.PropertyIsLessThanOrEqualTo);
+        comparisonOperators.add(ComparisonOperator.PropertyIsGreaterThan);
+        comparisonOperators.add(ComparisonOperator.PropertyIsGreaterThanOrEqualTo);
+        comparisonOperators.add(ComparisonOperator.PropertyIsLike);
+        filterCapabilities.setComparisonOperators(comparisonOperators);
+    }
+
+    /**
+     * Get FOIs contained in an offering
+     *
+     * @param offering
+     *                 Offering identifier
+     *
+     * @return FOI identifiers
+     *
+     *
+     * @throws OwsExceptionReport
+     *             * If an error occurs
+     */
+    private Set<String> getFOI4offering(final String offering) throws OwsExceptionReport {
+        final Set<String> featureIDs = new HashSet<>(0);
+        final Set<String> features = getCache().getFeaturesOfInterestForOffering(offering);
+        if (!this.profileHandler.getActiveProfile().isListFeatureOfInterestsInOfferings() ||
+                 features == null) {
+            featureIDs.add(OGCConstants.UNKNOWN);
+        } else {
+            featureIDs.addAll(features);
+        }
+        return featureIDs;
+    }
+
+    private Collection<String> getObservationTypes(final String offering) {
+        Set<String> observationTypes = getCache().getObservationTypesForOffering(offering).stream()
+                .filter(Predicate.isEqual(SosConstants.NOT_DEFINED).negate())
+                .collect(Collectors.toSet());
+
+        if (observationTypes.isEmpty()) {
+            getCache().getAllowedObservationTypesForOffering(offering).stream()
+                    .filter(Predicate.isEqual(SosConstants.NOT_DEFINED).negate())
+                    .forEach(observationTypes::add);
+        }
+        return observationTypes;
+    }
+
+    @Override
+    protected Set<String> getExtensionSections(String service, String version) throws OwsExceptionReport {
+        return getAndMergeExtensions(service, version).stream()
+                .map(OwsCapabilitiesExtension::getSectionName)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -643,42 +822,39 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
      * @throws OwsExceptionReport
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private List<CapabilitiesExtension> getAndMergeExtensions(final String service, final String version)
+    private List<OwsCapabilitiesExtension> getAndMergeExtensions(String service, String version)
             throws OwsExceptionReport {
-        final List<CapabilitiesExtensionProvider> capabilitiesExtensionProviders =
-                capabilitiesExtensionRepository.getCapabilitiesExtensionProvider(service, version);
-        final List<CapabilitiesExtension> extensions = Lists.newLinkedList();
-        if (CollectionHelper.isNotEmpty(capabilitiesExtensionProviders)) {
-            final HashMap<String, MergableExtension> map = new HashMap<>(capabilitiesExtensionProviders.size());
-            for (final CapabilitiesExtensionProvider capabilitiesExtensionDAO : capabilitiesExtensionProviders) {
-                if (capabilitiesExtensionDAO.getExtension() != null) {
-                    if (capabilitiesExtensionDAO.getExtension() instanceof MergableExtension) {
-                        final MergableExtension me = (MergableExtension) capabilitiesExtensionDAO.getExtension();
-                        final MergableExtension previous = map.get(me.getSectionName());
-                        if (previous == null) {
-                            map.put(me.getSectionName(), me);
+        List<CapabilitiesExtensionProvider> providers = capabilitiesExtensionRepository
+                .getCapabilitiesExtensionProvider(service, version);
+        List<OwsCapabilitiesExtension> extensions = new LinkedList<>();
+        if (CollectionHelper.isNotEmpty(providers)) {
+            HashMap<String, MergableExtension> map = new HashMap<>(providers.size());
+            providers.stream().filter(Objects::nonNull)
+                    .map(CapabilitiesExtensionProvider::getExtension)
+                    .forEachOrdered(extension -> {
+                        if (extension instanceof MergableExtension) {
+                            map.merge(extension.getSectionName(),
+                                      (MergableExtension) extension,
+                                      Functions.mergeLeft(MergableExtension::merge));
                         } else {
-                            previous.merge(me);
+                            extensions.add(extension);
                         }
-                    } else {
-                        extensions.add(capabilitiesExtensionDAO.getExtension());
-                    }
-                }
-            }
+            });
             extensions.addAll(map.values());
         }
-        Map<String, StringBasedCapabilitiesExtension> activeCapabilitiesExtensions =
-                this.capabilitiesExtensionService.getActiveCapabilitiesExtensions();
+        Map<String, StringBasedCapabilitiesExtension> activeCapabilitiesExtensions
+                = this.capabilitiesExtensionService.getActiveCapabilitiesExtensions();
         if (activeCapabilitiesExtensions != null && !activeCapabilitiesExtensions.isEmpty()) {
             extensions.addAll(activeCapabilitiesExtensions.values());
         }
         return extensions;
     }
 
-    private Collection<CapabilitiesExtension> getExtensions(final Set<String> requestedExtensionSections,
-            final String service, final String version) throws OwsExceptionReport {
+    private Collection<OwsCapabilitiesExtension> getExtensions(Set<String> requestedExtensionSections, String service, String version)
+            throws OwsExceptionReport {
         return getAndMergeExtensions(service, version).stream()
-                .filter(e -> requestedExtensionSections.contains(e.getSectionName())).collect(Collectors.toList());
+                .filter(e -> requestedExtensionSections.contains(e.getSectionName()))
+                .collect(toList());
     }
 
     protected void setUpPhenomenaForOffering(OfferingEntity offering, ProcedureEntity procedure,
@@ -686,8 +862,9 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         rsps.addParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(offering.getPkid()));
         rsps.addParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
-        List<PhenomenonEntity> observableProperties = new PhenomenonDao(session).getAllInstances(new DbQuery(IoParameters.createFromQuery(rsps)));
-        
+        List<PhenomenonEntity> observableProperties =
+                new PhenomenonDao(session).getAllInstances(new DbQuery(IoParameters.createFromQuery(rsps)));
+
         Collection<String> phenomenons = new LinkedList<>();
         Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
         for (PhenomenonEntity observableProperty : observableProperties) {
@@ -702,34 +879,88 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         }
         sosOffering.setObservableProperties(phenomenons);
         sosOffering.setPhens4CompPhens(phens4CompPhens);
-//        sosOffering.setCompositePhenomena(getCache().getCompositePhenomenonsForOffering(offering));
-//
-//        final Collection<String> compositePhenomenonsForOffering =
-//                getCache().getCompositePhenomenonsForOffering(offering);
-//
-//        if (compositePhenomenonsForOffering != null) {
-//            final Map<String, Collection<String>> phens4CompPhens =
-//                    new HashMap<>(compositePhenomenonsForOffering.size());
-//            for (final String compositePhenomenon : compositePhenomenonsForOffering) {
-//                final Collection<String> phenomenonsForComposite =
-//                        getCache().getObservablePropertiesForCompositePhenomenon(compositePhenomenon);
-//                phens4CompPhens.put(compositePhenomenon, phenomenonsForComposite);
-//            }
-//            sosOffering.setPhens4CompPhens(phens4CompPhens);
-//        } else {
-//            sosOffering.setPhens4CompPhens(Collections.<String, Collection<String>> emptyMap());
-//        }
+        // sosOffering.setCompositePhenomena(getCache().getCompositePhenomenonsForOffering(offering));
+        //
+        // final Collection<String> compositePhenomenonsForOffering =
+        // getCache().getCompositePhenomenonsForOffering(offering);
+        //
+        // if (compositePhenomenonsForOffering != null) {
+        // final Map<String, Collection<String>> phens4CompPhens =
+        // new HashMap<>(compositePhenomenonsForOffering.size());
+        // for (final String compositePhenomenon :
+        // compositePhenomenonsForOffering) {
+        // final Collection<String> phenomenonsForComposite =
+        // getCache().getObservablePropertiesForCompositePhenomenon(compositePhenomenon);
+        // phens4CompPhens.put(compositePhenomenon, phenomenonsForComposite);
+        // }
+        // sosOffering.setPhens4CompPhens(phens4CompPhens);
+        // } else {
+        // sosOffering.setPhens4CompPhens(Collections.<String,
+        // Collection<String>> emptyMap());
+        // }
 
     }
 
-//    private boolean isHiddenChildProcedureObservableProperty(final String offering,
-//            final Set<String> proceduresForObservableProperty) {
-//        for (final String hiddenProcedure : getCache().getHiddenChildProceduresForOffering(offering)) {
-//            if (proceduresForObservableProperty.contains(hiddenProcedure)) {
-//                return true;
+    protected void setUpTimeForOffering(OfferingEntity offering, SosObservationOffering sosOffering) {
+        sosOffering
+                .setPhenomenonTime(new TimePeriod(offering.getPhenomenonTimeStart(), offering.getPhenomenonTimeEnd()));
+        sosOffering.setResultTime(new TimePeriod(offering.getResultTimeStart(), offering.getResultTimeEnd()));
+    }
+
+    protected void setUpFeatureOfInterestTypesForOffering(OfferingEntity offering,
+            SosObservationOffering sosOffering) {
+        sosOffering.setFeatureOfInterestTypes(offering.getFeatureTypes());
+    }
+
+    protected void setUpResponseFormatForOffering(SosObservationOffering sosOffering) {
+        // initialize as new HashSet so that collection is modifiable
+        final Collection<String> responseFormats = new HashSet<>(
+                getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, Sos2Constants.VERSION));
+        sosOffering.setResponseFormats(responseFormats);
+        // TODO set as property
+    }
+
+    protected void setUpProcedureDescriptionFormatForOffering(SosObservationOffering sosOffering) {
+        // TODO: set procDescFormat <-- what is required here?
+        sosOffering.setProcedureDescriptionFormat(procedureDescriptionFormatRepository
+                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.VERSION));
+    }
+
+
+//    protected void setUpPhenomenaForOffering(String offering, String procedure, SosObservationOffering sosOffering) {
+//        final Collection<String> phenomenons = new LinkedList<>();
+//        final Collection<String> observablePropertiesForOffering = getCache()
+//                .getObservablePropertiesForOffering(offering);
+//        observablePropertiesForOffering.forEach(observableProperty -> {
+//            Set<String> proceduresForObservableProperty = getCache().getProceduresForObservableProperty(observableProperty);
+//            if (proceduresForObservableProperty.contains(procedure) || isHiddenChildProcedureObservableProperty(offering, proceduresForObservableProperty)) {
+//                phenomenons.add(observableProperty);
 //            }
+//        });
+//        sosOffering.setObservableProperties(phenomenons);
+//        sosOffering.setCompositePhenomena(getCache().getCompositePhenomenonsForOffering(offering));
+//
+//        final Collection<String> compositePhenomenonsForOffering = getCache()
+//                .getCompositePhenomenonsForOffering(offering);
+//
+//        if (compositePhenomenonsForOffering != null) {
+//            sosOffering.setPhens4CompPhens(compositePhenomenonsForOffering.stream().collect(toMap(Function.identity(),getCache()::getObservablePropertiesForCompositePhenomenon)));
+//        } else {
+//            sosOffering.setPhens4CompPhens(Collections.emptyMap());
 //        }
-//        return false;
+//
+//    }
+
+    private boolean isHiddenChildProcedureObservableProperty(String offering, Set<String> proceduresForObservableProperty) {
+        return getCache().getHiddenChildProceduresForOffering(offering).stream()
+                .anyMatch(proceduresForObservableProperty::contains);
+    }
+
+//    protected void setUpRelatedFeaturesForOffering(String offering, String version, String procedure, SosObservationOffering sosOffering) throws OwsExceptionReport {
+//
+//            // TODO add setting to set FeatureOfInterest if relatedFeatures are empty.
+//        sosOffering.setRelatedFeatures(getCache().getRelatedFeaturesForOffering(offering).stream()
+//                .collect(toMap(Function.identity(), getCache()::getRolesForRelatedFeature)));
 //    }
 
     private void setUpRelatedFeaturesForOffering(OfferingEntity offering,
@@ -758,27 +989,39 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         sosObservationOffering.setRelatedFeatures(relatedFeatures);
     }
 
-    protected void setUpTimeForOffering(OfferingEntity offering, SosObservationOffering sosOffering) {
-        sosOffering.setPhenomenonTime(new TimePeriod(offering.getPhenomenonTimeStart(), offering.getPhenomenonTimeEnd()));
-        sosOffering.setResultTime(new TimePeriod(offering.getResultTimeStart(), offering.getResultTimeEnd()));
+    protected void setUpTimeForOffering(String offering, SosObservationOffering sosOffering) {
+        sosOffering.setPhenomenonTime(new TimePeriod(getCache().getMinPhenomenonTimeForOffering(offering),
+                                                     getCache().getMaxPhenomenonTimeForOffering(offering)));
+        sosOffering.setResultTime(new TimePeriod(getCache().getMinResultTimeForOffering(offering),
+                                                 getCache().getMaxResultTimeForOffering(offering)));
     }
 
-    protected void setUpFeatureOfInterestTypesForOffering(OfferingEntity offering, SosObservationOffering sosOffering) {
-        sosOffering.setFeatureOfInterestTypes(offering.getFeatureTypes());
+    protected void setUpFeatureOfInterestTypesForOffering(String offering, SosObservationOffering sosOffering) {
+        sosOffering.setFeatureOfInterestTypes(getCache().getAllowedFeatureOfInterestTypesForOffering(offering));
     }
 
-    protected void setUpResponseFormatForOffering(SosObservationOffering sosOffering) {
+    protected void setUpResponseFormatForOffering(String version, SosObservationOffering sosOffering) {
         // initialize as new HashSet so that collection is modifiable
-        final Collection<String> responseFormats =
-                new HashSet<>(getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, Sos2Constants.VERSION));
-        sosOffering.setResponseFormats(responseFormats);
+        sosOffering.setResponseFormats(new HashSet<>(getResponseFormatRepository()
+                .getSupportedResponseFormats(SosConstants.SOS, version)));
         // TODO set as property
     }
 
-    protected void setUpProcedureDescriptionFormatForOffering(SosObservationOffering sosOffering) {
+    protected void setUpProcedureDescriptionFormatForOffering(SosObservationOffering sosOffering, String version) {
         // TODO: set procDescFormat <-- what is required here?
         sosOffering.setProcedureDescriptionFormat(procedureDescriptionFormatRepository
-                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.VERSION));
+                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, version));
+    }
+
+    private Collection<String> getProceduresForOffering(String offering, String version) throws OwsExceptionReport {
+        Collection<String> procedures = new HashSet<>(getCache().getProceduresForOffering(offering));
+        if (version.equals(Sos1Constants.SERVICEVERSION)) {
+            procedures.addAll(getCache().getHiddenChildProceduresForOffering(offering));
+        }
+        if (procedures.isEmpty()) {
+            throw new NoApplicableCodeException().withMessage("No procedures are contained in the database for the offering '%s'! Please contact the admin of this SOS.", offering);
+        }
+        return procedures;
     }
 
     private Collection<ProcedureEntity> getProceduresForOffering(final OfferingEntity offering, Session session)
@@ -796,23 +1039,27 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         return procedures;
     }
 
-    private boolean isContentsSectionRequested(final int sections) {
+    private boolean isV2(GetCapabilitiesResponse response) {
+        return response.getVersion().equals(Sos2Constants.SERVICEVERSION);
+    }
+
+    private boolean isContentsSectionRequested(int sections) {
         return (sections & CONTENTS) != 0;
     }
 
-    private boolean isFilterCapabilitiesSectionRequested(final int sections) {
+    private boolean isFilterCapabilitiesSectionRequested(int sections) {
         return (sections & FILTER_CAPABILITIES) != 0;
     }
 
-    private boolean isOperationsMetadataSectionRequested(final int sections) {
+    private boolean isOperationsMetadataSectionRequested(int sections) {
         return (sections & OPERATIONS_METADATA) != 0;
     }
 
-    private boolean isServiceProviderSectionRequested(final int sections) {
+    private boolean isServiceProviderSectionRequested(int sections) {
         return (sections & SERVICE_PROVIDER) != 0;
     }
 
-    private boolean isServiceIdentificationSectionRequested(final int sections) {
+    private boolean isServiceIdentificationSectionRequested(int sections) {
         return (sections & SERVICE_IDENTIFICATION) != 0;
     }
 
@@ -828,15 +1075,100 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         return this.responseFormatRepository;
     }
 
+    private void createStaticCapabilities(GetCapabilitiesRequest request, GetCapabilitiesResponse response) throws OwsExceptionReport {
+        response.setXmlString(this.capabilitiesExtensionService.getActiveStaticCapabilitiesDocument());
+    }
+
+    private void createStaticCapabilitiesWithId(GetCapabilitiesRequest request, GetCapabilitiesResponse response) throws OwsExceptionReport{
+        StaticCapabilities sc = this.capabilitiesExtensionService.getStaticCapabilities(request.getCapabilitiesId());
+        if (sc == null) {
+            throw new InvalidParameterValueException(GetCapabilitiesParams.CapabilitiesId, request.getCapabilitiesId());
+        }
+        response.setXmlString(sc.getDocument());
+    }
+
+    private void createDynamicCapabilities(GetCapabilitiesRequest request, GetCapabilitiesResponse response) throws OwsExceptionReport {
+        Set<String> availableExtensionSections = getExtensionSections(response.getService(), response.getVersion());
+        Set<String> requestedExtensionSections = new HashSet<>(availableExtensionSections.size());
+        int requestedSections = identifyRequestedSections(request, response, availableExtensionSections, requestedExtensionSections);
+
+        SosCapabilities sosCapabilities = new SosCapabilities(request.getService(), request.getVersion(), null, null, null, null, null, null, null, null);
+
+        SectionSpecificContentObject sectionSpecificContentObject = new SectionSpecificContentObject()
+                .setRequest(request)
+                .setResponse(response)
+                .setRequestedExtensionSections(requestedExtensionSections)
+                .setRequestedSections(requestedSections)
+                .setSosCapabilities(sosCapabilities);
+
+        addSectionSpecificContent(sectionSpecificContentObject, request);
+        response.setCapabilities(sosCapabilities);
+
+    }
+
+    private List<OwsOperation> getOperations(String service, String version) throws OwsExceptionReport {
+        CompositeOwsException exceptions = new CompositeOwsException();
+        List<OwsOperation> operations
+                = getRequestOperatorRepository()
+                        .getActiveRequestOperatorKeys()
+                        .stream()
+                        .filter(k -> k.getService().equals(service))
+                        .filter(k -> k.getVersion().equals(version))
+                        .map(getRequestOperatorRepository()::getRequestOperator)
+                        .map(operator -> {
+                            try {
+                                return operator.getOperationMetadata(service, version);
+                            } catch (OwsExceptionReport ex) {
+                                exceptions.add(ex);
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(toList());
+        exceptions.throwIfNotEmpty();
+        return operations;
+
+    }
+
+    private List<OwsDomain> getParameters(String service, String version) {
+        return Arrays.asList(getServiceParameter(service, version),
+                             getVersionParameter(service, version),
+                             getCrsParameter(service, version),
+                             getLanguageParameter(service, version));
+    }
+
+    private static boolean isV1(GetCapabilitiesResponse response) {
+        return response.getVersion().equals(Sos1Constants.SERVICEVERSION);
+    }
+
+    private OwsDomain getServiceParameter(String service, String version) {
+        OwsValue owsValue = new OwsValue(SosConstants.SOS);
+        return new OwsDomain(OWSConstants.RequestParams.service, new OwsAllowedValues(owsValue));
+    }
+
+    private OwsDomain getVersionParameter(String service, String version) {
+        Set<String> supportedVersions = getServiceOperatorRepository().getSupportedVersions(service);
+        Stream<OwsValue> allowedValues = supportedVersions.stream().map(OwsValue::new);
+        return new OwsDomain(OWSConstants.RequestParams.version, new OwsAllowedValues(allowedValues));
+    }
+
+    private OwsDomain getCrsParameter(String service, String version) {
+        Set<String> crs = this.geometryHandler.addOgcCrsPrefix(getCache().getEpsgCodes());
+        Stream<OwsValue> allowedValues = crs.stream().map(OwsValue::new);
+        return new OwsDomain(OWSConstants.AdditionalRequestParams.crs, new OwsAllowedValues(allowedValues));
+    }
+
+    private OwsDomain getLanguageParameter(String service, String version) {
+        Set<Locale> languages = getCache().getSupportedLanguages();
+        Stream<OwsValue> allowedValues = languages.stream().map(LocaleHelper::toString).map(OwsValue::new);
+        return new OwsDomain(OWSConstants.AdditionalRequestParams.language, new OwsAllowedValues(allowedValues));
+    }
+
     private class SectionSpecificContentObject {
         private GetCapabilitiesRequest request;
-
         private GetCapabilitiesResponse response;
-
         private Set<String> requestedExtensionSections;
-
         private int requestedSections;
-
         private SosCapabilities sosCapabilities;
 
         public SectionSpecificContentObject setRequest(GetCapabilitiesRequest request) {
@@ -885,3 +1217,849 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         }
     }
 }
+
+//import java.util.ArrayList;
+//import java.util.Collection;
+//import java.util.Collections;
+//import java.util.HashMap;
+//import java.util.HashSet;
+//import java.util.LinkedList;
+//import java.util.List;
+//import java.util.Locale;
+//import java.util.Map;
+//import java.util.Set;
+//import java.util.TreeSet;
+//import java.util.stream.Collectors;
+//import java.util.stream.Stream;
+//
+//import javax.inject.Inject;
+//import javax.xml.namespace.QName;
+//
+//import org.hibernate.HibernateException;
+//import org.hibernate.Session;
+//import org.n52.iceland.binding.BindingRepository;
+//import org.n52.iceland.config.SettingsService;
+//import org.n52.iceland.i18n.LocaleHelper;
+//import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
+//import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProvider;
+//import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderRepository;
+//import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
+//import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
+//import org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository;
+//import org.n52.iceland.ogc.swes.OfferingExtensionProvider;
+//import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
+//import org.n52.iceland.request.handler.OperationHandlerRepository;
+//import org.n52.iceland.request.operator.RequestOperatorKey;
+//import org.n52.iceland.request.operator.RequestOperatorRepository;
+//import org.n52.iceland.service.operator.ServiceOperatorRepository;
+//import org.n52.iceland.util.collections.MultiMaps;
+//import org.n52.iceland.util.collections.SetMultiMap;
+//import org.n52.io.request.IoParameters;
+//import org.n52.io.request.RequestSimpleParameterSet;
+//import org.n52.series.db.DataAccessException;
+//import org.n52.series.db.HibernateSessionStore;
+//import org.n52.series.db.beans.OfferingEntity;
+//import org.n52.series.db.beans.PhenomenonEntity;
+//import org.n52.series.db.beans.ProcedureEntity;
+//import org.n52.series.db.dao.DbQuery;
+//import org.n52.series.db.dao.OfferingDao;
+//import org.n52.series.db.dao.PhenomenonDao;
+//import org.n52.series.db.dao.ProcedureDao;
+//import org.n52.shetland.ogc.filter.FilterCapabilities;
+//import org.n52.shetland.ogc.gml.time.TimePeriod;
+//import org.n52.shetland.ogc.ows.OWSConstants;
+//import org.n52.shetland.ogc.ows.OwsNoValues;
+//import org.n52.shetland.ogc.ows.OwsOperation;
+//import org.n52.shetland.ogc.ows.OwsOperationsMetadata;
+//import org.n52.shetland.ogc.ows.OwsServiceIdentification;
+//import org.n52.shetland.ogc.ows.exception.CodedException;
+//import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+//import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+//import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+//import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+//import org.n52.shetland.ogc.sos.Sos2Constants;
+//import org.n52.shetland.ogc.sos.SosCapabilities;
+//import org.n52.shetland.ogc.sos.SosConstants;
+//import org.n52.shetland.ogc.sos.SosObservationOffering;
+//import org.n52.shetland.util.CollectionHelper;
+//import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
+//import org.n52.sos.coding.encode.ResponseFormatRepository;
+//import org.n52.sos.config.CapabilitiesExtensionService;
+//import org.n52.sos.service.profile.ProfileHandler;
+//import org.n52.sos.util.GeometryHandler;
+//import org.n52.sos.util.I18NHelper;
+//import org.n52.svalbard.decode.DecoderRepository;
+//import org.n52.svalbard.encode.EncoderRepository;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//
+//import com.google.common.collect.Collections2;
+//import com.google.common.collect.Lists;
+//import com.google.common.collect.Maps;
+//import com.vividsolutions.jts.geom.Geometry;
+//
+///**
+// * Implementation of the interface AbstractGetCapabilitiesHandler
+// *
+// * @since 4.0.0
+// */
+//public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
+//
+//    private static final Logger LOGGER = LoggerFactory.getLogger(GetCapabilitiesHandler.class);
+//
+//    /* section flags (values are powers of 2) */
+//    private static final int SERVICE_IDENTIFICATION = 0x01;
+//
+//    private static final int SERVICE_PROVIDER = 0x02;
+//
+//    private static final int OPERATIONS_METADATA = 0x04;
+//
+//    private static final int FILTER_CAPABILITIES = 0x08;
+//
+//    private static final int CONTENTS = 0x10;
+//
+//    private static final int ALL =
+//            0x20 | SERVICE_IDENTIFICATION | SERVICE_PROVIDER | OPERATIONS_METADATA | FILTER_CAPABILITIES | CONTENTS;
+//
+//    @Inject
+//    private HibernateSessionStore sessionStore;
+//
+//    @Inject
+//    private SettingsService settingsManager;
+//
+//    @Inject
+//    private CapabilitiesExtensionService capabilitiesExtensionService;
+//
+//    @Inject
+//    private EncoderRepository encoderRepository;
+//
+//    @Inject
+//    private DecoderRepository decoderRepository;
+//
+//    @Inject
+//    private OperationHandlerRepository operationHandlerRepository;
+//
+//    @Inject
+//    private ProfileHandler profileHandler;
+//
+//    @Inject
+//    private BindingRepository bindingRepository;
+//
+//    @Inject
+//    private ServiceMetadataRepository serviceMetadataRepository;
+//
+//    @Inject
+//    private RequestOperatorRepository requestOperatorRepository;
+//
+//    @Inject
+//    private ServiceOperatorRepository serviceOperatorRepository;
+//
+//    @Inject
+//    private ResponseFormatRepository responseFormatRepository;
+//
+//    @Inject
+//    private GeometryHandler geometryHandler;
+//
+//    @Inject
+//    private OwsExtendedCapabilitiesProviderRepository owsExtendedCapabilitiesProviderRepository;
+//
+//    @Inject
+//    private OfferingExtensionRepository offeringExtensionRepository;
+//
+//    @Inject
+//    private CapabilitiesExtensionRepository capabilitiesExtensionRepository;
+//
+//    @Inject
+//    private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+//
+//    public GetCapabilitiesHandler() {
+//        super(SosConstants.SOS);
+//    }
+//
+//    @Override
+//    public GetCapabilitiesResponse getCapabilities(final GetCapabilitiesRequest request) throws OwsExceptionReport {
+//        final GetCapabilitiesResponse response = new GetCapabilitiesResponse();
+//        response.setService(request.getService());
+//        response.setVersion(request.getVersion());
+//
+//        final String scId = request.getCapabilitiesId();
+//        if (scId == null) {
+//            if (this.capabilitiesExtensionService.isStaticCapabilitiesActive()) {
+//                response.setXmlString(this.capabilitiesExtensionService.getActiveStaticCapabilitiesDocument());
+//                return response;
+//            }
+//        } else if (!scId
+//                .equals(OWSConstants.GetCapabilitiesParams.DYNAMIC_CAPABILITIES_IDENTIFIER)) {
+//            final StaticCapabilities sc = this.capabilitiesExtensionService.getStaticCapabilities(scId);
+//            if (sc == null) {
+//                throw new InvalidParameterValueException(
+//                        OWSConstants.GetCapabilitiesParams.CapabilitiesId, scId);
+//            }
+//            response.setXmlString(sc.getDocument());
+//            return response;
+//        }
+//
+//        final Set<String> availableExtensionSections =
+//                getExtensionSections(response.getService(), response.getVersion());
+//        final Set<String> requestedExtensionSections = new HashSet<>(availableExtensionSections.size());
+//        final int requestedSections =
+//                identifyRequestedSections(request, response, availableExtensionSections, requestedExtensionSections);
+//
+//        final SosCapabilities sosCapabilities = new SosCapabilities(response.getVersion());
+//
+//        SectionSpecificContentObject sectionSpecificContentObject = new SectionSpecificContentObject()
+//                .setRequest(request).setResponse(response).setRequestedExtensionSections(requestedExtensionSections)
+//                .setRequestedSections(requestedSections).setSosCapabilities(sosCapabilities);
+//        addSectionSpecificContent(sectionSpecificContentObject, request);
+//        response.setCapabilities(sosCapabilities);
+//
+//        return response;
+//    }
+//
+//    @Override
+//    protected Set<String> getExtensionSections(String service, String version) throws OwsExceptionReport {
+//        return getAndMergeExtensions(service, version).stream().map(CapabilitiesExtension::getSectionName)
+//                .collect(Collectors.toSet());
+//    }
+//
+//    private void addSectionSpecificContent(final SectionSpecificContentObject sectionSpecificContentObject,
+//            GetCapabilitiesRequest request) throws OwsExceptionReport {
+//        String verion = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
+//        String service = sectionSpecificContentObject.getGetCapabilitiesResponse().getService();
+//        if (isServiceIdentificationSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
+//            sectionSpecificContentObject.getSosCapabilities()
+//                    .setServiceIdentification(getServiceIdentification(request, service, verion));
+//        }
+//        if (isServiceProviderSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
+//            sectionSpecificContentObject.getSosCapabilities()
+//                    .setServiceProvider(this.serviceMetadataRepository.getServiceProviderFactory(service).get());
+//        }
+//        if (isOperationsMetadataSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
+//            sectionSpecificContentObject.getSosCapabilities()
+//                    .setOperationsMetadata(getOperationsMetadataForOperations(request, service, verion));
+//        }
+//        if (isFilterCapabilitiesSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
+//            sectionSpecificContentObject.getSosCapabilities().setFilterCapabilities(getFilterCapabilities());
+//        }
+//        if (isContentsSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
+//            sectionSpecificContentObject.getSosCapabilities().setContents(getContents(sectionSpecificContentObject));
+//        }
+//
+//        if (sectionSpecificContentObject.getRequestedSections() == ALL) {
+//            sectionSpecificContentObject.getSosCapabilities().setExensions(getAndMergeExtensions(service, verion));
+//        } else if (!sectionSpecificContentObject.getRequestedExtensionSesctions().isEmpty()) {
+//            sectionSpecificContentObject.getSosCapabilities().setExensions(
+//                    getExtensions(sectionSpecificContentObject.getRequestedExtensionSesctions(), service, verion));
+//        }
+//    }
+//
+//    private int identifyRequestedSections(final GetCapabilitiesRequest request, final GetCapabilitiesResponse response,
+//            final Set<String> availableExtensionSections, final Set<String> requestedExtensionSections)
+//            throws OwsExceptionReport {
+//        int sections = 0;
+//        // handle sections array and set requested sections flag
+//        if (!request.isSetSections()) {
+//            sections = ALL;
+//        } else {
+//            for (final String section : request.getSections()) {
+//                if (section.isEmpty()) {
+//                    LOGGER.warn("A {} element is empty! Check if operator checks for empty elements!",
+//                            OWSConstants.GetCapabilitiesParams.Section.name());
+//                    continue;
+//                }
+//                if (section.equals(SosConstants.CapabilitiesSections.All.name())) {
+//                    sections = ALL;
+//                    break;
+//                } else if (section.equals(SosConstants.CapabilitiesSections.ServiceIdentification.name())) {
+//                    sections |= SERVICE_IDENTIFICATION;
+//                } else if (section.equals(SosConstants.CapabilitiesSections.ServiceProvider.name())) {
+//                    sections |= SERVICE_PROVIDER;
+//                } else if (section.equals(SosConstants.CapabilitiesSections.OperationsMetadata.name())) {
+//                    sections |= OPERATIONS_METADATA;
+//                } else if (section.equals(Sos2Constants.CapabilitiesSections.FilterCapabilities.name())) {
+//                    sections |= FILTER_CAPABILITIES;
+//                } else if (section.equals(SosConstants.CapabilitiesSections.Contents.name())) {
+//                    sections |= CONTENTS;
+//                } else if (availableExtensionSections.contains(section)) {
+//                    requestedExtensionSections.add(section);
+//                } else {
+//                    throw new InvalidParameterValueException()
+//                            .at(OWSConstants.GetCapabilitiesParams.Section)
+//                            .withMessage("The requested section '%s' does not exist or is not supported!", section);
+//                }
+//            }
+//        }
+//        return sections;
+//    }
+//
+//    private OwsServiceIdentification getServiceIdentification(GetCapabilitiesRequest request, String service,
+//            String version) throws OwsExceptionReport {
+//        OwsServiceIdentification serviceIdentification = this.serviceMetadataRepository
+//                .getServiceIdentificationFactory(service).get(request.getRequestedLocale());
+//        if (version.equals(Sos2Constants.SERVICEVERSION)) {
+//            serviceIdentification.setProfiles(getProfiles(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
+//        }
+//        return serviceIdentification;
+//    }
+//
+//    private Set<String> getProfiles(String service, String version) {
+//
+//        Set<String> profiles = Stream
+//                .of(this.bindingRepository.getBindings().values(),
+//                        this.requestOperatorRepository.getRequestOperators(), this.decoderRepository.getDecoders(),
+//                        this.encoderRepository.getEncoders(),
+//                        this.operationHandlerRepository.getOperationHandlers().values())
+//                .flatMap(Collection::stream).map(c -> c.getConformanceClasses(service, version)).flatMap(Set::stream)
+//                .collect(Collectors.toSet());
+//
+//        // FIXME additional profiles
+//        if ("hydrology".equalsIgnoreCase(this.profileHandler.getActiveProfile().getIdentifier())) {
+//            profiles.add("http://www.opengis.net/spec/SOS_application-profile_hydrology/1.0/req/hydrosos");
+//        }
+//        return profiles;
+//    }
+//
+//    /**
+//     * Get the OperationsMetadat for all supported operations
+//     *
+//     * @param service
+//     *            Requested service
+//     * @param version
+//     *            Requested service version
+//     * @return OperationsMetadata for all operations supported by the requested
+//     *         service and version
+//     * @throws OwsExceptionReport
+//     *             If an error occurs
+//     */
+//    private OwsOperationsMetadata getOperationsMetadataForOperations(final GetCapabilitiesRequest request,
+//            final String service, final String version) throws OwsExceptionReport {
+//
+//        final OwsOperationsMetadata operationsMetadata = new OwsOperationsMetadata();
+//        operationsMetadata.addCommonValue(OWSConstants.RequestParams.service.name(),
+//                new OwsParameterValuePossibleValues(SosConstants.SOS));
+//        operationsMetadata.addCommonValue(OWSConstants.RequestParams.version.name(),
+//                new OwsParameterValuePossibleValues(getServiceOperatorRepository().getSupportedVersions(service)));
+//        // crs
+//        operationsMetadata.addCommonValue(OWSConstants.AdditionalRequestParams.crs.name(),
+//                new OwsParameterValuePossibleValues(this.geometryHandler.addOgcCrsPrefix(getCache().getEpsgCodes())));
+//        // language
+//        operationsMetadata.addCommonValue(OWSConstants.AdditionalRequestParams.language.name(),
+//                new OwsParameterValuePossibleValues(
+//                        Collections2.transform(getCache().getSupportedLanguages(), LocaleHelper.toStringFunction())));
+//
+//        // FIXME: OpsMetadata for InsertSensor, InsertObservation SOS 2.0
+//        final Set<RequestOperatorKey> requestOperatorKeyTypes =
+//                getRequestOperatorRepository().getActiveRequestOperatorKeys();
+//        final List<OwsOperation> opsMetadata = new ArrayList<>(requestOperatorKeyTypes.size());
+//        for (final RequestOperatorKey requestOperatorKey : requestOperatorKeyTypes) {
+//            if (requestOperatorKey.getServiceOperatorKey().getVersion().equals(version)) {
+//                OwsOperation operationMetadata = getRequestOperatorRepository().getRequestOperator(requestOperatorKey)
+//                        .getOperationMetadata(service, version);
+//                if (operationMetadata != null) {
+//                    opsMetadata.add(operationMetadata);
+//                }
+//            }
+//        }
+//        operationsMetadata.setOperations(opsMetadata);
+//
+//        /*
+//         * check if an OwsExtendedCapabilities provider is available for this
+//         * service and check if this provider provides OwsExtendedCapabilities
+//         * for the request
+//         */
+//        if (owsExtendedCapabilitiesProviderRepository.hasExtendedCapabilitiesProvider(request)) {
+//            OwsExtendedCapabilitiesProvider extendedCapabilitiesProvider =
+//                    owsExtendedCapabilitiesProviderRepository.getExtendedCapabilitiesProvider(request);
+//            if (extendedCapabilitiesProvider != null
+//                    && extendedCapabilitiesProvider.hasExtendedCapabilitiesFor(request)) {
+//                operationsMetadata
+//                        .setExtendedCapabilities(extendedCapabilitiesProvider.getOwsExtendedCapabilities(request));
+//            }
+//        }
+//
+//        return operationsMetadata;
+//    }
+//
+//    /**
+//     * Get the FilterCapabilities
+//     *
+//     * @param version
+//     *            Requested service version
+//     * @return FilterCapabilities
+//     */
+//    private FilterCapabilities getFilterCapabilities() {
+//        final FilterCapabilities filterCapabilities = new FilterCapabilities();
+//        getConformance(filterCapabilities);
+//        getSpatialFilterCapabilities(filterCapabilities);
+//        getTemporalFilterCapabilities(filterCapabilities);
+//
+//        return filterCapabilities;
+//    }
+//
+//    private void getConformance(final FilterCapabilities filterCapabilities) {
+//        // set Query conformance class
+//        filterCapabilities.addConformance(
+//                new OwsDomainType(ConformanceClassConstraintNames.ImplementsQuery.name(), new OwsNoValues(), FALSE));
+//        // set Ad hoc query conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsAdHocQuery.name(), new OwsNoValues(), FALSE));
+//        // set Functions conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(ConformanceClassConstraintNames.ImplementsFunctions.name(),
+//                new OwsNoValues(), FALSE));
+//        // set Resource Identification conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsResourceld.name(), new OwsNoValues(), FALSE));
+//        // set Minimum Standard Filter conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsMinStandardFilter.name(), new OwsNoValues(), FALSE));
+//        // set Standard Filter conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsStandardFilter.name(), new OwsNoValues(), FALSE));
+//        // set Minimum Spatial Filter conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsMinSpatialFilter.name(), new OwsNoValues(), TRUE));
+//        // set Spatial Filter conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsSpatialFilter.name(), new OwsNoValues(), TRUE));
+//        // set Minimum Temporal Filter conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsMinTemporalFilter.name(), new OwsNoValues(), TRUE));
+//        // set Temporal Filter conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsTemporalFilter.name(), new OwsNoValues(), TRUE));
+//        // set Version navigation conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsVersionNav.name(), new OwsNoValues(), FALSE));
+//        // set Sorting conformance class
+//        filterCapabilities.addConformance(
+//                new OwsDomainType(ConformanceClassConstraintNames.ImplementsSorting.name(), new OwsNoValues(), FALSE));
+//        // set Extended Operators conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsExtendedOperators.name(), new OwsNoValues(), FALSE));
+//        // set Minimum XPath conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsMinimumXPath.name(), new OwsNoValues(), FALSE));
+//        // set Schema Element Function conformance class
+//        filterCapabilities.addConformance(new OwsDomainType(
+//                ConformanceClassConstraintNames.ImplementsSchemaElementFunc.name(), new OwsNoValues(), FALSE));
+//    }
+//
+//    private SosEnvelope processObservedArea(Geometry geometry) throws CodedException {
+//        // TODO Check transformation
+//        // if (requestedSrid >= 0 && sosEnvelope.getSrid() != requestedSrid) {
+//        // SosEnvelope tranformedEnvelope = new SosEnvelope();
+//        // tranformedEnvelope.setSrid(requestedSrid);
+//        // tranformedEnvelope.setEnvelope(GeometryHandler.getInstance().transformEnvelope(sosEnvelope.getEnvelope(),
+//        // sosEnvelope.getSrid(), requestedSrid));
+//        // return tranformedEnvelope;
+//        // }
+//        return new SosEnvelope(geometry.getEnvelopeInternal(), geometry.getSRID());
+//    }
+//
+//    /**
+//     * Get the contents for SOS 2.0 capabilities
+//     *
+//     * @param version
+//     *            Requested service version
+//     * @return Offerings for contents
+//     *
+//     *
+//     * @throws OwsExceptionReport
+//     *             * If an error occurs
+//     */
+//    // FIXME why version parameter? The method signature cleary states which
+//    // version is supported by this!
+//    private List<SosObservationOffering> getContents(SectionSpecificContentObject sectionSpecificContentObject)
+//            throws OwsExceptionReport {
+//        Session session = null;
+//        try {
+//            session = sessionStore.getSession();
+//        String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
+//        final Collection<OfferingEntity> offerings = new OfferingDao(session).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+//        final List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
+//        final Map<String, List<OfferingExtension>> extensions =
+//                this.capabilitiesExtensionService.getActiveOfferingExtensions();
+//
+//        if (CollectionHelper.isEmpty(offerings)) {
+//            // Set empty offering to add empty Contents section to Capabilities
+//            sosOfferings.add(new SosObservationOffering());
+//        } else {
+//            for (final OfferingEntity offering : offerings) {
+//                final Collection<ProcedureEntity> procedures = getProceduresForOffering(offering, session);
+//                if (!procedures.isEmpty()) {
+//                    final Collection<String> observationTypes = offering.getObservationTypes();
+//                    if (observationTypes != null && !observationTypes.isEmpty()) {
+//                        // FIXME why a loop? We are in SOS 2.0 context -> offering 1
+//                        // <-> 1 procedure!
+//                        for (final ProcedureEntity procedure : procedures) {
+//
+//                            final SosObservationOffering sosObservationOffering = new SosObservationOffering();
+//
+//                            // insert observationTypes
+//                            sosObservationOffering.setObservationTypes(observationTypes);
+//
+//                            if (offering.hasEnvelope()) {
+//                                sosObservationOffering.setObservedArea(processObservedArea(offering.getEnvelope()));
+//                            }
+//
+//                            sosObservationOffering.setProcedures(Collections.singletonList(procedure.getDomainId()));
+//
+//                            // TODO: add intended application
+//
+//                            // add offering to observation offering
+//                            addSosOfferingToObservationOffering(offering, sosObservationOffering,
+//                                    sectionSpecificContentObject.getGetCapabilitiesRequest());
+//                            // add offering extension
+//                            if (offeringExtensionRepository.hasOfferingExtensionProviderFor(
+//                                    sectionSpecificContentObject.getGetCapabilitiesRequest())) {
+//                                for (OfferingExtensionProvider provider : offeringExtensionRepository
+//                                        .getOfferingExtensionProvider(
+//                                                sectionSpecificContentObject.getGetCapabilitiesRequest())) {
+//                                    if (provider != null && provider.hasExtendedOfferingFor(offering.getDomainId())) {
+//                                        sosObservationOffering.addExtensions(provider.getOfferingExtensions(offering.getDomainId()));
+//                                    }
+//                                }
+//                            }
+//                            if (extensions.containsKey(sosObservationOffering.getOffering().getIdentifier())) {
+//                                for (OfferingExtension offeringExtension : extensions
+//                                        .get(sosObservationOffering.getOffering().getIdentifier())) {
+//                                    sosObservationOffering.addExtension(
+//                                            new SwesExtension<OfferingExtension>().setValue(offeringExtension));
+//                                }
+//                            }
+//
+//                            setUpPhenomenaForOffering(offering, procedure, sosObservationOffering, session);
+//                            setUpTimeForOffering(offering, sosObservationOffering);
+//                            setUpRelatedFeaturesForOffering(offering, sosObservationOffering);
+//                            setUpFeatureOfInterestTypesForOffering(offering, sosObservationOffering);
+//                            setUpProcedureDescriptionFormatForOffering(sosObservationOffering);
+//                            setUpResponseFormatForOffering(sosObservationOffering);
+//
+//                            sosOfferings.add(sosObservationOffering);
+//                        }
+//                    }
+//                } else {
+//                    LOGGER.error( "No procedures are contained in the database for the offering {}! Please contact the admin of this SOS.", offering.getDomainId());
+//                }
+//            }
+//        }
+//
+//        return sosOfferings;
+//        } catch (final HibernateException | DataAccessException e) {
+//            throw new NoApplicableCodeException().causedBy(e).withMessage(
+//                    "Error while querying data for DescribeSensor document!");
+//        } finally {
+//            sessionStore.returnSession(session);
+//        }
+//    }
+//
+//    private void addSosOfferingToObservationOffering(OfferingEntity offering, SosObservationOffering sosObservationOffering,
+//            GetCapabilitiesRequest request) throws CodedException {
+//        SosOffering sosOffering = new SosOffering(offering.getDomainId(), false);
+//        sosObservationOffering.setOffering(sosOffering);
+//        // add offering name
+//        I18NHelper.addOfferingNames(getCache(), sosOffering, request.getRequestedLocale(), Locale.ROOT, false);
+//        // add offering description
+//        I18NHelper.addOfferingDescription(sosOffering, request.getRequestedLocale(), Locale.ROOT, getCache());
+//    }
+//
+//    /**
+//     * Set SpatialFilterCapabilities to FilterCapabilities
+//     *
+//     * @param filterCapabilities
+//     *            FilterCapabilities
+//     * @param version
+//     *            SOS version
+//     */
+//    private void getSpatialFilterCapabilities(FilterCapabilities filterCapabilities) {
+//
+//        // set GeometryOperands
+//        final List<QName> operands = new LinkedList<>();
+//        operands.add(GmlConstants.QN_ENVELOPE_32);
+//
+//        filterCapabilities.setSpatialOperands(operands);
+//
+//        // set SpatialOperators
+//        final SetMultiMap<SpatialOperator, QName> ops = MultiMaps.newSetMultiMap(SpatialOperator.class);
+//        ops.add(SpatialOperator.BBOX, GmlConstants.QN_ENVELOPE_32);
+//
+//        filterCapabilities.setSpatialOperators(ops);
+//    }
+//
+//    /**
+//     * Set TemporalFilterCapabilities to FilterCapabilities
+//     *
+//     * @param filterCapabilities
+//     *            FilterCapabilities
+//     * @param version
+//     *            SOS version
+//     */
+//    private void getTemporalFilterCapabilities(FilterCapabilities filterCapabilities) {
+//
+//        // set TemporalOperands
+//        final List<QName> operands = new ArrayList<>(2);
+//        operands.add(GmlConstants.QN_TIME_PERIOD_32);
+//        operands.add(GmlConstants.QN_TIME_INSTANT_32);
+//
+//        filterCapabilities.setTemporalOperands(operands);
+//
+//        // set TemporalOperators
+//        final SetMultiMap<TimeOperator, QName> ops = MultiMaps.newSetMultiMap(TimeOperator.class);
+//        for (final TimeOperator op : TimeOperator.values()) {
+//            ops.add(op, GmlConstants.QN_TIME_INSTANT_32);
+//            ops.add(op, GmlConstants.QN_TIME_PERIOD_32);
+//        }
+//        filterCapabilities.setTemporalOperators(ops);
+//    }
+//
+//    /**
+//     * Get extensions and merge MergableExtension of the same class.
+//     *
+//     * @return Extensions
+//     *
+//     *
+//     * @throws OwsExceptionReport
+//     */
+//    @SuppressWarnings({ "rawtypes", "unchecked" })
+//    private List<CapabilitiesExtension> getAndMergeExtensions(final String service, final String version)
+//            throws OwsExceptionReport {
+//        final List<CapabilitiesExtensionProvider> capabilitiesExtensionProviders =
+//                capabilitiesExtensionRepository.getCapabilitiesExtensionProvider(service, version);
+//        final List<CapabilitiesExtension> extensions = Lists.newLinkedList();
+//        if (CollectionHelper.isNotEmpty(capabilitiesExtensionProviders)) {
+//            final HashMap<String, MergableExtension> map = new HashMap<>(capabilitiesExtensionProviders.size());
+//            for (final CapabilitiesExtensionProvider capabilitiesExtensionDAO : capabilitiesExtensionProviders) {
+//                if (capabilitiesExtensionDAO.getExtension() != null) {
+//                    if (capabilitiesExtensionDAO.getExtension() instanceof MergableExtension) {
+//                        final MergableExtension me = (MergableExtension) capabilitiesExtensionDAO.getExtension();
+//                        final MergableExtension previous = map.get(me.getSectionName());
+//                        if (previous == null) {
+//                            map.put(me.getSectionName(), me);
+//                        } else {
+//                            previous.merge(me);
+//                        }
+//                    } else {
+//                        extensions.add(capabilitiesExtensionDAO.getExtension());
+//                    }
+//                }
+//            }
+//            extensions.addAll(map.values());
+//        }
+//        Map<String, StringBasedCapabilitiesExtension> activeCapabilitiesExtensions =
+//                this.capabilitiesExtensionService.getActiveCapabilitiesExtensions();
+//        if (activeCapabilitiesExtensions != null && !activeCapabilitiesExtensions.isEmpty()) {
+//            extensions.addAll(activeCapabilitiesExtensions.values());
+//        }
+//        return extensions;
+//    }
+//
+//    private Collection<CapabilitiesExtension> getExtensions(final Set<String> requestedExtensionSections,
+//            final String service, final String version) throws OwsExceptionReport {
+//        return getAndMergeExtensions(service, version).stream()
+//                .filter(e -> requestedExtensionSections.contains(e.getSectionName())).collect(Collectors.toList());
+//    }
+//
+//    protected void setUpPhenomenaForOffering(OfferingEntity offering, ProcedureEntity procedure,
+//            SosObservationOffering sosOffering, Session session) throws DataAccessException {
+//        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
+//        rsps.addParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(offering.getPkid()));
+//        rsps.addParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
+//        List<PhenomenonEntity> observableProperties = new PhenomenonDao(session).getAllInstances(new DbQuery(IoParameters.createFromQuery(rsps)));
+//
+//        Collection<String> phenomenons = new LinkedList<>();
+//        Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
+//        for (PhenomenonEntity observableProperty : observableProperties) {
+//            if (!observableProperty.hasChilds() && !observableProperty.hasParents()) {
+//                phenomenons.add(observableProperty.getDomainId());
+//            } else if (observableProperty.hasChilds() && !observableProperty.hasParents()) {
+//                Set<String> childs = new TreeSet<String>();
+//                for (PhenomenonEntity child : observableProperty.getChilds()) {
+//                    childs.add(child.getDomainId());
+//                }
+//            }
+//        }
+//        sosOffering.setObservableProperties(phenomenons);
+//        sosOffering.setPhens4CompPhens(phens4CompPhens);
+////        sosOffering.setCompositePhenomena(getCache().getCompositePhenomenonsForOffering(offering));
+////
+////        final Collection<String> compositePhenomenonsForOffering =
+////                getCache().getCompositePhenomenonsForOffering(offering);
+////
+////        if (compositePhenomenonsForOffering != null) {
+////            final Map<String, Collection<String>> phens4CompPhens =
+////                    new HashMap<>(compositePhenomenonsForOffering.size());
+////            for (final String compositePhenomenon : compositePhenomenonsForOffering) {
+////                final Collection<String> phenomenonsForComposite =
+////                        getCache().getObservablePropertiesForCompositePhenomenon(compositePhenomenon);
+////                phens4CompPhens.put(compositePhenomenon, phenomenonsForComposite);
+////            }
+////            sosOffering.setPhens4CompPhens(phens4CompPhens);
+////        } else {
+////            sosOffering.setPhens4CompPhens(Collections.<String, Collection<String>> emptyMap());
+////        }
+//
+//    }
+//
+////    private boolean isHiddenChildProcedureObservableProperty(final String offering,
+////            final Set<String> proceduresForObservableProperty) {
+////        for (final String hiddenProcedure : getCache().getHiddenChildProceduresForOffering(offering)) {
+////            if (proceduresForObservableProperty.contains(hiddenProcedure)) {
+////                return true;
+////            }
+////        }
+////        return false;
+////    }
+//
+//    private void setUpRelatedFeaturesForOffering(OfferingEntity offering,
+//            SosObservationOffering sosObservationOffering) throws OwsExceptionReport {
+//        final Map<String, Set<String>> relatedFeatures = Maps.newHashMap();
+//        final Set<String> relatedFeaturesForThisOffering =
+//                getCache().getRelatedFeaturesForOffering(offering.getDomainId());
+//        if (CollectionHelper.isNotEmpty(relatedFeaturesForThisOffering)) {
+//            for (final String relatedFeature : relatedFeaturesForThisOffering) {
+//                relatedFeatures.put(relatedFeature, getCache().getRolesForRelatedFeature(relatedFeature));
+//            }
+//            /*
+//             * TODO add setting to set FeatureOfInterest if relatedFeatures are
+//             * empty. } else { final Set<String> role =
+//             * Collections.singleton("featureOfInterestID"); final Set<String>
+//             * featuresForOffering =
+//             * getCache().getFeaturesOfInterestForOffering(offering); if
+//             * (featuresForOffering != null) { for (final String foiID :
+//             * featuresForOffering) { if
+//             * (getCache().getProceduresForFeatureOfInterest
+//             * (foiID).contains(procedure)) { relatedFeatures.put(foiID, role);
+//             * } } }
+//             */
+//
+//        }
+//        sosObservationOffering.setRelatedFeatures(relatedFeatures);
+//    }
+//
+//    protected void setUpTimeForOffering(OfferingEntity offering, SosObservationOffering sosOffering) {
+//        sosOffering.setPhenomenonTime(new TimePeriod(offering.getPhenomenonTimeStart(), offering.getPhenomenonTimeEnd()));
+//        sosOffering.setResultTime(new TimePeriod(offering.getResultTimeStart(), offering.getResultTimeEnd()));
+//    }
+//
+//    protected void setUpFeatureOfInterestTypesForOffering(OfferingEntity offering, SosObservationOffering sosOffering) {
+//        sosOffering.setFeatureOfInterestTypes(offering.getFeatureTypes());
+//    }
+//
+//    protected void setUpResponseFormatForOffering(SosObservationOffering sosOffering) {
+//        // initialize as new HashSet so that collection is modifiable
+//        final Collection<String> responseFormats =
+//                new HashSet<>(getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, Sos2Constants.VERSION));
+//        sosOffering.setResponseFormats(responseFormats);
+//        // TODO set as property
+//    }
+//
+//    protected void setUpProcedureDescriptionFormatForOffering(SosObservationOffering sosOffering) {
+//        // TODO: set procDescFormat <-- what is required here?
+//        sosOffering.setProcedureDescriptionFormat(procedureDescriptionFormatRepository
+//                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.VERSION));
+//    }
+//
+//    private Collection<ProcedureEntity> getProceduresForOffering(final OfferingEntity offering, Session session)
+//            throws OwsExceptionReport, DataAccessException {
+//        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
+//        rsps.addParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(offering.getPkid()));
+//        List<ProcedureEntity> procedures =
+//                new ProcedureDao(session).getAllInstances(new DbQuery(IoParameters.createFromQuery(rsps)));
+//        // if (procedures.isEmpty()) {
+//        // throw new NoApplicableCodeException().withMessage(
+//        // "No procedures are contained in the database for the offering '%s'!
+//        // Please contact the admin of this SOS.",
+//        // offering);
+//        // }
+//        return procedures;
+//    }
+//
+//    private boolean isContentsSectionRequested(final int sections) {
+//        return (sections & CONTENTS) != 0;
+//    }
+//
+//    private boolean isFilterCapabilitiesSectionRequested(final int sections) {
+//        return (sections & FILTER_CAPABILITIES) != 0;
+//    }
+//
+//    private boolean isOperationsMetadataSectionRequested(final int sections) {
+//        return (sections & OPERATIONS_METADATA) != 0;
+//    }
+//
+//    private boolean isServiceProviderSectionRequested(final int sections) {
+//        return (sections & SERVICE_PROVIDER) != 0;
+//    }
+//
+//    private boolean isServiceIdentificationSectionRequested(final int sections) {
+//        return (sections & SERVICE_IDENTIFICATION) != 0;
+//    }
+//
+//    protected RequestOperatorRepository getRequestOperatorRepository() {
+//        return this.requestOperatorRepository;
+//    }
+//
+//    protected ServiceOperatorRepository getServiceOperatorRepository() {
+//        return this.serviceOperatorRepository;
+//    }
+//
+//    protected ResponseFormatRepository getResponseFormatRepository() {
+//        return this.responseFormatRepository;
+//    }
+//
+//    private class SectionSpecificContentObject {
+//        private GetCapabilitiesRequest request;
+//
+//        private GetCapabilitiesResponse response;
+//
+//        private Set<String> requestedExtensionSections;
+//
+//        private int requestedSections;
+//
+//        private SosCapabilities sosCapabilities;
+//
+//        public SectionSpecificContentObject setRequest(GetCapabilitiesRequest request) {
+//            this.request = request;
+//            return this;
+//        }
+//
+//        public GetCapabilitiesRequest getGetCapabilitiesRequest() {
+//            return request;
+//        }
+//
+//        public SectionSpecificContentObject setResponse(GetCapabilitiesResponse response) {
+//            this.response = response;
+//            return this;
+//        }
+//
+//        public GetCapabilitiesResponse getGetCapabilitiesResponse() {
+//            return response;
+//        }
+//
+//        public SectionSpecificContentObject setRequestedExtensionSections(Set<String> requestedExtensionSections) {
+//            this.requestedExtensionSections = requestedExtensionSections;
+//            return this;
+//        }
+//
+//        public Set<String> getRequestedExtensionSesctions() {
+//            return requestedExtensionSections;
+//        }
+//
+//        public SectionSpecificContentObject setRequestedSections(int requestedSections) {
+//            this.requestedSections = requestedSections;
+//            return this;
+//        }
+//
+//        public int getRequestedSections() {
+//            return requestedSections;
+//        }
+//
+//        public SectionSpecificContentObject setSosCapabilities(SosCapabilities sosCapabilities) {
+//            this.sosCapabilities = sosCapabilities;
+//            return this;
+//        }
+//
+//        public SosCapabilities getSosCapabilities() {
+//            return sosCapabilities;
+//        }
+//    }
+//}

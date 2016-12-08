@@ -65,7 +65,7 @@ public class OfferingsDecoder extends ResourceDecoder {
         } else {
             final String errorMsg = createBadGetRequestMessage(bindingConstants.getResourceOfferings(),true,true,false);
             final BadRequestException bR = new BadRequestException(errorMsg);
-            throw new NoApplicableCodeException().causedBy(bR);
+            throw new DecodingException(bR);
         }
 
         // 3 return result

@@ -32,7 +32,7 @@ import java.util.Collection;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 

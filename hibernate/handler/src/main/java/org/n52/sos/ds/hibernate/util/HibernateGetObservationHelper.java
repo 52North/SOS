@@ -43,26 +43,28 @@ import org.hibernate.criterion.HibernateCriterionHelper;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.filter.BinaryLogicFilter;
-import org.n52.sos.ogc.filter.ComparisonFilter;
-import org.n52.sos.ogc.filter.Filter;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.LocalizedProducer;
+import org.n52.shetland.ogc.filter.BinaryLogicFilter;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.Filter;
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -71,15 +73,9 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObserv
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.GetObservationRequest;
-
+import org.n52.svalbard.encode.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
-import org.n52.iceland.util.LocalizedProducer;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -258,7 +254,7 @@ public class HibernateGetObservationHelper {
      *             If the requested result filter is not supported
      */
     public static Criterion getCriterionForComparisonFilter(ComparisonFilter resultFilter) throws CodedException {
-        if (ComparisonOperator.PropertyIsLike.equals(resultFilter.getOperator())) {
+        if (FilterConstants.ComparisonOperator.PropertyIsLike.equals(resultFilter.getOperator())) {
             checkValueReferenceForResultFilter(resultFilter.getValueReference());
             if (resultFilter.isSetEscapeString()) {
                 return HibernateCriterionHelper.getLikeExpression(AbstractLegacyObservation.DESCRIPTION,
@@ -271,7 +267,7 @@ public class HibernateGetObservationHelper {
         } else {
             throw new NoApplicableCodeException().withMessage(
                     "The requested comparison filter {} is not supported! Only {} is supported!", resultFilter
-                            .getOperator().name(), ComparisonOperator.PropertyIsLike.name());
+                            .getOperator().name(), FilterConstants.ComparisonOperator.PropertyIsLike.name());
         }
     }
 

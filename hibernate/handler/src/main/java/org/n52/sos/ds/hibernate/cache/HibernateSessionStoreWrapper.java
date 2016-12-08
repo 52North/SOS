@@ -34,7 +34,7 @@ import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.series.db.HibernateSessionStore;
 
 public class HibernateSessionStoreWrapper implements ConnectionProvider {
-    
+
     private HibernateSessionStore sessionStore;
 
     public HibernateSessionStoreWrapper(HibernateSessionStore sessionStore) {

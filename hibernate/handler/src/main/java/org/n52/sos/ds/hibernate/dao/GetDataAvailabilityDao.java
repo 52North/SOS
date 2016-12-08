@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import static org.n52.iceland.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -44,12 +44,16 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.series.db.beans.DatasetEntity;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.InsertResultDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -57,15 +61,13 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailabilityDao {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDao.class);
     private HibernateSessionHolder sessionHolder;
 
@@ -75,12 +77,12 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
     }
 
     @Override
-    public Map<String, NamedValue> getMetadata(DataAvailability dataAvailability) {
-        Session session;
+    public Map<String, NamedValue> getMetadata(DataAvailability dataAvailability) throws OwsExceptionReport {
+        Session session = null;
         try {
             session = sessionHolder.getSession();
             Map<String, NamedValue> map = new HashMap<>();
-            if (HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
+//            if (HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
 //                List<SeriesMetadata> metadataList = new SeriesMetadataDAO().getMetadata(series.getSeriesId(), session);
 //                if (CollectionHelper.isNotEmpty(metadataList)) {
 //                    for (SeriesMetadata seriesMetadata : metadataList) {
@@ -88,7 +90,7 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
 //                                new ReferenceValue(new ReferenceType(seriesMetadata.getValue()))));
 //                    }
 //                }
-            }
+//            }
             return map;
         } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying metadata for GetDataAvailability!")
@@ -99,8 +101,8 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
     }
 
     @Override
-    public List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request) {
-        Session session;
+    public List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request) throws OwsExceptionReport {
+        Session session = null;
         try {
             session = sessionHolder.getSession();
             Criteria c = getDefaultObservationInfoCriteria(session);
@@ -125,18 +127,59 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
                 resultTimes.add(new TimeInstant(date));
             }
             return resultTimes;
-        } catch (final HibernateException he) {
+        } catch (final HibernateException | OwsExceptionReport he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying result time for GetDataAvailability!")
                     .setStatus(INTERNAL_SERVER_ERROR);
         } finally {
             sessionHolder.returnSession(session);
         }
     }
-    
+
     private Criteria getDefaultObservationInfoCriteria(Session session) {
         return session.createCriteria(ContextualReferencedObservation.class)
                 .add(Restrictions.eq(ContextualReferencedObservation.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
+    /**
+     * Check if extensions contains a temporal filter with valueReference
+     * phenomenonTime
+     *
+     * @param extensions
+     *            Extensions to check
+     * @return <code>true</code>, if extensions contains a temporal filter with
+     *         valueReference phenomenonTime
+     */
+    private boolean hasPhenomenonTimeFilter(Extensions extensions) {
+        boolean hasFilter = false;
+        for (Extension<?> extension : extensions.getExtensions()) {
+            if (extension.getValue() instanceof TemporalFilter) {
+                TemporalFilter filter = (TemporalFilter) extension.getValue();
+                if (TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE.equals(filter.getValueReference())) {
+                    hasFilter = true;
+                }
+            }
+        }
+        return hasFilter;
+    }
+
+    /**
+     * Get the temporal filter with valueReference phenomenonTime from
+     * extensions
+     *
+     * @param extensions
+     *            To get filter from
+     * @return Temporal filter with valueReference phenomenonTime
+     */
+    private TemporalFilter getPhenomenonTimeFilter(Extensions extensions) {
+        for (Extension<?> extension : extensions.getExtensions()) {
+            if (extension.getValue() instanceof TemporalFilter) {
+                TemporalFilter filter = (TemporalFilter) extension.getValue();
+                if (TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE.equals(filter.getValueReference())) {
+                    return filter;
+                }
+            }
+        }
+        return null;
+    }
 }

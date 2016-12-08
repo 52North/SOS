@@ -115,7 +115,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
             dbFeatures.add(feature);
         }
         FeatureQueryHandlerQueryObject queryHandler =
-                new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(dbFeatures)
+                new FeatureQueryHandlerQueryObject().setFeatures(dbFeatures)
                         .setConnection(getConnection());
         return this.featureQueryHandler.getEnvelopeForFeatureIDs(queryHandler);
     }

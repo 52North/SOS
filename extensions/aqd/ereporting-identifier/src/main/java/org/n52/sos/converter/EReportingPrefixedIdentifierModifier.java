@@ -54,9 +54,9 @@ import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdConstants.ProcessParameter;
 import org.n52.sos.convert.AbstractIdentifierModifier;
 import org.n52.sos.converter.util.EReportingPrefixedIdentifierHelper;
-import org.n52.sos.gda.GetDataAvailabilityRequest;
-import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
@@ -290,6 +290,11 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     }
 
     @Override
+    protected ReferenceType checkProcedureIdentifier(ReferenceType procedure) {
+        return new ReferenceType(checkProcedureIdentifier(procedure.getHref()));
+    }
+
+    @Override
     protected String checkOfferingIdentifier(String identifier) {
         if (getEReportingPrefixedIdentifierHelper().isSetOfferingPrefix()) {
             return checkNamespacePrefix(getEReportingPrefixedIdentifierHelper().getOfferingPrefix() + identifier);
@@ -305,10 +310,9 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
         abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
                     .getIdentifier()));
-        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXmlDescription()) {
-            ((SamplingFeature) abstractFeature).setXmlDescription(null);
+        if (abstractFeature.isSetXml()) {
+            abstractFeature.setXml(null);
         }
-
     }
 
     @Override

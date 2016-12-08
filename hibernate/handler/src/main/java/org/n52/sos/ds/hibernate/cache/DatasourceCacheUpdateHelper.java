@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 
 import com.google.common.collect.Maps;
@@ -131,7 +131,7 @@ public class DatasourceCacheUpdateHelper {
         }
         return procedures;
     }
-    
+
     @SuppressWarnings("rawtypes")
     public static Set<String> getAllObservablePropertyIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> observableProperties = Sets.newTreeSet();
@@ -140,7 +140,7 @@ public class DatasourceCacheUpdateHelper {
         }
         return observableProperties;
     }
-    
+
     @SuppressWarnings("rawtypes")
     public static Collection<String> getAllFeatureIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> features = Sets.newTreeSet();
@@ -149,8 +149,8 @@ public class DatasourceCacheUpdateHelper {
         }
         return features;
     }
-    
-    
+
+
     public static Collection<? extends String> getAllProcedureIdentifiersFromDatasets(
             Collection<org.n52.series.db.beans.DatasetEntity> datasets, ProcedureFlag parent) {
         // TODO Auto-generated method stub

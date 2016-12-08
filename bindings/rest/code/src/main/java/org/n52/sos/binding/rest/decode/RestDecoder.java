@@ -98,7 +98,7 @@ public class RestDecoder extends AbstractXmlDecoder<HttpServletRequest, RestRequ
         // check requested content type
         if (!isAcceptHeaderOk(httpRequest))
         {
-            throw new ContentTypeNotSupportedException(
+            throw new DecodingException(
                     httpRequest.getContentType(),
                     bindingConstants().getContentTypeDefault().toString());
         }
@@ -110,17 +110,8 @@ public class RestDecoder extends AbstractXmlDecoder<HttpServletRequest, RestRequ
         return decoder.decodeRestRequest(httpRequest);
     }
 
-    private boolean isAcceptHeaderOk(final HttpServletRequest httpRequest) throws OwsExceptionReport {
-        List<MediaType> request;
-        try {
-            request = HttpUtils.getAcceptHeader(httpRequest);
-        } catch (HTTPException e) {
-            throw new InvalidParameterValueException().causedBy(e)
-                    .at(HTTPHeaders.ACCEPT)
-                    .withMessage("Invalid Accept Header: %s", httpRequest
-                    .getHeader(HTTPHeaders.ACCEPT))
-                    .setStatus(HTTPStatus.BAD_REQUEST);
-        }
+    private boolean isAcceptHeaderOk(final HttpServletRequest httpRequest) {
+        List<MediaType> request = HTTPHeaders.getAcceptHeader(httpRequest);
         for (MediaType mt : request) {
             if (bindingConstants().getContentTypeDefault().isCompatible(mt.withoutQuality())) {
                 return true;
@@ -169,7 +160,7 @@ public class RestDecoder extends AbstractXmlDecoder<HttpServletRequest, RestRequ
                         httpRequestPathInfo,
                         this.getClass().getName());
         LOGGER.debug(exceptionText);
-        throw new OperationNotSupportedException(httpRequestPathInfo);
+        throw new DecodingException(httpRequestPathInfo);
     }
 
     private boolean isServiceDefaultEndpoint(final String pathInfo) {

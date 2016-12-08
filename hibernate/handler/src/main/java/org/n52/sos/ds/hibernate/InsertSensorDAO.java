@@ -40,11 +40,18 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
+import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
@@ -64,13 +71,6 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swes.SwesFeatureRelationship;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.response.InsertSensorResponse;
 
 /**
  * Implementation of the abstract class AbstractInsertSensorHandler
@@ -257,15 +257,15 @@ private HibernateSessionHolder sessionHolder;
      * @return SensorDescription String
      */
     private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription procedureDescription ) {
-        if (procedureDescription instanceof SensorML) {
-            final SensorML sensorML = (SensorML) procedureDescription;
+        if (procedureDescription.getProcedureDescription() instanceof SensorML) {
+            final SensorML sensorML = (SensorML) procedureDescription.getProcedureDescription() ;
             // if SensorML is not a wrapper
             if (!sensorML.isWrapper()) {
-                return sensorML.getSensorDescriptionXmlString();
+                return sensorML.getXml();
             }
             // if SensorML is a wrapper and member size is 1
             else if (sensorML.isWrapper() && sensorML.getMembers().size() == 1) {
-                return sensorML.getMembers().get(0).getSensorDescriptionXmlString();
+                return sensorML.getMembers().get(0).getXml();
             } else {
                 // TODO: get sensor description for procedure identifier
                 return "";
@@ -273,7 +273,7 @@ private HibernateSessionHolder sessionHolder;
         }
         // if procedureDescription not SensorML
         else {
-            return procedureDescription.getSensorDescriptionXmlString();
+            return procedureDescription.getXml();
         }
     }
 

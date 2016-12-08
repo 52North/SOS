@@ -35,6 +35,7 @@ import java.util.Set;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 
+import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -150,11 +151,16 @@ public interface HibernateRelations {
         String FEATURE_OF_INTEREST = "featureOfInterest";
 
         FeatureOfInterest getFeatureOfInterest();
+
+        default boolean hasFeatureOfInterest() {
+            return getFeatureOfInterest() != null;
+        }
     }
 
     interface HasFeatureOfInterest extends HasFeatureOfInterestGetter {
 
         void setFeatureOfInterest(FeatureOfInterest featureOfInterest);
+
     }
 
     interface HasReadableObservationContext
@@ -177,7 +183,9 @@ public interface HibernateRelations {
 
         void setDescriptionXml(String descriptionXml);
 
-        boolean isSetDescriptionXml();
+        default  boolean isSetDescriptionXml() {
+            return !Strings.isNullOrEmpty(getDescriptionXml());
+        }
     }
 
     interface HasGeometry {
@@ -465,6 +473,10 @@ public interface HibernateRelations {
         String getUrl();
 
         void setUrl(String url);
+
+        default boolean isSetUrl() {
+            return !Strings.isNullOrEmpty(getUrl());
+        }
     }
 
 
@@ -504,7 +516,9 @@ public interface HibernateRelations {
 
         void setParameters(Object offerings);
 
-        boolean hasParameters();
+        default boolean hasParameters() {
+            return getParameters() != null && !getParameters().isEmpty();
+        }
 
     }
 
@@ -626,11 +640,19 @@ public interface HibernateRelations {
 
         void addParent(T parent);
 
+        default boolean hasParents() {
+            return getParents() != null && !getParents().isEmpty();
+        }
+
         Set<T> getChilds();
 
         void setChilds(Set<T> childs);
 
         void addChild(T child);
+
+        default boolean hasChilds() {
+            return getChilds() != null && !getChilds().isEmpty();
+        }
     }
 
     interface HasObservationId {
@@ -650,6 +672,25 @@ public interface HibernateRelations {
          *                      Observation id to set
          */
         void setObservationId(final long observationId);
+    }
+
+    interface HasFeatureOfInterestId {
+        String FEAT_ID = "featureOfInterestId";
+
+        /**
+         * Get the featureOfInterest id
+         *
+         * @return FeatureOfInterest id
+         */
+        long getFeatureOfInterestId();
+
+        /**
+         * Set the featureOfInterest id
+         *
+         * @param featureOfInterestId
+         *                      FeatureOfInterest id to set
+         */
+        void setFeatureOfInterestId(final long featureOfInterestId);
     }
 
     interface HasLocale {

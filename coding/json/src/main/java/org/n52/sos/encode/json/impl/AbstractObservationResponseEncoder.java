@@ -28,9 +28,12 @@
  */
 package org.n52.sos.encode.json.impl;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
@@ -85,5 +88,14 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
     @Override
     public Set<String> getSupportedResponseFormats(String service, String version) {
         return Sets.newHashSet(MediaTypes.APPLICATION_JSON.toString());
+    }
+
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
+        return Collections.singletonMap(MediaTypes.APPLICATION_JSON.toString(),
+                (Set<String>) Sets.newHashSet(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
+                        OmConstants.OBS_TYPE_COUNT_OBSERVATION, OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
+                        OmConstants.OBS_TYPE_MEASUREMENT, OmConstants.OBS_TYPE_TEXT_OBSERVATION,
+                        OmConstants.OBS_TYPE_TRUTH_OBSERVATION, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION));
     }
 }

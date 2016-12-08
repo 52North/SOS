@@ -44,13 +44,14 @@ import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.sos.convert.AbstractIdentifierModifier;
 import org.n52.sos.converter.util.PrefixedIdentifierHelper;
-import org.n52.sos.gda.GetDataAvailabilityRequest;
-import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
@@ -166,6 +167,11 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     }
 
     @Override
+    protected ReferenceType checkProcedureIdentifier(ReferenceType procedure) {
+        return new ReferenceType(checkProcedureIdentifier(procedure.getHref()));
+    }
+
+    @Override
     protected String checkObservablePropertyParameterValue(String parameterValue) {
         String globalModified = checkGlobalPrefixForParameterValue(parameterValue);
         if (helper.isSetObservablePropertyPrefix()) {
@@ -233,10 +239,9 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
             abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
                     .getIdentifier()));
         }
-        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXmlDescription()) {
-            ((SamplingFeature) abstractFeature).setXmlDescription(null);
+        if (abstractFeature.isSetXml()) {
+            abstractFeature.setXml(null);
         }
-
     }
 
     @Override

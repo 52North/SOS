@@ -64,6 +64,7 @@ import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sensorML.AbstractComponent;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.System;
 import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
@@ -398,8 +399,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
         int requestedCrs = getRequestedCrs(request);
         if (response.isSetProcedureDescriptions()) {
             for (SosProcedureDescription<?> description : response.getProcedureDescriptions()) {
-                if (description instanceof AbstractSensorML) {
-                    checkAbstractSensorML((AbstractSensorML) description, requestedCrs);
+                if (description.getProcedureDescription() instanceof AbstractSensorML) {
+                    checkAbstractSensorML((AbstractSensorML) description.getProcedureDescription(), requestedCrs);
                 }
             }
         }

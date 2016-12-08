@@ -182,12 +182,11 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
     protected void getCommonRequestParameterDefinitions(Builder<R> builder) {
         super.getCommonRequestParameterDefinitions(builder);
         builder.add(OWSConstants.AdditionalRequestParams.language, OwsServiceRequest::addSweTextExtension);
         builder.add(OWSConstants.AdditionalRequestParams.crs, OwsServiceRequest::addSweTextExtension);
-        builder.add(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier, OwsServiceRequest::addSweBooleanExtension);
+//        builder.add(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier, OwsServiceRequest::addSweBooleanExtension);
     }
 
     protected ThrowingBiConsumer<R, String, DecodingException> decodeNamespaces(

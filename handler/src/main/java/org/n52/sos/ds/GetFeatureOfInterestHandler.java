@@ -37,9 +37,7 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
@@ -47,9 +45,12 @@ import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.dao.DbQuery;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
-import org.n52.sos.response.GetFeatureOfInterestResponse;
+import org.n52.shetland.ogc.om.features.FeatureCollection;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 
 public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHandler {
 
@@ -76,7 +77,10 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             throws OwsExceptionReport {
         Session session = sessionStore.getSession();
         try {
-            GetFeatureOfInterestResponse response = request.getResponse();
+            GetFeatureOfInterestResponse response = new GetFeatureOfInterestResponse();
+            response.setService(request.getService());
+            response.setVersion(request.getVersion());
+
             response.setAbstractFeature(getFeatures(request, session));
             return response;
         } catch (HibernateException he) {
@@ -102,7 +106,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
                 // .setSpatialFilters(request.getSpatialFilters())
-                .setVersion(request.getVersion()).setI18N(request.getRequestedLocale());
+                .setVersion(request.getVersion()).setI18N(LocaleHelper.fromString(request.getRequestedLanguage()));
         if (request.hasParameter()) {
             Set<FeatureEntity> featureEntities = new HashSet<>(queryFeaturesForParameter(request, session));
             if (featureEntities == null || featureEntities.isEmpty()) {

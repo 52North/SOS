@@ -35,9 +35,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.hibernate.Session;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
@@ -45,8 +42,11 @@ import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.dao.GetObservationDao;
-import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,26 +65,30 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
         this.sessionStore = sessionStore;
     }
-    
+
     @Inject
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
         this.featureQueryHandler = featureQueryHandler;
     }
-    
+
     @Inject
     public void setGetObservationDao(GetObservationDao dao) {
         this.dao = dao;
     }
-    
+
     public GetObservationHandler() {
         super(SosConstants.SOS);
     }
-    
+
     @Override
     public GetObservationResponse getObservation(GetObservationRequest request) throws OwsExceptionReport {
         Session session = sessionStore.getSession();
         try {
-            GetObservationResponse response = request.getResponse();
+            GetObservationResponse response = new GetObservationResponse();
+            response.setService(request.getService());
+            response.setVersion(request.getVersion());
+            response.setResponseFormat(request.getResponseFormat());
+            response.setResultModel(request.getResultModel());
             // check for featureOfInterest
             FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
             if (request.isSetFeatureOfInterest()){
@@ -101,7 +105,7 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
                 return response;
             }
             request.setFeatureIdentifiers(Lists.newArrayList(features));
-            
+
             dao.queryObservationData(request, response);
             return response;
         } catch (DataAccessException e) {
@@ -120,5 +124,5 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
         rsps.addParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));
     }
-    
+
 }

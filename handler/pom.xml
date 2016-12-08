@@ -13,15 +13,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.n52.sensorweb.sos</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb.sos</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb.sos</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>gda-operation</artifactId>
         </dependency>
         <dependency>
@@ -29,8 +29,65 @@
             <artifactId>iceland</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.shetland</groupId>
+            <artifactId>shetland</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.janmayen</groupId>
+            <artifactId>janmayen</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.n52.series-api</groupId>
             <artifactId>proxy</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.n52.series-api</groupId>
+            <artifactId>series-dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.series-api</groupId>
+            <artifactId>io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+         
     </dependencies>
 </project>

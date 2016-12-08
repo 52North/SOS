@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
@@ -42,6 +41,7 @@ import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ import com.google.common.collect.Sets;
  */
 public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(FeatureOfInterestCacheUpdate.class);
-    
+
     @Override
     public void execute() {
         LOGGER.debug("Executing FeatureOfInterestCacheUpdate");
@@ -75,7 +75,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                 }
                 getCache().setProceduresForFeatureOfInterest(identifier, getProcedures(procedureDao.getAllInstances(createProcedureDbQuery(featureEntity))));
             }
-            
+
     } catch (DataAccessException dae) {
         getErrors().add(new NoApplicableCodeException().causedBy(dae).withMessage("Error while updating featureOfInterest cache!"));
     }

@@ -28,10 +28,15 @@
  */
 package org.n52.sos.ds.dao;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 
+/**
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 5.0.0
+ *
+ */
 public interface GetObservationDao {
 
     GetObservationResponse queryObservationData(GetObservationRequest request, GetObservationResponse response) throws OwsExceptionReport;

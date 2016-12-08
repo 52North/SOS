@@ -273,18 +273,18 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
                     if (encodedXmlObject != null) {
                         return encodedXmlObject;
                     } else {
-                        if (samplingFeature.getXmlDescription() != null) {
+                        if (feature.isSetXml()) {
                             try {
                                 // TODO how set gml:id in already existing
                                 // XmlDescription? <-- XmlCursor
-                                return XmlObject.Factory.parse(samplingFeature.getXmlDescription());
+                                return XmlObject.Factory.parse(feature.getXml());
                             } catch (final XmlException xmle) {
                                 throw new EncodingException("Error while encoding featurePropertyType!", xmle);
                             }
                         } else {
-                            featurePropertyType.setHref(samplingFeature.getIdentifierCodeWithAuthority().getValue());
+                            featurePropertyType.setHref(feature.getIdentifierCodeWithAuthority().getValue());
                             if (samplingFeature.isSetName()) {
-                                featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                                featurePropertyType.setTitle(feature.getFirstName().getValue());
                             }
                             return featurePropertyType;
                         }

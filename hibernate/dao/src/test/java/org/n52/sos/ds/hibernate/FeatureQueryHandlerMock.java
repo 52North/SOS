@@ -92,16 +92,4 @@ public class FeatureQueryHandlerMock implements FeatureQueryHandler {
     public int getStorage3DEPSG() {
         return 0;
     }
-
-    @Override
-    public int getDefaultResponseEPSG() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int getDefaultResponse3DEPSG() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
 }

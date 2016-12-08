@@ -26,21 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.create;
+package org.n52.sos.event.events;
 
-import java.util.Locale;
+import org.n52.iceland.event.events.AbstractFlowEvent;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+public class UpdateCache extends AbstractFlowEvent {
 
-import com.vividsolutions.jts.geom.Geometry;
+    public UpdateCache(Long eventsGroupId) {
+        super(Thread.currentThread().getId());
+        // TODO Auto-generated constructor stub
+    }
 
-public interface FeatureCreator<T extends FeatureOfInterest> {
-
-    AbstractFeature create(T f,Locale i18n, String version, Session s)
-            throws OwsExceptionReport;
-
-    Geometry createGeometry(T feature, Session session) throws OwsExceptionReport;
 }

@@ -30,12 +30,14 @@ package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import java.util.Date;
 
+import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPublishedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -47,11 +49,11 @@ import org.n52.sos.ds.hibernate.entities.Unit;
  * @since 4.0.0
  *
  */
-public class Series
+public class Series extends AbstractIdentifierNameDescriptionEntity
         implements HasWriteableObservationContext,
                    HasDeletedFlag,
                    HasHiddenChildFlag,
-                   HasUnit, 
+                   HasUnit,
                    HasPublishedFlag,
                    HasOffering {
 
@@ -132,7 +134,7 @@ public class Series
     public void setProcedure(final Procedure procedure) {
         this.procedure = procedure;
     }
-    
+
     @Override
     public Offering getOffering() {
         return offering;
@@ -142,7 +144,7 @@ public class Series
     public void setOffering(final Offering offering) {
         this.offering = offering;
     }
-    
+
     @Override
     public void setDeleted(final boolean deleted) {
         this.deleted = deleted;
@@ -285,7 +287,7 @@ public class Series
     public boolean isSetFirstLastTime() {
         return isSetFirstTimeStamp() && isSetLastTimeStamp();
     }
-    
+
     public boolean hasSameObservationIdentifier(Series s) {
         return getFeatureOfInterest().equals(s.getFeatureOfInterest()) && getProcedure().equals(s.getProcedure())
                 && getObservableProperty().equals(s.getObservableProperty());

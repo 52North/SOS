@@ -42,13 +42,14 @@ import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.sos.convert.AbstractIdentifierModifier;
 import org.n52.sos.converter.util.FlexibleIdentifierHelper;
-import org.n52.sos.gda.GetDataAvailabilityRequest;
-import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
@@ -446,6 +447,11 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
     }
 
     @Override
+    protected ReferenceType checkProcedureIdentifier(ReferenceType procedure) {
+        return new ReferenceType(checkProcedureIdentifier(procedure.getHref()));
+    }
+
+    @Override
     protected String checkOfferingIdentifier(String identifier) {
         if (getFlexibleIdentifierHelper().isSetIncludeOffering()) {
             return getCache().getOfferingHumanReadableNameForIdentifier(identifier);
@@ -497,8 +503,8 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
                     .getIdentifier()));
         }
         abstractFeature.setHumanReadableIdentifierAsIdentifier();
-        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXmlDescription()) {
-            ((SamplingFeature) abstractFeature).setXmlDescription(null);
+        if (abstractFeature.isSetXml()) {
+            abstractFeature.setXml(null);
         }
 
     }

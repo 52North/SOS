@@ -60,6 +60,8 @@ import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 
+import com.google.common.collect.Lists;
+
 
 /**
  * @since 4.0.0
@@ -235,7 +237,7 @@ public class QueryHelper {
     /**
      * Creates a criterion for objects, considers if size is > 1000 (Oracle expression
      * limit).
-     * 
+     *
      * @param propertyName
      *                     Column name.
      * @param identifiers

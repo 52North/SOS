@@ -12,6 +12,6 @@
     <description>52°North Sensor Observation Service GetDataAvailability operation module</description>
     <modules>
         <module>operation</module>
-        <module>hibernate</module>
+        <!-- <module>hibernate</module> -->
     </modules>
 </project>

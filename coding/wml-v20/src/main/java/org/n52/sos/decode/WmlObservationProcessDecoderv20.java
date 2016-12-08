@@ -32,36 +32,29 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.waterml.x20.ObservationProcessDocument;
-import net.opengis.waterml.x20.ObservationProcessPropertyType;
-import net.opengis.waterml.x20.ObservationProcessType;
-
+import org.n52.iceland.coding.decode.ProcedureDecoder;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.sos.ProcedureDescriptionFormat;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.wml.WaterMLConstants;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ogc.wml.ObservationProcess;
+import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.decode.DecoderKey;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.iceland.coding.decode.ProcedureDecoder;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.SupportedType;
-import org.n52.shetland.ogc.gml.ReferenceType;
-import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.om.values.ReferenceValue;
-import org.n52.shetland.ogc.om.values.TextValue;
-import org.n52.shetland.ogc.sensorML.SensorMLConstants;
-import org.n52.shetland.ogc.sos.ProcedureDescriptionFormat;
-import org.n52.shetland.util.CollectionHelper;
-import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.sos.ogc.wml.ObservationProcess;
-import org.n52.shetland.ogc.wml.WaterMLConstants;
-import org.n52.sos.util.CodingHelper;
-
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+
+import net.opengis.waterml.x20.ObservationProcessDocument;
+import net.opengis.waterml.x20.ObservationProcessPropertyType;
+import net.opengis.waterml.x20.ObservationProcessType;
 
 public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 implements ProcedureDecoder<Object, Object> {
 
@@ -137,7 +130,7 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
         ObservationProcessDocument doc =
                 ObservationProcessDocument.Factory.newInstance(getXmlOptions());
         doc.setObservationProcess(opt);
-        observationProcess.setSensorDescriptionXmlString(doc.xmlText(getXmlOptions()));
+        observationProcess.setXml(doc.xmlText(getXmlOptions()));
     }
 
     private void parseProcessType(ObservationProcessType opt, ObservationProcess observationProcess) {
@@ -189,41 +182,5 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
         if (CollectionHelper.isNotNullOrEmpty(opt.getParameterArray())) {
             observationProcess.setParameters(parseNamedValueTypeArray(opt.getParameterArray()));
         }
-        checkForOffering(observationProcess);
     }
-
-    @VisibleForTesting
-    protected void checkForOffering(ObservationProcess observationProcess) {
-        if (observationProcess.isSetParameters()) {
-            observationProcess.getParameters().stream().filter(this::checkNameForOffering).filter(NamedValue::isSetValue)
-                    .forEachOrdered(namedValue -> {
-                        if (namedValue.getValue() instanceof TextValue) {
-                            TextValue value = (TextValue) namedValue.getValue();
-                            observationProcess.addOffering(new SosOffering(value.getValue(), true));
-                        } else if (namedValue.getValue() instanceof ReferenceValue) {
-                            ReferenceValue refValue = (ReferenceValue) namedValue.getValue();
-                            if (refValue.isSetValue()) {
-                                ReferenceType value = refValue.getValue();
-                                if (value.isSetHref()) {
-                                    if (value.isSetTitle()) {
-                                        observationProcess.addOffering(new SosOffering(value.getHref(), value.getTitle()));
-                                    } else {
-                                        observationProcess.addOffering(new SosOffering(value.getHref(), true));
-                                    }
-                                }
-                            }
-                        }
-            });
-        }
-    }
-
-    private boolean checkNameForOffering(NamedValue<?> namedValue) {
-        if (namedValue.isSetName()) {
-            ReferenceType name = namedValue.getName();
-            return (name.isSetHref() && SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(name.getHref()))
-                    || (name.isSetTitle() && SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(name.getTitle()));
-        }
-        return false;
-    }
-
 }

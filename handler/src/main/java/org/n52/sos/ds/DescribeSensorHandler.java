@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds;
 
-import static org.n52.iceland.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.util.List;
 import java.util.Locale;
@@ -41,23 +41,28 @@ import org.hibernate.Session;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.proxy.db.dao.ProxyProcedureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.shetland.ogc.ows.OwsAnyValue;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.ds.dao.DescribeSensorDao;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
@@ -66,18 +71,15 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.response.DescribeSensorResponse;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class DescribeSensorHandler extends AbstractDescribeSensorHandler implements Constructable {
-    
+
     private HibernateSessionStore sessionStore;
     private DescribeSensorDao describeSensorDao;
-    
+
     private ServiceMetadataRepository serviceMetadataRepository;
     private HibernateProcedureConverter procedureConverter;
     private ConverterRepository converterRepository;
@@ -86,12 +88,14 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
     public DescribeSensorHandler() {
         super(SosConstants.SOS);
     }
-    
+
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        super.setOperationsMetadata(opsMeta, service, version);
-        opsMeta.addAnyParameterValue(Sos2Constants.DescribeSensorParams.validTime);
+    protected Set<OwsDomain> getOperationParameters(String service, String version) {
+        Set<OwsDomain> operationParameters = super.getOperationParameters(service, version);
+        if (version.equals(Sos2Constants.SERVICEVERSION)) {
+            operationParameters.add(new OwsDomain(Sos2Constants.DescribeSensorParams.validTime, OwsAnyValue.instance()));
+        }
+        return operationParameters;
     }
 
     @Inject
@@ -128,13 +132,17 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
         Session session = null;
         try {
             session = sessionStore.getSession();
-            final DescribeSensorResponse response = request.getResponse();
+            final DescribeSensorResponse response = new DescribeSensorResponse();
+            response.setService(request.getService());
+            response.setVersion(request.getVersion());
+            response.setOutputFormat(request.getProcedureDescriptionFormat());
+
             ProcedureEntity entity = new ProxyProcedureDao(session).getInstance(request.getProcedure(), createDbQuery(request));
             if (entity == null) {
                 throw new NoApplicableCodeException().causedBy(
                         new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
                                 INTERNAL_SERVER_ERROR);
-            } 
+            }
             response.setSensorDescriptions(describeSensorDao.querySensorDescriptions(request));
             return response;
         } catch (final HibernateException | DataAccessException e) {
@@ -144,7 +152,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
             sessionStore.returnSession(session);
         }
     }
-    
+
     private DbQuery createDbQuery(DescribeSensorRequest req) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         if (req.isSetProcedure()) {
@@ -165,7 +173,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private SosProcedureDescription getProcedureDescription(DescribeSensorRequest request, Session session)
+    private SosProcedureDescription<?> getProcedureDescription(DescribeSensorRequest request, Session session)
             throws OwsExceptionReport {
         final Procedure procedure = new ProcedureDAO().getProcedureForIdentifier(request.getProcedure(), session);
         if (procedure == null) {
@@ -177,7 +185,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
         return procedureConverter.createSosProcedureDescription(procedure,
                                                                 request.getProcedureDescriptionFormat(),
                                                                 request.getVersion(),
-                                                                request.getRequestedLocale(),
+                                                                LocaleHelper.fromString(request.getRequestedLanguage()),
                                                                 session);
     }
 
@@ -190,30 +198,30 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private List<SosProcedureDescription> getProcedureDescriptions(DescribeSensorRequest request, Session session) throws OwsExceptionReport {
+    private List<SosProcedureDescription<?>> getProcedureDescriptions(DescribeSensorRequest request, Session session) throws OwsExceptionReport {
         Set<String> possibleProcedureDescriptionFormats =
                 getPossibleProcedureDescriptionFormats(request.getProcedureDescriptionFormat());
         final TProcedure procedure =
                 new ProcedureDAO().getTProcedureForIdentifier(request.getProcedure(),
                                                               possibleProcedureDescriptionFormats, request.getValidTime(), session);
-        List<SosProcedureDescription> list = Lists.newLinkedList();
+        List<SosProcedureDescription<?>> list = Lists.newLinkedList();
         if (procedure != null) {
             List<ValidProcedureTime> validProcedureTimes =
                     new ValidProcedureTimeDAO().getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats,
                                                                                   request.getValidTime(), session);
             for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
-                SosProcedureDescription sosProcedureDescription
+                SosProcedureDescription<?> sosProcedureDescription
                         = procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(
                                 procedure,
                                 request.getProcedureDescriptionFormat(),
                                 validProcedureTime,
                                 request.getVersion(),
-                                request.getRequestedLocale(),
+                                LocaleHelper.fromString(request.getRequestedLanguage()),
                                 session);
                 list.add(convertProcedureDescription(sosProcedureDescription, request));
             }
         } else {
-            SosProcedureDescription procedureDescription = getProcedureDescription(request, session);
+            SosProcedureDescription<?> procedureDescription = getProcedureDescription(request, session);
             if (procedureDescription != null) {
                 list.add(procedureDescription);
             } else {
@@ -271,8 +279,8 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
 //        return possibleFormats;
 //    }
 
-    private SosProcedureDescription convertProcedureDescription(
-            SosProcedureDescription procedureDescription, DescribeSensorRequest request)
+    private SosProcedureDescription<?> convertProcedureDescription(
+            SosProcedureDescription<?> procedureDescription, DescribeSensorRequest request)
             throws CodedException {
         if (!procedureDescription.getDescriptionFormat().contains(request.getProcedureDescriptionFormat())) {
             Converter<SosProcedureDescription, SosProcedureDescription> converter =

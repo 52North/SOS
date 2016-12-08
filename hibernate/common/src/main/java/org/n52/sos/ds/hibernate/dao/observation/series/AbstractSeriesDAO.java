@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
@@ -76,6 +77,17 @@ public abstract class AbstractSeriesDAO {
      * @throws OwsExceptionReport
      */
     public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session)
+            throws OwsExceptionReport;
+
+    /**
+     * Get series for GetObservationByIdRequest request
+     * @param request GetObservationByIdRequest request to get series for
+     * @param session
+     *            Hibernate session
+     * @return Series that fit
+     * @throws CodedException
+     */
+    public abstract List<Series> getSeries(GetObservationByIdRequest request, Session session)
             throws OwsExceptionReport;
 
     /**
@@ -177,6 +189,13 @@ public abstract class AbstractSeriesDAO {
                 createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features, session);
         addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
+        return c;
+    }
+
+    public Criteria  getSeriesCriteria(GetObservationByIdRequest request, Session session) {
+        final Criteria c = getDefaultSeriesCriteria(session);
+        c.add(Restrictions.in(Series.IDENTIFIER, request.getObservationIdentifier()));
+        LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
         return c;
     }
 

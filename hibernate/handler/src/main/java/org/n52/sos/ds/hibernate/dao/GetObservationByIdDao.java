@@ -41,12 +41,14 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.util.LocalizedProducer;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
@@ -59,8 +61,6 @@ import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.request.GetObservationByIdRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +84,7 @@ public class GetObservationByIdDao implements org.n52.sos.ds.dao.GetObservationB
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
-    
+
     @Override
     public Collection<OmObservation> queryObservationsById(GetObservationByIdRequest request) throws OwsExceptionReport {
         Session session = null;
@@ -92,7 +92,7 @@ public class GetObservationByIdDao implements org.n52.sos.ds.dao.GetObservationB
             session = sessionHolder.getSession();
             List<OmObservation> omObservations = querySeriesObservation(request, session);
             omObservations.addAll(HibernateObservationUtilities.createSosObservationsFromObservations(
-                    checkObservations(queryObservation(request, session), request), request, request.getRequestedLocale(), session));
+                    checkObservations(queryObservation(request, session), request), request, getLocalizedProducer(request.getService()), session));
             return omObservations;
 
         } catch (HibernateException he) {
@@ -103,7 +103,7 @@ public class GetObservationByIdDao implements org.n52.sos.ds.dao.GetObservationB
             sessionHolder.returnSession(session);
         }
     }
-    
+
     private List<Observation<?>> checkObservations(List<Observation<?>> queryObservation, GetObservationByIdRequest request) {
         if (!request.isCheckForDuplicity()) {
             return queryObservation;
@@ -140,7 +140,7 @@ public class GetObservationByIdDao implements org.n52.sos.ds.dao.GetObservationB
         LOGGER.debug("QUERY queryObservation(request): {}", HibernateHelper.getSqlString(c));
         return c.list();
     }
-    
+
     /**
      * Query the series observations for streaming datasource
      *
@@ -154,7 +154,7 @@ public class GetObservationByIdDao implements org.n52.sos.ds.dao.GetObservationB
      * @throws ConverterException
      *             If an error occurs during sensor description creation.
      */
-    protected List<OmObservation> querySeriesObservation(GetObservationByIdRequest request,
+    private List<OmObservation> querySeriesObservation(GetObservationByIdRequest request,
             final Session session) throws OwsExceptionReport, ConverterException {
         final long start = System.currentTimeMillis();
         final List<OmObservation> result = new LinkedList<OmObservation>();
@@ -164,7 +164,7 @@ public class GetObservationByIdDao implements org.n52.sos.ds.dao.GetObservationB
         for (Series series : serieses) {
             Collection<? extends OmObservation> createSosObservationFromSeries =
                     HibernateObservationUtilities
-                            .createSosObservationFromSeries(series, request, session);
+                            .createSosObservationFromSeries(series, request, getLocalizedProducer(request.getService()), session);
             OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
             HibernateSeriesStreamingValue streamingValue = new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), request, series.getSeriesId(), request.isCheckForDuplicity());
             streamingValue.setResponseFormat(request.getResponseFormat());
@@ -174,5 +174,9 @@ public class GetObservationByIdDao implements org.n52.sos.ds.dao.GetObservationB
         }
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         return result;
+    }
+
+    private LocalizedProducer<OwsServiceProvider> getLocalizedProducer(String service) {
+        return this.serviceMetadataRepository.getServiceProviderFactory(service);
     }
 }

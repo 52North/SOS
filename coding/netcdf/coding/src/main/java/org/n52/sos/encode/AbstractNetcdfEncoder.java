@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -54,8 +55,10 @@ import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.iso.CodeList.CiRoleCodes;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.ObservationType;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -68,6 +71,7 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorML20Constants;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.SmlContact;
@@ -188,6 +192,16 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     public boolean supportsResultStreamingForMergedValues() {
         return false;
     }
+
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
+        return Collections.singletonMap(NetcdfConstants.CONTENT_TYPE_NETCDF.toString(),
+                (Set<String>) getSupportedTypes()
+                    .stream()
+                    .filter(sp -> sp instanceof ObservationType)
+                    .map(sp -> ((ObservationType)sp).getValue())
+                    .collect(Collectors.toSet()));
+}
 
     @Override
     public BinaryAttachmentResponse encode(Object element) throws EncodingException {
@@ -1008,19 +1022,18 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
     }
 
-    private AbstractSensorML getProcedureDescription(String procedure, SosProcedureDescription<?> procedureDescription)
+    private AbstractSensorML getProcedureDescription(String procedure, AbstractFeature procedureDescription)
             throws EncodingException {
-        SosProcedureDescription<?> sosProcedureDescription = procedureDescription;
         // query full procedure description if necessary
-        if (sosProcedureDescription == null || procedureDescription instanceof SosProcedureDescriptionUnknownType) {
-            sosProcedureDescription = queryProcedureDescription(procedure);
+        if (procedureDescription == null || procedureDescription instanceof SosProcedureDescriptionUnknownType) {
+            procedureDescription = queryProcedureDescription(procedure);
         }
         AbstractSensorML abstractSensor = null;
-        if (sosProcedureDescription instanceof AbstractSensorML) {
-            abstractSensor = (AbstractSensorML) sosProcedureDescription;
+        if (procedureDescription instanceof AbstractSensorML) {
+            abstractSensor = (AbstractSensorML) procedureDescription;
             // check for SensorML to get members
-            if (sosProcedureDescription instanceof SensorML) {
-                SensorML sml = (SensorML) sosProcedureDescription;
+            if (procedureDescription instanceof SensorML) {
+                SensorML sml = (SensorML) procedureDescription;
                 if (sml.isWrapper()) {
                     abstractSensor = (AbstractSensorML) sml.getMembers().get(0);
                 }
@@ -1032,7 +1045,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
         if (abstractSensor == null) {
             throw new EncodingException("Only SensorML procedure descriptions are supported, found %s for %s",
-                    sosProcedureDescription.getClass().getName(), procedure);
+                    procedureDescription.getClass().getName(), procedure);
         }
         return abstractSensor;
     }

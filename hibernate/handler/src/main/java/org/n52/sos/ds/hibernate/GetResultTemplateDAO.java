@@ -30,20 +30,30 @@ package org.n52.sos.ds.hibernate;
 
 import javax.inject.Inject;
 
+import org.apache.xmlbeans.XmlObject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ds.AbstractGetResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
-import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservablePropertyCombination;
-import org.n52.sos.request.GetResultTemplateRequest;
-import org.n52.sos.response.GetResultTemplateResponse;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * Implementation of the abstract class AbstractGetResultTemplateHandler
@@ -74,9 +84,9 @@ public class GetResultTemplateDAO extends AbstractGetResultTemplateHandler {
                 GetResultTemplateResponse response = new GetResultTemplateResponse();
                 response.setService(request.getService());
                 response.setVersion(request.getVersion());
-                response.setResultEncoding(ResultHandlingHelper.createSosResultEncoding(resultTemplate
+                response.setResultEncoding(createSosResultEncoding(resultTemplate
                         .getResultEncoding()));
-                response.setResultStructure(ResultHandlingHelper.createSosResultStructure(resultTemplate
+                response.setResultStructure(createSosResultStructure(resultTemplate
                         .getResultStructure()));
                 return response;
             }

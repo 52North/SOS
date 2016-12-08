@@ -38,9 +38,9 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
@@ -51,7 +51,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
-import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
+import org.n52.sos.ds.hibernate.util.QueryHelper;
 
 /**
  * Abstract value time data access object class for {@link SeriesValueTime}
@@ -194,7 +194,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         return (TemporalReferencedSeriesObservation) getSeriesValueCriteriaFor(request, series, null, ExtendedIndeterminateTime.LATEST, session)
                 .uniqueResult();
     }
-    
+
     @Override
     public ObservationTimeExtrema getTimeExtremaForSeries(Collection<Series> series, Criterion temporalFilterCriterion,
             Session session) throws OwsExceptionReport {
@@ -214,7 +214,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
                 HibernateHelper.getSqlString(c));
         return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
     }
-    
+
     private ObservationTimeExtrema parseMinMaxPhenomenonTime(Object[] result) {
         ObservationTimeExtrema ote = new ObservationTimeExtrema();
         if (result != null) {
@@ -315,9 +315,9 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
     }
-    
+
     private Criteria getSeriesValueCriteriaFor(Collection<Series> series,
-            Criterion temporalFilterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session)
+            Criterion temporalFilterCriterion, IndeterminateValue sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session);
 
@@ -329,9 +329,9 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
     }
-    
+
     private Criteria getSeriesValueCriteriaForSeriesIds(Collection<Long> series,
-            Criterion temporalFilterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session)
+            Criterion temporalFilterCriterion, IndeterminateValue sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session).createAlias(SeriesObservation.SERIES, "s");
 
@@ -343,5 +343,5 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
     }
-    
+
 }

@@ -54,6 +54,7 @@ import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.coding.json.JSONConstants;
@@ -137,7 +138,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         return oc;
     }
 
-    protected SosProcedureDescription<?> parseProcedure(JsonNode node) {
+    protected AbstractFeature parseProcedure(JsonNode node) {
         return new SensorML().setIdentifier(node.path(JSONConstants.PROCEDURE).textValue());
     }
 

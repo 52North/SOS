@@ -33,9 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.n52.iceland.util.Constants;
 import org.n52.shetland.ogc.filter.SpatialFilter;
-import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -43,15 +41,24 @@ import com.google.common.collect.Sets;
 
 public class FeatureQueryHandlerQueryObject {
 
+    private Object connection;
+
     private Locale i18n;
 
     private List<SpatialFilter> spatialFilters = Lists.newArrayList();
 
-//    private Set<String> featureIdentifiers = Sets.newHashSet();
-
     private Set<String> features = Sets.newHashSet();
 
     private String version;
+
+    public Object getConnection() {
+        return connection;
+    }
+
+    public FeatureQueryHandlerQueryObject setConnection(Object connection) {
+        this.connection = connection;
+                return this;
+    }
 
     /**
      * @return the features
@@ -149,9 +156,12 @@ public class FeatureQueryHandlerQueryObject {
 
     public FeatureQueryHandlerQueryObject setI18N(Locale i18n) {
         this.i18n = i18n;
+        return this;
+    }
+
     public FeatureQueryHandlerQueryObject addFeatureIdentifier(String identifier) {
         if (!Strings.isNullOrEmpty(identifier)) {
-            featureIdentifiers.add(identifier);
+            features.add(identifier);
         }
         return this;
     }

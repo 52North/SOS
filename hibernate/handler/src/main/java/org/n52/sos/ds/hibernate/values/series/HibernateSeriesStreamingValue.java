@@ -33,17 +33,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GmlHelper;
 
 /**
@@ -56,7 +56,6 @@ import org.n52.sos.util.GmlHelper;
 public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStreamingValue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
-    private static final long serialVersionUID = 201732114914686926L;
     protected final AbstractSeriesValueDAO seriesValueDAO;
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
     protected long series;
@@ -86,7 +85,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         try {
             s = sessionHolder.getSession();
             ObservationTimeExtrema timeExtrema =
-                    seriesValueTimeDAO.getTimeExtremaForSeries(request, series, temporalFilterCriterion, s);
+                    seriesValueTimeDAO.getTimeExtremaForSeries((GetObservationRequest)request, series, temporalFilterCriterion, s);
             if (timeExtrema.isSetPhenomenonTimes()) {
                 setPhenomenonTime(GmlHelper.createTime(timeExtrema.getMinPhenomenonTime(), timeExtrema.getMaxPhenomenonTime()));
             }
@@ -108,21 +107,21 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         Session s = null;
         try {
            s = sessionHolder.getSession();
-            setUnit(seriesValueDAO.getUnit(request, series, s));
+            setUnit(seriesValueDAO.getUnit((GetObservationRequest)request, series, s));
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);
         } finally {
             sessionHolder.returnSession(s);
         }
     }
-    
+
     protected boolean checkValue(AbstractValuedLegacyObservation value) {
         if (isDuplicated()) {
             return value.getOfferings() != null && value.getOfferings().size() == 1;
         }
         return true;
      }
-    
+
     protected boolean isDuplicated() {
         return duplicated;
     }

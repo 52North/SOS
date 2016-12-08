@@ -31,17 +31,21 @@ package org.n52.sos.ds.dao;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.series.db.beans.DatasetEntity;
-import org.n52.sos.gda.GetDataAvailabilityRequest;
-import org.n52.sos.ogc.om.NamedValue;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 
-import dao.DataAvailability;
-
+/**
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 5.0.0
+ *
+ */
 public interface GetDataAvailabilityDao {
 
-    List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request);
+    List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request) throws OwsExceptionReport;
 
-    Map<String, NamedValue> getMetadata(DataAvailability dataAvailability);
+    Map<String, NamedValue> getMetadata(DataAvailability dataAvailability) throws OwsExceptionReport;
 
 }

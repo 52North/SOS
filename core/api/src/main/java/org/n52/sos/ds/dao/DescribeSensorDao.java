@@ -30,13 +30,18 @@ package org.n52.sos.ds.dao;
 
 import java.util.List;
 
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 
+
+/**
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 5.0.0
+ *
+ */
 public interface DescribeSensorDao {
 
-    public List<SosProcedureDescription> querySensorDescriptions(DescribeSensorRequest request) throws OwsExceptionReport;
+    public List<SosProcedureDescription<?>> querySensorDescriptions(DescribeSensorRequest request) throws OwsExceptionReport;
 
 }

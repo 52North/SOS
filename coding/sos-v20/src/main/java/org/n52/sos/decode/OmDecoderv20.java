@@ -73,6 +73,7 @@ import org.n52.shetland.ogc.om.values.NilTemplateValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.SweDataArrayValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.swe.SweDataArray;
@@ -366,8 +367,8 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
         return featureOfInterest;
     }
 
-    private SosProcedureDescription<?> createProcedure(String procedureIdentifier) {
-        return new SosProcedureDescriptionUnknownType(procedureIdentifier);
+    private AbstractFeature createProcedure(String procedureIdentifier) {
+        return new PhysicalComponent().setIdentifier(procedureIdentifier);
     }
 
 }

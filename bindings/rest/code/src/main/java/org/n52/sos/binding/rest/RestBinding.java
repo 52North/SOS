@@ -329,7 +329,11 @@ public class RestBinding extends Binding implements Constructable {
             throw new NoApplicableCodeException().withMessage(exceptionText);
         }
 
-        response = encoder.encode(restResponse);
+        try {
+            response = encoder.encode(restResponse);
+        } catch (EncodingException ee) {
+            throw new NoApplicableCodeException().causedBy(ee);
+        }
 
         if (response == null) {
             final String exceptionText = String.format("Encoding of response \"%s\" failed with encoder \"%s\" but no exception is thrown.",
@@ -443,7 +447,12 @@ public class RestBinding extends Binding implements Constructable {
         LOGGER.debug("Start handling of REST request. URI:{}",
                      request.getRequestURI());
         // Decode the request
-        final RestRequest restRequest = decodeHttpRequest(request);
+        final RestRequest restRequest;
+        try {
+            restRequest = decodeHttpRequest(request);
+        } catch (DecodingException de) {
+            throw new NoApplicableCodeException().causedBy(de);
+        }
         LOGGER.debug("Rest request decoded to {}",
                      restRequest != null ? restRequest.getClass().getName() : null);
         // Handle the request

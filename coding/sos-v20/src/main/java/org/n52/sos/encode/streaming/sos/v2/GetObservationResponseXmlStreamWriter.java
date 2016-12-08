@@ -38,6 +38,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.Sos2StreamingConstants;
 import org.n52.shetland.w3c.SchemaLocation;
@@ -47,7 +48,6 @@ import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.coding.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
-import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -140,7 +140,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         namespace(Sos2StreamingConstants.NS_SOS_PREFIX, Sos2StreamingConstants.NS_SOS_20);
         // get observation encoder
         ObservationEncoder<XmlObject, OmObservation> encoder = findObservationEncoder(response.getResponseFormat());
-        encodingValues.getAdditionalValues().put(SosHelperValues.DOCUMENT, null);
+        encodingValues.getAdditionalValues().with(SosHelperValues.DOCUMENT, null);
         encodingValues.setEncodingNamespace(response.getResponseFormat());
         // write schemaLocation
         schemaLocation(getSchemaLocation(encodingValues, encoder));
@@ -153,46 +153,32 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
             response.setMergeObservations(encoder.shouldObservationsWithSameXBeMerged());
         }
         for (OmObservation o : response.getObservationCollection()) {
-            if (o.getValue() instanceof StreamingObservation) {
-                StreamingObservation streamingObservation = (StreamingObservation) o.getValue();
-                if (streamingObservation.hasNextValue()) {
-                    if (response.isSetMergeObservation()) {
-                        for (OmObservation obs : streamingObservation.mergeObservation()) {
-                            writeObservationData(obs, encoder, encodingValues);
-                            writeNewLine();
-                        }
-                    } else {
-                        do {
-                            writeObservationData(streamingObservation.nextSingleObservation(), encoder, encodingValues);
-                            writeNewLine();
-                        } while (streamingObservation.hasNextValue());
-                    }
-                } else if (streamingObservation.getValue() != null) {
-                    writeObservationData(streamingObservation.getValue().getValue(), encoder, encodingValues);
-                    writeNewLine();
-                }
-            } else if (o.getValue() instanceof StreamingValue) {
+           if (o.getValue() instanceof StreamingValue) {
                 StreamingValue<?> streamingValue = (StreamingValue<?>) o.getValue();
-                if (streamingValue.hasNextValue()) {
-                    if (response.isSetMergeObservation()) {
-                        if (encoder.supportsResultStreamingForMergedValues()) {
-                            writeObservationData(o, encoder, encodingValues);
-                            writeNewLine();
-                        } else {
-                            for (OmObservation obs : streamingValue.mergeObservation()) {
-                                writeObservationData(obs, encoder, encodingValues);
+                try {
+                    if (streamingValue.hasNextValue()) {
+                        if (response.isSetMergeObservation()) {
+                            if (encoder.supportsResultStreamingForMergedValues()) {
+                                writeObservationData(o, encoder, encodingValues);
                                 writeNewLine();
+                            } else {
+                                for (OmObservation obs : streamingValue.mergeObservation()) {
+                                    writeObservationData(obs, encoder, encodingValues);
+                                    writeNewLine();
+                                }
                             }
+                        } else {
+                            do {
+                                writeObservationData(streamingValue.nextSingleObservation(), encoder, encodingValues);
+                                writeNewLine();
+                            } while (streamingValue.hasNextValue());
                         }
-                    } else {
-                        do {
-                            writeObservationData(streamingValue.nextSingleObservation(), encoder, encodingValues);
-                            writeNewLine();
-                        } while (streamingValue.hasNextValue());
+                    } else if (streamingValue.getValue() != null) {
+                        writeObservationData(streamingValue.getValue().getValue(), encoder, encodingValues);
+                        writeNewLine();
                     }
-                } else if (streamingValue.getValue() != null) {
-                    writeObservationData(streamingValue.getValue().getValue(), encoder, encodingValues);
-                    writeNewLine();
+                } catch (OwsExceptionReport owse) {
+                    throw new EncodingException(owse);
                 }
             } else {
                 writeObservationData(o, encoder, encodingValues);

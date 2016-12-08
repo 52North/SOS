@@ -34,16 +34,16 @@ import java.util.Iterator;
 import org.hibernate.HibernateException;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Hibernate series streaming value implementation for chunk results
@@ -54,16 +54,10 @@ import org.n52.sos.request.GetObservationRequest;
  */
 public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreamingValue {
 
-    private static final long serialVersionUID = -1990901204421577265L;
-
     private Iterator<AbstractValuedLegacyObservation<?>> seriesValuesResult;
-
     private int chunkSize;
-
     private int currentRow;
-
     private boolean noChunk = false;
-
     private int currentResultSize = 0;
 
     /**
@@ -97,7 +91,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         if (!next) {
             sessionHolder.returnSession(session);
         }
-        
+
 
         return next;
     }
@@ -151,7 +145,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
 
     /**
      * Get the next results from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -164,13 +158,13 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             Collection<AbstractValuedLegacyObservation<?>> seriesValuesResult = null;
             if (temporalFilterCriterion != null) {
                 seriesValuesResult =
-                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, temporalFilterCriterion,
+                        seriesValueDAO.getStreamingSeriesValuesFor((GetObservationRequest)request, series, temporalFilterCriterion,
                                 chunkSize, currentRow, session);
             }
             // query without temporal or indeterminate filters
             else {
                 seriesValuesResult =
-                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, session);
+                        seriesValueDAO.getStreamingSeriesValuesFor((GetObservationRequest)request, series, chunkSize, currentRow, session);
             }
             currentRow += chunkSize;
             checkMaxNumberOfReturnedValues(seriesValuesResult.size());
@@ -185,7 +179,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     /**
      * Check the queried {@link AbstractValuedLegacyObservation}s for null and set them as
      * iterator to local variable.
-     * 
+     *
      * @param seriesValuesResult
      *            Queried {@link AbstractValuedLegacyObservation}s
      */

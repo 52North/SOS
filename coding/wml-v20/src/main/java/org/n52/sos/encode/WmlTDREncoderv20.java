@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -157,6 +158,16 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
             return SUPPORTED_RESPONSE_FORMATS.get(service).get(version);
         }
         return Collections.emptySet();
+    }
+
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
+        return Collections.singletonMap(WaterMLConstants.NS_WML_20,
+                (Set<String>) getSupportedTypes()
+                    .stream()
+                    .filter(sp -> sp instanceof ObservationType)
+                    .map(sp -> ((ObservationType)sp).getValue())
+                    .collect(Collectors.toSet()));
     }
 
     @Override

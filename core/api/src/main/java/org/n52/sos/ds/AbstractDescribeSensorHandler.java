@@ -36,12 +36,11 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.OwsNoValues;
-import org.n52.shetland.ogc.ows.OwsOperation;
 import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -69,25 +68,6 @@ public abstract class AbstractDescribeSensorHandler extends AbstractOperationHan
     public void setDescriptionFormatRepository(ProcedureDescriptionFormatRepository descriptionFormatRepository) {
         this.descriptionFormatRepository = descriptionFormatRepository;
     }
-    
-    @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        addProcedureParameter(opsMeta);
-        opsMeta.addAnyParameterValue(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat);
-
-//        Set<String> pdfs = getCache().getRequestableProcedureDescriptionFormat();
-//        if (version.equals(Sos1Constants.SERVICEVERSION)) {
-//            pdfs.addAll(ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos1Constants.SERVICEVERSION));
-//            opsMeta.addPossibleValuesParameter(
-//                    Sos1Constants.DescribeSensorParams.outputFormat, pdfs);
-//        } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
-//            pdfs.addAll( ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
-//            opsMeta.addPossibleValuesParameter(
-//                    Sos2Constants.DescribeSensorParams.procedureDescriptionFormat, pdfs);
-//        }
-    }
-
 
     /**
      * Get the procedure description for a procedure

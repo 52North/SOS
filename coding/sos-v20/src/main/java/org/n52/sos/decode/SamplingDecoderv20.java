@@ -139,7 +139,7 @@ public class SamplingDecoderv20 extends AbstractGmlDecoderv321<XmlObject, Abstra
         parseAbstractFeatureType(spatialSamplingFeature, sosFeat);
         sosFeat.setFeatureType(getFeatureType(spatialSamplingFeature.getType()));
         sosFeat.setSampledFeatures(getSampledFeatures(spatialSamplingFeature.getSampledFeatureArray()));
-        sosFeat.setXmlDescription(getXmlDescription(spatialSamplingFeature));
+        sosFeat.setXml(getXmlDescription(spatialSamplingFeature));
         sosFeat.setGeometry(getGeometry(spatialSamplingFeature.getShape()));
         checkTypeAndGeometry(sosFeat);
         sosFeat.setGmlId(spatialSamplingFeature.getId());

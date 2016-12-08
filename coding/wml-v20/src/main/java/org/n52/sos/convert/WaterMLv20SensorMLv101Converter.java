@@ -31,9 +31,6 @@ package org.n52.sos.convert;
 import java.util.Collections;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -44,9 +41,10 @@ import org.n52.shetland.ogc.sensorML.ProcessModel;
 import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.System;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.shetland.ogc.wml.WaterMLConstants;
+import org.n52.sos.ogc.wml.ObservationProcess;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -80,14 +78,14 @@ public class WaterMLv20SensorMLv101Converter extends AbstractWaterMLv20SensorMLC
     }
 
     @Override
-    public AbstractFeature convert(final AbstractFeature objectToConvert) throws ConverterException {
-        if (objectToConvert.getDescriptionFormat().equals(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)
+    public AbstractFeature convert(AbstractFeature objectToConvert) throws ConverterException {
+        if (objectToConvert.getDefaultElementEncoding().equals(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)
                 && objectToConvert instanceof ObservationProcess) {
-            return convertWML2ObservationProcessToSensorML101((ObservationProcess) objectToConvert);
-        } else if ((objectToConvert.getDescriptionFormat().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL)
-                || objectToConvert.getDescriptionFormat().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
-                && objectToConvert instanceof AbstractSensorML) {
-            return convertSensorML101ToWML2ObservationProcess((AbstractSensorML) objectToConvert);
+            return convertWML2ObservationProcessToSensorML101((ObservationProcess)objectToConvert);
+        } else if ((objectToConvert.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL) ||
+                   objectToConvert.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+                   && objectToConvert instanceof AbstractSensorML) {
+            return convertSensorML101ToWML2ObservationProcess((AbstractSensorML)objectToConvert);
         }
         return null;
     }
@@ -98,7 +96,7 @@ public class WaterMLv20SensorMLv101Converter extends AbstractWaterMLv20SensorMLC
         if (abstractSensorML instanceof SensorML) {
             final SensorML sensorML = (SensorML) abstractSensorML;
             if (sensorML.isWrapper()) {
-                for (final AbstractProcess member : sensorML.getMembers()) {
+                for (AbstractProcess member : sensorML.getMembers()) {
                     observationProcess = new ObservationProcess(member.getIdentifierCodeWithAuthority());
                     convertSensorMLToObservationProcess(observationProcess, member);
                     if (member instanceof System) {
@@ -117,8 +115,9 @@ public class WaterMLv20SensorMLv101Converter extends AbstractWaterMLv20SensorMLC
     }
 
     private AbstractSensorML convertWML2ObservationProcessToSensorML101(
-            final ObservationProcess observationProcess) {
+            final ObservationProcess objectToConvert) {
         AbstractProcess process = null;
+        ObservationProcess observationProcess = (ObservationProcess)objectToConvert;
         if (observationProcess.isSetProcessType()) {
             if (checkProcessType(observationProcess.getProcessType(), WaterMLConstants.PROCESS_TYPE_SENSOR)) {
                 process = new System();
@@ -129,7 +128,8 @@ public class WaterMLv20SensorMLv101Converter extends AbstractWaterMLv20SensorMLC
         } else {
             process = new ProcessModel();
         }
-        process.setIdentifier(observationProcess.getIdentifierCodeWithAuthority());
+        convertObservationProcessToAbstractProcess(observationProcess, process);
+        process.setIdentifier(objectToConvert.getIdentifierCodeWithAuthority());
         return process;
     }
 }

@@ -11,7 +11,7 @@
 
     <bean id="getObservationHandler"
           class="org.n52.sos.ds.GetObservationHandler"/>
-          
+
     <bean id="getDataAvailabilityHandler"
           class="org.n52.sos.ds.GetDataAvailabilityHandler"/>
 

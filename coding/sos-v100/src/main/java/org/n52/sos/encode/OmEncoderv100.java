@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.opengis.om.x10.CategoryObservationDocument;
 import net.opengis.om.x10.CategoryObservationType;
@@ -63,7 +64,6 @@ import org.apache.xmlbeans.XmlString;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -84,6 +84,7 @@ import org.n52.shetland.ogc.om.values.CountValue;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -240,6 +241,16 @@ public class OmEncoderv100 extends AbstractXmlEncoder<XmlObject, Object> impleme
         return encodedObject;
     }
 
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
+        return Collections.singletonMap(OmConstants.CONTENT_TYPE_OM.toString(),
+                (Set<String>) getSupportedTypes()
+                    .stream()
+                    .filter(sp -> sp instanceof org.n52.shetland.ogc.om.ObservationType)
+                    .map(sp -> ((org.n52.shetland.ogc.om.ObservationType)sp).getValue())
+                    .collect(Collectors.toSet()));
+    }
+
     private XmlObject createObservation(OmObservation sosObservation, EncodingContext additionalValues)
             throws EncodingException {
         String observationType = checkObservationType(sosObservation);
@@ -289,9 +300,13 @@ public class OmEncoderv100 extends AbstractXmlEncoder<XmlObject, Object> impleme
                         || (!Strings.isNullOrEmpty(resultModel) && observationType.equals(resultModel))) {
                     if (sosObservation.getValue() instanceof StreamingValue) {
                         StreamingValue streamingValue = (StreamingValue) sosObservation.getValue();
-                        while (streamingValue.hasNextValue()) {
-                            xbObservationCollection.addNewMember().set(
-                                    createObservation(streamingValue.nextSingleObservation(), null));
+                        try {
+                            while (streamingValue.hasNextValue()) {
+                                xbObservationCollection.addNewMember().set(
+                                        createObservation(streamingValue.nextSingleObservation(), null));
+                            }
+                        } catch (OwsExceptionReport owse) {
+                            throw new EncodingException(owse);
                         }
                     } else {
                         xbObservationCollection.addNewMember().set(createObservation(sosObservation, null));

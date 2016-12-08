@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -52,6 +53,7 @@ import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.om.AbstractObservationValue;
 import org.n52.shetland.ogc.om.MultiObservationValues;
 import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.ObservationType;
 import org.n52.shetland.ogc.om.ObservationValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -171,6 +173,16 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         }
         return new HashSet<>(0);
     }
+
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
+        return Collections.singletonMap(OmConstants.NS_OM_2,
+                (Set<String>) getSupportedTypes()
+                    .stream()
+                    .filter(sp -> sp instanceof ObservationType)
+                    .map(sp -> ((ObservationType)sp).getValue())
+                    .collect(Collectors.toSet()));
+}
 
     @Override
     public boolean shouldObservationsWithSameXBeMerged() {

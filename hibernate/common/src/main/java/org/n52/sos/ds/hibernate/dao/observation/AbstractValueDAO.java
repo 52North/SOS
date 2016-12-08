@@ -41,6 +41,7 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.TimeCreator;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
@@ -49,7 +50,6 @@ import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
 import org.n52.sos.util.GeometryHandler;
 
 /**
@@ -85,7 +85,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
                             request.getSpatialFilter().getGeometry())));
         }
     }
-    
+
     protected void addTemporalFilterCriterion(Criteria c, Criterion temporalFilterCriterion, String logArgs) {
         if (temporalFilterCriterion != null) {
             logArgs += ", filterCriterion";
@@ -99,14 +99,14 @@ public abstract class AbstractValueDAO extends TimeCreator {
      * for latest, min for first). Note: use this method *after* adding all
      * other applicable restrictions so that they will apply to the min/max
      * observation time determination.
-     * 
+     *
      * @param c
      *            Criteria to add the restriction to
      * @param sosIndeterminateTime
      *            Indeterminate time restriction to add
      * @return Modified criteria
      */
-    protected Criteria addIndeterminateTimeRestriction(Criteria c, IndeterminateValue sosIndeterminateTime) {
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, IndeterminateValue sosIndeterminateTime, String logArgs) {
         // get extrema indeterminate time
         c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
         Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
@@ -121,11 +121,12 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
         // not really necessary to return the Criteria object, but useful if we
         // want to chain
+        logArgs += ", filterCriterion";
         return c;
     }
 
     /**
-     * Get projection for {@link ExtendedIndeterminateTime} value
+     * Get projection for {@link IndeterminateValue} value
      *
      * @param indetTime
      *            Value to get projection for
@@ -142,7 +143,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
     /**
      * Get the AbstractValue property to filter on for an
-     * {@link ExtendedIndeterminateTime}
+     * {@link IndeterminateValue}
      *
      * @param indetTime
      *            Value to get property for

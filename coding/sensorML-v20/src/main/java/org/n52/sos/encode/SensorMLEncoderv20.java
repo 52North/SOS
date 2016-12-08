@@ -383,13 +383,8 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
     }
 
-<<<<<<< HEAD
     private XmlObject encodeDescription(AbstractSensorML description,
-                                        Map<HelperValues, String> additionalValues) throws EncodingException {
-=======
-    private XmlObject encodeDescription(SosProcedureDescription<?> description,
                                         EncodingContext additionalValues) throws EncodingException {
->>>>>>> feature/arctic-sea
         XmlObject absProc = null;
         if (description instanceof AbstractPhysicalProcess) {
             absProc = encodeAbstractPhysicalProcess((AbstractPhysicalProcess) description, additionalValues);
@@ -621,7 +616,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     dot.addNewValidTime().addNewTimePeriod().set(xbtime);
                 }
             }
-            
+
             // } else {
             // TODO remove or
             // remove existing validTime element

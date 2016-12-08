@@ -94,8 +94,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
 
     private Map<String, AbstractFeature> getAbstractFeaturesMap(Collection<String> featureOfInterestIDs) throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject object = new FeatureQueryHandlerQueryObject();
-        object.setFeatureIdentifiers(featureOfInterestIDs);
-        object.setConnection(session);
+        object.setFeatures(featureOfInterestIDs);
         if (isSetLocale()) {
             object.setI18N(getLocale());
         }

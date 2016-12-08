@@ -30,13 +30,13 @@ package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.List;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.io.request.IoParameters;
 import org.n52.proxy.db.dao.ProxyOfferingDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

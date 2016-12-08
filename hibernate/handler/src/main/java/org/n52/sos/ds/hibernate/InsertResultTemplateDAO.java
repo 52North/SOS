@@ -34,11 +34,18 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -47,13 +54,6 @@ import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.response.InsertResultTemplateResponse;
 
 /**
  * Implementation of the abstract class AbstractInsertResultTemplateDAO
@@ -80,7 +80,7 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler
         InsertResultTemplateResponse response = new InsertResultTemplateResponse();
         response.setService(request.getService());
         response.setVersion(request.getVersion());
-        response.setAcceptedTemplate(request.getIdentifier());
+        response.setAcceptedTemplate(request.getIdentifier().getValue());
         Session session = null;
         Transaction transaction = null;
         try {
@@ -128,7 +128,7 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty)
             throws OwsExceptionReport {
         // TODO modify or remove if complex field elements are supported
-        final SweDataRecord record = setRecordFrom(resultStructure.getResultStructure());
+        final SweDataRecord record = setRecordFrom(resultStructure.get().get());
 
         for (final SweField swefield : record.getFields()) {
 

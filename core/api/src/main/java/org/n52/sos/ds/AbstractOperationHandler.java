@@ -201,7 +201,7 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
             return new OwsDomain(name, new OwsAllowedValues(procedures.stream().map(OwsValue::new)));
         } else {
             return new OwsDomain(name, OwsAnyValue.instance());
-//        }
+        }
     }
 
     protected OwsDomain getEnvelopeParameter(Enum<?> name, Collection<String> featureIDs) {

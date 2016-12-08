@@ -35,6 +35,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -51,6 +52,12 @@ public class SeriesDAO extends AbstractSeriesDAO {
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
         return getSeriesCriteria(request, features, session).list();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Series> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
+        return getSeriesCriteria(request, session).list();
     }
 
     @Override

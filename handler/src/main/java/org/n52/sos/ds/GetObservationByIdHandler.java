@@ -34,51 +34,51 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.series.db.HibernateSessionStore;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.sos.ds.dao.GetObservationByIdDao;
-import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.response.GetObservationByIdResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
 
 public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationByIdHandler.class);
-    
+
     private HibernateSessionStore sessionStore;
 
     private GetObservationByIdDao getObservationByIdDao;
-    
+
     public GetObservationByIdHandler() {
         super(SosConstants.SOS);
     }
-    
+
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
         this.sessionStore = sessionStore;
     }
-    
+
     @Inject
     public void setGetObservationByIdDao(GetObservationByIdDao getObservationByIdDao) {
         this.getObservationByIdDao = getObservationByIdDao;
     }
-    
+
     @Override
     public GetObservationByIdResponse getObservationById(GetObservationByIdRequest request) throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionStore.getSession();
-            GetObservationByIdResponse response = request.getResponse();
+            GetObservationByIdResponse response = new GetObservationByIdResponse();
+            response.setService(request.getService());
+            response.setVersion(request.getVersion());
+            response.setResponseFormat(request.getResponseFormat());
+            response.setResultModel(request.getResultModel());
             List<OmObservation> omObservations = Lists.newArrayList();
             if (getObservationByIdDao != null) {
                 omObservations.addAll(getObservationByIdDao.queryObservationsById(request));

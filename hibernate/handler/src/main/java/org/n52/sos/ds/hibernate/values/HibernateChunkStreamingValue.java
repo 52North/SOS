@@ -32,16 +32,16 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Hibernate streaming value implementation for chunk results
@@ -52,14 +52,9 @@ import org.n52.sos.request.GetObservationRequest;
  */
 public class HibernateChunkStreamingValue extends HibernateStreamingValue {
 
-    private static final long serialVersionUID = -4898252375907510691L;
-
     private Iterator<ValuedObservation<?>> valuesResult;
-
     private int chunkSize;
-
     private int currentRow;
-
     private boolean noChunk = false;
 
     /**
@@ -158,13 +153,13 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
             final Collection<ValuedObservation<?>> valuesResult;
             if (temporalFilterCriterion != null) {
                 valuesResult =
-                        valueDAO.getStreamingValuesFor(request, procedure, observableProperty, featureOfInterest,
+                        valueDAO.getStreamingValuesFor((GetObservationRequest)request, procedure, observableProperty, featureOfInterest,
                                 temporalFilterCriterion, chunkSize, currentRow, session);
             }
             // query without temporal or indeterminate filters
             else {
                 valuesResult =
-                        valueDAO.getStreamingValuesFor(request, procedure, observableProperty, featureOfInterest,
+                        valueDAO.getStreamingValuesFor((GetObservationRequest)request, procedure, observableProperty, featureOfInterest,
                                 chunkSize, currentRow, session);
             }
             currentRow += chunkSize;

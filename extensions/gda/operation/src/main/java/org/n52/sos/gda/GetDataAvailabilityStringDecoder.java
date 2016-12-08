@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
 import org.n52.sos.coding.decode.AbstractStringRequestDecoder;
 import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.decode.DecoderKey;

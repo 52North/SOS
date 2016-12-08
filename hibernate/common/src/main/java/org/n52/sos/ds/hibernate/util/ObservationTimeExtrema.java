@@ -29,9 +29,9 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 
 /**
  * Holder for observation time extrema. Contains phenomenon, result and valid

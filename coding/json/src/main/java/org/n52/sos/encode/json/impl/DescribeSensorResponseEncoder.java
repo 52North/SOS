@@ -33,6 +33,7 @@ import java.util.List;
 import org.apache.xmlbeans.XmlOptions;
 
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
@@ -66,9 +67,9 @@ public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<De
 
     }
 
-    private String toString(SosProcedureDescription<?> desc, String format) throws EncodingException {
-        if (desc instanceof SosProcedureDescriptionUnknownType && desc.isSetSensorDescriptionXmlString()) {
-           return desc.getSensorDescriptionXmlString();
+    private String toString(AbstractFeature desc, String format) throws EncodingException {
+        if (desc instanceof SosProcedureDescriptionUnknownType && desc.isSetXml()) {
+           return desc.getXml();
         }
         XmlOptions options = XmlOptionsHelper.getInstance().getXmlOptions();
         return CodingHelper.encodeObjectToXml(format, desc).xmlText(options);

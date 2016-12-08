@@ -43,15 +43,12 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.jdbc.ReturningWork;
-
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.sos.ds.GeneralQueryDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.util.SQLHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.ds.ConnectionProvider;
 
 /**
  * class that deals with crud operations related to SOS DB.

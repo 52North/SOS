@@ -3,17 +3,40 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-    <bean id="describeSensorDAO"
-          class="org.n52.sos.ds.hibernate.DescribeSensorDAO"/>
+    <!-- Querying database used by proxy DAOs -->
 
-    <bean id="getObservationDAO"
-          class="org.n52.sos.ds.hibernate.GetObservationDAO"/>
+    <bean id="describeSensorDao"
+          class="org.n52.sos.ds.hibernate.dao.DescribeSensorDao"/>
 
-    <bean id="getFeatureOfInterestDAO"
-          class="org.n52.sos.ds.hibernate.GetFeatureOfInterestDAO"/>
+    <bean id="getObservationDao"
+          class="org.n52.sos.ds.hibernate.dao.GetObservationDao"/>
 
-    <bean id="getObservationByIdDAO"
-          class="org.n52.sos.ds.hibernate.GetObservationByIdDAO"/>
+    <bean id="getObservationByIdDao"
+          class="org.n52.sos.ds.hibernate.dao.GetObservationByIdDao"/>
+
+    <bean id="getDataAvailabilityDao"
+          class="org.n52.sos.ds.hibernate.dao.GetDataAvailabilityDao"/>
+          
+    <import resource="series-database-config.xml" />
+     
+    <bean id="harvestJobFactory"
+          class="org.n52.sos.ds.hibernate.cache.proxy.HibernateDataSourceHarvestJobFactory"/>
+          
+    <bean id="dataSourceScheduler" class="org.n52.sos.ds.hibernate.cache.proxy.HibernateDataSourceHarvesterScheduler" destroy-method="shutdown">
+        <property name="scheduler">
+            <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+                <property name="jobFactory">
+                    <bean class="org.n52.io.task.AutowiringSpringBeanJobFactory" />
+                </property>
+            </bean>
+        </property>
+    </bean>
+          
+
+    <!-- <bean id="getFeatureOfInterestDAO"
+          class="org.n52.sos.ds.hibernate.GetFeatureOfInterestDAO"/> -->
+
+    <!-- Querying database -->
 
     <bean id="insertResultTemplateDAO"
           class="org.n52.sos.ds.hibernate.InsertResultTemplateDAO"/>

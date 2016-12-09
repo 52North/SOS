@@ -42,6 +42,9 @@
     <bean id="deleteDeletedObservationsDAO"
           class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
 
+    <bean id="deleteObservationCacheFeederDAO"
+          class="org.n52.sos.ext.deleteobservation.HibernateDeleteObservationCacheFeederDAO"/>
+
     <bean id="generalQueryDAO"
           class="org.n52.sos.ds.hibernate.admin.HibernateGeneralQueryDAO"/>
 

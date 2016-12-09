@@ -153,9 +153,9 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<XmlObject, AbstractFe
             absFeature.setGmlId(builder.toString());
 
             SFSpatialSamplingFeatureDocument xbSampFeatDoc = SFSpatialSamplingFeatureDocument.Factory.newInstance(getXmlOptions());
-            if (sampFeat.getXmlDescription() != null) {
+            if (sampFeat.isSetXml()) {
                 try {
-                    final XmlObject feature = XmlObject.Factory.parse(sampFeat.getXmlDescription(), getXmlOptions());
+                    final XmlObject feature = XmlObject.Factory.parse(sampFeat.getXml(), getXmlOptions());
                     XmlHelper.updateGmlIDs(feature.getDomNode().getFirstChild(), absFeature.getGmlId(), null);
                     if (XmlHelper.getNamespace(feature).equals(SfConstants.NS_SAMS) &&
                              feature instanceof SFSpatialSamplingFeatureType) {

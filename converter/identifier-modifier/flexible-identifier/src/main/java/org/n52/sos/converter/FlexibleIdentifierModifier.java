@@ -503,8 +503,8 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
                     .getIdentifier()));
         }
         abstractFeature.setHumanReadableIdentifierAsIdentifier();
-        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXmlDescription()) {
-            ((SamplingFeature) abstractFeature).setXmlDescription(null);
+        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXml()) {
+            ((SamplingFeature) abstractFeature).setXml(null);
         }
 
     }

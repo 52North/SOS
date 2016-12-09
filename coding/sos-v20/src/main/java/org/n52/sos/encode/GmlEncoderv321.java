@@ -273,11 +273,11 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
                     if (encodedXmlObject != null) {
                         return encodedXmlObject;
                     } else {
-                        if (samplingFeature.getXmlDescription() != null) {
+                        if (samplingFeature.getXml() != null) {
                             try {
                                 // TODO how set gml:id in already existing
                                 // XmlDescription? <-- XmlCursor
-                                return XmlObject.Factory.parse(samplingFeature.getXmlDescription());
+                                return XmlObject.Factory.parse(samplingFeature.getXml());
                             } catch (final XmlException xmle) {
                                 throw new EncodingException("Error while encoding featurePropertyType!", xmle);
                             }

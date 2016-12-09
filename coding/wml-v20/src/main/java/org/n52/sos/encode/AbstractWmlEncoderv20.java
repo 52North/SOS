@@ -101,7 +101,6 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWmlEncoderv20.class);
 
-    @SuppressWarnings("unchecked")
     protected static final Set<EncoderKey> DEFAULT_ENCODER_KEYS = CollectionHelper
             .union(CodingHelper.encoderKeysForElements(WaterMLConstants.NS_WML_20, AbstractFeature.class), CodingHelper
                     .encoderKeysForElements(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, ObservationProcess.class));
@@ -254,9 +253,9 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
             MonitoringPointDocument monitoringPointDoc =
                     MonitoringPointDocument.Factory.newInstance(getXmlOptions());
-            if (sampFeat.getXmlDescription() != null) {
+            if (sampFeat.isSetXml()) {
                 try {
-                    XmlObject feature = XmlObject.Factory.parse(sampFeat.getXmlDescription());
+                    XmlObject feature = XmlObject.Factory.parse(sampFeat.getXml());
                     if (XmlHelper.getNamespace(feature).equals(WaterMLConstants.NS_WML_20)) {
                         if (feature instanceof MonitoringPointDocument) {
                             monitoringPointDoc = (MonitoringPointDocument) feature;

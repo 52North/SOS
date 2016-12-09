@@ -284,7 +284,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             if (!samplingFeature.isSetIdentifier()) {
                 featureIdentifier =
                         SosConstants.GENERATED_IDENTIFIER_PREFIX
-                                + JavaHelper.generateID(samplingFeature.getXmlDescription());
+                                + JavaHelper.generateID(samplingFeature.getXml());
                 samplingFeature.setIdentifier(new CodeWithAuthority(featureIdentifier));
             }
             return insertFeatureOfInterest(samplingFeature, session).getIdentifier();
@@ -387,7 +387,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         sampFeat.setFeatureType(feature.getFeatureOfInterestType().getFeatureOfInterestType());
         sampFeat.setUrl(feature.getUrl());
         if (feature.isSetDescriptionXml()) {
-            sampFeat.setXmlDescription(feature.getDescriptionXml());
+            sampFeat.setXml(feature.getDescriptionXml());
         }
         final Set<FeatureOfInterest> parentFeatures = feature.getParents();
         if (parentFeatures != null && !parentFeatures.isEmpty()) {
@@ -476,8 +476,8 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             feature = new FeatureOfInterest();
             featureOfInterestDAO.addIdentifierNameDescription(samplingFeature, feature, session);
             processGeometryPreSave(samplingFeature, feature, session);
-            if (samplingFeature.isSetXmlDescription()) {
-                feature.setDescriptionXml(samplingFeature.getXmlDescription());
+            if (samplingFeature.isSetXml()) {
+                feature.setDescriptionXml(samplingFeature.getXml());
             }
             if (samplingFeature.isSetFeatureType()) {
                 feature.setFeatureOfInterestType(new FeatureOfInterestTypeDAO().getOrInsertFeatureOfInterestType(

@@ -310,8 +310,8 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
         abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
                     .getIdentifier()));
-        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXmlDescription()) {
-            ((SamplingFeature) abstractFeature).setXmlDescription(null);
+        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXml()) {
+            ((SamplingFeature) abstractFeature).setXml(null);
         }
 
     }

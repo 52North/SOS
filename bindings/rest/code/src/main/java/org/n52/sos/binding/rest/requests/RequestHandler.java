@@ -29,6 +29,8 @@
 package org.n52.sos.binding.rest.requests;
 
 import java.io.IOException;
+import java.util.Objects;
+import java.util.Set;
 
 import net.opengis.sos.x20.CapabilitiesDocument;
 import net.opengis.sos.x20.CapabilitiesType;
@@ -48,6 +50,7 @@ import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.exception.ows.concrete.ServiceOperatorNotFoundException;
 import org.n52.iceland.service.operator.ServiceOperator;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.janmayen.Comparables;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -136,13 +139,25 @@ public abstract class RequestHandler {
 
     private ServiceOperator getServiceOperator(OwsServiceRequest req) throws OwsExceptionReport
     {
-        for (OwsServiceKey sok : req.getServiceOperatorKeys()) {
-            ServiceOperator so = ServiceOperatorRepository.getInstance().getServiceOperator(sok);
-            if (so != null) {
-                return so;
+        String service = req.getService();
+        String version = req.getVersion();
+        ServiceOperatorRepository serviceOperatorRepository = ServiceOperatorRepository.getInstance();
+        if (req instanceof GetCapabilitiesRequest) {
+            GetCapabilitiesRequest gcr = (GetCapabilitiesRequest) req;
+            if (gcr.isSetAcceptVersions()) {
+                return gcr.getAcceptVersions().stream().map(v -> new OwsServiceKey(service, v))
+                        .map(serviceOperatorRepository::getServiceOperator).filter(Objects::nonNull).findFirst()
+                        .orElseThrow(() -> new ServiceOperatorNotFoundException(req));
+            } else {
+                Set<String> supportedVersions = serviceOperatorRepository
+                        .getSupportedVersions(service);
+                String newest = supportedVersions.stream().max(Comparables.version())
+                        .orElseThrow(() -> new ServiceOperatorNotFoundException(req));
+                return serviceOperatorRepository.getServiceOperator(new OwsServiceKey(service, newest));
             }
+        } else {
+            return serviceOperatorRepository.getServiceOperator(new OwsServiceKey(service, version));
         }
-        throw new ServiceOperatorNotFoundException(req);
     }
 
     protected XmlObject executeSosRequest(OwsServiceRequest request) throws EncodingException, OwsExceptionReport {

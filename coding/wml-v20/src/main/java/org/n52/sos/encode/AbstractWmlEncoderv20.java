@@ -101,7 +101,6 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWmlEncoderv20.class);
 
-    @SuppressWarnings("unchecked")
     protected static final Set<EncoderKey> DEFAULT_ENCODER_KEYS = CollectionHelper
             .union(CodingHelper.encoderKeysForElements(WaterMLConstants.NS_WML_20, AbstractFeature.class), CodingHelper
                     .encoderKeysForElements(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, ObservationProcess.class));

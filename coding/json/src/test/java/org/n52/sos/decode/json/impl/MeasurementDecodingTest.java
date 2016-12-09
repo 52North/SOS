@@ -63,7 +63,6 @@ import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.sos.ConfiguredSettingsManager;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.decode.json.JSONDecodingException;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;

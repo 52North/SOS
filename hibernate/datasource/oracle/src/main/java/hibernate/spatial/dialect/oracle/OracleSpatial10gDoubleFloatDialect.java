@@ -74,8 +74,9 @@ public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect 
             if (columnOrderMap.containsKey(column)) {
                 buf.append(" ").append(columnOrderMap.get(column));
             }
-            if (columns.hasNext())
+            if (columns.hasNext()) {
                 buf.append(", ");
+            }
         }
         buf.append(")  INDEXTYPE IS MDSYS.SPATIAL_INDEX");
         return buf.toString();

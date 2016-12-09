@@ -18,12 +18,6 @@
     <bean id="offeringI18NDAO"
           class="org.n52.sos.ds.hibernate.dao.i18n.OfferingI18NDAO"/>
 
-    <bean id="deleteDeletedObservationsDAO"
-          class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
-
-    <bean id="generalQueryDAO"
-          class="org.n52.sos.ds.hibernate.admin.HibernateGeneralQueryDAO"/>
-
     <bean id="eReportingObservationCreator"
           class="org.n52.sos.ds.hibernate.util.observation.EReportingObservationCreator"/>
 
@@ -35,6 +29,13 @@
 
     <bean id="hibernateProcedureDescriptionGeneratorFactoryWml20"
           class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryWml20"/>
+    <!--
+
+    <bean id="deleteDeletedObservationsDAO"
+          class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
+
+    <bean id="generalQueryDAO"
+          class="org.n52.sos.ds.hibernate.admin.HibernateGeneralQueryDAO"/>
 
     <bean id="procedureFormatDAO"
           class="org.n52.sos.ds.hibernate.admin.HibernateProcedureFormatDAO"/>
@@ -53,7 +54,7 @@
 
     <bean id="insertResultTemplateDAO"
           class="org.n52.sos.ds.hibernate.InsertResultTemplateDAO"/>
-
+    -->
     <bean id="additionalObservationCreatorRepository"
           class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
 

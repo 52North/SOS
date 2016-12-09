@@ -68,8 +68,9 @@ public class GeoDBDialectSpatialIndex extends GeoDBDialect implements SpatialInd
             if (columnOrderMap.containsKey(column)) {
                 buf.append(" ").append(columnOrderMap.get(column));
             }
-            if (columns.hasNext())
+            if (columns.hasNext()) {
                 buf.append(", ");
+            }
         }
         buf.append(")");
         return buf.toString();

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.n52</groupId>
         <artifactId>parent</artifactId>
-        <version>2</version>
+        <version>4</version>
     </parent>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
@@ -1088,7 +1088,7 @@
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.code.findbugs</groupId>
-                        <artifactId>jsr305</artifactId>           
+                        <artifactId>jsr305</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1284,7 +1284,7 @@
                     <preparationGoals>clean install</preparationGoals>
                 </configuration>
             </plugin>
-            <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>license-maven-plugin</artifactId> <version>1.5</version> <executions> <execution> <id>download-licenses</id> 
+            <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>license-maven-plugin</artifactId> <version>1.5</version> <executions> <execution> <id>download-licenses</id>
             <goals> <goal>download-licenses</goal> </goals> </execution> </executions> </plugin> -->
             <plugin>
                 <groupId>pl.project13.maven</groupId>
@@ -1310,9 +1310,9 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>buildnumber-maven-plugin</artifactId> <configuration> <doCheck>false</doCheck> <doUpdate>false</doUpdate> 
-            <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat> <revisionOnScmFailure>0</revisionOnScmFailure> <getRevisionOnlyOnce>true</getRevisionOnlyOnce> 
-            <shortRevisionLength>5</shortRevisionLength> </configuration> <executions> <execution> <phase>validate</phase> <goals> <goal>create</goal> </goals> </execution> 
+            <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>buildnumber-maven-plugin</artifactId> <configuration> <doCheck>false</doCheck> <doUpdate>false</doUpdate>
+            <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat> <revisionOnScmFailure>0</revisionOnScmFailure> <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+            <shortRevisionLength>5</shortRevisionLength> </configuration> <executions> <execution> <phase>validate</phase> <goals> <goal>create</goal> </goals> </execution>
             </executions> </plugin> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1731,12 +1731,12 @@
         </profile>
         <profile>
             <id>dist-custom</id>
-            <!-- The profile is used to customize the distribution management. The 
-            official sourceforge server ist quite slow, so the deploy, release and site-deploy 
-            goals often fail with a timeout exception. So with the help of this profile 
-            you can specify your own servers for the distribution management and later 
-            copy the files to the official server. If this profile is activated, then 
-            the deploy goals will look for some enviroment variables to get the server 
+            <!-- The profile is used to customize the distribution management. The
+            official sourceforge server ist quite slow, so the deploy, release and site-deploy
+            goals often fail with a timeout exception. So with the help of this profile
+            you can specify your own servers for the distribution management and later
+            copy the files to the official server. If this profile is activated, then
+            the deploy goals will look for some enviroment variables to get the server
             urls and ids. -->
             <activation>
                 <property>

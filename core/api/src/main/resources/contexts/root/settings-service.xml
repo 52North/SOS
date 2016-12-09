@@ -104,7 +104,7 @@
         <property name="minimum" value="0" />
     </bean>
     <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
-        <property name="key" value="service.capabilitiesCacheUpdate />
+        <property name="key" value="service.capabilitiesCacheUpdate" />
         <property name="title" value="Content cache update interval" />
         <property name="description" value="The update definition for the cache update. See http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html" />
         <property name="order" value="7.0" />

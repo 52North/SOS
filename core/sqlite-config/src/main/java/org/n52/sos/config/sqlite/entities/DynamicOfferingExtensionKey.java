@@ -70,7 +70,7 @@ public class DynamicOfferingExtensionKey implements Serializable {
     /**
      * constructor
      *
-     * @param oek
+     * @param key
      *            the {@link OfferingExtensionKey} to set
      */
     public DynamicOfferingExtensionKey(OfferingExtensionKey key) {

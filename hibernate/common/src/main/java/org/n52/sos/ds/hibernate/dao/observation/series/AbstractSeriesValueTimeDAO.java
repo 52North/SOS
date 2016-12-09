@@ -54,7 +54,7 @@ import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 
 /**
- * Abstract value time data access object class for {@link SeriesValueTime}
+ * Abstract value time data access object class for {@link TemporalReferencedSeriesObservation}
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
@@ -65,9 +65,9 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesValueTimeDAO.class);
 
     /**
-     * Get the concrete {@link SeriesValueTime} class.
+     * Get the concrete {@link TemporalReferencedSeriesObservation} class.
      *
-     * @return The concrete {@link SeriesValueTime} class
+     * @return The concrete {@link TemporalReferencedSeriesObservation} class
      */
     protected abstract Class<?> getSeriesValueTimeClass();
 
@@ -116,7 +116,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     }
 
     /**
-     * Query the minimum {@link SeriesValueTime} for parameter
+     * Query the minimum {@link TemporalReferencedSeriesObservation} for parameter
      *
      * @param request
      *            {@link GetObservationRequest}
@@ -126,7 +126,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      *            Temporal filter {@link Criterion}
      * @param session
      *            Hibernate Session
-     * @return Resulting minimum {@link SeriesValueTime}
+     * @return Resulting minimum {@link TemporalReferencedSeriesObservation}
      * @throws OwsExceptionReport
      *             If an error occurs when executing the query
      */
@@ -137,7 +137,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     }
 
     /**
-     * Query the maximum {@link SeriesValueTime} for parameter
+     * Query the maximum {@link TemporalReferencedSeriesObservation} for parameter
      *
      * @param request
      *            {@link GetObservationRequest}
@@ -147,7 +147,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      *            Temporal filter {@link Criterion}
      * @param session
      *            Hibernate Session
-     * @return Resulting maximum {@link SeriesValueTime}
+     * @return Resulting maximum {@link TemporalReferencedSeriesObservation}
      * @throws OwsExceptionReport
      *             If an error occurs when executing the query
      */
@@ -158,7 +158,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     }
 
     /**
-     * Query the minimum {@link SeriesValueTime} for parameter
+     * Query the minimum {@link TemporalReferencedSeriesObservation} for parameter
      *
      * @param request
      *            {@link GetObservationRequest}
@@ -166,7 +166,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      *            Datasource series id
      * @param session
      *            Hibernate Session
-     * @return Resulting minimum {@link SeriesValueTime}
+     * @return Resulting minimum {@link TemporalReferencedSeriesObservation}
      * @throws OwsExceptionReport
      *             If an error occurs when executing the query
      */
@@ -177,7 +177,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     }
 
     /**
-     * Query the maximum {@link SeriesValueTime} for parameter
+     * Query the maximum {@link TemporalReferencedSeriesObservation} for parameter
      *
      * @param request
      *            {@link GetObservationRequest}
@@ -185,7 +185,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      *            Datasource series id
      * @param session
      *            Hibernate Session
-     * @return Resulting maximum {@link SeriesValueTime}
+     * @return Resulting maximum {@link TemporalReferencedSeriesObservation}
      * @throws OwsExceptionReport
      *             If an error occurs when executing the query
      */

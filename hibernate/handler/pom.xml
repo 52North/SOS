@@ -8,8 +8,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-handler</artifactId>
     <packaging>jar</packaging>
-    <name>52°North SOS - Hibernate DAOs</name>
-    <description>52°North Sensor Observation Service Hibernate DAOs module</description>
+    <name>52°North SOS - Hibernate Handler</name>
+    <description>52°North Sensor Observation Service Hibernate Handler module</description>
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -56,10 +56,6 @@
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
         </dependency>
          <dependency>
             <groupId>com.google.guava</groupId>

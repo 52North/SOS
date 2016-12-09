@@ -250,12 +250,6 @@
             <artifactId>cache</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>gc-dao</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- CODING -->
 
         <dependency>
@@ -360,12 +354,23 @@
             <artifactId>handler</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-handler</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gc-dao</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-dao</artifactId>
             <scope>runtime</scope>
         </dependency>
+         -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-feature</artifactId>

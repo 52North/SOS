@@ -73,7 +73,7 @@
         <config.logger.level>INFO</config.logger.level>
         <config.logger.level.test.n52>ERROR</config.logger.level.test.n52>
         <config.logger.level.test.global>ERROR</config.logger.level.test.global>
-        <config.logger.history.max>30</config.logger.history.max>
+        <config.logger.history.max>10</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
         <postgresql.version>9.4-1201-jdbc41</postgresql.version>
@@ -93,10 +93,11 @@
         <shetland.version>1-SNAPSHOT</shetland.version>
         <svalbard.version>1-SNAPSHOT</svalbard.version>
         <janmayen.version>1-SNAPSHOT</janmayen.version>
-        <n52.common.xml.version>2.2.0</n52.common.xml.version>
         <dataset.api.version>2.0.0-SNAPSHOT</dataset.api.version>
-        <org.springframework.security.version>4.0.3.RELEASE</org.springframework.security.version>
-        <org.springframework.version>4.2.3.RELEASE</org.springframework.version>
+        <n52.common.xml.version>2.2.0</n52.common.xml.version>
+        <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
+        <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
+        <aspectj.version>1.8.9</aspectj.version>
         <saxon.version>9.1.0.8</saxon.version>
         <sos.test.suite.version>1.0.0-M6</sos.test.suite.version>
     </properties>
@@ -165,6 +166,11 @@
             <dependency>
                 <groupId>org.n52.series-api</groupId>
                 <artifactId>proxy</artifactId>
+                <version>${dataset.api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.series-api</groupId>
+                <artifactId>proxy-mappings</artifactId>
                 <version>${dataset.api.version}</version>
             </dependency>
             <dependency>
@@ -284,6 +290,16 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>hibernate-handler</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hibernate-dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-session-factory</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -302,11 +318,6 @@
                 <artifactId>hibernate-h2</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-dao</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -992,6 +1003,36 @@
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjtools</artifactId>
+                <version>${aspectj.version}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>

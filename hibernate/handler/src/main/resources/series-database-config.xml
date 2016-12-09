@@ -24,23 +24,20 @@
     <bean class="org.n52.series.db.SeriesHibernateSessionHolder" destroy-method="shutdown" />
 
     <bean id="seriesDatasource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="jdbcUrl" value="${series.database.url}" />
-        <property name="user" value="${series.database.username}" />
-        <property name="password" value="${series.database.password}" />
-        <property name="driverClass" value="${series.database.driver}" />
+        <property name="jdbcUrl" value="jdbc:h2:~/cache" />
+        <property name="driverClass" value="org.h2.Driver" />
     </bean>
 
     <bean id="seriesSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="seriesDatasource" />
         <property name="hibernateProperties">
             <props>
-                <prop key="hibernate.dialect">org.hibernate.spatial.dialect.postgis.PostgisDialect</prop>
-                <prop key="hibernate.default_schema">${series.database.schema.default}</prop>
-                <prop key="hibernate.hbm2ddl.auto">${series.hibernate.hbm2ddl.auto}</prop>
+                <prop key="hibernate.dialect">org.hibernate.spatial.dialect.h2geodb.GeoDBDialect</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
                 <prop key="hibernate.format_sql">true</prop>
             </props>
         </property>
-        <property name="mappingLocations" value="#{'${series.database.mappings}'.split(',')}" />
+        <property name="mappingLocations" value="#{'/hbm'.split(',')}" />
     </bean>
 
     <tx:annotation-driven />

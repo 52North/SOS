@@ -16,12 +16,12 @@
 
     <bean id="getDataAvailabilityDao"
           class="org.n52.sos.ds.hibernate.dao.GetDataAvailabilityDao"/>
-          
+
     <import resource="series-database-config.xml" />
-     
+
     <bean id="harvestJobFactory"
           class="org.n52.sos.ds.hibernate.cache.proxy.HibernateDataSourceHarvestJobFactory"/>
-          
+
     <bean id="dataSourceScheduler" class="org.n52.sos.ds.hibernate.cache.proxy.HibernateDataSourceHarvesterScheduler" destroy-method="shutdown">
         <property name="scheduler">
             <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -31,7 +31,7 @@
             </bean>
         </property>
     </bean>
-          
+
 
     <!-- <bean id="getFeatureOfInterestDAO"
           class="org.n52.sos.ds.hibernate.GetFeatureOfInterestDAO"/> -->

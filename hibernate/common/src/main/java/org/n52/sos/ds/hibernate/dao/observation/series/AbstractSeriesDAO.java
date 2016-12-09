@@ -183,6 +183,10 @@ public abstract class AbstractSeriesDAO {
         }
     }
 
+    public List<Series> getSeries(Session session) {
+        return getDefaultSeriesCriteria(session).list();
+    }
+
     public Criteria getSeriesCriteria(GetObservationRequest request, Collection<String> features, Session session)
             throws OwsExceptionReport {
         final Criteria c =

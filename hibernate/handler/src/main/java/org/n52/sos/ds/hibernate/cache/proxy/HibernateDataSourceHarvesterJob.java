@@ -28,19 +28,25 @@
  */
 package org.n52.sos.ds.hibernate.cache.proxy;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 import javax.inject.Inject;
 
+import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.io.task.ScheduledJob;
 import org.n52.proxy.config.DataSourcesConfig;
 import org.n52.proxy.config.DataSourcesConfig.DataSourceConfig;
-import org.n52.proxy.connector.EntityBuilder;
+import org.n52.proxy.db.beans.RelatedFeatureEntity;
 import org.n52.proxy.db.da.InsertRepository;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.CountDatasetEntity;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.MeasurementDatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
@@ -48,8 +54,20 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.OfferingDAO;
+import org.n52.sos.ds.hibernate.dao.UnitDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
+import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.RelatedFeature;
+import org.n52.sos.ds.hibernate.entities.TOffering;
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -93,33 +111,43 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-//        try {
+        Session session = null;
+        try {
             LOGGER.info(context.getJobDetail().getKey() + " execution starts.");
-
+            session = sessionHolder.getSession();
             ServiceEntity service = insertRepository.insertService(EntityBuilder.createService("localDB", "description of localDB", "localhost", "2.0.0"));
-
-            insertRepository.prepareInserting(service);
-
-            ProcedureEntity procedure = EntityBuilder.createProcedure("procedure", true, false, service);
-//            FeatureEntity feature = EntityBuilder.createFeature("feature", EntityBuilder.createGeometry((52 + Math.random()), (7 + Math.random())), service);
-            OfferingEntity offering = EntityBuilder.createOffering("offering", service);
-            CategoryEntity category = EntityBuilder.createCategory("category" + new Date().getMinutes(), service);
-            CategoryEntity category1 = EntityBuilder.createCategory("category", service);
-            PhenomenonEntity phenomenon = EntityBuilder.createPhenomenon("phen", service);
-            UnitEntity unit = EntityBuilder.createUnit("unit", service);
-
-//            MeasurementDatasetEntity measurement = EntityBuilder.createMeasurementDataset(procedure, category, feature, offering, phenomenon, unit, service);
-//            CountDatasetEntity countDataset = EntityBuilder.createCountDataset(procedure, category1, feature, offering, phenomenon, service);
-
-//            insertRepository.insertDataset(measurement);
-//            insertRepository.insertDataset(countDataset);
-
             insertRepository.cleanUp(service);
-
+            insertRepository.prepareInserting(service);
+            harvestSeries(service, session);
+            harvestRelatedFeartures(service, session);
             LOGGER.info(context.getJobDetail().getKey() + " execution ends.");
-//        } catch (OwsExceptionReport ex) {
-//            java.util.logging.Logger.getLogger(HibernateDataSourceHarvesterJob.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        } catch (OwsExceptionReport ex) {
+            java.util.logging.Logger.getLogger(HibernateDataSourceHarvesterJob.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            sessionHolder.returnSession(session);
+        }
+    }
+
+    private void harvestSeries(ServiceEntity service, Session session) throws CodedException {
+        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+        for (Series series : seriesDAO.getSeries(session)) {
+            DatasetEntity dataset = EntityBuilder.createDataset(series, service);
+            insertRepository.insertDataset(dataset);
+        }
+    }
+
+    private void harvestRelatedFeartures(ServiceEntity service, Session session) {
+        if (HibernateHelper.isEntitySupported(TOffering.class)) {
+            Set<RelatedFeatureEntity> relatedFeatures = new HashSet<>();
+            for (Offering offering : new OfferingDAO().getOfferings(session)) {
+                if (offering instanceof TOffering && ((TOffering) offering).hasRelatedFeatures()) {
+                    for (RelatedFeature relatedFeatureEntity : ((TOffering) offering).getRelatedFeatures()) {
+                        relatedFeatures.add(EntityBuilder.createRelatedFeature(relatedFeatureEntity, service));
+                    }
+                }
+            }
+            insertRepository.insertRelatedFeature(relatedFeatures);
+        }
     }
 
 }

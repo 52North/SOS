@@ -70,7 +70,7 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
     /**
      * constructor
      *
-     * @param oeck
+     * @param key
      *            the {@link OwsExtendedCapabilitiesProviderKey} to set
      */
     public DynamicOwsExtendedCapabilitiesKey(OwsExtendedCapabilitiesProviderKey key) {

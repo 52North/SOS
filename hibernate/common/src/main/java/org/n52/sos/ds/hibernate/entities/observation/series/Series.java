@@ -43,6 +43,8 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 
+import com.google.common.base.Strings;
+
 /**
  * Hibernate entity for series
  *
@@ -84,6 +86,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     private Double lastNumericValue;
     private Unit unit;
     private boolean hiddenChild;
+    private String seriesType;
 
     /**
      * Get series id
@@ -291,5 +294,17 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     public boolean hasSameObservationIdentifier(Series s) {
         return getFeatureOfInterest().equals(s.getFeatureOfInterest()) && getProcedure().equals(s.getProcedure())
                 && getObservableProperty().equals(s.getObservableProperty());
+    }
+
+    public String getSeriesType() {
+        return this.seriesType;
+    }
+
+    public void setSeriesType(String seriesType) {
+        this.seriesType = seriesType;
+    }
+
+    public boolean isSetSeriesType() {
+        return !Strings.isNullOrEmpty(getSeriesType());
     }
 }

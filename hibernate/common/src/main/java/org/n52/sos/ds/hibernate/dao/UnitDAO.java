@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -45,6 +47,12 @@ import org.slf4j.LoggerFactory;
 public class UnitDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitDAO.class);
+
+    public List<Unit> getUnits(Session session) {
+        Criteria criteria = session.createCriteria(Unit.class);
+        LOGGER.debug("QUERY getUnits(): {}", HibernateHelper.getSqlString(criteria));
+        return criteria.list();
+    }
 
     /**
      * Get unit object for unit

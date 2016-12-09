@@ -23,7 +23,7 @@
         <property name="order" value="3.0" />
         <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
         <property name="defaultValue">
-            <bean class="org.n52.iceland.i18n.MultilingualString">
+            <bean class="org.n52.shetland.i18n.MultilingualString">
                 <property name="localizations">
                     <map>
                         <entry key="en" value="52North Sensor Observation Service - Data Access for the Sensor Web" />
@@ -47,7 +47,7 @@
         <property name="order" value="1.0" />
         <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
         <property name="defaultValue">
-            <bean class="org.n52.iceland.i18n.MultilingualString">
+            <bean class="org.n52.shetland.i18n.MultilingualString">
                 <property name="localizations">
                     <map>
                         <entry key="en" value="52N SOS" />

@@ -52,6 +52,11 @@
         </dependency>
         <dependency>
             <groupId>org.n52.series-api</groupId>
+            <artifactId>proxy-mappings</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.series-api</groupId>
             <artifactId>series-dao</artifactId>
         </dependency>
         <dependency>
@@ -77,6 +82,16 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>

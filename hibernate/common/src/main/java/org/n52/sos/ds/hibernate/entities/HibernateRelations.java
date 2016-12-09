@@ -286,6 +286,11 @@ public interface HibernateRelations {
         Set<ObservationType> getObservationTypes();
 
         void setObservationTypes(Set<ObservationType> observationTypes);
+
+        default boolean hasObservationTypes() {
+            return getObservationTypes() != null && !getObservationTypes().isEmpty();
+        }
+
     }
 
     interface HasOffering {
@@ -371,6 +376,11 @@ public interface HibernateRelations {
         Set<RelatedFeature> getRelatedFeatures();
 
         void setRelatedFeatures(Set<RelatedFeature> relatedFeatures);
+
+        default boolean hasRelatedFeatures() {
+            return getRelatedFeatures() != null && !getRelatedFeatures().isEmpty();
+        }
+
     }
 
     interface HasResultEncoding {

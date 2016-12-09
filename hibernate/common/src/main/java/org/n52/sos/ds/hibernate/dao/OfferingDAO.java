@@ -114,6 +114,20 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     }
 
     /**
+     * Get all offering objects
+     *
+     * @param session
+     *            Hibernate session
+     * @return Offering objects
+     */
+    public List<Offering> getOfferings(final Session session) {
+        Criteria criteria =
+                session.createCriteria(Offering.class);
+        LOGGER.debug("QUERY getOfferings(): {}", HibernateHelper.getSqlString(criteria));
+        return criteria.list();
+    }
+
+    /**
      * Get offering objects for cache update
      *
      * @param identifiers

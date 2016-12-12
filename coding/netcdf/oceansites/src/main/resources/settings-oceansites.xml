@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
     <bean id="oceansitesSettingDefintionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
         <property name="title" value="OceanSITES netCDF" />
         <property name="description" value="Define OceanSITES specific parameter" />
@@ -10,7 +10,7 @@
     <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
         <property name="key" value="oceansites.license" />
         <property name="title" value="OceanSITES license" />
-        <property name="description" value="A statement describing the data distribution policy; it may be a project- or DAC-specific statement, but must allow free use of data. OceanSITES has adopted the CLIVAR data policy, which explicitly calls for free and unrestricted data exchange. Details at: <a href='http://www.clivar.org/data/data_policy.php' target='_blank'/>" />
+        <property name="description" value="A statement describing the data distribution policy; it may be a project- or DAC-specific statement, but must allow free use of data. OceanSITES has adopted the CLIVAR data policy, which explicitly calls for free and unrestricted data exchange. Details at: &lt;a href='http://www.clivar.org/data/data_policy.php' target='_blank'/&gt;" />
         <property name="order" value="0.0" />
         <property name="group" ref="oceansitesSettingDefintionGroup" />
         <property name="optional" ref="true" />
@@ -152,7 +152,7 @@
                 <entry key="CI_RoleCode_processor" value="processor" />
                 <entry key="CI_RoleCode_publisher" value="publisher" />
                 <entry key="CI_RoleCode_resourceProvider" value="resourceProvider" />
-                <entry key="CI_RoleCode_userv"user" />
+                <entry key="CI_RoleCode_user" value="user" />
             </map>
         </property>
     </bean>

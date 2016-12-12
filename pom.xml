@@ -1722,7 +1722,7 @@
         <repository>
             <id>boundlessgeo</id>
             <name>Boundless Cloud Repository</name>
-            <url>https://boundless.artifactoryonline.com/boundless/main</url>
+            <url>https://repo.boundlessgeo.com/main/</url>
         </repository>
         <!-- <repository>
             <id>boundless</id>

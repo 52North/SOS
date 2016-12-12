@@ -28,12 +28,11 @@
  */
 package org.n52.sos.util;
 
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.InvalidSridException;
-import org.n52.iceland.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateFilter;
@@ -49,50 +48,44 @@ import com.vividsolutions.jts.io.WKTReader;
  * @since 4.0.0
  *
  */
-public class JTSHelper implements Constants {
+public class JTSHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JTSHelper.class);
+    public static final String WKT_POLYGON = "Polygon";
+    public static final String WKT_POINT = "Point";
 
-    public static String WKT_POLYGON = "Polygon";
-
-    public static String WKT_POINT = "Point";
-
-    public static final CoordinateFilter COORDINATE_SWITCHING_FILTER = new CoordinateFilter() {
-        @Override
-        public void filter(Coordinate coord) {
-            double tmp = coord.x;
-            coord.x = coord.y;
-            coord.y = tmp;
-        }
+    public static final CoordinateFilter COORDINATE_SWITCHING_FILTER = coord -> {
+        double tmp = coord.x;
+        coord.x = coord.y;
+        coord.y = tmp;
     };
+
+    protected JTSHelper() {
+    }
 
     /**
      * Creates a JTS Geometry from an WKT representation. Switches the
      * coordinate order if needed.
-     * <p/>
      *
      * @param wkt
      *            WKT representation of the geometry
      * @param srid
      *            the SRID of the newly created geometry
-     *            <p/>
      * @return JTS Geometry object
-     *         <p/>
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             If an error occurs
      */
-    public static Geometry createGeometryFromWKT(String wkt, int srid) throws OwsExceptionReport {
+    public static Geometry createGeometryFromWKT(String wkt, int srid) throws DecodingException {
         WKTReader wktReader = getWKTReaderForSRID(srid);
         try {
             LOGGER.debug("FOI Geometry: {}", wkt);
             return wktReader.read(wkt);
         } catch (ParseException pe) {
-            throw new InvalidParameterValueException().causedBy(pe).withMessage(
-                    "Error while parsing the geometry of featureOfInterest parameter");
+            throw new DecodingException("Error while parsing the geometry of featureOfInterest parameter", pe);
         }
     }
 
-    public static WKTReader getWKTReaderForSRID(int srid) throws OwsExceptionReport {
+    public static WKTReader getWKTReaderForSRID(int srid) throws DecodingException {
         if (srid <= 0) {
             return new WKTReader(new GeometryFactory());
         }
@@ -104,19 +97,15 @@ public class JTSHelper implements Constants {
      *
      * @param geom
      *            Geometry to get coordinates
-     *            <p/>
      * @return Coordinates as String
-     *         <p/>
-     * @throws OwsExceptionReport
-     *             if the SRID is <= 0
      */
-    public static String getCoordinatesString(Geometry geom) throws OwsExceptionReport {
+    public static String getCoordinatesString(Geometry geom) {
         StringBuilder builder = new StringBuilder();
         Coordinate[] sourceCoords = geom.getCoordinates();
         if (sourceCoords.length > 0) {
             getCoordinateString(builder, sourceCoords[0]);
             for (int i = 1; i < sourceCoords.length; ++i) {
-                getCoordinateString(builder.append(BLANK_CHAR), sourceCoords[i]);
+                getCoordinateString(builder.append(' '), sourceCoords[i]);
             }
         }
         return builder.toString();
@@ -124,10 +113,10 @@ public class JTSHelper implements Constants {
 
     protected static StringBuilder getCoordinateString(StringBuilder builder, Coordinate coordinate) {
         builder.append(coordinate.x);
-        builder.append(BLANK_CHAR);
+        builder.append(' ');
         builder.append(coordinate.y);
         if (!Double.isNaN(coordinate.z)) {
-            builder.append(BLANK_CHAR);
+            builder.append(' ');
             builder.append(coordinate.z);
         }
         return builder;
@@ -135,46 +124,62 @@ public class JTSHelper implements Constants {
 
     /**
      * Creates a WKT Polygon representation from lower and upper corner values.
-     * <p/>
      *
      * @param lowerCorner
      *            Lower corner coordinates
      * @param upperCorner
      *            Upper corner coordinates
-     *            <p/>
      * @return WKT Polygon
      */
     public static String createWKTPolygonFromEnvelope(String lowerCorner, String upperCorner) {
-        final String[] splittedLowerCorner = lowerCorner.split(BLANK_STRING);
-        final String[] splittedUpperCorner = upperCorner.split(BLANK_STRING);
-        final String minX = splittedLowerCorner[0];
-        final String minY = splittedLowerCorner[1];
-        final String maxX = splittedUpperCorner[0];
-        final String maxY = splittedUpperCorner[1];
+        final String[] splittedLowerCorner = lowerCorner.split(" ");
+        final String[] splittedUpperCorner = upperCorner.split(" ");
+        String minx = splittedLowerCorner[0];
+        String miny = splittedLowerCorner[1];
+        String maxx = splittedUpperCorner[0];
+        String maxy = splittedUpperCorner[1];
+
+        return createWKTPolygonFromEnvelope(minx, miny, maxx, maxy);
+    }
+
+    private static String createWKTPolygonFromEnvelope(String minx, String miny, String maxx, String maxy) {
         StringBuilder sb = new StringBuilder();
         sb.append(WKT_POLYGON).append(" ((");
-        sb.append(minX).append(BLANK_CHAR).append(minY).append(COMMA_CHAR);
-        sb.append(minX).append(BLANK_CHAR).append(maxY).append(COMMA_CHAR);
-        sb.append(maxX).append(BLANK_CHAR).append(maxY).append(COMMA_CHAR);
-        sb.append(maxX).append(BLANK_CHAR).append(minY).append(COMMA_CHAR);
-        sb.append(minX).append(BLANK_CHAR).append(minY).append("))");
+        sb.append(minx).append(' ').append(miny).append(',');
+        sb.append(minx).append(' ').append(maxy).append(',');
+        sb.append(maxx).append(' ').append(maxy).append(',');
+        sb.append(maxx).append(' ').append(miny).append(',');
+        sb.append(minx).append(' ').append(miny).append("))");
         return sb.toString();
+    }
+
+    public static Geometry createPolygonFromEnvelope(double[] envelope, int srid) {
+        if (envelope.length != 4) {
+            throw new IllegalArgumentException();
+        }
+        return createPolygonFromEnvelope(envelope[0], envelope[1], envelope[2], envelope[3], srid);
+    }
+
+    public static Geometry createPolygonFromEnvelope(double minx, double miny, double maxx, double maxy, int srid) {
+        GeometryFactory fac = getGeometryFactoryForSRID(srid);
+        return fac.createPolygon(new Coordinate[] {
+            new Coordinate(minx, miny),
+            new Coordinate(minx, maxy),
+            new Coordinate(maxx, maxy),
+            new Coordinate(maxx, miny),
+            new Coordinate(minx, miny)
+        });
     }
 
     /**
      * Switches the coordinates of a JTS Geometry.
-     * <p/>
      *
      * @param <G>
      *            the geometry type
      * @param geometry
      *            Geometry to switch coordinates.
-     *            <p/>
      * @return Geometry with switched coordinates
-     *         <p/>
      * @throws OwsExceptionReport
-     *             *
-     *             <p/>
      */
     public static <G extends Geometry> G switchCoordinateAxisOrder(G geometry) throws OwsExceptionReport {
         if (geometry == null) {
@@ -214,6 +219,4 @@ public class JTSHelper implements Constants {
         return geometry != null && !geometry.isEmpty();
     }
 
-    protected JTSHelper() {
-    }
 }

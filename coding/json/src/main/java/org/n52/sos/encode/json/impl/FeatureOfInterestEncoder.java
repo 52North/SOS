@@ -28,14 +28,14 @@
  */
 package org.n52.sos.encode.json.impl;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeType;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.om.features.FeatureCollection;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -54,7 +54,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
     }
 
     @Override
-    public JsonNode encodeJSON(AbstractFeature t) throws OwsExceptionReport {
+    public JsonNode encodeJSON(AbstractFeature t) throws EncodingException {
         if (t instanceof FeatureCollection) {
             return encodeFeatureCollection(t);
         } else if (t instanceof SamplingFeature) {
@@ -64,7 +64,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
         }
     }
 
-    private JsonNode encodeSamplingFeature(AbstractFeature t) throws OwsExceptionReport {
+    private JsonNode encodeSamplingFeature(AbstractFeature t) throws EncodingException {
         SamplingFeature sf = (SamplingFeature) t;
         if (sf.isSetUrl()) {
             return nodeFactory().textNode(sf.getUrl());
@@ -80,7 +80,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
         }
     }
 
-    private JsonNode encodeFeatureCollection(AbstractFeature t) throws OwsExceptionReport {
+    private JsonNode encodeFeatureCollection(AbstractFeature t) throws EncodingException {
         FeatureCollection featureCollection = (FeatureCollection) t;
         ArrayNode a = nodeFactory().arrayNode();
         for (AbstractFeature af : featureCollection) {
@@ -109,7 +109,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
         }
     }
 
-    private void encodeSampledFeatures(SamplingFeature sf, ObjectNode json) throws OwsExceptionReport {
+    private void encodeSampledFeatures(SamplingFeature sf, ObjectNode json) throws EncodingException {
         if (sf.isSetSampledFeatures()) {
             if (sf.getSampledFeatures().size() == 1) {
                 json.set(JSONConstants.SAMPLED_FEATURE, encodeObjectToJson(sf.getSampledFeatures().iterator().next()));
@@ -122,7 +122,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
         }
     }
 
-    private void encodeGeometry(SamplingFeature sf, ObjectNode json) throws OwsExceptionReport {
+    private void encodeGeometry(SamplingFeature sf, ObjectNode json) throws EncodingException {
         if (sf.isSetGeometry()) {
             json.set(JSONConstants.GEOMETRY, encodeObjectToJson(sf.getGeometry()));
         }

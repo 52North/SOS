@@ -37,6 +37,4 @@ package org.n52.sos.ef;
  */
 public class EfEnvironmentalMonitoringNetwork extends EfAbstractMonitoringFeature {
 
-    private static final long serialVersionUID = 4350575166113005997L;
-
 }

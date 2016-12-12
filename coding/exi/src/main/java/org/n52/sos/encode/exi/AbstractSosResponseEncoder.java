@@ -29,7 +29,6 @@
 package org.n52.sos.encode.exi;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
@@ -37,24 +36,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.ResponseFormat;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.iceland.coding.encode.AbstractDelegatingEncoder;
+import org.n52.iceland.coding.encode.OwsEncodingException;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.ows.service.ResponseFormat;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.response.StreamingDataResponse;
+import org.n52.svalbard.AbstractDelegatingEncoder;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -66,9 +65,9 @@ import com.google.common.collect.Sets;
  * @since 4.2.0
  *
  * @param <T>
- *            concrete {@link AbstractServiceResponse}
+ *            concrete {@link OwsServiceResponse}
  */
-public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> extends AbstractDelegatingEncoder<EXIObject, T> {
+public class AbstractSosResponseEncoder<T extends OwsServiceResponse> extends AbstractDelegatingEncoder<EXIObject, T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSosResponseEncoder.class);
 
@@ -78,7 +77,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
      * Constructor
      *
      * @param type
-     *            Concrete {@link AbstractServiceResponse} class
+     *            Concrete {@link OwsServiceResponse} class
      * @param operation
      *            SOS operation as {@link String}
      * @param version
@@ -94,7 +93,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
      * Constructor
      *
      * @param type
-     *            Concrete {@link AbstractServiceResponse} class
+     *            Concrete {@link OwsServiceResponse} class
      * @param operation
      *            SOS operation as {@link Enum}
      * @param version
@@ -105,12 +104,16 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
     }
 
     @Override
-    public EXIObject encode(T objectToEncode, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
-            UnsupportedEncoderInputException {
-        AbstractServiceResponse asr = objectToEncode;
-        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
+    public EXIObject encode(T objectToEncode, EncodingContext additionalValues)
+            throws EncodingException {
+        OwsServiceResponse asr = objectToEncode;
+        Encoder<Object, OwsServiceResponse> encoder = getEncoder(asr);
         if (asr instanceof StreamingDataResponse && ((StreamingDataResponse)asr).hasStreamingData() && !(encoder instanceof StreamingDataEncoder)) {
-            ((StreamingDataResponse)asr).mergeStreamingData();
+            try {
+                ((StreamingDataResponse)asr).mergeStreamingData();
+            } catch (OwsExceptionReport ex) {
+                throw new OwsEncodingException(ex);
+            }
         }
         Object encode = encoder.encode(asr);
         if (encode != null && encode instanceof XmlObject) {
@@ -121,18 +124,8 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
     }
 
     @Override
-    public EXIObject encode(T objectToEncode) throws OwsExceptionReport, UnsupportedEncoderInputException {
+    public EXIObject encode(T objectToEncode) throws EncodingException {
         return encode(objectToEncode, null);
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override
@@ -141,46 +134,35 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
     }
 
     @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-        // nothing to add
-    }
-
-    @Override
     public MediaType getContentType() {
         return MediaTypes.APPLICATION_EXI;
     }
 
-    @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        return Collections.emptySet();
-    }
-
     /**
-     * Get the {@link Encoder} for the {@link AbstractServiceResponse} and the
+     * Get the {@link Encoder} for the {@link OwsServiceResponse} and the
      * requested contentType
      *
      * @param asr
-     *            {@link AbstractServiceResponse} to get {@link Encoder} for
-     * @return {@link Encoder} for the {@link AbstractServiceResponse}
+     *            {@link OwsServiceResponse} to get {@link Encoder} for
+     * @return {@link Encoder} for the {@link OwsServiceResponse}
      */
-    protected Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
-        OperationResponseEncoderKey key = new OperationResponseEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
-        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
+    protected Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) {
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OperationKey(asr), getEncodedContentType(asr));
+        Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationResponseEncoderKey(asr.getOperationKey(),
-                    MediaTypes.APPLICATION_XML)));
+            throw new RuntimeException(new NoEncoderForKeyException(key));
         }
         return encoder;
     }
 
     /**
-     * Get encoding {@link MediaType} from {@link AbstractServiceResponse}
+     * Get encoding {@link MediaType} from {@link OwsServiceResponse}
      *
      * @param asr
-     *            {@link AbstractServiceResponse} to get content type from
+     *            {@link OwsServiceResponse} to get content type from
      * @return Encoding {@link MediaType}
      */
-    protected MediaType getEncodedContentType(AbstractServiceResponse asr) {
+    protected MediaType getEncodedContentType(OwsServiceResponse asr) {
         if (asr instanceof ResponseFormat) {
             return getEncodedContentType((ResponseFormat) asr);
         }
@@ -198,14 +180,12 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
         if (responseFormat.isSetResponseFormat()) {
             MediaType contentTypeFromResponseFormat = null;
             try {
-                contentTypeFromResponseFormat =
-                        MediaType.parse(responseFormat.getResponseFormat()).withoutParameters();
+                contentTypeFromResponseFormat = MediaType.parse(responseFormat.getResponseFormat()).withoutParameters();
             } catch (IllegalArgumentException iae) {
                 LOGGER.debug("Requested responseFormat {} is not a MediaType", responseFormat.getResponseFormat());
             }
             if (contentTypeFromResponseFormat != null) {
-                if (MediaTypes.COMPATIBLE_TYPES.containsEntry(contentTypeFromResponseFormat,
-                        MediaTypes.APPLICATION_XML)) {
+                if (MediaTypes.COMPATIBLE_TYPES.containsEntry(contentTypeFromResponseFormat, MediaTypes.APPLICATION_XML)) {
                     return MediaTypes.APPLICATION_XML;
                 }
                 return contentTypeFromResponseFormat;

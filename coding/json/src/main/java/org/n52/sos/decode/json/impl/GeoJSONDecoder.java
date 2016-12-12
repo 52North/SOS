@@ -45,9 +45,8 @@ import static org.n52.sos.coding.json.JSONConstants.POLYGON;
 import static org.n52.sos.coding.json.JSONConstants.PROPERTIES;
 import static org.n52.sos.coding.json.JSONConstants.TYPE;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.Constants;
-import org.n52.sos.coding.json.GeoJSONException;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.sos.coding.json.GeoJSONDecodingException;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
@@ -79,7 +78,7 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
 
     private static final String[] SRS_NAME_PREFIXES = { "urn:ogc:def:crs:EPSG::", "EPSG::", "EPSG:" };
 
-    private static final int DEFAULT_SRID = Constants.EPSG_WGS84;
+    private static final int DEFAULT_SRID = 4326;
 
     private static final PrecisionModel DEFAULT_PRECISION_MODEL = new PrecisionModel(PrecisionModel.FLOATING);
 
@@ -95,7 +94,7 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
     }
 
     @Override
-    public Geometry decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport {
+    public Geometry decodeJSON(JsonNode node, boolean validate) throws DecodingException {
         if (node == null || node.isNull() || node.isMissingNode()) {
             return null;
         } else {
@@ -106,9 +105,9 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
         }
     }
 
-    protected Coordinate[] decodeCoordinates(JsonNode node) throws GeoJSONException {
+    protected Coordinate[] decodeCoordinates(JsonNode node) throws GeoJSONDecodingException {
         if (!node.isArray()) {
-            throw new GeoJSONException("expected array");
+            throw new GeoJSONDecodingException("expected array");
         }
         Coordinate[] coordinates = new Coordinate[node.size()];
         for (int i = 0; i < node.size(); ++i) {
@@ -117,12 +116,12 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
         return coordinates;
     }
 
-    protected Polygon decodePolygonCoordinates(JsonNode coordinates, GeometryFactory fac) throws GeoJSONException {
+    protected Polygon decodePolygonCoordinates(JsonNode coordinates, GeometryFactory fac) throws GeoJSONDecodingException {
         if (!coordinates.isArray()) {
-            throw new GeoJSONException("expected array");
+            throw new GeoJSONDecodingException("expected array");
         }
         if (coordinates.size() < 1) {
-            throw new GeoJSONException("missing polygon shell");
+            throw new GeoJSONDecodingException("missing polygon shell");
         }
         LinearRing shell = fac.createLinearRing(decodeCoordinates(coordinates.get(0)));
         LinearRing[] holes = new LinearRing[coordinates.size() - 1];
@@ -132,9 +131,9 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
         return fac.createPolygon(shell, holes);
     }
 
-    protected Geometry decodeGeometry(Object o, GeometryFactory parentFactory) throws GeoJSONException {
+    protected Geometry decodeGeometry(Object o, GeometryFactory parentFactory) throws GeoJSONDecodingException {
         if (!(o instanceof JsonNode)) {
-            throw new GeoJSONException("Cannot decode " + o);
+            throw new GeoJSONDecodingException("Cannot decode " + o);
         }
         final JsonNode node = (JsonNode) o;
         final String type = getType(node);
@@ -154,11 +153,11 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
         } else if (type.equals(GEOMETRY_COLLECTION)) {
             return decodeGeometryCollection(node, factory);
         } else {
-            throw new GeoJSONException("Unkown geometry type: " + type);
+            throw new GeoJSONDecodingException("Unkown geometry type: " + type);
         }
     }
 
-    protected MultiLineString decodeMultiLineString(JsonNode node, GeometryFactory fac) throws GeoJSONException {
+    protected MultiLineString decodeMultiLineString(JsonNode node, GeometryFactory fac) throws GeoJSONDecodingException {
         JsonNode coordinates = requireCoordinates(node);
         LineString[] lineStrings = new LineString[coordinates.size()];
         for (int i = 0; i < coordinates.size(); ++i) {
@@ -168,27 +167,27 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
         return fac.createMultiLineString(lineStrings);
     }
 
-    protected LineString decodeLineString(JsonNode node, GeometryFactory fac) throws GeoJSONException {
+    protected LineString decodeLineString(JsonNode node, GeometryFactory fac) throws GeoJSONDecodingException {
         Coordinate[] coordinates = decodeCoordinates(requireCoordinates(node));
         return fac.createLineString(coordinates);
     }
 
-    protected MultiPoint decodeMultiPoint(JsonNode node, GeometryFactory fac) throws GeoJSONException {
+    protected MultiPoint decodeMultiPoint(JsonNode node, GeometryFactory fac) throws GeoJSONDecodingException {
         Coordinate[] coordinates = decodeCoordinates(requireCoordinates(node));
         return fac.createMultiPoint(coordinates);
     }
 
-    protected Point decodePoint(JsonNode node, GeometryFactory fac) throws GeoJSONException {
+    protected Point decodePoint(JsonNode node, GeometryFactory fac) throws GeoJSONDecodingException {
         Coordinate parsed = decodeCoordinate(requireCoordinates(node));
         return fac.createPoint(parsed);
     }
 
-    protected Polygon decodePolygon(JsonNode node, GeometryFactory fac) throws GeoJSONException {
+    protected Polygon decodePolygon(JsonNode node, GeometryFactory fac) throws GeoJSONDecodingException {
         JsonNode coordinates = requireCoordinates(node);
         return decodePolygonCoordinates(coordinates, fac);
     }
 
-    protected MultiPolygon decodeMultiPolygon(JsonNode node, GeometryFactory fac) throws GeoJSONException {
+    protected MultiPolygon decodeMultiPolygon(JsonNode node, GeometryFactory fac) throws GeoJSONDecodingException {
         JsonNode coordinates = requireCoordinates(node);
         Polygon[] polygons = new Polygon[coordinates.size()];
         for (int i = 0; i < coordinates.size(); ++i) {
@@ -197,10 +196,10 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
         return fac.createMultiPolygon(polygons);
     }
 
-    protected GeometryCollection decodeGeometryCollection(JsonNode node, GeometryFactory fac) throws GeoJSONException {
+    protected GeometryCollection decodeGeometryCollection(JsonNode node, GeometryFactory fac) throws GeoJSONDecodingException {
         final JsonNode geometries = node.path(GEOMETRIES);
         if (!geometries.isArray()) {
-            throw new GeoJSONException("expected 'geometries' array");
+            throw new GeoJSONDecodingException("expected 'geometries' array");
         }
         Geometry[] geoms = new Geometry[geometries.size()];
         for (int i = 0; i < geometries.size(); ++i) {
@@ -209,36 +208,36 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
         return fac.createGeometryCollection(geoms);
     }
 
-    protected JsonNode requireCoordinates(JsonNode node) throws GeoJSONException {
+    protected JsonNode requireCoordinates(JsonNode node) throws GeoJSONDecodingException {
         if (!node.path(COORDINATES).isArray()) {
-            throw new GeoJSONException("missing 'coordinates' field");
+            throw new GeoJSONDecodingException("missing 'coordinates' field");
         }
         return node.path(COORDINATES);
     }
 
-    protected Coordinate decodeCoordinate(JsonNode node) throws GeoJSONException {
+    protected Coordinate decodeCoordinate(JsonNode node) throws GeoJSONDecodingException {
         if (!node.isArray()) {
-            throw new GeoJSONException("expected array");
+            throw new GeoJSONDecodingException("expected array");
         }
         final int dim = node.size();
         if (dim < DIM_2D) {
-            throw new GeoJSONException("coordinates may have at least 2 dimensions");
+            throw new GeoJSONDecodingException("coordinates may have at least 2 dimensions");
         }
         if (dim > DIM_3D) {
-            throw new GeoJSONException("coordinates may have at most 3 dimensions");
+            throw new GeoJSONDecodingException("coordinates may have at most 3 dimensions");
         }
         final Coordinate coordinate = new Coordinate();
         for (int i = 0; i < dim; ++i) {
             if (node.get(i).isNumber()) {
                 coordinate.setOrdinate(i, node.get(i).doubleValue());
             } else {
-                throw new GeoJSONException("coordinate index " + i + " has to be a number");
+                throw new GeoJSONDecodingException("coordinate index " + i + " has to be a number");
             }
         }
         return coordinate;
     }
 
-    protected GeometryFactory getGeometryFactory(JsonNode node, GeometryFactory factory) throws GeoJSONException {
+    protected GeometryFactory getGeometryFactory(JsonNode node, GeometryFactory factory) throws GeoJSONDecodingException {
         if (!node.hasNonNull(CRS)) {
             return factory;
         } else {
@@ -246,9 +245,9 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
         }
     }
 
-    protected GeometryFactory decodeCRS(JsonNode node, GeometryFactory factory) throws GeoJSONException {
+    protected GeometryFactory decodeCRS(JsonNode node, GeometryFactory factory) throws GeoJSONDecodingException {
         if (!node.path(CRS).hasNonNull(TYPE)) {
-            throw new GeoJSONException("Missing CRS type");
+            throw new GeoJSONDecodingException("Missing CRS type");
         }
         String type = node.path(CRS).path(TYPE).textValue();
         JsonNode properties = node.path(CRS).path(PROPERTIES);
@@ -257,14 +256,14 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
         } else if (type.equals(LINK)) {
             return decodeLinkedCRS(properties, factory);
         } else {
-            throw new GeoJSONException("Unknown CRS type: " + type);
+            throw new GeoJSONDecodingException("Unknown CRS type: " + type);
         }
     }
 
-    protected GeometryFactory decodeNamedCRS(JsonNode properties, GeometryFactory factory) throws GeoJSONException {
+    protected GeometryFactory decodeNamedCRS(JsonNode properties, GeometryFactory factory) throws GeoJSONDecodingException {
         String name = properties.path(NAME).textValue();
         if (name == null) {
-            throw new GeoJSONException("Missing name attribute for name crs");
+            throw new GeoJSONDecodingException("Missing name attribute for name crs");
         }
         for (String prefix : SRS_NAME_PREFIXES) {
             if (name.startsWith(prefix)) {
@@ -272,17 +271,17 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
                     int srid = parseInt(name.substring(prefix.length()));
                     return getGeometryFactory(srid, factory);
                 } catch (NumberFormatException e) {
-                    throw new GeoJSONException("Invalid CRS name", e);
+                    throw new GeoJSONDecodingException("Invalid CRS name", e);
                 }
             }
         }
-        throw new GeoJSONException("Unsupported named crs: " + name);
+        throw new GeoJSONDecodingException("Unsupported named crs: " + name);
     }
 
-    protected GeometryFactory decodeLinkedCRS(JsonNode properties, GeometryFactory factory) throws GeoJSONException {
+    protected GeometryFactory decodeLinkedCRS(JsonNode properties, GeometryFactory factory) throws GeoJSONDecodingException {
         String href = properties.path(HREF).textValue();
         if (href == null) {
-            throw new GeoJSONException("Missing href attribute for link crs");
+            throw new GeoJSONDecodingException("Missing href attribute for link crs");
         }
         for (String prefix : SRS_LINK_PREFIXES) {
             if (href.startsWith(prefix)) {
@@ -290,11 +289,11 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
                     int srid = parseInt(href.substring(prefix.length()));
                     return getGeometryFactory(srid, factory);
                 } catch (NumberFormatException e) {
-                    throw new GeoJSONException("Invalid CRS link", e);
+                    throw new GeoJSONDecodingException("Invalid CRS link", e);
                 }
             }
         }
-        throw new GeoJSONException("Unsupported linked crs: " + href);
+        throw new GeoJSONDecodingException("Unsupported linked crs: " + href);
     }
 
     protected GeometryFactory getGeometryFactory(int srid, GeometryFactory factory) {
@@ -305,12 +304,12 @@ public class GeoJSONDecoder extends JSONDecoder<Geometry> {
         }
     }
 
-    protected String getType(final JsonNode node) throws GeoJSONException {
+    protected String getType(final JsonNode node) throws GeoJSONDecodingException {
         if (!node.has(TYPE)) {
-            throw new GeoJSONException("Can not determine geometry type (missing 'type' field)");
+            throw new GeoJSONDecodingException("Can not determine geometry type (missing 'type' field)");
         }
         if (!node.path(TYPE).isTextual()) {
-            throw new GeoJSONException("'type' field has to be a string");
+            throw new GeoJSONDecodingException("'type' field has to be a string");
         }
         return node.path(TYPE).textValue();
     }

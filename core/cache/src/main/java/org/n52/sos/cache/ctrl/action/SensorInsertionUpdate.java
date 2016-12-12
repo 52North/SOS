@@ -33,14 +33,16 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.sos.cache.SosWritableContentCache;
-import org.n52.iceland.util.CollectionHelper;
+import com.google.common.collect.Sets;
+
 import org.n52.iceland.util.action.Action;
+import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.swes.SwesFeatureRelationship;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.response.InsertSensorResponse;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations
@@ -86,8 +88,8 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
 
         // procedure relations
         cache.addProcedure(procedure);
-        if (request.getProcedureDescription().isSetParentProcedures()) {
-            cache.addParentProcedures(procedure, request.getProcedureDescription().getParentProcedures());
+        if (request.getProcedureDescription().isSetParentProcedure()) {
+            cache.addParentProcedures(procedure, Sets.newHashSet(request.getProcedureDescription().getParentProcedure().getTitleOrFromHref()));
         }
         // if the inserted procedure is not a type, add values to cache
         if (!request.isType()) {
@@ -146,7 +148,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         } else {
             cache.addTypeInstanceProcedure(SosContentCache.TypeInstance.INSTANCE, response.getAssignedProcedure());
         }
-        if (request.getProcedureDescription().isAggragation()) {
+        if (request.getProcedureDescription().isAggregation()) {
             cache.addComponentAggregationProcedure(SosContentCache.ComponentAggregation.AGGREGATION, response.getAssignedProcedure());
         } else {
             cache.addComponentAggregationProcedure(SosContentCache.ComponentAggregation.COMPONENT, response.getAssignedProcedure());

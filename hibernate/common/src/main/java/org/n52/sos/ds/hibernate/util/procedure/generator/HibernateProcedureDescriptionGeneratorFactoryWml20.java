@@ -33,16 +33,19 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.wml.ObservationProcess;
-import org.n52.sos.ogc.wml.WaterMLConstants;
+
+import net.opengis.sos.x20.impl.SosInsertionMetadataPropertyTypeImpl;
+
+import org.n52.shetland.ogc.wml.WaterMLConstants;
 
 /**
  * Generator class for WaterML 2.0 procedure descriptions
@@ -65,8 +68,8 @@ public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
 
     @Override
     public SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-        return new HibernateProcedureDescriptionGeneratorWml20()
-                .generateProcedureDescription(procedure, i18n, session);
+        return new SosProcedureDescription<AbstractFeature>(new HibernateProcedureDescriptionGeneratorWml20()
+                .generateProcedureDescription(procedure, i18n, session));
     }
 
     private class HibernateProcedureDescriptionGeneratorWml20 extends AbstractHibernateProcedureDescriptionGenerator {
@@ -85,14 +88,14 @@ public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
          * @throws OwsExceptionReport
          *             If an error occurs
          */
-        public ObservationProcess generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
+        public SosProcedureDescription<AbstractFeature> generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
                 throws OwsExceptionReport {
             setLocale(i18n);
             final ObservationProcess op = new ObservationProcess();
             setCommonData(procedure, op, session);
             addName(procedure, op);
             op.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_ALGORITHM));
-            return op;
+            return new SosProcedureDescription<AbstractFeature>(op);
         }
 
         private void addName(Procedure procedure, ObservationProcess op) {

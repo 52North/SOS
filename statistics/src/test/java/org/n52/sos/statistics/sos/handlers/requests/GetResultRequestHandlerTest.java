@@ -36,7 +36,8 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.n52.sos.request.GetResultRequest;
+
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
 import basetest.HandlerBaseTest;

@@ -32,13 +32,13 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.response.DescribeSensorResponse;
 
-public class AqdDescribeSensorResponseEncoder extends
-AbstractAqdResponseEncoder<DescribeSensorResponse> {
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
+
+public class AqdDescribeSensorResponseEncoder extends AbstractAqdResponseEncoder<DescribeSensorResponse> {
 
     public AqdDescribeSensorResponseEncoder() {
           super(SosConstants.Operations.DescribeSensor.name(), DescribeSensorResponse.class);
@@ -51,7 +51,7 @@ AbstractAqdResponseEncoder<DescribeSensorResponse> {
 
     @Override
     protected XmlObject create(DescribeSensorResponse response)
-            throws OwsExceptionReport {
+            throws EncodingException {
         return encodeWithSosEncoder(response);
     }
 }

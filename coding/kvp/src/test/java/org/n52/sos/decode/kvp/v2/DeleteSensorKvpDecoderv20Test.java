@@ -37,12 +37,14 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants.DeleteSensorParams;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.request.DeleteSensorRequest;
+
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants.DeleteSensorParams;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -67,7 +69,7 @@ public class DeleteSensorKvpDecoderv20Test extends DeleteSensorKvpDecoderv20 {
     }
 
     @Test
-    public void correctMap() throws OwsExceptionReport {
+    public void correctMap() throws DecodingException {
         DeleteSensorRequest req = decoder.decode(createMap(SERVICE, VERSION, PROCEDURE));
         assertThat(req, is(notNullValue()));
         assertThat(req.getOperationName(), is(Sos2Constants.Operations.DeleteSensor.name()));
@@ -77,44 +79,44 @@ public class DeleteSensorKvpDecoderv20Test extends DeleteSensorKvpDecoderv20 {
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void additionalParameter() throws OwsExceptionReport {
+    public void additionalParameter() throws DecodingException {
         final Map<String, String> map = createMap(SERVICE, VERSION, PROCEDURE);
         map.put(ADDITIONAL_PARAMETER, ADDITIONAL_PARAMETER);
         decoder.decode(map);
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void missingService() throws OwsExceptionReport {
+    public void missingService() throws DecodingException {
         decoder.decode(createMap(null, VERSION, PROCEDURE));
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void missingVersion() throws OwsExceptionReport {
+    public void missingVersion() throws DecodingException {
         decoder.decode(createMap(SERVICE, null, PROCEDURE));
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void missingProcedure() throws OwsExceptionReport {
+    public void missingProcedure() throws DecodingException {
         decoder.decode(createMap(SERVICE, VERSION, null));
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void emptyService() throws OwsExceptionReport {
+    public void emptyService() throws DecodingException {
         decoder.decode(createMap(EMPTY_STRING, VERSION, PROCEDURE));
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void emptyVersion() throws OwsExceptionReport {
+    public void emptyVersion() throws DecodingException {
         decoder.decode(createMap(SERVICE, EMPTY_STRING, PROCEDURE));
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void emptyProcedure() throws OwsExceptionReport {
+    public void emptyProcedure() throws DecodingException {
         decoder.decode(createMap(SERVICE, VERSION, EMPTY_STRING));
     }
 
     private Map<String, String> createMap(String service, String version, String procedure) {
-        Map<String, String> map = new HashMap<String, String>(3);
+        Map<String, String> map = new HashMap<>(3);
         if (service != null) {
             map.put(RequestParams.service.name(), service);
         }

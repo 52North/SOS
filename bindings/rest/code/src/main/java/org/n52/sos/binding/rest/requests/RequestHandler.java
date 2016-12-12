@@ -29,6 +29,8 @@
 package org.n52.sos.binding.rest.requests;
 
 import java.io.IOException;
+import java.util.Objects;
+import java.util.Set;
 
 import net.opengis.sos.x20.CapabilitiesDocument;
 import net.opengis.sos.x20.CapabilitiesType;
@@ -38,26 +40,28 @@ import net.opengis.swes.x20.AbstractContentsType.Offering;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.EncoderResponseUnsupportedException;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.iceland.exception.ows.concrete.ServiceOperatorNotFoundException;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.operator.ServiceOperator;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
-import org.n52.iceland.service.operator.ServiceOperatorRepository;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.binding.rest.Constants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.coding.OperationKey;
+import org.n52.iceland.coding.encode.EncoderResponseUnsupportedException;
+import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
+import org.n52.iceland.exception.ows.concrete.ServiceOperatorNotFoundException;
+import org.n52.iceland.service.operator.ServiceOperator;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.janmayen.Comparables;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.sos.binding.rest.Constants;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -97,11 +101,9 @@ public abstract class RequestHandler {
     protected Offering[] getOfferingsFromSosCore(GetCapabilitiesRequest req) throws OwsExceptionReport, XmlException
     {
         // if response is an OWSException report -> cancel whole process and throw it
-
-        final XmlObject xb_getCapabilitiesResponse = executeSosRequest(req);
-
-        if (xb_getCapabilitiesResponse instanceof CapabilitiesDocument)
-        {
+        try {
+        XmlObject xb_getCapabilitiesResponse = executeSosRequest(req);
+        if (xb_getCapabilitiesResponse instanceof CapabilitiesDocument) {
             final CapabilitiesDocument xb_capabilitiesDocument = (CapabilitiesDocument) xb_getCapabilitiesResponse;
             final CapabilitiesType xb_capabilities = xb_capabilitiesDocument.getCapabilities();
 
@@ -118,6 +120,9 @@ public abstract class RequestHandler {
             LOGGER.debug(exceptionText);
             throw new NoApplicableCodeException().withMessage(exceptionText);
         }
+        } catch (EncodingException ee) {
+            throw new NoApplicableCodeException().causedBy(ee);
+        }
     }
 
     private boolean isOfferingArrayAvailable(final CapabilitiesType xb_capabilities)
@@ -132,26 +137,38 @@ public abstract class RequestHandler {
         return ObservationOfferingDocument.Factory.parse(xb_offering.newInputStream()).getObservationOffering();
     }
 
-    private ServiceOperator getServiceOperator(AbstractServiceRequest<?> req) throws OwsExceptionReport
+    private ServiceOperator getServiceOperator(OwsServiceRequest req) throws OwsExceptionReport
     {
-        for (ServiceOperatorKey sok : req.getServiceOperatorKeys()) {
-            ServiceOperator so = ServiceOperatorRepository.getInstance().getServiceOperator(sok);
-            if (so != null) {
-                return so;
+        String service = req.getService();
+        String version = req.getVersion();
+        ServiceOperatorRepository serviceOperatorRepository = ServiceOperatorRepository.getInstance();
+        if (req instanceof GetCapabilitiesRequest) {
+            GetCapabilitiesRequest gcr = (GetCapabilitiesRequest) req;
+            if (gcr.isSetAcceptVersions()) {
+                return gcr.getAcceptVersions().stream().map(v -> new OwsServiceKey(service, v))
+                        .map(serviceOperatorRepository::getServiceOperator).filter(Objects::nonNull).findFirst()
+                        .orElseThrow(() -> new ServiceOperatorNotFoundException(req));
+            } else {
+                Set<String> supportedVersions = serviceOperatorRepository
+                        .getSupportedVersions(service);
+                String newest = supportedVersions.stream().max(Comparables.version())
+                        .orElseThrow(() -> new ServiceOperatorNotFoundException(req));
+                return serviceOperatorRepository.getServiceOperator(new OwsServiceKey(service, newest));
             }
+        } else {
+            return serviceOperatorRepository.getServiceOperator(new OwsServiceKey(service, version));
         }
-        throw new ServiceOperatorNotFoundException(req);
     }
 
-    protected XmlObject executeSosRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    protected XmlObject executeSosRequest(OwsServiceRequest request) throws EncodingException, OwsExceptionReport {
         return encodeResponse(getServiceOperator(request).receiveRequest(request));
     }
 
-    private XmlObject encodeResponse(AbstractServiceResponse response)
-            throws OwsExceptionReport {
+    private XmlObject encodeResponse(OwsServiceResponse response)
+            throws EncodingException {
         OperationResponseEncoderKey key = new OperationResponseEncoderKey(
-                response.getOperationKey(), MediaTypes.TEXT_XML);
-        Encoder<XmlObject, AbstractServiceResponse> encoder =
+                new OperationKey(response), MediaTypes.TEXT_XML);
+        Encoder<XmlObject, OwsServiceResponse> encoder =
                 CodingRepository.getInstance().getEncoder(key);
         if (encoder == null) {
             throw new NoEncoderForKeyException(key);

@@ -32,7 +32,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescriptionXml;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestType;
@@ -40,6 +39,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUrl;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
@@ -97,7 +97,7 @@ public class FeatureOfInterest extends SpatialEntity  implements Serializable, H
 
     @Override
     public boolean isSetDescription() {
-        return StringHelper.isNotEmpty(getDescription());
+        return !Strings.isNullOrEmpty(getDescription());
     }
 
     @Override

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.encode.json.impl;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -38,7 +39,6 @@ import static org.n52.sos.coding.json.JSONConstants.TEXT;
 import static org.n52.sos.coding.json.JSONConstants.VERSION;
 import static org.n52.sos.coding.json.matchers.Does.does;
 import static org.n52.sos.coding.json.matchers.JSONMatchers.arrayOfLength;
-import static org.n52.sos.coding.json.matchers.JSONMatchers.equalTo;
 import static org.n52.sos.coding.json.matchers.JSONMatchers.exist;
 import static org.n52.sos.coding.json.matchers.JSONMatchers.isObject;
 import static org.n52.sos.coding.json.matchers.ValidationMatchers.instanceOf;
@@ -47,7 +47,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.concrete.EncoderResponseUnsupportedException;
+
+import org.n52.iceland.coding.encode.EncoderResponseUnsupportedException;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.encode.json.JSONEncodingException;
 

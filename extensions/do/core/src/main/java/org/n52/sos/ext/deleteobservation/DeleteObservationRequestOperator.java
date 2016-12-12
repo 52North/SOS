@@ -28,18 +28,17 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import static org.n52.iceland.ogc.sos.SosConstants.SOS;
+import static org.n52.shetland.ogc.sos.SosConstants.SOS;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
 
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.operator.RequestOperator;
-import org.n52.sos.service.Configurator;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.request.operator.AbstractTransactionalRequestOperator;
 
 /**
@@ -49,8 +48,7 @@ import org.n52.sos.request.operator.AbstractTransactionalRequestOperator;
  * @since 1.0.0
  */
 public class DeleteObservationRequestOperator
-        extends
-        AbstractTransactionalRequestOperator<AbstractDeleteObservationHandler, DeleteObservationRequest, DeleteObservationResponse>
+        extends AbstractTransactionalRequestOperator<AbstractDeleteObservationHandler, DeleteObservationRequest, DeleteObservationResponse>
         implements RequestOperator {
 
     public DeleteObservationRequestOperator() {
@@ -65,24 +63,9 @@ public class DeleteObservationRequestOperator
         return response;
     }
 
-    @Deprecated
-    protected Configurator getConfigurator() {
-        return Configurator.getInstance();
-    }
-
     @Override
     protected void checkParameters(DeleteObservationRequest sosRequest) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
-        try {
-            checkServiceParameter(sosRequest.getService());
-        } catch (OwsExceptionReport owse) {
-            exceptions.add(owse);
-        }
-        try {
-            checkSingleVersionParameter(sosRequest);
-        } catch (OwsExceptionReport owse) {
-            exceptions.add(owse);
-        }
         try {
             checkObservationID(sosRequest.getObservationIdentifier(), DeleteObservationConstants.PARAMETER_NAME);
         } catch (OwsExceptionReport owse) {

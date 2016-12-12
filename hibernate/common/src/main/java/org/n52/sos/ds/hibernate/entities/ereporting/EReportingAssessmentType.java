@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.entities.ereporting;
 
 import java.io.Serializable;
 
-import org.n52.iceland.util.StringHelper;
+import com.google.common.base.Strings;
 
 public class EReportingAssessmentType implements Serializable {
 
@@ -75,10 +75,10 @@ public class EReportingAssessmentType implements Serializable {
     }
 
     public boolean isSetAssessmentType() {
-        return StringHelper.isNotEmpty(getAssessmentType());
+        return !Strings.isNullOrEmpty(getAssessmentType());
     }
 
     public boolean isSetUri() {
-        return StringHelper.isNotEmpty(getUri());
+        return !Strings.isNullOrEmpty(getUri());
     }
 }

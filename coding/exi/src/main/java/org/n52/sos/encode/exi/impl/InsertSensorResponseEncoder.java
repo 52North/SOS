@@ -28,9 +28,9 @@
  */
 package org.n52.sos.encode.exi.impl;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.encode.exi.AbstractSosV2ResponseEncoder;
-import org.n52.sos.response.InsertSensorResponse;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 
 /**
  * Response encoder for {@link InsertSensorResponse}

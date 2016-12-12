@@ -32,39 +32,37 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.service.ServiceConstants.ObservationType;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
 import org.n52.sos.decode.json.JSONDecodingException;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableSet;
@@ -79,34 +77,17 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  */
 public class ObservationDecoder extends JSONDecoder<OmObservation> {
-    //TODO move these to OMConstants
-    private static final ObservationType OBS_TYPE_GEOMETRY_OBSERVATION
-            = new ObservationType(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
-    private static final ObservationType OBS_TYPE_COUNT_OBSERVATION
-            = new ObservationType(OmConstants.OBS_TYPE_COUNT_OBSERVATION);
-    private static final ObservationType OBS_TYPE_MEASUREMENT
-            = new ObservationType(OmConstants.OBS_TYPE_MEASUREMENT);
-    private static final ObservationType OBS_TYPE_TEXT_OBSERVATION
-            = new ObservationType(OmConstants.OBS_TYPE_TEXT_OBSERVATION);
-    private static final ObservationType OBS_TYPE_TRUTH_OBSERVATION
-            = new ObservationType(OmConstants.OBS_TYPE_TRUTH_OBSERVATION);
-    private static final ObservationType OBS_TYPE_CATEGORY_OBSERVATION
-            = new ObservationType(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION);
-    private static final ObservationType OBS_TYPE_COMPLEX_OBSERVATION
-            = new ObservationType(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
-    private static final ObservationType OBS_TYPE_SWE_ARRAY_OBSERVATION
-            = new ObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
 
     private static final Set<SupportedType> SUPPORTED_TYPES = ImmutableSet
             .<SupportedType>builder()
 //            .add(OBS_TYPE_SWE_ARRAY_OBSERVATION)
 //            .add(OBS_TYPE_COMPLEX_OBSERVATION)
-            .add(OBS_TYPE_GEOMETRY_OBSERVATION)
-            .add(OBS_TYPE_CATEGORY_OBSERVATION)
-            .add(OBS_TYPE_COUNT_OBSERVATION)
-            .add(OBS_TYPE_MEASUREMENT)
-            .add(OBS_TYPE_TEXT_OBSERVATION)
-            .add(OBS_TYPE_TRUTH_OBSERVATION)
+            .add(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_COUNT_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_MEASUREMENT_TYPE)
+            .add(OmConstants.OBS_TYPE_TEXT_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_TRUTH_OBSERVATION_TYPE)
             .build();
 
     private final JSONDecoder<AbstractFeature> featureDecoder = new FeatureDecoder();
@@ -123,7 +104,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
     }
 
     @Override
-    public OmObservation decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport {
+    public OmObservation decodeJSON(JsonNode node, boolean validate) throws DecodingException {
         if (node == null) {
             return null;
         }
@@ -133,7 +114,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         return decodeJSON(node);
     }
 
-    protected OmObservation decodeJSON(JsonNode node) throws OwsExceptionReport {
+    protected OmObservation decodeJSON(JsonNode node) throws DecodingException {
         if (node.isObject()) {
             OmObservation o = new OmObservation();
             o.setIdentifier(parseIdentifier(node));
@@ -148,7 +129,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         }
     }
 
-    public OmObservationConstellation parseObservationConstellation(JsonNode node) throws OwsExceptionReport {
+    public OmObservationConstellation parseObservationConstellation(JsonNode node) throws DecodingException {
         OmObservationConstellation oc = new OmObservationConstellation();
         oc.setProcedure(parseProcedure(node));
         oc.setObservableProperty(parseObservableProperty(node));
@@ -157,7 +138,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         return oc;
     }
 
-    protected SosProcedureDescription parseProcedure(JsonNode node) {
+    protected AbstractFeature parseProcedure(JsonNode node) {
         return new SensorML().setIdentifier(node.path(JSONConstants.PROCEDURE).textValue());
     }
 
@@ -173,19 +154,19 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         return node.path(JSONConstants.TYPE).textValue();
     }
 
-    protected TimePeriod parseValidTime(JsonNode node) throws OwsExceptionReport {
+    protected TimePeriod parseValidTime(JsonNode node) throws DecodingException {
         return parseTimePeriod(node.path(JSONConstants.VALID_TIME));
     }
 
-    protected TimeInstant parseResultTime(JsonNode node) throws OwsExceptionReport {
+    protected TimeInstant parseResultTime(JsonNode node) throws DecodingException {
         return parseTimeInstant(node.path(JSONConstants.RESULT_TIME));
     }
 
-    private Time parsePhenomenonTime(JsonNode node) throws OwsExceptionReport {
+    private Time parsePhenomenonTime(JsonNode node) throws DecodingException {
         return parseTime(node.path(JSONConstants.PHENOMENON_TIME));
     }
 
-    protected Collection<NamedValue<?>> parseParameter(JsonNode node) throws OwsExceptionReport {
+    protected Collection<NamedValue<?>> parseParameter(JsonNode node) throws DecodingException {
         Set<NamedValue<?>> parameters = Sets.newTreeSet();
         JsonNode parameter = node.path(JSONConstants.PARAMETER);
         if (parameter.isArray()) {
@@ -198,7 +179,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         return parameters;
     }
 
-    private NamedValue<?> parseNamedValue(JsonNode parameter) throws OwsExceptionReport {
+    private NamedValue<?> parseNamedValue(JsonNode parameter) throws DecodingException {
         JsonNode namedValue = parameter.path(JSONConstants.NAMED_VALUE);
         NamedValue<?> nv = parseNamedValueValue(namedValue.path(JSONConstants.VALUE));
         ReferenceType referenceType = new ReferenceType(namedValue.path(JSONConstants.NAME).asText());
@@ -206,42 +187,42 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         return nv;
     }
 
-    private NamedValue<?> parseNamedValueValue(JsonNode value) throws OwsExceptionReport {
+    private NamedValue<?> parseNamedValueValue(JsonNode value) throws DecodingException {
         if (value.isTextual()) {
-            NamedValue<W3CHrefAttribute> nv = new NamedValue<W3CHrefAttribute>();
+            NamedValue<W3CHrefAttribute> nv = new NamedValue<>();
             nv.setValue(new HrefAttributeValue(new W3CHrefAttribute(value.asText())));
             return nv;
         } else if (value.isBoolean()) {
-            NamedValue<Boolean> nv = new NamedValue<Boolean>();
+            NamedValue<Boolean> nv = new NamedValue<>();
             nv.setValue(new BooleanValue(value.asBoolean()));
             return nv;
         } else if (value.isInt()) {
-            NamedValue<Integer> nv = new NamedValue<Integer>();
+            NamedValue<Integer> nv = new NamedValue<>();
             nv.setValue(new CountValue(value.asInt()));
             return nv;
         } else if (value.isObject()) {
             if (value.has(JSONConstants.CODESPACE)) {
-                NamedValue<String> nv = new NamedValue<String>();
+                NamedValue<String> nv = new NamedValue<>();
                 nv.setValue(parseCategroyValue(value));
                 return nv;
             } else if (value.has(JSONConstants.UOM)) {
-                NamedValue<Double> nv = new NamedValue<Double>();
+                NamedValue<Double> nv = new NamedValue<>();
                 nv.setValue(parseQuantityValue(value));
                 return nv;
             } else if (value.has(JSONConstants.COORDINATES)) {
-                NamedValue<Geometry> nv = new NamedValue<Geometry>();
+                NamedValue<Geometry> nv = new NamedValue<>();
                 nv.setValue(new GeometryValue(geometryDecoder.decodeJSON(value, false)));
                 return nv;
             }
         }
-        throw new NotYetSupportedException(value.toString());
+        throw new DecodingException("%s is not yet supported", value.toString());
     }
 
-    protected AbstractFeature parseFeatureOfInterest(JsonNode node) throws OwsExceptionReport {
+    protected AbstractFeature parseFeatureOfInterest(JsonNode node) throws DecodingException {
         return featureDecoder.decodeJSON(node.path(JSONConstants.FEATURE_OF_INTEREST), false);
     }
 
-    private ObservationValue<?> parseValue(JsonNode node) throws OwsExceptionReport {
+    private ObservationValue<?> parseValue(JsonNode node) throws DecodingException {
         String type = parseObservationType(node);
         if (type.equals(OmConstants.OBS_TYPE_MEASUREMENT)) {
             return parseMeasurementValue(node);
@@ -260,46 +241,46 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         }
     }
 
-    protected ObservationValue<?> parseMeasurementValue(JsonNode node) throws OwsExceptionReport {
+    protected ObservationValue<?> parseMeasurementValue(JsonNode node) throws DecodingException {
         final QuantityValue qv = parseQuantityValue(node.path(JSONConstants.RESULT));
 //                new QuantityValue(node.path(JSONConstants.RESULT).path(JSONConstants.VALUE).doubleValue(), node
 //                        .path(JSONConstants.RESULT).path(JSONConstants.UOM).textValue());
-        return new SingleObservationValue<Double>(parsePhenomenonTime(node), qv);
+        return new SingleObservationValue<>(parsePhenomenonTime(node), qv);
     }
 
-    private QuantityValue parseQuantityValue(JsonNode node) throws OwsExceptionReport {
+    private QuantityValue parseQuantityValue(JsonNode node) throws DecodingException {
        return new QuantityValue(node.path(JSONConstants.VALUE).doubleValue(), node.path(JSONConstants.UOM).textValue());
     }
 
-    private ObservationValue<?> parseTextObservationValue(JsonNode node) throws OwsExceptionReport {
+    private ObservationValue<?> parseTextObservationValue(JsonNode node) throws DecodingException {
         final TextValue v = new TextValue(node.path(JSONConstants.RESULT).textValue());
-        return new SingleObservationValue<String>(parsePhenomenonTime(node), v);
+        return new SingleObservationValue<>(parsePhenomenonTime(node), v);
     }
 
-    private ObservationValue<?> parseCountObservationValue(JsonNode node) throws OwsExceptionReport {
+    private ObservationValue<?> parseCountObservationValue(JsonNode node) throws DecodingException {
         final CountValue v = new CountValue(node.path(JSONConstants.RESULT).intValue());
-        return new SingleObservationValue<Integer>(parsePhenomenonTime(node), v);
+        return new SingleObservationValue<>(parsePhenomenonTime(node), v);
     }
 
-    private ObservationValue<?> parseTruthObservationValue(JsonNode node) throws OwsExceptionReport {
+    private ObservationValue<?> parseTruthObservationValue(JsonNode node) throws DecodingException {
         final BooleanValue v = new BooleanValue(node.path(JSONConstants.RESULT).booleanValue());
-        return new SingleObservationValue<Boolean>(parsePhenomenonTime(node), v);
+        return new SingleObservationValue<>(parsePhenomenonTime(node), v);
     }
 
-    private ObservationValue<?> parseCategoryObservationValue(JsonNode node) throws OwsExceptionReport {
+    private ObservationValue<?> parseCategoryObservationValue(JsonNode node) throws DecodingException {
         final CategoryValue v = parseCategroyValue(node.path(JSONConstants.RESULT));
 //                new CategoryValue(node.path(JSONConstants.RESULT).path(JSONConstants.VALUE).textValue(), node
 //                        .path(JSONConstants.RESULT).path(JSONConstants.CODESPACE).textValue());
-        return new SingleObservationValue<String>(parsePhenomenonTime(node), v);
+        return new SingleObservationValue<>(parsePhenomenonTime(node), v);
     }
 
-    private CategoryValue parseCategroyValue(JsonNode node) throws OwsExceptionReport {
+    private CategoryValue parseCategroyValue(JsonNode node) throws DecodingException {
         return new CategoryValue(node.path(JSONConstants.VALUE).textValue(), node.path(JSONConstants.CODESPACE).textValue());
     }
 
-    private ObservationValue<?> parseGeometryObservation(JsonNode node) throws OwsExceptionReport {
+    private ObservationValue<?> parseGeometryObservation(JsonNode node) throws DecodingException {
         GeometryValue v = new GeometryValue(geometryDecoder.decodeJSON(node.path(JSONConstants.RESULT), false));
-        return new SingleObservationValue<Geometry>(parsePhenomenonTime(node), v);
+        return new SingleObservationValue<>(parsePhenomenonTime(node), v);
     }
 
 }

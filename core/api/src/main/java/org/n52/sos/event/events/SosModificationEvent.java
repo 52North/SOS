@@ -29,8 +29,8 @@
 package org.n52.sos.event.events;
 
 import org.n52.iceland.event.events.ModificationResponseEvent;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 
 /**
  *
@@ -38,7 +38,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
  *
  * @since 4.0.0
  */
-public abstract class SosModificationEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse>
+public abstract class SosModificationEvent<I extends OwsServiceRequest, O extends OwsServiceResponse>
         extends ModificationResponseEvent<I, O> {
 
     public SosModificationEvent(I request, O response) {

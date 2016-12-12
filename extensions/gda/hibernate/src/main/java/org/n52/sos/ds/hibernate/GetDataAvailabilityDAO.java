@@ -28,11 +28,14 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -50,20 +53,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.Extension;
-import org.n52.iceland.ogc.ows.Extensions;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.sos.ds.FeatureQueryHandler;
-
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
@@ -85,9 +87,8 @@ import org.n52.sos.gda.AbstractGetDataAvailabilityHandler;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.ReferenceType;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -144,16 +145,14 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
     public GetDataAvailabilityResponse getDataAvailability(GetDataAvailabilityRequest req) throws OwsExceptionReport {
         Session session = sessionHolder.getSession();
         try {
-            List<?> dataAvailabilityValues = queryDataAvailabilityValues(req, session);
+            List<DataAvailability> dataAvailabilityValues = queryDataAvailabilityValues(req, session);
             GetDataAvailabilityResponse response = new GetDataAvailabilityResponse();
             response.setService(req.getService());
             response.setVersion(req.getVersion());
             response.setNamespace(req.getNamespace());
-            for (Object o : dataAvailabilityValues) {
-                if (o != null) {
-                    response.addDataAvailability((DataAvailability) o);
-                }
-            }
+            dataAvailabilityValues.stream()
+                    .filter(Objects::nonNull)
+                    .forEach(response::addDataAvailability);
             return response;
         } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage(
@@ -174,7 +173,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private List<?> queryDataAvailabilityValues(GetDataAvailabilityRequest req, Session session)
+    private List<DataAvailability> queryDataAvailabilityValues(GetDataAvailabilityRequest req, Session session)
             throws OwsExceptionReport {
         // check is named queries are supported
         if (checkForNamedQueries(req, session)) {
@@ -217,7 +216,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
             c.setProjection(projectionList);
             c.setResultTransformer(new DataAvailabilityTransformer(session));
             LOGGER.debug("QUERY getDataAvailability(request): {}", HibernateHelper.getSqlString(c));
-            List<?> list = c.list();
+            @SuppressWarnings("unchecked")
+            List<DataAvailability> list = c.list();
             if (isIncludeResultTime(req)) {
                 for (Object o : list) {
                     DataAvailability dataAvailability = (DataAvailability) o;
@@ -285,7 +285,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private List<?> querySeriesDataAvailabilities(GetDataAvailabilityRequest request, Session session)
+    private List<DataAvailability> querySeriesDataAvailabilities(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
         List<DataAvailability> dataAvailabilityValues = Lists.newLinkedList();
         Map<String, ReferenceType> procedures = new HashMap<>();
@@ -441,11 +441,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
         List<Date> dateTimes =
                 seriesObservationDAO.getResultTimesForSeriesObservation(series, request.getOfferings(), filter,
                         session);
-        List<TimeInstant> resultTimes = Lists.newArrayList();
-        for (Date date : dateTimes) {
-            resultTimes.add(new TimeInstant(date));
-        }
-        return resultTimes;
+        return dateTimes.stream().map(TimeInstant::new).collect(toList());
     }
 
     /**
@@ -510,7 +506,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
         return false;
     }
 
-    private List<?> executeNamedQuery(GetDataAvailabilityRequest req, Session session) {
+    @SuppressWarnings("unchecked")
+    private List<DataAvailability> executeNamedQuery(GetDataAvailabilityRequest req, Session session) {
         final boolean features = req.isSetFeaturesOfInterest();
         final boolean observableProperties = req.isSetObservedProperties();
         final boolean procedures = req.isSetProcedures();
@@ -556,7 +553,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
             namedQueryName = SQL_QUERY_GET_DATA_AVAILABILITY_FOR_FEATURES;
             parameter.put(FEATURES, req.getFeaturesOfInterest());
         }
-        if (StringHelper.isNotEmpty(namedQueryName)) {
+        if (!Strings.isNullOrEmpty(namedQueryName)) {
             Query namedQuery = session.getNamedQuery(namedQueryName);
             for (String key : parameter.keySet()) {
                 namedQuery.setParameterList(key, parameter.get(key));
@@ -694,13 +691,30 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
         }
     }
 
+
+    private static class SeriesMinMaxTransformer implements ResultTransformer {
+        private static final long serialVersionUID = -373512929481519459L;
+
+        @Override
+        public TimePeriod transformTuple(Object[] tuple, String[] aliases) {
+            if (tuple != null) {
+                return new TimePeriod(tuple[0], tuple[1]);
+            }
+            return null;
+        }
+
+        @Override
+        @SuppressWarnings("rawtypes")
+        public List transformList(List collection) {
+            return collection;
+        }
+    }
+
     /**
      * Class to transform ResultSets to DataAvailabilities.
      */
-    private static class DataAvailabilityTransformer implements ResultTransformer {
+    private class DataAvailabilityTransformer implements ResultTransformer {
         private static final long serialVersionUID = -373512929481519459L;
-
-        private final Logger LOGGER = LoggerFactory.getLogger(DataAvailabilityTransformer.class);
 
         private final Session session;
 
@@ -778,7 +792,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
         }
 
         private ReferenceType getObservablePropertyReferenceType(Object observableProperty,
-                Map<String, ReferenceType> observableProperties) throws CodedException {
+                                                                 Map<String, ReferenceType> observableProperties) throws CodedException {
             String identifier = null;
             if (observableProperty instanceof ObservableProperty) {
                 identifier = ((ObservableProperty) observableProperty).getIdentifier();
@@ -801,7 +815,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
         }
 
         private ReferenceType getFeatureOfInterestReferenceType(Object featureOfInterest,
-                Map<String, ReferenceType> featuresOfInterest) throws OwsExceptionReport {
+                                                                Map<String, ReferenceType> featuresOfInterest) throws OwsExceptionReport {
             String identifier = null;
             if (featureOfInterest instanceof FeatureOfInterest) {
                 identifier = ((FeatureOfInterest) featureOfInterest).getIdentifier();
@@ -817,8 +831,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
                 FeatureQueryHandlerQueryObject queryObject =
                         new FeatureQueryHandlerQueryObject().addFeatureIdentifier(identifier).setConnection(session)
                                 .setVersion(Sos2Constants.SERVICEVERSION);
-                AbstractFeature feature =
-                        Configurator.getInstance().getFeatureQueryHandler().getFeatureByID(queryObject);
+                AbstractFeature feature = featureQueryHandler.getFeatureByID(queryObject);
                 if (feature.isSetName() && feature.getFirstName().isSetValue()) {
                     referenceType.setTitle(feature.getFirstName().getValue());
                 }
@@ -831,24 +844,6 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
             if (!referenceType.isSetTitle() && object instanceof String) {
                 referenceType.setTitle((String) object);
             }
-        }
-
-        @Override
-        @SuppressWarnings("rawtypes")
-        public List transformList(List collection) {
-            return collection;
-        }
-    }
-
-    private static class SeriesMinMaxTransformer implements ResultTransformer {
-        private static final long serialVersionUID = -373512929481519459L;
-
-        @Override
-        public TimePeriod transformTuple(Object[] tuple, String[] aliases) {
-            if (tuple != null) {
-                return new TimePeriod(tuple[0], tuple[1]);
-            }
-            return null;
         }
 
         @Override

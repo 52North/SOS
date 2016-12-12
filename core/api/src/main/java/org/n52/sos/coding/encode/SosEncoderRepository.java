@@ -30,10 +30,10 @@ package org.n52.sos.coding.encode;
 
 import java.util.Set;
 
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderRepository;
-import org.n52.iceland.util.Producer;
-import org.n52.iceland.util.Producers;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.janmayen.Producer;
+import org.n52.janmayen.Producers;
 
 import com.google.common.collect.Sets;
 

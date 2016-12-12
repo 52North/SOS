@@ -35,21 +35,21 @@ import java.util.Set;
 import org.joda.time.DateTime;
 
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
-import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.DateTimeHelper;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeFormatException;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.DateTimeParseException;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.AbstractGetObservationHandler;
@@ -59,8 +59,8 @@ import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterExceptio
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.SosHelper;
 
@@ -70,7 +70,7 @@ public class AqdGetObservationOperatorV10 extends
         AbstractAqdRequestOperator<AbstractGetObservationHandler, GetObservationRequest, GetObservationResponse> {
 
     private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(TimeOperator.TM_Equals,
-            new TimeInstant(ExtendedIndeterminateTime.latest), OmConstants.EN_PHENOMENON_TIME);
+            new TimeInstant(ExtendedIndeterminateTime.LATEST), OmConstants.EN_PHENOMENON_TIME);
 
     private static final String OPERATION_NAME = SosConstants.Operations.GetObservation.name();
 
@@ -101,10 +101,7 @@ public class AqdGetObservationOperatorV10 extends
     }
 
     private boolean checkForMergeObservationsInResponse(GetObservationRequest request) {
-        if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(request)) {
-            return true;
-        }
-        return false;
+        return getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(request);
     }
 
     private void checkRequestForFlowAndTemporalFilter(GetObservationRequest request, ReportObligationType flow) throws CodedException {

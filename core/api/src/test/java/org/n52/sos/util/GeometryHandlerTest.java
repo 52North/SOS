@@ -34,8 +34,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.Constants;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 import com.google.common.base.Joiner;
 import com.vividsolutions.jts.geom.Geometry;
@@ -67,23 +67,23 @@ public class GeometryHandlerTest {
     private static Geometry geometry31467Switched;
 
     // northing first
-    private static int EPSG_4326 = 4326;
+    private static final int EPSG_4326 = 4326;
 
     // easting first
-    private static int EPSG_31467 = 31467;
+    private static final int EPSG_31467 = 31467;
 
-    private static String supportedCRS = Joiner.on(Constants.COMMA_CHAR).join(EPSG_4326, EPSG_31467);
+    private static final String SUPPORTED_CRS = Joiner.on(",").join(EPSG_4326, EPSG_31467);
 
-    private static String nortingFirstCRS = Joiner.on(Constants.SEMICOLON_CHAR).join(EPSG_4326, EPSG_31467);
+    private static final String NORTHING_FIRST_CRS = Joiner.on(";").join(EPSG_4326, EPSG_31467);
 
     @BeforeClass
     public static void init() throws ParseException {
-        geometryHandler =  new GeometryHandler()
-                .setAuthority("EPSG")
-                .setStorageEpsg(EPSG_4326)
-                .setSupportedCRS(supportedCRS)
-                .setEpsgCodesWithNorthingFirstAxisOrder(nortingFirstCRS)
-                .setDatasourceNorthingFirst(false);
+        geometryHandler =  new GeometryHandler();
+        geometryHandler.setAuthority("EPSG");
+        geometryHandler.setStorageEpsg(EPSG_4326);
+        geometryHandler.setSupportedCRS(SUPPORTED_CRS);
+        geometryHandler.setEpsgCodesWithNorthingFirstAxisOrder(NORTHING_FIRST_CRS);
+        geometryHandler.setDatasourceNorthingFirst(false);
         geometryHandler.init();
         WKTReader reader = new WKTReader();
         double lat_4326 = 52.7;

@@ -40,9 +40,10 @@ import java.util.Random;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.Constants;
-import org.n52.sos.coding.json.GeoJSONException;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.sos.coding.json.GeoJSONDecodingException;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.impl.GeoJSONDecoder;
 import org.n52.sos.encode.json.JSONEncodingException;
@@ -76,6 +77,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
  * @since 4.0.0
  */
 public class GeoJSONTest {
+    private static final int EPSG_4326 = 4326;
     @Rule
     public final ErrorCollector errors = new ErrorCollector();
 
@@ -153,15 +155,15 @@ public class GeoJSONTest {
     }
 
     @Test
-    public void testGeometryCollection() throws GeoJSONException, IOException {
-        readWriteTest(geometryFactory.createGeometryCollection(new Geometry[] { randomGeometryCollection(Constants.EPSG_WGS84),
+    public void testGeometryCollection() throws GeoJSONDecodingException, IOException {
+        readWriteTest(geometryFactory.createGeometryCollection(new Geometry[] { randomGeometryCollection(EPSG_4326),
                 randomGeometryCollection(2000) }));
     }
 
     @Test
-    public void testGeometryCollectionWithZCoordinate() throws GeoJSONException, IOException {
+    public void testGeometryCollectionWithZCoordinate() throws GeoJSONDecodingException, IOException {
         GeometryCollection geometry =
-                geometryFactory.createGeometryCollection(new Geometry[] { randomGeometryCollection(Constants.EPSG_WGS84),
+                geometryFactory.createGeometryCollection(new Geometry[] { randomGeometryCollection(EPSG_4326),
                         randomGeometryCollection(2000) });
         geometry.apply(new RandomZCoordinateFilter());
         geometry.geometryChanged();
@@ -169,46 +171,46 @@ public class GeoJSONTest {
     }
 
     @Test
-    public void testPolygon() throws GeoJSONException, IOException {
-        readWriteTest(randomPolygon(Constants.EPSG_WGS84));
+    public void testPolygon() throws GeoJSONDecodingException, IOException {
+        readWriteTest(randomPolygon(EPSG_4326));
     }
 
     @Test
-    public void testPolygonWithZCoordinate() throws GeoJSONException, IOException {
-        Polygon geometry = randomPolygon(Constants.EPSG_WGS84);
+    public void testPolygonWithZCoordinate() throws GeoJSONDecodingException, IOException {
+        Polygon geometry = randomPolygon(EPSG_4326);
         geometry.apply(new RandomZCoordinateFilter());
         geometry.geometryChanged();
         readWriteTest(geometry);
     }
 
     @Test
-    public void testMultiPolygon() throws GeoJSONException, IOException {
-        readWriteTest(randomMultiPolygon(Constants.EPSG_WGS84));
+    public void testMultiPolygon() throws GeoJSONDecodingException, IOException {
+        readWriteTest(randomMultiPolygon(EPSG_4326));
     }
 
     @Test
-    public void testMultiPolygonWithZCoordinate() throws GeoJSONException, IOException {
-        MultiPolygon geometry = randomMultiPolygon(Constants.EPSG_WGS84);
+    public void testMultiPolygonWithZCoordinate() throws GeoJSONDecodingException, IOException {
+        MultiPolygon geometry = randomMultiPolygon(EPSG_4326);
         geometry.apply(new RandomZCoordinateFilter());
         geometry.geometryChanged();
         readWriteTest(geometry);
     }
 
     @Test
-    public void testPoint() throws GeoJSONException, IOException {
+    public void testPoint() throws GeoJSONDecodingException, IOException {
         readWriteTest(randomPoint(2000));
     }
 
     @Test
-    public void testCrsCombinations() throws GeoJSONException, IOException {
+    public void testCrsCombinations() throws GeoJSONDecodingException, IOException {
         testCrs(0, 0);
         testCrs(2000, 0);
-        testCrs(Constants.EPSG_WGS84, 0);
-        testCrs(Constants.EPSG_WGS84, 2000);
+        testCrs(EPSG_4326, 0);
+        testCrs(EPSG_4326, 2000);
         testCrs(0, 2000);
-        testCrs(0, Constants.EPSG_WGS84);
+        testCrs(0, EPSG_4326);
         testCrs(2000, 2000);
-        testCrs(Constants.EPSG_WGS84, Constants.EPSG_WGS84);
+        testCrs(EPSG_4326, EPSG_4326);
         testCrs(2000, 2001);
     }
 
@@ -219,7 +221,7 @@ public class GeoJSONTest {
     }
 
     @Test
-    public void testPointWithZCoordinate() throws GeoJSONException, IOException {
+    public void testPointWithZCoordinate() throws GeoJSONDecodingException, IOException {
         Point geometry = randomPoint(2000);
         geometry.apply(new RandomZCoordinateFilter());
         geometry.geometryChanged();
@@ -228,12 +230,12 @@ public class GeoJSONTest {
 
     @Test
     public void testMultiPoint() {
-        readWriteTest(randomMultiPoint(Constants.EPSG_WGS84));
+        readWriteTest(randomMultiPoint(EPSG_4326));
     }
 
     @Test
     public void testMultiPointWithZCoordinate() {
-        MultiPoint geometry = randomMultiPoint(Constants.EPSG_WGS84);
+        MultiPoint geometry = randomMultiPoint(EPSG_4326);
         geometry.apply(new RandomZCoordinateFilter());
         geometry.geometryChanged();
         readWriteTest(geometry);
@@ -241,12 +243,12 @@ public class GeoJSONTest {
 
     @Test
     public void testLineString() {
-        readWriteTest(randomLineString(Constants.EPSG_WGS84));
+        readWriteTest(randomLineString(EPSG_4326));
     }
 
     @Test
     public void testLineStringWithZCoordinate() {
-        LineString geometry = randomLineString(Constants.EPSG_WGS84);
+        LineString geometry = randomLineString(EPSG_4326);
         geometry.apply(new RandomZCoordinateFilter());
         geometry.geometryChanged();
         readWriteTest(geometry);
@@ -254,12 +256,12 @@ public class GeoJSONTest {
 
     @Test
     public void testMultiLineString() {
-        readWriteTest(randomMultiLineString(Constants.EPSG_WGS84));
+        readWriteTest(randomMultiLineString(EPSG_4326));
     }
 
     @Test
     public void testMultiLineStringWithZCoordinate() {
-        MultiLineString geometry = randomMultiLineString(Constants.EPSG_WGS84);
+        MultiLineString geometry = randomMultiLineString(EPSG_4326);
         geometry.apply(new RandomZCoordinateFilter());
         geometry.geometryChanged();
         readWriteTest(geometry);
@@ -274,7 +276,7 @@ public class GeoJSONTest {
             errors.checkThat(json, is(instanceOf(SchemaConstants.Common.GEOMETRY)));
             errors.checkThat(json2, is(instanceOf(SchemaConstants.Common.GEOMETRY)));
             errors.checkThat(json, is(equalTo(json2)));
-        } catch (OwsExceptionReport ex) {
+        } catch (EncodingException | DecodingException ex) {
             errors.addError(ex);
         }
 

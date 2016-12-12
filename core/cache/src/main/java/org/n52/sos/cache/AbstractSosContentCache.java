@@ -41,13 +41,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
 
-import org.n52.iceland.i18n.MultilingualString;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.collections.SetMultiMap;
-import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.shetland.i18n.MultilingualString;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.ReferencedEnvelope;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.BiMap;
@@ -55,8 +56,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
-
-import org.slf4j.Logger;
 
 /**
  * Abstract {@code ContentCache} implementation that encapsulates the needed
@@ -190,7 +189,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
         if (set == null) {
             return Collections.emptySet();
         } else {
-            return Collections.unmodifiableSet(new HashSet<T>(set));
+            return Collections.unmodifiableSet(new HashSet<>(set));
         }
     }
 
@@ -225,12 +224,12 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
      *
      * @return a copy
      */
-    protected static SosEnvelope copyOf(SosEnvelope e) {
+    protected static ReferencedEnvelope copyOf(ReferencedEnvelope e) {
         if (e == null) {
             // TODO empty envelope
             return null;
         } else {
-            return new SosEnvelope(e.getEnvelope() == null ? null : new Envelope(e.getEnvelope()), e.getSrid());
+            return new ReferencedEnvelope(e.getEnvelope() == null ? null : new Envelope(e.getEnvelope()), e.getSrid());
         }
     }
 
@@ -448,7 +447,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
 
     private SetMultiMap<String, String> rolesForRelatedFeatures = newSynchronizedSetMultiMap();
 
-    private Map<String, SosEnvelope> envelopeForOfferings = newSynchronizedMap();
+    private Map<String, ReferencedEnvelope> envelopeForOfferings = newSynchronizedMap();
 
     private Map<String, String> nameForOfferings = newSynchronizedMap();
 
@@ -466,13 +465,13 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
 
     private Set<String> offerings = newSynchronizedSet();
 
-    private SosEnvelope globalEnvelope = new SosEnvelope(null, defaultEpsgCode);
+    private ReferencedEnvelope globalEnvelope = new ReferencedEnvelope(null, defaultEpsgCode);
 
     private TimePeriod globalPhenomenonTimeEnvelope = new TimePeriod();
 
     private TimePeriod globalResultTimeEnvelope = new TimePeriod();
 
-    private Map<String, SosEnvelope> spatialFilteringProfileEnvelopeForOfferings = newSynchronizedMap();
+    private Map<String, ReferencedEnvelope> spatialFilteringProfileEnvelopeForOfferings = newSynchronizedMap();
 
     private Set<Locale> supportedLanguages = newSynchronizedSet();
 
@@ -698,14 +697,14 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
     /**
      * @return the relating offering -> envelope
      */
-    protected Map<String, SosEnvelope> getEnvelopeForOfferingsMap() {
+    protected Map<String, ReferencedEnvelope> getEnvelopeForOfferingsMap() {
         return this.envelopeForOfferings;
     }
 
     /**
      * @return the relating offering -> envelope
      */
-    protected Map<String, SosEnvelope> getSpatialFilteringProfileEnvelopeForOfferingsMap() {
+    protected Map<String, ReferencedEnvelope> getSpatialFilteringProfileEnvelopeForOfferingsMap() {
         return this.spatialFilteringProfileEnvelopeForOfferings;
     }
 
@@ -803,7 +802,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
     /**
      * @return the global spatial envelope
      */
-    protected SosEnvelope getGlobalSpatialEnvelope() {
+    protected ReferencedEnvelope getGlobalSpatialEnvelope() {
         return this.globalEnvelope;
     }
 
@@ -811,7 +810,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
      * @param envelope
      *            the new global spatial envelope
      */
-    protected void setGlobalSpatialEnvelope(SosEnvelope envelope) {
+    protected void setGlobalSpatialEnvelope(ReferencedEnvelope envelope) {
         if (envelope == null) {
             throw new NullPointerException();
         }

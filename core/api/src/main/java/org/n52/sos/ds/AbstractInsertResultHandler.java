@@ -28,11 +28,19 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.request.InsertResultRequest;
-import org.n52.sos.response.InsertResultResponse;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.n52.shetland.ogc.ows.OwsAllowedValues;
+import org.n52.shetland.ogc.ows.OwsAnyValue;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants.InsertResultParams;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 
 /**
  * Renamed, in version 4.x called AbstractInsertResultDAO
@@ -45,13 +53,24 @@ public abstract class AbstractInsertResultHandler extends AbstractResultHandling
         super(service, Sos2Constants.Operations.InsertResult.name());
     }
 
+    public abstract InsertResultResponse insertResult(InsertResultRequest request) throws OwsExceptionReport;
+
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        opsMeta.addPossibleValuesParameter(Sos2Constants.InsertResultParams.template, getCache().getResultTemplates());
-        opsMeta.addAnyParameterValue(Sos2Constants.InsertResultParams.resultValues);
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
+        return new HashSet<>(Arrays.asList(
+                getTemplateParameter(service, version),
+                getResultValuesParameter(service, version)));
     }
 
-    public abstract InsertResultResponse insertResult(InsertResultRequest request) throws OwsExceptionReport;
+    private OwsDomain getTemplateParameter(String service, String version) {
+        InsertResultParams name = Sos2Constants.InsertResultParams.template;
+        Set<String> resultTemplates = getCache().getResultTemplates();
+        return new OwsDomain(name, new OwsAllowedValues(resultTemplates.stream().map(OwsValue::new)));
+    }
+
+    private OwsDomain getResultValuesParameter(String service, String version) {
+        InsertResultParams name = Sos2Constants.InsertResultParams.resultValues;
+        return new OwsDomain(name, OwsAnyValue.instance());
+    }
 
 }

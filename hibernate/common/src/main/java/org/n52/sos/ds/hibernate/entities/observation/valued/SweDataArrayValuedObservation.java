@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.valued;
 
+import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.ogc.swe.SweDataArray;
 
 /**
  * A {@link ValuedObservation} that holds a {@link SweDataArray} value that is

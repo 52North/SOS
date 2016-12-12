@@ -30,11 +30,9 @@ package org.n52.sos.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -42,33 +40,6 @@ import javax.xml.soap.SOAPConstants;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.iceland.w3c.W3CConstants;
-import org.n52.iceland.w3c.soap.SoapConstants;
-import org.n52.iceland.w3c.soap.SoapFault;
-import org.n52.iceland.w3c.soap.SoapHeader;
-import org.n52.iceland.w3c.soap.SoapHelper;
-import org.n52.iceland.w3c.soap.SoapResponse;
-import org.n52.iceland.w3c.wsa.WsaActionHeader;
-import org.n52.iceland.w3c.wsa.WsaConstants;
-import org.n52.iceland.w3c.wsa.WsaHeader;
-import org.n52.sos.coding.encode.EncodingValues;
-import org.n52.sos.encode.streaming.Soap12XmlStreamWriter;
-import org.n52.sos.encode.streaming.StreamingEncoder;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.N52XmlHelper;
-import org.n52.sos.util.OwsHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x2003.x05.soapEnvelope.Body;
@@ -82,6 +53,33 @@ import org.w3.x2003.x05.soapEnvelope.Subcode;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import org.n52.iceland.w3c.soap.SoapConstants;
+import org.n52.iceland.w3c.soap.SoapFault;
+import org.n52.iceland.w3c.soap.SoapHeader;
+import org.n52.iceland.w3c.soap.SoapHelper;
+import org.n52.iceland.w3c.soap.SoapResponse;
+import org.n52.iceland.w3c.wsa.WsaActionHeader;
+import org.n52.iceland.w3c.wsa.WsaConstants;
+import org.n52.iceland.w3c.wsa.WsaHeader;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.w3c.W3CConstants;
+import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.sos.encode.streaming.Soap12XmlStreamWriter;
+import org.n52.sos.encode.streaming.StreamingEncoder;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.N52XmlHelper;
+import org.n52.sos.util.OwsHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
@@ -91,8 +89,8 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
-public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implements
-        StreamingEncoder<XmlObject, Object> {
+public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object>
+        implements StreamingEncoder<XmlObject, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Soap12Encoder.class);
 
@@ -102,7 +100,7 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
     public Soap12Encoder() {
         super(SoapConstants.NS_SOAP_12);
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
-                Joiner.on(", ").join(getKeys()));
+                Joiner.on(", ").join(ENCODER_KEY_TYPES));
     }
 
     @Override
@@ -117,14 +115,8 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
     }
 
     @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        // TODO return valid schemaLocation
-        return Sets.newHashSet();
-    }
-
-    @Override
-    public XmlObject encode(final Object element, final Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport {
+    public XmlObject encode(final Object element, EncodingContext additionalValues)
+            throws EncodingException {
         if (element instanceof SoapResponse) {
             return createSOAP12Envelope((SoapResponse) element, additionalValues);
         } else if (element instanceof SoapFault) {
@@ -137,26 +129,25 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
     }
 
     @Override
-    public void encode(Object element, OutputStream outputStream) throws OwsExceptionReport {
+    public void encode(Object element, OutputStream outputStream) throws EncodingException {
         encode(element, outputStream, new EncodingValues());
     }
 
     @Override
     public void encode(Object element, OutputStream outputStream, EncodingValues encodingValues)
-            throws OwsExceptionReport {
+            throws EncodingException {
         if (element instanceof SoapResponse) {
             new Soap12XmlStreamWriter().write((SoapResponse) element, outputStream);
         } else {
             try {
-                encode(element, encodingValues.getAdditionalValues()).save(outputStream, XmlOptionsHelper.getInstance().getXmlOptions());
+                encode(element, encodingValues.getAdditionalValues()).save(outputStream, getXmlOptions());
             } catch (IOException ioe) {
-                throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while writing element to stream!");
+                throw new EncodingException("Error while writing element to stream!", ioe);
             }
         }
     }
 
-    private XmlObject createSOAP12Envelope(final SoapResponse response,
-            final Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+    private XmlObject createSOAP12Envelope(final SoapResponse response, EncodingContext additionalValues) throws EncodingException {
         String action = null;
         final EnvelopeDocument envelopeDoc = EnvelopeDocument.Factory.newInstance();
         final Envelope envelope = envelopeDoc.addNewEnvelope();
@@ -216,20 +207,16 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
         return envelopeDoc;
     }
 
-    private void createSOAP12Header(Envelope envelope, List<SoapHeader> headers, String action) throws OwsExceptionReport {
+    private void createSOAP12Header(Envelope envelope, List<SoapHeader> headers, String action) throws EncodingException {
         Node headerDomNode = envelope.addNewHeader().getDomNode();
         for (SoapHeader header : headers) {
             if (WsaConstants.NS_WSA.equals(header.getNamespace()) && header instanceof WsaActionHeader) {
                 ((WsaHeader) header).setValue(action);
             }
-            try {
-                XmlObject xmObject = CodingHelper.encodeObjectToXml(header.getNamespace(), header);
-                if (xmObject != null) {
-                    Node ownerDoc = headerDomNode.getOwnerDocument().importNode(xmObject.getDomNode().getFirstChild(), true);
-                    headerDomNode.insertBefore(ownerDoc, null);
-                }
-            } catch (OwsExceptionReport owse) {
-                throw owse;
+            XmlObject xmObject = encodeObjectToXml(header.getNamespace(), header);
+            if (xmObject != null) {
+                Node ownerDoc = headerDomNode.getOwnerDocument().importNode(xmObject.getDomNode().getFirstChild(), true);
+                headerDomNode.insertBefore(ownerDoc, null);
             }
         }
     }
@@ -254,7 +241,7 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
     // http://www.angelikalanger.com/GenericsFAQ/FAQSections/ProgrammingIdioms.html#FAQ300
     // for more details
     private XmlObject createSOAP12FaultFromExceptionResponse(final OwsExceptionReport owsExceptionReport)
-            throws OwsExceptionReport {
+            throws EncodingException {
         final FaultDocument faultDoc = FaultDocument.Factory.newInstance();
         final Fault fault = faultDoc.addNewFault();
         final Faultcode code = fault.addNewCode();
@@ -276,10 +263,7 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
             addNewText.setLang(Locale.ENGLISH.getLanguage());
             addNewText.setStringValue(SoapHelper.getSoapFaultReasonText(firstException.getCode()));
 
-            fault.addNewDetail().set(
-                    CodingHelper.encodeObjectToXml(OWSConstants.NS_OWS, firstException, CollectionHelper
-                            .map(new AbstractMap.SimpleEntry<SosConstants.HelperValues, String>(
-                                    SosConstants.HelperValues.ENCODE_OWS_EXCEPTION_ONLY, ""))));
+            fault.addNewDetail().set(encodeObjectToXml(OWSConstants.NS_OWS, firstException, EncodingContext.of(SosHelperValues.ENCODE_OWS_EXCEPTION_ONLY)));
         }
         return faultDoc;
     }

@@ -29,8 +29,8 @@
 package org.n52.sos.ext.deleteobservation;
 
 import static java.lang.String.format;
-import static org.n52.iceland.ogc.sos.SosConstants.SOS;
-import static org.n52.iceland.util.CollectionHelper.union;
+import static org.n52.shetland.ogc.sos.SosConstants.SOS;
+import static org.n52.shetland.util.CollectionHelper.union;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0;
 import static org.n52.sos.util.CodingHelper.decoderKeysForElements;
@@ -43,19 +43,15 @@ import net.opengis.sosdo.x10.DeleteObservationDocument;
 import net.opengis.sosdo.x10.DeleteObservationType;
 
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Joiner;
 
@@ -79,11 +75,13 @@ public class DeleteObservationDecoder implements Decoder<DeleteObservationReques
         LOGGER.info("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(DECODER_KEYS));
     }
 
+    @Override
     public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 
-    public DeleteObservationRequest decode(XmlObject xmlObject) throws OwsExceptionReport {
+    @Override
+    public DeleteObservationRequest decode(XmlObject xmlObject) throws DecodingException {
         LOGGER.debug(format("REQUESTTYPE: %s", xmlObject != null ? xmlObject.getClass() : "null recevied"));
         // XmlHelper.validateDocument(xmlObject);
         if (xmlObject instanceof DeleteObservationDocument) {
@@ -97,7 +95,7 @@ public class DeleteObservationDecoder implements Decoder<DeleteObservationReques
     }
 
     private DeleteObservationRequest parseDeleteObservation(DeleteObservationDocument xbDelObsDoc)
-            throws OwsExceptionReport {
+            throws DecodingException {
         DeleteObservationRequest delObsRequest = null;
 
         DeleteObservationType xbDelObsType = xbDelObsDoc.getDeleteObservation();
@@ -108,8 +106,7 @@ public class DeleteObservationDecoder implements Decoder<DeleteObservationReques
             delObsRequest.setService(xbDelObsType.getService());
             delObsRequest.setObservationIdentifier(xbDelObsType.getObservation());
         } else {
-            throw new NoApplicableCodeException()
-                    .withMessage("Received XML document is not valid. Set log level to debug to get more details");
+            throw new DecodingException("Received XML document is not valid. Set log level to debug to get more details");
         }
 
         return delObsRequest;

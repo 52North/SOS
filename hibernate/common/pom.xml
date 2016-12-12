@@ -20,6 +20,18 @@
             <artifactId>iceland</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.shetland</groupId>
+            <artifactId>shetland</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.janmayen</groupId>
+            <artifactId>janmayen</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
@@ -49,7 +61,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>stax</groupId>
-                   <artifactId>stax-api</artifactId>
+                    <artifactId>stax-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -59,7 +71,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-        	<artifactId>coding-wml-v20</artifactId>
+            <artifactId>coding-wml-v20</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -73,10 +85,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
             <scope>test</scope>
-		</dependency>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sensorML-v101</artifactId>
@@ -110,20 +122,20 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.hamcrest</groupId>
-        	<artifactId>hamcrest-all</artifactId>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.n52.sensorweb.sos</groupId>
-        	<artifactId>api-aqd-v10</artifactId>
+            <groupId>org.n52.sensorweb.sos</groupId>
+            <artifactId>api-aqd-v10</artifactId>
         </dependency>
     </dependencies>
     <build>
-      <plugins>
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

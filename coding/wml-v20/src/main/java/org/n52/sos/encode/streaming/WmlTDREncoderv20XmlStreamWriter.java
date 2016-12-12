@@ -30,9 +30,9 @@ package org.n52.sos.encode.streaming;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.sos.coding.encode.EncodingValues;
-import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * Implementation of {@link AbstractOmV20XmlStreamWriter} to write WaterML 2.0
@@ -55,17 +55,18 @@ public class WmlTDREncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
      * constructor
      *
      * @param observation
-     *            {@link OmObservation} to write to stream
+     *                    {@link OmObservation} to write to stream
      */
     public WmlTDREncoderv20XmlStreamWriter(OmObservation observation) {
         super(observation);
     }
 
     @Override
-    protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException,
-            OwsExceptionReport {
+    protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws EncodingException,
+                                                                                                XMLStreamException {
         // TODO Auto-generated method stub
         super.writeResult(observation, encodingValues);
+
     }
 
 }

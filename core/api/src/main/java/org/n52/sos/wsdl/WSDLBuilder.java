@@ -34,16 +34,18 @@ import java.net.URI;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.util.StringHelper;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.wsdl.WSDLConstants.Operations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -368,8 +370,8 @@ public class WSDLBuilder {
             } else {
                 return getDefault();
             }
-        } catch (OwsExceptionReport e) {
-            LOGGER.error("Error while loading WSDL file!", e);
+        } catch (DecodingException | IOException ex) {
+            LOGGER.error("Error while loading WSDL file!", ex);
             return getDefault();
         }
     }
@@ -384,21 +386,10 @@ public class WSDLBuilder {
         return Configurator.getInstance().getClass().getResourceAsStream(filename);
     }
 
-    private XmlObject read(String path) throws OwsExceptionReport {
-        InputStream stream = null;
-        try {
-            stream = getDocumentAsStream(path);
+    private XmlObject read(String path) throws DecodingException, IOException {
+        try (InputStream stream = getDocumentAsStream(path)) {
             String string = StringHelper.convertStreamToString(stream);
-            XmlObject xml = XmlHelper.parseXmlString(string);
-            return xml;
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    LOGGER.error("Error while closing InputStream!", e);
-                }
-            }
+            return XmlHelper.parseXmlString(string);
         }
     }
 

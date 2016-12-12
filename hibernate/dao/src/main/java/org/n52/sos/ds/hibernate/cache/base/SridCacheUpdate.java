@@ -35,12 +35,14 @@ import org.hibernate.dialect.Oracle8iDialect;
 import org.hibernate.dialect.PostgreSQL81Dialect;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.hibernate.spatial.dialect.postgis.PostgisDialect;
-import org.n52.iceland.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.util.GeometryHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 /**
  *
  * @author Christian Autermann <c.autermann@52north.org>
@@ -79,7 +81,7 @@ public class SridCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
         } else if (dialect instanceof GeoDBDialect) {
             namedQueryName = SQL_QUERY_GET_DEFAULT_FEATURE_SRID_H2;
         }
-        if (StringHelper.isNotEmpty(namedQueryName) && HibernateHelper.isNamedQuerySupported(namedQueryName, session)) {
+        if (!Strings.isNullOrEmpty(namedQueryName) && HibernateHelper.isNamedQuerySupported(namedQueryName, session)) {
             Query namedQuery = session.getNamedQuery(namedQueryName);
             LOGGER.debug("QUERY checkAndGetEpsgCodes() with NamedQuery: {}", namedQuery);
             getCache().addEpsgCodes(namedQuery.list());
@@ -98,7 +100,7 @@ public class SridCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
         } else if (dialect instanceof GeoDBDialect) {
             namedQueryName = SQL_QUERY_GET_DEFAULT_FEATURE_SRID_H2;
         }
-        if (StringHelper.isNotEmpty(namedQueryName) && HibernateHelper.isNamedQuerySupported(namedQueryName, session)) {
+        if (!Strings.isNullOrEmpty(namedQueryName) && HibernateHelper.isNamedQuerySupported(namedQueryName, session)) {
             Query namedQuery = session.getNamedQuery(namedQueryName);
             LOGGER.debug("QUERY checkEpsgCode() with NamedQuery: {}", namedQuery);
             Integer uniqueResult = (Integer) namedQuery.uniqueResult();

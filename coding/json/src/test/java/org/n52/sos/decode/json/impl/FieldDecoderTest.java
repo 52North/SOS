@@ -42,24 +42,25 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.DateTimeHelper;
+
 import org.n52.iceland.util.JSONUtils;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweCountRange;
+import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ConfiguredSettingsManager;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweCountRange;
-import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
@@ -118,7 +119,7 @@ public class FieldDecoderTest {
     private FieldDecoder decoder;
 
     @Before
-    public void before() throws OwsExceptionReport {
+    public void before() throws DecodingException {
         this.decoder = new FieldDecoder();
         this.timeStart = DateTimeHelper.parseIsoString2DateTime(TIME_START);
         this.timeEnd = DateTimeHelper.parseIsoString2DateTime(TIME_END);
@@ -126,7 +127,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testCountWithValue() throws OwsExceptionReport {
+    public void testCountWithValue() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.COUNT_TYPE).put(JSONConstants.VALUE,
                         COUNT_VALUE_START);
@@ -137,14 +138,14 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testCount() throws OwsExceptionReport {
+    public void testCount() throws DecodingException {
         ObjectNode json = createField().put(JSONConstants.TYPE, JSONConstants.COUNT_TYPE);
         SweField field = checkCommon(json, false);
         assertThat(field.getElement(), is(instanceOf(SweCount.class)));
     }
 
     @Test
-    public void testBooleanWithValueTrue() throws OwsExceptionReport {
+    public void testBooleanWithValueTrue() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.BOOLEAN_TYPE).put(JSONConstants.VALUE, true);
         SweField field = checkCommon(json, true);
@@ -154,7 +155,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testBooleanWithValueFalse() throws OwsExceptionReport {
+    public void testBooleanWithValueFalse() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.BOOLEAN_TYPE).put(JSONConstants.VALUE, false);
         SweField field = checkCommon(json, true);
@@ -164,14 +165,14 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testBoolean() throws OwsExceptionReport {
+    public void testBoolean() throws DecodingException {
         ObjectNode json = createField().put(JSONConstants.TYPE, JSONConstants.BOOLEAN_TYPE);
         SweField field = checkCommon(json, false);
         assertThat(field.getElement(), is(instanceOf(SweBoolean.class)));
     }
 
     @Test
-    public void testCountRangeWithValue() throws OwsExceptionReport {
+    public void testCountRangeWithValue() throws DecodingException {
         ObjectNode json = createField().put(JSONConstants.TYPE, JSONConstants.COUNT_RANGE_TYPE);
         json.putArray(JSONConstants.VALUE).add(COUNT_VALUE_START).add(COUNT_VALUE_END);
         SweField field = checkCommon(json, true);
@@ -183,7 +184,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testCountRange() throws OwsExceptionReport {
+    public void testCountRange() throws DecodingException {
         ObjectNode json = createField().put(JSONConstants.TYPE, JSONConstants.COUNT_RANGE_TYPE);
         SweField field = checkCommon(json, false);
         assertThat(field.getElement(), is(instanceOf(SweCountRange.class)));
@@ -192,7 +193,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testObservablePropertyWithValue() throws OwsExceptionReport {
+    public void testObservablePropertyWithValue() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.OBSERVABLE_PROPERTY_TYPE).put(JSONConstants.VALUE,
                         OBSERVED_PROPERTY_VALUE);
@@ -203,7 +204,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testObservableProperty() throws OwsExceptionReport {
+    public void testObservableProperty() throws DecodingException {
         ObjectNode json = createField().put(JSONConstants.TYPE, JSONConstants.OBSERVABLE_PROPERTY_TYPE);
         SweField field = checkCommon(json, false);
         assertThat(field.getElement(), is(instanceOf(SweObservableProperty.class)));
@@ -222,7 +223,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testTextWithValue() throws OwsExceptionReport {
+    public void testTextWithValue() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.TEXT_TYPE).put(JSONConstants.VALUE, TEXT_VALUE);
         SweField field = checkCommon(json, true);
@@ -232,7 +233,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testText() throws OwsExceptionReport {
+    public void testText() throws DecodingException {
         ObjectNode json = createField().put(JSONConstants.TYPE, JSONConstants.TEXT_TYPE);
         SweField field = checkCommon(json, false);
         assertThat(field.getElement(), is(instanceOf(SweText.class)));
@@ -241,7 +242,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testQuantityWithValue() throws OwsExceptionReport {
+    public void testQuantityWithValue() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.QUANTITY_TYPE).put(JSONConstants.UOM, UOM)
                         .put(JSONConstants.VALUE, QUANTITY_VALUE_START);
@@ -253,7 +254,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testQuantity() throws OwsExceptionReport {
+    public void testQuantity() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.QUANTITY_TYPE).put(JSONConstants.UOM, UOM);
         SweField field = checkCommon(json, false);
@@ -263,7 +264,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testQuantityRangeWithValue() throws OwsExceptionReport {
+    public void testQuantityRangeWithValue() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.QUANTITY_RANGE_TYPE).put(JSONConstants.UOM, UOM);
         json.putArray(JSONConstants.VALUE).add(QUANTITY_VALUE_START).add(QUANTITY_VALUE_END);
@@ -277,7 +278,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testQuantityRange() throws OwsExceptionReport {
+    public void testQuantityRange() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.QUANTITY_RANGE_TYPE).put(JSONConstants.UOM, UOM);
         SweField field = checkCommon(json, false);
@@ -288,7 +289,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void timeWithValue() throws OwsExceptionReport {
+    public void timeWithValue() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.TIME_TYPE).put(JSONConstants.UOM, UOM)
                         .put(JSONConstants.VALUE, TIME_START);
@@ -300,7 +301,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void time() throws OwsExceptionReport {
+    public void time() throws DecodingException {
         ObjectNode json = createField().put(JSONConstants.TYPE, JSONConstants.TIME_TYPE).put(JSONConstants.UOM, UOM);
         SweField field = checkCommon(json, false);
         assertThat(field.getElement(), is(instanceOf(SweTime.class)));
@@ -310,7 +311,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void timeRangeWithValue() throws OwsExceptionReport {
+    public void timeRangeWithValue() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.TIME_RANGE_TYPE).put(JSONConstants.UOM, UOM);
         json.putArray(JSONConstants.VALUE).add(TIME_START).add(TIME_END);
@@ -325,7 +326,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void timeRange() throws OwsExceptionReport {
+    public void timeRange() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.TIME_RANGE_TYPE).put(JSONConstants.UOM, UOM);
         SweField field = checkCommon(json, false);
@@ -337,7 +338,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testCategoryWithValue() throws OwsExceptionReport {
+    public void testCategoryWithValue() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.CATEGORY_TYPE)
                         .put(JSONConstants.CODESPACE, CODESPACE).put(JSONConstants.VALUE, CATEGORY_VALUE);
@@ -349,7 +350,7 @@ public class FieldDecoderTest {
     }
 
     @Test
-    public void testCategory() throws OwsExceptionReport {
+    public void testCategory() throws DecodingException {
         ObjectNode json =
                 createField().put(JSONConstants.TYPE, JSONConstants.CATEGORY_TYPE).put(JSONConstants.CODESPACE,
                         CODESPACE);
@@ -360,7 +361,7 @@ public class FieldDecoderTest {
         errors.checkThat(swe.getCodeSpace(), is(CODESPACE));
     }
 
-    protected SweField validateWithValueAndDecode(ObjectNode json, boolean withValue) throws OwsExceptionReport {
+    protected SweField validateWithValueAndDecode(ObjectNode json, boolean withValue) throws DecodingException {
         ProcessingReport report =
                 validator.validate(json, withValue ? SchemaConstants.Common.FIELD_WITH_VALUE
                         : SchemaConstants.Common.FIELD);
@@ -377,7 +378,7 @@ public class FieldDecoderTest {
                 .put(JSONConstants.IDENTIFIER, IDENTIFIER);
     }
 
-    protected SweField checkCommon(ObjectNode json, boolean withValue) throws OwsExceptionReport {
+    protected SweField checkCommon(ObjectNode json, boolean withValue) throws DecodingException {
         SweField field = validateWithValueAndDecode(json, withValue);
         assertThat(field, is(notNullValue()));
         errors.checkThat(field.getName().getValue(), is(NAME));

@@ -28,14 +28,14 @@
  */
 package org.n52.sos.decode;
 
-import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.util.CodingHelper;
-
 import net.opengis.swes.x20.ExtensibleResponseType;
+
+import org.apache.xmlbeans.XmlObject;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.ogc.swes.SwesExtensions;
+import org.n52.shetland.util.CollectionHelper;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -44,16 +44,16 @@ import net.opengis.swes.x20.ExtensibleResponseType;
  */
 public interface ExtensibleResponseDecoder {
 
-    default SwesExtensions parseExtensibleResponse(ExtensibleResponseType ert) throws OwsExceptionReport {
+    default SwesExtensions parseExtensibleResponse(ExtensibleResponseType ert) throws DecodingException {
         return parseExtensibleResponseExtension(ert.getExtensionArray());
     }
 
-    default SwesExtensions parseExtensibleResponseExtension(XmlObject[] extensionArray) throws OwsExceptionReport {
+    default SwesExtensions parseExtensibleResponseExtension(XmlObject[] extensionArray) throws DecodingException {
         if (CollectionHelper.isNotNullOrEmpty(extensionArray)) {
-            final SwesExtensions extensions = new SwesExtensions();
-            for (final XmlObject xbSwesExtension : extensionArray) {
+            SwesExtensions extensions = new SwesExtensions();
+            for (XmlObject xbSwesExtension : extensionArray) {
 
-                final Object obj = CodingHelper.decodeXmlElement(xbSwesExtension);
+                Object obj = decodeXmlElement(xbSwesExtension);
                 if (obj instanceof SwesExtension<?>) {
                     extensions.addExtension((SwesExtension<?>) obj);
                 } else {
@@ -64,5 +64,7 @@ public interface ExtensibleResponseDecoder {
         }
         return null;
     }
+
+    <T> T decodeXmlElement(XmlObject obj) throws DecodingException;
 
 }

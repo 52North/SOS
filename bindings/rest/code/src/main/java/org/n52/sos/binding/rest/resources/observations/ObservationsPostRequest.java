@@ -30,7 +30,7 @@ package org.n52.sos.binding.rest.resources.observations;
 
 import net.opengis.om.x20.OMObservationType;
 
-import org.n52.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

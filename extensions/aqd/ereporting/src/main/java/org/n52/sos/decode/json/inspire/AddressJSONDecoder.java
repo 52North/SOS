@@ -28,7 +28,7 @@
  */
 package org.n52.sos.decode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.sos.inspire.aqd.Address;
 import org.n52.sos.inspire.aqd.GeographicalName;
 import org.n52.sos.util.AQDJSONConstants;
@@ -43,7 +43,7 @@ public class AddressJSONDecoder extends AbstractJSONDecoder<Address> {
 
     @Override
     public Address decodeJSON(JsonNode node, boolean validate)
-            throws OwsExceptionReport {
+            throws DecodingException {
         Address address = new Address();
         address.setAddressFeature(parseNillableReference(node
                 .path(AQDJSONConstants.ADDRESS_FEATURE)));

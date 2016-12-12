@@ -33,14 +33,11 @@ import static org.junit.Assert.assertThat;
 
 import javax.naming.ConfigurationException;
 
-import org.junit.AfterClass;
 import org.junit.Test;
-import org.n52.iceland.config.SettingsServiceImpl;
+
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.SweConstants.AltitudeSweCoordinateName;
-import org.n52.iceland.ogc.swe.SweConstants.EastingSweCoordinateName;
-import org.n52.iceland.ogc.swe.SweConstants.NorthingSweCoordinateName;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweConstants.SweCoordinateNames;
 
 /**
  * Test class for {@link CoordianteTransformator}
@@ -113,10 +110,10 @@ public class CoordianteTransformatorTest {
 
     @Test
     public void testCheckAltitudeName() throws ConnectionProviderException, ConfigurationException {
-        assertThat(transformer.checkAltitudeName(AltitudeSweCoordinateName.altitude.name()), is(true));
+        assertThat(transformer.checkAltitudeName(SweCoordinateNames.ALTITUDE), is(true));
         assertThat(transformer.checkAltitudeName("AltITuDe"), is(true));
-        assertThat(transformer.checkAltitudeName(AltitudeSweCoordinateName.height.name()), is(true));
-        assertThat(transformer.checkAltitudeName(AltitudeSweCoordinateName.depth.name()), is(true));
+        assertThat(transformer.checkAltitudeName(SweCoordinateNames.HEIGHT), is(true));
+        assertThat(transformer.checkAltitudeName(SweCoordinateNames.DEPTH), is(true));
         assertThat(transformer.checkAltitudeName("IamAltitude"), is(false));
         // Add value to setting
         transformer.setAltitudeNames("testAltitude, secondTestAltitude");
@@ -125,10 +122,10 @@ public class CoordianteTransformatorTest {
 
     @Test
     public void testCheckNorthingName() {
-        assertThat(transformer.checkNorthingName(NorthingSweCoordinateName.northing.name()), is(true));
+        assertThat(transformer.checkNorthingName(SweCoordinateNames.NORTHING), is(true));
         assertThat(transformer.checkNorthingName("nOrTHinG"), is(true));
-        assertThat(transformer.checkNorthingName(NorthingSweCoordinateName.southing.name()), is(true));
-        assertThat(transformer.checkNorthingName(NorthingSweCoordinateName.latitude.name()), is(true));
+        assertThat(transformer.checkNorthingName(SweCoordinateNames.SOUTHING), is(true));
+        assertThat(transformer.checkNorthingName(SweCoordinateNames.LATITUDE), is(true));
         assertThat(transformer.checkNorthingName("IamNorthing"), is(false));
         // Add value to setting
         transformer.setNorthingNames("testNorthing, secondTestNorthing");
@@ -137,10 +134,10 @@ public class CoordianteTransformatorTest {
 
     @Test
     public void testcheckEastingName() {
-        assertThat(transformer.checkEastingName(EastingSweCoordinateName.easting.name()), is(true));
+        assertThat(transformer.checkEastingName(SweCoordinateNames.EASTING), is(true));
         assertThat(transformer.checkEastingName("EaSTinG"), is(true));
-        assertThat(transformer.checkEastingName(EastingSweCoordinateName.westing.name()), is(true));
-        assertThat(transformer.checkEastingName(EastingSweCoordinateName.longitude.name()), is(true));
+        assertThat(transformer.checkEastingName(SweCoordinateNames.WESTING), is(true));
+        assertThat(transformer.checkEastingName(SweCoordinateNames.LONGITUDE), is(true));
         assertThat(transformer.checkEastingName("IamEasting"), is(false));
         // Add value to setting
         transformer.setEastingNames("testEasting, secondTestEasting");

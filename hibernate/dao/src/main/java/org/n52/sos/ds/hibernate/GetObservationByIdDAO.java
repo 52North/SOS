@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -36,30 +37,27 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
+import org.n52.iceland.util.LocalizedProducer;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.sos.ds.AbstractGetObservationByIdHandler;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.response.GetObservationByIdResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 
 
 /**
@@ -99,8 +97,10 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
             response.setService(request.getService());
             response.setVersion(request.getVersion());
             response.setResponseFormat(request.getResponseFormat());
-            response.setObservationCollection(HibernateObservationUtilities.createSosObservationsFromObservations(
-                    observations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session));
+            Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+            LocalizedProducer<OwsServiceProvider> serviceProviderFactory
+                    = this.serviceMetadataRepository.getServiceProviderFactory(request.getService());
+            response.setObservationCollection(HibernateObservationUtilities.createSosObservationsFromObservations(observations, request, serviceProviderFactory, locale, session));
             return response;
 
         } catch (HibernateException he) {

@@ -30,7 +30,8 @@ package org.n52.sos.coding.encode;
 
 import java.util.Set;
 
-import org.n52.iceland.coding.encode.Encoder;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.iceland.service.ConformanceClass;
 
 /**
  * @since 4.0.0
@@ -38,7 +39,7 @@ import org.n52.iceland.coding.encode.Encoder;
  * @param <S>
  * @param <T>
  */
-public interface ObservationEncoder<S, T> extends Encoder<S, T> {
+public interface ObservationEncoder<S, T> extends ConformanceClass, Encoder<S, T> {
 
     /**
      * Indicator whether the ObservationEncoder of type or subtype

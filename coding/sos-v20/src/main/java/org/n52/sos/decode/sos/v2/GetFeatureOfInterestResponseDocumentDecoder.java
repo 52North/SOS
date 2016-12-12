@@ -28,29 +28,30 @@
  */
 package org.n52.sos.decode.sos.v2;
 
-import static org.n52.sos.util.CodingHelper.decodeXmlObject;
 
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.response.GetFeatureOfInterestResponse;
-import org.n52.sos.util.CodingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-
 import net.opengis.gml.x32.FeaturePropertyType;
 import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 import net.opengis.sos.x20.GetFeatureOfInterestResponseType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.features.FeatureCollection;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
+import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.UnsupportedDecoderInputException;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
+
+import com.google.common.base.Joiner;
 
 /**
  * XML {@link Decoder} for {@link GetFeatureOfInterestResponse}
@@ -59,7 +60,7 @@ import net.opengis.sos.x20.GetFeatureOfInterestResponseType;
  * @since 5.0.0
  *
  */
-public class GetFeatureOfInterestResponseDocumentDecoder implements SosResponseDecoder, Decoder<GetFeatureOfInterestResponse, GetFeatureOfInterestResponseDocument> {
+public class GetFeatureOfInterestResponseDocumentDecoder extends AbstractXmlDecoder<GetFeatureOfInterestResponseDocument,GetFeatureOfInterestResponse> implements SosResponseDecoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetFeatureOfInterestResponseDocumentDecoder.class);
 
@@ -79,7 +80,7 @@ public class GetFeatureOfInterestResponseDocumentDecoder implements SosResponseD
 
     @Override
     public GetFeatureOfInterestResponse decode(GetFeatureOfInterestResponseDocument gfoird)
-            throws OwsExceptionReport, UnsupportedDecoderInputException {
+            throws DecodingException {
         if (gfoird != null)  {
             GetFeatureOfInterestResponse response = new GetFeatureOfInterestResponse();
             setService(response);
@@ -92,7 +93,7 @@ public class GetFeatureOfInterestResponseDocumentDecoder implements SosResponseD
         throw new UnsupportedDecoderInputException(this, gfoird);
     }
 
-    private AbstractFeature parseFeatures(GetFeatureOfInterestResponseType gfoirt) throws OwsExceptionReport {
+    private AbstractFeature parseFeatures(GetFeatureOfInterestResponseType gfoirt) throws DecodingException {
         if (CollectionHelper.isNotNullOrEmpty(gfoirt.getFeatureMemberArray())) {
             if (gfoirt.getFeatureMemberArray().length == 1) {
                 return (AbstractFeature)decodeXmlObject(gfoirt.getFeatureMemberArray()[0]);

@@ -36,9 +36,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.n52.iceland.ogc.om.OmConstants.OBS_TYPE_MEASUREMENT;
-import static org.n52.iceland.ogc.om.OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION;
-import static org.n52.sos.ogc.om.features.SfConstants.FT_SAMPLINGPOINT;
+import static org.n52.shetland.ogc.om.OmConstants.OBS_TYPE_MEASUREMENT;
+import static org.n52.shetland.ogc.om.OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION;
+import static org.n52.shetland.ogc.om.features.SfConstants.FT_SAMPLINGPOINT;
 import static org.n52.sos.util.builder.DataRecordBuilder.aDataRecord;
 import static org.n52.sos.util.builder.InsertObservationRequestBuilder.aInsertObservationRequest;
 import static org.n52.sos.util.builder.InsertResultTemplateRequestBuilder.anInsertResultTemplateRequest;
@@ -64,29 +64,29 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.DateTimeHelper;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
 import org.n52.sos.ds.MockCacheFeederDAO;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.ogc.swes.SwesFeatureRelationship;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.response.InsertResultTemplateResponse;
-import org.n52.sos.response.InsertSensorResponse;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 import org.n52.sos.util.builder.DeleteSensorRequestBuilder;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -135,11 +135,11 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private static final String OFFERING = PROCEDURE + OFFERING_IDENTIFIER_EXTENSION;
 
-    private AbstractServiceRequest<?> request;
+    private OwsServiceRequest request;
 
     private TestableInMemoryCacheController controller;
 
-    private AbstractServiceResponse response;
+    private OwsServiceResponse response;
 
     private OmObservation observation;
 
@@ -229,17 +229,17 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
         updateCacheWithSingleObservation(PROCEDURE);
 
         assertEquals("global envelope", getCache().getGlobalEnvelope(),
-                getSosEnvelopeFromObservation(((InsertObservationRequest) request).getObservations().get(0)));
+                getReferencedEnvelopeFromObservation(((InsertObservationRequest) request).getObservations().get(0)));
 
         assertEquals("offering envelop", getCache().getEnvelopeForOffering(getFirstOffering()),
-                getSosEnvelopeFromObservation(((InsertObservationRequest) request).getObservations().get(0)));
+                getReferencedEnvelopeFromObservation(((InsertObservationRequest) request).getObservations().get(0)));
 
         assertTrue("spatial bounding box of offering NOT contained in cache",
                 getCache().getEnvelopeForOffering(getFirstOffering()).isSetEnvelope());
 
         assertEquals("spatial bounding box of offering NOT same as feature envelope", getCache()
                 .getEnvelopeForOffering(getFirstOffering()),
-                getSosEnvelopeFromObservation(((InsertObservationRequest) request).getObservations().get(0)));
+                getReferencedEnvelopeFromObservation(((InsertObservationRequest) request).getObservations().get(0)));
     }
 
     @Test
@@ -584,7 +584,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
         int epsgCode = Constants.EPSG_WGS84;
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), epsgCode);
         Geometry geom = geometryFactory.createPoint(new Coordinate(xCoord, yCoord));
-        SosEnvelope offering2Envelope = new SosEnvelope(geom.getEnvelopeInternal(), epsgCode);
+        ReferencedEnvelope offering2Envelope = new ReferencedEnvelope(geom.getEnvelopeInternal(), epsgCode);
 
         updateCacheWithInsertSensor(PROCEDURE_2);
         updateCacheWithSingleObservation(PROCEDURE_2, xCoord, yCoord, epsgCode, FEATURE_2);
@@ -684,17 +684,17 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     public void should_contain_envelopes_after_InsertResult() throws OwsExceptionReport {
         insertResultPreparation();
 
-        assertEquals("global envelope", getCache().getGlobalEnvelope(), getSosEnvelopeFromObservation(observation));
+        assertEquals("global envelope", getCache().getGlobalEnvelope(), getReferencedEnvelopeFromObservation(observation));
         final String offering = OFFERING;
 
         assertEquals("offering envelop", getCache().getEnvelopeForOffering(offering),
-                getSosEnvelopeFromObservation(observation));
+                getReferencedEnvelopeFromObservation(observation));
 
         assertTrue("spatial bounding box of offering NOT contained in cache",
                 getCache().getEnvelopeForOffering(offering).isSetEnvelope());
 
         assertEquals("spatial bounding box of offering NOT same as feature envelope", getCache()
-                .getEnvelopeForOffering(offering), getSosEnvelopeFromObservation(observation));
+                .getEnvelopeForOffering(offering), getReferencedEnvelopeFromObservation(observation));
     }
 
     @Test
@@ -908,8 +908,8 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
         return ((InsertObservationRequest) request).getAssignedSensorId();
     }
 
-    private SosEnvelope getSosEnvelopeFromObservation(OmObservation sosObservation) {
-        return new SosEnvelope(((SamplingFeature) sosObservation.getObservationConstellation().getFeatureOfInterest())
+    private ReferencedEnvelope getReferencedEnvelopeFromObservation(OmObservation sosObservation) {
+        return new ReferencedEnvelope(((SamplingFeature) sosObservation.getObservationConstellation().getFeatureOfInterest())
                 .getGeometry().getEnvelopeInternal(), getCache().getDefaultEPSGCode());
     }
 

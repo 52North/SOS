@@ -37,37 +37,34 @@ import net.opengis.sensorML.x101.AbstractProcessType;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.IoComponentPropertyType;
 import net.opengis.sensorML.x101.SystemType;
-import net.opengis.swe.x101.AnyScalarPropertyType;
-import net.opengis.swe.x101.SimpleDataRecordType;
+import net.opengis.sos.x20.impl.SosInsertionMetadataPropertyTypeImpl;
 import net.opengis.sosREST.x10.SensorDocument;
 import net.opengis.sosREST.x10.SensorType;
-
-
-
-
-
+import net.opengis.swe.x101.AnyScalarPropertyType;
+import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OperationNotSupportedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.SosInsertionMetadata;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.request.UpdateSensorRequest;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -116,7 +113,7 @@ public class SensorsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePostRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws OwsExceptionReport, DecodingException
     {
         if (isContentOfPostRequestValid(httpRequest))
         {
@@ -135,7 +132,7 @@ public class SensorsDecoder extends ResourceDecoder {
 
                 SystemType xb_system = (SystemType) xb_ProcessRest.substitute(SensorMLConstants.SYSTEM_QNAME, SystemType.type);
 
-                SosProcedureDescription procedureDescription = createSosProcedureDescriptionFromSmlSystem(xb_system);
+                SosProcedureDescription<?> procedureDescription = createSosProcedureDescriptionFromSmlSystem(xb_system);
 
                 insertSensorRequest.setProcedureDescription(procedureDescription);
 
@@ -247,15 +244,15 @@ public class SensorsDecoder extends ResourceDecoder {
         return xb_system.isSetInputs() && xb_system.getInputs().isSetInputList() && xb_system.getInputs().getInputList().getInputArray().length > 0;
     }
 
-    private AbstractSensorML createSosProcedureDescriptionFromSmlSystem(SystemType xb_system) throws OwsExceptionReport
+    private SosProcedureDescription<?> createSosProcedureDescriptionFromSmlSystem(SystemType xb_system) throws DecodingException
     {
         // TODO add some error handling
-        Object decodedObject = CodingHelper.decodeXmlObject(xb_system);
+        Object decodedObject = decodeXmlObject(xb_system);
         if (decodedObject instanceof AbstractSensorML)
         {
-            return (AbstractSensorML) decodedObject;
+            return new SosProcedureDescription<AbstractFeature>((AbstractSensorML) decodedObject);
         }
-        throw new NoApplicableCodeException().causedBy(
+        throw new DecodingException(
                 new IllegalArgumentException(
                         String.format("SystemType '%s' could not be decoded",
                                 decodedObject!=null?decodedObject.getClass().getName():"null")));
@@ -263,7 +260,7 @@ public class SensorsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws OwsExceptionReport, DecodingException
     {
         if (pathPayload != null) {
             UpdateSensorRequest updateSensorRequest = new UpdateSensorRequest();

@@ -28,17 +28,16 @@
  */
 package org.n52.sos.encode;
 
-import static java.lang.Boolean.TRUE;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweText;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.util.XmlHelper;
 
 /**
@@ -50,14 +49,14 @@ import org.n52.sos.util.XmlHelper;
 public class SweCommonEncoderv20Test {
 
     @Test
-    public void should_encode_DataRecord_with_sweText_field() throws OwsExceptionReport {
+    public void should_encode_DataRecord_with_sweText_field() throws OwsExceptionReport, EncodingException {
         final SweDataRecord record = new SweDataRecord();
         record.addField(new SweField("text", new SweText().setValue("textValue").setDefinition("textDef")));
         record.addField(new SweField("count", new SweCount().setValue(2).setDefinition("countDef")));
 
         final XmlObject encoded = new SweCommonEncoderv20().encode(record);
 
-        assertThat(XmlHelper.validateDocument(encoded), is(TRUE));
+        XmlHelper.validateDocument(encoded, EncodingException::new);
     }
 
 }

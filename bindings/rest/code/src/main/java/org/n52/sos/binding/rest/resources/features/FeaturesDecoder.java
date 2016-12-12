@@ -34,19 +34,21 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeException;
-import org.n52.iceland.util.http.HTTPMethods;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.janmayen.http.HTTPMethods;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
+import org.n52.shetland.util.DateTimeException;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -58,7 +60,7 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport, DateTimeException
+            String pathPayload) throws OwsExceptionReport, DateTimeException, DecodingException
     {
         // variables
         RestRequest result = null;
@@ -104,7 +106,7 @@ public class FeaturesDecoder extends ResourceDecoder {
         return new FeaturesRequest(createBasicGetFeatureOfInterestRequest());
     }
 
-    private FeaturesRequest decodeFeaturesSearchRequest(HttpServletRequest httpRequest) throws OwsExceptionReport, DateTimeException
+    private FeaturesRequest decodeFeaturesSearchRequest(HttpServletRequest httpRequest) throws OwsExceptionReport, DateTimeException, DecodingException
     {
         GetFeatureOfInterestRequest featureOfInterestRequest = createBasicGetFeatureOfInterestRequest();
 
@@ -166,7 +168,7 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     }
 
-    private List<SpatialFilter> parseSpatialFilters(List<String> splitKvpParameterValueToList, String parameterName) throws OwsExceptionReport
+    private List<SpatialFilter> parseSpatialFilters(List<String> splitKvpParameterValueToList, String parameterName) throws OwsExceptionReport, DecodingException
     {
         List<SpatialFilter> spatialFilters = new ArrayList<SpatialFilter>(1);
 
@@ -198,7 +200,7 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws OwsExceptionReport, DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.DELETE,
                 bindingConstants.getResourceFeatures());
@@ -206,7 +208,7 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePostRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws OwsExceptionReport, DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.POST,
                 bindingConstants.getResourceFeatures());
@@ -214,7 +216,7 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws OwsExceptionReport, DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT,
                 bindingConstants.getResourceFeatures());

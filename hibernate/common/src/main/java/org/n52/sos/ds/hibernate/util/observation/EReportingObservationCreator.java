@@ -31,9 +31,10 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
@@ -48,8 +49,6 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingN
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingSweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingTextObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservation;
 
 public class EReportingObservationCreator implements AdditionalObservationCreator {
 

@@ -28,100 +28,29 @@
  */
 package org.n52.sos.decode;
 
-import static org.n52.iceland.util.KvpHelper.checkParameterSingleValue;
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.MissingRequestParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.KvpHelper;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
-import org.n52.sos.ext.deleteobservation.MissingObservationParameterException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
+ * J&uuml;rrens</a>
  *
  * @since 1.0.0
  */
-public class DeleteObservationKvpDecoder extends AbstractKvpDecoder {
+public class DeleteObservationKvpDecoder extends AbstractSosKvpDecoder<DeleteObservationRequest> {
 
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
-            Sos2Constants.SERVICEVERSION, DeleteObservationConstants.Operations.DeleteObservation,
-            MediaTypes.APPLICATION_KVP);
-
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return Collections.singleton(KVP_DECODER_KEY_TYPE);
+    public DeleteObservationKvpDecoder() {
+        super(DeleteObservationRequest::new,
+              Sos2Constants.SERVICEVERSION,
+              DeleteObservationConstants.Operations.DeleteObservation.name());
     }
 
     @Override
-    public DeleteObservationRequest decode(Map<String, String> objectToDecode) throws OwsExceptionReport {
-        if (objectToDecode == null) {
-            throw new UnsupportedDecoderInputException(this, objectToDecode);
-        }
-        DeleteObservationRequest deleteObservationRequest = new DeleteObservationRequest();
-        CompositeOwsException exceptions = new CompositeOwsException();
-        boolean foundRequest = false, foundService = false, foundVersion = false, foundObservation = false;
-
-        for (String parameterName : objectToDecode.keySet()) {
-            String parameterValues = objectToDecode.get(parameterName);
-            try {
-                if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
-                    deleteObservationRequest.setService(KvpHelper.checkParameterSingleValue(parameterValues,
-                            parameterName));
-                    foundService = true;
-                } else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
-                    deleteObservationRequest.setVersion(KvpHelper.checkParameterSingleValue(parameterValues,
-                            parameterName));
-                    foundVersion = true;
-                } else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
-                    KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-                    foundRequest = true;
-                } else if (parameterName.equalsIgnoreCase(PARAMETER_NAME)) {
-                    deleteObservationRequest.setObservationIdentifier(checkParameterSingleValue(parameterValues,
-                            parameterName));
-                    foundObservation = true;
-                }
-            } catch (OwsExceptionReport owse) {
-                exceptions.add(owse);
-            }
-        }
-
-        if (!foundService) {
-            exceptions.add(new MissingServiceParameterException());
-        }
-
-        if (!foundVersion) {
-            exceptions.add(new MissingVersionParameterException());
-        }
-
-        if (!foundRequest) {
-            exceptions.add(new MissingRequestParameterException());
-        }
-
-        if (!foundObservation) {
-            exceptions.add(new MissingObservationParameterException());
-        }
-
-        exceptions.throwIfNotEmpty();
-
-        return deleteObservationRequest;
+    protected void getRequestParameterDefinitions(Builder<DeleteObservationRequest> builder) {
+        builder.add(DeleteObservationConstants.PARAMETER_NAME, DeleteObservationRequest::setObservationIdentifier);
     }
 
 }

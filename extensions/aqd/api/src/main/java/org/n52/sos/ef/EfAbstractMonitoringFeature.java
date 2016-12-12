@@ -37,6 +37,4 @@ package org.n52.sos.ef;
  */
 public abstract class EfAbstractMonitoringFeature extends EfAbstractMonitoringObject {
 
-    private static final long serialVersionUID = -514744454407794343L;
-
 }

@@ -41,15 +41,15 @@ import static org.n52.sos.coding.json.JSONConstants.TEMPORAL_FILTER;
 
 import java.util.List;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.util.JSONUtils;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -73,7 +73,7 @@ public class GetObservationRequestDecoder extends AbstractSosRequestDecoder<GetO
     }
 
     @Override
-    public GetObservationRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    public GetObservationRequest decodeRequest(JsonNode node) throws DecodingException {
         GetObservationRequest r = new GetObservationRequest();
         r.setFeatureIdentifiers(parseStringOrStringList(node.path(FEATURE_OF_INTEREST)));
         r.setObservedProperties(parseStringOrStringList(node.path(OBSERVED_PROPERTY)));
@@ -90,11 +90,11 @@ public class GetObservationRequestDecoder extends AbstractSosRequestDecoder<GetO
         return r;
     }
 
-    private List<TemporalFilter> parseTemporalFilters(JsonNode node) throws OwsExceptionReport {
+    private List<TemporalFilter> parseTemporalFilters(JsonNode node) throws DecodingException {
         return decodeJsonToObjectList(node, TemporalFilter.class);
     }
 
-    private SpatialFilter parseSpatialFilter(JsonNode node) throws OwsExceptionReport {
+    private SpatialFilter parseSpatialFilter(JsonNode node) throws DecodingException {
         return decodeJsonToObject(node, SpatialFilter.class);
     }
 }

@@ -30,11 +30,11 @@ package org.n52.sos.netcdf.data.dataset;
 
 import java.util.Map;
 
-import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.values.Value;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import ucar.nc2.constants.CF;
 
@@ -48,7 +48,7 @@ import ucar.nc2.constants.CF;
  */
 public class TrajectoryProfileSensorDataset extends AbstractSensorDataset {
     public TrajectoryProfileSensorDataset( DatasetSensor sensor,
-            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {
+            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, AbstractFeature procedure) {
         super( CF.FeatureType.trajectoryProfile, sensor, dataValues, procedure);
     }
 }

@@ -28,8 +28,8 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

@@ -28,6 +28,8 @@
  */
 package org.n52.sos.statistics.sos.models;
 
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +38,11 @@ import java.util.stream.Collectors;
 import org.elasticsearch.common.geo.builders.PointBuilder;
 import org.elasticsearch.common.geo.builders.PolygonBuilder;
 import org.elasticsearch.common.geo.builders.ShapeBuilder;
-import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
-import org.n52.sos.ogc.filter.SpatialFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
+import org.n52.shetland.ogc.filter.SpatialFilter;
 
 import com.vividsolutions.jts.geom.Coordinate;
 

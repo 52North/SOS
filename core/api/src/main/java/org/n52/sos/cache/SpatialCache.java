@@ -30,7 +30,7 @@ package org.n52.sos.cache;
 
 import java.util.Set;
 
-import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.shetland.util.ReferencedEnvelope;
 
 /**
  * TODO JavaDoc
@@ -51,7 +51,7 @@ public interface SpatialCache {
      *
      * @return the envelope
      */
-    SosEnvelope getEnvelopeForOffering(String offering);
+    ReferencedEnvelope getEnvelopeForOffering(String offering);
 
     /**
      * Get the Spatial Filtering Profile envelope associated with the specified
@@ -62,7 +62,7 @@ public interface SpatialCache {
      *
      * @return the envelope
      */
-    SosEnvelope getSpatialFilteringProfileEnvelopeForOffering(String offering);
+    ReferencedEnvelope getSpatialFilteringProfileEnvelopeForOffering(String offering);
 
     /**
      * Checks whether the specified offering has a envelope.
@@ -88,7 +88,7 @@ public interface SpatialCache {
     /**
      * @return the global spatial envelope (never null)
      */
-    SosEnvelope getGlobalEnvelope();
+    ReferencedEnvelope getGlobalEnvelope();
 
     /**
      * @return whether the global spatial envelope is set or not

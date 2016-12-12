@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import static org.n52.iceland.util.http.HTTPStatus.BAD_REQUEST;
+import static org.n52.janmayen.http.HTTPStatus.BAD_REQUEST;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,16 +42,19 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -64,9 +67,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.service.Configurator;
 
 import com.google.common.collect.Maps;
 

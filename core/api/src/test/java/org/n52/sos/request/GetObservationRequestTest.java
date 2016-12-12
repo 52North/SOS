@@ -28,6 +28,8 @@
  */
 package org.n52.sos.request;
 
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.hamcrest.Matchers.is;
@@ -35,8 +37,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.ogc.swes.SwesExtensions;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

@@ -34,7 +34,7 @@ import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.cache.ctrl.ContentCacheControllerImpl;
 import org.n52.iceland.cache.ctrl.persistence.AbstractPersistingCachePersistenceStrategy;
 import org.n52.iceland.cache.ctrl.persistence.ImmediatePersistenceStrategy;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 import com.google.common.io.Files;
 

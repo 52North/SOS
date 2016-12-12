@@ -36,19 +36,20 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.Time.TimeFormat;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.w3c.W3CConstants;
+
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.oxf.xml.NcNameResolver;
+import org.n52.shetland.iso.GcoConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.Time.TimeFormat;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.XmlStreamWriter;
@@ -61,7 +62,6 @@ import org.n52.sos.inspire.aqd.InspireID;
 import org.n52.sos.inspire.aqd.Pronunciation;
 import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.inspire.aqd.Spelling;
-import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Reference;
 import org.n52.sos.util.Referenceable;
@@ -77,32 +77,32 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
 
     @Override
     public void write(OutputStream out, EncodingValues encodingValues)
-            throws XMLStreamException, OwsExceptionReport {
+            throws XMLStreamException, EncodingException {
         write(this.header, out, encodingValues);
     }
 
     @Override
     public void write(EReportingHeader elementToStream, OutputStream out)
-            throws XMLStreamException, OwsExceptionReport {
+            throws XMLStreamException, EncodingException {
         write(elementToStream, out, new EncodingValues());
     }
 
     @Override
     public void write(OutputStream out)
-            throws XMLStreamException, OwsExceptionReport {
+            throws XMLStreamException, EncodingException {
         write(this.header, out, new EncodingValues());
     }
 
     @Override
     public void write(EReportingHeader elementToStream, OutputStream out,
                       EncodingValues encodingValues)
-            throws XMLStreamException, OwsExceptionReport {
+            throws XMLStreamException, EncodingException {
         this.init(out, encodingValues);
         this.encodeReportingHeader(elementToStream, encodingValues);
     }
 
     private void encodeReportingHeader(EReportingHeader h, EncodingValues encodingValues)
-            throws XMLStreamException, DateTimeFormatException {
+            throws XMLStreamException, EncodingException {
 
         start(AqdConstants.QN_AQD_REPORTING_HEADER);
         namespace(AqdConstants.NS_AD_PREFIX, AqdConstants.NS_AD);
@@ -136,7 +136,7 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
     }
 
     private void encodeReportingPeriod(Referenceable<? extends Time> v)
-            throws XMLStreamException, DateTimeFormatException {
+            throws XMLStreamException, EncodingException {
         if (!v.isAbsent()) {
             if (v.isReference()) {
                 empty(AqdConstants.QN_AQD_REPORTING_PERIOD);
@@ -476,7 +476,7 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
         end(AqdConstants.QN_GN_SPELLING_OF_NAME);
     }
 
-    private void encodeTime(Time v) throws XMLStreamException, DateTimeFormatException {
+    private void encodeTime(Time v) throws XMLStreamException, EncodingException {
         if (v instanceof TimePeriod) {
             encodeTimePeriod((TimePeriod) v);
         } else if (v instanceof TimeInstant) {
@@ -485,7 +485,7 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
     }
 
     private void encodeTimeInstant(TimeInstant ti)
-            throws XMLStreamException, DateTimeFormatException {
+            throws XMLStreamException, EncodingException {
         start(GmlConstants.QN_TIME_INSTANT_32);
         attr(GmlConstants.QN_ID_32, getGMLId(ti));
         start(GmlConstants.QN_TIME_POSITION_32);
@@ -495,7 +495,7 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
     }
 
     private void encodeTimePeriod(TimePeriod tp)
-            throws XMLStreamException, DateTimeFormatException {
+            throws XMLStreamException, EncodingException {
         start(GmlConstants.QN_TIME_PERIOD_32);
         attr(GmlConstants.QN_ID_32, getGMLId(tp));
         start(GmlConstants.QN_BEGIN_POSITION_32);
@@ -508,8 +508,7 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
     }
 
     protected void encodeTimeString(DateTime time, TimeFormat format)
-            throws XMLStreamException,
-                   DateTimeFormatException {
+            throws XMLStreamException, EncodingException {
         chars(DateTimeHelper.formatDateTime2String(time, format));
     }
 

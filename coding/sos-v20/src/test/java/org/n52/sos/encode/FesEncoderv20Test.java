@@ -36,7 +36,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,18 +44,20 @@ import net.opengis.fes.x20.BBOXType;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
 
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Envelope;
@@ -71,13 +72,13 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 @Deprecated
 public class FesEncoderv20Test {
 
-    FesEncoderv20 fesEncoder = new FesEncoderv20();
+    private final FesEncoderv20 fesEncoder = new FesEncoderv20();
 
     @Test
     public final void should_return_correct_encoder_keys() {
         final Set<EncoderKey> expectedKeySet =
                 CodingHelper.encoderKeysForElements(FilterConstants.NS_FES_2, TemporalFilter.class,
-                        org.n52.sos.ogc.filter.FilterCapabilities.class, SpatialFilter.class);
+                        org.n52.shetland.ogc.filter.FilterCapabilities.class, SpatialFilter.class);
         final Set<EncoderKey> returnedKeySet = fesEncoder.getKeys();
 
         assertThat(returnedKeySet.size(), is(3));
@@ -124,15 +125,15 @@ public class FesEncoderv20Test {
     }
 
     @Test(expected = UnsupportedEncoderInputException.class)
-    public final void should_return_exception_if_received_null() throws OwsExceptionReport {
+    public final void should_return_exception_if_received_null() throws OwsExceptionReport, EncodingException {
         fesEncoder.encode(null);
         fesEncoder.encode(null, null);
-        fesEncoder.encode(null, new HashMap<SosConstants.HelperValues, String>());
+        fesEncoder.encode(null, EncodingContext.empty());
     }
 
     // @Test
     // deactivated until test fails on build server.
-    public final void should_return_BBoxType_for_spatialFilter() throws OwsExceptionReport {
+    public final void should_return_BBoxType_for_spatialFilter() throws EncodingException {
         final SpatialFilter filter = new SpatialFilter();
         filter.setOperator(SpatialOperator.BBOX);
         filter.setGeometry(new GeometryFactory().toGeometry(new Envelope(1, 2, 3, 4)));

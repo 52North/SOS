@@ -30,7 +30,6 @@ package org.n52.sos.profile;
 
 import java.util.Set;
 
-import org.n52.iceland.util.Constants;
 import org.n52.sos.service.profile.Profile;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -138,7 +137,7 @@ public class ProfileParser {
         if (isNotMissingNode(node.path(ENCODE_NAMESPACE_FOIS))) {
             return parseText(node.path(ENCODE_NAMESPACE_FOIS));
         }
-        return Constants.EMPTY_STRING;
+        return "";
     }
 
     private String parseObservationResponseFormat(JsonNode node) {

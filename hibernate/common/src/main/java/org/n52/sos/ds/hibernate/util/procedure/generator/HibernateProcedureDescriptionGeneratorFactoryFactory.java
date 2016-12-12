@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import org.n52.iceland.component.ComponentFactory;
+import org.n52.janmayen.component.ComponentFactory;
 
 /**
  * Interface for procedure description generator factories

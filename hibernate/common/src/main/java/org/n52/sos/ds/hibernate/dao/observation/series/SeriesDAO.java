@@ -33,10 +33,11 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.n52.iceland.exception.CodedException;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Hibernate data access class for series
@@ -48,7 +49,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws CodedException {
+    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
         return getSeriesCriteria(request, features, session).list();
     }
 
@@ -71,7 +72,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public Series getOrInsertSeries(ObservationContext identifiers, final Session session) throws CodedException {
+    public Series getOrInsertSeries(ObservationContext identifiers, final Session session) throws OwsExceptionReport {
         return getOrInsert(identifiers, session);
     }
 

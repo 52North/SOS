@@ -37,20 +37,20 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time.TimeFormat;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.w3c.W3CConstants;
+
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.Time.TimeFormat;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.XmlEventWriter;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * GetDataAvailability response stream writer.
@@ -85,7 +85,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
     }
 
     @Override
-    public void write(OutputStream out) throws XMLStreamException, OwsExceptionReport {
+    public void write(OutputStream out) throws XMLStreamException, EncodingException {
         init(out);
         start(true);
         writeGetDataAvailabilityResponse();
@@ -94,25 +94,25 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
     }
 
     @Override
-    public void write(OutputStream out, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+    public void write(OutputStream out, EncodingValues encodingValues) throws XMLStreamException, EncodingException {
         write(out);
     }
 
     @Override
     public void write(List<DataAvailability> elementToStream, OutputStream out) throws XMLStreamException,
-            OwsExceptionReport {
+            EncodingException {
        this.gdas = elementToStream;
        write(out);
     }
 
     @Override
     public void write(List<DataAvailability> elementToStream, OutputStream out, EncodingValues encodingValues)
-            throws XMLStreamException, OwsExceptionReport {
+            throws XMLStreamException, EncodingException {
         this.gdas = elementToStream;
         write(out);
     }
 
-    protected void writeGetDataAvailabilityResponse() throws XMLStreamException, OwsExceptionReport {
+    protected void writeGetDataAvailabilityResponse() throws XMLStreamException, EncodingException {
         start(GetDataAvailabilityConstants.GDA_GET_DATA_AVAILABILITY_RESPONSE);
         namespace(GetDataAvailabilityConstants.NS_GDA_PREFIX, GetDataAvailabilityConstants.NS_GDA);
         namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
@@ -124,7 +124,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         end(GetDataAvailabilityConstants.GDA_GET_DATA_AVAILABILITY_RESPONSE);
     }
 
-    protected void wirteDataAvailabilityMember(DataAvailability da) throws XMLStreamException, OwsExceptionReport {
+    protected void wirteDataAvailabilityMember(DataAvailability da) throws XMLStreamException, EncodingException {
         start(GetDataAvailabilityConstants.GDA_DATA_AVAILABILITY_MEMBER);
         attr(GmlConstants.QN_ID_32, DATA_AVAILABILITY_PREFIX + dataAvailabilityCount++);
         writeProcedure(da);
@@ -140,7 +140,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         end(GetDataAvailabilityConstants.GDA_DATA_AVAILABILITY_MEMBER);
     }
 
-    protected void writePhenomenonTime(DataAvailability da) throws DateTimeFormatException, XMLStreamException {
+    protected void writePhenomenonTime(DataAvailability da) throws EncodingException, XMLStreamException {
         start(GetDataAvailabilityConstants.GDA_PHENOMENON_TIME);
         if (times.containsKey(da.getPhenomenonTime())) {
             attr(GetDataAvailabilityConstants.XLINK_HREF, "#" + times.get(da.getPhenomenonTime()));
@@ -158,7 +158,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         if (da.getFeatureOfInterest().isSetTitle()) {
             attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getFeatureOfInterest().getTitle());
         } else {
-            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getFeatureOfInterest().getTitleFromHref());
+            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getFeatureOfInterest().getTitleOrFromHref());
         }
         end(GetDataAvailabilityConstants.GDA_FEATURE_OF_INTEREST);
     }
@@ -169,7 +169,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         if (da.getProcedure().isSetTitle()) {
             attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getProcedure().getTitle());
         } else {
-            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getProcedure().getTitleFromHref());
+            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getProcedure().getTitleOrFromHref());
         }
         end(GetDataAvailabilityConstants.GDA_PROCEDURE);
     }
@@ -180,12 +180,12 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         if (da.getObservedProperty().isSetTitle()) {
             attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getObservedProperty().getTitle());
         } else {
-            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getObservedProperty().getTitleFromHref());
+            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getObservedProperty().getTitleOrFromHref());
         }
         end(GetDataAvailabilityConstants.GDA_OBSERVED_PROPERTY);
     }
 
-    protected void writeTimePeriod(TimePeriod tp) throws XMLStreamException, DateTimeFormatException {
+    protected void writeTimePeriod(TimePeriod tp) throws XMLStreamException, EncodingException {
         start(GmlConstants.QN_TIME_PERIOD_32);
         attr(GmlConstants.QN_ID_32, tp.getGmlId());
         writeBegin(tp);
@@ -193,10 +193,10 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         end(GmlConstants.QN_TIME_PERIOD_32);
     }
 
-    protected void writeBegin(TimePeriod tp) throws XMLStreamException, DateTimeFormatException {
+    protected void writeBegin(TimePeriod tp) throws XMLStreamException, EncodingException {
         start(GmlConstants.QN_BEGIN_POSITION_32);
         if (tp.isSetStartIndeterminateValue()) {
-            attr(GmlConstants.AN_INDETERMINATE_POSITION, tp.getStartIndet().name());
+            attr(GmlConstants.AN_INDETERMINATE_POSITION, tp.getStartIndet().getValue());
         }
         if (tp.isSetStart()) {
             writeTimeString(tp.getStart(), tp.getTimeFormat());
@@ -204,10 +204,10 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         end(GmlConstants.QN_BEGIN_POSITION_32);
     }
 
-    protected void writeEnd(TimePeriod tp) throws XMLStreamException, DateTimeFormatException {
+    protected void writeEnd(TimePeriod tp) throws XMLStreamException, EncodingException {
         start(GmlConstants.QN_END_POSITION_32);
         if (tp.isSetEndIndeterminateValue()) {
-            attr(GmlConstants.AN_INDETERMINATE_POSITION, tp.getEndIndet().name());
+            attr(GmlConstants.AN_INDETERMINATE_POSITION, tp.getEndIndet().getValue());
         }
         if (tp.isSetEnd()) {
             writeTimeString(tp.getEnd(), tp.getTimeFormat());
@@ -216,7 +216,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
     }
 
     protected void writeTimeString(DateTime time, TimeFormat format) throws XMLStreamException,
-            DateTimeFormatException {
+            EncodingException {
         chars(DateTimeHelper.formatDateTime2String(time, format));
     }
 
@@ -226,7 +226,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         end(GetDataAvailabilityConstants.GDA_COUNT);
     }
 
-    protected void writeResultTimes(List<TimeInstant> resultTimes) throws XMLStreamException, OwsExceptionReport {
+    protected void writeResultTimes(List<TimeInstant> resultTimes) throws XMLStreamException, EncodingException {
         start(GetDataAvailabilityConstants.GDA_EXTENSION);
         start(SweConstants.QN_DATA_RECORD_SWE_200);
         attr("definition", RESULT_TIME);
@@ -240,7 +240,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         end(GetDataAvailabilityConstants.GDA_EXTENSION);
     }
 
-    protected void writeTime(TimeInstant ti) throws XMLStreamException, DateTimeFormatException {
+    protected void writeTime(TimeInstant ti) throws XMLStreamException, EncodingException {
         start(SweConstants.QN_TIME_SWE_200);
         writeValue(ti);
         writeUom();
@@ -254,7 +254,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
 
     }
 
-    protected void writeValue(TimeInstant ti) throws XMLStreamException, DateTimeFormatException {
+    protected void writeValue(TimeInstant ti) throws XMLStreamException, EncodingException {
         start(SweConstants.QN_VALUE_SWE_200);
         writeTimeString(ti.getValue(), ti.getTimeFormat());
         end(SweConstants.QN_VALUE_SWE_200);

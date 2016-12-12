@@ -28,7 +28,7 @@
  */
 package org.n52.sos.coding.encode;
 
-import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 
 import com.google.common.base.Objects;
 
@@ -37,11 +37,11 @@ import com.google.common.base.Objects;
  *
  */
 public class ProcedureDescriptionFormatKey {
-    private ServiceOperatorKey serviceOperatorKey;
+    private OwsServiceKey serviceOperatorKey;
 
     private String procedureDescriptionFormat;
 
-    public ProcedureDescriptionFormatKey(ServiceOperatorKey serviceOperatorKey, String responseFormat) {
+    public ProcedureDescriptionFormatKey(OwsServiceKey serviceOperatorKey, String responseFormat) {
         this.serviceOperatorKey = serviceOperatorKey;
         this.procedureDescriptionFormat = responseFormat;
     }
@@ -51,21 +51,21 @@ public class ProcedureDescriptionFormatKey {
     }
 
     @Deprecated
-    public ServiceOperatorKey getServiceOperatorKeyType() {
+    public OwsServiceKey getServiceOperatorKeyType() {
         return getServiceOperatorKey();
     }
 
     @Deprecated
-    public void setServiceOperatorKeyType(ServiceOperatorKey serviceOperatorKeyType) {
+    public void setServiceOperatorKeyType(OwsServiceKey serviceOperatorKeyType) {
         setServiceOperatorKey(serviceOperatorKeyType);
     }
 
 
-     public ServiceOperatorKey getServiceOperatorKey() {
+     public OwsServiceKey getServiceOperatorKey() {
         return serviceOperatorKey;
     }
 
-    public void setServiceOperatorKey(ServiceOperatorKey serviceOperatorKey) {
+    public void setServiceOperatorKey(OwsServiceKey serviceOperatorKey) {
         this.serviceOperatorKey = serviceOperatorKey;
     }
 

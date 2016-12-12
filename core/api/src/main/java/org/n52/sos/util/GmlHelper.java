@@ -31,10 +31,11 @@ package org.n52.sos.util;
 import javax.xml.namespace.QName;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
+
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -49,6 +50,8 @@ import com.vividsolutions.jts.geom.Polygon;
  *
  */
 public final class GmlHelper {
+    private GmlHelper() {
+    }
 
     public static QName getGml321QnameForGeometry(Geometry geom) {
         if (geom instanceof Point) {
@@ -94,8 +97,5 @@ public final class GmlHelper {
         } else {
             return new TimePeriod(start, end);
         }
-    }
-
-    private GmlHelper() {
     }
 }

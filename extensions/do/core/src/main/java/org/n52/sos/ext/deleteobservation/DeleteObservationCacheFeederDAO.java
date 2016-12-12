@@ -35,19 +35,19 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.features.FeatureCollection;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.DatasourceCacheUpdate;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.sos.SosEnvelope;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -109,7 +109,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * @throws OwsExceptionReport
      *             if the FeatureQueryHandler fails
      */
-    protected SosEnvelope getEnvelope(Set<String> features) throws OwsExceptionReport {
+    protected ReferencedEnvelope getEnvelope(Set<String> features) throws OwsExceptionReport {
         final Set<String> dbFeatures = new HashSet<>(features.size());
         for (String feature : features) {
             dbFeatures.add(feature);

@@ -40,16 +40,16 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.EncoderRepository;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.iceland.util.Producer;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.iceland.w3c.soap.SoapChain;
 import org.n52.iceland.w3c.soap.SoapResponse;
+import org.n52.janmayen.Producer;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.util.CodingHelper;
 
@@ -83,12 +83,12 @@ public class SoapChainResponseWriter extends AbstractResponseWriter<SoapChain> {
     public void write(SoapChain chain, OutputStream out, ResponseProxy responseProxy) throws IOException {
         try {
             write(chain, out);
-        } catch (OwsExceptionReport ex) {
+        } catch (EncodingException ex) {
             throw new IOException(ex);
         }
     }
 
-    private void write(SoapChain chain, OutputStream out) throws OwsExceptionReport, IOException {
+    private void write(SoapChain chain, OutputStream out) throws EncodingException, IOException {
         String namespace = chain.getSoapResponse().getSoapNamespace();
         EncoderKey key = CodingHelper.getEncoderKey(namespace, chain.getSoapResponse());
         Encoder<?, SoapResponse> encoder = this.encoderRepository.getEncoder(key);
@@ -99,7 +99,7 @@ public class SoapChainResponseWriter extends AbstractResponseWriter<SoapChain> {
     }
 
     private void write(Encoder<?, SoapResponse> encoder, SoapChain chain, OutputStream out)
-            throws IOException, OwsExceptionReport {
+            throws IOException, EncodingException {
         if (this.forceStreamingEncoding && encoder instanceof StreamingEncoder) {
             ((StreamingEncoder<?, ? super SoapResponse>) encoder)
                     .encode(chain.getSoapResponse(), out);

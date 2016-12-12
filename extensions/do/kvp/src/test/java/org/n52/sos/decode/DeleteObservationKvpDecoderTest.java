@@ -33,7 +33,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.n52.iceland.ogc.sos.SosConstants.SOS;
+import static org.n52.shetland.ogc.sos.SosConstants.SOS;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
 
 import java.util.Collections;
@@ -43,10 +43,11 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.util.http.MediaTypes;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.OperationDecoderKey;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
 
@@ -81,25 +82,25 @@ public class DeleteObservationKvpDecoderTest {
         assertTrue(instance.getKeys().equals(correctDecoderKey));
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void should_throw_DecodingException_in_case_of_missing_parameters() throws DecodingException {
         instance.decode(new HashMap<String, String>(0));
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void should_throw_OwsExceptionReport_in_case_of_null_parameter() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void should_throw_DecodingException_in_case_of_null_parameter() throws DecodingException {
         instance.decode(null);
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters2() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void should_throw_DecodingException_in_case_of_missing_parameters2() throws DecodingException {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(1);
         evolvingMap.put("service", SOS);
         instance.decode(evolvingMap);
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters3() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void should_throw_DecodingException_in_case_of_missing_parameters3() throws DecodingException {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(2);
         evolvingMap.put("service", SOS);
         evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
@@ -107,8 +108,8 @@ public class DeleteObservationKvpDecoderTest {
         instance.decode(evolvingMap);
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters4() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void should_throw_DecodingException_in_case_of_missing_parameters4() throws DecodingException {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
         evolvingMap.put("service", SOS);
         evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
@@ -117,8 +118,8 @@ public class DeleteObservationKvpDecoderTest {
         instance.decode(evolvingMap);
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters5() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void should_throw_DecodingException_in_case_of_missing_parameters5() throws DecodingException {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(2);
         evolvingMap.put("service", SOS);
         evolvingMap.put("request", OPERATION_NAME);
@@ -126,8 +127,8 @@ public class DeleteObservationKvpDecoderTest {
         instance.decode(evolvingMap);
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters6() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void should_throw_DecodingException_in_case_of_missing_parameters6() throws DecodingException {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
         evolvingMap.put("service", SOS);
         evolvingMap.put("request", OPERATION_NAME);
@@ -136,8 +137,8 @@ public class DeleteObservationKvpDecoderTest {
         instance.decode(evolvingMap);
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters7() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void should_throw_DecodingException_in_case_of_missing_parameters7() throws DecodingException {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
         evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
         evolvingMap.put("request", OPERATION_NAME);
@@ -146,8 +147,8 @@ public class DeleteObservationKvpDecoderTest {
         instance.decode(evolvingMap);
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters8() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void should_throw_DecodingException_in_case_of_missing_parameters8() throws DecodingException {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
         evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
         evolvingMap.put("request", OPERATION_NAME);
@@ -158,7 +159,7 @@ public class DeleteObservationKvpDecoderTest {
     }
 
     @Test
-    public void should_decode_valid_request() throws OwsExceptionReport {
+    public void should_decode_valid_request() throws DecodingException {
         final String observationIdentifier = "test-observation-identifier";
         HashMap<String, String> parameters = new HashMap<String, String>(4);
         parameters.put("service", SOS);

@@ -34,11 +34,12 @@ import java.net.URISyntaxException;
 import org.joda.time.DateTime;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
+
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.util.JSONUtils;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.inspire.aqd.Address;
 import org.n52.sos.inspire.aqd.Contact;
 import org.n52.sos.inspire.aqd.EReportingChange;
@@ -66,117 +67,103 @@ public class EReportingHeaderJSONEncoderTest {
 
     @Test
     public void test()
-            throws OwsExceptionReport, URISyntaxException {
+            throws OwsExceptionReport, URISyntaxException, EncodingException {
         EReportingHeader header
                 = new EReportingHeader()
-                .setInspireID(new InspireID()
-                        .setLocalId("id")
-                        .setNamespace("namespace")
-                        .setVersionId(Nillable.<String>missing()))
-                .setChange(new EReportingChange("Changed because... you know"))
-                .setReportingPeriod(Referenceable.of(Nillable
-                                .<Time>present(new TimeInstant(DateTime.now()))))
-                .setReportingAuthority(new RelatedParty()
-                        .setIndividualName(Nillable.<String>missing())
-                        .setOrganisationName("Organisation")
-                        .setPositionName("Postionti")
-                        .addRole(new Reference().setHref(URI
-                                        .create("http://hallo")))
-                        .addRole(Nillable.<Reference>withheld())
-                        .setContact(new Contact()
-                                .addTelephoneFacsimile("1234")
-                                .addTelephoneFacsimile(Nillable
-                                        .<String>missing())
-                                .addTelephoneVoice("asdfasdf")
-                                .setHoursOfService("asdfasdf")
-                                .setWebsite(Nillable.<String>unknown())
-                                .setElectronicMailAddress(Nillable
-                                        .<String>unknown())
-                                .setAddress(new Address()
-                                        .setPostCode("12341234")
-                                        .setAddressFeature(new Reference()
-                                                .setHref(URI
-                                                        .create("http://asdfasdf")))
-                                        .addLocatorDesignator("localtor")
-                                        .addAddressArea(Nillable
-                                                .<GeographicalName>withheld())
-                                        .addAddressArea(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
-                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
-                                                .setLanguage("eng")
-                                                .setNativeness(new CodeType("<asdfasdf"))
-                                                .setNameStatus(Nillable
-                                                        .<CodeType>unknown())
-                                                .addSpelling(new Spelling()
-                                                        .setScript("asdfasdf")
-                                                        .setText("asdfasdf")
-                                                        .setTransliterationScheme("asdfasdfasdf")
+                        .setInspireID(new InspireID()
+                                .setLocalId("id")
+                                .setNamespace("namespace")
+                                .setVersionId(Nillable.missing()))
+                        .setChange(new EReportingChange("Changed because... you know"))
+                        .setReportingPeriod(Referenceable.of(Nillable.present(new TimeInstant(DateTime.now()))))
+                        .setReportingAuthority(new RelatedParty()
+                                .setIndividualName(Nillable.missing())
+                                .setOrganisationName("Organisation")
+                                .setPositionName("Postionti")
+                                .addRole(new Reference().setHref(URI.create("http://hallo")))
+                                .addRole(Nillable.withheld())
+                                .setContact(new Contact()
+                                        .addTelephoneFacsimile("1234")
+                                        .addTelephoneFacsimile(Nillable.missing())
+                                        .addTelephoneVoice("asdfasdf")
+                                        .setHoursOfService("asdfasdf")
+                                        .setWebsite(Nillable.unknown())
+                                        .setElectronicMailAddress(Nillable.unknown())
+                                        .setAddress(new Address()
+                                                .setPostCode("12341234")
+                                                .setAddressFeature(new Reference()
+                                                        .setHref(URI.create("http://asdfasdf")))
+                                                .addLocatorDesignator("localtor")
+                                                .addAddressArea(Nillable.withheld())
+                                                .addAddressArea(new GeographicalName()
+                                                        .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                        .setGrammaticalNumber(new CodeType("c", new URI("d")))
+                                                        .setLanguage("eng")
+                                                        .setNativeness(new CodeType("<asdfasdf"))
+                                                        .setNameStatus(Nillable.unknown())
+                                                        .addSpelling(new Spelling()
+                                                                .setScript("asdfasdf")
+                                                                .setText("asdfasdf")
+                                                                .setTransliterationScheme("asdfasdfasdf")
+                                                        )
+                                                        .setPronunciation(new Pronunciation()
+                                                                .setIPA("asdfasdf")
+                                                                .setSoundLink(URI.create("http://asdfasdf"))
+                                                        )
                                                 )
-                                                .setPronunciation(new Pronunciation()
-                                                        .setIPA("asdfasdf")
-                                                        .setSoundLink(URI
-                                                                .create("http://asdfasdf"))
-                                                )
-                                        )
-                                        .addAdminUnit(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
-                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
-                                                .setLanguage("eng")
-                                                .setNativeness(new CodeType("<asdfasdf"))
-                                                .setNameStatus(Nillable
-                                                        .<CodeType>unknown())
-                                                .addSpelling(new Spelling()
-                                                        .setScript("asdfasdf")
-                                                        .setText("asdfasdf")
-                                                        .setTransliterationScheme("asdfasdfasdf")
-                                                )
-                                                .setPronunciation(new Pronunciation()
-                                                        .setIPA("asdfasdf")
-                                                        .setSoundLink(URI
-                                                                .create("http://asdfasdf"))
-                                                ))
-                                        .addPostName(Nillable
-                                                .<GeographicalName>withheld())
-                                        .addPostName(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
-                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
-                                                .setLanguage("eng")
-                                                .setNativeness(new CodeType("<asdfasdf"))
-                                                .setNameStatus(Nillable
-                                                        .<CodeType>unknown())
-                                                .addSpelling(new Spelling()
-                                                        .setScript("asdfasdf")
-                                                        .setText("asdfasdf")
-                                                        .setTransliterationScheme("asdfasdfasdf")
-                                                )
-                                                .setPronunciation(new Pronunciation()
-                                                        .setIPA("asdfasdf")
-                                                        .setSoundLink(URI
-                                                                .create("http://asdfasdf"))
-                                                ))
-                                        .addThoroughfare(Nillable
-                                                .<GeographicalName>withheld())
-                                        .addThoroughfare(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
-                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
-                                                .setLanguage("eng")
-                                                .setNativeness(new CodeType("<asdfasdf"))
-                                                .setNameStatus(Nillable
-                                                        .<CodeType>unknown())
-                                                .addSpelling(new Spelling()
-                                                        .setScript("asdfasdf")
-                                                        .setText("asdfasdf")
-                                                        .setTransliterationScheme("asdfasdfasdf")
-                                                )
-                                                .setPronunciation(new Pronunciation()
-                                                        .setIPA("asdfasdf")
-                                                        .setSoundLink(URI
-                                                                .create("http://asdfasdf"))
+                                                .addAdminUnit(new GeographicalName()
+                                                        .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                        .setGrammaticalNumber(new CodeType("c", new URI("d")))
+                                                        .setLanguage("eng")
+                                                        .setNativeness(new CodeType("<asdfasdf"))
+                                                        .setNameStatus(Nillable.unknown())
+                                                        .addSpelling(new Spelling()
+                                                                .setScript("asdfasdf")
+                                                                .setText("asdfasdf")
+                                                                .setTransliterationScheme("asdfasdfasdf")
+                                                        )
+                                                        .setPronunciation(new Pronunciation()
+                                                                .setIPA("asdfasdf")
+                                                                .setSoundLink(URI
+                                                                        .create("http://asdfasdf"))
+                                                        ))
+                                                .addPostName(Nillable.withheld())
+                                                .addPostName(new GeographicalName()
+                                                        .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                        .setGrammaticalNumber(new CodeType("c", new URI("d")))
+                                                        .setLanguage("eng")
+                                                        .setNativeness(new CodeType("<asdfasdf"))
+                                                        .setNameStatus(Nillable.unknown())
+                                                        .addSpelling(new Spelling()
+                                                                .setScript("asdfasdf")
+                                                                .setText("asdfasdf")
+                                                                .setTransliterationScheme("asdfasdfasdf")
+                                                        )
+                                                        .setPronunciation(new Pronunciation()
+                                                                .setIPA("asdfasdf")
+                                                                .setSoundLink(URI
+                                                                        .create("http://asdfasdf"))
+                                                        ))
+                                                .addThoroughfare(Nillable.withheld())
+                                                .addThoroughfare(new GeographicalName()
+                                                        .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                        .setGrammaticalNumber(new CodeType("c", new URI("d")))
+                                                        .setLanguage("eng")
+                                                        .setNativeness(new CodeType("<asdfasdf"))
+                                                        .setNameStatus(Nillable.unknown())
+                                                        .addSpelling(new Spelling()
+                                                                .setScript("asdfasdf")
+                                                                .setText("asdfasdf")
+                                                                .setTransliterationScheme("asdfasdfasdf")
+                                                        )
+                                                        .setPronunciation(new Pronunciation()
+                                                                .setIPA("asdfasdf")
+                                                                .setSoundLink(URI.create("http://asdfasdf"))
+                                                        )
                                                 )
                                         )
                                 )
-                        )
-                );
+                        );
 
         JsonNode o = new EReportingHeaderJSONEncoder().encode(header);
 

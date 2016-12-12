@@ -29,26 +29,23 @@
 package org.n52.sos.encode.exi.impl;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.encode.EncoderRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.ExceptionEncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.exi.EXIObject;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.ExceptionEncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -79,20 +76,9 @@ public class OwsExceptionReportEncoder implements Encoder<EXIObject, OwsExceptio
         this.encoderRepository = encoderRepository;
     }
 
-
     @Override
     public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(encoderKeys);
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-        /* noop */
     }
 
     @Override
@@ -101,18 +87,8 @@ public class OwsExceptionReportEncoder implements Encoder<EXIObject, OwsExceptio
     }
 
     @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public EXIObject encode(OwsExceptionReport objectToEncode) throws OwsExceptionReport,
-            UnsupportedEncoderInputException {
+    public EXIObject encode(OwsExceptionReport objectToEncode) throws EncodingException,
+                                                                      UnsupportedEncoderInputException {
         Encoder<Object, OwsExceptionReport> encoder = getEncoder(new ExceptionEncoderKey(MediaTypes.APPLICATION_XML));
         if (encoder != null) {
             Object encode = encoder.encode(objectToEncode);
@@ -122,12 +98,12 @@ public class OwsExceptionReportEncoder implements Encoder<EXIObject, OwsExceptio
                 throw new UnsupportedEncoderInputException(encoder, objectToEncode);
             }
         }
-        throw new NoApplicableCodeException().withMessage("Unable to encode {}", objectToEncode);
+        throw new EncodingException("Unable to encode {}", objectToEncode);
     }
 
     @Override
-    public EXIObject encode(OwsExceptionReport objectToEncode, Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport, UnsupportedEncoderInputException {
+    public EXIObject encode(OwsExceptionReport objectToEncode, EncodingContext additionalValues)
+            throws EncodingException {
         return encode(objectToEncode);
     }
 
@@ -136,6 +112,7 @@ public class OwsExceptionReportEncoder implements Encoder<EXIObject, OwsExceptio
      *
      * @param key
      *            Encoder key
+     *
      * @return Matching encoder
      */
     protected <D, S> Encoder<D, S> getEncoder(EncoderKey key) {

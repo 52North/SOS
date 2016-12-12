@@ -31,21 +31,19 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.event.ServiceEventBus;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OptionNotSupportedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.service.Configurator;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
 import org.n52.sos.event.events.SensorModification;
 import org.n52.sos.exception.ows.concrete.InvalidProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.request.UpdateSensorRequest;
-import org.n52.sos.response.UpdateSensorResponse;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
+import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
@@ -95,7 +93,7 @@ public class SosUpdateSensorDescriptionOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            for (SosProcedureDescription sosProcedureDescription : request.getProcedureDescriptions()) {
+            for (SosProcedureDescription<?> sosProcedureDescription : request.getProcedureDescriptions()) {
                 if (sosProcedureDescription.isSetValidTime()) {
                     throw new OptionNotSupportedException().at(Sos2Constants.UpdateSensorDescriptionParams.validTime)
                             .withMessage("The optional parameter '%s' is not supported!",
@@ -110,7 +108,7 @@ public class SosUpdateSensorDescriptionOperatorV20 extends
 
     private void checkProcedureIdentifier(String procedureIdentifier) throws OwsExceptionReport {
         if (procedureIdentifier != null && !procedureIdentifier.isEmpty()) {
-            if (!Configurator.getInstance().getCache().getProcedures().contains(procedureIdentifier)) {
+            if (!getCache().getProcedures().contains(procedureIdentifier)) {
                 throw new InvalidProcedureParameterException(procedureIdentifier);
             }
         } else {

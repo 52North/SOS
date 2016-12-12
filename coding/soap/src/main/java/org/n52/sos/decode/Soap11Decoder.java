@@ -37,13 +37,15 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.w3c.soap.SoapFault;
 import org.n52.iceland.w3c.soap.SoapHelper;
 import org.n52.iceland.w3c.soap.SoapRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 import com.google.common.base.Joiner;
 
@@ -68,11 +70,11 @@ public class Soap11Decoder extends AbstractSoapDecoder {
      *
      * @return SOS internal SOAP request
      *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             * if an error occurs.
      */
     @Override
-    protected SoapRequest createEnvelope(XmlObject doc) throws OwsExceptionReport {
+    protected SoapRequest createEnvelope(XmlObject doc) throws DecodingException {
         SoapRequest soapRequest =
                 new SoapRequest(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, SOAPConstants.SOAP_1_1_PROTOCOL);
         String soapAction = "";
@@ -112,19 +114,21 @@ public class Soap11Decoder extends AbstractSoapDecoder {
                 soapRequest.setSoapBodyContent(getSOAPBodyContent(soapMessageRequest));
             } catch (SOAPException soape) {
                 throw new NoApplicableCodeException().causedBy(soape).withMessage("Error while parsing SOAPMessage!");
+            } catch (DecodingException ex) {
+                throw new NoApplicableCodeException().causedBy(ex).withMessage("Error while parsing SOAPMessage!");
             }
         } catch (OwsExceptionReport owse) {
-            throw owse;
+            throw new DecodingException(owse);
         }
         return soapRequest;
     }
 
     @Override
-    protected SoapRequest createFault(OwsExceptionReport owse) {
+    protected SoapRequest createFault(DecodingException de) {
         SoapFault fault = new SoapFault();
         fault.setFaultCode(new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "Client"));
         fault.setLocale(Locale.ENGLISH);
-        fault.setFaultReason(owse.getMessage());
+        fault.setFaultReason(de.getMessage());
         SoapRequest r = new SoapRequest(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, SOAPConstants.SOAP_1_1_PROTOCOL);
         r.setSoapFault(fault);
         return r;

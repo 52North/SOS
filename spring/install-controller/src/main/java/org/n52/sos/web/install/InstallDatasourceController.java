@@ -43,9 +43,10 @@ import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.config.SettingValueFactory;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
+
+import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
@@ -114,7 +115,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                     try {
                         datasource.validateSchema(c.getDatabaseSettings());
                     } catch (ConfigurationError e) {
-                        if (StringHelper.isNotEmpty(e.getMessage())
+                        if (!Strings.isNullOrEmpty(e.getMessage())
                                 && (e.getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_FOI_COL_IN_OBS_TAB) || e
                                         .getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_SERIES_COL_IN_OBS_TAB))) {
                             throw new InstallationSettingsError(c, String.format(

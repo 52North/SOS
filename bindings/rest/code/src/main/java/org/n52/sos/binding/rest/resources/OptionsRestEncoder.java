@@ -28,8 +28,8 @@
  */
 package org.n52.sos.binding.rest.resources;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.response.ServiceResponse;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.n52.sos.binding.rest.requests.RestResponse;
 

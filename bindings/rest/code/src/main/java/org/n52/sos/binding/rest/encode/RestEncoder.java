@@ -28,8 +28,6 @@
  */
 package org.n52.sos.binding.rest.encode;
 
-import static java.util.Collections.emptySet;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -39,16 +37,12 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.response.ServiceResponse;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestResponse;
@@ -79,6 +73,10 @@ import org.n52.sos.binding.rest.resources.sensors.SensorsPostResponse;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutResponse;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.SchemaAwareEncoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -87,14 +85,14 @@ import com.google.common.collect.Sets;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
-public class RestEncoder implements Encoder<ServiceResponse, RestResponse>, Constructable {
+public class RestEncoder implements Constructable, SchemaAwareEncoder<ServiceResponse, RestResponse> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestEncoder.class);
     @Deprecated
     protected Constants bindingConstants;
 
     private Constants constants;
-    private Set<EncoderKey> encoderKeys ;
+    private Set<EncoderKey> encoderKeys;
 
     @Inject
     public void setConstants(Constants constants) {
@@ -115,132 +113,97 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse>, Cons
 
     @Override
     public ServiceResponse encode(final RestResponse restResponse)
-            throws OwsExceptionReport{
+            throws EncodingException {
+        try {
+            // 0 variables
+            ServiceResponse encodedResponse;
 
-        // 0 variables
-        ServiceResponse encodedResponse;
+            // 1 get decoder for response
+            final ResourceEncoder encoder = getRestEncoderForBindingResponse(restResponse);
+            LOGGER.debug("RestEncoder found for RestResponse {}: {}", restResponse.getClass().getName(), encoder.getClass()
+                         .getName());
+            // 2 decode
+            encodedResponse = encoder.encodeRestResponse(restResponse);
 
-        // 1 get decoder for response
-        final ResourceEncoder encoder = getRestEncoderForBindingResponse(restResponse);
-        LOGGER.debug("RestEncoder found for RestResponse {}: {}", restResponse.getClass().getName(), encoder.getClass().getName());
-        // 2 decode
-        encodedResponse = encoder.encodeRestResponse(restResponse);
-
-        // 3 return the results
-        return encodedResponse;
+            // 3 return the results
+            return encodedResponse;
+        } catch (OwsExceptionReport owse) {
+           throw new EncodingException(owse);
+        }
     }
 
-    private ResourceEncoder getRestEncoderForBindingResponse(final RestResponse restResponse) throws OwsExceptionReport
-    {
+    private ResourceEncoder getRestEncoderForBindingResponse(final RestResponse restResponse) throws EncodingException {
         if (restResponse != null) {
-            if (isSensorsGetResponse(restResponse))
-            {
+            if (isSensorsGetResponse(restResponse)) {
                 return new SensorsGetEncoder();
-            }
-            else if (isObservationsGetResponse(restResponse))
-            {
+            } else if (isObservationsGetResponse(restResponse)) {
                 return new ObservationsGetEncoder();
-            }
-            else if (restResponse instanceof CapabilitiesGetResponse)
-            {
+            } else if (restResponse instanceof CapabilitiesGetResponse) {
                 return new CapabilitiesGetEncoder();
-            }
-            else if (restResponse instanceof ObservationsPostResponse)
-            {
+            } else if (restResponse instanceof ObservationsPostResponse) {
                 return new ObservationsPostEncoder();
-            }
-            else if (restResponse instanceof SensorsPostResponse)
-            {
+            } else if (restResponse instanceof SensorsPostResponse) {
                 return new SensorsPostEncoder();
-            }
-            else if (restResponse instanceof SensorsPutResponse)
-            {
+            } else if (restResponse instanceof SensorsPutResponse) {
                 return new SensorsPutEncoder();
-            }
-            else if (isOfferingsGetResponse(restResponse))
-            {
+            } else if (isOfferingsGetResponse(restResponse)) {
                 return new OfferingsGetEncoder();
-            }
-            else if (isFeatureResponse(restResponse))
-            {
+            } else if (isFeatureResponse(restResponse)) {
                 return new FeaturesGetEncoder();
-            }
-            else if (restResponse instanceof ObservationsDeleteRespone)
-            {
+            } else if (restResponse instanceof ObservationsDeleteRespone) {
                 return new ObservationsDeleteEncoder();
-            }
-            else if (restResponse instanceof OptionsRestResponse)
-            {
+            } else if (restResponse instanceof OptionsRestResponse) {
                 return new OptionsRestEncoder();
-            }
-            else if (restResponse instanceof ResourceNotFoundResponse)
-            {
+            } else if (restResponse instanceof ResourceNotFoundResponse) {
                 return new GenericRestEncoder();
-            }
-            else if (restResponse instanceof ServiceEndpointResponse)
-            {
+            } else if (restResponse instanceof ServiceEndpointResponse) {
                 return new ServiceEndpointEncoder();
             }
         }
-        final String exceptionText = String.format("No encoder is available for response type '%s' by this encoder '%s'!",
-                restResponse!=null?restResponse.getClass().getName():"null",
+        final String exceptionText = String
+                .format("No encoder is available for response type '%s' by this encoder '%s'!",
+                        restResponse != null ? restResponse.getClass().getName() : "null",
                         this.getClass().getName());
         LOGGER.debug(exceptionText);
-        throw new NoEncoderForResponseException().withMessage(exceptionText);
+        throw new EncodingException(exceptionText);
     }
 
-    protected boolean isFeatureResponse(final RestResponse restResponse)
-    {
+    protected boolean isFeatureResponse(final RestResponse restResponse) {
         return restResponse instanceof FeatureByIdResponse || restResponse instanceof FeaturesResponse;
     }
 
-    private boolean isObservationsGetResponse(final RestResponse restResponse)
-    {
+    private boolean isObservationsGetResponse(final RestResponse restResponse) {
         return restResponse instanceof ObservationsGetByIdResponse || restResponse instanceof ObservationsSearchResponse;
     }
 
-    private boolean isSensorsGetResponse(final RestResponse restResponse)
-    {
+    private boolean isSensorsGetResponse(final RestResponse restResponse) {
         return restResponse instanceof GetSensorByIdResponse || restResponse instanceof SensorsGetResponse;
     }
 
-    private boolean isOfferingsGetResponse(final RestResponse restResponse)
-    {
+    private boolean isOfferingsGetResponse(final RestResponse restResponse) {
         return restResponse instanceof OfferingsResponse || restResponse instanceof OfferingByIdResponse;
     }
 
     @Override
-    public ServiceResponse encode(final RestResponse objectToEncode, final Map<HelperValues, String> iGNOREDadditionalValues) throws OwsExceptionReport
-    {
+    public ServiceResponse encode(final RestResponse objectToEncode,
+                                  EncodingContext iGNOREDadditionalValues) throws EncodingException {
         return encode(objectToEncode);
     }
 
     @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return emptySet();
-    }
-
-    @Override
     public Set<EncoderKey> getKeys() {
-        return Collections.unmodifiableSet(encoderKeys) ;
+        return Collections.unmodifiableSet(encoderKeys);
     }
 
     @Override
-    public void addNamespacePrefixToMap(final Map<String, String> nameSpacePrefixMap){
-        if (nameSpacePrefixMap != null)
-        {
+    public void addNamespacePrefixToMap(final Map<String, String> nameSpacePrefixMap) {
+        if (nameSpacePrefixMap != null) {
             nameSpacePrefixMap.put(bindingConstants.getEncodingNamespace(), bindingConstants.getEncodingPrefix());
         }
     }
 
     @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public MediaType getContentType()
-    {
+    public MediaType getContentType() {
         return Constants.getInstance().getContentTypeDefault();
     }
 

@@ -30,21 +30,14 @@ package org.n52.sos.ds.hibernate.util;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.lifecycle.Constructable;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 
 @Configurable
 public class ObservationSettingProvider implements Constructable {
-
-    private boolean includeChildObservableProperties;
-
     @Deprecated
     private static ObservationSettingProvider instance = null;
-
-    @Deprecated
-    public static ObservationSettingProvider getInstance() {
-        return instance;
-    }
+    private boolean includeChildObservableProperties;
 
     @Override
     public void init() {
@@ -58,5 +51,9 @@ public class ObservationSettingProvider implements Constructable {
     @Setting(AbstractRequestOperator.EXPOSE_CHILD_OBSERVABLE_PROPERTIES)
     public void setIncludeChildObservableProperties(boolean include) {
         this.includeChildObservableProperties = include;
+    }
+    @Deprecated
+    public static ObservationSettingProvider getInstance() {
+        return instance;
     }
 }

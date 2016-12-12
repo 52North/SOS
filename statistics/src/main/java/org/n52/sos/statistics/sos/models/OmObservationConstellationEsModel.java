@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
-import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
 
 public class OmObservationConstellationEsModel extends AbstractElasticsearchModel {
 

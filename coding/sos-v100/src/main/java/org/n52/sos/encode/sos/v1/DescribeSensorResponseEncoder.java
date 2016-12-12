@@ -29,10 +29,10 @@
 package org.n52.sos.encode.sos.v1;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.response.DescribeSensorResponse;
-import org.n52.sos.util.CodingHelper;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 
 /**
  * TODO JavaDoc
@@ -47,8 +47,8 @@ public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<De
     }
 
     @Override
-    protected XmlObject create(DescribeSensorResponse response) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(response.getOutputFormat(), response.getProcedureDescriptions().get(0));
+    protected XmlObject create(DescribeSensorResponse response) throws EncodingException {
+        return encodeObjectToXml(response.getOutputFormat(), response.getProcedureDescriptions().get(0));
     }
 
 }

@@ -28,61 +28,15 @@
  */
 package org.n52.sos.encode;
 
+import static java.util.stream.Collectors.joining;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlString;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.oxf.xml.NcNameResolver;
-import org.n52.sos.coding.encode.AbstractXmlEncoder;
-import org.n52.sos.exception.ows.concrete.XmlDecodingException;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweCoordinate;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.SweVector;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweCountRange;
-import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
 
 import net.opengis.swe.x20.AbstractDataComponentType;
 import net.opengis.swe.x20.AbstractEncodingDocument;
@@ -111,20 +65,77 @@ import net.opengis.swe.x20.UnitReference;
 import net.opengis.swe.x20.VectorType;
 import net.opengis.swe.x20.VectorType.Coordinate;
 
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
+import org.n52.iceland.ogc.sos.ConformanceClasses;
+import org.n52.iceland.ogc.swes.SwesConstants;
+import org.n52.iceland.service.ConformanceClass;
+import org.n52.oxf.xml.NcNameResolver;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.SweCoordinate;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.SweVector;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NotYetSupportedEncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
+
+public class SweCommonEncoderv20 extends AbstractXmlEncoder<XmlObject, Object>
+        implements ConformanceClass {
     private static final Logger LOGGER = LoggerFactory.getLogger(SweCommonEncoderv20.class);
 
-    private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(SweConstants.NS_SWE_20,
-            SweCoordinate.class, SweAbstractSimpleType.class, SweAbstractEncoding.class,
-            SweAbstractDataComponent.class, SweDataArray.class);
+    private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(
+            SweConstants.NS_SWE_20,
+            SweCoordinate.class,
+            SweAbstractSimpleType.class,
+            SweAbstractEncoding.class,
+            SweAbstractDataComponent.class,
+            SweDataArray.class);
 
-    private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet(ConformanceClasses.SWE_V2_CORE,
-            ConformanceClasses.SWE_V2_UML_SIMPLE_COMPONENTS, ConformanceClasses.SWE_V2_UML_RECORD_COMPONENTS,
-            ConformanceClasses.SWE_V2_UML_BLOCK_ENCODINGS, ConformanceClasses.SWE_V2_UML_SIMPLE_ENCODINGS,
-            ConformanceClasses.SWE_V2_XSD_SIMPLE_COMPONENTS, ConformanceClasses.SWE_V2_XSD_RECORD_COMPONENTS,
-            ConformanceClasses.SWE_V2_XSD_BLOCK_COMPONENTS, ConformanceClasses.SWE_V2_XSD_SIMPLE_ENCODINGS,
-            ConformanceClasses.SWE_V2_GENERAL_ENCODING_RULES, ConformanceClasses.SWE_V2_TEXT_ENCODING_RULES);
+    private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet(
+            ConformanceClasses.SWE_V2_CORE,
+            ConformanceClasses.SWE_V2_UML_SIMPLE_COMPONENTS,
+            ConformanceClasses.SWE_V2_UML_RECORD_COMPONENTS,
+            ConformanceClasses.SWE_V2_UML_BLOCK_ENCODINGS,
+            ConformanceClasses.SWE_V2_UML_SIMPLE_ENCODINGS,
+            ConformanceClasses.SWE_V2_XSD_SIMPLE_COMPONENTS,
+            ConformanceClasses.SWE_V2_XSD_RECORD_COMPONENTS,
+            ConformanceClasses.SWE_V2_XSD_BLOCK_COMPONENTS,
+            ConformanceClasses.SWE_V2_XSD_SIMPLE_ENCODINGS,
+            ConformanceClasses.SWE_V2_GENERAL_ENCODING_RULES,
+            ConformanceClasses.SWE_V2_TEXT_ENCODING_RULES);
 
     public SweCommonEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -155,14 +166,14 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public XmlObject encode(final Object sosSweType, final Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport {
+    public XmlObject encode(final Object sosSweType, EncodingContext additionalValues)
+            throws EncodingException {
         XmlObject encodedObject = null;
         if (sosSweType instanceof SweCoordinate) {
             encodedObject = createCoordinate((SweCoordinate) sosSweType);
         } else if (sosSweType instanceof SweAbstractEncoding) {
             encodedObject = createAbstractEncoding((SweAbstractEncoding) sosSweType);
-            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
                 if (encodedObject instanceof TextEncodingType) {
                     final TextEncodingDocument textEncodingDoc = TextEncodingDocument.Factory.newInstance(getXmlOptions());
                     textEncodingDoc.setTextEncoding((TextEncodingType) encodedObject);
@@ -178,23 +189,20 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             encodedObject = createAbstractDataComponent((SweAbstractDataComponent) sosSweType, additionalValues);
         } else if (sosSweType instanceof SweDataArray) {
             final DataArrayType dataArrayType = createDataArray((SweDataArray) sosSweType);
-            if (additionalValues.containsKey(HelperValues.FOR_OBSERVATION)) {
+            if (additionalValues.has(SosHelperValues.FOR_OBSERVATION)) {
                 final DataArrayPropertyType dataArrayProperty =
                         DataArrayPropertyType.Factory.newInstance(getXmlOptions());
                 dataArrayProperty.setDataArray1(dataArrayType);
-                encodedObject = dataArrayProperty;
             }
             encodedObject = dataArrayType;
         } else {
             throw new UnsupportedEncoderInputException(this, sosSweType);
         }
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
-        return encodedObject;
+        return XmlHelper.validateDocument(encodedObject, EncodingException::new);
     }
 
-    private XmlObject createAbstractDataComponent(final SweAbstractDataComponent sosSweAbstractDataComponent,
-            final Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+    private XmlObject createAbstractDataComponent(SweAbstractDataComponent sosSweAbstractDataComponent,
+                                                  EncodingContext additionalValues) throws EncodingException {
         if (sosSweAbstractDataComponent == null) {
             throw new UnsupportedEncoderInputException(this, sosSweAbstractDataComponent);
         }
@@ -211,11 +219,13 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             try {
                 return XmlObject.Factory.parse(sosSweAbstractDataComponent.getXml());
             } catch (final XmlException ex) {
-                throw new XmlDecodingException(SweAbstractDataComponent.class.getName(),
-                        sosSweAbstractDataComponent.getXml(), ex);
+                throw new EncodingException(ex, "Error while decoding %s:\n%s", new Object[] {
+                    SweAbstractDataComponent.class.getName(),
+                    sosSweAbstractDataComponent.getXml()
+                });
             }
         } else {
-            throw new NotYetSupportedException(SweAbstractDataComponent.class.getName(), sosSweAbstractDataComponent);
+            throw new NotYetSupportedEncodingException(SweAbstractDataComponent.class.getName(), sosSweAbstractDataComponent);
         }
         // add AbstractDataComponentType information
         if (abstractDataComponentType != null) {
@@ -233,18 +243,18 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             }
         }
         if ((abstractDataComponentType instanceof DataArrayType)
-                && additionalValues.containsKey(HelperValues.FOR_OBSERVATION)) {
+                && additionalValues.has(SosHelperValues.FOR_OBSERVATION)) {
             final DataArrayPropertyType dataArrayProperty = DataArrayPropertyType.Factory.newInstance(getXmlOptions());
             dataArrayProperty.setDataArray1((DataArrayType) abstractDataComponentType);
             return dataArrayProperty;
         }
         if ((abstractDataComponentType instanceof DataRecordType)) {
-            if (additionalValues.containsKey(HelperValues.FOR_OBSERVATION)) {
+            if (additionalValues.has(SosHelperValues.FOR_OBSERVATION)) {
                 final DataRecordPropertyType dataRecordProperty = DataRecordPropertyType.Factory.newInstance(getXmlOptions());
                 dataRecordProperty.setDataRecord((DataRecordType) abstractDataComponentType);
                 return dataRecordProperty;
             }
-            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
                 final DataRecordDocument dataRecordDoc = DataRecordDocument.Factory.newInstance(getXmlOptions());
                 dataRecordDoc.setDataRecord((DataRecordType) abstractDataComponentType);
                 return dataRecordDoc;
@@ -254,7 +264,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return abstractDataComponentType;
     }
 
-    private DataRecordType createDataRecord(final SweDataRecord sosDataRecord) throws OwsExceptionReport {
+    private DataRecordType createDataRecord(final SweDataRecord sosDataRecord) throws EncodingException {
         final List<SweField> sosFields = sosDataRecord.getFields();
         final DataRecordType xbDataRecord = DataRecordType.Factory.newInstance(getXmlOptions());
         if (sosFields != null) {
@@ -274,7 +284,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbDataRecord;
     }
 
-    private DataArrayType createDataArray(final SweDataArray sosDataArray) throws OwsExceptionReport {
+    private DataArrayType createDataArray(final SweDataArray sosDataArray) throws EncodingException {
         if (sosDataArray != null) {
             if (sosDataArray.isSetXml()) {
                 try {
@@ -322,32 +332,18 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
 
     private XmlString createValues(final List<List<String>> values, final SweAbstractEncoding encoding) {
         // TODO How to deal with the decimal separator - is it an issue here?
-        final StringBuilder valueStringBuilder = new StringBuilder(256);
         final SweTextEncoding textEncoding = (SweTextEncoding) encoding;
-        final String tokenSeparator = textEncoding.getTokenSeparator();
-        final String blockSeparator = textEncoding.getBlockSeparator();
-        for (final List<String> block : values) {
-            final StringBuilder blockStringBuilder = new StringBuilder();
-            for (final String token : block) {
-                blockStringBuilder.append(token);
-                blockStringBuilder.append(tokenSeparator);
-            }
-            String blockString = blockStringBuilder.toString();
-            // remove last token sep
-            blockString = blockString.substring(0, blockString.lastIndexOf(tokenSeparator));
-            valueStringBuilder.append(blockString);
-            valueStringBuilder.append(blockSeparator);
-        }
-        String valueString = valueStringBuilder.toString();
-        // remove last block sep
-        valueString = valueString.substring(0, valueString.lastIndexOf(blockSeparator));
+
+        String valueString = values.stream()
+                .map(block -> String.join(textEncoding.getTokenSeparator(), block))
+                .collect(joining(textEncoding.getBlockSeparator()));
         // create XB result object
         final XmlString xbValueString = XmlString.Factory.newInstance(getXmlOptions());
         xbValueString.setStringValue(valueString);
         return xbValueString;
     }
 
-    private DataRecordType.Field createField(final SweField sweField) throws OwsExceptionReport {
+    private DataRecordType.Field createField(final SweField sweField) throws EncodingException {
         final SweAbstractDataComponent sosElement = sweField.getElement();
         LOGGER.trace("sweField: {}, sosElement: {}", sweField, sosElement);
         final DataRecordType.Field xbField =
@@ -356,8 +352,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             xbField.setName(NcNameResolver.fixNcName(sweField.getName().getValue()));
         }
 
-        final XmlObject encodeObjectToXml = createAbstractDataComponent(sosElement, new EnumMap<SosConstants.HelperValues, String>(
-                HelperValues.class));
+        final XmlObject encodeObjectToXml = createAbstractDataComponent(sosElement, EncodingContext.empty());
         XmlObject substituteElement =
                 XmlHelper.substituteElement(xbField.addNewAbstractDataComponent(), encodeObjectToXml);
         substituteElement.set(encodeObjectToXml);
@@ -368,7 +363,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
      *
      * SIMPLE TYPES
      */
-    private AbstractDataComponentType createSimpleType(final SweAbstractSimpleType<?> sosSimpleType) throws OwsExceptionReport {
+    private AbstractDataComponentType createSimpleType(final SweAbstractSimpleType<?> sosSimpleType) throws EncodingException {
         if (sosSimpleType instanceof SweBoolean) {
             return createBoolean((SweBoolean) sosSimpleType);
         } else if (sosSimpleType instanceof SweCategory) {
@@ -388,7 +383,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         } else if (sosSimpleType instanceof SweTime) {
             return createTime((SweTime) sosSimpleType);
         }
-        throw new NotYetSupportedException(SweAbstractSimpleType.class.getSimpleName(), sosSimpleType);
+        throw new NotYetSupportedEncodingException(SweAbstractSimpleType.class.getSimpleName(), sosSimpleType);
     }
 
     private BooleanType createBoolean(final SweBoolean sosElement) {
@@ -415,7 +410,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
     private CountType createCount(final SweCount sosCount) {
         final CountType xbCount = CountType.Factory.newInstance(getXmlOptions());
         if (sosCount.isSetValue()) {
-            final BigInteger bigInt = new BigInteger(Integer.toString(sosCount.getValue().intValue()));
+            final BigInteger bigInt = new BigInteger(Integer.toString(sosCount.getValue()));
             xbCount.setValue(bigInt);
         }
         return xbCount;
@@ -505,7 +500,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbTimeRange;
     }
 
-    private VectorType createVector(SweVector sweVector) throws OwsExceptionReport {
+    private VectorType createVector(SweVector sweVector) throws EncodingException {
         final VectorType xbVector = VectorType.Factory.newInstance(getXmlOptions());
         if (sweVector.isSetReferenceFrame()) {
             xbVector.setReferenceFrame(sweVector.getReferenceFrame());
@@ -521,28 +516,28 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbVector;
     }
 
-    private Coordinate createCoordinate(final SweCoordinate<?> coordinate) throws OwsExceptionReport {
+    private Coordinate createCoordinate(final SweCoordinate<?> coordinate) throws EncodingException {
         final Coordinate xbCoordinate = Coordinate.Factory.newInstance(getXmlOptions());
         xbCoordinate.setName(coordinate.getName());
         xbCoordinate.setQuantity((QuantityType)createAbstractDataComponent((SweQuantity) coordinate.getValue(), null));
         return xbCoordinate;
     }
 
-    private AbstractEncodingType createAbstractEncoding(final SweAbstractEncoding sosSweAbstractEncoding) throws OwsExceptionReport {
+    private AbstractEncodingType createAbstractEncoding(SweAbstractEncoding sosSweAbstractEncoding) throws EncodingException {
         if (sosSweAbstractEncoding instanceof SweTextEncoding) {
             return createTextEncoding((SweTextEncoding) sosSweAbstractEncoding);
         }
 
         try {
             if ((sosSweAbstractEncoding.getXml() != null) && !sosSweAbstractEncoding.getXml().isEmpty()) {
-                final XmlObject xmlObject = XmlObject.Factory.parse(sosSweAbstractEncoding.getXml());
+                XmlObject xmlObject = XmlObject.Factory.parse(sosSweAbstractEncoding.getXml());
                 if (xmlObject instanceof AbstractEncodingType) {
                     return (AbstractEncodingType) xmlObject;
                 }
             }
-            throw new NoApplicableCodeException().withMessage("AbstractEncoding can not be encoded!");
-        } catch (final XmlException e) {
-            throw new NoApplicableCodeException().withMessage("Error while encoding AbstractEncoding!");
+            throw new EncodingException("AbstractEncoding can not be encoded!");
+        } catch (XmlException e) {
+            throw new EncodingException("Error while encoding AbstractEncoding!", e);
         }
     }
 
@@ -576,8 +571,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
     }
 
     private UnitReference createUnknownUnitReference() {
-        final UnitReference unitReference =
-                UnitReference.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        final UnitReference unitReference = UnitReference.Factory.newInstance(getXmlOptions());
         unitReference.setHref(OGCConstants.UNKNOWN);
         return unitReference;
     }

@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.n52.iceland.ogc.ows.Extension;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
+import org.n52.shetland.ogc.ows.extension.Extension;
 
 public class ExtensionEsModel extends AbstractElasticsearchModel {
 

@@ -30,8 +30,8 @@ package org.n52.sos.util.builder;
 
 import java.util.ArrayList;
 
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

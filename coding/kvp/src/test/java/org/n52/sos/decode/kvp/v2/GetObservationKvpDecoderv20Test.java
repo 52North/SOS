@@ -37,9 +37,9 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.collect.Maps;
 
@@ -52,7 +52,7 @@ import com.google.common.collect.Maps;
 public class GetObservationKvpDecoderv20Test {
 
     @Test
-    public void should_decode_extension_parameter_MergeObservationsIntoDataArray() throws OwsExceptionReport {
+    public void should_decode_extension_parameter_MergeObservationsIntoDataArray() throws DecodingException {
         final Map<String, String> mapTrue = Maps.newHashMap();
         mapTrue.put("MergeObservationsIntoDataArray", "true");
         mapTrue.put("service", "SOS");

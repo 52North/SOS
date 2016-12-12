@@ -28,25 +28,27 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.create;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -54,19 +56,22 @@ import com.google.common.base.Strings;
 /**
  * Strategy to create the {@link SosProcedureDescription} from a file.
  */
-public class FileDescriptionCreationStrategy implements
-        DescriptionCreationStrategy {
+public class FileDescriptionCreationStrategy extends XmlStringDescriptionCreationStrategy {
+
     private static final Logger LOGGER = LoggerFactory
             .getLogger(FileDescriptionCreationStrategy.class);
 
     @Override
     public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
-        XmlObject xml = read(p.getDescriptionFile());
-        SosProcedureDescription desc = decode(xml);
-        desc.setIdentifier(p.getIdentifier());
-        desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
-        return desc;
+        try {
+            SosProcedureDescription desc = new SosProcedureDescription<AbstractFeature>(readXml(read(p.getDescriptionFile())));
+            desc.setIdentifier(p.getIdentifier());
+            desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
+            return desc;
+        } catch (IOException ex) {
+            throw new NoApplicableCodeException().causedBy(ex);
+        }
     }
 
     private InputStream getDocumentAsStream(String filename) {
@@ -84,17 +89,10 @@ public class FileDescriptionCreationStrategy implements
                 getResourceAsStream(builder.toString());
     }
 
-    private SosProcedureDescription decode(XmlObject xml)
-            throws OwsExceptionReport {
-        return (SosProcedureDescription) CodingHelper.decodeXmlElement(xml);
-    }
-
-    private XmlObject read(String path)
-            throws OwsExceptionReport {
+    private String read(String path)
+            throws IOException {
         InputStream stream = getDocumentAsStream(path);
-        String string = StringHelper.convertStreamToString(stream);
-        XmlObject xml = XmlHelper.parseXmlString(string);
-        return xml;
+        return StringHelper.convertStreamToString(stream);
     }
 
     @Override

@@ -28,20 +28,19 @@
  */
 package org.n52.sos.decode.json.impl;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.OperationDecoderKey;
+import org.n52.svalbard.decode.NoDecoderForKeyException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.request.BatchRequest;
-import org.n52.sos.util.BatchConstants;
+import org.n52.shetland.ogc.sos.request.BatchRequest;
+import org.n52.shetland.ogc.sos.BatchConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -63,7 +62,7 @@ public class BatchRequestDecoder extends AbstractSosRequestDecoder<BatchRequest>
     }
 
     @Override
-    protected BatchRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    protected BatchRequest decodeRequest(JsonNode node) throws DecodingException {
         BatchRequest request = new BatchRequest();
         if (node.path(JSONConstants.STOP_AT_FAILURE).isBoolean()) {
             request.setStopAtFailure(node.path(JSONConstants.STOP_AT_FAILURE).booleanValue());
@@ -74,11 +73,11 @@ public class BatchRequestDecoder extends AbstractSosRequestDecoder<BatchRequest>
         return request;
     }
 
-    private Decoder<AbstractServiceRequest<?>, JsonNode> getDecoder(JsonNode n) throws OwsExceptionReport {
+    private Decoder<OwsServiceRequest, JsonNode> getDecoder(JsonNode n) throws DecodingException {
         OperationDecoderKey k =
                 new OperationDecoderKey(n.path(JSONConstants.SERVICE).textValue(), n.path(JSONConstants.VERSION)
                         .textValue(), n.path(JSONConstants.REQUEST).textValue(), MediaTypes.APPLICATION_JSON);
-        Decoder<AbstractServiceRequest<?>, JsonNode> decoder = CodingRepository.getInstance().getDecoder(k);
+        Decoder<OwsServiceRequest, JsonNode> decoder = getDecoder(k);
         if (decoder == null) {
             // TODO other exception?
             throw new NoDecoderForKeyException(k);

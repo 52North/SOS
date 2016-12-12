@@ -39,14 +39,17 @@ import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -143,11 +146,15 @@ public class FeaturesRequestHandler extends RequestHandler {
 
     private GetFeatureOfInterestResponseDocument getFeatureOfInterestFromSosCore(FeaturesRequest request) throws OwsExceptionReport, XmlException
     {
-        XmlObject xb_getFeatureOfInterestResponse =executeSosRequest(request.getGetFeatureOfInterestRequest());
-        if (xb_getFeatureOfInterestResponse instanceof GetFeatureOfInterestResponseDocument) {
-            return (GetFeatureOfInterestResponseDocument) xb_getFeatureOfInterestResponse;
+        XmlObject xb_getFeatureOfInterestResponse;
+        try {
+            xb_getFeatureOfInterestResponse = executeSosRequest(request.getGetFeatureOfInterestRequest());
+            if (xb_getFeatureOfInterestResponse instanceof GetFeatureOfInterestResponseDocument) {
+                return (GetFeatureOfInterestResponseDocument) xb_getFeatureOfInterestResponse;
+            }
+        } catch (EncodingException ee) {
+            throw new NoApplicableCodeException().causedBy(ee);
         }
-
         return null;
     }
 

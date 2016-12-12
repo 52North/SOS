@@ -28,23 +28,31 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import static org.n52.iceland.util.DateTimeHelper.formatDateTime2IsoString;
+import static org.n52.shetland.util.DateTimeHelper.formatDateTime2IsoString;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.DateTimeHelper;
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
@@ -54,15 +62,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.base.Strings;
@@ -86,9 +86,7 @@ public class ResultHandlingHelper {
      * @return Internal ResultEncoding
      */
     public static SosResultEncoding createSosResultEncoding(final String resultEncoding) {
-        final SosResultEncoding sosResultEncoding = new SosResultEncoding();
-        sosResultEncoding.setXml(resultEncoding);
-        return sosResultEncoding;
+        return new SosResultEncoding(resultEncoding);
     }
 
     /**
@@ -99,9 +97,7 @@ public class ResultHandlingHelper {
      * @return Internal ResultStructure
      */
     public static SosResultStructure createSosResultStructure(final String resultStructure) {
-        final SosResultStructure sosResultStructure = new SosResultStructure();
-        sosResultStructure.setXml(resultStructure);
-        return sosResultStructure;
+        return new SosResultStructure(resultStructure);
     }
 
     /**
@@ -120,13 +116,13 @@ public class ResultHandlingHelper {
      *             If creation fails
      */
     public static String createResultValuesFromObservations(final List<Observation<?>> observations,
-            final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure)
+            final SweAbstractEncoding sosResultEncoding, final SweAbstractDataComponent sosResultStructure)
             throws OwsExceptionReport {
         final StringBuilder builder = new StringBuilder();
         if (CollectionHelper.isNotEmpty(observations)) {
-            final String tokenSeparator = getTokenSeparator(sosResultEncoding.getEncoding());
-            final String blockSeparator = getBlockSeparator(sosResultEncoding.getEncoding());
-            final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure.getResultStructure());
+            final String tokenSeparator = getTokenSeparator(sosResultEncoding);
+            final String blockSeparator = getBlockSeparator(sosResultEncoding);
+            final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure);
             addElementCount(builder, observations.size(), blockSeparator);
             for (final Observation<?> observation : observations) {
                 for (final Integer intger : valueOrder.keySet()) {
@@ -134,7 +130,7 @@ public class ResultHandlingHelper {
                     switch (definition) {
                         case PHENOMENON_TIME:
                             builder.append(getTimeStringForPhenomenonTime(observation.getPhenomenonTimeStart(),
-                                                                          observation.getPhenomenonTimeEnd()));
+                                                                      observation.getPhenomenonTimeEnd()));
                             break;
                         case RESULT_TIME:
                             builder.append(getTimeStringForResultTime(observation.getResultTime()));
@@ -254,12 +250,12 @@ public class ResultHandlingHelper {
         if (resultTime != null) {
             return DateTimeHelper.formatDateTime2IsoString(new DateTime(resultTime, DateTimeZone.UTC));
         }
-        return ProfileHandler.getInstance().getActiveProfile().getResponseNoDataPlaceholder();
+        return getActiveProfile().getResponseNoDataPlaceholder();
     }
 
     private static Object getTimeStringForPhenomenonTime(final Date phenomenonTimeStart, final Date phenomenonTimeEnd) {
         if (phenomenonTimeStart == null) {
-            return ProfileHandler.getInstance().getActiveProfile().getResponseNoDataPlaceholder();
+            return getActiveProfile().getResponseNoDataPlaceholder();
         }
 
         final StringBuilder builder = new StringBuilder();
@@ -351,6 +347,10 @@ public class ResultHandlingHelper {
     }
 
     private ResultHandlingHelper() {
+    }
+
+    private static Profile getActiveProfile() throws ConfigurationError {
+        return ProfileHandler.getInstance().getActiveProfile();
     }
 
 }

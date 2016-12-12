@@ -28,91 +28,13 @@
  */
 package org.n52.sos.encode;
 
-import static org.n52.iceland.util.CollectionHelper.union;
+import static org.n52.shetland.util.CollectionHelper.union;
 import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.oxf.xml.NcNameResolver;
-import org.n52.sos.iso.gmd.GmdConstants;
-import org.n52.sos.ogc.sensorML.AbstractProcess;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.HasComponents;
-import org.n52.sos.ogc.sensorML.HasProcessMethod;
-import org.n52.sos.ogc.sensorML.ProcessMethod;
-import org.n52.sos.ogc.sensorML.SensorML20Constants;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.SmlContact;
-import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
-import org.n52.sos.ogc.sensorML.Term;
-import org.n52.sos.ogc.sensorML.elements.AbstractSmlDocumentation;
-import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
-import org.n52.sos.ogc.sensorML.elements.SmlCapability;
-import org.n52.sos.ogc.sensorML.elements.SmlCharacteristic;
-import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
-import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
-import org.n52.sos.ogc.sensorML.elements.SmlComponent;
-import org.n52.sos.ogc.sensorML.elements.SmlDocumentation;
-import org.n52.sos.ogc.sensorML.elements.SmlDocumentationList;
-import org.n52.sos.ogc.sensorML.elements.SmlDocumentationListMember;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.sos.ogc.sensorML.elements.SmlIo;
-import org.n52.sos.ogc.sensorML.elements.SmlLocation;
-import org.n52.sos.ogc.sensorML.elements.SmlPosition;
-import org.n52.sos.ogc.sensorML.v20.AbstractPhysicalProcess;
-import org.n52.sos.ogc.sensorML.v20.AbstractProcessV20;
-import org.n52.sos.ogc.sensorML.v20.AggregateProcess;
-import org.n52.sos.ogc.sensorML.v20.DescribedObject;
-import org.n52.sos.ogc.sensorML.v20.PhysicalComponent;
-import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
-import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
-import org.n52.sos.ogc.sensorML.v20.SmlDataInterface;
-import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import net.opengis.sensorml.x20.AbstractPhysicalProcessType;
 import net.opengis.sensorml.x20.AbstractProcessType;
@@ -143,7 +65,6 @@ import net.opengis.sensorml.x20.DocumentListType;
 import net.opengis.sensorml.x20.FeatureListType;
 import net.opengis.sensorml.x20.IdentifierListPropertyType;
 import net.opengis.sensorml.x20.IdentifierListType;
-import net.opengis.sensorml.x20.IdentifierListType.Identifier;
 import net.opengis.sensorml.x20.InputListType;
 import net.opengis.sensorml.x20.InputListType.Input;
 import net.opengis.sensorml.x20.ObservablePropertyType;
@@ -162,8 +83,85 @@ import net.opengis.sensorml.x20.SimpleProcessPropertyType;
 import net.opengis.sensorml.x20.SimpleProcessType;
 import net.opengis.sensorml.x20.TermType;
 
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.janmayen.http.MediaType;
+import org.n52.oxf.xml.NcNameResolver;
+import org.n52.shetland.iso.gmd.GmdConstants;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.HasComponents;
+import org.n52.shetland.ogc.sensorML.HasProcessMethod;
+import org.n52.shetland.ogc.sensorML.ProcessMethod;
+import org.n52.shetland.ogc.sensorML.SensorML20Constants;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.SmlContact;
+import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
+import org.n52.shetland.ogc.sensorML.Term;
+import org.n52.shetland.ogc.sensorML.elements.AbstractSmlDocumentation;
+import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
+import org.n52.shetland.ogc.sensorML.elements.SmlCapability;
+import org.n52.shetland.ogc.sensorML.elements.SmlCharacteristic;
+import org.n52.shetland.ogc.sensorML.elements.SmlCharacteristics;
+import org.n52.shetland.ogc.sensorML.elements.SmlClassifier;
+import org.n52.shetland.ogc.sensorML.elements.SmlComponent;
+import org.n52.shetland.ogc.sensorML.elements.SmlDocumentation;
+import org.n52.shetland.ogc.sensorML.elements.SmlDocumentationList;
+import org.n52.shetland.ogc.sensorML.elements.SmlDocumentationListMember;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.sensorML.elements.SmlIo;
+import org.n52.shetland.ogc.sensorML.elements.SmlLocation;
+import org.n52.shetland.ogc.sensorML.elements.SmlPosition;
+import org.n52.shetland.ogc.sensorML.v20.AbstractPhysicalProcess;
+import org.n52.shetland.ogc.sensorML.v20.AbstractProcessV20;
+import org.n52.shetland.ogc.sensorML.v20.AggregateProcess;
+import org.n52.shetland.ogc.sensorML.v20.DescribedObject;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalSystem;
+import org.n52.shetland.ogc.sensorML.v20.SimpleProcess;
+import org.n52.shetland.ogc.sensorML.v20.SmlDataInterface;
+import org.n52.shetland.ogc.sensorML.v20.SmlFeatureOfInterest;
+import org.n52.shetland.ogc.sos.ProcedureDescriptionFormat;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 /**
  * {@link AbstractSensorMLEncoder} class to encode OGC SensorML 2.0
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -171,29 +169,29 @@ import net.opengis.sensorml.x20.TermType;
 public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorMLEncoderv20.class);
 
-
     private static final ImmutableSet<SupportedType> SUPPORTED_TYPES
             = ImmutableSet.<SupportedType>builder()
             .add(new ProcedureDescriptionFormat(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
             .add(new ProcedureDescriptionFormat(SensorML20Constants.SENSORML_20_CONTENT_TYPE.toString()))
             .build();
 
-    private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS =
-            ImmutableMap.of(SosConstants.SOS,
-                    ImmutableMap.<String, Set<String>> builder()
-                            .put(Sos2Constants.SERVICEVERSION, ImmutableSet.of(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
-                            .put(Sos1Constants.SERVICEVERSION, ImmutableSet.of(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)).build());
+    private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS
+            = ImmutableMap.of(SosConstants.SOS,
+                              ImmutableMap.<String, Set<String>>builder()
+                              .put(Sos2Constants.SERVICEVERSION, ImmutableSet
+                                   .of(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
+                              .put(Sos1Constants.SERVICEVERSION, ImmutableSet
+                                   .of(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)).build());
 
-    @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
-            encoderKeysForElements(SensorML20Constants.NS_SML_20, SosProcedureDescription.class,
-                    AbstractSensorML.class, DescribedObject.class),
+            encoderKeysForElements(SensorML20Constants.NS_SML_20,
+                                   AbstractSensorML.class, DescribedObject.class),
             encoderKeysForElements(SensorML20Constants.SENSORML_20_CONTENT_TYPE.toString(),
-                    SosProcedureDescription.class, AbstractSensorML.class, DescribedObject.class));
+                                   AbstractSensorML.class, DescribedObject.class));
 
     public SensorMLEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
-                Joiner.on(", ").join(ENCODER_KEYS));
+                     Joiner.on(", ").join(ENCODER_KEYS));
     }
 
     @Override
@@ -229,16 +227,16 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     @Override
-    public XmlObject encode(Object objectToEncode, Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport, UnsupportedEncoderInputException {
+    public XmlObject encode(Object objectToEncode, EncodingContext additionalValues)
+            throws EncodingException {
         XmlObject encodedObject = null;
         try {
-            if (objectToEncode instanceof SosProcedureDescription) {
-                SosProcedureDescription description = (SosProcedureDescription) objectToEncode;
-                if (description.isSetSensorDescriptionXmlString()) {
+            if (objectToEncode instanceof AbstractSensorML) {
+                AbstractSensorML description = (AbstractSensorML) objectToEncode;
+                if (description.isSetXml()) {
                     encodedObject = XmlObject.Factory
-                            .parse(((SosProcedureDescription) objectToEncode).getSensorDescriptionXmlString());
-                    addValuesToXmlObject(encodedObject, (SosProcedureDescription) objectToEncode);
+                            .parse(((AbstractSensorML) objectToEncode).getXml());
+                    addValuesToXmlObject(encodedObject, (AbstractSensorML) objectToEncode);
                     encodedObject = checkForAdditionalValues(encodedObject, additionalValues);
                 } else {
                     encodedObject = encodeDescription(description, additionalValues);
@@ -246,23 +244,22 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             } else {
                 throw new UnsupportedEncoderInputException(this, objectToEncode);
             }
-        } catch (final XmlException xmle) {
-            throw new NoApplicableCodeException().causedBy(xmle);
+        } catch (XmlException xmle) {
+            throw new EncodingException(xmle);
         }
         // check if all gml:id are unique
         XmlHelper.makeGmlIdsUnique(encodedObject.getDomNode());
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        XmlHelper.validateDocument(encodedObject, EncodingException::new);
         return encodedObject;
     }
 
-    private XmlObject checkForAdditionalValues(XmlObject element, Map<HelperValues, String> additionalValues) {
-        boolean doc = additionalValues.containsKey(HelperValues.DOCUMENT);
-        boolean propertyType = additionalValues.containsKey(HelperValues.PROPERTY_TYPE);
-        boolean type = additionalValues.containsKey(HelperValues.TYPE);
+    private XmlObject checkForAdditionalValues(XmlObject element, EncodingContext additionalValues) {
+        boolean doc = additionalValues.has(SosHelperValues.DOCUMENT);
+        boolean propertyType = additionalValues.has(SosHelperValues.PROPERTY_TYPE);
+        boolean type = additionalValues.has(SosHelperValues.TYPE);
         if (element instanceof PhysicalSystemDocument) {
             if (propertyType) {
-                PhysicalSystemPropertyType pspt = PhysicalSystemPropertyType.Factory.newInstance(getOptions());
+                PhysicalSystemPropertyType pspt = PhysicalSystemPropertyType.Factory.newInstance(getXmlOptions());
                 pspt.setPhysicalSystem(((PhysicalSystemDocument) element).getPhysicalSystem());
                 return pspt;
             } else if (type) {
@@ -270,7 +267,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         } else if (element instanceof PhysicalSystemPropertyType) {
             if (doc) {
-                PhysicalSystemDocument psd = PhysicalSystemDocument.Factory.newInstance(getOptions());
+                PhysicalSystemDocument psd = PhysicalSystemDocument.Factory.newInstance(getXmlOptions());
                 psd.setPhysicalSystem(((PhysicalSystemPropertyType) element).getPhysicalSystem());
                 return psd;
             } else if (type) {
@@ -278,24 +275,24 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         } else if (element instanceof PhysicalSystemType) {
             if (doc) {
-                PhysicalSystemDocument psd = PhysicalSystemDocument.Factory.newInstance(getOptions());
+                PhysicalSystemDocument psd = PhysicalSystemDocument.Factory.newInstance(getXmlOptions());
                 psd.setPhysicalSystem((PhysicalSystemType) element);
                 return psd;
             } else if (propertyType) {
-                PhysicalSystemPropertyType pspt = PhysicalSystemPropertyType.Factory.newInstance(getOptions());
+                PhysicalSystemPropertyType pspt = PhysicalSystemPropertyType.Factory.newInstance(getXmlOptions());
                 pspt.setPhysicalSystem((PhysicalSystemType) element);
                 return pspt;
             }
         } else if (element instanceof PhysicalComponentDocument) {
             if (propertyType) {
-                PhysicalComponentPropertyType pcpt = PhysicalComponentPropertyType.Factory.newInstance(getOptions());
+                PhysicalComponentPropertyType pcpt = PhysicalComponentPropertyType.Factory.newInstance(getXmlOptions());
                 pcpt.setPhysicalComponent(((PhysicalComponentDocument) element).getPhysicalComponent());
             } else if (type) {
                 return ((PhysicalComponentDocument) element).getPhysicalComponent();
             }
         } else if (element instanceof PhysicalComponentPropertyType) {
             if (doc) {
-                PhysicalComponentDocument pcd = PhysicalComponentDocument.Factory.newInstance(getOptions());
+                PhysicalComponentDocument pcd = PhysicalComponentDocument.Factory.newInstance(getXmlOptions());
                 pcd.setPhysicalComponent(((PhysicalComponentPropertyType) element).getPhysicalComponent());
                 return pcd;
             } else if (type) {
@@ -303,24 +300,24 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         } else if (element instanceof PhysicalComponentType) {
             if (doc) {
-                PhysicalComponentDocument pcd = PhysicalComponentDocument.Factory.newInstance(getOptions());
+                PhysicalComponentDocument pcd = PhysicalComponentDocument.Factory.newInstance(getXmlOptions());
                 pcd.setPhysicalComponent((PhysicalComponentType) element);
                 return pcd;
             } else if (propertyType) {
-                PhysicalComponentPropertyType pcpt = PhysicalComponentPropertyType.Factory.newInstance(getOptions());
+                PhysicalComponentPropertyType pcpt = PhysicalComponentPropertyType.Factory.newInstance(getXmlOptions());
                 pcpt.setPhysicalComponent((PhysicalComponentType) element);
                 return pcpt;
             }
         } else if (element instanceof SimpleProcessDocument) {
             if (propertyType) {
-                SimpleProcessPropertyType sppt = SimpleProcessPropertyType.Factory.newInstance(getOptions());
+                SimpleProcessPropertyType sppt = SimpleProcessPropertyType.Factory.newInstance(getXmlOptions());
                 sppt.setSimpleProcess(((SimpleProcessDocument) element).getSimpleProcess());
             } else if (type) {
                 return ((SimpleProcessDocument) element).getSimpleProcess();
             }
         } else if (element instanceof SimpleProcessPropertyType) {
             if (doc) {
-                SimpleProcessDocument spd = SimpleProcessDocument.Factory.newInstance(getOptions());
+                SimpleProcessDocument spd = SimpleProcessDocument.Factory.newInstance(getXmlOptions());
                 spd.setSimpleProcess(((SimpleProcessPropertyType) element).getSimpleProcess());
                 return spd;
             } else if (type) {
@@ -328,24 +325,24 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         } else if (element instanceof SimpleProcessType) {
             if (doc) {
-                SimpleProcessDocument spd = SimpleProcessDocument.Factory.newInstance(getOptions());
+                SimpleProcessDocument spd = SimpleProcessDocument.Factory.newInstance(getXmlOptions());
                 spd.setSimpleProcess((SimpleProcessType) element);
                 return spd;
             } else if (propertyType) {
-                SimpleProcessPropertyType sppt = SimpleProcessPropertyType.Factory.newInstance(getOptions());
+                SimpleProcessPropertyType sppt = SimpleProcessPropertyType.Factory.newInstance(getXmlOptions());
                 sppt.setSimpleProcess((SimpleProcessType) element);
                 return sppt;
             }
         } else if (element instanceof AggregateProcessDocument) {
             if (propertyType) {
-                AggregateProcessPropertyType appt = AggregateProcessPropertyType.Factory.newInstance(getOptions());
+                AggregateProcessPropertyType appt = AggregateProcessPropertyType.Factory.newInstance(getXmlOptions());
                 appt.setAggregateProcess(((AggregateProcessDocument) element).getAggregateProcess());
             } else if (type) {
                 return ((AggregateProcessDocument) element).getAggregateProcess();
             }
         } else if (element instanceof AggregateProcessPropertyType) {
             if (doc) {
-                AggregateProcessDocument apd = AggregateProcessDocument.Factory.newInstance(getOptions());
+                AggregateProcessDocument apd = AggregateProcessDocument.Factory.newInstance(getXmlOptions());
                 apd.setAggregateProcess(((AggregateProcessPropertyType) element).getAggregateProcess());
                 return apd;
             } else if (type) {
@@ -353,11 +350,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         } else if (element instanceof AggregateProcessType) {
             if (doc) {
-                AggregateProcessDocument apd = AggregateProcessDocument.Factory.newInstance(getOptions());
+                AggregateProcessDocument apd = AggregateProcessDocument.Factory.newInstance(getXmlOptions());
                 apd.setAggregateProcess((AggregateProcessType) element);
                 return apd;
             } else if (propertyType) {
-                AggregateProcessPropertyType appt = AggregateProcessPropertyType.Factory.newInstance(getOptions());
+                AggregateProcessPropertyType appt = AggregateProcessPropertyType.Factory.newInstance(getXmlOptions());
                 appt.setAggregateProcess((AggregateProcessType) element);
                 return appt;
             }
@@ -365,36 +362,29 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         return element;
     }
 
-    private void addValuesToXmlObject(XmlObject element, SosProcedureDescription description)
-            throws OwsExceptionReport {
+    private void addValuesToXmlObject(XmlObject element, AbstractSensorML description)
+            throws EncodingException {
         if (element instanceof PhysicalSystemDocument) {
-            addPhysicalSystemValues(((PhysicalSystemDocument) element).getPhysicalSystem(),
-                    (PhysicalSystem) description);
+            addPhysicalSystemValues(((PhysicalSystemDocument) element).getPhysicalSystem(), (PhysicalSystem) description);
         } else if (element instanceof PhysicalSystemPropertyType) {
-            addPhysicalSystemValues(((PhysicalSystemPropertyType) element).getPhysicalSystem(),
-                    (PhysicalSystem) description);
+            addPhysicalSystemValues(((PhysicalSystemPropertyType) element).getPhysicalSystem(), (PhysicalSystem) description);
         } else if (element instanceof PhysicalComponentDocument && description instanceof PhysicalComponent) {
-            addPhysicalComponentValues(((PhysicalComponentDocument) element).getPhysicalComponent(),
-                    (PhysicalComponent) description);
+            addPhysicalComponentValues(((PhysicalComponentDocument) element).getPhysicalComponent(), (PhysicalComponent) description);
         } else if (element instanceof PhysicalComponentPropertyType && description instanceof PhysicalComponent) {
-            addPhysicalComponentValues(((PhysicalComponentPropertyType) element).getPhysicalComponent(),
-                    (PhysicalComponent) description);
+            addPhysicalComponentValues(((PhysicalComponentPropertyType) element).getPhysicalComponent(), (PhysicalComponent) description);
         } else if (element instanceof SimpleProcessDocument && description instanceof SimpleProcess) {
             addSimpleProcessValues(((SimpleProcessDocument) element).getSimpleProcess(), (SimpleProcess) description);
         } else if (element instanceof SimpleProcessPropertyType && description instanceof SimpleProcess) {
-            addSimpleProcessValues(((SimpleProcessPropertyType) element).getSimpleProcess(),
-                    (SimpleProcess) description);
+            addSimpleProcessValues(((SimpleProcessPropertyType) element).getSimpleProcess(), (SimpleProcess) description);
         } else if (element instanceof AggregateProcessDocument && description instanceof AggregateProcess) {
-            addAggregateProcessValues(((AggregateProcessDocument) element).getAggregateProcess(),
-                    (AggregateProcess) description);
+            addAggregateProcessValues(((AggregateProcessDocument) element).getAggregateProcess(), (AggregateProcess) description);
         } else if (element instanceof AggregateProcessPropertyType && description instanceof AggregateProcess) {
-            addAggregateProcessValues(((AggregateProcessPropertyType) element).getAggregateProcess(),
-                    (AggregateProcess) description);
+            addAggregateProcessValues(((AggregateProcessPropertyType) element).getAggregateProcess(), (AggregateProcess) description);
         }
     }
 
-    private XmlObject encodeDescription(SosProcedureDescription description,
-            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+    private XmlObject encodeDescription(AbstractSensorML description,
+                                        EncodingContext additionalValues) throws EncodingException {
         XmlObject absProc = null;
         if (description instanceof AbstractPhysicalProcess) {
             absProc = encodeAbstractPhysicalProcess((AbstractPhysicalProcess) description, additionalValues);
@@ -408,21 +398,21 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         return absProc;
     }
 
-    private XmlObject encodeSimpleProcess(SimpleProcess abstractProcess, Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport {
-        SimpleProcessPropertyType sppt = SimpleProcessPropertyType.Factory.newInstance(getOptions());
+    private XmlObject encodeSimpleProcess(SimpleProcess abstractProcess, EncodingContext additionalValues)
+            throws EncodingException {
+        SimpleProcessPropertyType sppt = SimpleProcessPropertyType.Factory.newInstance(getXmlOptions());
         addSimpleProcessValues(sppt.addNewSimpleProcess(), abstractProcess);
-        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
-            SimpleProcessDocument spd = SimpleProcessDocument.Factory.newInstance(getOptions());
+        if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+            SimpleProcessDocument spd = SimpleProcessDocument.Factory.newInstance(getXmlOptions());
             spd.setSimpleProcess(sppt.getSimpleProcess());
-        } else if (additionalValues.containsKey(HelperValues.TYPE)) {
+        } else if (additionalValues.has(SosHelperValues.TYPE)) {
             return sppt.getSimpleProcess();
         }
         return sppt;
     }
 
     private void addSimpleProcessValues(SimpleProcessType spt, SimpleProcess abstractProcess)
-            throws OwsExceptionReport {
+            throws EncodingException {
         addAbstractProcessValues(spt, abstractProcess);
         addDescribedObjectValues(spt, abstractProcess);
         // set method
@@ -432,29 +422,29 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     private XmlObject encodeAggregateProcess(AggregateProcess abstractProcess,
-            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        AggregateProcessPropertyType appt = AggregateProcessPropertyType.Factory.newInstance(getOptions());
+                                             EncodingContext additionalValues) throws EncodingException {
+        AggregateProcessPropertyType appt = AggregateProcessPropertyType.Factory.newInstance(getXmlOptions());
         addAggregateProcessValues(appt.addNewAggregateProcess(), abstractProcess);
-        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
-            AggregateProcessDocument apd = AggregateProcessDocument.Factory.newInstance(getOptions());
+        if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+            AggregateProcessDocument apd = AggregateProcessDocument.Factory.newInstance(getXmlOptions());
             apd.setAbstractProcess(appt.getAggregateProcess());
-        } else if (additionalValues.containsKey(HelperValues.TYPE)) {
+        } else if (additionalValues.has(SosHelperValues.TYPE)) {
             return appt.getAggregateProcess();
         }
         return appt;
     }
 
     private void addAggregateProcessValues(AggregateProcessType apt, AggregateProcess abstractProcess)
-            throws OwsExceptionReport {
+            throws EncodingException {
         addAbstractProcessValues(apt, abstractProcess);
         addDescribedObjectValues(apt, abstractProcess);
         // set components
-        if (abstractProcess.isSetComponents() || abstractProcess.isSetChildProcedures()) {
+        if (abstractProcess.isSetComponents()) {
             List<SmlComponent> smlComponents = checkForComponents(abstractProcess);
             if (!smlComponents.isEmpty()) {
                 ComponentListPropertyType clpt = createComponents(smlComponents);
-                if (clpt != null && clpt.getComponentList() != null
-                        && clpt.getComponentList().sizeOfComponentArray() > 0) {
+                if (clpt != null && clpt.getComponentList() != null &&
+                    clpt.getComponentList().sizeOfComponentArray() > 0) {
                     apt.setComponents(clpt);
                 }
             }
@@ -463,7 +453,8 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     private XmlObject encodeAbstractPhysicalProcess(AbstractPhysicalProcess abstractPhysicalProcess,
-            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+                                                    EncodingContext additionalValues) throws
+            EncodingException {
         XmlObject absPhysObj = null;
         if (abstractPhysicalProcess instanceof PhysicalSystem) {
             absPhysObj = encodePhysicalSystem((PhysicalSystem) abstractPhysicalProcess, additionalValues);
@@ -479,20 +470,20 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     private XmlObject encodePhysicalComponent(PhysicalComponent abstractPhysicalProcess,
-            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        PhysicalComponentPropertyType pcpt = PhysicalComponentPropertyType.Factory.newInstance(getOptions());
+                                              EncodingContext additionalValues) throws EncodingException {
+        PhysicalComponentPropertyType pcpt = PhysicalComponentPropertyType.Factory.newInstance(getXmlOptions());
         addPhysicalComponentValues(pcpt.addNewPhysicalComponent(), abstractPhysicalProcess);
-        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
-            PhysicalComponentDocument pcd = PhysicalComponentDocument.Factory.newInstance(getOptions());
+        if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+            PhysicalComponentDocument pcd = PhysicalComponentDocument.Factory.newInstance(getXmlOptions());
             pcd.setPhysicalComponent(pcpt.getPhysicalComponent());
-        } else if (additionalValues.containsKey(HelperValues.TYPE)) {
+        } else if (additionalValues.has(SosHelperValues.TYPE)) {
             return pcpt.getPhysicalComponent();
         }
         return pcpt;
     }
 
     private void addPhysicalComponentValues(PhysicalComponentType pct, PhysicalComponent abstractPhysicalProcess)
-            throws OwsExceptionReport {
+            throws EncodingException {
         addAbstractProcessValues(pct, abstractPhysicalProcess);
         addDescribedObjectValues(pct, abstractPhysicalProcess);
         addAbstractPhysicalProcessValues(pct, abstractPhysicalProcess);
@@ -503,30 +494,30 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     private XmlObject encodePhysicalSystem(PhysicalSystem abstractPhysicalProcess,
-            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        PhysicalSystemPropertyType pspt = PhysicalSystemPropertyType.Factory.newInstance(getOptions());
+                                           EncodingContext additionalValues) throws EncodingException {
+        PhysicalSystemPropertyType pspt = PhysicalSystemPropertyType.Factory.newInstance(getXmlOptions());
         addPhysicalSystemValues(pspt.addNewPhysicalSystem(), abstractPhysicalProcess);
-        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
-            PhysicalSystemDocument psd = PhysicalSystemDocument.Factory.newInstance(getOptions());
+        if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+            PhysicalSystemDocument psd = PhysicalSystemDocument.Factory.newInstance(getXmlOptions());
             psd.setPhysicalSystem(pspt.getPhysicalSystem());
-        } else if (additionalValues.containsKey(HelperValues.TYPE)) {
+        } else if (additionalValues.has(SosHelperValues.TYPE)) {
             return pspt.getPhysicalSystem();
         }
         return pspt;
     }
 
     private void addPhysicalSystemValues(PhysicalSystemType pst, PhysicalSystem abstractPhysicalProcess)
-            throws OwsExceptionReport {
+            throws EncodingException {
         addAbstractProcessValues(pst, abstractPhysicalProcess);
         addDescribedObjectValues(pst, abstractPhysicalProcess);
         addAbstractPhysicalProcessValues(pst, abstractPhysicalProcess);
         // set components
-        if (abstractPhysicalProcess.isSetComponents() || abstractPhysicalProcess.isSetChildProcedures()) {
+        if (abstractPhysicalProcess.isSetComponents()) {
             List<SmlComponent> smlComponents = checkForComponents(abstractPhysicalProcess);
             if (!smlComponents.isEmpty()) {
                 ComponentListPropertyType clpt = createComponents(smlComponents);
-                if (clpt != null && clpt.getComponentList() != null
-                        && clpt.getComponentList().sizeOfComponentArray() > 0) {
+                if (clpt != null && clpt.getComponentList() != null &&
+                    clpt.getComponentList().sizeOfComponentArray() > 0) {
                     pst.setComponents(clpt);
                 }
             }
@@ -535,8 +526,8 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     private void addDescribedObjectValues(DescribedObjectType dot, DescribedObject describedObject)
-            throws OwsExceptionReport {
-        if (!describedObject.isSetGmlId()) {
+            throws EncodingException {
+        if (!describedObject.isSetGmlID()) {
             describedObject.setGmlId("do_" + JavaHelper.generateID(describedObject.toString()));
         }
         dot.setId(describedObject.getGmlId());
@@ -554,15 +545,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         }
 
-
-        // merge offerings if set
-        if (describedObject.isSetOfferings()) {
-            final Set<SweText> offeringsSet = convertOfferingsToSet(describedObject.getOfferings());
-            mergeCapabilities(describedObject, SensorMLConstants.ELEMENT_NAME_OFFERINGS,
-                    SensorMLConstants.OFFERING_FIELD_DEFINITION, null, offeringsSet);
-        }
         // set capabilities
-        // TODO remove parentProcedure from capabilities
         if (describedObject.isSetCapabilities()) {
             final Capabilities[] existing = dot.getCapabilitiesArray();
             final Set<String> names = Sets.newHashSetWithExpectedSize(existing.length);
@@ -625,13 +608,15 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
         // set validTime
         if (describedObject.isSetValidTime() && CollectionHelper.isNullOrEmpty(dot.getValidTimeArray())) {
-            final Time time = describedObject.getValidTime();
-            final XmlObject xbtime = encodeObjectToXmlGml32(time);
-            if (time instanceof TimeInstant) {
-                dot.addNewValidTime().addNewTimeInstant().set(xbtime);
-            } else if (time instanceof TimePeriod) {
-                dot.addNewValidTime().addNewTimePeriod().set(xbtime);
+            for (Time time : describedObject.getValidTime()) {
+                final XmlObject xbtime = encodeObjectToXmlGml32(time);
+                if (time instanceof TimeInstant) {
+                    dot.addNewValidTime().addNewTimeInstant().set(xbtime);
+                } else if (time instanceof TimePeriod) {
+                    dot.addNewValidTime().addNewTimePeriod().set(xbtime);
+                }
             }
+
             // } else {
             // TODO remove or
             // remove existing validTime element
@@ -655,14 +640,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             for (SmlContact contact : describedObject.getContact()) {
                 if (contact instanceof SmlResponsibleParty) {
                     if (contact.isSetHref()) {
-                        Map<SosConstants.HelperValues, String> additionalValues = Maps.newHashMap();
-                        additionalValues.put(HelperValues.PROPERTY_TYPE, "true");
-                        XmlObject encodeObjectToXml =
-                                CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact, additionalValues);
-                        cl.addNewContact().set(encodeObjectToXml);
+                        XmlObject xml = encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact, EncodingContext.of(SosHelperValues.PROPERTY_TYPE));
+                        cl.addNewContact().set(xml);
                     } else {
-                        XmlObject encodeObjectToXml =
-                                CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact);
+                        XmlObject encodeObjectToXml = encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact);
                         if (encodeObjectToXml != null) {
                             cl.addNewContact().addNewCIResponsibleParty().set(encodeObjectToXml);
                         }
@@ -682,7 +663,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     private void addAbstractProcessValues(final AbstractProcessType apt, final AbstractProcessV20 abstractProcess)
-            throws OwsExceptionReport {
+            throws EncodingException {
         // TODO
         // set typeOf
         if (abstractProcess.isSetTypeOf()) {
@@ -706,15 +687,14 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
         // set outputs
         if (abstractProcess.isSetOutputs()) {
-            extendOutputs(abstractProcess);
             apt.setOutputs(createOutputs(abstractProcess.getOutputs()));
         }
         // set parameters
         // set modes
     }
 
-    private void addAbstractPhysicalProcessValues(final AbstractPhysicalProcessType appt,
-            final AbstractPhysicalProcess absPhysicalProcess) throws OwsExceptionReport {
+    private void addAbstractPhysicalProcessValues(AbstractPhysicalProcessType appt,
+                                                  AbstractPhysicalProcess absPhysicalProcess) throws EncodingException {
         // set attachedTo
         if (absPhysicalProcess.isSetAttachedTo()) {
             if (appt.isSetAttachedTo()) {
@@ -738,24 +718,15 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     }
 
-    private List<SmlComponent> checkForComponents(AbstractProcess abstractProcess) throws CodedException {
+    private List<SmlComponent> checkForComponents(AbstractProcess abstractProcess) throws EncodingException {
         List<SmlComponent> smlComponents = Lists.newArrayList();
         if (abstractProcess instanceof HasComponents<?> && ((HasComponents<?>) abstractProcess).isSetComponents()) {
             smlComponents.addAll(((HasComponents<?>) abstractProcess).getComponents());
         }
-        if (abstractProcess.isSetChildProcedures()) {
-            smlComponents.addAll(createComponentsForChildProcedures(abstractProcess.getChildProcedures()));
-        }
-        if (!smlComponents.isEmpty()) {
-            // TODO check for duplicated outputs
-            abstractProcess.getOutputs().addAll(getOutputsFromChilds(smlComponents));
-            // TODO check if necessary
-            // system.addFeatureOfInterest(getFeaturesFromChild(smlComponents));
-        }
         return smlComponents;
     }
 
-    private void addNamesToAbstractProcess(DescribedObjectType dot, List<CodeType> names) throws OwsExceptionReport {
+    private void addNamesToAbstractProcess(DescribedObjectType dot, List<CodeType> names) throws EncodingException {
         for (CodeType codeType : names) {
             dot.addNewName().set(encodeObjectToXmlGml32(codeType));
         }
@@ -808,7 +779,6 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     // }
     // return xbRespParty;
     // }
-
     // private ContactInfo createContactInfo(final SmlResponsibleParty
     // smlRespParty) {
     // final ContactInfo xbContactInfo = ContactInfo.Factory.newInstance();
@@ -885,7 +855,6 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     // return xbPerson;
     // }
     //
-
     // private ContactList createContactList(final List<SmlContact> contacts) {
     // final ContactList xbContacts = ContactList.Factory.newInstance();
     // for (final SmlContact smlContact : contacts) {
@@ -939,7 +908,6 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     // contact.getContactList().getMemberArray() != null
     // && contact.getContactList().getMemberArray().length > 0;
     // }
-
     private void removeCapability(final DescribedObjectType dot, final Capabilities c) {
         // get current index of element with this name
         for (int i = 0; i < dot.getCapabilitiesArray().length; i++) {
@@ -950,10 +918,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
     }
 
-    private Capabilities createCapability(final SmlCapabilities capabilities) throws OwsExceptionReport {
+    private Capabilities createCapability(final SmlCapabilities capabilities) throws EncodingException {
         Capabilities xbCapabilities = null;
         if (capabilities.isSetAbstractDataComponents()) {
-            xbCapabilities = Capabilities.Factory.newInstance(getOptions());
+            xbCapabilities = Capabilities.Factory.newInstance(getXmlOptions());
             if (capabilities.isSetName()) {
                 xbCapabilities.setName(capabilities.getName());
             }
@@ -966,12 +934,14 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     if (capability.isSetName()) {
                         c.setName(NcNameResolver.fixNcName(capability.getName()));
                     } else if (capability.getAbstractDataComponent().isSetName()) {
-                        capability.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getName().getValue()));
+                        capability.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getName()
+                                .getValue()));
                     } else {
-                        capability.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getDefinition()));
+                        capability.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent()
+                                .getDefinition()));
                     }
-                    XmlObject substituteElement =
-                            XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
+                    XmlObject substituteElement = XmlHelper
+                            .substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
                     substituteElement.set(encodeObjectToXml);
 
                 }
@@ -984,8 +954,8 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     } else {
                         capability.setName(NcNameResolver.fixNcName(component.getDefinition()));
                     }
-                    XmlObject substituteElement =
-                            XmlHelper.substituteElement(capability.addNewAbstractDataComponent(), encodeObjectToXml);
+                    XmlObject substituteElement = XmlHelper
+                            .substituteElement(capability.addNewAbstractDataComponent(), encodeObjectToXml);
                     substituteElement.set(encodeObjectToXml);
                 }
             }
@@ -993,21 +963,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         return xbCapabilities;
     }
 
-    private void extendOutputs(AbstractProcess abstractProcess) {
-        if (abstractProcess.isSetPhenomenon()) {
-            for (SmlIo<?> output : abstractProcess.getOutputs()) {
-                if (abstractProcess.hasPhenomenonFor(output.getIoValue().getDefinition())) {
-                    output.getIoValue()
-                            .setName(abstractProcess.getPhenomenonFor(output.getIoValue().getDefinition()).getName());
-                }
-            }
-        }
-    }
-
     private ProcessMethodType createProcessMethod(HasProcessMethod processMethod) {
         // TODO how to?
         ProcessMethod method = processMethod.getMethod();
-        ProcessMethodType pmt = ProcessMethodType.Factory.newInstance(getOptions());
+        ProcessMethodType pmt = ProcessMethodType.Factory.newInstance(getXmlOptions());
         // if (false) {
         // pmt.setDescription("");
         // pmt.setIdentifier("");
@@ -1043,17 +1002,16 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * Creates the valueentification section of the SensorML description.
      *
      * @param identifications
-     *            SOS valueentifications
+     *                        SOS valueentifications
+     *
      * @return XML Identification array
      */
     protected IdentifierListPropertyType[] createIdentification(final List<SmlIdentifier> identifications) {
-        final IdentifierListPropertyType xbIdentification =
-                IdentifierListPropertyType.Factory.newInstance(getOptions());
+        final IdentifierListPropertyType xbIdentification = IdentifierListPropertyType.Factory.newInstance(getXmlOptions());
         final IdentifierListType xbIdentifierList = xbIdentification.addNewIdentifierList();
-        for (final SmlIdentifier sosSMLIdentifier : identifications) {
-            final Identifier xbIdentifier = xbIdentifierList.addNewIdentifier2();
-            createTerm(xbIdentifier.addNewTerm(), sosSMLIdentifier);
-        }
+        identifications.forEach(sosSMLIdentifier ->
+            createTerm(xbIdentifierList.addNewIdentifier2().addNewTerm(), sosSMLIdentifier)
+        );
         return new IdentifierListPropertyType[] { xbIdentification };
     }
 
@@ -1061,12 +1019,12 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * Creates the classification section of the SensorML description.
      *
      * @param classifications
-     *            SOS classifications
+     *                        SOS classifications
+     *
      * @return XML Classification array
      */
     private ClassifierListPropertyType[] createClassification(final List<SmlClassifier> classifications) {
-        final ClassifierListPropertyType xbClassification =
-                ClassifierListPropertyType.Factory.newInstance(getOptions());
+        final ClassifierListPropertyType xbClassification = ClassifierListPropertyType.Factory.newInstance(getXmlOptions());
         final ClassifierListType xbClassifierList = xbClassification.addNewClassifierList();
         for (final SmlClassifier sosSMLClassifier : classifications) {
             final Classifier xbClassifier = xbClassifierList.addNewClassifier();
@@ -1091,27 +1049,26 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * Creates the characteristics section of the SensorML description.
      *
      * @param smlCharacteristics
-     *            SOS characteristics list
+     *                           SOS characteristics list
+     *
      * @return XML Characteristics array
-     * @throws OwsExceptionReport
-     *             If an error occurs
+     *
+     * @throws EncodingException
+     *                            If an error occurs
      */
     private Characteristics[] createCharacteristics(final List<SmlCharacteristics> smlCharacteristics)
-            throws OwsExceptionReport {
-        final List<Characteristics> characteristicsList =
-                Lists.newArrayListWithExpectedSize(smlCharacteristics.size());
+            throws EncodingException {
+        final List<Characteristics> characteristicsList = Lists.newArrayListWithExpectedSize(smlCharacteristics.size());
         for (final SmlCharacteristics sosSMLCharacteristics : smlCharacteristics) {
-            Characteristics xbCharacteristics = Characteristics.Factory.newInstance(getOptions());
+            Characteristics xbCharacteristics = Characteristics.Factory.newInstance(getXmlOptions());
             CharacteristicListType characteristicList = xbCharacteristics.addNewCharacteristicList();
             if (sosSMLCharacteristics.isSetCharacteristics()) {
                 for (SmlCharacteristic characteristic : sosSMLCharacteristics.getCharacteristic()) {
                     Characteristic c = characteristicList.addNewCharacteristic();
                     c.setName(NcNameResolver.fixNcName(characteristic.getName()));
                     if (characteristic.isSetAbstractDataComponent()) {
-                        XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20,
-                                characteristic.getAbstractDataComponent());
-                        XmlObject substituteElement =
-                                XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
+                        XmlObject encodeObjectToXml = encodeObjectToXml(SweConstants.NS_SWE_20, characteristic.getAbstractDataComponent());
+                        XmlObject substituteElement = XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
                         substituteElement.set(encodeObjectToXml);
                     } else if (characteristic.isSetHref()) {
                         c.setHref(characteristic.getHref());
@@ -1124,12 +1081,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
                 if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
                     for (SweAbstractDataComponent component : sosSMLCharacteristics.getAbstractDataComponents()) {
-                        XmlObject encodeObjectToXml =
-                                CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, component);
+                        XmlObject encodeObjectToXml = encodeObjectToXml(SweConstants.NS_SWE_20, component);
                         Characteristic c = characteristicList.addNewCharacteristic();
                         c.setName(NcNameResolver.fixNcName(component.getName().getValue()));
-                        XmlObject substituteElement =
-                                XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
+                        XmlObject substituteElement = XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
                         substituteElement.set(encodeObjectToXml);
                     }
                 }
@@ -1144,13 +1099,14 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * Create XML Documentation array from SOS documentations
      *
      * @param sosDocumentation
-     *            SOS documentation list
+     *                         SOS documentation list
+     *
      * @return XML Documentation array
      */
     protected DocumentListPropertyType[] createDocumentationArray(
             final List<AbstractSmlDocumentation> sosDocumentation) {
-        final List<DocumentListPropertyType> documentationList =
-                Lists.newArrayListWithExpectedSize(sosDocumentation.size());
+        final List<DocumentListPropertyType> documentationList = Lists.newArrayListWithExpectedSize(sosDocumentation
+                .size());
         for (final AbstractSmlDocumentation abstractSosSMLDocumentation : sosDocumentation) {
             final DocumentListPropertyType documentation = DocumentListPropertyType.Factory.newInstance();
             if (abstractSosSMLDocumentation instanceof SmlDocumentation) {
@@ -1168,7 +1124,8 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * Create a XML Documentation element from SOS documentation
      *
      * @param sosDocumentation
-     *            SOS documentation
+     *                         SOS documentation
+     *
      * @return XML Documentation element
      */
     private DocumentListType createDocument(final SmlDocumentation sosDocumentation) {
@@ -1185,7 +1142,8 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * Create a XML DocuemntList from SOS documentList
      *
      * @param sosDocumentationList
-     *            SOS documentList
+     *                             SOS documentList
+     *
      * @return XML DocumentList element
      */
     private DocumentListType createDocumentationList(final SmlDocumentationList sosDocumentationList) {
@@ -1208,12 +1166,12 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * @param pupt
      *
      * @param position
-     *            SOS position
-     * @return XML Position element
-     * @throws OwsExceptionReport
-     *             if an error occurs
+     *                 SOS position
+     *
+     * @throws EncodingException
+     *                            if an error occurs
      */
-    private void createPosition(PositionUnionPropertyType pupt, final SmlPosition position) throws OwsExceptionReport {
+    private void createPosition(PositionUnionPropertyType pupt, final SmlPosition position) throws EncodingException {
         if (position.isSetVector()) {
             pupt.addNewVector().set(encodeObjectToXmlSwe20(position.getVector()));
         } else if (position.isSetAbstractDataComponent()) {
@@ -1230,12 +1188,12 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * Creates the location section of the SensorML description.
      *
      * @param location
-     *            SOS location representation.
-     * @return XML SmlLocation2 element
-     * @throws OwsExceptionReport
-     *             if an error occurs
+     *                 SOS location representation.
+     *
+     * @throws EncodingException
+     *                            if an error occurs
      */
-    private void createLocation(DescribedObjectType dot, SmlLocation location) throws OwsExceptionReport {
+    private void createLocation(DescribedObjectType dot, SmlLocation location) throws EncodingException {
         dot.addNewLocation().addNewAbstractGeometry().set(encodeObjectToXmlGml32(location.getPoint()));
     }
 
@@ -1243,14 +1201,15 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * Creates the inputs section of the SensorML description.
      *
      * @param inputs
-     *            SOS SWE representation.
+     *               SOS SWE representation.
+     *
      * @return XML Inputs element
      *
-     * @throws OwsExceptionReport
-     *             if an error occurs
+     * @throws EncodingException
+     *                            if an error occurs
      */
-    private Inputs createInputs(final List<SmlIo<?>> inputs) throws OwsExceptionReport {
-        final Inputs xbInputs = Inputs.Factory.newInstance(getOptions());
+    private Inputs createInputs(final List<SmlIo<?>> inputs) throws EncodingException {
+        final Inputs xbInputs = Inputs.Factory.newInstance(getXmlOptions());
         final InputListType xbInputList = xbInputs.addNewInputList();
         int counter = 1;
         for (final SmlIo<?> sosSMLIo : inputs) {
@@ -1268,13 +1227,12 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * Creates the outputs section of the SensorML description.
      *
      * @param sosOutputs
-     *            SOS SWE representation.
-     * @return XML Outputs element
+     *                   SOS SWE representation.
      *
-     * @throws OwsExceptionReport
+     * @return XML Outputs element
      */
-    private Outputs createOutputs(final List<SmlIo<?>> sosOutputs) throws OwsExceptionReport {
-        final Outputs outputs = Outputs.Factory.newInstance(getOptions());
+    private Outputs createOutputs(final List<SmlIo<?>> sosOutputs) throws EncodingException {
+        final Outputs outputs = Outputs.Factory.newInstance(getXmlOptions());
         final OutputListType outputList = outputs.addNewOutputList();
         final Set<String> definitions = Sets.newHashSet();
         int counter = 1;
@@ -1296,7 +1254,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     private FeaturesOfInterest createFeatureOfInterest(SmlFeatureOfInterest feature) {
         if (feature.isSetFeaturesOfInterest()) {
-            FeaturesOfInterest foi = FeaturesOfInterest.Factory.newInstance(getOptions());
+            FeaturesOfInterest foi = FeaturesOfInterest.Factory.newInstance(getXmlOptions());
             FeatureListType featureList = foi.addNewFeatureList();
             if (feature.isSetDefinition()) {
                 featureList.setDefinition(feature.getDefinition());
@@ -1326,23 +1284,25 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         for (int i = 0; i < featureList.sizeOfFeatureArray(); i++) {
             featureList.removeFeature(i);
         }
-        for (String featureIdentifier : featuresToAdd) {
+        featuresToAdd.forEach(featureIdentifier ->
             // TODO encode in GML 3.2.1 encoder
-            featureList.addNewFeature().setHref(featureIdentifier);
-        }
+            featureList.addNewFeature().setHref(featureIdentifier)
+        );
     }
 
     /**
      * Creates the components section of the SensorML description.
      *
      * @param sosComponents
-     *            SOS SWE representation.
+     *                      SOS SWE representation.
+     *
      * @return encoded sml:components
-     * @throws OwsExceptionReport
+     *
+     * @throws EncodingException
      */
     private ComponentListPropertyType createComponents(final List<SmlComponent> sosComponents)
-            throws OwsExceptionReport {
-        ComponentListPropertyType clpt = ComponentListPropertyType.Factory.newInstance(getOptions());
+            throws EncodingException {
+        ComponentListPropertyType clpt = ComponentListPropertyType.Factory.newInstance(getXmlOptions());
         final ComponentListType clt = clpt.addNewComponentList();
         for (final SmlComponent sosSMLComponent : sosComponents) {
             final Component component = clt.addNewComponent();
@@ -1356,18 +1316,16 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     component.setTitle(sosSMLComponent.getTitle());
                 }
             } else if (sosSMLComponent.isSetProcess()) {
-                Map<HelperValues, String> additionalValues = Maps.newHashMap();
-                additionalValues.put(HelperValues.TYPE, null);
-                XmlObject xmlObject = encode(sosSMLComponent.getProcess(), additionalValues);
+                XmlObject xmlObject = encode(sosSMLComponent.getProcess(), EncodingContext.of(SosHelperValues.TYPE));
                 // if
-                // (sosSMLComponent.getProcess().getSensorDescriptionXmlString()
+                // (sosSMLComponent.getProcess().getXml()
                 // != null
                 // &&
-                // !sosSMLComponent.getProcess().getSensorDescriptionXmlString().isEmpty())
+                // !sosSMLComponent.getProcess().getXml().isEmpty())
                 // {
                 // try {
                 // xmlObject =
-                // XmlObject.Factory.parse(sosSMLComponent.getProcess().getSensorDescriptionXmlString());
+                // XmlObject.Factory.parse(sosSMLComponent.getProcess().getXml());
                 //
                 // } catch (final XmlException xmle) {
                 // throw new
@@ -1406,12 +1364,13 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * Adds a SOS SWE simple type to a XML SML Input.
      *
      * @param input
-     *            SML Input
+     *                 SML Input
      * @param sosSMLIO
-     *            SOS SWE simple type.
-     * @throws OwsExceptionReport
+     *                 SOS SWE simple type.
+     *
+     * @throws EncodingException
      */
-    private void addInput(final Input input, final SmlIo<?> sosSMLIO) throws OwsExceptionReport {
+    private void addInput(final Input input, final SmlIo<?> sosSMLIO) throws EncodingException {
         input.setName(sosSMLIO.getIoName());
         addDataComponentOrObservablePropertyType(input, sosSMLIO);
         // if (sosSMLIO.isSetHref()) {
@@ -1431,7 +1390,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     private void addDataComponentOrObservablePropertyType(DataComponentOrObservablePropertyType type,
-            SmlIo<?> sosSMLIO) throws OwsExceptionReport {
+                                                          SmlIo<?> sosSMLIO) throws EncodingException {
         if (sosSMLIO.isSetHref()) {
             type.setHref(sosSMLIO.getHref());
             if (sosSMLIO.isSetTitle()) {
@@ -1445,14 +1404,14 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             // sosSMLIO.getIoValue());
         } else {
             final XmlObject encodeObjectToXml = encodeObjectToXmlSwe20(sosSMLIO.getIoValue());
-            XmlObject substituteElement =
-                    XmlHelper.substituteElement(type.addNewAbstractDataComponent(), encodeObjectToXml);
+            XmlObject substituteElement = XmlHelper
+                    .substituteElement(type.addNewAbstractDataComponent(), encodeObjectToXml);
             substituteElement.set(encodeObjectToXml);
         }
     }
 
     private void addValueToObservableProperty(ObservablePropertyType opt,
-            SweAbstractDataComponent observableProperty) {
+                                              SweAbstractDataComponent observableProperty) {
         if (observableProperty.isSetDefinition()) {
             opt.setDefinition(observableProperty.getDefinition());
         }
@@ -1475,13 +1434,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * Adds a SOS SWE simple type to a XML SML Output.
      *
      * @param output
-     *            SML Output
+     *                 SML Output
      * @param sosSMLIO
-     *            SOS SWE simple type.
-     *
-     * @throws OwsExceptionReport
+     *                 SOS SWE simple type.
      */
-    private void addOutput(final Output output, final SmlIo<?> sosSMLIO) throws OwsExceptionReport {
+    private void addOutput(final Output output, final SmlIo<?> sosSMLIO) throws EncodingException  {
         output.setName(sosSMLIO.getIoName());
         addDataComponentOrObservablePropertyType(output, sosSMLIO);
         // substitute(output.addNewAbstractDataComponent(),
@@ -1494,16 +1451,12 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         // substituteElement.set(encodeObjectToXml);
     }
 
-    private XmlObject encodeObjectToXmlGml32(Object o) throws OwsExceptionReport {
+    private XmlObject encodeObjectToXmlGml32(Object o) throws EncodingException {
         return encodeObjectToXml(GmlConstants.NS_GML_32, o);
     }
 
-    private XmlObject encodeObjectToXmlSwe20(Object o) throws OwsExceptionReport {
+    private XmlObject encodeObjectToXmlSwe20(Object o) throws EncodingException {
         return encodeObjectToXml(SweConstants.NS_SWE_20, o);
-    }
-
-    private XmlObject encodeObjectToXml(String namespace, Object o) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(namespace, o);
     }
 
     // /**
@@ -1521,5 +1474,4 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     // }
     // return SensorMLConstants.ABSTRACT_PROCESS_QNAME;
     // }
-
 }

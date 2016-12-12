@@ -28,9 +28,22 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import java.net.MalformedURLException;
+
+import org.n52.iceland.binding.BindingConstants;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.util.SosHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -43,8 +56,8 @@ import com.google.common.base.Strings;
  */
 public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TypeOfEnrichment.class);
     private String typeOfIdentifier;
-
     private String typeOfFormat;
 
     @Override
@@ -61,7 +74,7 @@ public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
 
     private SosProcedureDescription setTypeOfReferenceType(SosProcedureDescription description)
             throws OwsExceptionReport {
-        String href = description.createKvpDescribeSensorOrReturnIdentifier(getTypeOfIdentifier());
+        String href = createKvpDescribeSensorOrReturnIdentifier(getTypeOfIdentifier(), getTypeOfFormat());
         description.setTypeOf(new ReferenceType(href, getTypeOfIdentifier()));
         return description;
     }
@@ -94,6 +107,24 @@ public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
 
     private boolean isSetTypeOfFormat() {
         return !Strings.isNullOrEmpty(getTypeOfFormat());
+    }
+
+    private String createKvpDescribeSensorOrReturnIdentifier(String identifier, String format) throws CodedException {
+        String href = identifier;
+        if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
+            final String version =
+                    ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
+                            .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
+                            : Sos1Constants.SERVICEVERSION;
+            try {
+                href =
+                        SosHelper.getDescribeSensorUrl(version, ServiceConfiguration.getInstance().getServiceURL(),
+                                identifier, BindingConstants.KVP_BINDING_ENDPOINT, format).toString();
+            } catch (MalformedURLException murle) {
+               LOGGER.error("Error while encoding DescribeSensor URL!", murle);
+            }
+        }
+        return href;
     }
 
 }

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode;
 
-import static org.n52.iceland.util.CollectionHelper.union;
+import static org.n52.shetland.util.CollectionHelper.union;
 import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 
 import java.util.Collections;
@@ -37,6 +37,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
+
+import net.opengis.gml.x32.BaseUnitType;
+import net.opengis.gml.x32.CodeType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -61,33 +64,30 @@ import org.isotc211.x2005.gmd.DQResultPropertyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.coding.encode.AbstractXmlEncoder;
-import org.n52.sos.iso.GcoConstants;
-import org.n52.sos.iso.gmd.GmdCitationDate;
-import org.n52.sos.iso.gmd.GmdConformanceResult;
-import org.n52.sos.iso.gmd.GmdConstants;
-import org.n52.sos.iso.gmd.GmdDateType;
-import org.n52.sos.iso.gmd.GmdDomainConsistency;
-import org.n52.sos.iso.gmd.GmdQuantitativeResult;
-import org.n52.sos.iso.gmd.GmlBaseUnit;
-import org.n52.sos.ogc.sensorML.Role;
-import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
-import org.n52.sos.util.CodingHelper;
+import org.n52.shetland.iso.GcoConstants;
+import org.n52.shetland.iso.gmd.GmdCitationDate;
+import org.n52.shetland.iso.gmd.GmdConformanceResult;
+import org.n52.shetland.iso.gmd.GmdConstants;
+import org.n52.shetland.iso.gmd.GmdDateType;
+import org.n52.shetland.iso.gmd.GmdDomainConsistency;
+import org.n52.shetland.iso.gmd.GmdQuantitativeResult;
+import org.n52.shetland.iso.gmd.GmlBaseUnit;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.sensorML.Role;
+import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
-import net.opengis.gml.x32.BaseUnitType;
-import net.opengis.gml.x32.CodeType;
 
 /**
  * {@link AbstractXmlEncoder} class to decode ISO TC211 Geographic MetaData
@@ -97,7 +97,7 @@ import net.opengis.gml.x32.CodeType;
  * @since 4.2.0
  *
  */
-public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
+public class Iso19139GmdEncoder extends AbstractXmlEncoder<XmlObject, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Iso19139GmdEncoder.class);
 
@@ -143,7 +143,7 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
+    public XmlObject encode(Object element, EncodingContext additionalValues) throws EncodingException,
             UnsupportedEncoderInputException {
         XmlObject encodedObject = null;
         // try {
@@ -159,15 +159,14 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
         // } catch (final XmlException xmle) {
         // throw new NoApplicableCodeException().causedBy(xmle);
         // }
-        if (LOGGER.isDebugEnabled() && encodedObject != null) {
-            LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                    XmlHelper.validateDocument(encodedObject));
+        if (encodedObject != null) {
+            XmlHelper.validateDocument(encodedObject, EncodingException::new);
         }
         return encodedObject;
     }
 
     private XmlObject encodeResponsibleParty(SmlResponsibleParty responsibleParty,
-            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+            EncodingContext additionalValues) throws EncodingException {
         if (responsibleParty.isSetHref()) {
             CIResponsiblePartyPropertyType cirppt =
                     CIResponsiblePartyPropertyType.Factory.newInstance(getXmlOptions());
@@ -195,12 +194,12 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
         encodeContact(cirpt.addNewContactInfo().addNewCIContact(), responsibleParty);
         // set role
         encodeRole(cirpt.addNewRole(), responsibleParty.getRoleObject());
-        if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+        if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
             CIResponsiblePartyPropertyType cirppt =
                     CIResponsiblePartyPropertyType.Factory.newInstance(getXmlOptions());
             cirppt.setCIResponsibleParty(cirpt);
             return cirppt;
-        } else if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+        } else if (additionalValues.has(SosHelperValues.DOCUMENT)) {
             CIResponsiblePartyDocument cirpd =
                     CIResponsiblePartyDocument.Factory.newInstance(getXmlOptions());
             cirpd.setCIResponsibleParty(cirpt);
@@ -259,21 +258,21 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
         }
     }
 
-    private void encodeRole(CIRoleCodePropertyType circpt, Role role) throws OwsExceptionReport {
-        XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(GcoConstants.NS_GCO, role);
+    private void encodeRole(CIRoleCodePropertyType circpt, Role role) throws EncodingException {
+        XmlObject encodeObjectToXml = encodeObjectToXml(GcoConstants.NS_GCO, role);
         if (encodeObjectToXml != null) {
             circpt.addNewCIRoleCode().set(encodeObjectToXml);
         }
     }
 
-    private XmlObject encodeGmdDomainConsistency(GmdDomainConsistency element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+    private XmlObject encodeGmdDomainConsistency(GmdDomainConsistency element, EncodingContext additionalValues) throws EncodingException {
+        if (additionalValues.has(SosHelperValues.DOCUMENT)) {
             DQDomainConsistencyDocument document =
                     DQDomainConsistencyDocument.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = document.addNewDQDomainConsistency().addNewResult();
             encodeGmdDomainConsistency(addNewResult, element);
             return document;
-        } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+        } else if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
             DQDomainConsistencyPropertyType propertyType =
                     DQDomainConsistencyPropertyType.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = propertyType.addNewDQDomainConsistency().addNewResult();
@@ -288,7 +287,7 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
     }
 
     private void encodeGmdDomainConsistency(DQResultPropertyType xbResult, GmdDomainConsistency domainConsistency)
-            throws OwsExceptionReport {
+            throws EncodingException {
         if (domainConsistency instanceof GmdConformanceResult) {
             encodeGmdConformanceResult(xbResult, (GmdConformanceResult) domainConsistency);
         } else if (domainConsistency instanceof GmdQuantitativeResult) {

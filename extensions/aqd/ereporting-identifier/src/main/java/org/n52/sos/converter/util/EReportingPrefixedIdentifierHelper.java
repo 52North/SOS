@@ -30,9 +30,10 @@ package org.n52.sos.converter.util;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.util.StringHelper;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.sos.settings.EReportingSetting;
+
+import com.google.common.base.Strings;
 
 @Configurable
 public class EReportingPrefixedIdentifierHelper implements Constructable {
@@ -87,7 +88,7 @@ public class EReportingPrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetNamespacePrefix() {
-        return StringHelper.isNotEmpty(getNamespacePrefix());
+        return !Strings.isNullOrEmpty(getNamespacePrefix());
     }
 
     /**
@@ -107,7 +108,7 @@ public class EReportingPrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetOfferingPrefix() {
-        return StringHelper.isNotEmpty(getOfferingPrefix());
+        return !Strings.isNullOrEmpty(getOfferingPrefix());
     }
 
     /**
@@ -127,7 +128,7 @@ public class EReportingPrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetProcedurePrefix() {
-        return StringHelper.isNotEmpty(getProcedurePrefix());
+        return !Strings.isNullOrEmpty(getProcedurePrefix());
     }
 
     /**
@@ -147,7 +148,7 @@ public class EReportingPrefixedIdentifierHelper implements Constructable {
     // }
 
     public boolean isSetObservablePropertyPrefix() {
-        return StringHelper.isNotEmpty(getObservablePropertyPrefix());
+        return !Strings.isNullOrEmpty(getObservablePropertyPrefix());
     }
 
     /**
@@ -167,7 +168,7 @@ public class EReportingPrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetFeatureOfInterestPrefix() {
-        return StringHelper.isNotEmpty(getFeatureOfInterestPrefix());
+        return !Strings.isNullOrEmpty(getFeatureOfInterestPrefix());
     }
 
     /**
@@ -187,7 +188,7 @@ public class EReportingPrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetSamplingPointPrefix() {
-        return StringHelper.isNotEmpty(getSamplingPointPrefix());
+        return !Strings.isNullOrEmpty(getSamplingPointPrefix());
     }
 
     /**
@@ -207,7 +208,7 @@ public class EReportingPrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetStationPrefix() {
-        return StringHelper.isNotEmpty(getStationPrefix());
+        return !Strings.isNullOrEmpty(getStationPrefix());
     }
 
     /**
@@ -227,7 +228,7 @@ public class EReportingPrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetNetworkPrefix() {
-        return StringHelper.isNotEmpty(getNetworkPrefix());
+        return !Strings.isNullOrEmpty(getNetworkPrefix());
     }
 
     public boolean isSetAnyPrefix() {

@@ -32,10 +32,10 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.gda.GetDataAvailabilityConstants.GetDataAvailabilityParams;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.request.operator.WSDLAwareRequestOperator;
@@ -74,7 +74,7 @@ public class GetDataAvailabilityOperator
 
     @Override
     public GetDataAvailabilityResponse receive(GetDataAvailabilityRequest sosRequest) throws OwsExceptionReport {
-        return getDao().getDataAvailability(sosRequest);
+        return getOperationHandler().getDataAvailability(sosRequest);
     }
 
     @Override

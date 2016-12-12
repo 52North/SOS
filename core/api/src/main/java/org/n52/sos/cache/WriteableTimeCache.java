@@ -29,7 +29,8 @@
 package org.n52.sos.cache;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.ogc.gml.time.Time;
+
+import org.n52.shetland.ogc.gml.time.Time;
 
 /**
  * TODO JavaDoc

@@ -28,12 +28,13 @@
  */
 package org.n52.sos.util;
 
+import static java.util.stream.Collectors.toSet;
 import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
 import static org.n52.iceland.service.MiscSettings.SRS_NAME_PREFIX_SOS_V2;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,22 +56,20 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.lifecycle.Destroyable;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.JavaHelper;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.janmayen.lifecycle.Destroyable;
 import org.n52.iceland.util.Range;
-import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.util.Validation;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.FeatureQuerySettingsProvider;
-import org.n52.sos.ogc.filter.SpatialFilter;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -196,11 +195,10 @@ public class GeometryHandler implements Constructable, Destroyable {
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
-    public GeometryHandler setStorageEpsg(int epsgCode) throws ConfigurationError {
+    public void setStorageEpsg(int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         storageEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
-        return this;
     }
 
     /**
@@ -212,11 +210,10 @@ public class GeometryHandler implements Constructable, Destroyable {
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
-    public GeometryHandler setStorage3DEpsg(final int epsgCode3D) throws ConfigurationError {
+    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         storage3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
-        return this;
     }
 
     /**
@@ -228,11 +225,10 @@ public class GeometryHandler implements Constructable, Destroyable {
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
-    public GeometryHandler setDefaultResponseEpsg(final int epsgCode) throws ConfigurationError {
+    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         defaultResponseEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
-        return this;
     }
 
     /**
@@ -244,11 +240,10 @@ public class GeometryHandler implements Constructable, Destroyable {
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
-    public GeometryHandler setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationError {
+    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         defaultResponse3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
-        return this;
     }
 
     /**
@@ -259,11 +254,10 @@ public class GeometryHandler implements Constructable, Destroyable {
      * @throws ConfigurationError
      */
     @Setting(FeatureQuerySettingsProvider.SUPPORTED_CRS_KEY)
-    public GeometryHandler setSupportedCRS(final String supportedCRS) throws ConfigurationError {
+    public void setSupportedCRS(final String supportedCRS) throws ConfigurationError {
         // Validation.notNull("Supported CRS codes as CSV string",
         // supportedCRS);
         this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, ","));
-        return this;
     }
 
     /**
@@ -412,18 +406,14 @@ public class GeometryHandler implements Constructable, Destroyable {
      * @throws OwsExceptionReport
      *             If coordinate axis switching fails
      */
-    public Geometry switchCoordinateAxisFromToDatasourceIfNeeded(final Geometry geom) throws OwsExceptionReport {
+    public Geometry switchCoordinateAxisFromToDatasourceIfNeeded(Geometry geom) throws OwsExceptionReport {
         if (geom != null && !geom.isEmpty()) {
             if (isDatasourceNorthingFirst()) {
                 if (!isNorthingFirstEpsgCode(geom.getSRID())) {
                     return JTSHelper.switchCoordinateAxisOrder(geom);
                 }
-                return geom;
-            } else {
-                if (isNorthingFirstEpsgCode(geom.getSRID())) {
-                    return JTSHelper.switchCoordinateAxisOrder(geom);
-                }
-                return geom;
+            } else if (isNorthingFirstEpsgCode(geom.getSRID())) {
+                return JTSHelper.switchCoordinateAxisOrder(geom);
             }
         }
         return geom;
@@ -449,7 +439,7 @@ public class GeometryHandler implements Constructable, Destroyable {
      * @throws OwsExceptionReport
      *             If SpatialFilter is not supported
      */
-    public Geometry getFilterForNonSpatialDatasource(final SpatialFilter filter) throws OwsExceptionReport {
+    public Geometry getFilterForNonSpatialDatasource(SpatialFilter filter) throws OwsExceptionReport {
         switch (filter.getOperator()) {
         case BBOX:
             return switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
@@ -469,10 +459,15 @@ public class GeometryHandler implements Constructable, Destroyable {
      *            Latitude coordinate
      * @return WKT string
      */
-    public String getWktString(final Object longitude, final Object latitude) {
-        final StringBuilder builder = new StringBuilder();
+    public String getWktString(Object longitude, Object latitude) {
+        return getWktString(latitude, longitude, datasoureUsesNorthingFirst);
+    }
+
+    private String getWktString(Object latitude, Object longitude, boolean northingFirst) {
+        StringBuilder builder = new StringBuilder();
         builder.append("POINT ").append('(');
-        if (datasoureUsesNorthingFirst) {
+
+        if (northingFirst) {
             builder.append(JavaHelper.asString(latitude)).append(' ');
             builder.append(JavaHelper.asString(longitude));
         } else {
@@ -496,10 +491,7 @@ public class GeometryHandler implements Constructable, Destroyable {
      * @return WKT string
      */
     public String getWktString(Object longitude, Object latitude, int epsg) {
-        if (isNorthingFirstEpsgCode(epsg)) {
-            return getWktString(latitude, longitude);
-        }
-        return getWktString(longitude, latitude);
+        return getWktString(latitude, longitude, isNorthingFirstEpsgCode(epsg));
     }
 
     /**
@@ -511,15 +503,8 @@ public class GeometryHandler implements Constructable, Destroyable {
      *            SpatialFilter envelopes
      * @return True if geometry is contained in envelopes
      */
-    public boolean featureIsInFilter(final Geometry geometry, final List<Geometry> envelopes) {
-        if (geometry != null && !geometry.isEmpty()) {
-            for (final Geometry envelope : envelopes) {
-                if (envelope.contains(geometry)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public boolean featureIsInFilter(Geometry geometry, List<Geometry> envelopes) {
+        return geometry != null && !geometry.isEmpty() && envelopes.stream().anyMatch(e -> e.contains(geometry));
     }
 
     /**
@@ -530,7 +515,7 @@ public class GeometryHandler implements Constructable, Destroyable {
      * @return Transformed geometry
      * @throws OwsExceptionReport
      */
-    public Geometry transformToStorageEpsg(final Geometry geometry) throws OwsExceptionReport {
+    public Geometry transformToStorageEpsg(Geometry geometry) throws OwsExceptionReport {
         if (geometry != null && !geometry.isEmpty()) {
             CoordinateReferenceSystem sourceCRS = getCRS(geometry.getSRID());
             int targetSRID;
@@ -554,7 +539,7 @@ public class GeometryHandler implements Constructable, Destroyable {
      * @return Transformed geometry
      * @throws OwsExceptionReport
      */
-    public Geometry transform(final Geometry geometry, final int targetSRID) throws OwsExceptionReport {
+    public Geometry transform(Geometry geometry, int targetSRID) throws OwsExceptionReport {
         if (geometry != null && !geometry.isEmpty()) {
             if (geometry.getSRID() == targetSRID) {
                 return geometry;
@@ -689,11 +674,7 @@ public class GeometryHandler implements Constructable, Destroyable {
     }
 
     public Set<String> addAuthorityCrsPrefix(Collection<Integer> crses) {
-        HashSet<String> withPrefix = Sets.newHashSetWithExpectedSize(crses.size());
-        for (Integer crs : crses) {
-            withPrefix.add(addAuthorityCrsPrefix(crs));
-        }
-        return withPrefix;
+        return crses.stream().map(this::addAuthorityCrsPrefix).collect(toSet());
     }
 
     public String addAuthorityCrsPrefix(int crs) {
@@ -701,11 +682,7 @@ public class GeometryHandler implements Constructable, Destroyable {
     }
 
     public Set<String> addOgcCrsPrefix(Collection<Integer> crses) {
-        HashSet<String> withPrefix = Sets.newHashSetWithExpectedSize(crses.size());
-        for (Integer crs : crses) {
-            withPrefix.add(addOgcCrsPrefix(crs));
-        }
-        return withPrefix;
+        return crses.stream().map(this::addOgcCrsPrefix).collect(toSet());
     }
 
     public String addOgcCrsPrefix(int crs) {

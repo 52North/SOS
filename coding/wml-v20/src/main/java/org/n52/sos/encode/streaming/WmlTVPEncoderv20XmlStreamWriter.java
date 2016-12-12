@@ -33,23 +33,27 @@ import java.util.List;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.w3c.W3CConstants;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.om.MultiObservationValues;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.TVPValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.coding.encode.EncodingValues;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.shetland.ogc.wml.WaterMLConstants;
+import org.n52.shetland.util.DateTimeFormatException;
+
+import com.google.common.base.Strings;
 
 /**
  * Implementation of {@link AbstractOmV20XmlStreamWriter} to write WaterML 2.0
@@ -80,7 +84,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     @Override
     protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException,
-            OwsExceptionReport {
+                                                                                                EncodingException {
         start(OmConstants.QN_OM_20_RESULT);
         namespace(WaterMLConstants.NS_WML_20_PREFIX, WaterMLConstants.NS_WML_20);
         writeNewLine();
@@ -109,13 +113,17 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             }
             close();
         } else if (observation.getValue() instanceof StreamingValue) {
-            StreamingValue observationValue = (StreamingValue) observation.getValue();
+            StreamingValue<?> observationValue = (StreamingValue) observation.getValue();
             writeDefaultPointMetadata(observationValue.getUnit());
             writeNewLine();
-            while (observationValue.hasNextValue()) {
-                TimeValuePair timeValuePair = observationValue.nextValue();
-                writePoint(getTimeString(timeValuePair.getTime()), getValue(timeValuePair.getValue()));
-                writeNewLine();
+            try {
+                while (observationValue.hasNextValue()) {
+                    TimeValuePair timeValuePair = observationValue.nextValue();
+                    writePoint(getTimeString(timeValuePair.getTime()), getValue(timeValuePair.getValue()));
+                    writeNewLine();
+                }
+            } catch (DateTimeFormatException | OwsExceptionReport e) {
+                throw new EncodingException(e);
             }
             close();
         } else {
@@ -192,7 +200,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
      *             If an error occurs when writing to stream
      */
     private void writeUOM(String code) throws XMLStreamException {
-        if (StringHelper.isNotEmpty(code)) {
+        if (!Strings.isNullOrEmpty(code)) {
             empty(WaterMLConstants.UOM);
             attr("code", code);
         }
@@ -243,7 +251,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
      *             If an error occurs when writing to stream
      */
     private void writePoint(String time, String value) throws XMLStreamException {
-        if (StringHelper.isNotEmpty(time)) {
+        if (!Strings.isNullOrEmpty(time)) {
             start(WaterMLConstants.QN_POINT);
             writeNewLine();
             writeMeasurementTVP(time, value);
@@ -299,7 +307,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
      *             If an error occurs when writing to stream
      */
     private void writeValue(String value) throws XMLStreamException {
-        if (StringHelper.isNotEmpty(value)) {
+        if (!Strings.isNullOrEmpty(value)) {
             start(WaterMLConstants.QN_VALUE);
             chars(value);
             endInline(WaterMLConstants.QN_VALUE);

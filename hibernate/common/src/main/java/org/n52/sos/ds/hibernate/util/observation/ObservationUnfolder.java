@@ -34,38 +34,39 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.MultiObservationValues;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.DateTimeParseException;
 
 import com.google.common.collect.Maps;
 
@@ -84,7 +85,7 @@ public class ObservationUnfolder {
         if (multiObservation.getValue() instanceof SingleObservationValue) {
             return Collections.singletonList(multiObservation);
         } else {
-            final List<OmObservation> observationCollection = new ArrayList<OmObservation>();
+            final List<OmObservation> observationCollection = new ArrayList<>();
             if (((MultiObservationValues<?>) multiObservation.getValue()).getValue() instanceof SweDataArrayValue) {
                 final SweDataArrayValue arrayValue =
                         (SweDataArrayValue) ((MultiObservationValues<?>) multiObservation.getValue()).getValue();
@@ -102,7 +103,7 @@ public class ObservationUnfolder {
                     int tokenIndex = 0;
                     Time phenomenonTime = null;
                     TimeInstant resultTime = null;
-                    final List<Value<?>> observedValues = new LinkedList<Value<?>>();
+                    final List<Value<?>> observedValues = new LinkedList<>();
                     // map to store the observed properties
                     final Map<Value<?>, String> definitionsForObservedValues = Maps.newHashMap();
                     Value<?> observedValue = null;
@@ -123,9 +124,7 @@ public class ObservationUnfolder {
                                         phenomenonTime = new TimeInstant(DateTimeHelper.parseIsoString2DateTime(token));
                                     }
                                 }
-                            } catch (final OwsExceptionReport e) {
-                                throw e;
-                            } catch (final Exception e) {
+                            } catch (DateTimeParseException e) {
                                 /*
                                  * FIXME what is the valid exception code if the
                                  * result is not correct?
@@ -138,9 +137,7 @@ public class ObservationUnfolder {
                                 final String[] subTokens = token.split("/");
                                 phenomenonTime = new TimePeriod(DateTimeHelper.parseIsoString2DateTime(subTokens[0]),
                                         DateTimeHelper.parseIsoString2DateTime(subTokens[1]));
-                            } catch (final OwsExceptionReport e) {
-                                throw e;
-                            } catch (final Exception e) {
+                            } catch (DateTimeParseException e) {
                                 /*
                                  * FIXME what is the valid exception code if the
                                  * result is not correct?
@@ -206,7 +203,6 @@ public class ObservationUnfolder {
     }
 
     private Value<?> parseSweDataRecord(SweDataRecord record, List<String> block, int tokenIndex) throws CodedException {
-        boolean tokenIndexIncreased = false;
         for (SweField field : record.getFields()) {
             String token = block.get(tokenIndex);
             if (field.getElement() instanceof SweQuantity) {
@@ -221,14 +217,8 @@ public class ObservationUnfolder {
                 ((SweCount)field.getElement()).setValue(Integer.parseInt(token));
             } else {
                 throw new NoApplicableCodeException().withMessage("sweField type '%s' not supported",
-                        field != null ? field.getClass().getName() : "null");
+                                                                  field.getClass().getName());
             }
-            tokenIndex++;
-            tokenIndexIncreased = true;
-        }
-        // decrease token index because it is increased in the calling method.
-        if (tokenIndexIncreased) {
-            tokenIndex--;
         }
         return new ComplexValue(record);
     }

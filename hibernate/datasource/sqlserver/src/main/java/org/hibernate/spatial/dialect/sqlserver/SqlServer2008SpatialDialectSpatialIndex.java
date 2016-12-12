@@ -67,8 +67,9 @@ public class SqlServer2008SpatialDialectSpatialIndex extends SqlServer2008Spatia
             if (columnOrderMap.containsKey(column)) {
                 buf.append(" ").append(columnOrderMap.get(column));
             }
-            if (columns.hasNext())
+            if (columns.hasNext()) {
                 buf.append(", ");
+            }
         }
         buf.append(")");
         return buf.toString();

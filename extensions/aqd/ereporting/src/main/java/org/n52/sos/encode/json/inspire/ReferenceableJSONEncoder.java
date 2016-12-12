@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.util.Referenceable;
 
@@ -47,7 +47,7 @@ public class ReferenceableJSONEncoder extends JSONEncoder<Referenceable<?>> {
 
     @Override
     public JsonNode encodeJSON(Referenceable<?> t)
-            throws OwsExceptionReport {
+            throws EncodingException {
         if (t.isReference()) {
             return encodeObjectToJson(t.getReference());
         } else if (t.isInstance()) {

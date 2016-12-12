@@ -28,11 +28,10 @@
  */
 package org.n52.sos.encode.json.impl;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.response.InsertResultTemplateResponse;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -49,7 +48,7 @@ public class InsertResultTemplateResponseEncoder extends AbstractSosResponseEnco
     }
 
     @Override
-    protected void encodeResponse(ObjectNode json, InsertResultTemplateResponse t) throws OwsExceptionReport {
+    protected void encodeResponse(ObjectNode json, InsertResultTemplateResponse t) {
         json.put(JSONConstants.ACCEPTED_TEMPLATE, t.getAcceptedTemplate());
     }
 }

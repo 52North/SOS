@@ -33,10 +33,11 @@ import java.util.Set;
 import net.opengis.sos.x20.InsertResultResponseDocument;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.response.InsertResultResponse;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 
 import com.google.common.collect.Sets;
 
@@ -53,7 +54,7 @@ public class InsertResultResponseEncoder extends AbstractSosResponseEncoder<Inse
     }
 
     @Override
-    protected XmlObject create(InsertResultResponse response) throws OwsExceptionReport {
+    protected XmlObject create(InsertResultResponse response) throws EncodingException {
         final InsertResultResponseDocument doc = InsertResultResponseDocument.Factory.newInstance(getXmlOptions());
         doc.addNewInsertResultResponse();
         return doc;

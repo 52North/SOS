@@ -48,9 +48,11 @@ import org.n52.iceland.config.SettingDefinitionGroup;
 import org.n52.iceland.config.SettingsService;
 import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.StringHelper;
+
+import com.google.common.base.Strings;
 
 
 
@@ -76,7 +78,7 @@ public class SettingDefinitonController extends AbstractController {
             throws ConfigurationError, JSONException {
         Set<SettingDefinition<?, ?>> defs = this.settingsManager.getSettingDefinitions();
         Map<SettingDefinitionGroup, Set<SettingDefinition<?,?>>> grouped;
-        if (StringHelper.isNotEmpty(only)) {
+        if (!Strings.isNullOrEmpty(only)) {
             grouped = sortByGroup(defs, false, StringHelper.splitToSet(only));
         } else {
             grouped = sortByGroup(defs, showAll, Collections.emptySet());

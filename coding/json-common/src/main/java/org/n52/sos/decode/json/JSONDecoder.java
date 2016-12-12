@@ -28,37 +28,40 @@
  */
 package org.n52.sos.decode.json;
 
-import static org.n52.iceland.util.DateTimeHelper.parseIsoString2DateTime;
+import static java.util.stream.Collectors.toList;
+import static org.n52.shetland.util.DateTimeHelper.parseIsoString2DateTime;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.JsonDecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
-import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.sos.coding.json.JSONConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.JsonDecoderKey;
+import org.n52.svalbard.decode.NoDecoderForKeyException;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.util.DateTimeParseException;
+import org.n52.janmayen.stream.Streams;
+import org.n52.janmayen.exception.CompositeException;
+import org.n52.sos.coding.json.JSONConstants;
+import org.n52.svalbard.AbstractDelegatingDecoder;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
@@ -67,7 +70,7 @@ import com.google.common.collect.Lists;
  *
  * @since 4.0.0
  */
-public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
+public abstract class JSONDecoder<T> extends AbstractDelegatingDecoder<T, JsonNode> {
     private static final Logger LOGGER = LoggerFactory.getLogger(JSONDecoder.class);
     private final Set<DecoderKey> decoderKeys;
 
@@ -79,32 +82,34 @@ public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
         this.decoderKeys = keys;
     }
 
-    private <T> Decoder<T, JsonNode> getDecoder(Class<T> type) throws NoDecoderForKeyException {
+    private <T> Decoder<T, JsonNode> getDecoder(Class<T> type) throws DecodingException {
         JsonDecoderKey key = new JsonDecoderKey(type);
-        Decoder<T, JsonNode> decoder = CodingRepository.getInstance().getDecoder(key);
+        Decoder<T, JsonNode> decoder = getDecoder(key);
         if (decoder == null) {
             throw new NoDecoderForKeyException(key);
         }
         return decoder;
     }
 
-    protected <T> T decodeJsonToObject(JsonNode json, Class<T> type) throws OwsExceptionReport {
+    protected <T> T decodeJsonToObject(JsonNode json, Class<T> type) throws DecodingException {
         if (json == null || json.isNull() || json.isMissingNode()) {
             return null;
         }
         return getDecoder(type).decode(json);
     }
 
-    protected <T> List<T> decodeJsonToObjectList(JsonNode node, Class<T> type) throws OwsExceptionReport {
+    protected <T> List<T> decodeJsonToObjectList(JsonNode node, Class<T> type) throws DecodingException {
         Decoder<T, JsonNode> decoder = getDecoder(type);
         if (node.isArray()) {
-            List<T> filters = Lists.newArrayListWithExpectedSize(node.size());
-            for (JsonNode n : node) {
-                if (n.isObject()) {
-                    filters.add(decoder.decode(n));
-                }
-            }
-            return filters;
+            CompositeException exceptions = new CompositeException();
+            List<T> list = Streams.stream(node)
+                    .filter(JsonNode::isObject)
+                    .map(exceptions.wrap(decoder::decode))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(toList());
+            exceptions.throwIfNotEmpty(DecodingException::new);
+            return list;
         } else if (node.isObject()) {
             return Collections.singletonList(decoder.decode(node));
         } else {
@@ -118,31 +123,17 @@ public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
     }
 
     @Override
-    public T decode(JsonNode objectToDecode) throws OwsExceptionReport {
+    public T decode(JsonNode objectToDecode) throws DecodingException {
         return decodeJSON(objectToDecode, true);
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     protected TimeInstant parseTimeInstant(JsonNode node) throws DateTimeParseException {
         if (node.isTextual()) {
-            TimeInstant timeInstant = new TimeInstant();
-            String time = node.textValue();
-            if (TimeIndeterminateValue.template.equals(TimeIndeterminateValue.getEnumForString(time))) {
-                timeInstant.setIndeterminateValue(TimeIndeterminateValue.template);
-            } else if(ExtendedIndeterminateTime.getEnumForString(time) != null) { // first, latest
-                timeInstant.setSosIndeterminateTime(ExtendedIndeterminateTime.getEnumForString(time));
-            } else {
-                DateTime dateTime = parseDateTime(time);
-                timeInstant.setValue(dateTime);
-            }
-            return timeInstant;
-        } else {
-            return null;
+            return new TimeInstant(parseDateTime(node.textValue()));
+        } else if (node.path(JSONConstants.INDETERMINATE_VALUE).isTextual()) {
+            return new TimeInstant(new IndeterminateValue(node.path(JSONConstants.INDETERMINATE_VALUE).textValue()));
         }
+        return null;
     }
 
     protected TimePeriod parseTimePeriod(JsonNode node) throws DateTimeParseException {
@@ -206,5 +197,5 @@ public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
         return null;
     }
 
-    public abstract T decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport;
+    public abstract T decodeJSON(JsonNode node, boolean validate) throws DecodingException;
 }

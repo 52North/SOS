@@ -34,35 +34,36 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.ReferenceValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.om.features.SfConstants;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.ReferenceValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TVPValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.UnknownValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
 
 /**
  * Utility class for Observation and Measurement
@@ -72,7 +73,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class OMHelper {
     private static final Logger log = LoggerFactory.getLogger(OMHelper.class);
-    private static final ValueVisitor<String> OBSERVATION_TYPE_VISITOR = new ObservationTypeVisitor();
+    private static final ValueVisitor<String, RuntimeException> OBSERVATION_TYPE_VISITOR = new ObservationTypeVisitor();
     private OMHelper() {
     }
 
@@ -109,8 +110,7 @@ public final class OMHelper {
                 .setStatus(HTTPStatus.BAD_REQUEST);
     }
 
-    public static String getObservationTypeFor(Value<?> value)
-            throws OwsExceptionReport {
+    public static String getObservationTypeFor(Value<?> value) {
         return value.accept(OBSERVATION_TYPE_VISITOR);
     }
 
@@ -182,7 +182,7 @@ public final class OMHelper {
         return builder.toString();
     }
 
-    private static class ObservationTypeVisitor implements ValueVisitor<String> {
+    private static class ObservationTypeVisitor implements ValueVisitor<String, RuntimeException> {
         @Override
         public String visit(BooleanValue value) {
             return OmConstants.OBS_TYPE_TRUTH_OBSERVATION;

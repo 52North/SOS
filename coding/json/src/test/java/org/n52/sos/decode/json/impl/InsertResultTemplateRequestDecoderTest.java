@@ -42,16 +42,17 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.ConfiguredSettingsManager;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
-import org.n52.sos.request.InsertResultTemplateRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
@@ -75,21 +76,25 @@ public class InsertResultTemplateRequestDecoderTest {
     }
 
     @Test
-    public void resultEncoding() throws IOException, OwsExceptionReport {
+    public void resultEncoding() throws IOException, DecodingException {
         InsertResultTemplateRequest req = load();
         assertThat(req.getResultEncoding(), is(notNullValue()));
-        assertThat(req.getResultEncoding().getEncoding(), is(instanceOf(SweTextEncoding.class)));
-        SweTextEncoding encoding = (SweTextEncoding) req.getResultEncoding().getEncoding();
+        assertThat(req.getResultEncoding().isDecoded(), is(true));
+        assertThat(req.getResultEncoding().isEncoded(), is(false));
+        assertThat(req.getResultEncoding().get().get(), is(instanceOf(SweTextEncoding.class)));
+        SweTextEncoding encoding = (SweTextEncoding) req.getResultEncoding().get().get();
         errors.checkThat(encoding.getTokenSeparator(), is(","));
         errors.checkThat(encoding.getBlockSeparator(), is("#"));
     }
 
     @Test
-    public void resultStructure() throws IOException, OwsExceptionReport {
+    public void resultStructure() throws IOException, DecodingException {
         InsertResultTemplateRequest req = load();
         assertThat(req.getResultStructure(), is(notNullValue()));
-        assertThat(req.getResultStructure().getResultStructure(), is(instanceOf(SweDataRecord.class)));
-        SweDataRecord structure = (SweDataRecord) req.getResultStructure().getResultStructure();
+        assertThat(req.getResultStructure().isDecoded(), is(true));
+        assertThat(req.getResultStructure().isEncoded(), is(false));
+        assertThat(req.getResultStructure().get().get(), is(instanceOf(SweDataRecord.class)));
+        SweDataRecord structure = (SweDataRecord) req.getResultStructure().get().get();
         assertThat(structure.getFields(), is(notNullValue()));
         assertThat(structure.getFields(), hasSize(3));
 
@@ -120,7 +125,7 @@ public class InsertResultTemplateRequestDecoderTest {
     }
 
     @Test
-    public void observationTemplate() throws IOException, OwsExceptionReport {
+    public void observationTemplate() throws IOException, DecodingException {
         InsertResultTemplateRequest req = load();
         OmObservationConstellation oc = req.getObservationTemplate();
         assertThat(oc, is(notNullValue()));
@@ -139,7 +144,7 @@ public class InsertResultTemplateRequestDecoderTest {
     }
 
     @Test
-    public void offering() throws IOException, OwsExceptionReport {
+    public void offering() throws IOException, DecodingException {
         InsertResultTemplateRequest req = load();
         assertThat(req.getObservationTemplate(), is(notNullValue()));
         assertThat(req.getObservationTemplate().getOfferings(), hasSize(1));
@@ -147,11 +152,11 @@ public class InsertResultTemplateRequestDecoderTest {
     }
 
     @Test
-    public void identifier() throws IOException, OwsExceptionReport {
+    public void identifier() throws IOException, DecodingException {
         assertThat(load().getIdentifier(), is("http://www.52north.org/test/procedure/6/template/1"));
     }
 
-    protected InsertResultTemplateRequest load() throws IOException, OwsExceptionReport {
+    protected InsertResultTemplateRequest load() throws IOException, DecodingException {
         final JsonNode json = JsonLoader.fromResource("/examples/sos/InsertResultTemplateRequest.json");
         final InsertResultTemplateRequest req = decoder.decodeJSON(json, true);
         assertThat(req, is(notNullValue()));

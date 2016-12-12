@@ -34,9 +34,8 @@ import java.util.Set;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.util.Constants;
-import org.n52.sos.iso.CodeList.CiRoleCodes;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.iso.CodeList.CiRoleCodes;
 
 import com.axiomalaska.cf4j.CFStandardName;
 import com.axiomalaska.cf4j.CFStandardNames;
@@ -252,7 +251,7 @@ public class NetcdfHelper implements Constructable {
     @Setting(NetcdfSettingsProvider.NETCDF_PHEN_LATITUDE)
     public void setLatitude(String latitude) {
         if (!Strings.isNullOrEmpty(latitude)) {
-            this.latitude = Sets.newHashSet(latitude.split(Constants.COMMA_STRING));
+            this.latitude = Sets.newHashSet(latitude.split(","));
         } else {
             this.latitude.clear();
         }
@@ -271,7 +270,7 @@ public class NetcdfHelper implements Constructable {
     @Setting(NetcdfSettingsProvider.NETCDF_PHEN_LONGITUDE)
     public void setLongitude(String longitude) {
         if (!Strings.isNullOrEmpty(longitude)) {
-            this.longitude = Sets.newHashSet(longitude.split(Constants.COMMA_STRING));
+            this.longitude = Sets.newHashSet(longitude.split(","));
         } else {
             this.longitude.clear();
         }
@@ -290,7 +289,7 @@ public class NetcdfHelper implements Constructable {
     @Setting(NetcdfSettingsProvider.NETCDF_PHEN_Z)
     public void setZ(String z) {
         if (!Strings.isNullOrEmpty(z)) {
-            this.z = Sets.newHashSet(z.split(Constants.COMMA_STRING));
+            this.z = Sets.newHashSet(z.split(","));
         } else {
             this.z.clear();
         }

@@ -28,12 +28,12 @@
  */
 package org.n52.sos.encode.json.impl;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.response.BatchResponse;
-import org.n52.sos.response.BatchResponse.ExceptionOrResponse;
-import org.n52.sos.util.BatchConstants;
+import org.n52.shetland.ogc.sos.response.BatchResponse;
+import org.n52.shetland.ogc.sos.response.BatchResponse.ExceptionOrResponse;
+import org.n52.shetland.ogc.sos.BatchConstants;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -51,7 +51,7 @@ public class BatchResponseEncoder extends AbstractSosResponseEncoder<BatchRespon
     }
 
     @Override
-    protected void encodeResponse(ObjectNode json, BatchResponse response) throws OwsExceptionReport {
+    protected void encodeResponse(ObjectNode json, BatchResponse response) throws EncodingException {
         ArrayNode responses = json.putArray(JSONConstants.RESPONSES);
         for (ExceptionOrResponse eor : response) {
             if (eor.isException()) {

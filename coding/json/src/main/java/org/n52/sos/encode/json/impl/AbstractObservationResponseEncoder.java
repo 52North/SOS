@@ -30,12 +30,12 @@ package org.n52.sos.encode.json.impl;
 
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.response.AbstractObservationResponse;
+import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -60,7 +60,7 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
     }
 
     @Override
-    protected void encodeResponse(ObjectNode json, T t) throws OwsExceptionReport {
+    protected void encodeResponse(ObjectNode json, T t) throws EncodingException {
         ArrayNode obs = json.putArray(JSONConstants.OBSERVATIONS);
         for (OmObservation o : t.getObservationCollection()) {
             obs.add(encodeObjectToJson(o));

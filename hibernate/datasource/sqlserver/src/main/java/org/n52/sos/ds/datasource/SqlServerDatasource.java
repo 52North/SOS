@@ -34,7 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.util.StringHelper;
+
+import com.google.common.base.Strings;
 
 /**
  * MS SQL Server datasource
@@ -132,10 +134,10 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
 
     private String getQualifiedTable(String database, String schema, String table) {
         StringBuilder builder = new StringBuilder();
-        if (StringHelper.isNotEmpty(database)) {
+        if (!Strings.isNullOrEmpty(database)) {
             builder.append(database).append(".");
         }
-        if (StringHelper.isNotEmpty(schema)) {
+        if (!Strings.isNullOrEmpty(schema)) {
             builder.append(schema);
         }
         builder.append(table);

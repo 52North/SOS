@@ -28,8 +28,8 @@
  */
 package org.n52.sos.binding.rest.resources.observations;
 
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

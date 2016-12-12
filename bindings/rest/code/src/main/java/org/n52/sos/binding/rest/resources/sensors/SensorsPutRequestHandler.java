@@ -35,9 +35,11 @@ import net.opengis.swes.x20.UpdateSensorDescriptionResponseType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -49,16 +51,20 @@ public class SensorsPutRequestHandler extends SensorsRequestHandler {
     public RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException
     {
         if (request != null && request instanceof SensorsPutRequest) {
-            // submit request to core
-            SensorsPutRequest putRequest = (SensorsPutRequest)request;
-            XmlObject xb_ServiceResponse = executeSosRequest(putRequest.getUpdateSensorRequest());
+            try {
+                // submit request to core
+                SensorsPutRequest putRequest = (SensorsPutRequest)request;
+                XmlObject xb_ServiceResponse = executeSosRequest(putRequest.getUpdateSensorRequest());
 
-            if(xb_ServiceResponse instanceof UpdateSensorDescriptionResponseDocument) {
-                UpdateSensorDescriptionResponseDocument xb_InsertSensorResponseDoc = (UpdateSensorDescriptionResponseDocument) xb_ServiceResponse;
-                UpdateSensorDescriptionResponseType xb_InsertSensorResponse = xb_InsertSensorResponseDoc.getUpdateSensorDescriptionResponse();
-                String procedureId = xb_InsertSensorResponse.getUpdatedProcedure();
+                if(xb_ServiceResponse instanceof UpdateSensorDescriptionResponseDocument) {
+                    UpdateSensorDescriptionResponseDocument xb_InsertSensorResponseDoc = (UpdateSensorDescriptionResponseDocument) xb_ServiceResponse;
+                    UpdateSensorDescriptionResponseType xb_InsertSensorResponse = xb_InsertSensorResponseDoc.getUpdateSensorDescriptionResponse();
+                    String procedureId = xb_InsertSensorResponse.getUpdatedProcedure();
 
-                return new SensorsPutResponse(procedureId,putRequest.getXb_smlSystem());
+                    return new SensorsPutResponse(procedureId,putRequest.getXb_smlSystem());
+                }
+            } catch (EncodingException ee) {
+                throw new NoApplicableCodeException().causedBy(ee);
             }
         }
         throw logRequestTypeNotSupportedByThisHandlerAndCreateException(request, getClass().getName());

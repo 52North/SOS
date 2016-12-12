@@ -34,13 +34,15 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.hibernate.Session;
+
 import org.n52.sos.cache.SosContentCache;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.I18NHelper;
 

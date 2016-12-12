@@ -32,7 +32,7 @@ import java.util.Locale;
 
 import javax.xml.namespace.QName;
 
-import org.n52.iceland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.OWSConstants;
 
 /**
  * Helper class for OGC OWS

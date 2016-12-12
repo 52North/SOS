@@ -28,80 +28,25 @@
  */
 package org.n52.sos.decode.kvp.v2;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants.DeleteSensorParams;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.KvpHelper;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
-import org.n52.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants.DeleteSensorParams;
+import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
 
 /**
  * @since 4.0.0e
  *
  */
-public class DeleteSensorKvpDecoderv20 extends AbstractKvpDecoder {
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
-            Sos2Constants.SERVICEVERSION, Sos2Constants.Operations.DeleteSensor, MediaTypes.APPLICATION_KVP);
+public class DeleteSensorKvpDecoderv20 extends AbstractSosKvpDecoder<DeleteSensorRequest> {
 
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return Collections.singleton(KVP_DECODER_KEY_TYPE);
+    public DeleteSensorKvpDecoderv20() {
+        super(DeleteSensorRequest::new,
+              Sos2Constants.SERVICEVERSION,
+              Sos2Constants.Operations.DeleteSensor);
     }
 
     @Override
-    public DeleteSensorRequest decode(Map<String, String> element) throws OwsExceptionReport {
-
-        DeleteSensorRequest request = new DeleteSensorRequest();
-        CompositeOwsException exceptions = new CompositeOwsException();
-
-        boolean foundProcedure = false;
-
-        for (String parameterName : element.keySet()) {
-            String parameterValues = element.get(parameterName);
-            try {
-                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-                    if (parameterName.equalsIgnoreCase(RequestParams.request.name())) {
-                        KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-                    } // procedure
-                    else if (parameterName.equalsIgnoreCase(DeleteSensorParams.procedure.name())) {
-                        request.setProcedureIdentifier(KvpHelper.checkParameterSingleValue(parameterValues,
-                                parameterName));
-                        foundProcedure = true;
-                    } else {
-                        exceptions.add(new ParameterNotSupportedException(parameterName));
-                    }
-                }
-            } catch (OwsExceptionReport owse) {
-                exceptions.add(owse);
-            }
-        }
-
-        if (!foundProcedure) {
-            exceptions.add(new MissingProcedureParameterException());
-        }
-        if (!request.isSetService()) {
-            exceptions.add(new MissingServiceParameterException());
-        }
-        if (!request.isSetVersion()) {
-            exceptions.add(new MissingVersionParameterException());
-        }
-
-        exceptions.throwIfNotEmpty();
-
-        return request;
+    protected void getRequestParameterDefinitions(Builder<DeleteSensorRequest> builder) {
+        builder.add(DeleteSensorParams.procedure, DeleteSensorRequest::setProcedureIdentifier);
     }
 }

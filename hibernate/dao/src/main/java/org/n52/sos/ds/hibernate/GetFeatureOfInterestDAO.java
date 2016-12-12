@@ -48,15 +48,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.ogc.om.features.FeatureCollection;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.ds.AbstractGetFeatureOfInterestHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
@@ -71,10 +73,8 @@ import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferenced
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
-import org.n52.sos.response.GetFeatureOfInterestResponse;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -623,7 +623,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
             namedQueryName = SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER;
             parameter.put(FEATURES, req.getFeatureIdentifiers());
         }
-        if (StringHelper.isNotEmpty(namedQueryName)) {
+        if (!Strings.isNullOrEmpty(namedQueryName)) {
             Query namedQuery = session.getNamedQuery(namedQueryName);
             for (String key : parameter.keySet()) {
                 namedQuery.setParameterList(key, parameter.get(key));

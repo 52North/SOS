@@ -49,7 +49,7 @@ import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.JSONConstants;
@@ -98,14 +98,14 @@ public class AdminEncodingController extends AbstractAdminController {
         JsonNode json = JSONUtils.loadString(request);
 
         if (json.has(JSONConstants.RESPONSE_FORMAT_KEY)) {
-            ServiceOperatorKey sokt =
-                    new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
+            OwsServiceKey sokt =
+                    new OwsServiceKey(json.path(JSONConstants.SERVICE_KEY).asText(),
                             json.path(JSONConstants.VERSION_KEY).asText());
             ResponseFormatKey rfkt = new ResponseFormatKey(sokt, json.path(JSONConstants.RESPONSE_FORMAT_KEY).asText());
             this.responseFormatRepository.setActive(rfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else if (json.has(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY)) {
-            ServiceOperatorKey sokt =
-                    new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
+            OwsServiceKey sokt =
+                    new OwsServiceKey(json.path(JSONConstants.SERVICE_KEY).asText(),
                             json.path(JSONConstants.VERSION_KEY).asText());
             ProcedureDescriptionFormatKey pdfkt =
                     new ProcedureDescriptionFormatKey(sokt,
@@ -118,9 +118,9 @@ public class AdminEncodingController extends AbstractAdminController {
 
     protected ArrayNode getObservationEncodings() {
         ArrayNode joes = JSONUtils.nodeFactory().arrayNode();
-        final Map<ServiceOperatorKey, Set<String>> oes =
+        final Map<OwsServiceKey, Set<String>> oes =
                 this.responseFormatRepository.getAllSupportedResponseFormats();
-        for (ServiceOperatorKey sokt : oes.keySet()) {
+        for (OwsServiceKey sokt : oes.keySet()) {
             for (String responseFormat : oes.get(sokt)) {
                 ResponseFormatKey rfkt = new ResponseFormatKey(sokt, responseFormat);
                 joes.addObject()
@@ -135,9 +135,9 @@ public class AdminEncodingController extends AbstractAdminController {
 
     protected ArrayNode getProcedureEncodings() {
         ArrayNode jpes = JSONUtils.nodeFactory().arrayNode();
-        final Map<ServiceOperatorKey, Set<String>> oes =
+        final Map<OwsServiceKey, Set<String>> oes =
                 this.procedureDescriptionFormatRepository.getAllProcedureDescriptionFormats();
-        for (ServiceOperatorKey sokt : oes.keySet()) {
+        for (OwsServiceKey sokt : oes.keySet()) {
             for (String procedureDescriptionFormat : oes.get(sokt)) {
                 ProcedureDescriptionFormatKey rfkt =
                         new ProcedureDescriptionFormatKey(sokt, procedureDescriptionFormat);

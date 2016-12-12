@@ -28,7 +28,7 @@
  */
 package org.n52.sos.netcdf.data.dataset;
 
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>

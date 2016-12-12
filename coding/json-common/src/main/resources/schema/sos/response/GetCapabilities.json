@@ -26,7 +26,7 @@
             "type": "string"
           },
           "fees": {
-            "type": "string"
+            "$ref": "#/definitions/stringList"
           },
           "serviceType": {
             "type": "string"

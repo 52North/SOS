@@ -31,10 +31,11 @@ package org.n52.sos.ds.hibernate.util.procedure.create;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 /**
  * Strategy to create the {@link SosProcedureDescription} from a
@@ -51,7 +52,7 @@ public class ValidProcedureTimeDescriptionCreationStrategy extends XmlStringDesc
     @Override
     public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
-        SosProcedureDescription desc = readXml(vpt.getDescriptionXml());
+        SosProcedureDescription desc = new SosProcedureDescription<AbstractFeature>(readXml(vpt.getDescriptionXml()));
         desc.setIdentifier(p.getIdentifier());
         desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
         return desc;

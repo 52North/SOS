@@ -37,11 +37,11 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderRepository;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.iceland.coding.encode.ProcedureEncoder;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.activation.ActivationListener;
 import org.n52.iceland.util.activation.ActivationListeners;
@@ -84,12 +84,12 @@ public class ProcedureDescriptionFormatRepository
     private void generateProcedureDescriptionFormatMaps() {
         this.procedureDescriptionFormats.clear();
         this.keys.clear();
-        Set<ServiceOperatorKey> serviceOperatorKeyTypes
+        Set<OwsServiceKey> serviceOperatorKeyTypes
                 = this.serviceOperatorRepository.getServiceOperatorKeys();
         for (Encoder<?, ?> encoder : this.encoderRepository.getEncoders()) {
             if (encoder instanceof ProcedureEncoder) {
                 ProcedureEncoder<?, ?> procedureEncoder = (ProcedureEncoder<?, ?>) encoder;
-                for (ServiceOperatorKey sokt : serviceOperatorKeyTypes) {
+                for (OwsServiceKey sokt : serviceOperatorKeyTypes) {
                     Set<String> formats = procedureEncoder.getSupportedProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
                     if (formats != null) {
                         for (String format : formats) {
@@ -138,15 +138,15 @@ public class ProcedureDescriptionFormatRepository
         byVersion.add(key.getProcedureDescriptionFormat());
     }
 
-    public Map<ServiceOperatorKey, Set<String>> getSupportedProcedureDescriptionFormats() {
-        final Map<ServiceOperatorKey, Set<String>> map = Maps.newHashMap();
-        for (final ServiceOperatorKey sokt : this.serviceOperatorRepository.getServiceOperatorKeys()) {
+    public Map<OwsServiceKey, Set<String>> getSupportedProcedureDescriptionFormats() {
+        final Map<OwsServiceKey, Set<String>> map = Maps.newHashMap();
+        for (final OwsServiceKey sokt : this.serviceOperatorRepository.getServiceOperatorKeys()) {
             map.put(sokt, getSupportedProcedureDescriptionFormats(sokt));
         }
         return map;
     }
 
-    public Set<String> getSupportedProcedureDescriptionFormats(final ServiceOperatorKey sokt) {
+    public Set<String> getSupportedProcedureDescriptionFormats(final OwsServiceKey sokt) {
         return getSupportedProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
     }
 
@@ -154,9 +154,9 @@ public class ProcedureDescriptionFormatRepository
         return getSupportedProcedureDescriptionFormats(service, version, procedureDescriptionFormats);
     }
 
-    public Map<ServiceOperatorKey, Set<String>> getAllProcedureDescriptionFormats() {
-        final Map<ServiceOperatorKey, Set<String>> map = Maps.newHashMap();
-        for (final ServiceOperatorKey sokt : this.serviceOperatorRepository.getServiceOperatorKeys()) {
+    public Map<OwsServiceKey, Set<String>> getAllProcedureDescriptionFormats() {
+        final Map<OwsServiceKey, Set<String>> map = Maps.newHashMap();
+        for (final OwsServiceKey sokt : this.serviceOperatorRepository.getServiceOperatorKeys()) {
             map.put(sokt, getAllSupportedProcedureDescriptionFormats(sokt));
         }
         return map;
@@ -166,7 +166,7 @@ public class ProcedureDescriptionFormatRepository
         return getAllSupportedProcedureDescriptionFormats(service, version, procedureDescriptionFormats);
     }
 
-    public Set<String> getAllSupportedProcedureDescriptionFormats(final ServiceOperatorKey sokt) {
+    public Set<String> getAllSupportedProcedureDescriptionFormats(final OwsServiceKey sokt) {
         return getAllSupportedProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
     }
 
@@ -175,9 +175,9 @@ public class ProcedureDescriptionFormatRepository
         return getSupportedProcedureDescriptionFormats(service, version, transactionalProcedureDescriptionFormats);
     }
 
-    public Map<ServiceOperatorKey, Set<String>> getAllTransactionalProcedureDescriptionFormats() {
-        final Map<ServiceOperatorKey, Set<String>> map = Maps.newHashMap();
-        for (final ServiceOperatorKey sokt : this.serviceOperatorRepository.getServiceOperatorKeys()) {
+    public Map<OwsServiceKey, Set<String>> getAllTransactionalProcedureDescriptionFormats() {
+        final Map<OwsServiceKey, Set<String>> map = Maps.newHashMap();
+        for (final OwsServiceKey sokt : this.serviceOperatorRepository.getServiceOperatorKeys()) {
             map.put(sokt, getAllSupportedTransactionalProcedureDescriptionFormats(sokt));
         }
         return map;
@@ -188,7 +188,7 @@ public class ProcedureDescriptionFormatRepository
         return getAllSupportedProcedureDescriptionFormats(service, version, transactionalProcedureDescriptionFormats);
     }
 
-    public Set<String> getAllSupportedTransactionalProcedureDescriptionFormats(final ServiceOperatorKey sokt) {
+    public Set<String> getAllSupportedTransactionalProcedureDescriptionFormats(final OwsServiceKey sokt) {
         return getAllSupportedTransactionalProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
     }
 
@@ -216,7 +216,7 @@ public class ProcedureDescriptionFormatRepository
             return Collections.emptySet();
         }
 
-        final ServiceOperatorKey sokt = new ServiceOperatorKey(service, version);
+        final OwsServiceKey sokt = new OwsServiceKey(service, version);
         final Set<String> result = Sets.newHashSet();
         for (final String a : rfs) {
             final ProcedureDescriptionFormatKey pdfkt = new ProcedureDescriptionFormatKey(sokt, a);

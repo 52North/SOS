@@ -29,10 +29,11 @@
 package org.n52.sos.util.builder;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.Value;
+
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.Value;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

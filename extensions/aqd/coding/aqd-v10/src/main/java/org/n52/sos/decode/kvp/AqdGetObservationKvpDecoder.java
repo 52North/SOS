@@ -28,46 +28,20 @@
  */
 package org.n52.sos.decode.kvp;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.KvpHelper;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.kvp.v2.GetObservationKvpDecoderv20;
-import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 
 public class AqdGetObservationKvpDecoder extends GetObservationKvpDecoderv20 {
 
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(
-            AqdConstants.AQD, AqdConstants.VERSION,
-            SosConstants.Operations.GetObservation, MediaTypes.APPLICATION_KVP);
-
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return Collections.singleton(KVP_DECODER_KEY_TYPE);
+    public AqdGetObservationKvpDecoder() {
+        super(AqdConstants.AQD, AqdConstants.VERSION, SosConstants.Operations.GetObservation);
     }
 
     @Override
-    protected boolean parseExtensionParameter(AbstractServiceRequest<?> request, String parameterValues,
-        String parameterName) throws OwsExceptionReport {
-        if (parameterName
-                .equalsIgnoreCase(AqdConstants.EXTENSION_FLOW)) {
-            request.addExtension(getFlowExtension(KvpHelper
-                    .checkParameterSingleValue(parameterValues, parameterName)));
-            return true;
-        } else {
-            return super.parseExtensionParameter(request, parameterValues, parameterName);
-        }
-    }
-
-    private SwesExtension<SweText> getFlowExtension(String value) {
-        return getSweTextFor(AqdConstants.EXTENSION_FLOW, value);
+    protected void getRequestParameterDefinitions(Builder<GetObservationRequest> builder) {
+        super.getRequestParameterDefinitions(builder);
+        builder.add(AqdConstants.EXTENSION_FLOW, GetObservationRequest::addSweTextExtension);
     }
 }

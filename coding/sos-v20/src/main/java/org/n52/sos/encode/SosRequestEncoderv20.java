@@ -29,34 +29,8 @@
 package org.n52.sos.encode;
 
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.coding.encode.AbstractXmlEncoder;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.request.GetResultRequest;
-import org.n52.sos.request.GetResultTemplateRequest;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
 
 import net.opengis.sos.x20.GetResultDocument;
 import net.opengis.sos.x20.GetResultTemplateDocument;
@@ -64,15 +38,40 @@ import net.opengis.sos.x20.GetResultTemplateType;
 import net.opengis.sos.x20.GetResultType;
 import net.opengis.sos.x20.GetResultType.SpatialFilter;
 
+import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
+
 /**
  * @since 4.0.0
  *
  */
-public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequest<?>> {
+public class SosRequestEncoderv20 extends AbstractXmlEncoder<XmlObject, OwsServiceRequest> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SosRequestEncoderv20.class);
 
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(Sos2Constants.NS_SOS_20,
-            AbstractServiceRequest.class, GetResultTemplateRequest.class, GetResultRequest.class);
+            OwsServiceRequest.class, GetResultTemplateRequest.class, GetResultRequest.class);
 
     public SosRequestEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -95,22 +94,19 @@ public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequ
     }
 
     @Override
-    public XmlObject encode(final AbstractServiceRequest<?> communicationObject) throws OwsExceptionReport {
-        final Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
-        additionalValues.put(HelperValues.VERSION, Sos2Constants.SERVICEVERSION);
-        return encode(communicationObject, additionalValues);
+    public XmlObject encode(OwsServiceRequest communicationObject) throws EncodingException {
+        return encode(communicationObject, EncodingContext.of(SosHelperValues.VERSION, Sos2Constants.SERVICEVERSION));
     }
 
     @Override
-    public XmlObject encode(final AbstractServiceRequest<?> request, final Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport {
+    public XmlObject encode(OwsServiceRequest request, EncodingContext additionalValues)
+            throws EncodingException {
         XmlObject encodedObject = encodeRequests(request);
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        XmlHelper.validateDocument(encodedObject, EncodingException::new);
         return encodedObject;
     }
 
-    private XmlObject encodeRequests(final AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    private XmlObject encodeRequests(OwsServiceRequest request) throws EncodingException {
         if (request instanceof GetResultTemplateRequest) {
             return createGetResultTemplateRequest((GetResultTemplateRequest) request);
         } else if (request instanceof GetResultRequest) {
@@ -121,7 +117,7 @@ public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequ
 
     private XmlObject createGetResultTemplateRequest(final GetResultTemplateRequest request) {
         final GetResultTemplateDocument getResultTemplateDoc =
-                GetResultTemplateDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                GetResultTemplateDocument.Factory.newInstance(getXmlOptions());
         final GetResultTemplateType getResultTemplate = getResultTemplateDoc.addNewGetResultTemplate();
         getResultTemplate.setService(request.getService());
         getResultTemplate.setVersion(request.getVersion());
@@ -130,18 +126,16 @@ public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequ
         return getResultTemplateDoc;
     }
 
-    private XmlObject createGetResultRequest(final GetResultRequest request) throws OwsExceptionReport {
+    private XmlObject createGetResultRequest(final GetResultRequest request) throws EncodingException {
         final GetResultDocument getResultDoc =
-                GetResultDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                GetResultDocument.Factory.newInstance(getXmlOptions());
         final GetResultType getResult = getResultDoc.addNewGetResult();
         getResult.setService(request.getService());
         getResult.setVersion(request.getVersion());
         getResult.setOffering(request.getOffering());
         getResult.setObservedProperty(request.getObservedProperty());
         if (request.isSetFeatureOfInterest()) {
-            for (final String featureOfInterest : request.getFeatureIdentifiers()) {
-                getResult.addFeatureOfInterest(featureOfInterest);
-            }
+            request.getFeatureIdentifiers().forEach(getResult::addFeatureOfInterest);
         }
         if (request.hasTemporalFilter()) {
             for (final TemporalFilter temporalFilter : request.getTemporalFilter()) {
@@ -156,19 +150,17 @@ public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequ
     }
 
     private void createTemporalFilter(final net.opengis.sos.x20.GetResultType.TemporalFilter temporalFilter,
-            final TemporalFilter sosTemporalFilter) throws OwsExceptionReport {
+            final TemporalFilter sosTemporalFilter) throws EncodingException {
         final Encoder<XmlObject, TemporalFilter> encoder =
-                CodingRepository.getInstance().getEncoder(
-                        CodingHelper.getEncoderKey(FilterConstants.NS_FES_2, sosTemporalFilter));
+                getEncoder(FilterConstants.NS_FES_2, sosTemporalFilter);
         final XmlObject encodedObject = encoder.encode(sosTemporalFilter);
         temporalFilter.set(encodedObject);
     }
 
     private void createSpatialFilter(final SpatialFilter spatialFilter,
-            final org.n52.sos.ogc.filter.SpatialFilter sosSpatialFilter) throws OwsExceptionReport {
-        final Encoder<XmlObject, org.n52.sos.ogc.filter.SpatialFilter> encoder =
-                CodingRepository.getInstance().getEncoder(
-                        CodingHelper.getEncoderKey(FilterConstants.NS_FES_2, sosSpatialFilter));
+            final org.n52.shetland.ogc.filter.SpatialFilter sosSpatialFilter) throws EncodingException {
+        final Encoder<XmlObject, org.n52.shetland.ogc.filter.SpatialFilter> encoder =
+                getEncoder(FilterConstants.NS_FES_2, sosSpatialFilter);
         final XmlObject encodedObject = encoder.encode(sosSpatialFilter);
         spatialFilter.set(encodedObject);
     }

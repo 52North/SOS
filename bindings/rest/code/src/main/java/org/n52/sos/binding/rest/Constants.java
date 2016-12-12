@@ -92,11 +92,11 @@ import java.net.URI;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.service.ServiceSettings;
 import org.n52.iceland.util.Validation;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -239,7 +239,7 @@ public class Constants implements Constructable {
 
     @Setting(REST_ERROR_MSG_BAD_GET_REQUEST_BY_ID)
     public void setErrorMessageBadGetRequestById(String val) {
-        this.errorMessageBadGetRequestById = Validation.notNullOrEmpty(REST_ERROR_MSG_BAD_GET_REQUEST_BY_ID, val);;
+        this.errorMessageBadGetRequestById = Validation.notNullOrEmpty(REST_ERROR_MSG_BAD_GET_REQUEST_BY_ID, val);
     }
 
     public String getErrorMessageBadGetRequestGlobalResource() {

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.exception.sos;
 
-import org.n52.iceland.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -39,7 +39,7 @@ public abstract class CodedSosException extends CodedException {
 
     private static final long serialVersionUID = 6428684723492121464L;
 
-    public CodedSosException(final SosExceptionCode code) {
+    public CodedSosException(SosExceptionCode code) {
         super(code);
     }
 }

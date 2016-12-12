@@ -54,6 +54,7 @@ public class EntitiyHelper {
      *
      * @return Returns the instance of the EntitiyHelper.
      */
+    @Deprecated
     public static synchronized EntitiyHelper getInstance() {
         if (instance == null) {
             instance = new EntitiyHelper();

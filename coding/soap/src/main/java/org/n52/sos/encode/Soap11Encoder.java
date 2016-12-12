@@ -30,7 +30,6 @@ package org.n52.sos.encode;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPConstants;
@@ -38,27 +37,24 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.iceland.w3c.W3CConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.w3c.soap.SoapHeader;
 import org.n52.iceland.w3c.soap.SoapHelper;
 import org.n52.iceland.w3c.soap.SoapResponse;
 import org.n52.iceland.w3c.wsa.WsaActionHeader;
 import org.n52.iceland.w3c.wsa.WsaConstants;
 import org.n52.iceland.w3c.wsa.WsaHeader;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -75,14 +71,8 @@ public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage, SoapResponse
     }
 
     @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        // TODO return valid schemaLocation
-        return Sets.newHashSet();
-    }
-
-    @Override
-    public SOAPMessage encode(SoapResponse soapResponse, Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport {
+    public SOAPMessage encode(SoapResponse soapResponse, EncodingContext additionalValues)
+            throws EncodingException {
         if (soapResponse == null) {
             throw new UnsupportedEncoderInputException(this, soapResponse);
         }
@@ -111,19 +101,15 @@ public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage, SoapResponse
                     if (WsaConstants.NS_WSA.equals(header.getNamespace()) && header instanceof WsaActionHeader) {
                         ((WsaHeader) header).setValue(action);
                     }
-                    try {
-                        Encoder<Map<QName, String>, SoapHeader> encoder =
-                                CodingRepository.getInstance().getEncoder(
-                                        CodingHelper.getEncoderKey(header.getNamespace(), header));
-                        if (encoder != null) {
-                            Map<QName, String> headerElements = encoder.encode(header);
-                            for (QName qName : headerElements.keySet()) {
-                                soapResponseMessage.getSOAPHeader().addChildElement(qName)
-                                        .setTextContent(headerElements.get(qName));
-                            }
+                    Encoder<Map<QName, String>, SoapHeader> encoder =
+                            getEncoder(
+                                    CodingHelper.getEncoderKey(header.getNamespace(), header));
+                    if (encoder != null) {
+                        Map<QName, String> headerElements = encoder.encode(header);
+                        for (QName qName : headerElements.keySet()) {
+                            soapResponseMessage.getSOAPHeader().addChildElement(qName)
+                                    .setTextContent(headerElements.get(qName));
                         }
-                    } catch (OwsExceptionReport owse) {
-                        throw owse;
                     }
                 }
 
@@ -133,7 +119,7 @@ public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage, SoapResponse
             soapResponseMessage.setProperty(SOAPMessage.WRITE_XML_DECLARATION, String.valueOf(true));
             return soapResponseMessage;
         } catch (SOAPException soape) {
-            throw new NoApplicableCodeException().causedBy(soape).withMessage("Error while encoding SOAPMessage!");
+            throw new EncodingException("Error while encoding SOAPMessage!", soape);
         }
     }
 

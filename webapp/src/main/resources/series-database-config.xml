@@ -37,7 +37,7 @@
                 <prop key="hibernate.format_sql">true</prop>
             </props>
         </property>
-        <property name="mappingLocations" value="#{'\hbm'.split(',')}" />
+        <property name="mappingLocations" value="#{'\hbm\sos\v50'.split(',')}" />
     </bean>
 
     <tx:annotation-driven />

@@ -17,8 +17,6 @@
     <bean id="getDataAvailabilityDao"
           class="org.n52.sos.ds.hibernate.dao.GetDataAvailabilityDao"/>
 
-    <import resource="series-database-config.xml" />
-
     <bean id="harvestJobFactory"
           class="org.n52.sos.ds.hibernate.cache.proxy.HibernateDataSourceHarvestJobFactory"/>
 

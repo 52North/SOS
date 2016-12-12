@@ -56,6 +56,34 @@
                     </execution>
                 </executions>
             </plugin>
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>proxy-mappings</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <usedDependencies>
+                                <usedDependency>org.springframework:spring-core</usedDependency>
+                            </usedDependencies>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.n52.series-api</groupId>
+                                    <artifactId>proxy-mappings</artifactId>
+                                    <overWrite>false</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>**/*.xml,**/README</includes>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

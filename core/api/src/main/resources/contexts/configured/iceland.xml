@@ -12,14 +12,14 @@
 
     <bean id="serviceMetadataRepository" class="org.n52.iceland.ogc.ows.ServiceMetadataRepositoryImpl" />
 
-    <bean class="org.n52.iceland.coding.DocumentBuilderProvider" />
+    <bean id="documentBuilderProvider" class="org.n52.iceland.coding.DocumentBuilderProvider" />
 	<bean id="bindingRepository" class="org.n52.iceland.binding.BindingRepository" />
 	<bean id="codingRepository" class="org.n52.iceland.coding.CodingRepository" />
 	<bean id="supportedTypeRepository" class="org.n52.iceland.coding.SupportedTypeRepository" />
 	<bean id="owsExtendedCapabilitiesRepository" class="org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderRepository" />
 	<bean id="offeringExtensionRepository" class="org.n52.iceland.ogc.swes.OfferingExtensionRepository" />
 	<bean id="capabilitiesExtensionRepository" class="org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository" />
-	<bean id="i18nDaoRepository" class="org.n52.iceland.i18n.I18NDAORepository" />
+	<bean id="i18NDAORepository" class="org.n52.iceland.i18n.I18NDAORepository" />
 	<bean id="schemaRepository" class="org.n52.iceland.coding.encode.SchemaRepository" />
 	<bean id="operationHandlerRepository" class="org.n52.iceland.request.handler.OperationHandlerRepository" />
 	<bean id="requestResponseModifierRepository" class="org.n52.iceland.convert.RequestResponseModifierRepository" />

@@ -13,7 +13,7 @@
         <property name="description" value="Set the NetCDF version for the encoding. Notice: NetCDF 4 requires the installation of the native netCDF4 c library. Inforamtion about the installation of the native netCDF4 c library can be found here: <a href='https://www.unidata.ucar.edu/software/thredds/v4.3/netcdf-java/reference/netcdf4Clibrary.html' target='_blank'/>" />
         <property name="order" value="0.0" />
         <property name="group" ref="netcdfSettingDefintionGroup" />
-        <property name="optional" ref="false" />
+        <property name="optional" value="false" />
         <property name="defaultValue" value="netcdf4" />
         <property name="options">
             <map>
@@ -28,7 +28,7 @@
         <property name="description" value="Set the chunk size for time variable of NetCDF 4 encoding." />
         <property name="order" value="1.0" />
         <property name="group" ref="netcdfSettingDefintionGroup" />
-        <property name="optional" ref="false" />
+        <property name="optional" value="false" />
         <property name="defaultValue" value="1000" />
     </bean>
     <bean class="org.n52.iceland.config.settings.NumericSettingDefinition">
@@ -37,7 +37,7 @@
         <property name="description" value="Set the netCDF _FillValue" />
         <property name="order" value="2.0" />
         <property name="group" ref="netcdfSettingDefintionGroup" />
-        <property name="optional" ref="false" />
+        <property name="optional" value="false" />
         <property name="defaultValue" value="-9999.9" />
     </bean>
     <bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
@@ -46,7 +46,7 @@
         <property name="description" value="Define which vertical variable should be use, height or depth" />
         <property name="order" value="3.0" />
         <property name="group" ref="netcdfSettingDefintionGroup" />
-        <property name="optional" ref="false" />
+        <property name="optional" value="false" />
         <property name="defaultValue" value="height" />
         <property name="options">
             <map>
@@ -61,7 +61,7 @@
         <property name="description" value="Define the variable type for latitude, longitude, height/depth, values." />
         <property name="order" value="4.0" />
         <property name="group" ref="netcdfSettingDefintionGroup" />
-        <property name="optional" ref="false" />
+        <property name="optional" value="false" />
         <property name="defaultValue" value="Double" />
         <property name="options">
             <map>
@@ -76,7 +76,7 @@
         <property name="description" value="Set TRUE if the variable/dimension names should be UPPER_CASE" />
         <property name="order" value="5.0" />
         <property name="group" ref="procedureRequestSettingDefintionGroup" />
-        <property name="optional" ref="true" />
+        <property name="optional" value="true" />
         <property name="defaultValue" value="false" />
     </bean>
     <bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
@@ -85,7 +85,7 @@
         <property name="description" value="Define the publisher CI_RoleCode definition." />
         <property name="order" value="6.0" />
         <property name="group" ref="netcdfSettingDefintionGroup" />
-        <property name="optional" ref="false" />
+        <property name="optional" value="false" />
         <property name="defaultValue" value="CI_RoleCode_publisher" />
         <property name="options">
             <map>
@@ -109,7 +109,7 @@
         <property name="description" value="Define the contributor CI_RoleCode definition." />
         <property name="order" value="7.0" />
         <property name="group" ref="netcdfSettingDefintionGroup" />
-        <property name="optional" ref="false" />
+        <property name="optional" value="false" />
         <property name="defaultValue" value="CI_RoleCode_principalInvestigator" />
         <property name="options">
             <map>
@@ -133,7 +133,7 @@
         <property name="description" value="Define the phenomenon identifier for latitude values. Multiple values as comma separated list." />
         <property name="order" value="8.0" />
         <property name="group" ref="netcdfSettingDefintionGroup" />
-        <property name="optional" ref="true" />
+        <property name="optional" value="true" />
         <property name="defaultValue" value="" />
     </bean>
     <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
@@ -142,7 +142,7 @@
         <property name="description" value="Define the phenomenon identifier for longitude values. Multiple values as comma separated list." />
         <property name="order" value="9.0" />
         <property name="group" ref="netcdfSettingDefintionGroup" />
-        <property name="optional" ref="true" />
+        <property name="optional" value="true" />
         <property name="defaultValue" value="" />
     </bean>
     <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
@@ -151,7 +151,7 @@
         <property name="description" value="Define the phenomenon identifier for height/depth values. Multiple values as comma separated list." />
         <property name="order" value="10.0" />
         <property name="group" ref="netcdfSettingDefintionGroup" />
-        <property name="optional" ref="true" />
+        <property name="optional" value="true" />
         <property name="defaultValue" value="" />
     </bean>
 </beans>

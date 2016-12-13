@@ -1238,11 +1238,23 @@
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-epsg-hsql</artifactId>
                 <version>${geotools.version}</version>
+                <exclusions>
+                   <exclusion>
+                       <groupId>javax.media</groupId>
+                       <artifactId>jai_core</artifactId>
+                   </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-main</artifactId>
                 <version>${geotools.version}</version>
+                <exclusions>
+                   <exclusion>
+                       <groupId>javax.media</groupId>
+                       <artifactId>jai_core</artifactId>
+                   </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
@@ -1253,17 +1265,33 @@
                         <groupId>java3d</groupId>
                         <artifactId>vecmath</artifactId>
                     </exclusion>
+                   <exclusion>
+                       <groupId>javax.media</groupId>
+                       <artifactId>jai_core</artifactId>
+                   </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-metadata</artifactId>
                 <version>${geotools.version}</version>
+                <exclusions>
+                   <exclusion>
+                       <groupId>javax.media</groupId>
+                       <artifactId>jai_core</artifactId>
+                   </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-opengis</artifactId>
                 <version>${geotools.version}</version>
+                <exclusions>
+                   <exclusion>
+                       <groupId>javax.media</groupId>
+                       <artifactId>jai_core</artifactId>
+                   </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>java3d</groupId>
@@ -1274,6 +1302,12 @@
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-api</artifactId>
                 <version>${geotools.version}</version>
+                <exclusions>
+                   <exclusion>
+                       <groupId>javax.media</groupId>
+                       <artifactId>jai_core</artifactId>
+                   </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.reflections</groupId>

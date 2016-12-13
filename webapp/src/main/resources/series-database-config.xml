@@ -37,7 +37,11 @@
                 <prop key="hibernate.format_sql">true</prop>
             </props>
         </property>
-        <property name="mappingLocations" value="#{'\hbm\sos\v50'.split(',')}" />
+        <property name="mappingLocations" >
+            <list>
+               <value>classpath*:hbm/sos/v50/**/*.hbm.xml</value>
+            </list>
+        </property>
     </bean>
 
     <tx:annotation-driven />

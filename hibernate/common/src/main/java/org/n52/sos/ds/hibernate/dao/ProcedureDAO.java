@@ -56,6 +56,7 @@ import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -84,7 +85,6 @@ import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -869,7 +869,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @return Procedure object
      */
     public Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,
-            SosProcedureDescription procedureDescription, boolean isType, Session session) {
+            SosProcedureDescription<?> procedureDescription, boolean isType, Session session) {
         return getOrInsertProcedure(identifier, procedureDescriptionFormat,
                 procedureDescription.getParentProcedures(), procedureDescription.getTypeOf(), isType,
                 procedureDescription.isAggregation(), session);

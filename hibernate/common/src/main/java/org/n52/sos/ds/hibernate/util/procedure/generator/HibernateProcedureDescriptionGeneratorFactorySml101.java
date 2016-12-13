@@ -32,19 +32,18 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.n52.shetland.ogc.gml.AbstractFeature;
+
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.ProcessMethod;
 import org.n52.shetland.ogc.sensorML.ProcessModel;
 import org.n52.shetland.ogc.sensorML.RulesDefinition;
-import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.System;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 /**
  * Generator class for SensorML 1.0.1 procedure descriptions
@@ -64,7 +63,7 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101 implements Hibe
     }
 
     @Override
-    public SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
+    public SosProcedureDescription<?> create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
         return new HibernateProcedureDescriptionGeneratorSml101().generateProcedureDescription(procedure, i18n, session);
     }
 
@@ -86,16 +85,16 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101 implements Hibe
          *             If an error occurs
          */
         @Override
-        public SosProcedureDescription generateProcedureDescription(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
+        public SosProcedureDescription<?> generateProcedureDescription(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
             setLocale(i18n);
             // 2 try to get position from entity
             if (procedure.isSpatial()) {
                 // 2.1 if position is available -> system -> own class <- should
                 // be compliant with SWE lightweight profile
-                return new SosProcedureDescription<AbstractFeature>(createSmlSystem(procedure, session));
+                return new SosProcedureDescription<>(createSmlSystem(procedure, session));
             } else {
                 // 2.2 if no position is available -> processModel -> own class
-                return new SosProcedureDescription<AbstractFeature>(createSmlProcessModel(procedure, session));
+                return new SosProcedureDescription<>(createSmlProcessModel(procedure, session));
             }
         }
 

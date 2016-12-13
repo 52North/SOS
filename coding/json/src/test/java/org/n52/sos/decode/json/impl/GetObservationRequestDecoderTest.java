@@ -49,8 +49,8 @@ import org.n52.iceland.util.Constants;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
-import org.n52.sos.ConfiguredSettingsManager;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ConfiguredSettingsManager;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;

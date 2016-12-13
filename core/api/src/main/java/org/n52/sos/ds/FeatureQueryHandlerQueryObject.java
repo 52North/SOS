@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.n52.iceland.util.Constants;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.util.CollectionHelper;
 
@@ -118,7 +117,7 @@ public class FeatureQueryHandlerQueryObject {
         if (isSetFeatureIdentifiers() && getFeatureIdentifiers().size() == 1) {
             return getFeatureIdentifiers().iterator().next();
         }
-        return Constants.EMPTY_STRING;
+        return "";
     }
 
     public FeatureQueryHandlerQueryObject setVersion(String version) {

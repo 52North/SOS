@@ -140,11 +140,11 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         }
     }
 
-    private List<SmlIo<?>> createInputs(Set<String> observableProperties) throws OwsExceptionReport {
-        final List<SmlIo<?>> inputs = Lists.newArrayListWithExpectedSize(observableProperties.size());
+    private List<SmlIo> createInputs(Set<String> observableProperties) throws OwsExceptionReport {
+        final List<SmlIo> inputs = Lists.newArrayListWithExpectedSize(observableProperties.size());
         int i = 1;
         for (String observableProperty : observableProperties) {
-            inputs.add(new SmlIo<String>().setIoName("input#" + i++).setIoValue(getInputComponent(observableProperty)));
+            inputs.add(new SmlIo().setIoName("input#" + i++).setIoValue(getInputComponent(observableProperty)));
         }
         return inputs;
     }
@@ -164,15 +164,15 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private List<SmlIo<?>> createOutputs(Procedure procedure, Set<String> observableProperties, Session session)
+    private List<SmlIo> createOutputs(Procedure procedure, Set<String> observableProperties, Session session)
             throws OwsExceptionReport {
         try {
-            final List<SmlIo<?>> outputs = Lists.newArrayListWithExpectedSize(observableProperties.size());
+            final List<SmlIo> outputs = Lists.newArrayListWithExpectedSize(observableProperties.size());
             int i = 1;
             final boolean supportsObservationConstellation =
                     HibernateHelper.isEntitySupported(ObservationConstellation.class);
                 for (String observableProperty : observableProperties) {
-                    final SmlIo<?> output;
+                    final SmlIo output;
                     if (supportsObservationConstellation) {
                         output =
                                 createOutputFromObservationConstellation(procedure.getIdentifier(), observableProperty,
@@ -193,7 +193,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         }
     }
 
-    private SmlIo<?> createOutputFromObservationConstellation(String procedure, String observableProperty,
+    private SmlIo createOutputFromObservationConstellation(String procedure, String observableProperty,
             Session session) throws OwsExceptionReport {
         List<ObservationConstellation> observationConstellations =
                 new ObservationConstellationDAO().getObservationConstellations(procedure, observableProperty, session);
@@ -208,20 +208,20 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
                     if (!Strings.isNullOrEmpty(unit)) {
                         quantity.setUom(unit);
                     }
-                    return new SmlIo<>(quantity);
+                    return new SmlIo(quantity);
                 } else if (OmConstants.OBS_TYPE_CATEGORY_OBSERVATION.equals(observationType)) {
                     final SweCategory category = new SweCategory();
                     category.setDefinition(observableProperty);
                     if (!Strings.isNullOrEmpty(unit)) {
                         category.setUom(unit);
                     }
-                    return new SmlIo<>(category);
+                    return new SmlIo(category);
                 } else if (OmConstants.OBS_TYPE_COUNT_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<>(new SweCategory().setDefinition(observableProperty));
+                    return new SmlIo(new SweCategory().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_TEXT_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<>(new SweText().setDefinition(observableProperty));
+                    return new SmlIo(new SweText().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_TRUTH_OBSERVATION.equals(observationType)) {
-                    return new SmlIo<>(new SweBoolean().setDefinition(observableProperty));
+                    return new SmlIo(new SweBoolean().setDefinition(observableProperty));
                 } else if (OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION.equals(observationType)) {
                     // TODO implement GeometryObservation
                     logTypeNotSupported(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
@@ -305,9 +305,9 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         LOGGER.debug("ObservationType '{}' is not supported by the current implementation", observationType);
     }
 
-    private SmlIo<?> createOutputFromExampleObservation(String procedure, String observableProperty, Session session)
+    private SmlIo createOutputFromExampleObservation(String procedure, String observableProperty, Session session)
             throws OwsExceptionReport {
-        AbstractObservation exampleObservation = getExampleObservation(procedure, observableProperty, session);
+        AbstractObservation<?> exampleObservation = getExampleObservation(procedure, observableProperty, session);
         if (exampleObservation == null) {
             return null;
         }
@@ -315,16 +315,16 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
             // TODO implement BlobObservations
             logTypeNotSupported(BlobObservation.class);
         } else if (exampleObservation instanceof BooleanObservation) {
-            return new SmlIo<>(new SweBoolean().setDefinition(observableProperty));
+            return new SmlIo(new SweBoolean().setDefinition(observableProperty));
         } else if (exampleObservation instanceof CategoryObservation) {
             final SweCategory category = new SweCategory();
             category.setDefinition(observableProperty);
             if (exampleObservation.isSetUnit()) {
                 category.setUom(exampleObservation.getUnit().getUnit());
             }
-            return new SmlIo<>(category);
+            return new SmlIo(category);
         } else if (exampleObservation instanceof CountObservation) {
-            return new SmlIo<>(new SweCount().setDefinition(observableProperty));
+            return new SmlIo(new SweCount().setDefinition(observableProperty));
         } else if (exampleObservation instanceof GeometryObservation) {
             // TODO implement GeometryObservations
             logTypeNotSupported(GeometryObservation.class);
@@ -334,9 +334,9 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
             if (exampleObservation.isSetUnit()) {
                 quantity.setUom(exampleObservation.getUnit().getUnit());
             }
-            return new SmlIo<>(quantity);
+            return new SmlIo(quantity);
         } else if (exampleObservation instanceof TextObservation) {
-            return new SmlIo<>(new SweText().setDefinition(observableProperty));
+            return new SmlIo(new SweText().setDefinition(observableProperty));
         }
         return null;
     }

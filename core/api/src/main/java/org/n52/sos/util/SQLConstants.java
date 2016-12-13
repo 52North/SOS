@@ -28,15 +28,13 @@
  */
 package org.n52.sos.util;
 
-import org.n52.iceland.util.Constants;
-
 /**
  * Interface for SQL constanst
  *
  * @since 4.0.0
  *
  */
-public interface SQLConstants extends Constants {
+public interface SQLConstants {
 
     String SELECT = "SELECT";
 

@@ -170,7 +170,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private SosProcedureDescription getProcedureDescription(DescribeSensorRequest request, Session session)
+    private SosProcedureDescription<?> getProcedureDescription(DescribeSensorRequest request, Session session)
             throws OwsExceptionReport {
         final Procedure procedure = new ProcedureDAO().getProcedureForIdentifier(request.getProcedure(), session);
         if (procedure == null) {
@@ -209,13 +209,13 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
                 Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
                 String pdf = request.getProcedureDescriptionFormat();
                 String version = request.getVersion();
-                SosProcedureDescription sosProcedureDescription
+                SosProcedureDescription<?> sosProcedureDescription
                         = procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure, pdf,
                                 validProcedureTime, version, locale, session);
                 list.add(convertProcedureDescription(sosProcedureDescription, request));
             }
         } else {
-            SosProcedureDescription procedureDescription = getProcedureDescription(request, session);
+            SosProcedureDescription<?> procedureDescription = getProcedureDescription(request, session);
             if (procedureDescription != null) {
                 list.add(procedureDescription);
             } else {
@@ -273,12 +273,12 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
         return possibleFormats;
     }
 
-    private SosProcedureDescription convertProcedureDescription(
-            SosProcedureDescription procedureDescription,
+    private SosProcedureDescription<?> convertProcedureDescription(
+            SosProcedureDescription<?> procedureDescription,
                                                                 DescribeSensorRequest request)
             throws CodedException {
         if (!checkForUrlVsMimeType(procedureDescription.getDescriptionFormat()).contains(request.getProcedureDescriptionFormat())) {
-            Converter<SosProcedureDescription, SosProcedureDescription> converter =
+            Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> converter =
                     converterRepository.getConverter(procedureDescription.getDescriptionFormat(), request.getProcedureDescriptionFormat());
             if (converter != null) {
                 try {

@@ -122,10 +122,10 @@ public abstract class AbstractWaterMLv20SensorMLConverter
         }
     }
 
-    private List<SmlIo<?>> convertObservationProcessInputsToSMLInputs(final List<ReferenceType> inputs) {
-        final List<SmlIo<?>> smlInputs = new ArrayList<SmlIo<?>>(inputs.size());
+    private List<SmlIo> convertObservationProcessInputsToSMLInputs(final List<ReferenceType> inputs) {
+        final List<SmlIo> smlInputs = new ArrayList<>(inputs.size());
         for (final ReferenceType referenceType : inputs) {
-            final SmlIo<String> io = new SmlIo<String>();
+            final SmlIo io = new SmlIo();
             if (referenceType.isSetTitle()) {
                 io.setIoName(referenceType.getTitle());
             }
@@ -242,8 +242,8 @@ public abstract class AbstractWaterMLv20SensorMLConverter
     }
 
     private void convertSMLOutputsToObservationProcessParameter(final ObservationProcess observationProcess,
-            final List<SmlIo<?>> outputs) {
-        for (final SmlIo<?> sosSMLIo : outputs) {
+            final List<SmlIo> outputs) {
+        for (final SmlIo sosSMLIo : outputs) {
             final ReferenceType referenceType = new ReferenceType("output");
             final NamedValue<String> namedValueProperty = new NamedValue<String>();
             namedValueProperty.setName(referenceType);
@@ -252,9 +252,9 @@ public abstract class AbstractWaterMLv20SensorMLConverter
         }
     }
 
-    private List<ReferenceType> convertSMLInputsToObservationProcessInputs(final List<SmlIo<?>> inputs) {
+    private List<ReferenceType> convertSMLInputsToObservationProcessInputs(final List<SmlIo> inputs) {
         final List<ReferenceType> oPInputs = new ArrayList<ReferenceType>(inputs.size());
-        for (final SmlIo<?> sosSMLIo : inputs) {
+        for (final SmlIo sosSMLIo : inputs) {
             final ReferenceType refType = new ReferenceType(sosSMLIo.getIoValue().getDefinition());
             refType.setTitle(sosSMLIo.getIoName());
             oPInputs.add(refType);

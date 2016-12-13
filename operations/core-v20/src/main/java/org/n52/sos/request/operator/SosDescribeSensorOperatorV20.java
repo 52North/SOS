@@ -65,6 +65,8 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.shetland.ogc.swe.DataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.SweSimpleDataRecord;
@@ -72,8 +74,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.request.ProcedureRequestSettingProvider;
-import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
-import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -542,8 +542,8 @@ public class SosDescribeSensorOperatorV20 extends
          *            SOS component list
          * @return Child outputs
          */
-        private Collection<? extends SmlIo<?>> getOutputsFromChilds(final List<SmlComponent> smlComponents) {
-            final Set<SmlIo<?>> outputs = Sets.newHashSet();
+        private Collection<SmlIo> getOutputsFromChilds(final List<SmlComponent> smlComponents) {
+            final Set<SmlIo> outputs = Sets.newHashSet();
             for (final SmlComponent sosSMLComponent : smlComponents) {
                 if (sosSMLComponent.isSetProcess()) {
                     if (sosSMLComponent.getProcess() instanceof SensorML) {

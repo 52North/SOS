@@ -180,7 +180,7 @@ public abstract class AbstractOmObservationCreator {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected SosProcedureDescription createProcedure(String identifier) throws ConverterException, OwsExceptionReport {
+    protected SosProcedureDescription<?> createProcedure(String identifier) throws ConverterException, OwsExceptionReport {
         Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(identifier, getSession());
         String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
         if (getActiveProfile().isEncodeProcedureInObservation()) {

@@ -36,11 +36,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
@@ -49,6 +44,11 @@ import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.OwsNoValues;
 import org.n52.shetland.ogc.ows.OwsValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 
 /**
  * interface for getting capabilities for a passed GetCapabilities request from
@@ -93,7 +93,7 @@ public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHa
         // set param Sections
         List<String> sections = new LinkedList<>();
         /* common sections */
-        Arrays.stream(SosConstants.CapabilitiesSections.values()).map(Enum::name).forEach(sections::add);
+        Arrays.stream(SosConstants.CapabilitiesSections.values()).map(e -> e.name()).forEach(sections::add);
 
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
             sections.add(Sos1Constants.CapabilitiesSections.Filter_Capabilities.name());

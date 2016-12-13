@@ -30,14 +30,14 @@ package org.n52.sos.ds.hibernate.util.procedure.create;
 
 import java.util.Locale;
 
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
+
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
@@ -51,9 +51,9 @@ public class XmlStringDescriptionCreationStrategy
         implements DescriptionCreationStrategy {
 
     @Override
-    public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
+    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
-        SosProcedureDescription desc = new SosProcedureDescription<AbstractFeature>(readXml(p.getDescriptionFile()));
+        SosProcedureDescription<?> desc = new SosProcedureDescription<>(readXml(p.getDescriptionFile()));
         desc.setIdentifier(p.getIdentifier());
         desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
         return desc;

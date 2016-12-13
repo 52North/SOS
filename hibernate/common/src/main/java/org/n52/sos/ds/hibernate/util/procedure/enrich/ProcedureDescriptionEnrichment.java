@@ -35,14 +35,13 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 
-import org.n52.sos.cache.SosContentCache;
+import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sensorML.AbstractProcess;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.I18NHelper;
 
@@ -56,7 +55,7 @@ import com.google.common.collect.Lists;
  */
 public abstract class ProcedureDescriptionEnrichment {
     private static final IsApplicable IS_APPLICABLE = new IsApplicable();
-    private SosProcedureDescription description;
+    private SosProcedureDescription<?> description;
     private String version;
     private String identifier;
     private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
@@ -87,11 +86,11 @@ public abstract class ProcedureDescriptionEnrichment {
         return offerings;
     }
 
-    public SosProcedureDescription getDescription() {
+    public SosProcedureDescription<?> getDescription() {
         return description;
     }
 
-    public ProcedureDescriptionEnrichment setDescription(SosProcedureDescription description) {
+    public ProcedureDescriptionEnrichment setDescription(SosProcedureDescription<?> description) {
         this.description = checkNotNull(description);
         return this;
     }

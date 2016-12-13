@@ -28,8 +28,6 @@
  */
 package org.hibernate.criterion;
 
-import org.n52.iceland.util.Constants;
-
 /**
  * Helper class to create Hibernate LikeExpression
  *
@@ -57,7 +55,7 @@ public class HibernateCriterionHelper {
      */
     public static LikeExpression getLikeExpression(String propertyName, String value, MatchMode matchMode,
             Character escapeChar, boolean ignoreCase) {
-        return new LikeExpression(propertyName, value, MatchMode.ANYWHERE, Constants.DOLLAR_CHAR, ignoreCase);
+        return new LikeExpression(propertyName, value, MatchMode.ANYWHERE, '$', ignoreCase);
     }
 
 }

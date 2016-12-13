@@ -210,7 +210,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
             HashSet<T> newHashSet = Sets.newHashSet();
             Iterator<Set<T>> iterator = set.iterator();
             while (iterator.hasNext()) {
-                newHashSet.addAll((Set<T>) iterator.next());
+                newHashSet.addAll(iterator.next());
             }
             return Collections.unmodifiableSet(newHashSet);
         }
@@ -387,118 +387,118 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
 
     private int defaultEpsgCode = Constants.EPSG_WGS84;
 
-    private Map<String, DateTime> maxPhenomenonTimeForOfferings = newSynchronizedMap();
+    private final Map<String, DateTime> maxPhenomenonTimeForOfferings = newSynchronizedMap();
 
-    private Map<String, DateTime> minPhenomenonTimeForOfferings = newSynchronizedMap();
+    private final Map<String, DateTime> minPhenomenonTimeForOfferings = newSynchronizedMap();
 
-    private Map<String, DateTime> maxResultTimeForOfferings = newSynchronizedMap();
+    private final Map<String, DateTime> maxResultTimeForOfferings = newSynchronizedMap();
 
-    private Map<String, DateTime> minResultTimeForOfferings = newSynchronizedMap();
+    private final Map<String, DateTime> minResultTimeForOfferings = newSynchronizedMap();
 
-    private Map<String, DateTime> maxPhenomenonTimeForProcedures = newSynchronizedMap();
+    private final  Map<String, DateTime> maxPhenomenonTimeForProcedures = newSynchronizedMap();
 
-    private Map<String, DateTime> minPhenomenonTimeForProcedures = newSynchronizedMap();
+    private final Map<String, DateTime> minPhenomenonTimeForProcedures = newSynchronizedMap();
 
-    private SetMultiMap<String, String> allowedObservationTypeForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> allowedObservationTypeForOfferings = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> allowedFeatureOfInterestTypeForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> allowedFeatureOfInterestTypeForOfferings = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> childFeaturesForFeatureOfInterest = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> childFeaturesForFeatureOfInterest = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> childProceduresForProcedures = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> childProceduresForProcedures = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> compositePhenomenonForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> compositePhenomenonForOfferings = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> featuresOfInterestForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> featuresOfInterestForOfferings = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> featuresOfInterestForResultTemplates = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> featuresOfInterestForResultTemplates = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> observablePropertiesForCompositePhenomenons = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> observablePropertiesForCompositePhenomenons = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> observablePropertiesForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> observablePropertiesForOfferings = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> observablePropertiesForProcedures = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> observablePropertiesForProcedures = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> observationTypesForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> observationTypesForOfferings = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> featureOfInterestTypesForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> featureOfInterestTypesForOfferings = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> observedPropertiesForResultTemplates = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> observedPropertiesForResultTemplates = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> offeringsForObservableProperties = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> offeringsForObservableProperties = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> offeringsForProcedures = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> offeringsForProcedures = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> parentFeaturesForFeaturesOfInterest = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> parentFeaturesForFeaturesOfInterest = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> parentProceduresForProcedures = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> parentProceduresForProcedures = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> proceduresForFeaturesOfInterest = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> proceduresForFeaturesOfInterest = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> proceduresForObservableProperties = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> proceduresForObservableProperties = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> proceduresForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> proceduresForOfferings = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> hiddenChildProceduresForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> hiddenChildProceduresForOfferings = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> relatedFeaturesForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> relatedFeaturesForOfferings = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> resultTemplatesForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> resultTemplatesForOfferings = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> rolesForRelatedFeatures = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> rolesForRelatedFeatures = newSynchronizedSetMultiMap();
 
-    private Map<String, ReferencedEnvelope> envelopeForOfferings = newSynchronizedMap();
+    private final Map<String, ReferencedEnvelope> envelopeForOfferings = newSynchronizedMap();
 
-    private Map<String, String> nameForOfferings = newSynchronizedMap();
+    private final Map<String, String> nameForOfferings = newSynchronizedMap();
 
-    private Map<String, MultilingualString> i18nNameForOfferings = newSynchronizedMap();
+    private final Map<String, MultilingualString> i18nNameForOfferings = newSynchronizedMap();
 
-    private Map<String, MultilingualString> i18nDescriptionForOfferings = newSynchronizedMap();
+    private final Map<String, MultilingualString> i18nDescriptionForOfferings = newSynchronizedMap();
 
-    private Set<Integer> epsgCodes = newSynchronizedSet();
+    private final Set<Integer> epsgCodes = newSynchronizedSet();
 
-    private Set<String> featuresOfInterest = newSynchronizedSet();
+    private final Set<String> featuresOfInterest = newSynchronizedSet();
 
-    private Set<String> procedures = newSynchronizedSet();
+    private final Set<String> procedures = newSynchronizedSet();
 
-    private Set<String> resultTemplates = newSynchronizedSet();
+    private final Set<String> resultTemplates = newSynchronizedSet();
 
-    private Set<String> offerings = newSynchronizedSet();
+    private final Set<String> offerings = newSynchronizedSet();
 
     private ReferencedEnvelope globalEnvelope = new ReferencedEnvelope(null, defaultEpsgCode);
 
-    private TimePeriod globalPhenomenonTimeEnvelope = new TimePeriod();
+    private final TimePeriod globalPhenomenonTimeEnvelope = new TimePeriod();
 
-    private TimePeriod globalResultTimeEnvelope = new TimePeriod();
+    private final TimePeriod globalResultTimeEnvelope = new TimePeriod();
 
-    private Map<String, ReferencedEnvelope> spatialFilteringProfileEnvelopeForOfferings = newSynchronizedMap();
+    private final Map<String, ReferencedEnvelope> spatialFilteringProfileEnvelopeForOfferings = newSynchronizedMap();
 
-    private Set<Locale> supportedLanguages = newSynchronizedSet();
+    private final Set<Locale> supportedLanguages = newSynchronizedSet();
 
-    private Set<String> requestableProcedureDescriptionFormats  = newSynchronizedSet();
+    private final Set<String> requestableProcedureDescriptionFormats  = newSynchronizedSet();
 
 
-    private BiMap<String, String> featureOfInterestIdentifierHumanReadableName = newSynchronizedBiMap();
+    private final BiMap<String, String> featureOfInterestIdentifierHumanReadableName = newSynchronizedBiMap();
 
 //    private Map<String, String> featureOfInterestHumanReadableNameForIdentifier = newSynchronizedMap();
 
-    private BiMap<String, String> observablePropertyIdentifierHumanReadableName = newSynchronizedBiMap();
+    private final BiMap<String, String> observablePropertyIdentifierHumanReadableName = newSynchronizedBiMap();
 
 //    private Map<String, String> observablePropertyHumanReadableNameForIdentifier = newSynchronizedMap();
 
-    private BiMap<String, String> procedureIdentifierHumanReadableName = newSynchronizedBiMap();
+    private final BiMap<String, String> procedureIdentifierHumanReadableName = newSynchronizedBiMap();
 
 //    private Map<String, String> procedureHumanReadableNameForIdentifier = newSynchronizedMap();
 
-    private BiMap<String, String> offeringIdentifierHumanReadableName = newSynchronizedBiMap();
+    private final BiMap<String, String> offeringIdentifierHumanReadableName = newSynchronizedBiMap();
 
 //    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
 
-    private Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
+    private final Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
 
-    private Map<ComponentAggregation, Set<String>> componentAggregationProcedures = newSynchronizedMap();
+    private final Map<ComponentAggregation, Set<String>> componentAggregationProcedures = newSynchronizedMap();
 
-    private Map<String, Set<String>> typeOfProceduresMap = newSynchronizedMap();
+    private final Map<String, Set<String>> typeOfProceduresMap = newSynchronizedMap();
 
     protected static Logger getLogger() {
         return null;

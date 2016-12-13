@@ -37,8 +37,8 @@ import org.hibernate.Session;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.util.LocalizedProducer;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
@@ -47,7 +47,8 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.v20.AbstractProcessV20;
-import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.DescriptionXmlEntity;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescriptionFormat;
@@ -61,7 +62,6 @@ import org.n52.sos.ds.hibernate.util.procedure.create.ValidProcedureTimeDescript
 import org.n52.sos.ds.hibernate.util.procedure.create.XmlStringDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.enrich.ProcedureDescriptionEnrichments;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -104,7 +104,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription createSosProcedureDescription(
+    public SosProcedureDescription<?> createSosProcedureDescription(
             Procedure procedure,
             String requestedDescriptionFormat,
             String requestedServiceVersion,
@@ -134,7 +134,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription createSosProcedureDescription(
+    public SosProcedureDescription<?> createSosProcedureDescription(
             Procedure procedure,
             String requestedDescriptionFormat,
             String requestedServiceVersion,
@@ -148,7 +148,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
         }
         checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), procedure, requestedDescriptionFormat,
                 getFormat(procedure));
-        SosProcedureDescription desc = create(procedure, requestedDescriptionFormat, null, i18n, session).orNull();
+        SosProcedureDescription<?> desc = create(procedure, requestedDescriptionFormat, null, i18n, session).orNull();
         if (desc != null) {
             addHumanReadableName(desc, procedure);
             enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null, loadedProcedures, i18n,
@@ -179,7 +179,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription createSosProcedureDescriptionFromValidProcedureTime(Procedure procedure,
+    public SosProcedureDescription<?> createSosProcedureDescriptionFromValidProcedureTime(Procedure procedure,
             String requestedDescriptionFormat, ValidProcedureTime vpt, String version, Locale i18n, Session session)
             throws OwsExceptionReport {
         if (vpt != null) {
@@ -189,14 +189,14 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
             checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), procedure, requestedDescriptionFormat,
                     getFormat(procedure));
         }
-        Optional<SosProcedureDescription> description =
+        Optional<SosProcedureDescription<?>> description =
                 create(procedure, requestedDescriptionFormat, vpt, i18n, session);
         if (description.isPresent()) {
             addHumanReadableName(description.get(), procedure);
             enrich(description.get(), procedure, version, requestedDescriptionFormat, getValidTime(vpt), null, i18n,
                     session);
             if (!requestedDescriptionFormat.equals(description.get().getDescriptionFormat())) {
-                SosProcedureDescription converted =
+                SosProcedureDescription<?> converted =
                         convert(description.get().getDescriptionFormat(), requestedDescriptionFormat,
                                 description.get());
                 converted.setDescriptionFormat(requestedDescriptionFormat);
@@ -206,14 +206,14 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
         return description.orNull();
     }
 
-    public SosProcedureDescription createSosProcedureDescription(Procedure procedure,
+    public SosProcedureDescription<?> createSosProcedureDescription(Procedure procedure,
             String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n, Session session)
             throws OwsExceptionReport {
         return createSosProcedureDescription(procedure, requestedDescriptionFormat, requestedServiceVersion, null,
                 i18n, session);
     }
 
-    private void addHumanReadableName(SosProcedureDescription desc, Procedure procedure) {
+    private void addHumanReadableName(SosProcedureDescription<?> desc, Procedure procedure) {
         if (!desc.isSetHumanReadableIdentifier() && procedure.isSetName()) {
             desc.setHumanReadableIdentifier(procedure.getName());
         }
@@ -270,7 +270,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
                 .hasHibernateProcedureDescriptionGeneratorFactory(descriptionFormat);
     }
 
-    private Optional<SosProcedureDescription> create(Procedure procedure, String descriptionFormat,
+    private Optional<SosProcedureDescription<?>> create(Procedure procedure, String descriptionFormat,
             ValidProcedureTime vpt, Locale i18n, Session session) throws OwsExceptionReport {
         Optional<DescriptionCreationStrategy> strategy = getCreationStrategy(procedure, vpt);
         if (strategy.isPresent()) {
@@ -317,7 +317,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport
      *             if the enrichment fails
      */
-    private void enrich(SosProcedureDescription desc, Procedure procedure, String version, String format,
+    private void enrich(SosProcedureDescription<?> desc, Procedure procedure, String version, String format,
             TimePeriod validTime, Map<String, Procedure> cache, Locale language, Session session)
             throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
@@ -360,10 +360,10 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport
      *             if conversion fails
      */
-    private SosProcedureDescription convert(String fromFormat, String toFormat, SosProcedureDescription description)
+    private SosProcedureDescription<?> convert(String fromFormat, String toFormat, SosProcedureDescription<?> description)
             throws OwsExceptionReport {
         try {
-            Converter<SosProcedureDescription, Object> converter =
+            Converter<SosProcedureDescription<?>, Object> converter =
                     ConverterRepository.getInstance().getConverter(fromFormat, toFormat);
             if (converter != null) {
                 return converter.convert(description);

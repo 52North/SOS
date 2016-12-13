@@ -12,6 +12,7 @@
 
     <bean id="serviceMetadataRepository" class="org.n52.iceland.ogc.ows.ServiceMetadataRepositoryImpl" />
 
+
     <bean id="documentBuilderProvider" class="org.n52.iceland.coding.DocumentBuilderProvider" />
 	<bean id="bindingRepository" class="org.n52.iceland.binding.BindingRepository" />
 	<bean id="codingRepository" class="org.n52.iceland.coding.CodingRepository" />
@@ -27,8 +28,6 @@
 	<bean id="serviceOperatorRepository" class="org.n52.iceland.service.operator.ServiceOperatorRepository" />
 	<bean id="requestOperatorRepository" class="org.n52.iceland.request.operator.RequestOperatorRepository" />
 	<bean id="converterRepository" class="org.n52.iceland.convert.ConverterRepository" />
-	<bean id="decoderRepository" class="org.n52.svalbard.decode.DecoderRepository" />
-	<!-- <bean id="encoderRepository" class="org.n52.svalbard.coding.EncoderRepository" /> -->
 
 	<bean id="serviceConfiguration" class="org.n52.iceland.service.ServiceConfiguration" />
 

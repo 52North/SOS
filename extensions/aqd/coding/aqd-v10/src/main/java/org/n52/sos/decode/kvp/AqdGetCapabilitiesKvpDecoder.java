@@ -39,7 +39,7 @@ import org.n52.svalbard.decode.OperationDecoderKey;
 
 import com.google.common.collect.Sets;
 
-public class AqdGetCapabilitiesKvpDecoder extends GetCapabilitiesKvpDecoder{
+public class AqdGetCapabilitiesKvpDecoder extends GetCapabilitiesKvpDecoder {
 
     private static final Set<DecoderKey> KVP_DECODER_KEY_TYPE = Sets.<DecoderKey>newHashSet(
             new OperationDecoderKey(AqdConstants.AQD, null,                 SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
@@ -52,6 +52,5 @@ public class AqdGetCapabilitiesKvpDecoder extends GetCapabilitiesKvpDecoder{
     public Set<DecoderKey> getDecoderKeyTypes() {
         return  Collections.unmodifiableSet(KVP_DECODER_KEY_TYPE);
     }
-
 
 }

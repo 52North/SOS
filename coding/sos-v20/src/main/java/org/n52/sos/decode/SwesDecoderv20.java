@@ -252,13 +252,18 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20<OwsServiceCommunicati
                 }
 
                 final Object decodedObject = decoder.decode(xmlObject);
+
+                SosProcedureDescription<?> sosProcedureDescription = null;
                 if (decodedObject instanceof SosProcedureDescription) {
-                    SosProcedureDescription<?> sosProcedureDescription = (SosProcedureDescription) decodedObject;
-                    if (sensorDescription.isSetValidTime()) {
-                        sosProcedureDescription.setValidTime(getValidTime(sensorDescription.getValidTime()));
-                    }
-                    request.addProcedureDescriptionString(sosProcedureDescription);
+                    sosProcedureDescription = (SosProcedureDescription) decodedObject;
+                } else if (decodedObject instanceof AbstractFeature){
+                    sosProcedureDescription = new SosProcedureDescription<AbstractFeature>((AbstractFeature)decodedObject);
                 }
+
+                if (sensorDescription.isSetValidTime()) {
+                    sosProcedureDescription.setValidTime(getValidTime(sensorDescription.getValidTime()));
+                }
+                request.addProcedureDescriptionString(sosProcedureDescription);
             } catch (final XmlException xmle) {
                 throw new DecodingException("Error while parsing procedure description of UpdateSensor request!", xmle);
             }

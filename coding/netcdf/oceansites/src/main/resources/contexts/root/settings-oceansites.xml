@@ -80,7 +80,7 @@
         <property name="defaultValue" value="http://www.nexosproject.eu/dictionary/definitions.html#WMO_ID" />
     </bean>
     <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
-        <property name="key" value="ceansites.definition.site" />
+        <property name="key" value="oceansites.definition.site" />
         <property name="title" value="OceanSITES site definition" />
         <property name="description" value="The site code SensorML identifier definition." />
         <property name="order" value="8.0" />

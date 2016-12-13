@@ -7,5 +7,6 @@
     <bean class="org.n52.sos.netcdf.oceansites.OceanSITESHelper"/>
     <bean class="org.n52.sos.encode.OceanSITESEncoder"/>
     <bean class="org.n52.sos.encode.OceanSITESZipEncoder"/>
+    <bean class="org.n52.sos.netcdf.oceansites.OceanSITESHelper"/>
 
 </beans>

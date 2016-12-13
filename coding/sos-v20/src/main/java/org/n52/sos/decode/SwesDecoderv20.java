@@ -252,14 +252,14 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20<OwsServiceCommunicati
                 }
 
                 final Object decodedObject = decoder.decode(xmlObject);
-                
+
                 SosProcedureDescription<?> sosProcedureDescription = null;
                 if (decodedObject instanceof SosProcedureDescription) {
                     sosProcedureDescription = (SosProcedureDescription) decodedObject;
                 } else if (decodedObject instanceof AbstractFeature){
                     sosProcedureDescription = new SosProcedureDescription<AbstractFeature>((AbstractFeature)decodedObject);
                 }
-                
+
                 if (sensorDescription.isSetValidTime()) {
                     sosProcedureDescription.setValidTime(getValidTime(sensorDescription.getValidTime()));
                 }

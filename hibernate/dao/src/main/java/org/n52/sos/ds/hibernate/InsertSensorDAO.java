@@ -41,6 +41,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -271,11 +272,12 @@ private HibernateSessionHolder sessionHolder;
                 // TODO: get sensor description for procedure identifier
                 return "";
             }
-        }
-        // if procedureDescription not SensorML
-        else {
+        } else if (procedureDescription.getProcedureDescription() instanceof AbstractFeature) {
+            return procedureDescription.getProcedureDescription().getXml();
+        } else if (procedureDescription.isSetXml()) {
             return procedureDescription.getXml();
         }
+        return "";
     }
 
 }

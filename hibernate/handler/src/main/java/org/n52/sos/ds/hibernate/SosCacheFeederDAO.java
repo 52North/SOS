@@ -58,7 +58,6 @@ import org.n52.sos.ds.CacheFeederHandler;
 import org.n52.sos.ds.hibernate.cache.HibernateSessionStoreWrapper;
 import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
-import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,9 +82,6 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     private HibernateSessionStore sessionStore;
 
     @Inject
-    private ObservationSettingProvider observationSettingProvider;
-
-    @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
         this.sessionStore = sessionStore;
     }
@@ -95,15 +91,15 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
         this.defaultLocale = LocaleHelper.fromString(defaultLocale);
     }
 
-    @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
-        this.serviceMetadataRepository = repo;
-    }
+//    @Inject
+//    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+//        this.serviceMetadataRepository = repo;
+//    }
 
-    @Inject
-    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
-        this.i18NDAORepository = i18NDAORepository;
-    }
+//    @Inject
+//    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
+//        this.i18NDAORepository = i18NDAORepository;
+//    }
 
     @Setting(CACHE_THREAD_COUNT)
     public void setCacheThreadCount(int threads) throws ConfigurationError {

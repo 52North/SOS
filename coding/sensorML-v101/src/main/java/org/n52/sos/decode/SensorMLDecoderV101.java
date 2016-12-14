@@ -763,8 +763,8 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
      * @throws DecodingException
      *             * if an error occurs
      */
-    private List<SmlIo<?>> parseInputs(final Inputs inputs) throws DecodingException {
-        final List<SmlIo<?>> sosInputs = new ArrayList<>(inputs.getInputList().getInputArray().length);
+    private List<SmlIo> parseInputs(final Inputs inputs) throws DecodingException {
+        final List<SmlIo> sosInputs = new ArrayList<>(inputs.getInputList().getInputArray().length);
         for (final IoComponentPropertyType xbInput : inputs.getInputList().getInputArray()) {
             sosInputs.add(parseIoComponentPropertyType(xbInput));
         }
@@ -782,8 +782,8 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
      * @throws DecodingException
      *             * if an error occurs
      */
-    private List<SmlIo<?>> parseOutputs(final Outputs outputs) throws DecodingException {
-        final List<SmlIo<?>> sosOutputs = new ArrayList<>(outputs.getOutputList().getOutputArray().length);
+    private List<SmlIo> parseOutputs(final Outputs outputs) throws DecodingException {
+        final List<SmlIo> sosOutputs = new ArrayList<>(outputs.getOutputList().getOutputArray().length);
         for (final IoComponentPropertyType xbOutput : outputs.getOutputList().getOutputArray()) {
             sosOutputs.add(parseIoComponentPropertyType(xbOutput));
         }
@@ -829,9 +829,9 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
      *             * if an error occurs
      */
     @SuppressWarnings({ "rawtypes" })
-    private SmlIo<?> parseIoComponentPropertyType(final IoComponentPropertyType xbIoCompPropType)
+    private SmlIo parseIoComponentPropertyType(final IoComponentPropertyType xbIoCompPropType)
             throws DecodingException {
-        final SmlIo<?> sosIo = new SmlIo();
+        final SmlIo sosIo = new SmlIo();
         sosIo.setIoName(xbIoCompPropType.getName());
         XmlObject toDecode = null;
         if (xbIoCompPropType.isSetHref()) {

@@ -77,11 +77,11 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
     }
 
     @Override
-    public Map<String, NamedValue> getMetadata(DataAvailability dataAvailability) throws OwsExceptionReport {
+    public Map<String, NamedValue<?>> getMetadata(DataAvailability dataAvailability) throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            Map<String, NamedValue> map = new HashMap<>();
+            Map<String, NamedValue<?>> map = new HashMap<>();
 //            if (HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
 //                List<SeriesMetadata> metadataList = new SeriesMetadataDAO().getMetadata(series.getSeriesId(), session);
 //                if (CollectionHelper.isNotEmpty(metadataList)) {

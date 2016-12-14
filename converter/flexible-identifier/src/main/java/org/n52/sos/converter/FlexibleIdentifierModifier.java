@@ -532,7 +532,7 @@ public class FlexibleIdentifierModifier
     private void checkAbstractProcess(AbstractProcess procedure) {
         checkIdentificationCapabilities((AbstractSensorML)procedure);
         if (procedure.isSetOutputs()) {
-            for (SmlIo<?> output : procedure.getOutputs()) {
+            for (SmlIo output : procedure.getOutputs()) {
                 checkAbstractDataComponentForObservableProperty(output.getIoValue());
             }
         }

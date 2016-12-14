@@ -1208,11 +1208,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * @throws EncodingException
      *                            if an error occurs
      */
-    private Inputs createInputs(final List<SmlIo<?>> inputs) throws EncodingException {
+    private Inputs createInputs(final List<SmlIo> inputs) throws EncodingException {
         final Inputs xbInputs = Inputs.Factory.newInstance(getXmlOptions());
         final InputListType xbInputList = xbInputs.addNewInputList();
         int counter = 1;
-        for (final SmlIo<?> sosSMLIo : inputs) {
+        for (final SmlIo sosSMLIo : inputs) {
             if (!sosSMLIo.isSetName()) {
                 sosSMLIo.setIoName("input_" + counter++);
             } else {
@@ -1231,13 +1231,13 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      *
      * @return XML Outputs element
      */
-    private Outputs createOutputs(final List<SmlIo<?>> sosOutputs) throws EncodingException {
+    private Outputs createOutputs(final List<SmlIo> sosOutputs) throws EncodingException {
         final Outputs outputs = Outputs.Factory.newInstance(getXmlOptions());
         final OutputListType outputList = outputs.addNewOutputList();
         final Set<String> definitions = Sets.newHashSet();
         int counter = 1;
         final Set<String> outputNames = Sets.newHashSet();
-        for (final SmlIo<?> sosSMLIo : sosOutputs) {
+        for (final SmlIo sosSMLIo : sosOutputs) {
             if (sosSMLIo.isSetValue() && !definitions.contains(sosSMLIo.getIoValue().getDefinition())) {
                 if (!sosSMLIo.isSetName() || outputNames.contains(sosSMLIo.getIoName())) {
                     sosSMLIo.setIoName(getValidOutputName(counter++, outputNames));
@@ -1370,7 +1370,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      *
      * @throws EncodingException
      */
-    private void addInput(final Input input, final SmlIo<?> sosSMLIO) throws EncodingException {
+    private void addInput(final Input input, final SmlIo sosSMLIO) throws EncodingException {
         input.setName(sosSMLIO.getIoName());
         addDataComponentOrObservablePropertyType(input, sosSMLIO);
         // if (sosSMLIO.isSetHref()) {
@@ -1390,7 +1390,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     private void addDataComponentOrObservablePropertyType(DataComponentOrObservablePropertyType type,
-                                                          SmlIo<?> sosSMLIO) throws EncodingException {
+                                                          SmlIo sosSMLIO) throws EncodingException {
         if (sosSMLIO.isSetHref()) {
             type.setHref(sosSMLIO.getHref());
             if (sosSMLIO.isSetTitle()) {
@@ -1438,7 +1438,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
      * @param sosSMLIO
      *                 SOS SWE simple type.
      */
-    private void addOutput(final Output output, final SmlIo<?> sosSMLIO) throws EncodingException  {
+    private void addOutput(final Output output, final SmlIo sosSMLIO) throws EncodingException  {
         output.setName(sosSMLIO.getIoName());
         addDataComponentOrObservablePropertyType(output, sosSMLIO);
         // substitute(output.addNewAbstractDataComponent(),

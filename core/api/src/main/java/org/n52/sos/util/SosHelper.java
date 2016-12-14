@@ -472,7 +472,7 @@ public class SosHelper {
                         Lists.newArrayList(Double.toString(envelope.getMinX()), Double.toString(envelope.getMinY())));
     }
 
-    public static OmObservableProperty createSosOberavablePropertyFromSosSMLIo(final SmlIo<?> output) {
+    public static OmObservableProperty createSosOberavablePropertyFromSosSMLIo(final SmlIo output) {
         final SweAbstractDataComponent ioValue = output.getIoValue();
         final String identifier = ioValue.getDefinition();
         final String description = ioValue.getDescription();

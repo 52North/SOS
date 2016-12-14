@@ -204,17 +204,17 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
 //        final SweQuantity q1 = new SweQuantity();
 //        q1.setDefinition("def1");
 //        q1.setUom("uom1");
-//        final SmlIo<?> output1 = new SmlIo<SweQuantity>(q1);
+//        final SmlIo output1 = new SmlIo<SweQuantity>(q1);
 //
 //        final SweQuantity q2 = new SweQuantity();
 //        q2.setDefinition("def2");
 //        q2.setUom("uom2");
-//        final SmlIo<?> output2 = new SmlIo<SweQuantity>(q2);
+//        final SmlIo output2 = new SmlIo<SweQuantity>(q2);
 //
 //        final SweQuantity q3 = new SweQuantity();
 //        q3.setDefinition("def3");
 //        q3.setUom("uom3");
-//        final SmlIo<?> output3 = new SmlIo<SweQuantity>(q3);
+//        final SmlIo output3 = new SmlIo<SweQuantity>(q3);
 //
 //        final SensorML sensorMl = new SensorML();
 //        sensorMl.setIdentifier("sensorMl");

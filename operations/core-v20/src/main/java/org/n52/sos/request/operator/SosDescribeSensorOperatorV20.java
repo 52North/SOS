@@ -542,8 +542,8 @@ public class SosDescribeSensorOperatorV20 extends
          *            SOS component list
          * @return Child outputs
          */
-        private Collection<? extends SmlIo<?>> getOutputsFromChilds(final List<SmlComponent> smlComponents) {
-            final Set<SmlIo<?>> outputs = Sets.newHashSet();
+        private Collection<? extends SmlIo> getOutputsFromChilds(final List<SmlComponent> smlComponents) {
+            final Set<SmlIo> outputs = Sets.newHashSet();
             for (final SmlComponent sosSMLComponent : smlComponents) {
                 if (sosSMLComponent.isSetProcess()) {
                     if (sosSMLComponent.getProcess() instanceof SensorML) {

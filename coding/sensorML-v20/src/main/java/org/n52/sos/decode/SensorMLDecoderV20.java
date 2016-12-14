@@ -623,9 +623,9 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         return smlContacts;
     }
 
-    private List<SmlIo<?>> parseInputs(Inputs inputs) throws DecodingException {
+    private List<SmlIo> parseInputs(Inputs inputs) throws DecodingException {
         if (CollectionHelper.isNotNullOrEmpty(inputs.getInputList().getInputArray())) {
-            final List<SmlIo<?>> sosInputs = new ArrayList<>(inputs.getInputList().getInputArray().length);
+            final List<SmlIo> sosInputs = new ArrayList<>(inputs.getInputList().getInputArray().length);
             for (final Input xbInput : inputs.getInputList().getInputArray()) {
                 sosInputs.add(parseInput(xbInput));
             }
@@ -634,9 +634,9 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         return Collections.emptyList();
     }
 
-    private List<SmlIo<?>> parseOutputs(Outputs outputs) throws DecodingException {
+    private List<SmlIo> parseOutputs(Outputs outputs) throws DecodingException {
         if (CollectionHelper.isNotNullOrEmpty(outputs.getOutputList().getOutputArray())) {
-            final List<SmlIo<?>> sosOutputs = new ArrayList<>(outputs.getOutputList().getOutputArray().length);
+            final List<SmlIo> sosOutputs = new ArrayList<>(outputs.getOutputList().getOutputArray().length);
             for (final Output xbOutput : outputs.getOutputList().getOutputArray()) {
                 sosOutputs.add(parseOutput(xbOutput));
             }
@@ -773,8 +773,8 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     }
 
     @SuppressWarnings({ "rawtypes" })
-    private SmlIo<?> parseInput(Input xbInput) throws DecodingException {
-        final SmlIo<?> sosIo = new SmlIo();
+    private SmlIo parseInput(Input xbInput) throws DecodingException {
+        final SmlIo sosIo = new SmlIo();
         sosIo.setIoName(xbInput.getName());
         if (xbInput.isSetHref()) {
             parseReference(xbInput, sosIo);
@@ -785,7 +785,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         return sosIo;
     }
 
-    private void parseReference(DataComponentOrObservablePropertyType adcpt, SmlIo<?> sosIo) {
+    private void parseReference(DataComponentOrObservablePropertyType adcpt, SmlIo sosIo) {
         sosIo.setHref(adcpt.getHref());
         if (adcpt.isSetTitle()) {
             sosIo.setTitle(adcpt.getTitle());
@@ -794,8 +794,8 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     }
 
     @SuppressWarnings({ "rawtypes" })
-    private SmlIo<?> parseOutput(Output xbOutput) throws DecodingException {
-        final SmlIo<?> sosIo = new SmlIo();
+    private SmlIo parseOutput(Output xbOutput) throws DecodingException {
+        final SmlIo sosIo = new SmlIo();
         sosIo.setIoName(xbOutput.getName());
         if (xbOutput.isSetHref()) {
             parseReference(xbOutput, sosIo);

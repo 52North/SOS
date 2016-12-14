@@ -1034,11 +1034,11 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
      * @throws EncodingException
      *             if an error occurs
      */
-    private Inputs createInputs(List<SmlIo<?>> inputs) throws EncodingException {
+    private Inputs createInputs(List<SmlIo> inputs) throws EncodingException {
         Inputs xbInputs = Inputs.Factory.newInstance(getXmlOptions());
         InputList xbInputList = xbInputs.addNewInputList();
         int counter = 1;
-        for (SmlIo<?> sosSMLIo : inputs) {
+        for (SmlIo sosSMLIo : inputs) {
             if (!sosSMLIo.isSetName()) {
                 sosSMLIo.setIoName("input_" + counter++);
             }
@@ -1056,13 +1056,13 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
      *
      * @throws EncodingException
      */
-    private Outputs createOutputs(final List<SmlIo<?>> sosOutputs) throws EncodingException {
+    private Outputs createOutputs(final List<SmlIo> sosOutputs) throws EncodingException {
         Outputs outputs = Outputs.Factory.newInstance(getXmlOptions());
         OutputList outputList = outputs.addNewOutputList();
         Set<String> definitions = Sets.newHashSet();
         int counter = 1;
         Set<String> outputNames = Sets.newHashSet();
-        for (SmlIo<?> sosSMLIo : sosOutputs) {
+        for (SmlIo sosSMLIo : sosOutputs) {
             if (sosSMLIo.isSetValue() && !definitions.contains(sosSMLIo.getIoValue().getDefinition())) {
                 if (!sosSMLIo.isSetName() || outputNames.contains(sosSMLIo.getIoName())) {
                     sosSMLIo.setIoName(getValidOutputName(counter++, outputNames));
@@ -1183,7 +1183,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
      * @throws EncodingException
      */
     private void addIoComponentPropertyType(final IoComponentPropertyType ioComponentPropertyType,
-            final SmlIo<?> sosSMLIO) throws EncodingException {
+            final SmlIo sosSMLIO) throws EncodingException {
         ioComponentPropertyType.setName(sosSMLIO.getIoName());
         if (sosSMLIO.isSetHref()) {
             ioComponentPropertyType.setHref(sosSMLIO.getTitle());

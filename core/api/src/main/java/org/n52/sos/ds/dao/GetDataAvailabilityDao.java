@@ -46,6 +46,6 @@ public interface GetDataAvailabilityDao {
 
     List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request) throws OwsExceptionReport;
 
-    Map<String, NamedValue> getMetadata(DataAvailability dataAvailability) throws OwsExceptionReport;
+    Map<String, NamedValue<?>> getMetadata(DataAvailability dataAvailability) throws OwsExceptionReport;
 
 }

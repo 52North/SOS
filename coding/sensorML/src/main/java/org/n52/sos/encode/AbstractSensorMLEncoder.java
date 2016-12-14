@@ -371,8 +371,8 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<XmlObje
 //     *            SOS component list
 //     * @return Child outputs
 //     */
-//    protected Collection<? extends SmlIo<?>> getOutputsFromChilds(final List<SmlComponent> smlComponents) {
-//        final Set<SmlIo<?>> outputs = Sets.newHashSet();
+//    protected Collection<? extends SmlIo> getOutputsFromChilds(final List<SmlComponent> smlComponents) {
+//        final Set<SmlIo> outputs = Sets.newHashSet();
 //        for (final SmlComponent sosSMLComponent : smlComponents) {
 //            if (sosSMLComponent.isSetProcess()) {
 //                if (sosSMLComponent.getProcess() instanceof SensorML) {

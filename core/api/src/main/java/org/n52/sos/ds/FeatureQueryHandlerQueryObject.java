@@ -92,10 +92,6 @@ public class FeatureQueryHandlerQueryObject {
         return getFeatures() != null && !getFeatures().isEmpty();
     }
 
-    public Set<String> getFeatureIdentifier() {
-        return getFeatures();
-    }
-
     public List<SpatialFilter> getSpatialFilters() {
         return spatialFilters;
     }
@@ -167,8 +163,8 @@ public class FeatureQueryHandlerQueryObject {
     }
 
     public String getFeatureIdentifier() {
-        if (isSetFeatureIdentifiers() && getFeatureIdentifiers().size() == 1) {
-            return getFeatureIdentifiers().iterator().next();
+        if (!getFeatures().isEmpty()) {
+            return getFeatures().iterator().next();
         }
         return "";
     }

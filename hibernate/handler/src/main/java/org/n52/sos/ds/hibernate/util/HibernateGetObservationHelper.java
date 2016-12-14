@@ -259,7 +259,7 @@ public class HibernateGetObservationHelper {
             if (resultFilter.isSetEscapeString()) {
                 return HibernateCriterionHelper.getLikeExpression(AbstractLegacyObservation.DESCRIPTION,
                         checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE,
-                        Constants.DOLLAR_CHAR, true);
+                        '$', true);
             } else {
                 return Restrictions.like(AbstractLegacyObservation.DESCRIPTION,
                         checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE);
@@ -282,14 +282,14 @@ public class HibernateGetObservationHelper {
      */
     public static String checkValueForWildcardSingleCharAndEscape(ComparisonFilter resultFilter) {
         String value = resultFilter.getValue();
-        if (resultFilter.isSetSingleChar() && !resultFilter.getSingleChar().equals(Constants.PERCENT_STRING)) {
-            value = value.replace(resultFilter.getSingleChar(), Constants.UNDERSCORE_STRING);
+        if (resultFilter.isSetSingleChar() && !resultFilter.getSingleChar().equals("%")) {
+            value = value.replace(resultFilter.getSingleChar(), "_");
         }
-        if (resultFilter.isSetWildCard() && !resultFilter.getWildCard().equals(Constants.UNDERSCORE_STRING)) {
-            value = value.replace(resultFilter.getWildCard(), Constants.UNDERSCORE_STRING);
+        if (resultFilter.isSetWildCard() && !resultFilter.getWildCard().equals("_")) {
+            value = value.replace(resultFilter.getWildCard(), "_");
         }
-        if (resultFilter.isSetEscapeString() && !resultFilter.getEscapeString().equals(Constants.DOLLAR_STRING)) {
-            value = value.replace(resultFilter.getWildCard(), Constants.UNDERSCORE_STRING);
+        if (resultFilter.isSetEscapeString() && !resultFilter.getEscapeString().equals("$")) {
+            value = value.replace(resultFilter.getWildCard(), "_");
         }
         return value;
     }

@@ -218,13 +218,13 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     @Override
     protected String toURL(Map<String, Object> settings) {
         StringBuilder builder = new StringBuilder("jdbc:sqlserver://");
-        builder.append(settings.get(HOST_KEY)).append(Constants.COLON_CHAR);
-        builder.append(settings.get(PORT_KEY)).append(Constants.SEMICOLON_CHAR);
+        builder.append(settings.get(HOST_KEY)).append(':');
+        builder.append(settings.get(PORT_KEY)).append(';');
         if (settings.containsKey(INSTANCE_KEY) &&
                 settings.get(INSTANCE_KEY) != null &&
                 settings.get(INSTANCE_KEY) instanceof String &&
                 !((String)settings.get(INSTANCE_KEY)).isEmpty()) {
-            builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(Constants.SEMICOLON_CHAR);
+            builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(';');
         }
         builder.append(URL_DATABASE_NAME).append(settings.get(DATABASE_KEY));
         return builder.toString();

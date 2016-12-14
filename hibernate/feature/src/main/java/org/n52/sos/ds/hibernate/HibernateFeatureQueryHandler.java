@@ -191,13 +191,13 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                             getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry())));
                 }
                 if (queryObject.isSetSpatialFilters()) {
-                    c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, queryObject.getFeatureIdentifier()));
+                    c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, queryObject.getFeatures()));
                 }
                 return c.list();
             } else {
                 Criteria c = session.createCriteria(FeatureOfInterest.class);
                 if (queryObject.isSetFeatures()) {
-                    c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, queryObject.getFeatureIdentifier()));
+                    c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, queryObject.getFeatures()));
                 }
                 List<String> identifiers = new LinkedList<>();
                 if (queryObject.isSetSpatialFilters()) {
@@ -258,7 +258,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                             (Geometry) session
                                     .createCriteria(FeatureOfInterest.class)
                                     .add(QueryHelper.getCriterionForObjects(FeatureOfInterest.IDENTIFIER,
-                                            queryObject.getFeatureIdentifier()))
+                                            queryObject.getFeatures()))
                                     .setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY))
                                     .uniqueResult();
                     if (geom != null) {
@@ -270,7 +270,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 } else {
                     final Envelope envelope = new Envelope();
                     final List<FeatureOfInterest> featuresOfInterest =
-                            new FeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatureIdentifier(),
+                            new FeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatures(),
                                     session);
                     for (final FeatureOfInterest feature : featuresOfInterest) {
                         try {
@@ -630,7 +630,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             }
         }
         final List<FeatureOfInterest> featuresOfInterest =
-                new FeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatureIdentifier(), session);
+                new FeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatures(), session);
         for (final FeatureOfInterest feature : featuresOfInterest) {
             final SamplingFeature sosAbstractFeature =
                     (SamplingFeature) createSosAbstractFeature(feature, queryObject);
@@ -653,7 +653,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 session.createCriteria(FeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         boolean filtered = false;
         if (queryObject.isSetFeatures()) {
-            c.add(QueryHelper.getCriterionForObjects(FeatureOfInterest.IDENTIFIER, queryObject.getFeatureIdentifier()));
+            c.add(QueryHelper.getCriterionForObjects(FeatureOfInterest.IDENTIFIER, queryObject.getFeatures()));
             filtered = true;
         }
         if (queryObject.isSetSpatialFilters()) {

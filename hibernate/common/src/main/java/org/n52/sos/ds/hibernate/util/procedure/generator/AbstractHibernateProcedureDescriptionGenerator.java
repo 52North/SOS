@@ -47,6 +47,7 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -55,7 +56,6 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 
@@ -79,7 +79,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
 
     private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
 
-    public abstract SosProcedureDescription generateProcedureDescription(Procedure procedure, Locale i18n,
+    public abstract SosProcedureDescription<?> generateProcedureDescription(Procedure procedure, Locale i18n,
             Session session) throws OwsExceptionReport;
 
     protected void setLocale(Locale i18n) {

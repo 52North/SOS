@@ -33,8 +33,8 @@ import java.util.Locale;
 import org.hibernate.Session;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ds.hibernate.entities.Procedure;
 
 import com.google.common.base.Predicate;
 
@@ -43,6 +43,6 @@ import com.google.common.base.Predicate;
  */
 public interface DescriptionCreationStrategy
         extends Predicate<Procedure> {
-    SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
+    SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport;
 }

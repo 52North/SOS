@@ -375,24 +375,24 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
 
     private void checkAndChangeProcedure(AbstractFeature abstractFeature) {
         if (abstractFeature instanceof SosProcedureDescription){
-            SosProcedureDescription procedure = (SosProcedureDescription)abstractFeature;
+            SosProcedureDescription<?> procedure = (SosProcedureDescription)abstractFeature;
             checkAndChangeProcedureIdentifier(procedure);
             if (procedure.isSetFeaturesOfInterest()) {
                 procedure.setFeaturesOfInterest(checkFeatureOfInterestIdentifier(procedure.getFeaturesOfInterest()));
             }
             if (procedure.isSetFeaturesOfInterestMap()) {
                 Map<String, AbstractFeature> checkedFeatures = Maps.newHashMap();
-                for (AbstractFeature feature : (Collection<AbstractFeature>)procedure.getFeaturesOfInterestMap().values()) {
+                for (AbstractFeature feature : procedure.getFeaturesOfInterestMap().values()) {
                     checkAndChangeFeatureOfInterestIdentifier(feature);
                     checkedFeatures.put(feature.getIdentifier(), feature);
                 }
                 procedure.setFeaturesOfInterestMap(checkedFeatures);
             }
             if (procedure.isSetOfferings()) {
-                procedure.getOfferings().forEach(off -> checkAndChangOfferingIdentifier((SosOffering)off));
+                procedure.getOfferings().forEach(off -> checkAndChangOfferingIdentifier(off));
             }
             if (procedure.isSetPhenomenon()) {
-                procedure.setPhenomenon((Map<String, AbstractFeature>)procedure.getPhenomenon().values().stream()
+                procedure.setPhenomenon(procedure.getPhenomenon().values().stream()
                         .map(phen -> {
                             checkAndChangeObservablePropertyIdentifier((AbstractFeature)phen);
                             return phen;

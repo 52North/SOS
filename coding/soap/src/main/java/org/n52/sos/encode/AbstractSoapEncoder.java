@@ -28,9 +28,6 @@
  */
 package org.n52.sos.encode;
 
-import static org.n52.iceland.util.Constants.BLANK_CHAR;
-import static org.n52.iceland.util.Constants.LINE_SEPARATOR_CHAR;
-
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
@@ -63,10 +60,10 @@ import org.n52.shetland.ogc.ows.exception.ExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.SosSoapConstants;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.exception.sos.SosExceptionCode;
 import org.n52.sos.exception.swes.SwesExceptionCode;
-import org.n52.shetland.ogc.sos.SosSoapConstants;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
@@ -213,10 +210,10 @@ public abstract class AbstractSoapEncoder<T, S> extends AbstractXmlEncoder<T, S>
         SOAPEnvelope envelope = soapResponseMessage.getSOAPPart().getEnvelope();
         StringBuilder string = new StringBuilder();
         string.append(envelope.getNamespaceURI());
-        string.append(BLANK_CHAR);
+        string.append(' ');
         string.append(envelope.getNamespaceURI());
         if (value != null && !value.isEmpty()) {
-            string.append(BLANK_CHAR);
+            string.append(' ');
             string.append(value);
         }
         envelope.addAttribute(N52XmlHelper.getSchemaLocationQNameWithPrefix(), string.toString());
@@ -328,17 +325,17 @@ public abstract class AbstractSoapEncoder<T, S> extends AbstractXmlEncoder<T, S>
         String locator = exception.getLocator();
         StringBuilder exceptionText = new StringBuilder();
         exceptionText.append(exception.getMessage());
-        exceptionText.append(LINE_SEPARATOR_CHAR);
+        exceptionText.append('\n');
         if (exception.getCause() != null) {
-            exceptionText.append(LINE_SEPARATOR_CHAR).append("[EXCEPTION]: ").append(LINE_SEPARATOR_CHAR);
+            exceptionText.append('\n').append("[EXCEPTION]: ").append('\n');
             if (exception.getCause().getLocalizedMessage() != null
                     && !exception.getCause().getLocalizedMessage().isEmpty()) {
                 exceptionText.append(exception.getCause().getLocalizedMessage());
-                exceptionText.append(LINE_SEPARATOR_CHAR);
+                exceptionText.append('\n');
             }
             if (exception.getCause().getMessage() != null && !exception.getCause().getMessage().isEmpty()) {
                 exceptionText.append(exception.getCause().getMessage());
-                exceptionText.append(LINE_SEPARATOR_CHAR);
+                exceptionText.append('\n');
             }
         }
         exRep.addAttribute(new QName(OWSConstants.EN_EXCEPTION_CODE), code);

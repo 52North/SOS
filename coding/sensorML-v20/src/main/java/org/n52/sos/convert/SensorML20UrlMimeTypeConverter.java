@@ -51,7 +51,7 @@ import com.google.common.collect.ImmutableSet;
  * @since 4.2.0
  *
  */
-public class SensorML20UrlMimeTypeConverter implements Converter<SosProcedureDescription, SosProcedureDescription> {
+public class SensorML20UrlMimeTypeConverter implements Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorML20UrlMimeTypeConverter.class);
 
@@ -73,7 +73,7 @@ public class SensorML20UrlMimeTypeConverter implements Converter<SosProcedureDes
     }
 
     @Override
-    public SosProcedureDescription convert(SosProcedureDescription objectToConvert) throws ConverterException {
+    public SosProcedureDescription<?> convert(SosProcedureDescription<?> objectToConvert) throws ConverterException {
         return objectToConvert;
     }
 

@@ -152,7 +152,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
      *            FeatureOfInterest object
      * @return Observation constellation
      */
-    protected OmObservationConstellation getObservationConstellation(SosProcedureDescription procedure,
+    protected OmObservationConstellation getObservationConstellation(SosProcedureDescription<?> procedure,
             OmObservableProperty obsProp, AbstractFeature feature) {
         OmObservationConstellation obsConst = new OmObservationConstellation(procedure, obsProp, null, feature, null);
         /* get the offerings to find the templates */

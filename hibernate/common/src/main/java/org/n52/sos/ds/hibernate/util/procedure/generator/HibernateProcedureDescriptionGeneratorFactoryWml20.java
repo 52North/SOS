@@ -33,19 +33,17 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
+
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.wml.WaterMLConstants;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.wml.ObservationProcess;
-
-import net.opengis.sos.x20.impl.SosInsertionMetadataPropertyTypeImpl;
-
-import org.n52.shetland.ogc.wml.WaterMLConstants;
 
 /**
  * Generator class for WaterML 2.0 procedure descriptions
@@ -67,8 +65,8 @@ public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
     }
 
     @Override
-    public SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-        return new SosProcedureDescription<AbstractFeature>(new HibernateProcedureDescriptionGeneratorWml20()
+    public SosProcedureDescription<?> create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
+        return new SosProcedureDescription<>(new HibernateProcedureDescriptionGeneratorWml20()
                 .generateProcedureDescription(procedure, i18n, session));
     }
 
@@ -95,7 +93,7 @@ public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
             setCommonData(procedure, op, session);
             addName(procedure, op);
             op.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_ALGORITHM));
-            return new SosProcedureDescription<AbstractFeature>(op);
+            return new SosProcedureDescription<>(op);
         }
 
         private void addName(Procedure procedure, ObservationProcess op) {
@@ -108,7 +106,7 @@ public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
         }
 
         private NamedValue<String> createName(String type, String name) {
-            final NamedValue<String> namedValueProperty = new NamedValue<String>();
+            final NamedValue<String> namedValueProperty = new NamedValue<>();
             final ReferenceType refType = new ReferenceType(type);
             refType.setTitle(name);
             namedValueProperty.setName(refType);

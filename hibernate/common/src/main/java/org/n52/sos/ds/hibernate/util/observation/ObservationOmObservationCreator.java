@@ -80,7 +80,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private final AbstractObservationRequest request;
     private final Map<String, AbstractFeature> features = Maps.newHashMap();
     private final Map<String, AbstractPhenomenon> observedProperties = Maps.newHashMap();
-    private final Map<String, SosProcedureDescription> procedures = Maps.newHashMap();
+    private final Map<String, SosProcedureDescription<?>> procedures = Maps.newHashMap();
     private final Map<Integer, OmObservationConstellation> observationConstellations = Maps.newHashMap();
     private List<OmObservation> observationCollection;
 
@@ -105,7 +105,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return request.getResultModel();
     }
 
-    private SosProcedureDescription getProcedure(String procedureId) {
+    private SosProcedureDescription<?> getProcedure(String procedureId) {
         return procedures.get(procedureId);
     }
 
@@ -264,7 +264,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Procedure...");
         final String procedureId = hObservation.getProcedure().getIdentifier();
         if (!procedures.containsKey(procedureId)) {
-            final SosProcedureDescription procedure = createProcedure(procedureId);
+            final SosProcedureDescription<?> procedure = createProcedure(procedureId);
             procedures.put(procedureId, procedure);
         }
         LOGGER.trace("Creating Procedure done.");

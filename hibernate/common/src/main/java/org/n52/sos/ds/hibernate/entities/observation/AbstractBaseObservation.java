@@ -49,7 +49,7 @@ public abstract class AbstractBaseObservation
     private boolean deleted;
     private boolean child;
     private boolean parent;
-    private Set<Parameter> parameters = new HashSet<>(0);
+    private Set<Parameter<?>> parameters = new HashSet<>(0);
 
     @Override
     public boolean getDeleted() {
@@ -127,7 +127,7 @@ public abstract class AbstractBaseObservation
     }
 
     @Override
-    public Set<Parameter> getParameters() {
+    public Set<Parameter<?>> getParameters() {
         return parameters;
     }
 
@@ -135,7 +135,7 @@ public abstract class AbstractBaseObservation
     @Override
     public void setParameters(Object parameters) {
         if (parameters instanceof Set<?>) {
-            this.parameters = (Set<Parameter>) parameters;
+            this.parameters = (Set<Parameter<?>>) parameters;
         } else {
             getParameters().add((Parameter) parameters);
         }

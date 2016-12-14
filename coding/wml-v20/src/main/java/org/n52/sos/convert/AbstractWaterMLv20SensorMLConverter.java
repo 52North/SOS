@@ -123,7 +123,7 @@ public abstract class AbstractWaterMLv20SensorMLConverter
     }
 
     private List<SmlIo> convertObservationProcessInputsToSMLInputs(final List<ReferenceType> inputs) {
-        final List<SmlIo> smlInputs = new ArrayList<SmlIo>(inputs.size());
+        final List<SmlIo> smlInputs = new ArrayList<>(inputs.size());
         for (final ReferenceType referenceType : inputs) {
             final SmlIo io = new SmlIo();
             if (referenceType.isSetTitle()) {

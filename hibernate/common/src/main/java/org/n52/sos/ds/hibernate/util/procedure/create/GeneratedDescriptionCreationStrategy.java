@@ -33,10 +33,10 @@ import java.util.Locale;
 import org.hibernate.Session;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactory;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -51,9 +51,9 @@ public class GeneratedDescriptionCreationStrategy implements
             HibernateProcedureDescriptionGeneratorFactoryRepository.getInstance();
 
     @Override
-    public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
+    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
-        SosProcedureDescription desc = getFactory(descriptionFormat).create(p, i18n, s);
+        SosProcedureDescription<?> desc = getFactory(descriptionFormat).create(p, i18n, s);
         desc.setDescriptionFormat(descriptionFormat);
         return desc;
     }

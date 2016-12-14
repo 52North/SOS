@@ -83,7 +83,7 @@ private HibernateSessionHolder sessionHolder;
             UpdateSensorResponse response = new UpdateSensorResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
-            for (SosProcedureDescription procedureDescription : request.getProcedureDescriptions()) {
+            for (SosProcedureDescription<?> procedureDescription : request.getProcedureDescriptions()) {
                 DateTime currentTime = new DateTime(DateTimeZone.UTC);
                 // TODO: check for all validTimes of descriptions for this
                 // identifier

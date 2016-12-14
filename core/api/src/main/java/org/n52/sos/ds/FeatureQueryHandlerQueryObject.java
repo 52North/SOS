@@ -166,8 +166,11 @@ public class FeatureQueryHandlerQueryObject {
         return this;
     }
 
-    public boolean isSetI18N() {
-        return getI18N() != null;
+    public String getFeatureIdentifier() {
+        if (isSetFeatureIdentifiers() && getFeatureIdentifiers().size() == 1) {
+            return getFeatureIdentifiers().iterator().next();
+        }
+        return "";
     }
 
     public FeatureQueryHandlerQueryObject setVersion(String version) {

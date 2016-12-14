@@ -307,7 +307,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
 
     private SmlIo createOutputFromExampleObservation(String procedure, String observableProperty, Session session)
             throws OwsExceptionReport {
-        AbstractObservation exampleObservation = getExampleObservation(procedure, observableProperty, session);
+        AbstractObservation<?> exampleObservation = getExampleObservation(procedure, observableProperty, session);
         if (exampleObservation == null) {
             return null;
         }

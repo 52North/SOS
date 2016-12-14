@@ -117,7 +117,7 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
 //        }
 //    }
 
-    private OmObservationConstellation getObservationConstellation(SosProcedureDescription procedure,
+    private OmObservationConstellation getObservationConstellation(SosProcedureDescription<?> procedure,
             OmObservableProperty obsProp, AbstractFeature feature) {
         OmObservationConstellation obsConst = new OmObservationConstellation(procedure, obsProp, null, feature, null);
         /* get the offerings to find the templates */

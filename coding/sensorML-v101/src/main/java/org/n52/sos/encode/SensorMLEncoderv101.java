@@ -133,8 +133,6 @@ import org.n52.shetland.ogc.sos.ProcedureDescriptionFormat;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.swe.AbstractOptionalSweDataComponentVisitor;
 import org.n52.shetland.ogc.swe.AbstractVoidSweDataComponentVisitor;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;

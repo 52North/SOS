@@ -1050,7 +1050,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         return abstractSensor;
     }
 
-    private SosProcedureDescription queryProcedureDescription(String procedure) throws EncodingException {
+    private SosProcedureDescription<?> queryProcedureDescription(String procedure) throws EncodingException {
         DescribeSensorRequest req = new DescribeSensorRequest();
         req.setService(SosConstants.SOS);
         req.setVersion(Sos2Constants.SERVICEVERSION);

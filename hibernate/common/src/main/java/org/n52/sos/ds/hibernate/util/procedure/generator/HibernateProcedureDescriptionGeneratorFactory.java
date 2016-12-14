@@ -34,8 +34,8 @@ import org.hibernate.Session;
 
 import org.n52.janmayen.component.Component;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ds.hibernate.entities.Procedure;
 
 /**
  * Interface for procedure description generator factories
@@ -46,6 +46,6 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
  */
 public interface HibernateProcedureDescriptionGeneratorFactory extends Component<HibernateProcedureDescriptionGeneratorFactoryKey> {
 
-    SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport;
+    SosProcedureDescription<?> create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport;
 
 }

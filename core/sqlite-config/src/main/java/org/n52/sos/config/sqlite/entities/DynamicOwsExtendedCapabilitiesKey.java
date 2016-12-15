@@ -54,14 +54,12 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
     /**
      * constructor
      *
-     * @param service
-     *            the service to set
-     * @param version
-     *            the version to set
-     * @param domain
-     *            the domain to set
+     * @param service the service to set
+     * @param version the version to set
+     * @param domain the domain to set
      */
-    public DynamicOwsExtendedCapabilitiesKey(String service, String version, String domain) {
+    public DynamicOwsExtendedCapabilitiesKey(String service, String version,
+                                             String domain) {
         setService(service);
         setVersion(version);
         setDomain(domain);
@@ -70,10 +68,10 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
     /**
      * constructor
      *
-     * @param oeck
-     *            the {@link OwsExtendedCapabilitiesProviderKey} to set
+     * @param key the {@link OwsExtendedCapabilitiesProviderKey} to set
      */
-    public DynamicOwsExtendedCapabilitiesKey(OwsExtendedCapabilitiesProviderKey key) {
+    public DynamicOwsExtendedCapabilitiesKey(
+            OwsExtendedCapabilitiesProviderKey key) {
         this(key.getService(), key.getVersion(), key.getDomain());
     }
 
@@ -96,8 +94,8 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
     /**
      * Set the key service
      *
-     * @param service
-     *            the service to set
+     * @param service the service to set
+     *
      * @return this
      */
     public DynamicOwsExtendedCapabilitiesKey setService(String service) {
@@ -117,8 +115,8 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
     /**
      * Set the key service
      *
-     * @param version
-     *            the version to seet
+     * @param version the version to seet
+     *
      * @return this
      */
     public DynamicOwsExtendedCapabilitiesKey setVersion(String version) {
@@ -138,8 +136,8 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
     /**
      * Set the key domain
      *
-     * @param domain
-     *            the domain to set
+     * @param domain the domain to set
+     *
      * @return this
      */
     public DynamicOwsExtendedCapabilitiesKey setDomain(String domain) {

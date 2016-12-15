@@ -47,20 +47,8 @@ import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.AfterRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.BeforeRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.BeginsRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.BegunByRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.ContainsRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.DuringRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.EndedByRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.EndsRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.MeetsRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.MetByRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.OverlappedByRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.OverlapsRestriction;
-import org.n52.sos.ds.hibernate.util.TemporalRestriction.TEqualsRestriction;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
@@ -79,7 +67,7 @@ import com.google.common.collect.Maps;
  * @see DuringRestriction
  * @see EndedByRestriction
  * @see EndsRestriction
- * @see TEqualsRestriction
+ * @see EqualsRestriction
  * @see MeetsRestriction
  * @see MetByRestriction
  * @see OverlappedByRestriction
@@ -169,7 +157,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion before(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new BeforeRestriction(), begin, end, value);
+        return filter(TemporalRestriction.before(), begin, end, value);
     }
 
     /**
@@ -188,7 +176,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion before(String property, Time value) throws UnsupportedTimeException {
-        return filter(new BeforeRestriction(), property, value);
+        return filter(TemporalRestriction.before(), property, value);
     }
 
     /**
@@ -207,7 +195,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion before(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
-        return filter(new BeforeRestriction(), property, value);
+        return filter(TemporalRestriction.before(), property, value);
     }
 
     /**
@@ -228,7 +216,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion after(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new AfterRestriction(), begin, end, value);
+        return filter(TemporalRestriction.after(), begin, end, value);
     }
 
     /**
@@ -247,7 +235,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion after(String property, Time value) throws UnsupportedTimeException {
-        return filter(new AfterRestriction(), property, value);
+        return filter(TemporalRestriction.after(), property, value);
     }
 
     /**
@@ -266,7 +254,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion after(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
-        return filter(new AfterRestriction(), property, value);
+        return filter(TemporalRestriction.after(), property, value);
     }
 
     /**
@@ -287,7 +275,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion begins(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new BeginsRestriction(), begin, end, value);
+        return filter(TemporalRestriction.begins(), begin, end, value);
     }
 
     /**
@@ -306,7 +294,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion begins(String property, Time value) throws UnsupportedTimeException {
-        return filter(new BeginsRestriction(), property, value);
+        return filter(TemporalRestriction.begins(), property, value);
     }
 
     /**
@@ -325,7 +313,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion begins(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
-        return filter(new BeginsRestriction(), property, value);
+        return filter(TemporalRestriction.begins(), property, value);
     }
 
     /**
@@ -346,7 +334,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion ends(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new EndsRestriction(), begin, end, value);
+        return filter(TemporalRestriction.ends(), begin, end, value);
     }
 
     /**
@@ -365,7 +353,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion ends(String property, Time value) throws UnsupportedTimeException {
-        return filter(new EndsRestriction(), property, value);
+        return filter(TemporalRestriction.ends(), property, value);
     }
 
     /**
@@ -384,7 +372,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion ends(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
-        return filter(new EndsRestriction(), property, value);
+        return filter(TemporalRestriction.ends(), property, value);
     }
 
     /**
@@ -405,7 +393,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion endedBy(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new EndedByRestriction(), begin, end, value);
+        return filter(TemporalRestriction.endedBy(), begin, end, value);
     }
 
     /**
@@ -424,7 +412,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion endedBy(String property, Time value) throws UnsupportedTimeException {
-        return filter(new EndedByRestriction(), property, value);
+        return filter(TemporalRestriction.endedBy(), property, value);
     }
 
     /**
@@ -443,7 +431,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion endedBy(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
-        return filter(new EndedByRestriction(), property, value);
+        return filter(TemporalRestriction.endedBy(), property, value);
     }
 
     /**
@@ -464,7 +452,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion begunBy(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new BegunByRestriction(), begin, end, value);
+        return filter(TemporalRestriction.begunBy(), begin, end, value);
     }
 
     /**
@@ -483,7 +471,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion begunBy(String property, Time value) throws UnsupportedTimeException {
-        return filter(new BegunByRestriction(), property, value);
+        return filter(TemporalRestriction.begunBy(), property, value);
     }
 
     /**
@@ -502,7 +490,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion begunBy(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
-        return filter(new BegunByRestriction(), property, value);
+        return filter(TemporalRestriction.begunBy(), property, value);
     }
 
     /**
@@ -523,7 +511,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion during(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new DuringRestriction(), begin, end, value);
+        return filter(TemporalRestriction.during(), begin, end, value);
     }
 
     /**
@@ -542,7 +530,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion during(String property, Time value) throws UnsupportedTimeException {
-        return filter(new DuringRestriction(), property, value);
+        return filter(TemporalRestriction.during(), property, value);
     }
 
     /**
@@ -561,7 +549,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion during(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
-        return filter(new DuringRestriction(), property, value);
+        return filter(TemporalRestriction.during(), property, value);
     }
 
     /**
@@ -576,13 +564,13 @@ public class TemporalRestrictions {
      *
      * @return the <tt>Criterion</tt>
      *
-     * @see TEqualsRestriction
+     * @see EqualsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
      *             this restriction
      */
     public static Criterion tEquals(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new TEqualsRestriction(), begin, end, value);
+        return filter(TemporalRestriction.equals(), begin, end, value);
     }
 
     /**
@@ -595,13 +583,13 @@ public class TemporalRestrictions {
      *
      * @return the <tt>Criterion</tt>
      *
-     * @see TEqualsRestriction
+     * @see EqualsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
      *             this restriction
      */
     public static Criterion tEquals(String property, Time value) throws UnsupportedTimeException {
-        return filter(new TEqualsRestriction(), property, value);
+        return filter(TemporalRestriction.equals(), property, value);
     }
 
     /**
@@ -614,13 +602,13 @@ public class TemporalRestrictions {
      *
      * @return the <tt>Criterion</tt>
      *
-     * @see TEqualsRestriction
+     * @see EqualsRestriction
      * @throws UnsupportedTimeException
      *             if the value and property combination is not applicable for
      *             this restriction
      */
     public static Criterion tEquals(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
-        return filter(new TEqualsRestriction(), property, value);
+        return filter(TemporalRestriction.equals(), property, value);
     }
 
     /**
@@ -641,7 +629,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion contains(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new ContainsRestriction(), begin, end, value);
+        return filter(TemporalRestriction.contains(), begin, end, value);
     }
 
     /**
@@ -660,7 +648,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion contains(String property, Time value) throws UnsupportedTimeException {
-        return filter(new ContainsRestriction(), property, value);
+        return filter(TemporalRestriction.contains(), property, value);
     }
 
     /**
@@ -680,7 +668,7 @@ public class TemporalRestrictions {
      */
     public static Criterion contains(TimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedTimeException {
-        return filter(new ContainsRestriction(), property, value);
+        return filter(TemporalRestriction.contains(), property, value);
     }
 
     /**
@@ -701,7 +689,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion overlaps(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new OverlapsRestriction(), begin, end, value);
+        return filter(TemporalRestriction.overlaps(), begin, end, value);
     }
 
     /**
@@ -720,7 +708,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion overlaps(String property, Time value) throws UnsupportedTimeException {
-        return filter(new OverlapsRestriction(), property, value);
+        return filter(TemporalRestriction.overlaps(), property, value);
     }
 
     /**
@@ -740,7 +728,7 @@ public class TemporalRestrictions {
      */
     public static Criterion overlaps(TimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedTimeException {
-        return filter(new OverlapsRestriction(), property, value);
+        return filter(TemporalRestriction.overlaps(), property, value);
     }
 
     /**
@@ -761,7 +749,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion meets(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new MeetsRestriction(), begin, end, value);
+        return filter(TemporalRestriction.meets(), begin, end, value);
     }
 
     /**
@@ -780,7 +768,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion meets(String property, Time value) throws UnsupportedTimeException {
-        return filter(new MeetsRestriction(), property, value);
+        return filter(TemporalRestriction.meets(), property, value);
     }
 
     /**
@@ -799,7 +787,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion meets(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
-        return filter(new MeetsRestriction(), property, value);
+        return filter(TemporalRestriction.meets(), property, value);
     }
 
     /**
@@ -820,7 +808,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion metBy(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new MetByRestriction(), begin, end, value);
+        return filter(TemporalRestriction.metBy(), begin, end, value);
     }
 
     /**
@@ -839,7 +827,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion metBy(String property, Time value) throws UnsupportedTimeException {
-        return filter(new MetByRestriction(), property, value);
+        return filter(TemporalRestriction.metBy(), property, value);
     }
 
     /**
@@ -858,7 +846,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion metBy(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
-        return filter(new MetByRestriction(), property, value);
+        return filter(TemporalRestriction.metBy(), property, value);
     }
 
     /**
@@ -879,7 +867,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion overlappedBy(String begin, String end, Time value) throws UnsupportedTimeException {
-        return filter(new OverlappedByRestriction(), begin, end, value);
+        return filter(TemporalRestriction.overlappedBy(), begin, end, value);
     }
 
     /**
@@ -898,7 +886,7 @@ public class TemporalRestrictions {
      *             this restriction
      */
     public static Criterion overlappedBy(String property, Time value) throws UnsupportedTimeException {
-        return filter(new OverlappedByRestriction(), property, value);
+        return filter(TemporalRestriction.overlappedBy(), property, value);
     }
 
     /**
@@ -918,7 +906,7 @@ public class TemporalRestrictions {
      */
     public static Criterion overlappedBy(TimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedTimeException {
-        return filter(new OverlappedByRestriction(), property, value);
+        return filter(TemporalRestriction.overlappedBy(), property, value);
     }
 
     /**

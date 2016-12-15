@@ -54,6 +54,24 @@ import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
  * @since 4.0.0
  */
 public abstract class TemporalRestriction {
+
+    private static final TemporalRestriction AFTER = new AfterRestriction();
+    private static final TemporalRestriction BEFORE = new BeforeRestriction();
+    private static final TemporalRestriction BEGINS = new BeginsRestriction();
+    private static final TemporalRestriction BEGUN_BY = new BegunByRestriction();
+    private static final TemporalRestriction CONTAINS
+            = new ContainsRestriction();
+    private static final TemporalRestriction DURING = new DuringRestriction();
+    private static final TemporalRestriction ENDED_BY = new EndedByRestriction();
+    private static final TemporalRestriction ENDS = new EndsRestriction();
+    private static final TemporalRestriction MEETS = new MeetsRestriction();
+    private static final TemporalRestriction MET_BY = new MetByRestriction();
+    private static final TemporalRestriction OVERLAPPED_BY
+            = new OverlappedByRestriction();
+    private static final TemporalRestriction OVERLAPS
+            = new OverlapsRestriction();
+    private static final TemporalRestriction EQUALS = new EqualsRestriction();
+
     /**
      * ISO 19108:2002 states (&lt;, &gt;) and not (&le;, &ge;).
      *
@@ -66,17 +84,16 @@ public abstract class TemporalRestriction {
      * Creates a criterion from this restriction for the specified fields and
      * time.
      *
-     * @param ref
-     *            the descriptor holding the property name(s)
-     * @param time
-     *            the compared time
+     * @param ref  the descriptor holding the property name(s)
+     * @param time the compared time
      *
      * @return a <tt>Criterion</tt> that describes this restriction
      *
-     * @throws UnsupportedTimeException
-     *             if the supplied time can not be used with this restriction
+     * @throws UnsupportedTimeException if the supplied time can not be used
+     *                                  with this restriction
      */
-    public Criterion get(TimePrimitiveFieldDescriptor ref, Time time) throws UnsupportedTimeException {
+    public Criterion get(TimePrimitiveFieldDescriptor ref, Time time) throws
+            UnsupportedTimeException {
         Criterion c;
         if (time instanceof TimePeriod) {
             c = filterWithPeriod((TimePeriod) time, ref, false);
@@ -94,89 +111,85 @@ public abstract class TemporalRestriction {
     /**
      * Applies this restriction to the specified time periods.
      *
-     * @param selfBegin
-     *            the property name of the begin time stamp
-     * @param selfEnd
-     *            the property name of the end time stamp
-     * @param otherBegin
-     *            the begin instance of the compared time period
-     * @param otherEnd
-     *            the end instance of the compared time period
+     * @param selfBegin  the property name of the begin time stamp
+     * @param selfEnd    the property name of the end time stamp
+     * @param otherBegin the begin instance of the compared time period
+     * @param otherEnd   the end instance of the compared time period
      *
      * @return the criterion for the temporal relation (or <tt>null</tt> if not
      *         applicable)
      */
-    protected abstract Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin,
-            Date otherEnd);
+    protected abstract Criterion filterPeriodWithPeriod(String selfBegin,
+                                                        String selfEnd,
+                                                        Date otherBegin,
+                                                        Date otherEnd);
 
     /**
      * Applies this restriction to the specified time instance and time period.
      *
-     * @param selfPosition
-     *            the property name of the instance
-     * @param otherBegin
-     *            the begin instance of the compared time period
-     * @param otherEnd
-     *            the end instance of the compared time period
-     * @param isOtherPeriodFromReducedPrecisionInstant
-     *            was the period interpreted from a reduced precision time?
-     *            see DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition
+     * @param selfPosition                             the property name of the
+     *                                                 instance
+     * @param otherBegin                               the begin instance of the
+     *                                                 compared time period
+     * @param otherEnd                                 the end instance of the
+     *                                                 compared time period
+     * @param isOtherPeriodFromReducedPrecisionInstant was the period
+     *                                                 interpreted from a
+     *                                                 reduced precision time?
+     *                                                 see
+     *                                                 DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition
      *
      * @return the criterion for the temporal relation (or <tt>null</tt> if not
      *         applicable)
      */
-    protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
-            boolean isOtherPeriodFromReducedPrecisionInstant) {
+    protected Criterion filterInstantWithPeriod(String selfPosition,
+                                                Date otherBegin, Date otherEnd,
+                                                boolean isOtherPeriodFromReducedPrecisionInstant) {
         return null;
     }
 
     /**
      * Applies this restriction to the specified time period and time instance.
      *
-     * @param selfBegin
-     *            the property name of the begin time stamp
-     * @param selfEnd
-     *            the property name of the end time stamp
-     * @param otherPosition
-     *            the position of the compared time instance
+     * @param selfBegin     the property name of the begin time stamp
+     * @param selfEnd       the property name of the end time stamp
+     * @param otherPosition the position of the compared time instance
      *
      * @return the criterion for the temporal relation (or <tt>null</tt> if not
      *         applicable)
      */
-    protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
+    protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd,
+                                                Date otherPosition) {
         return null;
     }
 
     /**
      * Applies this restriction to the specified time instantes.
      *
-     * @param selfPosition
-     *            the property name of the time instance
-     * @param otherPosition
-     *            the position of the compared time instance
+     * @param selfPosition  the property name of the time instance
+     * @param otherPosition the position of the compared time instance
      *
      * @return the criterion for the temporal relation (or <tt>null</tt> if not
      *         applicable)
      */
-    protected Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
+    protected Criterion filterInstantWithInstant(String selfPosition,
+                                                 Date otherPosition) {
         return null;
     }
 
     /**
      * Create a filter for the specified period and fields. If the period is no
      * real period but a instance, the method will call
-     * {@link #filterWithInstant(TimeInstant, TimePrimitiveFieldDescriptor)
-     * filterWithInstant()}.
+     * {@link #filterWithInstant(TimeInstant, TimePrimitiveFieldDescriptor) filterWithInstant()}.
      *
-     * @param time
-     *            the time
-     * @param r
-     *            the property name(s)
+     * @param time the time
+     * @param r    the property name(s)
      *
      * @return the <tt>Criterion</tt> that describes this restriction
      */
-    private Criterion filterWithPeriod(TimePeriod time, TimePrimitiveFieldDescriptor r,
-            boolean periodFromReducedPrecisionInstant) {
+    private Criterion filterWithPeriod(TimePeriod time,
+                                       TimePrimitiveFieldDescriptor r,
+                                       boolean periodFromReducedPrecisionInstant) {
         Date begin = time.resolveStart().toDate();
         // FIXME should also incorporate reduced precision like getRequestedTimeLength()
         // (Partially?) fixed with use of periodFromReducedPrecisionInstant?
@@ -186,7 +199,8 @@ public abstract class TemporalRestriction {
         }
         if (r.isPeriod()) {
             return getPropertyCheckingCriterion(
-                    filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
+                    filterPeriodWithPeriod(r.getBeginPosition(),
+                                           r.getEndPosition(), begin, end),
                     filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant), r);
         } else {
             return filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant);
@@ -197,17 +211,15 @@ public abstract class TemporalRestriction {
     /**
      * Creates a filter for the specfied instant and fields. In case of a
      * instance with reduced precision a the method will call
-     * {@link #filterWithPeriod(TimePeriod, TimePrimitiveFieldDescriptor)
-     * filterWithPeriod()}.
+     * {@link #filterWithPeriod(TimePeriod, TimePrimitiveFieldDescriptor) filterWithPeriod()}.
      *
-     * @param time
-     *            the time
-     * @param r
-     *            the property name(s)
+     * @param time the time
+     * @param r    the property name(s)
      *
      * @return the <tt>Criterion</tt> that describes this restriction
      */
-    private Criterion filterWithInstant(TimeInstant time, TimePrimitiveFieldDescriptor r) {
+    private Criterion filterWithInstant(TimeInstant time,
+                                        TimePrimitiveFieldDescriptor r) {
         /*
          * Saved primitives can be periods, but can also be instants. As begin
          * &lt; end has to be true for all periods those are instants and have
@@ -221,7 +233,8 @@ public abstract class TemporalRestriction {
         }
         if (r.isPeriod()) {
             return getPropertyCheckingCriterion(
-                    filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), begin),
+                    filterPeriodWithInstant(r.getBeginPosition(),
+                                            r.getEndPosition(), begin),
                     filterInstantWithInstant(r.getPosition(), begin), r);
 
         } else {
@@ -233,16 +246,15 @@ public abstract class TemporalRestriction {
      * Check if <tt>time</tt> is a instance with reduces precision that
      * describes a period (a day, a hour, etc.).
      *
-     * @param time
-     *            the instant to check
+     * @param time the instant to check
      *
      * @return the end date of the period the instance with reduced precision
      *         started or <tt>null</tt> if there is no reduced precision
      */
-    private Date checkInstantWithReducedPrecision(TimeInstant time) {
-        DateTime end =
-                DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(time.getValue(),
-                        time.getRequestedTimeLength());
+    private static Date checkInstantWithReducedPrecision(TimeInstant time) {
+        DateTime end = DateTimeHelper
+                .setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
+                        time.getValue(), time.getRequestedTimeLength());
         return time.getValue().equals(end) ? null : end.toDate();
     }
 
@@ -252,26 +264,27 @@ public abstract class TemporalRestriction {
      * applies <tt>periods</tt> to "real" periods and <tt>instants</tt> to
      * periods that are instants by definition.
      *
-     * @param periods
-     *            the <tt>Criterion</tt> for "real" periods (may be
-     *            <tt>null</tt>)
-     * @param instants
-     *            the <tt>Criterion</tt> for periods with equal begin and end
-     *            (may be <tt>null</tt>)
-     * @param r
-     *            the <tt>TimePrimitiveFieldDescriptor</tt> that holds the
-     *            property names
+     * @param periods  the <tt>Criterion</tt> for "real" periods (may be
+     * <tt>null</tt>)
+     * @param instants the <tt>Criterion</tt> for periods with equal begin and
+     *                 end (may be <tt>null</tt>)
+     * @param r        the <tt>TimePrimitiveFieldDescriptor</tt> that holds the
+     *                 property names
      *
      * @return the composite criterion or <tt>null</tt> if no <tt>Criterion</tt>
-     *         could be applied
+     * could be applied
      */
-    protected Criterion getPropertyCheckingCriterion(Criterion periods, Criterion instants,
-            TimePrimitiveFieldDescriptor r) {
+    protected static Criterion getPropertyCheckingCriterion(Criterion periods,
+                                                            Criterion instants,
+                                                            TimePrimitiveFieldDescriptor r) {
         if (periods == null) {
-            return instants == null ? null : Restrictions.and(isInstant(r), instants);
+            return instants == null ? null : Restrictions
+                    .and(isInstant(r), instants);
         } else {
-            return instants == null ? Restrictions.and(isPeriod(r), periods) : Restrictions.or(
-                    Restrictions.and(isPeriod(r), periods), Restrictions.and(isInstant(r), instants));
+            return instants == null ? Restrictions.and(isPeriod(r), periods)
+                           : Restrictions.or(
+                            Restrictions.and(isPeriod(r), periods), Restrictions
+                            .and(isInstant(r), instants));
         }
     }
 
@@ -279,42 +292,39 @@ public abstract class TemporalRestriction {
      * Creates a <tt>Criterion</tt> for the specified property. Used to easily
      * swap &lt; and &le;.
      *
-     * @param property
-     *            the property name
-     * @param value
-     *            the compared value
+     * @param property the property name
+     * @param value    the compared value
      *
      * @return the <tt>Criterion</tt>
      */
-    protected Criterion lower(String property, Date value) {
-        return ALLOW_EQUALITY ? Restrictions.le(property, value) : Restrictions.lt(property, value);
+    protected static Criterion lower(String property, Date value) {
+        return ALLOW_EQUALITY ? Restrictions.le(property, value) : Restrictions
+                .lt(property, value);
     }
 
     /**
      * Creates a <tt>Criterion</tt> for the specified property. Used to easily
      * swap &gt; and &ge;.
      *
-     * @param property
-     *            the property name
-     * @param value
-     *            the compared value
+     * @param property the property name
+     * @param value    the compared value
      *
      * @return the <tt>Criterion</tt>
      */
-    protected Criterion greater(String property, Date value) {
-        return ALLOW_EQUALITY ? Restrictions.ge(property, value) : Restrictions.gt(property, value);
+    protected static Criterion greater(String property, Date value) {
+        return ALLOW_EQUALITY ? Restrictions.ge(property, value) : Restrictions
+                .gt(property, value);
     }
 
     /**
      * Creates a <tt>Criterion</tt> that checks that the persisted period is a
      * "real" period (<tt>begin != end</tt>).
      *
-     * @param r
-     *            the property names
+     * @param r the property names
      *
      * @return the <tt>Criterion</tt>
      */
-    protected PropertyExpression isPeriod(TimePrimitiveFieldDescriptor r) {
+    protected static PropertyExpression isPeriod(TimePrimitiveFieldDescriptor r) {
         return Restrictions.neProperty(r.getBeginPosition(), r.getEndPosition());
     }
 
@@ -322,13 +332,360 @@ public abstract class TemporalRestriction {
      * Creates a <tt>Criterion</tt> that checks that the persisted period is a
      * instant period (<tt>begin == end</tt>).
      *
-     * @param r
-     *            the property names
+     * @param r the property names
      *
      * @return the <tt>Criterion</tt>
      */
-    protected PropertyExpression isInstant(TimePrimitiveFieldDescriptor r) {
+    protected static PropertyExpression isInstant(TimePrimitiveFieldDescriptor r) {
         return Restrictions.eqProperty(r.getBeginPosition(), r.getEndPosition());
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td><tt>self.begin &gt; other.end</tt></td>
+     * <td><tt>self.begin &gt; other.position</tt></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><tt>self.position &gt; other.end</tt></td>
+     * <td><tt>self.position &gt; other.position</tt></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction after() {
+        return AFTER;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td><tt>self.end &lt; other.begin</tt></td>
+     * <td><tt>self.end &lt; other.position</tt></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><tt>self.position &lt; other.begin</tt></td>
+     * <td><tt>self.position &lt; other.position</tt></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction before() {
+        return BEFORE;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td><tt>self.begin = other.begin AND self.end &lt; other.end</tt></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><tt>self.position = other.begin</tt></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction begins() {
+        return BEGINS;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td><tt>self.begin = other.begin AND self.end &gt; other.end</tt></td>
+     * <td><tt>self.begin = other.position</tt></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><i>not defined</i></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction begunBy() {
+        return BEGUN_BY;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td><tt>self.begin &lt; other.begin AND self.end &gt; other.end</tt></td>
+     * <td>
+     * <tt>self.begin &lt; other.position AND self.end &gt;
+     * other.position</tt></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><i>not defined</i></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction contains() {
+        return CONTAINS;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td><tt>self.begin &gt; other.begin AND self.end &lt; other.end</tt></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><tt>self.position &gt; other.begin AND self.position &lt;
+     * other.end</tt></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction during() {
+        return DURING;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td><tt>self.begin &lt; other.begin AND self.end = other.end</tt></td>
+     * <td><tt>self.end = other.position</tt></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><i>not defined</i></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction endedBy() {
+        return ENDED_BY;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td><tt>self.begin &gt; other.begin AND self.end = other.end</tt></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><tt>self.position = other.end</tt></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction ends() {
+        return ENDS;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td><tt>self.end = other.begin</tt></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><i>not defined</i></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction meets() {
+        return MEETS;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td><tt>self.begin = other.end</tt></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><i>not defined</i></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction metBy() {
+        return MET_BY;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td>
+     * <tt>self.begin &gt; other.begin AND self.begin &lt; other.end AND
+     * self.end &gt; other.end</tt>
+     * </td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><i>not defined</i></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction overlappedBy() {
+        return OVERLAPPED_BY;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td>
+     * <tt>self.begin &lt; other.begin AND self.end &gt; other.begin AND
+     * self.end &lt; other.end</tt>
+     * </td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><i>not defined</i></td>
+     * <td><i>not defined</i></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction overlaps() {
+        return OVERLAPS;
+    }
+
+    /**
+     * Creates filters according to the following table.
+     * <table>
+     * <tr>
+     * <td><i>Self/Other</i></td>
+     * <td><b>Period</b></td>
+     * <td><b>Instant</b></td>
+     * </tr>
+     * <tr>
+     * <td><b>Period</b></td>
+     * <td><tt>self.begin = other.begin AND self.end = other.end</tt></td>
+     * <td><i>if period is from a reduced precision instant, self.begin &ge;
+     * other.begin and self.end &le; other.end, otherwise not defined</i></td>
+     * </tr>
+     * <tr>
+     * <td><b>Instant</b></td>
+     * <td><i>not defined</i></td>
+     * <td><tt>self.position = other.position</tt></td>
+     * </tr>
+     * </table>
+     *
+     * @return the filter
+     */
+    public static TemporalRestriction equals() {
+        return EQUALS;
     }
 
     /**
@@ -351,25 +708,33 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class BeforeRestriction extends TemporalRestriction {
+    private static class BeforeRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
             return lower(selfEnd, otherBegin);
         }
 
         @Override
-        protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
-                boolean isOtherPeriodFromReducedPrecisionInstant) {
+        protected Criterion filterInstantWithPeriod(String selfPosition,
+                                                    Date otherBegin,
+                                                    Date otherEnd,
+                                                    boolean isOtherPeriodFromReducedPrecisionInstant) {
             return lower(selfPosition, otherBegin);
         }
 
         @Override
-        protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
+        protected Criterion filterPeriodWithInstant(String selfBegin,
+                                                    String selfEnd,
+                                                    Date otherPosition) {
             return lower(selfEnd, otherPosition);
         }
 
         @Override
-        protected Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
+        protected Criterion filterInstantWithInstant(String selfPosition,
+                                                     Date otherPosition) {
             return lower(selfPosition, otherPosition);
         }
     };
@@ -394,25 +759,33 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class AfterRestriction extends TemporalRestriction {
+    private static class AfterRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
             return greater(selfBegin, otherEnd);
         }
 
         @Override
-        protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
-                boolean periodFromReducedPrecisionInstant) {
+        protected Criterion filterInstantWithPeriod(String selfPosition,
+                                                    Date otherBegin,
+                                                    Date otherEnd,
+                                                    boolean periodFromReducedPrecisionInstant) {
             return greater(selfPosition, otherEnd);
         }
 
         @Override
-        protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
+        protected Criterion filterPeriodWithInstant(String selfBegin,
+                                                    String selfEnd,
+                                                    Date otherPosition) {
             return greater(selfBegin, otherPosition);
         }
 
         @Override
-        protected Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
+        protected Criterion filterInstantWithInstant(String selfPosition,
+                                                     Date otherPosition) {
             return greater(selfPosition, otherPosition);
         }
     };
@@ -437,15 +810,22 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class BeginsRestriction extends TemporalRestriction {
+    private static class BeginsRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return Restrictions.and(Restrictions.eq(selfBegin, otherBegin), lower(selfEnd, otherEnd));
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
+            return Restrictions.and(
+                    Restrictions.eq(selfBegin, otherBegin),
+                    lower(selfEnd, otherEnd));
         }
 
         @Override
-        protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
-                boolean periodFromReducedPrecisionInstant) {
+        protected Criterion filterInstantWithPeriod(String selfPosition,
+                                                    Date otherBegin,
+                                                    Date otherEnd,
+                                                    boolean periodFromReducedPrecisionInstant) {
             return Restrictions.eq(selfPosition, otherBegin);
         }
     };
@@ -470,15 +850,22 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class EndsRestriction extends TemporalRestriction {
+    private static class EndsRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return Restrictions.and(greater(selfBegin, otherBegin), Restrictions.eq(selfEnd, otherEnd));
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
+            return Restrictions.and(
+                    greater(selfBegin, otherBegin),
+                    Restrictions.eq(selfEnd, otherEnd));
         }
 
         @Override
-        protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
-                boolean periodFromReducedPrecisionInstant) {
+        protected Criterion filterInstantWithPeriod(String selfPosition,
+                                                    Date otherBegin,
+                                                    Date otherEnd,
+                                                    boolean periodFromReducedPrecisionInstant) {
             return Restrictions.eq(selfPosition, otherEnd);
         }
     };
@@ -503,14 +890,21 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class EndedByRestriction extends TemporalRestriction {
+    private static class EndedByRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return Restrictions.and(lower(selfBegin, otherBegin), Restrictions.eq(selfEnd, otherEnd));
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
+            return Restrictions.and(
+                    lower(selfBegin, otherBegin),
+                    Restrictions.eq(selfEnd, otherEnd));
         }
 
         @Override
-        protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
+        protected Criterion filterPeriodWithInstant(String selfBegin,
+                                                    String selfEnd,
+                                                    Date otherPosition) {
             return Restrictions.eq(selfEnd, otherPosition);
         }
     };
@@ -535,14 +929,21 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class BegunByRestriction extends TemporalRestriction {
+    private static class BegunByRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return Restrictions.and(Restrictions.eq(selfBegin, otherBegin), greater(selfEnd, otherEnd));
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
+            return Restrictions.and(
+                    Restrictions.eq(selfBegin, otherBegin),
+                    greater(selfEnd, otherEnd));
         }
 
         @Override
-        protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
+        protected Criterion filterPeriodWithInstant(String selfBegin,
+                                                    String selfEnd,
+                                                    Date otherPosition) {
             return Restrictions.eq(selfBegin, otherPosition);
         }
     };
@@ -560,24 +961,33 @@ public abstract class TemporalRestriction {
      * <td><tt>self.begin &gt; other.begin AND self.end &lt; other.end</tt></td>
      * <td><i>not defined</i></td>
      * </tr>
-     * <td><b>Instant</b></td>
-     * <td>
      * <tr>
-     * <tt>self.position &gt; other.begin AND self.position &lt; other.end</tt></td>
+     * <td><b>Instant</b></td>
+     * <td><tt>self.position &gt; other.begin AND self.position &lt;
+     * other.end</tt></td>
      * <td><i>not defined</i></td>
      * </tr>
      * </table>
      */
-    public static class DuringRestriction extends TemporalRestriction {
+    private static class DuringRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return Restrictions.and(greater(selfBegin, otherBegin), lower(selfEnd, otherEnd));
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
+            return Restrictions.and(
+                    greater(selfBegin, otherBegin),
+                    lower(selfEnd, otherEnd));
         }
 
         @Override
-        protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
-                boolean isOtherPeriodFromReducedPrecisionInstant) {
-            return Restrictions.and(greater(selfPosition, otherBegin), lower(selfPosition, otherEnd));
+        protected Criterion filterInstantWithPeriod(String selfPosition,
+                                                    Date otherBegin,
+                                                    Date otherEnd,
+                                                    boolean isOtherPeriodFromReducedPrecisionInstant) {
+            return Restrictions.and(
+                    greater(selfPosition, otherBegin),
+                    lower(selfPosition, otherEnd));
         }
     };
 
@@ -592,8 +1002,8 @@ public abstract class TemporalRestriction {
      * <tr>
      * <td><b>Period</b></td>
      * <td><tt>self.begin = other.begin AND self.end = other.end</tt></td>
-     * <td><i>if period is from a reduced precision instant, self.begin &ge; other.begin
-     *        and self.end &le; other.end, otherwise not defined</i></td>
+     * <td><i>if period is from a reduced precision instant, self.begin &ge;
+     * other.begin and self.end &le; other.end, otherwise not defined</i></td>
      * </tr>
      * <tr>
      * <td><b>Instant</b></td>
@@ -602,25 +1012,35 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class TEqualsRestriction extends TemporalRestriction {
+    private static class EqualsRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return Restrictions.and(Restrictions.eq(selfBegin, otherBegin), Restrictions.eq(selfEnd, otherEnd));
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
+            return Restrictions.and(
+                    Restrictions.eq(selfBegin, otherBegin),
+                    Restrictions.eq(selfEnd, otherEnd));
         }
 
         @Override
-        protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
-                boolean isOtherPeriodFromReducedPrecisionInstant) {
+        protected Criterion filterInstantWithPeriod(String selfPosition,
+                                                    Date otherBegin,
+                                                    Date otherEnd,
+                                                    boolean isOtherPeriodFromReducedPrecisionInstant) {
             if (isOtherPeriodFromReducedPrecisionInstant) {
                 //time period was created from a reduced precision instant
-                return Restrictions.and(Restrictions.ge(selfPosition, otherBegin), Restrictions.le(selfPosition, otherEnd));
+                return Restrictions.and(
+                        Restrictions.ge(selfPosition, otherBegin),
+                        Restrictions.le(selfPosition, otherEnd));
             } else {
                 return null;
             }
         }
 
         @Override
-        protected Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
+        protected Criterion filterInstantWithInstant(String selfPosition,
+                                                     Date otherPosition) {
             return Restrictions.eq(selfPosition, otherPosition);
         }
     };
@@ -637,7 +1057,8 @@ public abstract class TemporalRestriction {
      * <td><b>Period</b></td>
      * <td><tt>self.begin &lt; other.begin AND self.end &gt; other.end</tt></td>
      * <td>
-     * <tt>self.begin &lt; other.position AND self.end &gt; other.position</tt></td>
+     * <tt>self.begin &lt; other.position AND self.end &gt;
+     * other.position</tt></td>
      * </tr>
      * <tr>
      * <td><b>Instant</b></td>
@@ -646,15 +1067,22 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class ContainsRestriction extends TemporalRestriction {
+    private static class ContainsRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return Restrictions.and(lower(selfBegin, otherBegin), greater(selfEnd, otherEnd));
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
+            return Restrictions.and(lower(selfBegin, otherBegin),
+                                    greater(selfEnd, otherEnd));
         }
 
         @Override
-        protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
-            return Restrictions.and(lower(selfBegin, otherPosition), greater(selfEnd, otherPosition));
+        protected Criterion filterPeriodWithInstant(String selfBegin,
+                                                    String selfEnd,
+                                                    Date otherPosition) {
+            return Restrictions.and(lower(selfBegin, otherPosition),
+                                    greater(selfEnd, otherPosition));
         }
     };
 
@@ -669,7 +1097,8 @@ public abstract class TemporalRestriction {
      * <tr>
      * <td><b>Period</b></td>
      * <td>
-     * <tt>self.begin &lt; other.begin AND self.end &gt; other.begin AND self.end &lt; other.end</tt>
+     * <tt>self.begin &lt; other.begin AND self.end &gt; other.begin AND
+     * self.end &lt; other.end</tt>
      * </td>
      * <td><i>not defined</i></td>
      * </tr>
@@ -680,11 +1109,15 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class OverlapsRestriction extends TemporalRestriction {
+    private static class OverlapsRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return Restrictions.and(lower(selfBegin, otherBegin), greater(selfEnd, otherBegin),
-                    lower(selfEnd, otherEnd));
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
+            return Restrictions.and(lower(selfBegin, otherBegin),
+                                    greater(selfEnd, otherBegin),
+                                    lower(selfEnd, otherEnd));
         }
     };
 
@@ -708,9 +1141,12 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class MeetsRestriction extends TemporalRestriction {
+    private static class MeetsRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
             return Restrictions.eq(selfEnd, otherBegin);
         }
     };
@@ -735,9 +1171,12 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class MetByRestriction extends TemporalRestriction {
+    private static class MetByRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
             return Restrictions.eq(selfBegin, otherEnd);
         }
     };
@@ -753,7 +1192,8 @@ public abstract class TemporalRestriction {
      * <tr>
      * <td><b>Period</b></td>
      * <td>
-     * <tt>self.begin &gt; other.begin AND self.begin &lt; other.end AND self.end &gt; other.end</tt>
+     * <tt>self.begin &gt; other.begin AND self.begin &lt; other.end AND
+     * self.end &gt; other.end</tt>
      * </td>
      * <td><i>not defined</i></td>
      * </tr>
@@ -764,11 +1204,15 @@ public abstract class TemporalRestriction {
      * </tr>
      * </table>
      */
-    public static class OverlappedByRestriction extends TemporalRestriction {
+    private static class OverlappedByRestriction extends TemporalRestriction {
         @Override
-        protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return Restrictions.and(greater(selfBegin, otherBegin), lower(selfBegin, otherEnd),
-                    greater(selfEnd, otherEnd));
+        protected Criterion filterPeriodWithPeriod(String selfBegin,
+                                                   String selfEnd,
+                                                   Date otherBegin,
+                                                   Date otherEnd) {
+            return Restrictions.and(greater(selfBegin, otherBegin),
+                                    lower(selfBegin, otherEnd),
+                                    greater(selfEnd, otherEnd));
         }
     };
 }

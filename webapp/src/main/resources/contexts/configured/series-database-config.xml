@@ -24,7 +24,7 @@
     <bean class="org.n52.series.db.SeriesHibernateSessionHolder" destroy-method="shutdown" />
 
     <bean id="seriesDatasource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="jdbcUrl" value="jdbc:h2:~/cache" />
+        <property name="jdbcUrl" value="jdbc:h2:cache" />
         <property name="driverClass" value="org.h2.Driver" />
     </bean>
 
@@ -33,19 +33,25 @@
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.spatial.dialect.h2geodb.GeoDBDialect</prop>
+                <prop key="hibernate.transaction.factory_class">org.hibernate.engine.transaction.internal.jdbc.JdbcTransactionFactory</prop>
+                <prop key="hibernate.current_session_context_class">thread</prop>
+                <prop key="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</prop>
+                <prop key="hibernate.max_fetch_depth">1</prop>
+                <prop key="hibernate.schema_update.unique_constraint_strategy">RECREATE_QUIETLY</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
                 <prop key="hibernate.format_sql">true</prop>
             </props>
         </property>
         <property name="mappingLocations" >
             <list>
-               <value>classpath*:hbm/sos/v50/**/*.hbm.xml</value>
+               <value>classpath*:hbm/sos/v50/*.hbm.xml</value>
             </list>
         </property>
     </bean>
 
+<!--
     <tx:annotation-driven />
-
+-->
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="seriesSessionFactory" />
     </bean>
@@ -61,21 +67,20 @@
 
     <!-- http://docs.spring.io/autorepo/docs/spring/4.2.x/spring-framework-reference/html/transaction.html#transaction-declarative -->
 
-    <!-- the transactional advice (what 'happens'; see the <aop:advisor/> bean below) -->
+    <!-- the transactional advice (what 'happens'; see the <aop:advisor/> bean below)
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="get*" read-only="true" />
             <tx:method name="searchFor" read-only="true" />
-            <!--<tx:method name="*" />-->
         </tx:attributes>
     </tx:advice>
-
-    <!-- ensure that the above transactional advices run for any execution of an operation defined by the DAO interfaces -->
+ -->
+    <!-- ensure that the above transactional advices run for any execution of an operation defined by the DAO interfaces
     <aop:config>
-        <aop:pointcut id="serviceOperation" expression="execution(* org.n52.series.db.da.dao.v1.*Dao.*(..))" />
+        <aop:pointcut id="serviceOperation" expression="execution(* org.n52.series.db.da.dao.*Dao.*(..))" />
         <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
     </aop:config>
-
+-->
     <!-- ############################################################################################### -->
 
 </beans>

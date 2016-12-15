@@ -8,6 +8,6 @@
     <bean id="sosElasticsearchSchemas" class="org.n52.sos.statistics.sos.schema.SosElasticsearchSchemas"></bean>
     <bean id="statisticsServiceEventListener" class="org.n52.sos.statistics.sos.SosStatisticsServiceEventListener"></bean>
 
-    <import resource="imports/request-event.xml"/>
-    <import resource="imports/response-event.xml"/>
+    <import resource="../../imports/request-event.xml"/>
+    <import resource="../../imports/response-event.xml"/>
 </beans>

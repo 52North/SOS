@@ -40,18 +40,18 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.EncoderRepository;
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
-import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.iceland.w3c.soap.SoapChain;
 import org.n52.iceland.w3c.soap.SoapResponse;
 import org.n52.janmayen.Producer;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 
 /**
@@ -64,15 +64,17 @@ import org.n52.sos.util.CodingHelper;
 public class SoapChainResponseWriter extends AbstractResponseWriter<SoapChain> {
     public static final ResponseWriterKey KEY = new ResponseWriterKey(SoapChain.class);
 
-    private final EncoderRepository encoderRepository;
     private final Producer<XmlOptions> xmlOptions;
     private final boolean forceStreamingEncoding;
 
-    public SoapChainResponseWriter(EncoderRepository encoderRepository, Producer<XmlOptions> xmlOptions, boolean forceStreamingEncoding) {
-        this.encoderRepository = encoderRepository;
+    public SoapChainResponseWriter(EncoderRepository encoderRepository,
+                                   Producer<XmlOptions> xmlOptions,
+                                   boolean forceStreamingEncoding) {
+        super(encoderRepository);
         this.xmlOptions = xmlOptions;
         this.forceStreamingEncoding = forceStreamingEncoding;
     }
+
 
     @Override
     public Set<ResponseWriterKey> getKeys() {
@@ -91,7 +93,7 @@ public class SoapChainResponseWriter extends AbstractResponseWriter<SoapChain> {
     private void write(SoapChain chain, OutputStream out) throws EncodingException, IOException {
         String namespace = chain.getSoapResponse().getSoapNamespace();
         EncoderKey key = CodingHelper.getEncoderKey(namespace, chain.getSoapResponse());
-        Encoder<?, SoapResponse> encoder = this.encoderRepository.getEncoder(key);
+        Encoder<?, SoapResponse> encoder = getEncoder(key);
         if (encoder == null) {
             throw new NoEncoderForKeyException(key);
         }

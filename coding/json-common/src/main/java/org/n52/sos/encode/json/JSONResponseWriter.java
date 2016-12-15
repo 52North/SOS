@@ -39,6 +39,7 @@ import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.svalbard.encode.EncoderRepository;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -52,6 +53,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
 
     public static final ResponseWriterKey KEY = new ResponseWriterKey(JsonNode.class);
+
+    public JSONResponseWriter(EncoderRepository encoderRepository) {
+        super(encoderRepository);
+    }
 
     @Override
     public Set<ResponseWriterKey> getKeys() {

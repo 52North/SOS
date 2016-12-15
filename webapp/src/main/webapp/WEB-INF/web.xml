@@ -48,7 +48,7 @@
         <param-value>
             classpath*:contexts/configured.xml
             classpath*:configured-context.xml
-            classpath:contexts/configured/*.xml
+            classpath*:contexts/configured/*.xml
         </param-value>
     </context-param>
     <!-- Memory leak preventer listener -->

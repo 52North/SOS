@@ -61,6 +61,8 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 import org.n52.shetland.ogc.swe.DataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
@@ -72,8 +74,6 @@ import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
-import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -187,8 +187,7 @@ public class SosInsertSensorOperatorV20 extends
                 }
             } else {
                 exceptions.add(new MissingParameterValueException(Sos2Constants.InsertSensorParams.observationType));
-                exceptions.add(
-                        new MissingParameterValueException(Sos2Constants.InsertSensorParams.featureOfInterestType));
+                exceptions.add(new MissingParameterValueException(Sos2Constants.InsertSensorParams.featureOfInterestType));
             }
         }
         exceptions.throwIfNotEmpty();
@@ -198,51 +197,49 @@ public class SosInsertSensorOperatorV20 extends
     protected void preProcessRequest(InsertSensorRequest request) {
         if (request.isSetProcedureDescription()) {
             SosProcedureDescription<?> procedureDescription = request.getProcedureDescription();
-            if (request.isSetExtensions()) {
-                if (request.hasExtension(SensorMLConstants.ELEMENT_NAME_OFFERINGS)) {
-                    Optional<Extension<?>> extension = request.getExtension(SensorMLConstants.ELEMENT_NAME_OFFERINGS);
-                    if (extension.isPresent()) {
-                        if (extension.get().getValue() instanceof DataRecord) {
-                            procedureDescription
-                                    .addOfferings(SosOffering.fromSet(((DataRecord) extension.get().getValue())
-                                            .getSweAbstractSimpleTypeFromFields(SweText.class)));
-                        } else if (extension.get().getValue() instanceof SweText) {
-                            procedureDescription.addOffering(SosOffering.from((SweText) extension.get().getValue()));
+            if (request.hasExtension(SensorMLConstants.ELEMENT_NAME_OFFERINGS)) {
+                Optional<Extension<?>> extension = request.getExtension(SensorMLConstants.ELEMENT_NAME_OFFERINGS);
+                if (extension.isPresent()) {
+                    if (extension.get().getValue() instanceof DataRecord) {
+                        procedureDescription
+                                .addOfferings(SosOffering.fromSet(((DataRecord) extension.get().getValue())
+                                        .getSweAbstractSimpleTypeFromFields(SweText.class)));
+                    } else if (extension.get().getValue() instanceof SweText) {
+                        procedureDescription.addOffering(SosOffering.from((SweText) extension.get().getValue()));
+                    }
+                }
+            }
+            if (request.hasExtension(SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES)) {
+                Optional<Extension<?>> extension =
+                        request.getExtension(SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES);
+                if (extension.isPresent()) {
+                    if (extension.get().getValue() instanceof SweText) {
+                        SweText sweText = (SweText) extension.get().getValue();
+                        if (sweText.isSetName()) {
+                            procedureDescription.setParentProcedure(
+                                    new ReferenceType(sweText.getValue(), sweText.getName().getValue()));
+                        } else {
+                            procedureDescription.setParentProcedure(new ReferenceType(sweText.getValue()));
                         }
                     }
                 }
-                if (request.hasExtension(SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES)) {
-                    Optional<Extension<?>> extension =
-                            request.getExtension(SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES);
-                    if (extension.isPresent()) {
-                        if (extension.get().getValue() instanceof SweText) {
-                            SweText sweText = (SweText) extension.get().getValue();
-                            if (sweText.isSetName()) {
-                                procedureDescription.setParentProcedure(
-                                        new ReferenceType(sweText.getValue(), sweText.getName().getValue()));
-                            } else {
-                                procedureDescription.setParentProcedure(new ReferenceType(sweText.getValue()));
-                            }
-                        }
-                    }
-                }
-                if (request.hasExtension(SensorMLConstants.INSITU)) {
-                    procedureDescription
-                            .setInsitu(request.getExtensions().isBooleanExtensionSet(SensorMLConstants.INSITU));
-                } else if (request.hasExtension(SensorMLConstants.REMOTE)) {
-                    procedureDescription
-                            .setInsitu(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.REMOTE));
-                }
-                if (request.hasExtension(SensorMLConstants.MOBILE)) {
-                    procedureDescription
-                            .setMobile(request.getExtensions().isBooleanExtensionSet(SensorMLConstants.MOBILE));
-                } else if (request.hasExtension(SensorMLConstants.FIXED)) {
-                    procedureDescription
-                            .setMobile(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.FIXED));
-                } else if (request.hasExtension(SensorMLConstants.STATIONARY)) {
-                    procedureDescription
-                            .setMobile(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.STATIONARY));
-                }
+            }
+            if (request.hasExtension(SensorMLConstants.INSITU)) {
+                procedureDescription
+                        .setInsitu(request.getExtensions().isBooleanExtensionSet(SensorMLConstants.INSITU));
+            } else if (request.hasExtension(SensorMLConstants.REMOTE)) {
+                procedureDescription
+                        .setInsitu(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.REMOTE));
+            }
+            if (request.hasExtension(SensorMLConstants.MOBILE)) {
+                procedureDescription
+                        .setMobile(request.getExtensions().isBooleanExtensionSet(SensorMLConstants.MOBILE));
+            } else if (request.hasExtension(SensorMLConstants.FIXED)) {
+                procedureDescription
+                        .setMobile(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.FIXED));
+            } else if (request.hasExtension(SensorMLConstants.STATIONARY)) {
+                procedureDescription
+                        .setMobile(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.STATIONARY));
             }
             if (request.getProcedureDescription().getProcedureDescription() instanceof AbstractSensorML) {
                 AbstractSensorML abstractSensorML =

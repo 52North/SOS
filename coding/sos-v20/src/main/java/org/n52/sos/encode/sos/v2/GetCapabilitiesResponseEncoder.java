@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ogc.ows.extension.OfferingExtension;
 import org.n52.iceland.ogc.ows.extension.StringBasedExtension;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -57,14 +56,15 @@ import org.n52.shetland.ogc.ows.OwsCapabilities;
 import org.n52.shetland.ogc.ows.OwsCapabilitiesExtension;
 import org.n52.shetland.ogc.ows.OwsOperationsMetadata;
 import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.shetland.w3c.W3CConstants;
 import org.n52.shetland.ogc.sos.SosCapabilities;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosInsertionCapabilities;
 import org.n52.shetland.ogc.sos.SosObservationOffering;
 import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
@@ -320,20 +320,18 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     }
 
     private void encodeOfferingExtension(SosObservationOffering sosOffering, ObservationOfferingType xbObsOff) throws EncodingException {
-        if (sosOffering.isSetExtensions()) {
-            for (Extension<?> extention : sosOffering.getExtensions().getExtensions()) {
-                if (extention.getValue() instanceof OfferingExtension) {
-                    OfferingExtension extension = (OfferingExtension) extention.getValue();
-                    try {
-                        xbObsOff.addNewExtension().set(XmlObject.Factory.parse(extension.getExtension()));
-                    } catch (XmlException ex) {
-                        throw new EncodingException("Error encoding SwesExtension", ex);
-                    }
-                } else {
-                    xbObsOff.addNewExtension().set(encodeObjectToXml(extention.getNamespace(), extention));
+        for (Extension<?> extention : sosOffering.getExtensions().getExtensions()) {
+            if (extention.getValue() instanceof OfferingExtension) {
+                OfferingExtension extension = (OfferingExtension) extention.getValue();
+                try {
+                    xbObsOff.addNewExtension().set(XmlObject.Factory.parse(extension.getExtension()));
+                } catch (XmlException ex) {
+                    throw new EncodingException("Error encoding SwesExtension", ex);
                 }
-
+            } else {
+                xbObsOff.addNewExtension().set(encodeObjectToXml(extention.getNamespace(), extention));
             }
+
         }
     }
 

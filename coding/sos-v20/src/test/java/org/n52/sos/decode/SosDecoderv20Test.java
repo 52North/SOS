@@ -40,10 +40,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -86,7 +87,6 @@ public class SosDecoderv20Test {
         assertThat(decodedObject, instanceOf(GetObservationRequest.class));
 
         final GetObservationRequest request = (GetObservationRequest) decodedObject;
-        assertThat(request.isSetExtensions(), is(TRUE));
         assertThat(request.getExtensions().isBooleanExtensionSet("MergeObservationsIntoDataArray"), is(TRUE));
     }
 
@@ -110,7 +110,7 @@ public class SosDecoderv20Test {
         assertThat(decodedObject, instanceOf(GetObservationRequest.class));
 
         final GetObservationRequest request = (GetObservationRequest) decodedObject;
-        assertThat(request.isSetExtensions(), is(TRUE));
+        assertThat(request.getExtension("my-text-extension").map(Extension::getValue), is("true"));
 
     }
 

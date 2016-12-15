@@ -35,8 +35,6 @@ import java.util.Set;
 import org.joda.time.DateTime;
 
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -46,6 +44,10 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
@@ -59,8 +61,6 @@ import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterExceptio
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
-import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.SosHelper;
 
@@ -144,8 +144,7 @@ public class AqdGetObservationOperatorV10 extends
     }
 
     private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest request) {
-        return request.isSetExtensions()
-                && request.getExtensions().isBooleanExtensionSet(
+        return request.getExtensions().isBooleanExtensionSet(
                         Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
     }
 

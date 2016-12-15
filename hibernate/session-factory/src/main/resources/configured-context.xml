@@ -3,6 +3,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
+    <bean id="driverCleanupListener"
+          class="org.n52.sos.service.DriverCleanupListener" />
+
     <bean class="org.n52.sos.ds.hibernate.SessionFactoryProvider" />
 
 </beans>

@@ -42,6 +42,7 @@ import org.joda.time.format.PeriodFormat;
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
@@ -58,6 +59,7 @@ import org.n52.sos.ds.CacheFeederHandler;
 import org.n52.sos.ds.hibernate.cache.HibernateSessionStoreWrapper;
 import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
+import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,10 +82,19 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     private I18NDAORepository i18NDAORepository;
     private ServiceMetadataRepository serviceMetadataRepository;
     private HibernateSessionStore sessionStore;
+    private HibernateSessionHolder sessionHolder;
 
     @Inject
-    public void setConnectionProvider(HibernateSessionStore sessionStore) {
+    private ObservationSettingProvider observationSettingProvider;
+
+    @Inject
+    public void setProxyConnectionProvider(HibernateSessionStore sessionStore) {
         this.sessionStore = sessionStore;
+    }
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)

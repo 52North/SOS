@@ -28,7 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.cache.base;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,9 +61,8 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureCacheUpdate.class);
 
     private static final String THREAD_GROUP_NAME = "procedure-cache-update";
-    private final ProxyProcedureDao procedureDAO;
-    private List<ProcedureEntity> procedures;
-    private Map<String,Collection<DatasetEntity>> procedureDatasetMap;
+    private List<ProcedureEntity> procedures = new ArrayList<>();
+    private Map<String,Collection<DatasetEntity>> procedureDatasetMap = new HashMap<>();
 
     /**
      * constructor
@@ -69,15 +70,14 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
      */
     public ProcedureCacheUpdate(int threads, ConnectionProvider connectionProvider) {
         super(threads, THREAD_GROUP_NAME, connectionProvider);
-        procedureDAO = new ProxyProcedureDao(getSession());
     }
 
     @SuppressWarnings("unchecked")
     private Map<String,Collection<DatasetEntity>> getOfferingDatasets() throws OwsExceptionReport {
         if (procedureDatasetMap == null) {
             try {
-                procedureDatasetMap = DatasourceCacheUpdateHelper.mapByProcedure(
-                    new ProxyDatasetDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults())));
+                procedureDatasetMap.putAll(DatasourceCacheUpdateHelper.mapByProcedure(
+                    new ProxyDatasetDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()))));
             } catch (DataAccessException dae) {
                 throw new NoApplicableCodeException().causedBy(dae).withMessage("Error while querying datasets for offerings");
             }

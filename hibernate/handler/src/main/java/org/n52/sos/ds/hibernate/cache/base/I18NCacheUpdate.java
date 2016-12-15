@@ -70,11 +70,13 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
         LOGGER.info("Executing I18NCacheUpdate");
         startStopwatch();
         try {
-            getCache().addSupportedLanguage(this.serviceMetadataRepository.getAvailableLocales());
-            getCache().addSupportedLanguage(getEntityLocales(I18NFeatureMetadata.class));
-            getCache().addSupportedLanguage(getEntityLocales(I18NOfferingMetadata.class));
-            getCache().addSupportedLanguage(getEntityLocales(I18NObservablePropertyMetadata.class));
-            getCache().addSupportedLanguage(getEntityLocales(I18NProcedureMetadata.class));
+            if (this.i18NDAORepository != null && this.serviceMetadataRepository != null) {
+                getCache().addSupportedLanguage(this.serviceMetadataRepository.getAvailableLocales());
+                getCache().addSupportedLanguage(getEntityLocales(I18NFeatureMetadata.class));
+                getCache().addSupportedLanguage(getEntityLocales(I18NOfferingMetadata.class));
+                getCache().addSupportedLanguage(getEntityLocales(I18NObservablePropertyMetadata.class));
+                getCache().addSupportedLanguage(getEntityLocales(I18NProcedureMetadata.class));
+            }
         } catch (OwsExceptionReport ce) {
             getErrors().add(ce);
         }

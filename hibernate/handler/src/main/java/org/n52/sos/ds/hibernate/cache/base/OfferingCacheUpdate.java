@@ -67,7 +67,7 @@ import com.google.common.collect.Lists;
 public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<OfferingCacheUpdateTask> {
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingCacheUpdate.class);
     private static final String THREAD_GROUP_NAME = "offering-cache-update";
-    private final ProxyOfferingDao offeringDAO;
+    private ProxyOfferingDao offeringDAO;
     private Collection<String> offeringsIdToUpdate = Lists.newArrayList();
     private Collection<OfferingEntity> offeringsToUpdate;
     private Map<String,Collection<DatasetEntity>> offDatasetMap;
@@ -80,13 +80,17 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
 
     public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, ConnectionProvider connectionProvider, Collection<String> offeringIdsToUpdate) {
         super(threads, THREAD_GROUP_NAME, connectionProvider);
-        this.offeringsIdToUpdate = offeringIdsToUpdate;
+        if (offeringIdsToUpdate != null) {
+            this.offeringsIdToUpdate.addAll(offeringIdsToUpdate);
+        }
         this.defaultLanguage = defaultLanguage;
         this.i18NDAORepository = i18NDAORepository;
-        offeringDAO = new ProxyOfferingDao(getSession());
     }
 
     private Collection<OfferingEntity> getOfferingsToUpdate() {
+        if (offeringDAO == null) {
+            offeringDAO = new ProxyOfferingDao(getSession());
+        }
         if (offeringsToUpdate == null) {
             offeringsToUpdate = offeringDAO.getInstancesFor(offeringsIdToUpdate);
         }
@@ -143,7 +147,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     @Override
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
-        boolean hasSamplingGeometry = checkForSamplingGeometry();
+        boolean hasSamplingGeometry = false;
         for (OfferingEntity offering : getOfferingsToUpdate()){
             if (shouldOfferingBeProcessed(offering)) {
                 Collection<DatasetEntity> datasets
@@ -151,7 +155,6 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                 offeringUpdateTasks.add(new OfferingCacheUpdateTask(
                         offering,
                         datasets,
-                        hasSamplingGeometry,
                         this.defaultLanguage,
                         this.i18NDAORepository));
             }
@@ -159,21 +162,21 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
     }
 
-    /**
-     * Check if the observation table contains samplingGeometries with values.
-     *
-     * @return <code>true</code>, if the observation table contains samplingGeometries with values
-     */
-    private boolean checkForSamplingGeometry() {
-        try {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-            return observationDAO.containsSamplingGeometries(getSession());
-        } catch (OwsExceptionReport e) {
-            LOGGER.error("Error while getting observation DAO class from factory!", e);
-            getErrors().add(e);
-        }
-        return false;
-    }
+//    /**
+//     * Check if the observation table contains samplingGeometries with values.
+//     *
+//     * @return <code>true</code>, if the observation table contains samplingGeometries with values
+//     */
+//    private boolean checkForSamplingGeometry() {
+//        try {
+//            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+//            return observationDAO.containsSamplingGeometries(getSession());
+//        } catch (OwsExceptionReport e) {
+//            LOGGER.error("Error while getting observation DAO class from factory!", e);
+//            getErrors().add(e);
+//        }
+//        return false;
+//    }
 
     protected boolean shouldOfferingBeProcessed(OfferingEntity offering) {
         try {

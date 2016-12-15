@@ -59,7 +59,6 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureCacheUpdateTask.class);
     private ProcedureEntity procedure;
-    private final ProxyOfferingDao offeringDAO;
     private Collection<DatasetEntity> datasets;
 
     /**
@@ -72,13 +71,14 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     ProcedureCacheUpdateTask(ProcedureEntity procedure, Collection<DatasetEntity> datasets) {
         this.procedure = procedure;
         this.datasets = datasets;
-        this.offeringDAO = new ProxyOfferingDao(getSession());
+
     }
 
 
 
     protected void getProcedureInformationFromDbAndAddItToCacheMaps() throws OwsExceptionReport {
         try {
+            ProxyOfferingDao offeringDAO = new ProxyOfferingDao(getSession());
             String identifier = procedure.getDomainId();
             getCache().addProcedure(identifier);
             if (procedure.isSetName()) {

@@ -71,7 +71,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     private final Collection<DatasetEntity> datasets;
     private final OfferingEntity offering;
     private boolean obsConstSupported;
-    private final boolean hasSamplingGeometry;
 
     private final Locale defaultLanguage;
     private final I18NDAORepository i18NDAORepository;
@@ -85,19 +84,14 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      * @param observationConstellationInfos
      *            Observation Constellation info collection, passed in from
      *            parent update if supported
-     * @param hasSamplingGeometry
-     *            Indicator to execute or not the extent query for the Spatial
-     *            Filtering Profile
      */
     public OfferingCacheUpdateTask(OfferingEntity offering,
                                    Collection<DatasetEntity> datasets,
-                                   boolean hasSamplingGeometry,
                                    Locale defaultLanguage,
                                    I18NDAORepository i18NDAORepository) {
         this.offering = offering;
         this.identifier = offering.getDomainId();
         this.datasets = datasets;
-        this.hasSamplingGeometry = hasSamplingGeometry;
         this.defaultLanguage = defaultLanguage;
         this.i18NDAORepository = i18NDAORepository;
     }

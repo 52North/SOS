@@ -36,17 +36,17 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.OwsNoValues;
 import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 
 /**
  * interface for getting procedure description for a passed DescribeSensor

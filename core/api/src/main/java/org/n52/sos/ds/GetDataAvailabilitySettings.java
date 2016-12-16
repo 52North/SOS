@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.gda;
+package org.n52.sos.ds;
 
 public interface GetDataAvailabilitySettings {
     String FORCE_GDA_VALUE_COUNT = "operation.gda.forceValueCount";

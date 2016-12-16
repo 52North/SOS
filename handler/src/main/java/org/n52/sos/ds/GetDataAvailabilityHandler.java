@@ -64,7 +64,6 @@ import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ProcedureDescrip
 import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.ds.dao.GetDataAvailabilityDao;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
-import org.n52.sos.gda.AbstractGetDataAvailabilityHandler;
 import org.n52.svalbard.encode.Encoder;
 
 import com.google.common.collect.Lists;

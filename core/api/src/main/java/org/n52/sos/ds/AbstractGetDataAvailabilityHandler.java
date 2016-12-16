@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.gda;
+package org.n52.sos.ds;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -39,8 +39,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
-import org.n52.shetland.ogc.ows.OwsDomain;
-import org.n52.sos.ds.AbstractOperationHandler;
 
 /**
  * Handler to get the DataAvailabilities out of the database.

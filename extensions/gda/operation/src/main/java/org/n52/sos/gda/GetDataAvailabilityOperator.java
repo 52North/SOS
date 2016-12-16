@@ -40,6 +40,7 @@ import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants.GetDataAvailabilityParams;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.AbstractGetDataAvailabilityHandler;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.request.operator.WSDLAwareRequestOperator;
 import org.n52.sos.wsdl.WSDLOperation;

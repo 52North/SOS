@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
 import org.n52.proxy.db.dao.ProxyOfferingDao;
 import org.n52.series.db.DataAccessException;
@@ -67,7 +68,7 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
             getCache().setMaxPhenomenonTime(phenomenonTime.getEnd());
             getCache().setMinResultTime(resultTime.getStart());
             getCache().setMaxResultTime(resultTime.getEnd());
-        } catch (DataAccessException dae) {
+        } catch (HibernateException | DataAccessException dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while updating observation time cache!"));
         }

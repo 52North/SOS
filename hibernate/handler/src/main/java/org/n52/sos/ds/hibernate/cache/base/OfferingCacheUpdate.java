@@ -34,7 +34,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.HibernateException;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.io.request.IoParameters;
 import org.n52.proxy.db.dao.ProxyDatasetDao;
@@ -88,11 +90,16 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     private Collection<OfferingEntity> getOfferingsToUpdate() {
-        if (offeringDAO == null) {
-            offeringDAO = new ProxyOfferingDao(getSession());
-        }
-        if (offeringsToUpdate == null) {
-            offeringsToUpdate = offeringDAO.getInstancesFor(offeringsIdToUpdate);
+        try {
+            if (offeringDAO == null) {
+                offeringDAO = new ProxyOfferingDao(getSession());
+            }
+            if (offeringsToUpdate == null) {
+                offeringsToUpdate = offeringDAO.getInstancesFor(offeringsIdToUpdate);
+            }
+        } catch (Exception e) {
+            getErrors().add(new GenericThrowableWrapperException(e)
+                    .withMessage("Error while processing procedure cache update task!"));
         }
         return offeringsToUpdate;
     }
@@ -103,7 +110,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             try {
                 offDatasetMap = DatasourceCacheUpdateHelper.mapByOffering(
                     new ProxyDatasetDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults())));
-            } catch (DataAccessException dae) {
+            } catch (HibernateException | DataAccessException dae) {
                 throw new NoApplicableCodeException().causedBy(dae).withMessage("Error while querying datasets for offerings");
             }
         }

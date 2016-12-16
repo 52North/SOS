@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyDatasetDao;
@@ -84,7 +85,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                                     .getAllProcedureIdentifiersFromDatasets(datasets));
                 }
             }
-        } catch (DataAccessException dae) {
+        } catch (HibernateException | DataAccessException dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while updating featureOfInterest cache!"));
         }

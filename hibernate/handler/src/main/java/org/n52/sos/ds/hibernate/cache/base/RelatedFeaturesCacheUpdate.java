@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.cache.base;
 
+import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
 import org.n52.proxy.db.beans.RelatedFeatureEntity;
 import org.n52.proxy.db.beans.RelatedFeatureRoleEntity;
@@ -63,7 +64,7 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
                     getCache().addRoleForRelatedFeature(identifier, relatedFeatureRole.getRelatedFeatureRole());
                 }
             }
-        } catch (DataAccessException dae) {
+        } catch (HibernateException | DataAccessException dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while updating related feature cache!"));
         }

@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
@@ -254,6 +255,9 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             getOfferingInformationFromDbAndAddItToCacheMaps(getSession());
         } catch (OwsExceptionReport owse) {
             getErrors().add(owse);
+        } catch (Exception e) {
+            getErrors().add(new GenericThrowableWrapperException(e)
+                    .withMessage("Error while processing procedure cache update task!"));
         }
     }
 }

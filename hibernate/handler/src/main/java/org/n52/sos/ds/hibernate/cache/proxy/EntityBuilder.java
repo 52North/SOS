@@ -58,6 +58,8 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
+import com.google.common.base.Strings;
+
 public class EntityBuilder {
 
     public static ServiceEntity createService(String name, String description, String url, String version) {
@@ -70,44 +72,44 @@ public class EntityBuilder {
         return service;
     }
 
-    public static ProcedureEntity createProcedure(Procedure sosProc, ServiceEntity service) {
+    public static ProcedureEntity createProcedure(Procedure sosProc, ServiceEntity service, boolean processParents, boolean processChilds) {
         ProcedureEntity procedure = new ProcedureEntity();
         procedure.setService(service);
         setIdentifierNameDesxription(sosProc, procedure);
         procedure.setInsitu(sosProc.isInsitu());
         procedure.setMobile(sosProc.isMobile());
-        if (sosProc.hasParents()) {
+        if (sosProc.hasParents() && processParents) {
             Set<ProcedureEntity> parents = new HashSet<>();
             for (Procedure parent : sosProc.getParents()) {
-                parents.add(createProcedure(parent, service));
+                parents.add(createProcedure(parent, service, true, false));
             }
             procedure.setParents(parents);
         }
-        if (sosProc.hasChilds()) {
+        if (sosProc.hasChilds() && processChilds) {
             Set<ProcedureEntity> childs = new HashSet<>();
             for (Procedure child : sosProc.getChilds()) {
-                childs.add(createProcedure(child, service));
+                childs.add(createProcedure(child, service, false, true));
             }
             procedure.setChilds(childs);
         }
         return procedure;
     }
 
-    public static OfferingEntity createOffering(Offering sosOffering, ServiceEntity service) {
+    public static OfferingEntity createOffering(Offering sosOffering, ServiceEntity service, boolean processParents, boolean processChilds) {
         OfferingEntity offering = new OfferingEntity();
         offering.setService(service);
         setIdentifierNameDesxription(sosOffering, offering);
-        if (sosOffering.hasParents()) {
+        if (sosOffering.hasParents() && processParents) {
             Set<OfferingEntity> parents = new HashSet<>();
             for (Offering parent : sosOffering.getParents()) {
-                parents.add(createOffering(parent, service));
+                parents.add(createOffering(parent, service, true, false));
             }
             offering.setParents(parents);
         }
-        if (sosOffering.hasChilds()) {
+        if (sosOffering.hasChilds() && processChilds) {
             Set<OfferingEntity> childs = new HashSet<>();
             for (Offering child : sosOffering.getChilds()) {
-                childs.add(createOffering(child, service));
+                childs.add(createOffering(child, service, false, true));
             }
             offering.setChilds(childs);
         }
@@ -125,43 +127,43 @@ public class EntityBuilder {
         return category;
     }
 
-    public static PhenomenonEntity createPhenomenon(ObservableProperty sosObsProp, ServiceEntity service) {
+    public static PhenomenonEntity createPhenomenon(ObservableProperty sosObsProp, ServiceEntity service, boolean processParents, boolean processChilds) {
         PhenomenonEntity phenomenon = new PhenomenonEntity();
         phenomenon.setService(service);
         setIdentifierNameDesxription(sosObsProp, phenomenon);
-        if (sosObsProp.hasParents()) {
+        if (sosObsProp.hasParents() && processParents) {
             Set<PhenomenonEntity> parents = new HashSet<>();
             for (ObservableProperty parent : sosObsProp.getParents()) {
-                parents.add(createPhenomenon(parent, service));
+                parents.add(createPhenomenon(parent, service, true, false));
             }
             phenomenon.setParents(parents);
         }
-        if (sosObsProp.hasChilds()) {
+        if (sosObsProp.hasChilds() && processChilds) {
             Set<PhenomenonEntity> childs = new HashSet<>();
             for (ObservableProperty child : sosObsProp.getChilds()) {
-                childs.add(createPhenomenon(child, service));
+                childs.add(createPhenomenon(child, service, false, true));
             }
             phenomenon.setChilds(childs);
         }
         return phenomenon;
     }
 
-    public static FeatureEntity createFeature(FeatureOfInterest sosFeature, ServiceEntity service) {
+    public static FeatureEntity createFeature(FeatureOfInterest sosFeature, ServiceEntity service, boolean processParents, boolean processChilds) {
         FeatureEntity feature = new FeatureEntity();
         feature.setService(service);
         setIdentifierNameDesxription(sosFeature, feature);
         feature.setGeometryEntity(new GeometryEntity().setGeometry(sosFeature.getGeom()));
-        if (sosFeature.hasParents()) {
+        if (sosFeature.hasParents() && processParents) {
             Set<FeatureEntity> parents = new HashSet<>();
             for (FeatureOfInterest parent : sosFeature.getParents()) {
-                parents.add(createFeature(parent, service));
+                parents.add(createFeature(parent, service, true, false));
             }
             feature.setParents(parents);
         }
-        if (sosFeature.hasChilds()) {
+        if (sosFeature.hasChilds() && processChilds) {
             Set<FeatureEntity> childs = new HashSet<>();
             for (FeatureOfInterest child : sosFeature.getChilds()) {
-                childs.add(createFeature(child, service));
+                childs.add(createFeature(child, service, false, true));
             }
             feature.setChilds(childs);
         }
@@ -183,11 +185,11 @@ public class EntityBuilder {
             dataset.setDeleted(series.isDeleted());
             dataset.setFirstValueAt(series.getFirstTimeStamp());
             dataset.setLastValueAt(series.getLastTimeStamp());
-            dataset.setProcedure(createProcedure(series.getProcedure(), service));
+            dataset.setProcedure(createProcedure(series.getProcedure(), service, true, true));
             dataset.setCategory(createCategory(series.getObservableProperty(), service));
-            dataset.setFeature(createFeature(series.getFeatureOfInterest(), service));
-            dataset.setPhenomenon(createPhenomenon(series.getObservableProperty(), service));
-            dataset.setOffering(createOffering(series.getOffering(), service));
+            dataset.setFeature(createFeature(series.getFeatureOfInterest(), service, true, true));
+            dataset.setPhenomenon(createPhenomenon(series.getObservableProperty(), service, true, true));
+            dataset.setOffering(createOffering(series.getOffering(), service, true, true));
             if (series.isSetUnit()) {
                 dataset.setUnit(createUnit(series.getUnit(), service));
             }
@@ -203,6 +205,9 @@ public class EntityBuilder {
     }
 
     private static DatasetEntity createDataset(String seriesType) {
+        if (Strings.isNullOrEmpty(seriesType)) {
+            return null;
+        }
         switch (seriesType.toLowerCase(Locale.ROOT)) {
         case "measurement":
             return new MeasurementDatasetEntity();
@@ -219,10 +224,10 @@ public class EntityBuilder {
     public static RelatedFeatureEntity createRelatedFeature(RelatedFeature sosRelatedFeature, ServiceEntity service) {
         RelatedFeatureEntity relatedFeature = new RelatedFeatureEntity();
         relatedFeature.setService(service);
-        relatedFeature.setFeature(createFeature(sosRelatedFeature.getFeatureOfInterest(), service));
+        relatedFeature.setFeature(createFeature(sosRelatedFeature.getFeatureOfInterest(), service, false, false));
         Set<OfferingEntity> offerings = new HashSet<>();
         for (Offering offering : sosRelatedFeature.getOfferings()) {
-            offerings.add(createOffering(offering, service));
+            offerings.add(createOffering(offering, service, false, false));
         }
         relatedFeature.setOfferings(offerings);
 

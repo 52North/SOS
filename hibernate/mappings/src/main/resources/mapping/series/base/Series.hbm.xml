@@ -50,6 +50,16 @@
             	<comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
             </column>
         </many-to-one>
+        <many-to-one name="offering" 
+                        class="org.n52.sos.ds.hibernate.entities.Offering" 
+                        foreign-key="seriesOfferingFk">
+            <column index="seriesOfferingIdx" 
+                    name="offeringId"
+                    not-null="true"
+                    unique-key="seriesIdentity" >
+                <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+            </column>
+        </many-to-one>
         <property name="deleted"
                   type="org.hibernate.type.TrueFalseType">
             <column name="deleted"

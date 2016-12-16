@@ -45,14 +45,8 @@ import org.quartz.SchedulerException;
 public class HibernateDataSourceHarvestJobFactory {
 
     private String cronExpression;
-    private ConnectionProvider connectionProvider;
     private HibernateDataSourceHarvesterScheduler scheduler;
-    private Set<ScheduledJob> jobs = new HashSet<>();
-
-    @Inject
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.connectionProvider = connectionProvider;
-    }
+    private Set<String> jobs = new HashSet<>();
 
     @Inject
     public void setHibernateDataSourceHarvesterScheduler(HibernateDataSourceHarvesterScheduler scheduler) {
@@ -82,11 +76,11 @@ public class HibernateDataSourceHarvestJobFactory {
     }
 
     private void reschedule() {
-        HibernateDataSourceHarvesterJob job = new HibernateDataSourceHarvesterJob(connectionProvider);
+        HibernateDataSourceHarvesterJob job = new HibernateDataSourceHarvesterJob();
         job.setEnabled(true);
         job.setCronExpression(getCronExpression());
         job.setTriggerAtStartup(true);
-        if (jobs.contains(job)) {
+        if (jobs.contains(job.getJobName())) {
             try {
                 scheduler.updateJob(job);
             } catch (SchedulerException e) {
@@ -96,6 +90,6 @@ public class HibernateDataSourceHarvestJobFactory {
         } else {
             scheduler.scheduleJob(job);
         }
-        jobs.add(job);
+        jobs.add(job.getJobName());
     }
 }

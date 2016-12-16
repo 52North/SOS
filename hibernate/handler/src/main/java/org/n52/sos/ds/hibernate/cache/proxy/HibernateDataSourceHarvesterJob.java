@@ -72,8 +72,13 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
     private InsertRepository insertRepository;
     private HibernateSessionHolder sessionHolder;
 
-    public HibernateDataSourceHarvesterJob(ConnectionProvider connectionProvider) {
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
+    public HibernateSessionHolder getConnectionProvider() {
+        return this.sessionHolder;
     }
 
     public InsertRepository getInsertRepository() {
@@ -96,17 +101,17 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
         Session session = null;
         try {
             LOGGER.info(context.getJobDetail().getKey() + " execution starts.");
-            session = sessionHolder.getSession();
+            session = getConnectionProvider().getSession();
             ServiceEntity service = insertRepository.insertService(EntityBuilder.createService("localDB", "description of localDB", "localhost", "2.0.0"));
             insertRepository.cleanUp(service);
             insertRepository.prepareInserting(service);
             harvestSeries(service, session);
             harvestRelatedFeartures(service, session);
             LOGGER.info(context.getJobDetail().getKey() + " execution ends.");
-        } catch (OwsExceptionReport ex) {
+        } catch (Exception ex) {
             java.util.logging.Logger.getLogger(HibernateDataSourceHarvesterJob.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            sessionHolder.returnSession(session);
+            getConnectionProvider().returnSession(session);
         }
     }
 

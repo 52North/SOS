@@ -71,7 +71,8 @@ public class DefaultContentModificationListener implements ServiceEventListener 
                     ObservationInsertion.class,
                     ResultTemplateInsertion.class,
                     SensorDeletion.class,
-                    ResultInsertion.class);
+                    ResultInsertion.class,
+                    UpdateCache.class);
 
     private CacheFeederHandler handler;
     private ContentCacheController controller;

@@ -32,9 +32,8 @@ import org.n52.iceland.event.events.AbstractFlowEvent;
 
 public class UpdateCache extends AbstractFlowEvent {
 
-    public UpdateCache(Long eventsGroupId) {
+    public UpdateCache() {
         super(Thread.currentThread().getId());
-        // TODO Auto-generated constructor stub
     }
 
 }

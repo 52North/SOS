@@ -40,6 +40,7 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -260,21 +261,23 @@ private HibernateSessionHolder sessionHolder;
         if (procedureDescription.getProcedureDescription() instanceof SensorML) {
             final SensorML sensorML = (SensorML) procedureDescription.getProcedureDescription() ;
             // if SensorML is not a wrapper
-            if (!sensorML.isWrapper()) {
+            if (!sensorML.isWrapper() && sensorML.isSetXml()) {
                 return sensorML.getXml();
             }
             // if SensorML is a wrapper and member size is 1
-            else if (sensorML.isWrapper() && sensorML.getMembers().size() == 1) {
-                return sensorML.getMembers().get(0).getXml();
+            else if (sensorML.isWrapper() && sensorML.getMembers().size() == 1 && sensorML.getMembers().get(0).isSetXml()) {
+                return sensorML.getMembers().iterator().next().getXml();
             } else {
                 // TODO: get sensor description for procedure identifier
                 return "";
             }
-        }
-        // if procedureDescription not SensorML
-        else {
+        } else if (procedureDescription.getProcedureDescription() instanceof AbstractFeature
+                    && procedureDescription.getProcedureDescription().isSetXml()) {
+            return procedureDescription.getProcedureDescription().getXml();
+        } else if (procedureDescription.isSetXml()) {
             return procedureDescription.getXml();
         }
+        return "";
     }
 
 }

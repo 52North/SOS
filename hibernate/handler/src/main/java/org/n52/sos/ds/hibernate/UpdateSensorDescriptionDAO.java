@@ -38,8 +38,10 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
@@ -104,7 +106,7 @@ private HibernateSessionHolder sessionHolder;
                         }
                     }
                     validProcedureTimeDAO.insertValidProcedureTime(procedure, procedureDescriptionFormat,
-                            procedureDescription.getXml(), currentTime, session);
+                            getSensorDescriptionFromProcedureDescription(procedureDescription), currentTime, session);
                 }
             }
             session.flush();
@@ -120,6 +122,36 @@ private HibernateSessionHolder sessionHolder;
         } finally {
             sessionHolder.returnSession(session);
         }
+    }
+
+    /**
+     * Get SensorDescription String from procedure description
+     *
+     * @param procedureDescription
+     *            Procedure description
+     * @return SensorDescription String
+     */
+    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription procedureDescription ) {
+        if (procedureDescription.getProcedureDescription() instanceof SensorML) {
+            final SensorML sensorML = (SensorML) procedureDescription.getProcedureDescription() ;
+            // if SensorML is not a wrapper
+            if (!sensorML.isWrapper() && sensorML.isSetXml()) {
+                return sensorML.getXml();
+            }
+            // if SensorML is a wrapper and member size is 1
+            else if (sensorML.isWrapper() && sensorML.getMembers().size() == 1 && sensorML.getMembers().get(0).isSetXml()) {
+                return sensorML.getMembers().iterator().next().getXml();
+            } else {
+                // TODO: get sensor description for procedure identifier
+                return "";
+            }
+        } else if (procedureDescription.getProcedureDescription() instanceof AbstractFeature
+                    && procedureDescription.getProcedureDescription().isSetXml()) {
+            return procedureDescription.getProcedureDescription().getXml();
+        } else if (procedureDescription.isSetXml()) {
+            return procedureDescription.getXml();
+        }
+        return "";
     }
 
 }

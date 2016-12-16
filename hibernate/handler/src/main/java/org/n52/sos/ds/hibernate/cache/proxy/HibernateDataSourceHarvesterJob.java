@@ -36,13 +36,14 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.event.ServiceEventBus;
 import org.n52.io.task.ScheduledJob;
 import org.n52.proxy.db.beans.RelatedFeatureEntity;
 import org.n52.proxy.db.da.InsertRepository;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
@@ -52,6 +53,7 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.event.events.UpdateCache;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -71,6 +73,7 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
     @Inject
     private InsertRepository insertRepository;
     private HibernateSessionHolder sessionHolder;
+    private ServiceEventBus serviceEventBus;
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
@@ -89,6 +92,15 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
         this.insertRepository = insertRepository;
     }
 
+    @Inject
+    public void setServiceEventBus(ServiceEventBus serviceEventBus) {
+        this.serviceEventBus = serviceEventBus;
+    }
+
+    public ServiceEventBus getServiceEventBus() {
+        return serviceEventBus;
+    }
+
     @Override
     public JobDetail createJobDetails() {
         return JobBuilder.newJob(HibernateDataSourceHarvesterJob.class)
@@ -105,9 +117,11 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
             ServiceEntity service = insertRepository.insertService(EntityBuilder.createService("localDB", "description of localDB", "localhost", "2.0.0"));
             insertRepository.cleanUp(service);
             insertRepository.prepareInserting(service);
+            harvestOfferings(service, session);
             harvestSeries(service, session);
             harvestRelatedFeartures(service, session);
             LOGGER.info(context.getJobDetail().getKey() + " execution ends.");
+            getServiceEventBus().submit(new UpdateCache());
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(HibernateDataSourceHarvesterJob.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -115,11 +129,22 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
         }
     }
 
+    private void harvestOfferings(ServiceEntity service, Session session) {
+        for (Offering offering : new OfferingDAO().getOfferings(session)) {
+            OfferingEntity offferingEntity = EntityBuilder.createOffering(offering, service, true, true);
+            // TODO add phenTime, ResultTime, ...
+            
+            insertRepository.insertOffering(offferingEntity);
+        }
+    }
+
     private void harvestSeries(ServiceEntity service, Session session) throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         for (Series series : seriesDAO.getSeries(session)) {
-            DatasetEntity dataset = EntityBuilder.createDataset(series, service);
-            insertRepository.insertDataset(dataset);
+            DatasetEntity<?> dataset = EntityBuilder.createDataset(series, service);
+            if (dataset != null) {
+                insertRepository.insertDataset(dataset);
+            }
         }
     }
 

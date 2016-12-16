@@ -30,7 +30,10 @@ package org.n52.sos.ds.hibernate.cache.proxy;
 
 import static org.quartz.TriggerBuilder.newTrigger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import org.joda.time.DateTime;
 import org.n52.io.task.ScheduledJob;
 import org.n52.janmayen.lifecycle.Destroyable;
 import org.quartz.JobDetail;
@@ -76,20 +79,23 @@ public class HibernateDataSourceHarvesterScheduler implements Destroyable {
     public void updateJob(ScheduledJob taskToSchedule) throws SchedulerException {
         JobDetail details = taskToSchedule.createJobDetails();
         Trigger trigger = taskToSchedule.createTrigger(details.getKey());
-        scheduler.rescheduleJob(trigger.getKey(), trigger);
+        Date nextExecution = scheduler.rescheduleJob(trigger.getKey(), trigger);
+        LOGGER.debug("Rescheduled job '{}' will be executed at '{}'!", details.getKey(), new DateTime(nextExecution));
     }
 
     public void scheduleJob(ScheduledJob taskToSchedule) {
         try {
             JobDetail details = taskToSchedule.createJobDetails();
             Trigger trigger = taskToSchedule.createTrigger(details.getKey());
-            scheduler.scheduleJob(details, trigger);
+            Date nextExecution = scheduler.scheduleJob(details, trigger);
+            LOGGER.debug("Schedule job '{}' will be executed at '{}'!", details.getKey(), new DateTime(nextExecution));
             if (taskToSchedule.isTriggerAtStartup()) {
                 LOGGER.debug("Schedule job '{}' to run once at startup.", details.getKey());
                 Trigger onceAtStartup = newTrigger()
                         .withIdentity(details.getKey() + "_onceAtStartup")
                         .forJob(details.getKey()).build();
-                scheduler.scheduleJob(onceAtStartup);
+                Date startupExecution = scheduler.scheduleJob(onceAtStartup);
+                LOGGER.debug("Schedule job '{}' will be executed on startup at '{}'!", details.getKey(), new DateTime(startupExecution));
             }
         } catch (SchedulerException e) {
             LOGGER.warn("Could not schdule Job '{}'.", taskToSchedule.getJobName(), e);
@@ -118,7 +124,10 @@ public class HibernateDataSourceHarvesterScheduler implements Destroyable {
     }
 
     public void setScheduledJobs(List<ScheduledJob> scheduledJobs) {
-        this.scheduledJobs = scheduledJobs;
+        this.scheduledJobs.clear();
+        if (scheduledJobs != null) {
+            this.scheduledJobs.addAll(scheduledJobs);
+        }
     }
 
     public int getStartupDelayInSeconds() {

@@ -28,10 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.cache.proxy;
 
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -40,45 +37,30 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.io.task.ScheduledJob;
-import org.n52.proxy.config.DataSourcesConfig;
-import org.n52.proxy.config.DataSourcesConfig.DataSourceConfig;
 import org.n52.proxy.db.beans.RelatedFeatureEntity;
 import org.n52.proxy.db.da.InsertRepository;
-import org.n52.series.db.beans.CategoryEntity;
-import org.n52.series.db.beans.CountDatasetEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.beans.MeasurementDatasetEntity;
-import org.n52.series.db.beans.OfferingEntity;
-import org.n52.series.db.beans.PhenomenonEntity;
-import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ServiceEntity;
-import org.n52.series.db.beans.UnitEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
-import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
-import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
-import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
@@ -90,7 +72,7 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
     private InsertRepository insertRepository;
     private HibernateSessionHolder sessionHolder;
 
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+    public HibernateDataSourceHarvesterJob(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 

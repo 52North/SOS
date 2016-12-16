@@ -24,7 +24,7 @@
     <bean class="org.n52.series.db.SeriesHibernateSessionHolder" destroy-method="shutdown" />
 
     <bean id="seriesDatasource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="jdbcUrl" value="jdbc:h2:cache" />
+        <property name="jdbcUrl" value="jdbc:h2:file:./cache/proxy" />
         <property name="driverClass" value="org.h2.Driver" />
     </bean>
 

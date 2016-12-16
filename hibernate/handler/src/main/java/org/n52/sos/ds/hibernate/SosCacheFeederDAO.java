@@ -102,15 +102,15 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
         this.defaultLocale = LocaleHelper.fromString(defaultLocale);
     }
 
-//    @Inject
-//    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
-//        this.serviceMetadataRepository = repo;
-//    }
+    @Inject
+    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+        this.serviceMetadataRepository = repo;
+    }
 
-//    @Inject
-//    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
-//        this.i18NDAORepository = i18NDAORepository;
-//    }
+    @Inject
+    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
+        this.i18NDAORepository = i18NDAORepository;
+    }
 
     @Setting(CACHE_THREAD_COUNT)
     public void setCacheThreadCount(int threads) throws ConfigurationError {

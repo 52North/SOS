@@ -17,10 +17,15 @@
     <bean id="getDataAvailabilityDao"
           class="org.n52.sos.ds.hibernate.dao.GetDataAvailabilityDao"/>
 
+    <bean class="org.n52.series.db.dao.DefaultDbQueryFactory"/>
+
+    <bean id="insertRepository"
+          class="org.n52.proxy.db.da.InsertRepository"/>
+
     <bean id="harvestJobFactory"
           class="org.n52.sos.ds.hibernate.cache.proxy.HibernateDataSourceHarvestJobFactory"/>
 
-    <bean id="dataSourceScheduler" class="org.n52.sos.ds.hibernate.cache.proxy.HibernateDataSourceHarvesterScheduler" destroy-method="shutdown">
+    <bean id="dataSourceScheduler" class="org.n52.sos.ds.hibernate.cache.proxy.HibernateDataSourceHarvesterScheduler" init-method="init" destroy-method="shutdown">
         <property name="scheduler">
             <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
                 <property name="jobFactory">

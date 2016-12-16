@@ -53,8 +53,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
@@ -68,6 +66,8 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -618,10 +618,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      * @return <code>true</code>, if optional count should be added
      */
     private boolean isShowCount(GetDataAvailabilityRequest request) {
-        if (request.isSetExtensions()) {
-            return request.getExtensions().isBooleanExtensionSet(SHOW_COUNT);
-        }
-        return isForceValueCount();
+        return request.getExtensions().isBooleanExtensionSet(SHOW_COUNT);
     }
 
     /**
@@ -632,11 +629,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      * @return <code>true</code>, if result times should be added
      */
     private boolean isIncludeResultTime(GetDataAvailabilityRequest request) {
-        if (request.isSetExtensions()) {
-            return request.getExtensions().isBooleanExtensionSet(INCLUDE_RESULT_TIMES)
-                    || hasPhenomenonTimeFilter(request.getExtensions());
-        }
-        return false;
+        return request.getExtensions().isBooleanExtensionSet(INCLUDE_RESULT_TIMES)
+                || hasPhenomenonTimeFilter(request.getExtensions());
     }
 
     /**

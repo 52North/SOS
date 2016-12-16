@@ -37,11 +37,12 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * Writer for {@link SOAPMessage} objects
@@ -51,6 +52,10 @@ import org.n52.janmayen.http.MediaTypes;
  */
 public class SoapResponseWriter extends AbstractResponseWriter<SOAPMessage> {
     public static final ResponseWriterKey KEY = new ResponseWriterKey(SOAPMessage.class);
+
+    public SoapResponseWriter(EncoderRepository encoderRepository) {
+        super(encoderRepository);
+    }
 
     @Override
     public Set<ResponseWriterKey> getKeys() {

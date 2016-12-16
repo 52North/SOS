@@ -28,15 +28,19 @@
  */
 package org.n52.sos.encode;
 
+import javax.inject.Inject;
 import javax.xml.soap.SOAPMessage;
 
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.janmayen.component.SingleTypeComponentFactory;
+import org.n52.svalbard.encode.EncoderRepository;
+
 /**
  * {@link ResponseWriterFactory} implementation for {@link SOAPMessage} and
  * {@link SoapResponseWriter}
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -47,6 +51,12 @@ public class SoapResponseWriterFactory
 
     private static final ResponseWriterKey RESPONSE_WRITER_KEY
             = new ResponseWriterKey(SOAPMessage.class);
+    private EncoderRepository encoderRepository;
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
 
     @Override
     public ResponseWriterKey getKey() {
@@ -55,7 +65,7 @@ public class SoapResponseWriterFactory
 
     @Override
     public SoapResponseWriter create() {
-        return new SoapResponseWriter();
+        return new SoapResponseWriter(this.encoderRepository);
     }
 
 }

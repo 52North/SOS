@@ -48,6 +48,7 @@ import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.response.StreamingDataResponse;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
@@ -65,11 +66,14 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
     private final ResponseWriterRepository responseWriterRepository;
     private final boolean forceStreamingEncoding;
 
-    public AbstractServiceResponseWriter(ResponseWriterRepository responseWriterRepository,
+    public AbstractServiceResponseWriter(EncoderRepository encoderRepository,
+                                         ResponseWriterRepository responseWriterRepository,
                                          boolean forceStreamingEncoding) {
+        super(encoderRepository);
         this.responseWriterRepository = responseWriterRepository;
         this.forceStreamingEncoding = forceStreamingEncoding;
     }
+
 
     public ResponseWriterRepository getResponseWriterRepository() {
         return responseWriterRepository;

@@ -43,8 +43,7 @@ public interface SosActivationDao {
      * Checks if the response format is active for the specified service and
      * version.
      *
-     * @param key
-     *            the service/version/responseFormat combination
+     * @param key the service/version/responseFormat combination
      *
      * @return if the format is active
      */
@@ -54,12 +53,9 @@ public interface SosActivationDao {
      * Sets the status of a response format for the specified service and
      * version.
      *
-     * @param key
-     *               the service/version/responseFormat combination
-     * @param active
-     *               the status
+     * @param key the service/version/responseFormat combination
+     * @param active the status
      *
-     * @see #setActive(ResponseFormatKey, boolean)
      */
     void setResponseFormatStatus(ResponseFormatKey key, boolean active);
 
@@ -69,8 +65,7 @@ public interface SosActivationDao {
      * Checks if the procedure description format is active for the specified
      * service and version.
      *
-     * @param key
-     *            the service/version/procedure description combination
+     * @param key the service/version/procedure description combination
      *
      * @return if the format is active
      */
@@ -80,12 +75,9 @@ public interface SosActivationDao {
      * Sets the status of a response format for the specified service and
      * version.
      *
-     * @param key
-     *               the service/version/responseFormat combination
-     * @param active
-     *               the status
+     * @param key the service/version/responseFormat combination
+     * @param active the status
      *
-     * @see #setActive(ProcedureDescriptionFormatKey, boolean)
      */
     void setProcedureDescriptionFormatStatus(ProcedureDescriptionFormatKey key,
                                              boolean active);

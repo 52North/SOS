@@ -28,16 +28,18 @@
  */
 package org.n52.sos.coding.encode;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.janmayen.component.SingleTypeComponentFactory;
 import org.n52.shetland.ogc.sos.response.BinaryAttachmentResponse;
+import org.n52.svalbard.encode.EncoderRepository;
 
 /**
  * {@link ResponseWriterFactory} implementation for
- * {@link BinaryAttachmentResponse} and
- * {@link BinaryAttachmentResponseWriter}
+ * {@link BinaryAttachmentResponse} and {@link BinaryAttachmentResponseWriter}
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
@@ -47,6 +49,13 @@ public class BinaryAttachmentResponseWriterFactory
         implements ResponseWriterFactory,
                    SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>> {
 
+    private EncoderRepository encoderRepository;
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
     @Override
     public ResponseWriterKey getKey() {
         return BinaryAttachmentResponseWriter.KEY;
@@ -54,7 +63,7 @@ public class BinaryAttachmentResponseWriterFactory
 
     @Override
     public BinaryAttachmentResponseWriter create() {
-        return new BinaryAttachmentResponseWriter();
+        return new BinaryAttachmentResponseWriter(this.encoderRepository);
     }
 
 }

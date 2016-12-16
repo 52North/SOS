@@ -33,11 +33,11 @@ import net.opengis.swes.x20.ExtensibleRequestType;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -63,10 +63,8 @@ public interface ExtensibleRequestEncoder {
     }
 
     default void addExtension(ExtensibleRequestType ert, OwsServiceRequest request) throws EncodingException {
-        if (request.isSetExtensions()) {
-            for (Extension<?> extension : request.getExtensions().getExtensions()) {
-                ert.addNewExtension().set(encodeObjectToXml(extension.getNamespace(), extension));
-            }
+        for (Extension<?> extension : request.getExtensions().getExtensions()) {
+            ert.addNewExtension().set(encodeObjectToXml(extension.getNamespace(), extension));
         }
     }
 

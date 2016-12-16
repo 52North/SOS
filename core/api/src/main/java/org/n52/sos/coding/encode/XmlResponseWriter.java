@@ -40,6 +40,7 @@ import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.janmayen.Producer;
+import org.n52.svalbard.encode.EncoderRepository;
 
 /**
  * TODO JavaDoc
@@ -49,11 +50,14 @@ import org.n52.janmayen.Producer;
  * @since 4.0.0
  */
 public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
-    public static final ResponseWriterKey KEY = new ResponseWriterKey(XmlObject.class);
+    public static final ResponseWriterKey KEY
+            = new ResponseWriterKey(XmlObject.class);
 
     private final Producer<XmlOptions> xmlOptions;
 
-    public XmlResponseWriter(Producer<XmlOptions> xmlOptions) {
+    public XmlResponseWriter(EncoderRepository encoderRepository,
+                             Producer<XmlOptions> xmlOptions) {
+        super(encoderRepository);
         this.xmlOptions = xmlOptions;
     }
 
@@ -63,7 +67,8 @@ public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
     }
 
     @Override
-    public void write(XmlObject xml, OutputStream out, ResponseProxy responseProxy) throws IOException {
+    public void write(XmlObject xml, OutputStream out,
+                      ResponseProxy responseProxy) throws IOException {
         xml.save(out, this.xmlOptions.get());
     }
 

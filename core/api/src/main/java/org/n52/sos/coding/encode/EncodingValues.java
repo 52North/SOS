@@ -35,7 +35,7 @@ import org.n52.svalbard.encode.Encoder;
 import com.google.common.base.Strings;
 
 /**
- * @deprecated move everything to {@link CodingContext}.
+ * @deprecated move everything to {@link EncodingContext}.
  */
 @Deprecated
 public class EncodingValues {

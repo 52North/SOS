@@ -36,8 +36,9 @@ import org.apache.xmlbeans.XmlOptions;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
-import org.n52.janmayen.component.SingleTypeComponentFactory;
 import org.n52.janmayen.Producer;
+import org.n52.janmayen.component.SingleTypeComponentFactory;
+import org.n52.svalbard.encode.EncoderRepository;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link XmlObject} and
@@ -52,6 +53,12 @@ public class XmlResponseWriterFactory
                    SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>> {
 
     private Producer<XmlOptions> xmlOptions;
+    private EncoderRepository encoderRepository;
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
 
     @Inject
     public void setXmlOptions(Producer<XmlOptions> xmlOptions) {
@@ -65,7 +72,7 @@ public class XmlResponseWriterFactory
 
     @Override
     public XmlResponseWriter create() {
-        return new XmlResponseWriter(this.xmlOptions);
+        return new XmlResponseWriter(this.encoderRepository, this.xmlOptions);
     }
 
 }

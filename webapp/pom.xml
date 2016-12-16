@@ -447,11 +447,6 @@
             <artifactId>gda-operation</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>gda-hibernate</artifactId>
-            <scope>runtime</scope>
-        </dependency>
 
         <!-- DELETE OBSERVATION -->
 

@@ -227,9 +227,8 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
      */
     protected AbstractFeature getSosAbstractFeature(final FeatureOfInterest featureOfInterest, final String version,
             final Session session) throws OwsExceptionReport {
-        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(session)
             .addFeatureIdentifier(featureOfInterest.getIdentifier())
-            .setConnection(session)
             .setVersion(version);
         return this.featureQueryHandler.getFeatureByID(queryObject);
     }

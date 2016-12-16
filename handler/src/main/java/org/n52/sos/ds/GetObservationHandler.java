@@ -90,7 +90,7 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
             response.setResponseFormat(request.getResponseFormat());
             response.setResultModel(request.getResultModel());
             // check for featureOfInterest
-            FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
+            FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(session);
             if (request.isSetFeatureOfInterest()){
                 List<FeatureEntity> features = new ProxyFeatureDao(session).getAllInstances(createDbQuery(request));
                 if (features == null || (features != null && features.isEmpty())) {

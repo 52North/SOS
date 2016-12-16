@@ -82,7 +82,7 @@ public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
             String version = Sos2Constants.SERVICEVERSION;
             AbstractFeature result =
                     new HibernateFeatureQueryHandler().createSosAbstractFeature(feature,
-                            new FeatureQueryHandlerQueryObject().setVersion(version).setConnection(session));
+                            new FeatureQueryHandlerQueryObject(session).setVersion(version));
             final AbstractFeature expectedResult =
                     SamplingFeatureBuilder.aSamplingFeature().setFeatureType(type).setIdentifier(id).build();
             assertThat(expectedResult, is(result));
@@ -135,8 +135,7 @@ public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
                     create(1, "id", geometry, "name", "url", createFeatureOfInterestType(1, "type"));
             AbstractFeature sosFeature =
                     new HibernateFeatureQueryHandler().createSosAbstractFeature(feature,
-                            new FeatureQueryHandlerQueryObject().setVersion(Sos2Constants.SERVICEVERSION)
-                                    .setConnection(session));
+                            new FeatureQueryHandlerQueryObject(session).setVersion(Sos2Constants.SERVICEVERSION));
 
             assertThat(GeometryHandler.getInstance().isNorthingFirstEpsgCode(4326), is(true));
             assertThat(sosFeature, is(notNullValue()));
@@ -181,8 +180,7 @@ public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
                     create(1, "id", geometry, "name", "url", createFeatureOfInterestType(1, "type"));
             AbstractFeature sosFeature =
                     new HibernateFeatureQueryHandler().createSosAbstractFeature(feature,
-                            new FeatureQueryHandlerQueryObject().setVersion(Sos2Constants.SERVICEVERSION)
-                                    .setConnection(session));
+                            new FeatureQueryHandlerQueryObject(session).setVersion(Sos2Constants.SERVICEVERSION));
 
             assertThat(GeometryHandler.getInstance().isNorthingFirstEpsgCode(4326), is(true));
             assertThat(sosFeature, is(notNullValue()));

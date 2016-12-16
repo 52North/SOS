@@ -223,7 +223,7 @@ public abstract class AbstractOmObservationCreator {
      *             If an error occurs
      */
     protected AbstractFeature createFeatureOfInterest(String identifier) throws OwsExceptionReport {
-        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
         queryObject.addFeature(identifier).setVersion(getVersion());
         final AbstractFeature feature =
                 getFeatureQueryHandler().getFeatureByID(queryObject);

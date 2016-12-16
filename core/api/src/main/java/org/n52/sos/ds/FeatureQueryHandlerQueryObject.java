@@ -51,13 +51,12 @@ public class FeatureQueryHandlerQueryObject {
 
     private String version;
 
-    public Object getConnection() {
-        return connection;
+    public FeatureQueryHandlerQueryObject(Object connection) {
+        this.connection = connection;
     }
 
-    public FeatureQueryHandlerQueryObject setConnection(Object connection) {
-        this.connection = connection;
-                return this;
+    public Object getConnection() {
+        return connection;
     }
 
     /**
@@ -68,7 +67,8 @@ public class FeatureQueryHandlerQueryObject {
     }
 
     /**
-     * @param features the features to set
+     * @param features
+     *            the features to set
      */
     public FeatureQueryHandlerQueryObject setFeatures(Collection<String> features) {
         this.features.clear();
@@ -117,30 +117,32 @@ public class FeatureQueryHandlerQueryObject {
         return null;
     }
 
-//    public Set<String> getFeatureIdentifiers() {
-//        return featureIdentifiers;
-//    }
-//
-//    public FeatureQueryHandlerQueryObject setFeatureIdentifiers(Collection<String> featureIdentifiers) {
-//        if (featureIdentifiers != null && !featureIdentifiers.isEmpty()) {
-//            this.featureIdentifiers.addAll(featureIdentifiers);
-//        }
-//        return this;
-//    }
-//
-//    public FeatureQueryHandlerQueryObject addFeatureIdentifier(String identifier) {
-//        if (!Strings.isNullOrEmpty(identifier)) {
-//            featureIdentifiers.add(identifier);
-//        }
-//        return this;
-//    }
-//
-//    public String getFeatureIdentifier() {
-//        if (isSetFeatureIdentifiers() && getFeatureIdentifiers().size() == 1) {
-//            return getFeatureIdentifiers().iterator().next();
-//        }
-//        return Constants.EMPTY_STRING;
-//    }
+    // public Set<String> getFeatureIdentifiers() {
+    // return featureIdentifiers;
+    // }
+    //
+    // public FeatureQueryHandlerQueryObject
+    // setFeatureIdentifiers(Collection<String> featureIdentifiers) {
+    // if (featureIdentifiers != null && !featureIdentifiers.isEmpty()) {
+    // this.featureIdentifiers.addAll(featureIdentifiers);
+    // }
+    // return this;
+    // }
+    //
+    // public FeatureQueryHandlerQueryObject addFeatureIdentifier(String
+    // identifier) {
+    // if (!Strings.isNullOrEmpty(identifier)) {
+    // featureIdentifiers.add(identifier);
+    // }
+    // return this;
+    // }
+    //
+    // public String getFeatureIdentifier() {
+    // if (isSetFeatureIdentifiers() && getFeatureIdentifiers().size() == 1) {
+    // return getFeatureIdentifiers().iterator().next();
+    // }
+    // return Constants.EMPTY_STRING;
+    // }
 
     public boolean isSetSpatialFilters() {
         return getSpatialFilters() != null && !getSpatialFilters().isEmpty();
@@ -178,10 +180,9 @@ public class FeatureQueryHandlerQueryObject {
         return version;
     }
 
-
-//    public boolean isSetFeatureIdentifiers() {
-//        return CollectionHelper.isNotEmpty(getFeatureIdentifiers());
-//    }
+    // public boolean isSetFeatureIdentifiers() {
+    // return CollectionHelper.isNotEmpty(getFeatureIdentifiers());
+    // }
 
     public boolean isSetVersion() {
         return !Strings.isNullOrEmpty(getVersion());

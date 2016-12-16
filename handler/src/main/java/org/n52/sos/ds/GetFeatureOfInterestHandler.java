@@ -104,7 +104,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
      */
     private FeatureCollection getFeatures(GetFeatureOfInterestRequest request, Session session)
             throws OwsExceptionReport {
-        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(session)
                 // .setSpatialFilters(request.getSpatialFilters())
                 .setVersion(request.getVersion()).setI18N(LocaleHelper.fromString(request.getRequestedLanguage()));
         if (request.hasParameter()) {

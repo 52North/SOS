@@ -127,7 +127,7 @@ public class QueryHelper {
                 throw new NoApplicableCodeException()
                         .withMessage("The requested valueReference for spatial filters is not supported by this server!");
             }
-            FeatureQueryHandlerQueryObject query = new FeatureQueryHandlerQueryObject().addSpatialFilter(spatialFilter);
+            FeatureQueryHandlerQueryObject query = new FeatureQueryHandlerQueryObject(session).addSpatialFilter(spatialFilter);
             foiIDs = new HashSet<>(featureQueryHandler.getFeatureIDs(query));
         }
 

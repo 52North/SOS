@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
@@ -76,10 +77,10 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                 getCache().setProceduresForFeatureOfInterest(identifier, getProcedures(procedureDao.getAllInstances(createProcedureDbQuery(featureEntity))));
             }
 
-    } catch (DataAccessException dae) {
-        getErrors().add(new NoApplicableCodeException().causedBy(dae).withMessage("Error while updating featureOfInterest cache!"));
-    }
-    LOGGER.debug("Finished executing FeatureOfInterestCacheUpdate ({})", getStopwatchResult());
+        } catch (HibernateException | DataAccessException dae) {
+            getErrors().add(new NoApplicableCodeException().causedBy(dae).withMessage("Error while updating featureOfInterest cache!"));
+        }
+        LOGGER.debug("Finished executing FeatureOfInterestCacheUpdate ({})", getStopwatchResult());
     }
 
     private Collection<String> getProcedures(List<ProcedureEntity> procedures) {

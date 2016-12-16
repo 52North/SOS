@@ -121,6 +121,9 @@ public class FlexibleIdentifierHelper implements Constructable {
 
     public boolean checkIsReturnHumanReadableIdentifierFlagExtensionSet(Extensions extensions)
             throws InvalidParameterValueException {
+        if (extensions == null) {
+            return false;
+        }
         Optional<Extension<?>> extension = extensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER);
         if (extension.isPresent()) {
             Object value = extension.get().getValue();
@@ -135,6 +138,9 @@ public class FlexibleIdentifierHelper implements Constructable {
 
     public boolean checkForReturnHumanReadableIdentifierFlagExtension(Extensions extensions)
             throws InvalidParameterValueException {
+        if (extensions == null) {
+            return false;
+        }
         Optional<Extension<?>> extension = extensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER);
         if (extension.isPresent()) {
             Object value = extension.get().getValue();

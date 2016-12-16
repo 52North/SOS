@@ -28,8 +28,11 @@
  */
 package org.n52.sos.ds;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,7 +40,6 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
@@ -45,27 +47,41 @@ import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
+import org.n52.shetland.ogc.om.features.samplingFeatures.InvalidSridException;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
+import org.n52.sos.ds.dao.GetFeatureOfInterestDao;
+import org.n52.sos.util.GeometryHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.base.Strings;
 
 public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHandler {
 
     private HibernateSessionStore sessionStore;
+    private GetFeatureOfInterestDao dao;
+    private GeometryHandler geometryHandler;
 
-    private FeatureQueryHandler featureQueryHandler;
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
 
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
         this.sessionStore = sessionStore;
     }
 
-    @Inject
-    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
-        this.featureQueryHandler = featureQueryHandler;
+    @Autowired(required=false)
+    public void setGetFeatureOfInterestDao(GetFeatureOfInterestDao dao) {
+        this.dao = dao;
     }
 
     public GetFeatureOfInterestHandler() {
@@ -104,19 +120,47 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
      */
     private FeatureCollection getFeatures(GetFeatureOfInterestRequest request, Session session)
             throws OwsExceptionReport {
-        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(session)
-                // .setSpatialFilters(request.getSpatialFilters())
-                .setVersion(request.getVersion()).setI18N(LocaleHelper.fromString(request.getRequestedLanguage()));
-        if (request.hasParameter()) {
-            Set<FeatureEntity> featureEntities = new HashSet<>(queryFeaturesForParameter(request, session));
-            if (featureEntities == null || featureEntities.isEmpty()) {
-                return new FeatureCollection();
-            }
-            queryObject.setFeatures(featureEntities.stream().map(f -> f.getDomainId()).collect(Collectors.toSet()));
+        Set<FeatureEntity> featureEntities = new HashSet<>(queryFeaturesForParameter(request, session));
+        if (featureEntities == null || featureEntities.isEmpty()) {
+            return new FeatureCollection();
         }
-        return new FeatureCollection(this.featureQueryHandler.getFeatures(queryObject));
+        if (dao != null) {
+            request.setFeatureIdentifiers(featureEntities.stream().map(f -> f.getDomainId()).collect(Collectors.toSet()));
+            return new FeatureCollection(dao.getFeatureOfInterest(request));
+        }
+        return new FeatureCollection(createFeatures(featureEntities));
     }
 
+    private Map<String, AbstractFeature> createFeatures(Set<FeatureEntity> featureEntities) throws InvalidSridException, OwsExceptionReport {
+        final Map<String, AbstractFeature> map = new HashMap<>(featureEntities.size());
+        for (final FeatureEntity feature : featureEntities) {
+            final AbstractFeature abstractFeature = createFeature(feature);
+            map.put(abstractFeature.getIdentifier(), abstractFeature);
+        }
+        return map;
+    }
+
+    private AbstractFeature createFeature(FeatureEntity feature) throws InvalidSridException, OwsExceptionReport {
+        final SamplingFeature sampFeat = new SamplingFeature(new CodeWithAuthority(feature.getDomainId()));
+        if (feature.isSetName()) {
+            sampFeat.addName(feature.getName());
+        }
+        if (!Strings.isNullOrEmpty(feature.getDescription())) {
+            sampFeat.setDescription(feature.getDescription());
+        }
+        if (feature.isSetGeometry()) {
+            sampFeat.setGeometry(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometry()));
+        }
+        final Set<FeatureEntity> parentFeatures = feature.getParents();
+        if (parentFeatures != null && !parentFeatures.isEmpty()) {
+            final List<AbstractFeature> sampledFeatures = new ArrayList<>(parentFeatures.size());
+            for (final FeatureEntity parentFeature : parentFeatures) {
+                sampledFeatures.add(createFeature(parentFeature));
+            }
+            sampFeat.setSampledFeatures(sampledFeatures);
+        }
+        return sampFeat;
+    }
     /**
      * Get featureOfInterest identifiers for requested parameters
      *
@@ -149,8 +193,15 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         if (req.isSetObservableProperties()) {
             rsps.addParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(req.getObservedProperties()));
         }
+        if (req.isSetSpatialFilters()) {
+            // TODO
+        }
         rsps.addParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));
+    }
+
+    protected GeometryHandler getGeometryHandler() {
+        return geometryHandler;
     }
 
 }

@@ -11,6 +11,9 @@
     <bean id="getObservationDao"
           class="org.n52.sos.ds.hibernate.dao.GetObservationDao"/>
 
+    <bean id="getFeatureOfInterestDao"
+          class="org.n52.sos.ds.hibernate.dao.GetFeatureOfInterestDao"/>
+
     <bean id="getObservationByIdDao"
           class="org.n52.sos.ds.hibernate.dao.GetObservationByIdDao"/>
 

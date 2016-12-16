@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,24 +50,16 @@ import org.n52.sos.response.GetObservationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 public class GetObservationHandler extends AbstractGetObservationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationHandler.class);
 
     private HibernateSessionStore sessionStore;
-    private FeatureQueryHandler featureQueryHandler;
     private GetObservationDao dao;
 
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
         this.sessionStore = sessionStore;
-    }
-
-    @Inject
-    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
-        this.featureQueryHandler = featureQueryHandler;
     }
 
     @Inject
@@ -89,23 +80,11 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
             response.setVersion(request.getVersion());
             response.setResponseFormat(request.getResponseFormat());
             response.setResultModel(request.getResultModel());
-            // check for featureOfInterest
-            FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(session);
-            if (request.isSetFeatureOfInterest()){
-                List<FeatureEntity> features = new ProxyFeatureDao(session).getAllInstances(createDbQuery(request));
-                if (features == null || (features != null && features.isEmpty())) {
-                    return response;
-                }
-                queryObject.setFeatures(features.stream().map(f -> f.getDomainId()).collect(Collectors.toSet()));
-            } else if (request.isSetSpatialFilter()) {
-                queryObject.addSpatialFilter(request.getSpatialFilter());
-            }
-            Collection<String> features = featureQueryHandler.getFeatureIDs(queryObject);
-            if (features != null && features.isEmpty()) {
+            List<FeatureEntity> features = new ProxyFeatureDao(session).getAllInstances(createDbQuery(request));
+            if (features == null || (features != null && features.isEmpty())) {
                 return response;
             }
-            request.setFeatureIdentifiers(Lists.newArrayList(features));
-
+            request.setFeatureIdentifiers(features.stream().map(f -> f.getDomainId()).collect(Collectors.toList()));
             dao.queryObservationData(request, response);
             return response;
         } catch (DataAccessException e) {
@@ -120,6 +99,9 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         if (request.isSetFeatureOfInterest()) {
             rsps.addParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(request.getFeatureIdentifiers()));
+        }
+        if (request.isSetSpatialFilter() && !request.hasSpatialFilteringProfileSpatialFilter()) {
+            // TODO
         }
         rsps.addParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));

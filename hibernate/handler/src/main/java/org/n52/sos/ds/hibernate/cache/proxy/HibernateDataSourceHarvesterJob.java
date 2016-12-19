@@ -133,7 +133,7 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
         for (Offering offering : new OfferingDAO().getOfferings(session)) {
             OfferingEntity offferingEntity = EntityBuilder.createOffering(offering, service, true, true);
             // TODO add phenTime, ResultTime, ...
-            
+
             insertRepository.insertOffering(offferingEntity);
         }
     }

@@ -26,16 +26,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.cache;
+package org.n52.sos.ds.cache;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 
 import com.google.common.collect.Maps;
@@ -60,6 +60,7 @@ public class DatasourceCacheUpdateHelper {
         return offerings;
     }
 
+    @SuppressWarnings("rawtypes")
     public static Set<String> getAllOfferingIdentifiersFromDatasetEntitys(
             Collection<DatasetEntity> datasets) {
         Set<String> offerings = new HashSet<String>(datasets.size());
@@ -78,11 +79,13 @@ public class DatasourceCacheUpdateHelper {
         return procedures;
     }
 
+    @SuppressWarnings("rawtypes")
     public static Set<String> getAllProcedureIdentifiersFromDatasetEntitys(
             Collection<DatasetEntity> datasets) {
         return getAllProcedureIdentifiersFromDatasetEntitys(datasets, null);
     }
 
+    @SuppressWarnings("rawtypes")
     public static Set<String> getAllProcedureIdentifiersFromDatasetEntitys(
             Collection<DatasetEntity> datasets, ProcedureFlag procedureFlag) {
         Set<String> procedures = new HashSet<String>(datasets.size());
@@ -151,10 +154,14 @@ public class DatasourceCacheUpdateHelper {
     }
 
 
+    @SuppressWarnings("rawtypes")
     public static Collection<? extends String> getAllProcedureIdentifiersFromDatasets(
-            Collection<org.n52.series.db.beans.DatasetEntity> datasets, ProcedureFlag parent) {
-        // TODO Auto-generated method stub
-        return null;
+            Collection<DatasetEntity> datasets, ProcedureFlag parent) {
+        Set<String> procedures = Sets.newTreeSet();
+        for (DatasetEntity dataset : datasets) {
+            procedures.add(dataset.getProcedure().getDomainId());
+        }
+        return procedures;
     }
 
     @SuppressWarnings("rawtypes")

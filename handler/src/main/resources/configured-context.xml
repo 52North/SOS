@@ -21,4 +21,7 @@
     <bean id="getObservationByIdHandler"
           class="org.n52.sos.ds.GetObservationByIdHandler"/>
 
+    <bean id="cacheFeederHandler"
+          class="org.n52.sos.ds.hibernate.SosCacheFeederHandler"/>
+          
 </beans>

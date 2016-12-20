@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate;
+package org.n52.sos.ds;
 
 import static org.n52.sos.ds.hibernate.CacheFeederSettingDefinitionProvider.CACHE_THREAD_COUNT;
 
@@ -56,9 +56,10 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.sos.ds.CacheFeederHandler;
-import org.n52.sos.ds.hibernate.cache.HibernateSessionStoreWrapper;
-import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
+import org.n52.sos.ds.cache.HibernateSessionStoreWrapper;
+import org.n52.sos.ds.cache.InitialCacheUpdate;
+import org.n52.sos.ds.cache.base.OfferingCacheUpdate;
+import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,9 +70,9 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  */
 @Configurable
-public class SosCacheFeederDAO implements CacheFeederHandler {
+public class SosCacheFeederHandler implements CacheFeederHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SosCacheFeederDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SosCacheFeederHandler.class);
 
     /**
      * Defines the number of threads available in the thread pool of the cache

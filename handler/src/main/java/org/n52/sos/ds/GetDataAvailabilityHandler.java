@@ -65,6 +65,7 @@ import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.ds.dao.GetDataAvailabilityDao;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.svalbard.encode.Encoder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -91,7 +92,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         this.codingRepository = codingRepository;
     }
 
-    @Inject
+    @Autowired(required=false)
     public void setGetDataAvaolabilityDao(GetDataAvailabilityDao dao) {
         this.dao = dao;
     }
@@ -162,7 +163,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
                 if (isShowCount(context.getRequest()) && entity.getObservationCount() >= 0) {
                     dataAvailability.setCount(entity.getObservationCount());
                 }
-                if (isIncludeResultTime(context.getRequest())) {
+                if (isIncludeResultTime(context.getRequest()) && dao != null) {
                     dataAvailability.setResultTimes(dao.getResultTimes(dataAvailability, context.getRequest()));
                 }
                 return dataAvailability;
@@ -202,7 +203,9 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         DataAvailability dataAvailability = defaultProcessDataAvailability(entity, context, session);
         if (dataAvailability != null) {
             dataAvailability.setFormatDescriptor(getFormatDescriptor(context, entity));
-            dataAvailability.setMetadata(dao.getMetadata(dataAvailability));
+            if (dao != null) {
+                dataAvailability.setMetadata(dao.getMetadata(dataAvailability));
+            }
             context.addDataAvailability(dataAvailability);
         }
         checkForParentOfferings(context, entity.getOffering());

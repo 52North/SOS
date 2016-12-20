@@ -26,48 +26,53 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.cache.base;
+package org.n52.sos.ds.cache.base;
+
+import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
-import org.n52.proxy.db.beans.RelatedFeatureEntity;
-import org.n52.proxy.db.beans.RelatedFeatureRoleEntity;
-import org.n52.proxy.db.dao.ProxyRelatedFeatureDao;
+import org.n52.proxy.db.dao.ProxyOfferingDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  *
  * @since 4.0.0
  */
-public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RelatedFeaturesCacheUpdate.class);
+public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ObservationTimeCacheUpdate.class);
 
     @Override
     public void execute() {
-        LOGGER.debug("Executing RelatedFeaturesCacheUpdate");
+        LOGGER.debug("Executing ObservationTimeCacheUpdate");
         startStopwatch();
         try {
-            for (RelatedFeatureEntity relatedFeature : new ProxyRelatedFeatureDao(getSession())
-                    .getAllInstances(new DbQuery(IoParameters.createDefaults()))) {
-                String identifier = relatedFeature.getFeature().getDomainId();
-                for (OfferingEntity offering : relatedFeature.getOfferings()) {
-                    getCache().addRelatedFeatureForOffering(offering.getDomainId(), identifier);
-                }
-                for (RelatedFeatureRoleEntity relatedFeatureRole : relatedFeature.getRelatedFeatureRoles()) {
-                    getCache().addRoleForRelatedFeature(identifier, relatedFeatureRole.getRelatedFeatureRole());
-                }
+            // TODD Use TimerPeriod.expand from OfferingTimes
+            List<OfferingEntity> offerings = new ProxyOfferingDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+            TimePeriod phenomenonTime = new TimePeriod();
+            TimePeriod resultTime = new TimePeriod();
+            for (OfferingEntity offering : offerings) {
+                phenomenonTime.extendToContain(new TimePeriod(offering.getPhenomenonTimeStart(), offering.getPhenomenonTimeEnd()));
+                resultTime.extendToContain(new TimePeriod(offering.getResultTimeStart(), offering.getResultTimeEnd()));
             }
+            getCache().setMinPhenomenonTime(phenomenonTime.getStart());
+            getCache().setMaxPhenomenonTime(phenomenonTime.getEnd());
+            getCache().setMinResultTime(resultTime.getStart());
+            getCache().setMaxResultTime(resultTime.getEnd());
         } catch (HibernateException | DataAccessException dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
-                    .withMessage("Error while updating related feature cache!"));
+                    .withMessage("Error while updating observation time cache!"));
         }
-        LOGGER.debug("Finished executing RelatedFeaturesCacheUpdate ({})", getStopwatchResult());
+        LOGGER.debug("Finished executing ObservationTimeCacheUpdate ({})", getStopwatchResult());
     }
+
 }

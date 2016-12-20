@@ -44,6 +44,7 @@ import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.sos.ds.dao.GetObservationByIdDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
 
@@ -53,7 +54,7 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
 
     private HibernateSessionStore sessionStore;
 
-    private GetObservationByIdDao getObservationByIdDao;
+    private GetObservationByIdDao dao;
 
     public GetObservationByIdHandler() {
         super(SosConstants.SOS);
@@ -64,9 +65,9 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
         this.sessionStore = sessionStore;
     }
 
-    @Inject
+    @Autowired(required=false)
     public void setGetObservationByIdDao(GetObservationByIdDao getObservationByIdDao) {
-        this.getObservationByIdDao = getObservationByIdDao;
+        this.dao = getObservationByIdDao;
     }
 
     @Override
@@ -80,8 +81,8 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
             response.setResponseFormat(request.getResponseFormat());
             response.setResultModel(request.getResultModel());
             List<OmObservation> omObservations = Lists.newArrayList();
-            if (getObservationByIdDao != null) {
-                omObservations.addAll(getObservationByIdDao.queryObservationsById(request));
+            if (dao != null) {
+                omObservations.addAll(dao.queryObservationsById(request));
             }
             response.setObservationCollection(omObservations);
             return response;

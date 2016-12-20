@@ -550,7 +550,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             return seriesObservations;
         }
         Collection<SeriesObservation> checked = Lists.newArrayList();
-        Set<Series> serieses = Sets.newHashSet();
+        Set<org.opengis.metadata.citation.Series> serieses = Sets.newHashSet();
         Set<Series> duplicated = Sets.newHashSet();
         for (SeriesObservation seriesObservation : seriesObservations) {
             if (serieses.isEmpty()) {
@@ -559,6 +559,8 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                 if (!serieses.contains(seriesObservation.getSeries()) && !duplicated.contains(seriesObservation)
                         && isDuplicatedSeries(seriesObservation.getSeries(), serieses)) {
                     duplicated.add(seriesObservation.getSeries());
+                } else {
+                    serieses.add(seriesObservation.getSeries());
                 }
             }
 

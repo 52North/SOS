@@ -46,6 +46,7 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
@@ -81,28 +82,28 @@ public class TemporalRestrictions {
      *
      * @see #PHENOMENON_TIME_FIELDS
      */
-    public static final String PHENOMENON_TIME_VALUE_REFERENCE = "phenomenonTime";
+    public static final String PHENOMENON_TIME_VALUE_REFERENCE = SosConstants.PHENOMENON_TIME_VALUE_REFERENCE;
 
     /**
      * Marker for a value reference referencing the result time ({@value} ).
      *
      * @see #RESULT_TIME_FIELDS
      */
-    public static final String RESULT_TIME_VALUE_REFERENCE = "resultTime";
+    public static final String RESULT_TIME_VALUE_REFERENCE = SosConstants.RESULT_TIME_VALUE_REFERENCE;
 
     /**
      * Marker for a value reference referencing the valid time ({@value} ).
      *
      * @see #VALID_TIME_FIELDS
      */
-    public static final String VALID_TIME_VALUE_REFERENCE = "validTime";
+    public static final String VALID_TIME_VALUE_REFERENCE = SosConstants.VALID_TIME_VALUE_REFERENCE;
 
     /**
      * Marker for a value reference referencing the valid time ({@value} ).
      *
      * @see #VALID_TIME_FIELDS
      */
-    public static final String VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE = "validDescribeSensorTime";
+    public static final String VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE = SosConstants.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE;
 
     /**
      * Fields describing the phenomenon time of a <tt>Observation</tt>.

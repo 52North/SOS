@@ -40,10 +40,10 @@ import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.wml.ObservationProcess;
 import org.n52.shetland.ogc.wml.WaterMLConstants;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.wml.ObservationProcess;
 
 /**
  * Generator class for WaterML 2.0 procedure descriptions

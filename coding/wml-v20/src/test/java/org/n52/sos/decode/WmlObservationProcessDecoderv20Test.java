@@ -39,7 +39,7 @@ import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.sos.ogc.wml.ObservationProcess;
+import org.n52.shetland.ogc.wml.ObservationProcess;
 
 /**
  * Test class for {@link WmlObservationProcessDecoderv20}

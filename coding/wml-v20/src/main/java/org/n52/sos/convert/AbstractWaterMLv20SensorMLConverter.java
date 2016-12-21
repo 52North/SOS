@@ -51,7 +51,7 @@ import org.n52.shetland.ogc.sensorML.elements.SmlIo;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.wml.ObservationProcess;
+import org.n52.shetland.ogc.wml.ObservationProcess;
 
 /**
  * Abstract converter for WaterML {@link ObservationProcess} and SensorML

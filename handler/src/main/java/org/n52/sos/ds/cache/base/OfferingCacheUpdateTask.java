@@ -30,7 +30,6 @@ package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -48,12 +47,14 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
+import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
+//import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+//import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
+//import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+//import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+//import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -69,10 +70,9 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
 //    private final FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
     private final String identifier;
+    @SuppressWarnings("rawtypes")
     private final Collection<DatasetEntity> datasets;
     private final OfferingEntity offering;
-    private boolean obsConstSupported;
-
     private final Locale defaultLanguage;
     private final I18NDAORepository i18NDAORepository;
 
@@ -110,7 +110,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         getCache().addOffering(identifier);
         addOfferingNamesAndDescriptionsToCache(identifier, session);
         // only check once, check flag in other methods
-        obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
         // Procedures
         final Map<ProcedureFlag, Set<String>> procedureIdentifiers = getProcedureIdentifier(session);
         getCache().setProceduresForOffering(identifier, procedureIdentifiers.get(ProcedureFlag.PARENT));
@@ -204,20 +203,13 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {
         Set<String> procedures = new HashSet<>(0);
         Set<String> hiddenChilds = new HashSet<>(0);
-        if (obsConstSupported) {
-            if (CollectionHelper.isNotEmpty(datasets)) {
-                procedures.addAll(DatasourceCacheUpdateHelper
-                        .getAllProcedureIdentifiersFromDatasets(datasets,
-                                ProcedureFlag.PARENT));
-                hiddenChilds.addAll(DatasourceCacheUpdateHelper
-                        .getAllProcedureIdentifiersFromDatasets(datasets,
-                                ProcedureFlag.HIDDEN_CHILD));
-            }
-        } else {
-            List<String> list = new ProcedureDAO().getProcedureIdentifiersForOffering(identifier, session);
-            for (String procedureIdentifier : list) {
-                procedures.add(procedureIdentifier);
-            }
+        if (CollectionHelper.isNotEmpty(datasets)) {
+            procedures.addAll(DatasourceCacheUpdateHelper
+                    .getAllProcedureIdentifiersFromDatasets(datasets,
+                            ProcedureFlag.PARENT));
+            hiddenChilds.addAll(DatasourceCacheUpdateHelper
+                    .getAllProcedureIdentifiersFromDatasets(datasets,
+                            ProcedureFlag.HIDDEN_CHILD));
         }
         Map<ProcedureFlag, Set<String>> allProcedures = Maps.newEnumMap(ProcedureFlag.class);
         allProcedures.put(ProcedureFlag.PARENT, procedures);

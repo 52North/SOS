@@ -28,9 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,33 +54,7 @@ import com.google.common.collect.Sets;
  *
  * @author Christian Autermann <c.autermann@52north.org>
  */
-public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment {
-    private String procedureDescriptionFormat;
-    private HibernateProcedureConverter converter;
-    private Map<String, Procedure> procedureCache;
-    private TimePeriod validTime;
-
-    public RelatedProceduresEnrichment setProcedureDescriptionFormat(String pdf) {
-        this.procedureDescriptionFormat = checkNotNull(pdf);
-        return this;
-    }
-
-    public RelatedProceduresEnrichment setConverter(
-            HibernateProcedureConverter c) {
-        this.converter = checkNotNull(c);
-        return this;
-    }
-
-    public RelatedProceduresEnrichment setProcedureCache(
-            Map<String, Procedure> cache) {
-        this.procedureCache = cache;
-        return this;
-    }
-
-    public RelatedProceduresEnrichment setValidTime(TimePeriod validTime) {
-        this.validTime = validTime;
-        return this;
-    }
+public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrichment<Procedure> {
 
     @Override
     public void enrich() throws OwsExceptionReport {
@@ -118,20 +90,12 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
     private Set<AbstractSensorML> getChildProcedures()
             throws OwsExceptionReport {
 
-        final Collection<String> childIdentfiers =
-                getCache().getChildProcedures(getIdentifier(), false, false);
-
-        if (CollectionHelper.isEmptyOrNull(childIdentfiers)) {
+        if (!getProcedure().hasChilds()) {
             return Sets.newHashSet();
         }
 
-        if (procedureCache == null) {
-            procedureCache = createProcedureCache();
-        }
-
         Set<AbstractSensorML> childProcedures = Sets.newHashSet();
-        for (String childId : childIdentfiers) {
-            Procedure child = procedureCache.get(childId);
+        for (Procedure child : getProcedure().getChilds()) {
 
             //if child has valid vpts, use the most recent one within
             //the validTime to create the child procedure
@@ -142,12 +106,12 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
                     TimePeriod thisCvptValidTime = new TimePeriod(cvpt.getStartTime(),
                             cvpt.getEndTime());
 
-                    if (validTime != null && !validTime.isSetEnd() && !thisCvptValidTime.isSetEnd()) {
+                    if (getValidTime() != null && !getValidTime().isSetEnd() && !thisCvptValidTime.isSetEnd()) {
                         childVpt = cvpt;
                     } else {
                         //make sure this child's validtime is within the parent's valid time,
                         //if parent has one
-                        if (validTime != null && !thisCvptValidTime.isWithin(validTime)){
+                        if (getValidTime() != null && !thisCvptValidTime.isWithin(getValidTime())){
                             continue;
                         }
 
@@ -163,15 +127,15 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
             if (childVpt != null) {
                 //matching child validProcedureTime was found, use it to build procedure description
                 SosProcedureDescription<?> childDescription =
-                        converter.createSosProcedureDescriptionFromValidProcedureTime(
-                                child, procedureDescriptionFormat, childVpt, getVersion(), getLocale(), getSession());
+                        ((HibernateProcedureConverter)getConverter()).createSosProcedureDescriptionFromValidProcedureTime(
+                                child, getProcedureDescriptionFormat(), childVpt, getVersion(), getLocale(), getI18NDAORepository(), getSession());
                 if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
                     childProcedures.add((AbstractSensorML)childDescription.getProcedureDescription());
                 }
             } else  if  (child != null) {
                 //no matching child validProcedureTime, generate the procedure description
-                SosProcedureDescription<?> childDescription = converter.createSosProcedureDescription(
-                        child, procedureDescriptionFormat, getVersion(), procedureCache, getLocale(), getSession());
+                SosProcedureDescription<?> childDescription = getConverter().createSosProcedureDescription(
+                        child, getProcedureDescriptionFormat(), getVersion(), getLocale(), getI18NDAORepository(), getSession());
                 // TODO check if call is necessary because it is also called in
                 // createSosProcedureDescription()
                 // addValuesToSensorDescription(childProcID,childProcedureDescription,

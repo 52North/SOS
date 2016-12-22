@@ -40,6 +40,7 @@ import org.hibernate.Transaction;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
@@ -70,6 +71,8 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
 
     private ServiceMetadataRepository serviceMetadataRepository;
 
+    private I18NDAORepository i18NDAORepository;
+
     @Inject
     public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
@@ -78,6 +81,11 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.hibernateSessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
+    @Inject
+    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
+        this.i18NDAORepository = i18NDAORepository;
     }
 
     @Override
@@ -107,7 +115,7 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
                 Set<Observation<?>> oberservations = Collections.singleton(observation);
                 LocalizedProducer<OwsServiceProvider> serviceProvider = this.serviceMetadataRepository.getServiceProviderFactory(request.getService());
                 Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
-                so = HibernateObservationUtilities.createSosObservationsFromObservations(oberservations, getRequest(request), serviceProvider, locale, session).iterator().next();
+                so = HibernateObservationUtilities.createSosObservationsFromObservations(oberservations, getRequest(request), serviceProvider, locale, i18NDAORepository, session).iterator().next();
                 observation.setDeleted(true);
                 session.saveOrUpdate(observation);
                 checkSeriesForFirstLatest(observation, session);

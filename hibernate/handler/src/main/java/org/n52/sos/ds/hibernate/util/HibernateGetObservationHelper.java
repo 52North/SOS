@@ -46,6 +46,7 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.LocalizedProducer;
@@ -180,13 +181,13 @@ public class HibernateGetObservationHelper {
     }
 
     public static List<OmObservation> toSosObservation(final Collection<Observation<?>> observations,
-            final AbstractObservationRequest request, final LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, final Session session) throws OwsExceptionReport,
+            final AbstractObservationRequest request, final LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, I18NDAORepository i18ndaoRepository, final Session session) throws OwsExceptionReport,
             ConverterException {
         if (!observations.isEmpty()) {
             final long startProcess = System.currentTimeMillis();
             List<OmObservation> sosObservations =
                         HibernateObservationUtilities.createSosObservationsFromObservations(
-                                new HashSet<>(observations), request, serviceProvider, language, session);
+                                new HashSet<>(observations), request, serviceProvider, language, i18ndaoRepository, session);
 
 
             LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
@@ -197,10 +198,10 @@ public class HibernateGetObservationHelper {
         }
     }
 
-    public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language,final Session session) throws OwsExceptionReport, ConverterException {
+    public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, I18NDAORepository i18ndaoRepository, final Session session) throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();
-            OmObservation sosObservation = HibernateObservationUtilities.createSosObservationFromObservation(observation, request, serviceProvider, language, session);
+            OmObservation sosObservation = HibernateObservationUtilities.createSosObservationFromObservation(observation, request, serviceProvider, language, i18ndaoRepository, session);
             LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));
             return sosObservation;
         }

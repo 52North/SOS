@@ -40,13 +40,17 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.n52.io.crs.BoundingBox;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
+import org.n52.io.response.BBox;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
@@ -62,6 +66,7 @@ import org.n52.sos.util.GeometryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Strings;
+import com.vividsolutions.jts.geom.Envelope;
 
 public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHandler {
 
@@ -80,8 +85,8 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     }
 
     @Autowired(required=false)
-    public void setGetFeatureOfInterestDao(GetFeatureOfInterestDao dao) {
-        this.dao = dao;
+    public void setGetFeatureOfInterestDao(GetFeatureOfInterestDao getFeatureOfInterestDao) {
+        this.dao = getFeatureOfInterestDao;
     }
 
     public GetFeatureOfInterestHandler() {
@@ -194,7 +199,17 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             rsps.addParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(req.getObservedProperties()));
         }
         if (req.isSetSpatialFilters()) {
-            // TODO
+              Envelope envelope = null;
+            for (SpatialFilter spatialFilter : req.getSpatialFilters()) {
+                if (SpatialOperator.BBOX.equals(spatialFilter.getOperator())) {
+                    envelope.expandToInclude(spatialFilter.getGeometry().getEnvelopeInternal());
+                }
+            }
+              if (envelope != null) {
+//                  BBox bbox = new BBox();
+//                spatialFilter.getGeometry();
+//                rsps.addParameter(IoParameters.BBOX, IoParameters.getJsonNodeFrom(bbox));
+              }
         }
         rsps.addParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));

@@ -43,6 +43,7 @@ import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
@@ -76,6 +77,7 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
     private HibernateProcedureConverter procedureConverter;
     private ConverterRepository converterRepository;
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+    private I18NDAORepository i18NDAORepository;
 
     @Inject
     public void setConverterRepository(ConverterRepository repo) {
@@ -96,6 +98,11 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
+    @Inject
+    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
+        this.i18NDAORepository = i18NDAORepository;
     }
 
     @Override
@@ -154,6 +161,7 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
                                                                 request.getProcedureDescriptionFormat(),
                                                                 request.getVersion(),
                                                                 LocaleHelper.fromString(request.getRequestedLanguage()),
+                                                                i18NDAORepository,
                                                                 session);
     }
 
@@ -185,6 +193,7 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
                                 validProcedureTime,
                                 request.getVersion(),
                                 LocaleHelper.fromString(request.getRequestedLanguage()),
+                                i18NDAORepository,
                                 session);
                 list.add(convertProcedureDescription(sosProcedureDescription, request));
             }

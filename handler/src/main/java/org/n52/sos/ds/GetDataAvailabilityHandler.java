@@ -63,7 +63,6 @@ import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ObservationForma
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ProcedureDescriptionFormatDescriptor;
 import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.ds.dao.GetDataAvailabilityDao;
-import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.svalbard.encode.Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -93,8 +92,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     }
 
     @Autowired(required=false)
-    public void setGetDataAvaolabilityDao(GetDataAvailabilityDao dao) {
-        this.dao = dao;
+    public void setGetDataAvaolabilityDao(GetDataAvailabilityDao getDataAvailabilityDao) {
+        this.dao = getDataAvailabilityDao;
     }
 
     @Override
@@ -379,7 +378,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         for (Extension<?> extension : extensions.getExtensions()) {
             if (extension.getValue() instanceof TemporalFilter) {
                 TemporalFilter filter = (TemporalFilter) extension.getValue();
-                if (TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE.equals(filter.getValueReference())) {
+                if (SosConstants.PHENOMENON_TIME_VALUE_REFERENCE.equals(filter.getValueReference())) {
                     hasFilter = true;
                 }
             }

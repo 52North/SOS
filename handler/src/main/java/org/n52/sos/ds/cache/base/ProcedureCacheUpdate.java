@@ -37,15 +37,14 @@ import java.util.Map;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.io.request.IoParameters;
 import org.n52.proxy.db.dao.ProxyDatasetDao;
-import org.n52.proxy.db.dao.ProxyProcedureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

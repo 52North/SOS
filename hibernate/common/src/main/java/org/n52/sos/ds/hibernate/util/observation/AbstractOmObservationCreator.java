@@ -33,9 +33,12 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
 
 import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -79,15 +82,18 @@ public abstract class AbstractOmObservationCreator {
     private final Session session;
     private final Locale i18n;
     private final LocalizedProducer<OwsServiceProvider> serviceProvider;
+    private final I18NDAORepository i18NDAORepository;
 
     public AbstractOmObservationCreator(AbstractObservationRequest request,
                                         Locale i18n,
                                         LocalizedProducer<OwsServiceProvider> serviceProvider,
+                                        I18NDAORepository i18NDAORepository,
                                         Session session) {
         this.request = request;
         this.session = session;
         this.i18n = i18n == null ?  ServiceConfiguration.getInstance().getDefaultLanguage() : i18n;
         this.serviceProvider = serviceProvider;
+        this.i18NDAORepository = i18NDAORepository;
     }
 
     protected SosContentCache getCache() {
@@ -145,6 +151,10 @@ public abstract class AbstractOmObservationCreator {
         return i18n;
     }
 
+    public I18NDAORepository getI18NDAORepository() {
+        return i18NDAORepository;
+    }
+
 
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
             throws OwsExceptionReport {
@@ -174,21 +184,34 @@ public abstract class AbstractOmObservationCreator {
      * Get procedure object from series
      * @param identifier
      *
-     * @return Procedure object
+     * @return Procedure identifier
      * @throws ConverterException
      *             If an error occurs sensor description creation
      * @throws OwsExceptionReport
      *             If an error occurs
      */
     protected SosProcedureDescription<?> createProcedure(String identifier) throws ConverterException, OwsExceptionReport {
-        Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(identifier, getSession());
+        return createProcedure(new ProcedureDAO().getProcedureForIdentifier(identifier, getSession()));
+    }
+
+    /**
+     * Get procedure object from series
+     * @param identifier
+     *
+     * @return Procedure object
+     * @throws ConverterException
+     *             If an error occurs sensor description creation
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    protected SosProcedureDescription<?> createProcedure(Procedure hProcedure) throws ConverterException, OwsExceptionReport {
         String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
         if (getActiveProfile().isEncodeProcedureInObservation()) {
             return new HibernateProcedureConverter(this.serviceProvider)
-                    .createSosProcedureDescription(hProcedure, pdf, getVersion(), getSession());
+                    .createSosProcedureDescription(hProcedure, pdf, getVersion(), getI18NDAORepository(), getSession());
         } else {
             SosProcedureDescriptionUnknownType sosProcedure =
-                    new SosProcedureDescriptionUnknownType(identifier, pdf, null);
+                    new SosProcedureDescriptionUnknownType(hProcedure.getIdentifier(), pdf, null);
             if (hProcedure.isSetName()) {
                 sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
                 addName(sosProcedure, hProcedure);

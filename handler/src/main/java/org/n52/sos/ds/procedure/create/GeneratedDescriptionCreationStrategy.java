@@ -26,42 +26,47 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.procedure.enrich;
+package org.n52.sos.ds.procedure.create;
 
-import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.hibernate.Session;
-
-import org.n52.iceland.util.LocalizedProducer;
-import org.n52.shetland.ogc.gml.time.TimePeriod;
-import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactory;
+import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository;
 
 /**
- * TODO JavaDoc
- *
- * @author Christian Autermann <c.autermann@52north.org>
+ * Strategy to generate a description.
  */
-public class ProcedureDescriptionEnrichments extends AbstractProcedureDescriptionEnrichments<Procedure>  {
+public class GeneratedDescriptionCreationStrategy implements
+        DescriptionCreationStrategy {
 
-    public ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider) {
-        super(locale, serviceProvider);
+    private ProcedureDescriptionGeneratorFactoryRepository factoryRepository;
+
+    @Inject
+    public void setProcedureDescriptionGeneratorFactoryRepository(ProcedureDescriptionGeneratorFactoryRepository procedureDescriptionGeneratorFactoryRepository) {
+        this.factoryRepository = procedureDescriptionGeneratorFactoryRepository;
     }
 
-    public AbstractRelatedProceduresEnrichment createRelatedProceduresEnrichment() {
-        return setValues(new RelatedProceduresEnrichment())
-                .setConverter(getConverter())
-                .setProcedure(getProcedure())
-                .setProcedureDescriptionFormat(getProcedureDescriptionFormat())
-                .setValidTime(getValidTime())
-                .setI18NDAORepository(getI18NDAORepository());
+    @Override
+    public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n, I18NDAORepository i18NDAORepository, Session s)
+            throws OwsExceptionReport {
+        SosProcedureDescription<?> desc = getFactory(descriptionFormat).create(p, i18n, i18NDAORepository, s);
+        desc.setDescriptionFormat(descriptionFormat);
+        return desc;
+    }
+
+    @Override
+    public boolean apply(ProcedureEntity p) {
+        return true;
+    }
+
+    private ProcedureDescriptionGeneratorFactory getFactory(String descriptionFormat) {
+        return factoryRepository.getFactory(descriptionFormat);
     }
 }

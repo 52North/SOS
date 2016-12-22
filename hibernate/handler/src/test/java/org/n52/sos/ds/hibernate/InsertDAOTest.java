@@ -44,6 +44,7 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.event.ServiceEventBus;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.ServiceProviderFactory;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -240,6 +241,7 @@ public class InsertDAOTest extends HibernateTestCase {
     private final InsertResultDAO insertResultDAO = new InsertResultDAO();
     private final GetObservationDao getObsDAO = new GetObservationDao();
     private final SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
+    private final I18NDAORepository i18NDAORepository = I18NDAORepository.getInstance();
 
     // optionally run these tests multiple times to expose intermittent faults
     // (use -DrepeatDaoTest=x)
@@ -376,7 +378,7 @@ public class InsertDAOTest extends HibernateTestCase {
         ServiceProviderFactory serviceProviderFactory = Mockito.mock(ServiceProviderFactory.class);
         SosProcedureDescription spd =
                 new HibernateProcedureConverter(serviceProviderFactory).createSosProcedureDescription(procedure, SensorMLConstants.NS_SML,
-                        Sos2Constants.SERVICEVERSION, session);
+                        Sos2Constants.SERVICEVERSION, i18NDAORepository, session);
         obsConst.setProcedure(spd);
         OmObservableProperty omObservableProperty = new OmObservableProperty(obsPropId);
         omObservableProperty.setUnit(unit);

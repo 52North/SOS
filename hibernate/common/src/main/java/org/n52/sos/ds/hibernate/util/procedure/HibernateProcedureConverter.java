@@ -33,10 +33,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -79,7 +79,7 @@ import com.google.common.collect.Lists;
  *        TODO - apply description enrichment to all types of procedures
  *        (creates, file, or database) - use setting switches for code flow
  */
-public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
+public class HibernateProcedureConverter extends AbstractProcedureConverter<Procedure> implements HibernateSqlQueryConstants {
 
     private final LocalizedProducer<OwsServiceProvider> serviceProvider;
 
@@ -108,38 +108,8 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
             Procedure procedure,
             String requestedDescriptionFormat,
             String requestedServiceVersion,
-            Session session)
-            throws OwsExceptionReport {
-        // child hierarchy procedures haven't been queried yet, pass null
-        return createSosProcedureDescription(procedure, requestedDescriptionFormat, requestedServiceVersion, null, session);
-    }
-
-    /**
-     * Create procedure description from file, single XML text or generate
-     *
-     * @param procedure
-     *            Hibernate procedure entity
-     * @param requestedDescriptionFormat
-     *            Requested procedure descriptionFormat
-     * @param requestedServiceVersion
-     *            Requested SOS version
-     * @param loadedProcedures
-     *            Loaded procedure hierarchy (passed to recursive requests to
-     *            avoid multiple queries)
-     * @param session
-     *            Hibernate session
-     *
-     * @return created SosProcedureDescription
-     *
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     */
-    public SosProcedureDescription<?> createSosProcedureDescription(
-            Procedure procedure,
-            String requestedDescriptionFormat,
-            String requestedServiceVersion,
-            Map<String, Procedure> loadedProcedures,
             Locale i18n,
+            I18NDAORepository i18ndaoRepository,
             Session session) throws OwsExceptionReport {
         if (procedure == null) {
             throw new NoApplicableCodeException().causedBy(
@@ -151,7 +121,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
         SosProcedureDescription<?> desc = create(procedure, requestedDescriptionFormat, null, i18n, session).orNull();
         if (desc != null) {
             addHumanReadableName(desc, procedure);
-            enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null, loadedProcedures, i18n,
+            enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null , i18n, i18ndaoRepository,
                     session);
             if (!requestedDescriptionFormat.equals(desc.getDescriptionFormat())) {
                 desc = convert(desc.getDescriptionFormat(), requestedDescriptionFormat, desc);
@@ -180,7 +150,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      *             If an error occurs
      */
     public SosProcedureDescription<?> createSosProcedureDescriptionFromValidProcedureTime(Procedure procedure,
-            String requestedDescriptionFormat, ValidProcedureTime vpt, String version, Locale i18n, Session session)
+            String requestedDescriptionFormat, ValidProcedureTime vpt, String version, Locale i18n, I18NDAORepository i18ndaoRepository, Session session)
             throws OwsExceptionReport {
         if (vpt != null) {
             checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), vpt, requestedDescriptionFormat,
@@ -193,7 +163,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
                 create(procedure, requestedDescriptionFormat, vpt, i18n, session);
         if (description.isPresent()) {
             addHumanReadableName(description.get(), procedure);
-            enrich(description.get(), procedure, version, requestedDescriptionFormat, getValidTime(vpt), null, i18n,
+            enrich(description.get(), procedure, version, requestedDescriptionFormat, getValidTime(vpt), i18n, i18ndaoRepository,
                     session);
             if (!requestedDescriptionFormat.equals(description.get().getDescriptionFormat())) {
                 SosProcedureDescription<?> converted =
@@ -204,13 +174,6 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
             }
         }
         return description.orNull();
-    }
-
-    public SosProcedureDescription<?> createSosProcedureDescription(Procedure procedure,
-            String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n, Session session)
-            throws OwsExceptionReport {
-        return createSosProcedureDescription(procedure, requestedDescriptionFormat, requestedServiceVersion, null,
-                i18n, session);
     }
 
     private void addHumanReadableName(SosProcedureDescription<?> desc, Procedure procedure) {
@@ -318,17 +281,17 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      *             if the enrichment fails
      */
     private void enrich(SosProcedureDescription<?> desc, Procedure procedure, String version, String format,
-            TimePeriod validTime, Map<String, Procedure> cache, Locale language, Session session)
+            TimePeriod validTime, Locale language, I18NDAORepository i18ndaoRepository, Session session)
             throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
-                ProcedureDescriptionEnrichments.create(language, serviceProvider)
-                        .setIdentifier(procedure.getIdentifier())
+                new ProcedureDescriptionEnrichments(language, serviceProvider);
+                enrichments.setIdentifier(procedure.getIdentifier())
                         .setVersion(version)
                         .setDescription(desc)
                         .setProcedureDescriptionFormat(format)
                         .setSession(session)
                         .setValidTime(validTime)
-                        .setProcedureCache(cache)
+                        .setI18NDAORepository(i18ndaoRepository)
                         .setConverter(this);
         if (procedure.isSetTypeOf() && desc.getProcedureDescription() instanceof AbstractProcessV20) {
             Procedure typeOf = procedure.getTypeOf();

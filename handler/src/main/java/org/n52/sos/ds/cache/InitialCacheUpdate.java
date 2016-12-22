@@ -33,15 +33,15 @@ import java.util.Locale;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
+import org.n52.sos.ds.cache.base.FeatureOfInterestCacheUpdate;
+import org.n52.sos.ds.cache.base.I18NCacheUpdate;
+import org.n52.sos.ds.cache.base.ObservablePropertiesCacheUpdate;
+import org.n52.sos.ds.cache.base.ObservationTimeCacheUpdate;
+import org.n52.sos.ds.cache.base.OfferingCacheUpdate;
+import org.n52.sos.ds.cache.base.ProcedureCacheUpdate;
+import org.n52.sos.ds.cache.base.RelatedFeaturesCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.CompositeCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.ParallelCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.base.FeatureOfInterestCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.base.I18NCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.base.ObservablePropertiesCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.base.ObservationTimeCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.base.ProcedureCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.base.RelatedFeaturesCacheUpdate;
 
 /**
  *

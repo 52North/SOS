@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -71,8 +72,14 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
 
     protected final Series series;
 
-    public SeriesOmObservationCreator(Series series, AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, Session session) {
-        super(request, language, serviceProvider, session);
+    public SeriesOmObservationCreator(
+            Series series,
+            AbstractObservationRequest request,
+            LocalizedProducer<OwsServiceProvider> serviceProvider,
+            Locale language,
+            I18NDAORepository i18NDAORepository,
+            Session session) {
+        super(request, language, serviceProvider, i18NDAORepository, session);
         this.series = series;
     }
 

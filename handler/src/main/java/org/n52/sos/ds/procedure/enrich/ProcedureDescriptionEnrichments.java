@@ -26,37 +26,45 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.observation;
+package org.n52.sos.ds.procedure.enrich;
 
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.hibernate.Session;
 
-import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.util.LocalizedProducer;
-import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ds.hibernate.util.procedure.AbstractProcedureConverter;
+import org.n52.sos.ds.hibernate.util.procedure.enrich.AbstractProcedureDescriptionEnrichments;
+import org.n52.sos.ds.hibernate.util.procedure.enrich.AbstractRelatedProceduresEnrichment;
+import org.n52.sos.ds.procedure.ProcedureConverter;
 
-public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann <c.autermann@52north.org>
+ */
+public class ProcedureDescriptionEnrichments extends AbstractProcedureDescriptionEnrichments<ProcedureEntity> {
 
-    public EReportingSeriesOmObservationCreator(
-            EReportingSeries series,
-            AbstractObservationRequest request,
-            LocalizedProducer<OwsServiceProvider> serviceProvider,
-            Locale language,
-            I18NDAORepository i18NDAORepository,
-            Session session) {
-        super(series, request, serviceProvider, language, i18NDAORepository, session);
+    public ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider) {
+        super(locale, serviceProvider);
     }
 
-    @Override
-    public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
-        return super.create();
+    public AbstractRelatedProceduresEnrichment<ProcedureEntity> createRelatedProceduresEnrichment() {
+    return setValues(new RelatedProceduresEnrichment())
+            .setConverter(getConverter())
+            .setProcedure(getProcedure())
+            .setProcedureDescriptionFormat(getProcedureDescriptionFormat())
+            .setI18NDAORepository(getI18NDAORepository())
+            .setValidTime(getValidTime());
     }
+
 }

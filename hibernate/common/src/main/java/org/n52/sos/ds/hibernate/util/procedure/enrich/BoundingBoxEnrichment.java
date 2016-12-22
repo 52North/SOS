@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-
-
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;

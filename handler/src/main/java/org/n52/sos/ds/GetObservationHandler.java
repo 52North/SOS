@@ -63,8 +63,8 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
     }
 
     @Inject
-    public void setGetObservationDao(GetObservationDao dao) {
-        this.dao = dao;
+    public void setGetObservationDao(GetObservationDao getObservationDao) {
+        this.dao = getObservationDao;
     }
 
     public GetObservationHandler() {

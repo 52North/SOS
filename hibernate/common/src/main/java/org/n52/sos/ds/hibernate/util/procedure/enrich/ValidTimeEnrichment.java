@@ -32,6 +32,7 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.sos.ds.hibernate.util.procedure.enrich.SensorMLEnrichment;
 
 /**
  * TODO JavaDoc

@@ -26,37 +26,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.observation;
+package org.n52.sos.ds.procedure.create;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.hibernate.Session;
-
-import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.util.LocalizedProducer;
-import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
-public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
+import com.google.common.base.Predicate;
 
-
-    public EReportingSeriesOmObservationCreator(
-            EReportingSeries series,
-            AbstractObservationRequest request,
-            LocalizedProducer<OwsServiceProvider> serviceProvider,
-            Locale language,
-            I18NDAORepository i18NDAORepository,
-            Session session) {
-        super(series, request, serviceProvider, language, i18NDAORepository, session);
-    }
-
-    @Override
-    public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
-        return super.create();
-    }
+/**
+ * Strategy pattern to create {@link SosProcedureDescription}.
+ */
+public interface DescriptionCreationStrategy
+        extends Predicate<ProcedureEntity> {
+    SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n, I18NDAORepository i18NDAORepository, Session s)
+            throws OwsExceptionReport;
 }

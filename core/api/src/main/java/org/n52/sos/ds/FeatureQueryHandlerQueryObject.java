@@ -48,6 +48,8 @@ public class FeatureQueryHandlerQueryObject {
     private List<SpatialFilter> spatialFilters = Lists.newArrayList();
 
     private Set<String> features = Sets.newHashSet();
+    
+    private Object feature;
 
     private String version;
 
@@ -186,5 +188,25 @@ public class FeatureQueryHandlerQueryObject {
 
     public boolean isSetVersion() {
         return !Strings.isNullOrEmpty(getVersion());
+    }
+
+    /**
+     * @return the feature
+     */
+    public Object getFeatureObject() {
+        return feature;
+    }
+
+    /**
+     * @param feature the feature to set
+     * @return 
+     */
+    public FeatureQueryHandlerQueryObject setFeatureObject(Object feature) {
+        this.feature = feature;
+        return this;
+    }
+    
+    public boolean isSetFeatureObject() {
+        return getFeatureObject() != null;
     }
 }

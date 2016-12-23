@@ -164,16 +164,19 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
 
     @Override
     public AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
-        final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
-        try {
-            Criteria c = session.createCriteria(FeatureOfInterest.class)
-                    .add(Restrictions.eq(FeatureOfInterest.IDENTIFIER, queryObject.getFeatureIdentifier()));
-            return createSosAbstractFeature((FeatureOfInterest) c.uniqueResult(), queryObject);
-        } catch (final HibernateException he) {
-            throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "An error occurred while querying feature data for a featureOfInterest identifier!");
+        if (queryObject.isSetFeatureObject() && queryObject.getFeatureObject() instanceof FeatureOfInterest) {
+            return createSosAbstractFeature((FeatureOfInterest) queryObject.getFeatureObject(), queryObject);
+        } else {
+            final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
+            try {
+                Criteria c = session.createCriteria(FeatureOfInterest.class)
+                        .add(Restrictions.eq(FeatureOfInterest.IDENTIFIER, queryObject.getFeatureIdentifier()));
+                return createSosAbstractFeature((FeatureOfInterest) c.uniqueResult(), queryObject);
+            } catch (final HibernateException he) {
+                throw new NoApplicableCodeException().causedBy(he).withMessage(
+                        "An error occurred while querying feature data for a featureOfInterest identifier!");
+            }
         }
-
     }
 
     @Override

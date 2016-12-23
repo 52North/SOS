@@ -88,7 +88,7 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
     public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
         final List<OmObservation> observations = Lists.newLinkedList();
         if (getObservationConstellation() != null && getFeatureIds() != null) {
-            SosProcedureDescription procedure = createProcedure(getObservationConstellation().getProcedure().getIdentifier());
+            SosProcedureDescription procedure = createProcedure(getObservationConstellation().getProcedure());
             OmObservableProperty obsProp = createObservableProperty(getObservationConstellation().getObservableProperty());
             obsProp.setUnit(queryUnit());
             for (final String featureId : getFeatureIds()) {

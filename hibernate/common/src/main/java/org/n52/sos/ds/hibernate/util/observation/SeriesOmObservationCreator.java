@@ -88,10 +88,10 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
         final List<OmObservation> observations = Lists.newLinkedList();
         if (series != null) {
-            SosProcedureDescription procedure = createProcedure(series.getProcedure().getIdentifier());
+            SosProcedureDescription procedure = createProcedure(series.getProcedure());
             OmObservableProperty obsProp = createObservableProperty(series.getObservableProperty());
             obsProp.setUnit(queryUnit());
-            AbstractFeature feature = createFeatureOfInterest(series.getFeatureOfInterest().getIdentifier());
+            AbstractFeature feature = createFeatureOfInterest(series.getFeatureOfInterest());
 
             final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
 

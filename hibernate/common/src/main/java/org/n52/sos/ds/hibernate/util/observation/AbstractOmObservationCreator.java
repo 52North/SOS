@@ -60,6 +60,7 @@ import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
+import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -248,6 +249,22 @@ public abstract class AbstractOmObservationCreator {
     protected AbstractFeature createFeatureOfInterest(String identifier) throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
         queryObject.addFeature(identifier).setVersion(getVersion());
+        final AbstractFeature feature =
+                getFeatureQueryHandler().getFeatureByID(queryObject);
+        return feature;
+    }
+    
+    /**
+     * Get featureOfInterest object from series
+     *
+     * @param identifier
+     * @return FeatureOfInerest object
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    protected AbstractFeature createFeatureOfInterest(FeatureOfInterest featureOfInterest) throws OwsExceptionReport {
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
+        queryObject.setFeatureObject(featureOfInterest).setVersion(getVersion());
         final AbstractFeature feature =
                 getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;

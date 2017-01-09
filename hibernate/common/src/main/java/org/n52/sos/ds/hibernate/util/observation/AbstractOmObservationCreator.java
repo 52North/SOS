@@ -253,7 +253,7 @@ public abstract class AbstractOmObservationCreator {
                 getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;
     }
-    
+
     /**
      * Get featureOfInterest object from series
      *

@@ -48,7 +48,7 @@ public class FeatureQueryHandlerQueryObject {
     private List<SpatialFilter> spatialFilters = Lists.newArrayList();
 
     private Set<String> features = Sets.newHashSet();
-    
+
     private Object feature;
 
     private String version;
@@ -199,13 +199,13 @@ public class FeatureQueryHandlerQueryObject {
 
     /**
      * @param feature the feature to set
-     * @return 
+     * @return
      */
     public FeatureQueryHandlerQueryObject setFeatureObject(Object feature) {
         this.feature = feature;
         return this;
     }
-    
+
     public boolean isSetFeatureObject() {
         return getFeatureObject() != null;
     }

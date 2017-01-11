@@ -47,14 +47,9 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
+import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
-//import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
-//import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
-//import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-//import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-//import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
+import org.n52.sos.ds.cache.ProcedureFlag;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;

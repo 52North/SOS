@@ -40,17 +40,15 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.io.crs.BoundingBox;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
-import org.n52.io.response.BBox;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.dao.DbQuery;
-import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.FeatureCollection;

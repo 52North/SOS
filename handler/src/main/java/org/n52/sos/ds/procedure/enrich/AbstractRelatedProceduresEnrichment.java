@@ -26,13 +26,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.procedure.enrich;
+package org.n52.sos.ds.procedure.enrich;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
-import org.n52.sos.ds.hibernate.util.procedure.AbstractProcedureConverter;
+import org.n52.sos.ds.procedure.AbstractProcedureConverter;
 
 public abstract class AbstractRelatedProceduresEnrichment<T> extends ProcedureDescriptionEnrichment {
     private T procedure;

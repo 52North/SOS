@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds;
 
-import static org.n52.sos.ds.hibernate.CacheFeederSettingDefinitionProvider.CACHE_THREAD_COUNT;
+import static org.n52.sos.ds.cache.CacheFeederSettingDefinitionProvider.CACHE_THREAD_COUNT;
 
 import java.util.Collection;
 import java.util.List;
@@ -54,7 +54,6 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosWritableContentCache;
-import org.n52.sos.ds.cache.HibernateSessionStoreWrapper;
 import org.n52.sos.ds.cache.InitialCacheUpdate;
 import org.n52.sos.ds.cache.base.OfferingCacheUpdate;
 import org.slf4j.Logger;
@@ -116,7 +115,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
                     this.cacheThreadCount,
                     this.defaultLocale,
                     this.i18NDAORepository,
-                    new HibernateSessionStoreWrapper(this.sessionStore),
+                    this.sessionStore,
                     this.serviceMetadataRepository);
             session = this.sessionStore.getSession();
             update.setCache(cache);
@@ -154,7 +153,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
                 this.cacheThreadCount,
                 this.defaultLocale,
                 this.i18NDAORepository,
-                new HibernateSessionStoreWrapper(this.sessionStore));
+                this.sessionStore);
         update.setCache(cache);
         update.setErrors(errors);
         update.setSession(session);

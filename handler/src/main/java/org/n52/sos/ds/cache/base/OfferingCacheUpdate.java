@@ -35,24 +35,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.io.request.IoParameters;
 import org.n52.proxy.db.dao.ProxyDatasetDao;
 import org.n52.proxy.db.dao.ProxyOfferingDao;
 import org.n52.series.db.DataAccessException;
+import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
-import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.ObservationType;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,12 +70,12 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     private final Locale defaultLanguage;
     private final I18NDAORepository i18NDAORepository;
 
-    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, ConnectionProvider connectionProvider) {
-        this(threads, defaultLanguage, i18NDAORepository, connectionProvider, null);
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, HibernateSessionStore sessionStore) {
+        this(threads, defaultLanguage, i18NDAORepository, sessionStore, null);
     }
 
-    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, ConnectionProvider connectionProvider, Collection<String> offeringIdsToUpdate) {
-        super(threads, THREAD_GROUP_NAME, connectionProvider);
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, HibernateSessionStore sessionStore, Collection<String> offeringIdsToUpdate) {
+        super(threads, THREAD_GROUP_NAME, sessionStore);
         if (offeringIdsToUpdate != null) {
             this.offeringsIdToUpdate.addAll(offeringIdsToUpdate);
         }
@@ -154,7 +150,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
         boolean hasSamplingGeometry = false;
         for (OfferingEntity offering : getOfferingsToUpdate()){
-            if (shouldOfferingBeProcessed(offering)) {
+//            if (shouldOfferingBeProcessed(offering)) {
                 Collection<DatasetEntity> datasets
                         = getOfferingDatasets().get(offering.getDomainId());
                 offeringUpdateTasks.add(new OfferingCacheUpdateTask(
@@ -162,7 +158,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                         datasets,
                         this.defaultLanguage,
                         this.i18NDAORepository));
-            }
+//            }
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
     }
@@ -183,32 +179,24 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
 //        return false;
 //    }
 
-    protected boolean shouldOfferingBeProcessed(OfferingEntity offering) {
-        try {
-            if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
-                return getOfferingDatasets().containsKey(offering.getDomainId());
-            }
-        } catch (OwsExceptionReport e) {
-            LOGGER.error("Error while getting observation DAO class from factory!", e);
-            getErrors().add(e);
-        }
-        return false;
-    }
+//    protected boolean shouldOfferingBeProcessed(OfferingEntity offering) {
+//        return false;
+//    }
 
-    protected Set<String> getObservationTypesFromObservationType(Set<ObservationType> observationTypes) {
-        Set<String> obsTypes = new HashSet<>(observationTypes.size());
-        for (ObservationType obsType : observationTypes) {
-            obsTypes.add(obsType.getObservationType());
-        }
-        return obsTypes;
-    }
+//    protected Set<String> getObservationTypesFromObservationType(Set<ObservationType> observationTypes) {
+//        Set<String> obsTypes = new HashSet<>(observationTypes.size());
+//        for (ObservationType obsType : observationTypes) {
+//            obsTypes.add(obsType.getObservationType());
+//        }
+//        return obsTypes;
+//    }
 
-    protected Collection<String> getFeatureOfInterestTypesFromFeatureOfInterestType(
-            Set<FeatureOfInterestType> featureOfInterestTypes) {
-        Set<String> featTypes = new HashSet<>(featureOfInterestTypes.size());
-        for (FeatureOfInterestType featType : featureOfInterestTypes) {
-            featTypes.add(featType.getFeatureOfInterestType());
-        }
-        return featTypes;
-    }
+//    protected Collection<String> getFeatureOfInterestTypesFromFeatureOfInterestType(
+//            Set<FeatureOfInterestType> featureOfInterestTypes) {
+//        Set<String> featTypes = new HashSet<>(featureOfInterestTypes.size());
+//        for (FeatureOfInterestType featType : featureOfInterestTypes) {
+//            featTypes.add(featType.getFeatureOfInterestType());
+//        }
+//        return featTypes;
+//    }
 }

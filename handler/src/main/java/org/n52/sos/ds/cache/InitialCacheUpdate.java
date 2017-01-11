@@ -33,6 +33,7 @@ import java.util.Locale;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
+import org.n52.series.db.HibernateSessionStore;
 import org.n52.sos.ds.cache.base.FeatureOfInterestCacheUpdate;
 import org.n52.sos.ds.cache.base.I18NCacheUpdate;
 import org.n52.sos.ds.cache.base.ObservablePropertiesCacheUpdate;
@@ -40,8 +41,6 @@ import org.n52.sos.ds.cache.base.ObservationTimeCacheUpdate;
 import org.n52.sos.ds.cache.base.OfferingCacheUpdate;
 import org.n52.sos.ds.cache.base.ProcedureCacheUpdate;
 import org.n52.sos.ds.cache.base.RelatedFeaturesCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.CompositeCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.ParallelCacheUpdate;
 
 /**
  *
@@ -66,12 +65,12 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
     public InitialCacheUpdate(int threadCount,
                               Locale defaultLocale,
                               I18NDAORepository i18NDAORepository,
-                              ConnectionProvider connectionProvider,
+                              HibernateSessionStore sessionStore,
                               ServiceMetadataRepository serviceMetadataRepository) {
         //execute all updates except offerings and procedures in parallel, then execute offering and procedure updates
         //(which spawn their own threads)
         super(new ParallelCacheUpdate(threadCount,
-                                      connectionProvider,
+                sessionStore,
                                       new ObservablePropertiesCacheUpdate(),
                                       new FeatureOfInterestCacheUpdate(),
                                       new RelatedFeaturesCacheUpdate(),
@@ -81,7 +80,7 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
               new OfferingCacheUpdate(threadCount,
                                       defaultLocale,
                                       i18NDAORepository,
-                                      connectionProvider),
-              new ProcedureCacheUpdate(threadCount, connectionProvider));
+                                      sessionStore),
+              new ProcedureCacheUpdate(threadCount, sessionStore));
     }
 }

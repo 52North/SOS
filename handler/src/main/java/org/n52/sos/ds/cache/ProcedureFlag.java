@@ -26,25 +26,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.cache;
+package org.n52.sos.ds.cache;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.DatasourceCacheUpdate;
-
-/**
- * @author Christian Autermann <c.autermann@52north.org>
- *
- * @since 4.0.0
- */
-public abstract class AbstractDatasourceCacheUpdate extends DatasourceCacheUpdate {
-    private Session session;
-
-    public Session getSession() {
-        return session;
-    }
-
-    public void setSession(Session session) {
-        this.session = session;
-    }
-
+public enum ProcedureFlag {
+    PARENT, HIDDEN_CHILD;
 }

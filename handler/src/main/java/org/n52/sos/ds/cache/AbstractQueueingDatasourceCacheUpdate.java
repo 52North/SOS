@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.cache;
+package org.n52.sos.ds.cache;
 
 
 import org.slf4j.Logger;
@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.util.action.CompositeParallelAction;
+import org.n52.series.db.HibernateSessionStore;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.ThreadLocalSessionFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -54,10 +54,10 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
 
     private final ThreadLocalSessionFactory sessionFactory;
 
-    public AbstractQueueingDatasourceCacheUpdate(int threads, String threadGroupName, ConnectionProvider connectionProvider) {
+    public AbstractQueueingDatasourceCacheUpdate(int threads, String threadGroupName, HibernateSessionStore sessionStore) {
         this.threads = threads;
         this.threadGroupName = threadGroupName;
-        this.sessionFactory = new ThreadLocalSessionFactory(connectionProvider);
+        this.sessionFactory = new ThreadLocalSessionFactory(sessionStore);
     }
 
     protected abstract T[] getUpdatesToExecute() throws OwsExceptionReport;
@@ -92,8 +92,8 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
 
         try {
             sessionFactory.close();
-        } catch (ConnectionProviderException cpe) {
-            LOGGER.error("Error while closing SessionFactory", cpe);
+        } catch (Exception e) {
+            LOGGER.error("Error while closing SessionFactory", e);
         }
     }
 }

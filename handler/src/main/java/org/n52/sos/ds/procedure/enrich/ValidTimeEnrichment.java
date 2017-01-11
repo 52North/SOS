@@ -26,23 +26,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.cache;
+package org.n52.sos.ds.procedure.enrich;
 
-import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.sos.ds.procedure.enrich.SensorMLEnrichment;
 
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann <c.autermann@52north.org>
+ */
+public class ValidTimeEnrichment extends SensorMLEnrichment {
+    private TimePeriod validTime;
 
-public class ParallelCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<AbstractThreadableDatasourceCacheUpdate> {
-    private static final String THREAD_GROUP_NAME = "parallel-cache-update";
-
-    private final AbstractThreadableDatasourceCacheUpdate[] updates;
-
-    public ParallelCacheUpdate(int threads, ConnectionProvider connectionProvider, AbstractThreadableDatasourceCacheUpdate... updates) {
-        super(threads, THREAD_GROUP_NAME, connectionProvider);
-        this.updates = updates;
+    @Override
+    protected void enrich(AbstractSensorML description)
+            throws OwsExceptionReport {
+        if (description instanceof AbstractProcess) {
+            AbstractProcess abstractProcess =  (AbstractProcess)description;
+            if (abstractProcess.getValidTime() != null) {
+                validTime.extendToContain(abstractProcess.getValidTime());
+            }
+            abstractProcess.setValidTime(validTime);
+        }
     }
 
     @Override
-    protected AbstractThreadableDatasourceCacheUpdate[] getUpdatesToExecute() {
-        return updates;
+    public boolean isApplicable() {
+        return super.isApplicable() && validTime != null;
     }
+
+    public ValidTimeEnrichment setValidTime(TimePeriod validTime) {
+        this.validTime = validTime;
+        return this;
+    }
+
 }

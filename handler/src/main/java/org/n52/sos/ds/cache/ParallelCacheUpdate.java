@@ -28,29 +28,20 @@
  */
 package org.n52.sos.ds.cache;
 
-import org.hibernate.Session;
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.series.db.HibernateSessionStore;
 
-public class HibernateSessionStoreWrapper implements ConnectionProvider {
+public class ParallelCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<AbstractThreadableDatasourceCacheUpdate> {
+    private static final String THREAD_GROUP_NAME = "parallel-cache-update";
 
-    private HibernateSessionStore sessionStore;
+    private final AbstractThreadableDatasourceCacheUpdate[] updates;
 
-    public HibernateSessionStoreWrapper(HibernateSessionStore sessionStore) {
-        this.sessionStore = sessionStore;
+    public ParallelCacheUpdate(int threads, HibernateSessionStore sessionStore, AbstractThreadableDatasourceCacheUpdate... updates) {
+        super(threads, THREAD_GROUP_NAME, sessionStore);
+        this.updates = updates;
     }
 
     @Override
-    public Object getConnection() throws ConnectionProviderException {
-        return sessionStore.getSession();
+    protected AbstractThreadableDatasourceCacheUpdate[] getUpdatesToExecute() {
+        return updates;
     }
-
-    @Override
-    public void returnConnection(Object connection) {
-        if (connection instanceof Session) {
-            sessionStore.returnSession((Session)connection);
-        }
-    }
-
 }

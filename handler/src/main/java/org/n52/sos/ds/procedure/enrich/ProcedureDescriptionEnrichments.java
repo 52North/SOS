@@ -29,23 +29,10 @@
 package org.n52.sos.ds.procedure.enrich;
 
 import java.util.Locale;
-import java.util.Map;
-
-import org.hibernate.Session;
 
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.hibernate.util.procedure.AbstractProcedureConverter;
-import org.n52.sos.ds.hibernate.util.procedure.enrich.AbstractProcedureDescriptionEnrichments;
-import org.n52.sos.ds.hibernate.util.procedure.enrich.AbstractRelatedProceduresEnrichment;
-import org.n52.sos.ds.procedure.ProcedureConverter;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc

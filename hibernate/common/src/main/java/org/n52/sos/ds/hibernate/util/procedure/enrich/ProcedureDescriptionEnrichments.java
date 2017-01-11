@@ -41,6 +41,8 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ds.procedure.enrich.AbstractProcedureDescriptionEnrichments;
+import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;

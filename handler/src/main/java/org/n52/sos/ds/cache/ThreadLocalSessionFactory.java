@@ -26,19 +26,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate;
+package org.n52.sos.ds.cache;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.series.db.HibernateSessionStore;
 import org.n52.shetland.util.CollectionHelper;
 
 /**
@@ -50,23 +50,23 @@ import org.n52.shetland.util.CollectionHelper;
 public class ThreadLocalSessionFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadLocalSessionFactory.class);
-    private final ConnectionProvider connectionProvider;
+    private final HibernateSessionStore sessionStore;
     private final Lock lock = new ReentrantLock();
     private final Set<Session> createdSessions = CollectionHelper.synchronizedSet();
     private final ThreadLocal<Session> threadLocal;
     private boolean closed = false;
 
-    public ThreadLocalSessionFactory(ConnectionProvider connectionProvider) {
-        this.connectionProvider = Objects.requireNonNull(connectionProvider);
+    public ThreadLocalSessionFactory(HibernateSessionStore sessionStore) {
+        this.sessionStore = Objects.requireNonNull(sessionStore);
         this.threadLocal = ThreadLocal.withInitial(this::createConnection);
     }
 
     private Session createConnection() {
         try {
-            return (Session) this.connectionProvider.getConnection();
-        } catch (ConnectionProviderException cpe) {
-            LOGGER.error("Error while getting initialValue for ThreadLocalSessionFactory!", cpe);
-            throw new RuntimeException(cpe);
+            return this.sessionStore.getSession();
+        } catch (HibernateException he) {
+            LOGGER.error("Error while getting initialValue for ThreadLocalSessionFactory!", he);
+            throw new RuntimeException(he);
         }
     }
 
@@ -84,7 +84,7 @@ public class ThreadLocalSessionFactory {
         }
     }
 
-    public void close() throws ConnectionProviderException {
+    public void close() {
         setClosed();
         returnSessions();
     }
@@ -107,11 +107,11 @@ public class ThreadLocalSessionFactory {
         }
     }
 
-    protected void returnSessions() throws ConnectionProviderException {
+    protected void returnSessions() {
         this.lock.lock();
         try {
             this.createdSessions
-                .forEach(this.connectionProvider::returnConnection);
+                .forEach(this.sessionStore::returnSession);
         } finally {
             this.lock.unlock();
         }

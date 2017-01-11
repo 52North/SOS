@@ -30,10 +30,8 @@ package org.n52.sos.ds.procedure;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
@@ -48,18 +46,13 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.SensorML;
-import org.n52.shetland.ogc.sensorML.SensorML20Constants;
-import org.n52.shetland.ogc.sensorML.v20.AbstractProcessV20;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.util.procedure.AbstractProcedureConverter;
 import org.n52.sos.ds.procedure.create.DescriptionCreationStrategy;
 import org.n52.sos.ds.procedure.create.GeneratedDescriptionCreationStrategy;
 import org.n52.sos.ds.procedure.enrich.ProcedureDescriptionEnrichments;
 import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 

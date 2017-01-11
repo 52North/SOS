@@ -26,28 +26,33 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.cache;
+package org.n52.sos.ds.procedure.enrich;
 
-import org.hibernate.Session;
+import java.util.Collection;
 
-import org.n52.sos.ds.hibernate.ThreadLocalSessionFactory;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.ogc.sos.SosOffering;
 
-public abstract class AbstractThreadableDatasourceCacheUpdate extends AbstractDatasourceCacheUpdate {
-    private ThreadLocalSessionFactory sessionFactory;
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann <c.autermann@52north.org>
+ */
+public class OfferingEnrichment extends ProcedureDescriptionEnrichment {
 
-    public ThreadLocalSessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
-
-    public void setSessionFactory(ThreadLocalSessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    @Override
+    public void enrich() throws OwsExceptionReport {
+        Collection<SosOffering> offerings = getSosOfferings();
+        if (CollectionHelper.isNotEmpty(offerings)) {
+            getDescription().addOfferings(offerings);
+        }
     }
 
     @Override
-    public Session getSession(){
-        if (super.getSession() == null && sessionFactory != null) {
-            setSession(sessionFactory.getSession());
-        }
-        return super.getSession();
+    public boolean isApplicable() {
+        return super.isApplicable() && procedureSettings()
+                .isEnrichWithOfferings();
     }
+
 }

@@ -41,7 +41,7 @@ import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

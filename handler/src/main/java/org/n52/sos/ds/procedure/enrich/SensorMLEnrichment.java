@@ -26,42 +26,51 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.procedure.enrich;
+package org.n52.sos.ds.procedure.enrich;
 
-import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ds.hibernate.util.procedure.enrich.SensorMLEnrichment;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifierPredicates;
+
+import com.google.common.base.Predicate;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann <c.autermann@52north.org>
  */
-public class ValidTimeEnrichment extends SensorMLEnrichment {
-    private TimePeriod validTime;
+public abstract class SensorMLEnrichment extends ProcedureDescriptionEnrichment {
+    protected Predicate<SmlIdentifier> longNamePredicate() {
+        return SmlIdentifierPredicates.nameOrDefinition(
+                SensorMLConstants.ELEMENT_NAME_LONG_NAME,
+                procedureSettings().getIdentifierLongNameDefinition());
+    }
+
+    protected Predicate<SmlIdentifier> shortNamePredicate() {
+        return SmlIdentifierPredicates.nameOrDefinition(
+                SensorMLConstants.ELEMENT_NAME_SHORT_NAME,
+                procedureSettings().getIdentifierShortNameDefinition());
+    }
+
+    protected Predicate<SmlIdentifier> uniqueIdPredicate() {
+        return SmlIdentifierPredicates.nameOrDefinition(
+                OGCConstants.URN_UNIQUE_IDENTIFIER_END,
+                OGCConstants.URN_UNIQUE_IDENTIFIER);
+    }
 
     @Override
-    protected void enrich(AbstractSensorML description)
-            throws OwsExceptionReport {
-        if (description instanceof AbstractProcess) {
-            AbstractProcess abstractProcess =  (AbstractProcess)description;
-            if (abstractProcess.getValidTime() != null) {
-                validTime.extendToContain(abstractProcess.getValidTime());
-            }
-            abstractProcess.setValidTime(validTime);
-        }
+    public void enrich() throws OwsExceptionReport {
+        enrich((AbstractSensorML) getDescription().getProcedureDescription());
     }
 
     @Override
     public boolean isApplicable() {
-        return super.isApplicable() && validTime != null;
+        return getDescription().getProcedureDescription() instanceof AbstractSensorML;
     }
 
-    public ValidTimeEnrichment setValidTime(TimePeriod validTime) {
-        this.validTime = validTime;
-        return this;
-    }
-
+    protected abstract void enrich(AbstractSensorML description)
+            throws OwsExceptionReport;
 }

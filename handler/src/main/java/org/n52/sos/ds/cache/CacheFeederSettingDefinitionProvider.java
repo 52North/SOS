@@ -26,33 +26,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.procedure.enrich;
-
-import java.util.Collection;
-
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.CollectionHelper;
-import org.n52.shetland.ogc.sos.SosOffering;
+package org.n52.sos.ds.cache;
 
 /**
- * TODO JavaDoc
- *
  * @author Christian Autermann <c.autermann@52north.org>
+ *
+ * @since 4.0.0
  */
-public class OfferingEnrichment extends ProcedureDescriptionEnrichment {
+public interface CacheFeederSettingDefinitionProvider {
 
-    @Override
-    public void enrich() throws OwsExceptionReport {
-        Collection<SosOffering> offerings = getSosOfferings();
-        if (CollectionHelper.isNotEmpty(offerings)) {
-            getDescription().addOfferings(offerings);
-        }
-    }
-
-    @Override
-    public boolean isApplicable() {
-        return super.isApplicable() && procedureSettings()
-                .isEnrichWithOfferings();
-    }
-
+    String CACHE_THREAD_COUNT = "service.cacheThreadCount";
 }

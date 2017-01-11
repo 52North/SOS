@@ -45,6 +45,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

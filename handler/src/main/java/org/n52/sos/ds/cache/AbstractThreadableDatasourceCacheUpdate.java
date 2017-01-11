@@ -26,8 +26,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.cache;
+package org.n52.sos.ds.cache;
 
-public enum ProcedureFlag {
-    PARENT, HIDDEN_CHILD;
+import org.hibernate.Session;
+
+public abstract class AbstractThreadableDatasourceCacheUpdate extends AbstractDatasourceCacheUpdate {
+    private ThreadLocalSessionFactory sessionFactory;
+
+    public ThreadLocalSessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    public void setSessionFactory(ThreadLocalSessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
+    @Override
+    public Session getSession(){
+        if (super.getSession() == null && sessionFactory != null) {
+            setSession(sessionFactory.getSession());
+        }
+        return super.getSession();
+    }
 }

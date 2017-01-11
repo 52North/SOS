@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.procedure.enrich;
+package org.n52.sos.ds.procedure.enrich;
 
 import java.util.Locale;
 
@@ -37,7 +37,7 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.hibernate.util.procedure.AbstractProcedureConverter;
+import org.n52.sos.ds.procedure.AbstractProcedureConverter;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;

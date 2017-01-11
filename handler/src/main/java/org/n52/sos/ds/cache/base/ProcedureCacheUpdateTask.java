@@ -44,8 +44,8 @@ import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
-import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,10 +71,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     ProcedureCacheUpdateTask(ProcedureEntity procedure, Collection<DatasetEntity> datasets) {
         this.procedure = procedure;
         this.datasets = datasets;
-
     }
-
-
 
     protected void getProcedureInformationFromDbAndAddItToCacheMaps() throws OwsExceptionReport {
         try {

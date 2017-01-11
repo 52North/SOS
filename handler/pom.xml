@@ -16,6 +16,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
+        <!-- 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-common</artifactId>
@@ -24,6 +25,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-session-factory</artifactId>
         </dependency>
+         -->
         <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
@@ -35,12 +37,6 @@
         <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.n52.janmayen</groupId>

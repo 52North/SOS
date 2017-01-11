@@ -62,6 +62,7 @@ import org.n52.sos.ds.hibernate.util.procedure.create.ValidProcedureTimeDescript
 import org.n52.sos.ds.hibernate.util.procedure.create.XmlStringDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.enrich.ProcedureDescriptionEnrichments;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
+import org.n52.sos.ds.procedure.AbstractProcedureConverter;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;

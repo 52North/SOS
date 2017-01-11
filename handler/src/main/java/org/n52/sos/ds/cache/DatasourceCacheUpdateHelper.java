@@ -35,8 +35,6 @@ import java.util.Set;
 
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -51,15 +49,6 @@ public class DatasourceCacheUpdateHelper {
 
     }
 
-    public static Set<String> getAllOfferingIdentifiersFrom(
-            Collection<ObservationConstellation> observationConstellations) {
-        Set<String> offerings = new HashSet<String>(observationConstellations.size());
-        for (ObservationConstellation oc : observationConstellations) {
-            offerings.add(oc.getOffering().getIdentifier());
-        }
-        return offerings;
-    }
-
     @SuppressWarnings("rawtypes")
     public static Set<String> getAllOfferingIdentifiersFromDatasetEntitys(
             Collection<DatasetEntity> datasets) {
@@ -68,15 +57,6 @@ public class DatasourceCacheUpdateHelper {
             offerings.add(dataset.getOffering().getDomainId());
         }
         return offerings;
-    }
-
-    public static Set<String> getAllProcedureIdentifiersFrom(
-            Collection<ObservationConstellation> observationConstellations) {
-        Set<String> procedures = new HashSet<String>(observationConstellations.size());
-        for (ObservationConstellation oc : observationConstellations) {
-            procedures.add(oc.getProcedure().getIdentifier());
-        }
-        return procedures;
     }
 
     @SuppressWarnings("rawtypes")
@@ -106,15 +86,6 @@ public class DatasourceCacheUpdateHelper {
             }
         }
         return procedures;
-    }
-
-    public static Set<String> getAllObservablePropertyIdentifiersFrom(
-            Collection<ObservationConstellation> observationConstellations) {
-        Set<String> observableProperties = new HashSet<String>(observationConstellations.size());
-        for (ObservationConstellation oc : observationConstellations) {
-            observableProperties.add(oc.getObservableProperty().getIdentifier());
-        }
-        return observableProperties;
     }
 
     @SuppressWarnings("rawtypes")

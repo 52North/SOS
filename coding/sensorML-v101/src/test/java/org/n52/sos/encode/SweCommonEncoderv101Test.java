@@ -320,7 +320,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
                     }
 
                     @Override
-                    public SweAbstractDataComponent clone() throws CloneNotSupportedException {
+                    public SweAbstractDataComponent copy() {
                         return null;
                     }
                 })));

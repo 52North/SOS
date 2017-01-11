@@ -36,13 +36,13 @@ import org.isotc211.x2005.gco.CodeListValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.shetland.iso.GcoConstants;
+import org.n52.shetland.ogc.sensorML.Role;
+import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.shetland.iso.GcoConstants;
-import org.n52.shetland.ogc.sensorML.Role;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.util.CodingHelper;
 
 import com.google.common.base.Joiner;
 

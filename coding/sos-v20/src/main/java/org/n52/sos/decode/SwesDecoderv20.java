@@ -37,6 +37,7 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -65,6 +66,7 @@ import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
 import org.n52.svalbard.decode.exception.DecoderResponseUnsupportedException;
 import org.n52.svalbard.decode.exception.DecodingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;

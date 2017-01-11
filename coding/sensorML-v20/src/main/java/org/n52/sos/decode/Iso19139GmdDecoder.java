@@ -49,12 +49,12 @@ import org.n52.shetland.iso.gmd.GmdConstants;
 import org.n52.shetland.ogc.sensorML.Role;
 import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.decode.exception.UnsupportedDecoderInputException;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Joiner;

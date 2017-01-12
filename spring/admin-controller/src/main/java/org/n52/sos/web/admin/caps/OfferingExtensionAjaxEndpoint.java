@@ -54,7 +54,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.ogc.ows.extension.OfferingExtension;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -69,7 +69,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingExtensionAjaxEndpoint.class);
 
     private ObjectNode toJson(final Collection<OfferingExtension> extensionsForOffering) {
-        ObjectNode jsonOffering = JSONUtils.nodeFactory().objectNode();
+        ObjectNode jsonOffering = Json.nodeFactory().objectNode();
         if (extensionsForOffering != null) {
             for (final OfferingExtension e : extensionsForOffering) {
                 jsonOffering.set(e.getIdentifier(), toJson(e));
@@ -79,7 +79,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
     }
 
     private ObjectNode toJson(final OfferingExtension extensionForOffering) {
-        return JSONUtils.nodeFactory().objectNode()
+        return Json.nodeFactory().objectNode()
             .put(IDENTIFIER_PROPERTY, extensionForOffering.getIdentifier())
             .put(DISABLED_PROPERTY, extensionForOffering.isDisabled())
             .put(EXTENSION_PROPERTY, extensionForOffering.getExtension())
@@ -93,7 +93,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
         final Map<String, List<OfferingExtension>> offeringExtensions = getCapabilitiesExtensionService().getOfferingExtensions();
         final List<String> offerings = Lists.newArrayList(getCache().getOfferings());
         Collections.sort(offerings);
-        ObjectNode response = JSONUtils.nodeFactory().objectNode();
+        ObjectNode response = Json.nodeFactory().objectNode();
         for (final String offering : offerings) {
             response.set(offering, toJson(offeringExtensions.get(offering)));
         }
@@ -112,7 +112,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
     @RequestMapping(value="/save", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void saveOfferingExtension(@RequestBody final String extensionJson)
             throws XmlException, NoSuchOfferingException, OwsExceptionReport, IOException {
-        JsonNode request = JSONUtils.loadString(extensionJson);
+        JsonNode request = Json.loadString(extensionJson);
         final String offeringId = request.path(OFFERING).asText();
         final String extensionId = request.path(IDENTIFIER).asText();
         final String extensionContent = request.path(EXTENSION_PROPERTY).asText();
@@ -126,7 +126,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
     public void setOfferingExtensionSettings(
             @RequestBody final String settings) throws NoSuchExtensionException, NoSuchOfferingException,
             OwsExceptionReport, IOException {
-        JsonNode request = JSONUtils.loadString(settings);
+        JsonNode request = Json.loadString(settings);
         final String offeringId = request.path(OFFERING).asText();
         final String extensionId = request.path(IDENTIFIER).asText();
 
@@ -140,7 +140,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
     public void deleteOfferingExtension(
             @RequestBody final String requestJson) throws NoSuchExtensionException, NoSuchOfferingException,
             OwsExceptionReport, IOException {
-        JsonNode request = JSONUtils.loadString(requestJson);
+        JsonNode request = Json.loadString(requestJson);
         final String offeringId = request.path(OFFERING).asText();
         final String extensionId = request.path(IDENTIFIER).asText();
         getCapabilitiesExtensionService().deleteOfferingExtension(offeringId, extensionId);

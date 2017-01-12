@@ -43,7 +43,6 @@ import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.lifecycle.Constructable;
@@ -178,7 +177,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
                     new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
                             INTERNAL_SERVER_ERROR);
         }
-        Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+        Locale locale = getRequestedLocale(request);
         String pdf = request.getProcedureDescriptionFormat();
         String version = request.getVersion();
 
@@ -206,7 +205,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
                     new ValidProcedureTimeDAO().getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats,
                                                                                   request.getValidTime(), session);
             for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
-                Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+                Locale locale = getRequestedLocale(request);
                 String pdf = request.getProcedureDescriptionFormat();
                 String version = request.getVersion();
                 SosProcedureDescription<?> sosProcedureDescription

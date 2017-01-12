@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+import java.util.function.Predicate;
+
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
@@ -35,7 +37,6 @@ import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifierPredicates;
 
-import com.google.common.base.Predicate;
 
 /**
  * TODO JavaDoc

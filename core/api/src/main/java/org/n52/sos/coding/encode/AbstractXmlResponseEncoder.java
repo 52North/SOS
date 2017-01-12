@@ -44,7 +44,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
 import org.n52.iceland.coding.encode.SchemaRepository;
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.service.ConformanceClass;
 import org.n52.iceland.service.ServiceSettings;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;

@@ -65,11 +65,8 @@ import javax.xml.namespace.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.LocaleHelper;
+import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.filter.FilterCapabilities;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
@@ -98,13 +95,16 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.OwsValueRestriction;
 import org.n52.shetland.ogc.ows.OwsValuesReference;
 import org.n52.shetland.ogc.ows.OwsValuesUnit;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.sos.SosCapabilities;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosObservationOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.w3c.xlink.Link;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.shetland.ogc.sos.SosCapabilities;
-import org.n52.shetland.ogc.sos.SosObservationOffering;
-import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -141,7 +141,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     private void encodeMultilingualString(ObjectNode json, String name, Optional<MultilingualString> string) {
         string.ifPresent(t -> {
             ObjectNode title = json.putObject(name);
-            t.forEach(ls -> json.put(LocaleHelper.toString(ls.getLang()), ls.getText()));
+            t.forEach(ls -> json.put(LocaleHelper.encode(ls.getLang()), ls.getText()));
         });
     }
 

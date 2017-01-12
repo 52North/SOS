@@ -36,7 +36,7 @@ import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.util.Constants;
 import org.n52.shetland.ogc.gml.AbstractFeature;

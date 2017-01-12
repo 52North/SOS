@@ -49,7 +49,7 @@ import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.event.ServiceEventBus;
+import org.n52.janmayen.event.EventBus;
 import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.response.ServiceResponse;
@@ -108,7 +108,7 @@ public class RestBinding extends Binding implements Constructable {
     private static final Set<BindingKey> KEYS = Collections.<BindingKey>singleton(new PathBindingKey(URI_PATTERN));
     private Set<String> conformanceClasses;
     private Constants bindingConstants;
-    private ServiceEventBus eventBus;
+    private EventBus eventBus;
     private EncoderRepository encoderRepository;
     private DecoderRepository decoderRepository;
 
@@ -152,11 +152,11 @@ public class RestBinding extends Binding implements Constructable {
     }
 
     @Inject
-    public void setEventBus(ServiceEventBus eventBus) {
+    public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
     }
 
-    public ServiceEventBus getEventBus() {
+    public EventBus getEventBus() {
         return eventBus;
     }
 

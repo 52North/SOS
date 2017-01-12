@@ -31,7 +31,7 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.event.ServiceEventBus;
+import org.n52.janmayen.event.EventBus;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;

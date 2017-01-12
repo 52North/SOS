@@ -48,7 +48,7 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
 
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.event.ServiceEventBus;
+import org.n52.janmayen.event.EventBus;
 import org.n52.iceland.ogc.ows.ServiceProviderFactory;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -185,7 +185,7 @@ public class InsertDAOTest extends HibernateTestCase {
     private static final double HEIGHT_DEPTH_VALUE_2 = 20.0;
     private static final String HEIGHT_DEPTH_UNIT = "m";
 
-    private ServiceEventBus serviceEventBus = new ServiceEventBus();
+    private EventBus serviceEventBus = new EventBus();
 
 
     /* FIXTURES */

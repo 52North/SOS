@@ -57,9 +57,8 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
-import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.shetland.ogc.ows.extension.MergableExtension;
 import org.n52.iceland.ogc.ows.extension.OfferingExtension;
 import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProvider;
 import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderRepository;
@@ -68,10 +67,8 @@ import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository;
 import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.iceland.service.ConformanceClass;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.LocalizedProducer;
@@ -104,18 +101,22 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.exception.VersionNegotiationFailedException;
+import org.n52.shetland.ogc.ows.extension.MergableExtension;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosCapabilities;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosObservationOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.config.CapabilitiesExtensionService;
-import org.n52.shetland.ogc.sos.SosCapabilities;
-import org.n52.shetland.ogc.sos.SosObservationOffering;
-import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
@@ -303,7 +304,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
     private OwsServiceIdentification getServiceIdentification(GetCapabilitiesRequest request, String service,
                                                               String version) throws OwsExceptionReport {
-        Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+        Locale locale = getRequestedLocale(request);
         LocalizedProducer<OwsServiceIdentification> serviceIdentificationFactory
                 = this.serviceMetadataRepository.getServiceIdentificationFactory(service);
         OwsServiceIdentification serviceIdentification = serviceIdentificationFactory.get(locale);
@@ -601,10 +602,13 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                                                      GetCapabilitiesRequest request) throws CodedException {
         SosOffering sosOffering = new SosOffering(offering, false);
         sosObservationOffering.setOffering(sosOffering);
+        SosContentCache cache = getCache();
+        Locale requestedLocale = getRequestedLocale(request);
+        Locale defaultLocale = getDefaultLanguage();
         // add offering name
-        I18NHelper.addOfferingNames(sosOffering, request);
+        I18NHelper.addOfferingNames(cache, sosOffering, requestedLocale, defaultLocale, isShowAllLanguages());
         // add offering description
-        I18NHelper.addOfferingDescription(sosOffering, request);
+        I18NHelper.addOfferingDescription(sosOffering, requestedLocale, defaultLocale, cache);
     }
 
     /**
@@ -1004,7 +1008,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
     private OwsDomain getLanguageParameter(String service, String version) {
         Set<Locale> languages = getCache().getSupportedLanguages();
-        Stream<OwsValue> allowedValues = languages.stream().map(LocaleHelper::toString).map(OwsValue::new);
+        Stream<OwsValue> allowedValues = languages.stream().map(LocaleHelper::encode).map(OwsValue::new);
         return new OwsDomain(OWSConstants.AdditionalRequestParams.language, new OwsAllowedValues(allowedValues));
     }
 

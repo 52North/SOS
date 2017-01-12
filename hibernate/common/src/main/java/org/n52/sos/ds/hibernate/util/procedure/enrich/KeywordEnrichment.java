@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -36,7 +37,6 @@ import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.util.CollectionHelper;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 

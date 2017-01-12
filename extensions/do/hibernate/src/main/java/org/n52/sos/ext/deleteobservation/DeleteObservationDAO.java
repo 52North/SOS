@@ -40,7 +40,6 @@ import org.hibernate.Transaction;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -106,7 +105,7 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
             if (observation != null) {
                 Set<Observation<?>> oberservations = Collections.singleton(observation);
                 LocalizedProducer<OwsServiceProvider> serviceProvider = this.serviceMetadataRepository.getServiceProviderFactory(request.getService());
-                Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+                Locale locale = getRequestedLocale(request);
                 so = HibernateObservationUtilities.createSosObservationsFromObservations(oberservations, getRequest(request), serviceProvider, locale, session).iterator().next();
                 observation.setDeleted(true);
                 session.saveOrUpdate(observation);

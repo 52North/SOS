@@ -34,11 +34,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.handler.OperationHandlerKey;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
@@ -46,6 +45,7 @@ import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.OwsNoValues;
 import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.request.operator.AbstractRequestOperator;
@@ -66,6 +66,7 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     private ContentCacheController contentCacheController;
     private boolean includeChildObservableProperties;
 
+
     public AbstractOperationHandler(String service, String operationName) {
         this.key = new OperationHandlerKey(service, operationName);
     }
@@ -80,10 +81,9 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     }
 
     @Inject
-    public void setContentCacheController(ContentCacheController contentCacheController) {
+    public void setCacheController(ContentCacheController contentCacheController) {
         this.contentCacheController = contentCacheController;
     }
-
     protected ContentCacheController getCacheController() {
         return this.contentCacheController;
     }

@@ -38,8 +38,8 @@ import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlOptions;
 
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.util.Validation;
 import org.n52.janmayen.Producer;
 import org.n52.janmayen.function.Functions;

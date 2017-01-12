@@ -48,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
@@ -238,7 +237,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
                 .setSpatialFilters(request.getSpatialFilters())
                 .setConnection(session)
                 .setVersion(request.getVersion())
-                .setI18N(LocaleHelper.fromRequest(request));
+                .setI18N(getRequestedLocale(request));
         return new FeatureCollection(this.featureQueryHandler.getFeatures(queryObject));
     }
 

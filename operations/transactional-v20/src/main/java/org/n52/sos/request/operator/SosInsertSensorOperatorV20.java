@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.n52.iceland.config.annotation.Configurable;
+import org.n52.faroe.annotation.Configurable;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.ows.exception.CodedException;

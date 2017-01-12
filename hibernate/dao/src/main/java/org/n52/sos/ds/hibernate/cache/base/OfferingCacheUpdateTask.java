@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -43,10 +44,10 @@ import org.hibernate.Session;
 
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
-import org.n52.shetland.i18n.LocalizedString;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -69,7 +70,6 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -182,7 +182,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             if (offering.isSetName()) {
                 final Locale locale;
                 if (offering.isSetCodespaceName()) {
-                    locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
+                    locale = LocaleHelper.decode(offering.getCodespaceName().getCodespace(), defaultLanguage);
                 } else {
                     locale = defaultLanguage;
 
@@ -203,7 +203,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             if (offering.isSetDescription()) {
                 final Locale locale;
                 if (offering.isSetCodespaceName()) {
-                    locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
+                    locale = LocaleHelper.decode(offering.getCodespaceName().getCodespace(), defaultLanguage);
                 } else {
                     locale = defaultLanguage;
                 }

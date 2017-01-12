@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.iceland.config.SettingType;
+import org.n52.faroe.SettingType;
 
 /**
  *
@@ -42,15 +42,23 @@ public class IntegerSettingValue extends AbstractSettingValue<Integer> {
 
     private Integer value;
 
+    public IntegerSettingValue(String identifier, Integer value) {
+        super(identifier);
+        this.value = value;
+    }
+
+    public IntegerSettingValue() {
+        this(null, null);
+    }
+
     @Override
     public Integer getValue() {
         return this.value;
     }
 
     @Override
-    public IntegerSettingValue setValue(Integer value) {
+    public void setValue(Integer value) {
         this.value = value;
-        return this;
     }
 
     @Override

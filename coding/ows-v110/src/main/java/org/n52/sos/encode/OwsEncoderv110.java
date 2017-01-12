@@ -81,13 +81,13 @@ import org.slf4j.LoggerFactory;
 import org.w3.x1999.xlink.ActuateType;
 import org.w3.x1999.xlink.ShowType;
 
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.http.HTTPMethods;
 import org.n52.janmayen.http.MediaTypes;
-import org.n52.shetland.i18n.LocalizedString;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.OwsAcceptVersions;
 import org.n52.shetland.ogc.ows.OwsAddress;
@@ -367,7 +367,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<XmlObject, Object> {
     private LanguageStringType encodeOwsLanguageString(LocalizedString ls) {
         LanguageStringType lst = LanguageStringType.Factory.newInstance(getXmlOptions());
         lst.setStringValue(ls.getText());
-        lst.setLang(LocaleHelper.toString(ls.getLang()));
+        lst.setLang(LocaleHelper.encode(ls.getLang()));
         return lst;
     }
 

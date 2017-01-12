@@ -52,7 +52,7 @@ import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.util.DefaultHibernateConstants;
 import org.n52.sos.service.Configurator;

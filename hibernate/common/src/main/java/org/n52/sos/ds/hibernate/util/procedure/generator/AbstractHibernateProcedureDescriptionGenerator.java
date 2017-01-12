@@ -28,9 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import org.hibernate.Criteria;
@@ -42,10 +42,9 @@ import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.shetland.i18n.LocalizedString;
+import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
@@ -61,7 +60,6 @@ import org.n52.sos.service.ProcedureDescriptionSettings;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 /**
@@ -135,11 +133,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
                 I18NProcedureMetadata i18n = i18nDAO.getMetadata(procedure.getIdentifier(), requestedLocale);
                 Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
                 if (name.isPresent()) {
-                    try {
-                        feature.addName(name.get().asCodeType());
-                    } catch (URISyntaxException e) {
-                        throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", name.get().getLang().toString());
-                    }
+                    feature.addName(new CodeType(name.get()));
                 }
                 Optional<LocalizedString> description = i18n.getDescription().getLocalization(requestedLocale);
                 if (description.isPresent()) {
@@ -157,11 +151,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
                 }
                 for (LocalizedString name : i18n.getName()) {
                     // either all or default only
-                    try {
-                        feature.addName(name.asCodeType());
-                    } catch (URISyntaxException e) {
-                        throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", name.getLang().toString());
-                    }
+                    feature.addName(new CodeType(name));
                 }
                 // choose always the description in the default locale
                 Optional<LocalizedString> description = i18n.getDescription().getLocalization(defaultLocale);

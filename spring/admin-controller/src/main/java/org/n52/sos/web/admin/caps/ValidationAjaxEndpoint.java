@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlHelper.LaxValidationCase;
 import org.n52.sos.web.common.ControllerConstants;
@@ -67,7 +67,7 @@ public class ValidationAjaxEndpoint extends AbstractAdminCapabiltiesAjaxEndpoint
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String validate(@RequestBody String xml) {
         LOGGER.trace("Starting validation");
-        ObjectNode result = JSONUtils.nodeFactory().objectNode();
+        ObjectNode result = Json.nodeFactory().objectNode();
         ArrayNode resultErrors = result.putArray(ERRORS_PROPERTY);
         LinkedList<XmlError> xmlErrors = new LinkedList<>();
         XmlOptions options = new XmlOptions().setErrorListener(xmlErrors).setLoadLineNumbers(XmlOptions.LOAD_LINE_NUMBERS_END_ELEMENT);

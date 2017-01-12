@@ -31,7 +31,7 @@ package org.n52.sos.encode.json.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -397,7 +397,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         private static final TokenConverter COUNT_RANGE_CONVERTER = new RangeTokenConverter(COUNT_CONVERTER);
 
         JsonNodeFactory nodeFactory() {
-            return JSONUtils.nodeFactory();
+            return Json.nodeFactory();
         }
 
         abstract JsonNode convert(String s);

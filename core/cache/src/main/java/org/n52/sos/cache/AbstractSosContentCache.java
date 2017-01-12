@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.collections.SetMultiMap;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.ReferencedEnvelope;

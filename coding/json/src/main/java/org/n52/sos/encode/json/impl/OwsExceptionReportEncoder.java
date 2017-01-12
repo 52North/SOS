@@ -38,7 +38,7 @@ import org.n52.svalbard.encode.ExceptionEncoderKey;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncodingException;
@@ -78,7 +78,7 @@ public class OwsExceptionReportEncoder extends JSONEncoder<OwsExceptionReport> {
 
     @Override
     public JsonNode encodeJSON(OwsExceptionReport t) throws JSONEncodingException {
-        final ObjectNode exceptionReport = JSONUtils.nodeFactory().objectNode();
+        final ObjectNode exceptionReport = Json.nodeFactory().objectNode();
         exceptionReport.put(VERSION, t.getVersion());
         final ArrayNode exceptions = exceptionReport.putArray(EXCEPTIONS);
         for (CodedException ce : t.getExceptions()) {

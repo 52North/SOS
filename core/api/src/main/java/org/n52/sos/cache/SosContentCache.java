@@ -34,8 +34,8 @@ import java.util.Set;
 import org.joda.time.DateTime;
 
 import org.n52.iceland.cache.ContentCache;
-import org.n52.shetland.i18n.LocalizedString;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.janmayen.i18n.MultilingualString;
 
 
 /**

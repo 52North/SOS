@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.encode.json.JSONEncoderKey;
@@ -102,7 +102,7 @@ public class AdminEReportingHeaderController extends AbstractController {
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     public String getJSON() throws OwsExceptionReport, EncodingException {
-        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        ObjectNode node = Json.nodeFactory().objectNode();
         Encoder<JsonNode, ReportObligation> reportObligationEncoder = encoderRepository.getEncoder(new JSONEncoderKey(ReportObligation.class));
         Encoder<JsonNode, RelatedParty> relatedPartyEncoder = encoderRepository.getEncoder(new JSONEncoderKey(RelatedParty.class));
         node.set(AQDJSONConstants.REPORTING_AUTHORITY, relatedPartyEncoder.encode(reportObligationRepository.getReportingAuthority()));
@@ -114,7 +114,7 @@ public class AdminEReportingHeaderController extends AbstractController {
                     .put(AQDJSONConstants.DESCRIPTION, reportObligationType.getDescription())
                     .set(AQDJSONConstants.VALUE, reportObligationEncoder.encode(reportObligation));
         }
-        return JSONUtils.print(node);
+        return Json.print(node);
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
@@ -124,7 +124,7 @@ public class AdminEReportingHeaderController extends AbstractController {
         Decoder<ReportObligation, JsonNode> reportObligationDecoder = decoderRepository.getDecoder(new JsonDecoderKey(ReportObligation.class));
         Decoder<RelatedParty, JsonNode> relatedPartyDecoder = decoderRepository.getDecoder(new JsonDecoderKey(RelatedParty.class));
 
-        JsonNode node = JSONUtils.loadString(json);
+        JsonNode node = Json.loadString(json);
 
         RelatedParty relatedParty = relatedPartyDecoder.decode(node.path(AQDJSONConstants.REPORTING_AUTHORITY));
         reportObligationRepository.saveReportingAuthority(relatedParty);

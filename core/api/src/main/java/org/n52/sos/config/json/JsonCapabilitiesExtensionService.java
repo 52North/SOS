@@ -41,8 +41,8 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.n52.faroe.json.AbstractJsonDao;
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.config.json.AbstractJsonDao;
 import org.n52.iceland.config.json.JsonConstants;
 import org.n52.iceland.ogc.ows.extension.DisableableExtension;
 import org.n52.iceland.ogc.ows.extension.OfferingExtension;

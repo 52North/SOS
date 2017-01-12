@@ -41,16 +41,15 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
 
 import org.n52.iceland.cache.WritableContentCache;
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.iceland.util.Validation;
@@ -95,7 +94,7 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
     public void setDefaultLocale(String defaultLocale) {
-        this.defaultLocale = LocaleHelper.fromString(defaultLocale);
+        this.defaultLocale = new Locale(defaultLocale);
     }
 
     @Inject

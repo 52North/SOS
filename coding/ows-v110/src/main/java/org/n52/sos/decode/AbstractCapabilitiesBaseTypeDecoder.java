@@ -70,10 +70,10 @@ import net.opengis.ows.x11.ValuesReferenceDocument.ValuesReference;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.http.HTTPMethods;
-import org.n52.shetland.i18n.LocalizedString;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.ows.OwsAddress;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
@@ -460,7 +460,7 @@ public abstract class AbstractCapabilitiesBaseTypeDecoder {
     }
 
     private LocalizedString parseLanguageString(LanguageStringType lst) {
-        return new LocalizedString(LocaleHelper.fromString(lst.getLang()), lst.getStringValue());
+        return new LocalizedString(LocaleHelper.decode(lst.getLang()), lst.getStringValue());
     }
 
 }

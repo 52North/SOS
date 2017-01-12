@@ -29,18 +29,17 @@
 package org.n52.sos.ds.hibernate.dao.i18n;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import org.hibernate.Session;
 
 import org.n52.iceland.i18n.I18NDAOKey;
-import org.n52.shetland.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
+import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NProcedureMetadata;
-
-import com.google.common.base.Optional;
 
 /**
  * TODO JavaDoc

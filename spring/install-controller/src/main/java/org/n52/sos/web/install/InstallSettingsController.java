@@ -38,10 +38,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingType;
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsService;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingType;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingsService;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
 
@@ -67,7 +67,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
                            InstallationConfiguration c)
             throws InstallationSettingsError {
         logSettings(parameters);
-        for (SettingDefinition<?, ?> def : this.settingsManager.getSettingDefinitions()) {
+        for (SettingDefinition<?> def : this.settingsManager.getSettingDefinitions()) {
             SettingValue<?> val = null;
             if (parameters.containsKey(def.getKey())) {
                 val = createSettingValue(this.settingsManager, def, parameters.get(def.getKey()), c);
@@ -95,7 +95,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
         }
     }
 
-    protected SettingValue<?> createSettingValue(SettingsService sm, SettingDefinition<?, ?> def, String stringValue,
+    protected SettingValue<?> createSettingValue(SettingsService sm, SettingDefinition<?> def, String stringValue,
             InstallationConfiguration c) throws InstallationSettingsError {
         try {
             return sm.getSettingFactory().newSettingValue(def, stringValue);
@@ -105,7 +105,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
     }
 
     @SuppressWarnings("unchecked")
-    protected void checkFileSetting(SettingDefinition<?, ?> def, SettingValue<?> val, InstallationConfiguration c)
+    protected void checkFileSetting(SettingDefinition<?> def, SettingValue<?> val, InstallationConfiguration c)
             throws InstallationSettingsError {
         if (val.getValue() instanceof File) {
             SettingValue<File> fileSetting = (SettingValue<File>) val;

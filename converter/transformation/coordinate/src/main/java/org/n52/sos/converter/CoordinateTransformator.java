@@ -39,7 +39,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;

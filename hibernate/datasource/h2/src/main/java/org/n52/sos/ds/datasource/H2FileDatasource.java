@@ -42,9 +42,9 @@ import java.util.regex.Pattern;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.settings.StringSettingDefinition;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 import com.google.common.collect.Sets;
@@ -63,9 +63,6 @@ public class H2FileDatasource extends AbstractH2Datasource {
 
     private static final String JDBC_URL_FORMAT = "jdbc:h2:%s";
 
-    private final StringSettingDefinition h2Database = createDatabaseDefinition().setDescription(
-            "Set this to the name/path of the database you want to use for SOS.").setDefaultValue(
-            System.getProperty("user.home") + File.separator + "sos");
 
     @Override
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
@@ -84,9 +81,16 @@ public class H2FileDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Sets.<SettingDefinition<?, ?>> newHashSet(h2Database, getDatabaseConceptDefinition(),
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
+        return Sets.<SettingDefinition<?>> newHashSet(getDatabaseDefinition(), getDatabaseConceptDefinition(),
                 getTransactionalDefiniton(), getMulitLanguageDefiniton());
+    }
+
+    private StringSettingDefinition getDatabaseDefinition() {
+        StringSettingDefinition def = createDatabaseDefinition();
+        def.setDescription("Set this to the name/path of the database you want to use for SOS.");
+        def.setDefaultValue(System.getProperty("user.home") + File.separator + "sos");
+        return def;
     }
 
     @Override
@@ -110,7 +114,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
         Map<String, Object> settings = new HashMap<>(5);
         Matcher matcher = JDBC_URL_PATTERN.matcher(current.getProperty(HibernateConstants.CONNECTION_URL));
         matcher.find();
-        settings.put(h2Database.getKey(), matcher.group(1));
+        settings.put(DATABASE_KEY, matcher.group(1));
         settings.put(TRANSACTIONAL_KEY, isTransactional(current));
         settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
@@ -119,7 +123,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
 
     @Override
     public boolean checkSchemaCreation(Map<String, Object> settings) {
-        String path = (String) settings.get(h2Database.getKey());
+        String path = (String) settings.get(DATABASE_KEY);
         File f = new File(path + ".h2.db");
         if (f.exists()) {
             return false;
@@ -154,7 +158,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
 
     @Override
     protected String toURL(Map<String, Object> settings) {
-        return String.format(JDBC_URL_FORMAT, settings.get(h2Database.getKey()));
+        return String.format(JDBC_URL_FORMAT, settings.get(DATABASE_KEY));
     }
 
     @Override

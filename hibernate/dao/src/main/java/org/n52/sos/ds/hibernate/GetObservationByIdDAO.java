@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
@@ -97,7 +96,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
             response.setService(request.getService());
             response.setVersion(request.getVersion());
             response.setResponseFormat(request.getResponseFormat());
-            Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+            Locale locale = getRequestedLocale(request);
             LocalizedProducer<OwsServiceProvider> serviceProviderFactory
                     = this.serviceMetadataRepository.getServiceProviderFactory(request.getService());
             response.setObservationCollection(HibernateObservationUtilities.createSosObservationsFromObservations(observations, request, serviceProviderFactory, locale, session));

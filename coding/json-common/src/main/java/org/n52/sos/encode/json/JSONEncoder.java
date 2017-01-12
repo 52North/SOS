@@ -42,7 +42,7 @@ import java.util.stream.Collector;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.janmayen.exception.CompositeException;
 import org.n52.janmayen.function.ThrowingFunction;
 import org.n52.janmayen.http.MediaType;
@@ -128,7 +128,7 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     }
 
     protected JsonNodeFactory nodeFactory() {
-        return JSONUtils.nodeFactory();
+        return Json.nodeFactory();
     }
 
     protected <T> void encodeOptional(ObjectNode json, String name, Optional<T> obj, Function<T, JsonNode> encoder) {

@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.datasource;
 
-import geodb.GeoDB;
-
 import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -45,9 +43,12 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialectSpatialIndex;
-import org.n52.iceland.config.SettingDefinition;
+
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.iceland.exception.ConfigurationError;
+
+import geodb.GeoDB;
 
 
 
@@ -88,7 +89,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     }
 
     @Override
-    public  Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties p) {
+    public  Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties p) {
         return Collections.emptySet();
     }
 

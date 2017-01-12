@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.operator.RequestOperatorKey;

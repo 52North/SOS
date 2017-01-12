@@ -40,9 +40,9 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
-import org.n52.iceland.config.SettingsService;
+import org.n52.faroe.SettingsService;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.ControllerConstants;
 

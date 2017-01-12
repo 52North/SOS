@@ -43,7 +43,7 @@ import org.joda.time.DateTime;
 
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.janmayen.function.Functions;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.GmlConstants;

@@ -43,11 +43,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierRepository;
-import org.n52.iceland.event.ServiceEventBus;
+import org.n52.janmayen.event.EventBus;
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
@@ -123,7 +123,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     private ContentCacheController contentCacheController;
     private ProfileHandler profileHandler;
     private ServiceOperatorRepository serviceOperatorRepository;
-    private ServiceEventBus serviceEventBus;
+    private EventBus serviceEventBus;
     private boolean includeChildObservableProperties;
 
 
@@ -193,11 +193,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     }
 
     @Inject
-    public void setServiceEventBus(ServiceEventBus serviceEventBus) {
+    public void setServiceEventBus(EventBus serviceEventBus) {
         this.serviceEventBus = serviceEventBus;
     }
 
-    public ServiceEventBus getServiceEventBus() {
+    public EventBus getServiceEventBus() {
         return serviceEventBus;
     }
 

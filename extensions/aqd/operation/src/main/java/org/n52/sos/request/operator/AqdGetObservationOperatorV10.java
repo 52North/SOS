@@ -34,7 +34,7 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;

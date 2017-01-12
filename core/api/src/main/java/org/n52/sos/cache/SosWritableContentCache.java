@@ -35,7 +35,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 
 import org.n52.iceland.cache.WritableContentCache;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.MultilingualString;
 
 /**
  * Extension of {@code ContentCache} to allow the manipulation of the cache.

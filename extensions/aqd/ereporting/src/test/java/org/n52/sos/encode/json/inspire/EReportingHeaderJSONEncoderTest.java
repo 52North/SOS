@@ -36,7 +36,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -167,6 +167,6 @@ public class EReportingHeaderJSONEncoderTest {
 
         JsonNode o = new EReportingHeaderJSONEncoder().encode(header);
 
-        System.out.println(JSONUtils.print(o));
+        System.out.println(Json.print(o));
     }
 }

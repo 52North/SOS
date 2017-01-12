@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -53,18 +53,18 @@ import org.hibernate.spatial.criterion.SpatialProjections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
-import org.n52.shetland.i18n.LocalizedString;
+import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -90,7 +90,6 @@ import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -116,7 +115,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
     public void setDefaultLocale(String defaultLocale) {
-        this.defaultLocale = LocaleHelper.fromString(defaultLocale);
+        this.defaultLocale = new Locale(defaultLocale);
     }
 
     @Setting(I18NSettings.I18N_SHOW_ALL_LANGUAGE_VALUES)
@@ -421,12 +420,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 // specific locale was requested
                 Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(requestedLocale, this.defaultLocale);
                 if (name.isPresent()) {
-                    try {
-                        samplingFeature.addName(name.get().asCodeType());
-                    } catch (URISyntaxException e) {
-                        throw new NoApplicableCodeException().causedBy(e)
-                                .withMessage("Error while creating URI from '{}'", name.get().getLang().toString());
-                    }
+                    samplingFeature.addName(new CodeType(name.get()));
                 }
                 Optional<LocalizedString> description =
                         i18n.getDescription().getLocalizationOrDefault(requestedLocale, this.defaultLocale);
@@ -437,22 +431,12 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             } else {
                 if (this.showAllLanguages) {
                     for (LocalizedString name : i18n.getName()) {
-                        try {
-                            samplingFeature.addName(name.asCodeType());
-                        } catch (URISyntaxException e) {
-                            throw new NoApplicableCodeException().causedBy(e)
-                                    .withMessage("Error while creating URI from '{}'", name.getLang().toString());
-                        }
+                        samplingFeature.addName(new CodeType(name));
                     }
                 } else {
                     Optional<LocalizedString> name = i18n.getName().getLocalization(this.defaultLocale);
                     if (name.isPresent()) {
-                        try {
-                            samplingFeature.addName(name.get().asCodeType());
-                        } catch (URISyntaxException e) {
-                            throw new NoApplicableCodeException().causedBy(e).withMessage(
-                                    "Error while creating URI from '{}'", name.get().getLang().toString());
-                        }
+                        samplingFeature.addName(new CodeType(name.get()));
                     }
                 }
                 // choose always the description in the default locale

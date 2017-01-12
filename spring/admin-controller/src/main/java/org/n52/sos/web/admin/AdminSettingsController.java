@@ -52,14 +52,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingsService;
 import org.n52.iceland.config.AdministratorUser;
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsService;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.auth.DefaultAdministratorUser;
@@ -125,7 +125,7 @@ public class AdminSettingsController extends AbstractController {
     private String getSettingsJsonString()
             throws ConfigurationError, JSONException,
                    ConnectionProviderException {
-        return JSONUtils.print(encodeValues(settingsManager.getSettings()));
+        return Json.print(encodeValues(settingsManager.getSettings()));
     }
 
     private void logSettings(Collection<SettingValue<?>> values) {
@@ -137,8 +137,8 @@ public class AdminSettingsController extends AbstractController {
     }
 
     private void updateSettings(HttpServletRequest request) {
-        Map<SettingDefinition<?, ?>, SettingValue<?>> changedSettings = new HashMap<>();
-        for (SettingDefinition<?, ?> def : settingsManager.getSettingDefinitions()) {
+        Map<SettingDefinition<?>, SettingValue<?>> changedSettings = new HashMap<>();
+        for (SettingDefinition<?> def : settingsManager.getSettingDefinitions()) {
             SettingValue<?> newValue =
                     settingsManager.getSettingFactory().newSettingValue(def, request.getParameter(def.getKey()));
             changedSettings.put(def, newValue);

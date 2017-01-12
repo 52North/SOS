@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -110,7 +111,6 @@ import com.axiomalaska.cf4j.constants.ACDDConstants;
 import com.axiomalaska.cf4j.constants.CFConstants;
 import com.axiomalaska.cf4j.constants.NODCConstants;
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;

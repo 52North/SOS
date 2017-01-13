@@ -71,9 +71,15 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
 
     private HibernateSessionHolder sessionHolder;
     private ServiceMetadataRepository serviceMetadataRepository;
+    private DaoFactory daoFactory;
 
     public GetObservationByIdDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     @Inject
@@ -99,7 +105,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
             Locale locale = getRequestedLocale(request);
             LocalizedProducer<OwsServiceProvider> serviceProviderFactory
                     = this.serviceMetadataRepository.getServiceProviderFactory(request.getService());
-            response.setObservationCollection(HibernateObservationUtilities.createSosObservationsFromObservations(observations, request, serviceProviderFactory, locale, session));
+            response.setObservationCollection(HibernateObservationUtilities.createSosObservationsFromObservations(observations, request, serviceProviderFactory, locale, daoFactory, session));
             return response;
 
         } catch (HibernateException he) {
@@ -126,7 +132,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
     private List<Observation<?>> queryObservation(GetObservationByIdRequest request, Session session)
             throws OwsExceptionReport {
         Criteria c =
-                DaoFactory.getInstance().getObservationDAO()
+                daoFactory.getObservationDAO()
                         .getObservationClassCriteriaForResultModel(request.getResultModel(), session);
         c.add(Restrictions.in(AbstractObservation.IDENTIFIER, request.getObservationIdentifier()));
         LOGGER.debug("QUERY queryObservation(request): {}", HibernateHelper.getSqlString(c));

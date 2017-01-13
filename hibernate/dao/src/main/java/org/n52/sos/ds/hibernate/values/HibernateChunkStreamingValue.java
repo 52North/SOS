@@ -41,6 +41,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 
@@ -52,32 +53,24 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacy
  *
  */
 public class HibernateChunkStreamingValue extends HibernateStreamingValue {
-
-    private static final long serialVersionUID = -4898252375907510691L;
-
     private Iterator<ValuedObservation<?>> valuesResult;
-
     private int chunkSize;
-
     private int currentRow;
-
     private boolean noChunk = false;
 
     /**
      * constructor
      *
-     * @param request
-     *            {@link GetObservationRequest}
-     * @param procedure
-     *            Datasource procedure id
-     * @param observableProperty
-     *            Datasource observableProperty id
-     * @param featureOfInterest
-     *            Datasource featureOfInterest id
+     * @param connectionProvider the connection provider
+     * @param request            {@link GetObservationRequest}
+     * @param daoFactory         the DAO factory
+     * @param procedure          Datasource procedure id
+     * @param observableProperty Datasource observableProperty id
+     * @param featureOfInterest  Datasource featureOfInterest id
      */
-    public HibernateChunkStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long procedure, long observableProperty,
+    public HibernateChunkStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
-        super(connectionProvider, request, procedure, observableProperty, featureOfInterest);
+        super(connectionProvider, daoFactory, request, procedure, observableProperty, featureOfInterest);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 

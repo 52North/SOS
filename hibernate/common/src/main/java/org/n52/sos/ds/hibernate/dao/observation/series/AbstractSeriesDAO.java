@@ -44,6 +44,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -61,18 +62,23 @@ public abstract class AbstractSeriesDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesDAO.class);
 
+    private final DaoFactory daoFactory;
+
+    public AbstractSeriesDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     protected abstract Class<?> getSeriesClass();
 
     /**
      * Get series for GetObservation request and featuresOfInterest
      *
-     * @param request
-     *            GetObservation request to get series for
-     * @param features
-     *            FeaturesOfInterest to get series for
-     * @param session
-     *            Hibernate session
+     * @param request GetObservation request to get series for
+     * @param features FeaturesOfInterest to get series for
+     * @param session Hibernate session
+     *
      * @return Series that fit
+     *
      * @throws OwsExceptionReport
      */
     public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session)
@@ -81,12 +87,10 @@ public abstract class AbstractSeriesDAO {
     /**
      * Query series for observedProiperty and featuresOfInterest
      *
-     * @param observedProperty
-     *            ObservedProperty to get series for
-     * @param features
-     *            FeaturesOfInterest to get series for
-     * @param session
-     *            Hibernate session
+     * @param observedProperty ObservedProperty to get series for
+     * @param features FeaturesOfInterest to get series for
+     * @param session Hibernate session
+     *
      * @return Series list
      */
     public abstract List<Series> getSeries(String observedProperty, Collection<String> features, Session session);
@@ -94,44 +98,37 @@ public abstract class AbstractSeriesDAO {
     /**
      * Create series for parameter
      *
-     * @param procedures
-     *            Procedures to get series for
-     * @param observedProperties
-     *            ObservedProperties to get series for
-     * @param features
-     *            FeaturesOfInterest to get series for
-     * @param session
-     *            Hibernate session
+     * @param procedures Procedures to get series for
+     * @param observedProperties ObservedProperties to get series for
+     * @param features FeaturesOfInterest to get series for
+     * @param session Hibernate session
+     *
      * @return Series that fir
      */
     public abstract List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
-            Collection<String> features, Session session);
+                                           Collection<String> features, Session session);
 
     /**
      * Get series for procedure, observableProperty and featureOfInterest
      *
-     * @param procedure
-     *            Procedure identifier parameter
-     * @param observableProperty
-     *            ObservableProperty identifier parameter
-     * @param featureOfInterest
-     *            FeatureOfInterest identifier parameter
-     * @param session
-     *            Hibernate session
+     * @param procedure Procedure identifier parameter
+     * @param observableProperty ObservableProperty identifier parameter
+     * @param featureOfInterest FeatureOfInterest identifier parameter
+     * @param session Hibernate session
+     *
      * @return Matching series
      */
     public abstract Series getSeriesFor(String procedure, String observableProperty, String featureOfInterest,
-            Session session);
+                                        Session session);
 
     /**
-     * Insert or update and get series for procedure, observable property and
-     * featureOfInterest
+     * Insert or update and get series for procedure, observable property and featureOfInterest
      *
-     * @param identifiers
-     *            identifiers object
-     * @param session
-     *            Hibernate session
+     * @param identifiers identifiers object
+     * @param session Hibernate session
+     *
      * @return Series object
+     *
      * @throws OwsExceptionReport
      */
     public abstract Series getOrInsertSeries(ObservationContext identifiers, final Session session)
@@ -143,7 +140,7 @@ public abstract class AbstractSeriesDAO {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         identifiers.addIdentifierRestrictionsToCritera(criteria);
         LOGGER.debug("QUERY getOrInsertSeries(feature, observableProperty, procedure): {}",
-                HibernateHelper.getSqlString(criteria));
+                     HibernateHelper.getSqlString(criteria));
         Series series = (Series) criteria.uniqueResult();
         if (series == null) {
             series = getSeriesImpl();
@@ -167,24 +164,24 @@ public abstract class AbstractSeriesDAO {
             return (Series) getSeriesClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating an instance of %s",
-                    getSeriesClass().getCanonicalName());
+                                                                          getSeriesClass().getCanonicalName());
         }
     }
 
     public Criteria getSeriesCriteria(GetObservationRequest request, Collection<String> features, Session session)
             throws OwsExceptionReport {
-        final Criteria c =
-                createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features, session);
+        final Criteria c
+                = createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features, session);
         addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
         return c;
     }
 
     public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
-            Collection<String> features, Session session) {
+                                      Collection<String> features, Session session) {
         final Criteria c = createCriteriaFor(procedures, observedProperties, features, session);
         LOGGER.debug("QUERY getSeries(proceedures, observableProperteies, features): {}",
-                HibernateHelper.getSqlString(c));
+                     HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -200,20 +197,18 @@ public abstract class AbstractSeriesDAO {
     }
 
     public Criteria getSeriesCriteriaFor(String procedure, String observableProperty, String featureOfInterest,
-            Session session) {
+                                         Session session) {
         final Criteria c = createCriteriaFor(procedure, observableProperty, featureOfInterest, session);
         LOGGER.debug("QUERY getSeriesFor(procedure, observableProperty, featureOfInterest): {}",
-                HibernateHelper.getSqlString(c));
+                     HibernateHelper.getSqlString(c));
         return c;
     }
 
     /**
      * Add featureOfInterest restriction to Hibernate Criteria
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param feature
-     *            FeatureOfInterest identifier to add
+     * @param c Hibernate Criteria to add restriction
+     * @param feature FeatureOfInterest identifier to add
      */
     public void addFeatureOfInterestToCriteria(Criteria c, String feature) {
         c.createCriteria(Series.FEATURE_OF_INTEREST).add(Restrictions.eq(FeatureOfInterest.IDENTIFIER, feature));
@@ -223,10 +218,8 @@ public abstract class AbstractSeriesDAO {
     /**
      * Add featureOfInterest restriction to Hibernate Criteria
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param feature
-     *            FeatureOfInterest to add
+     * @param c Hibernate Criteria to add restriction
+     * @param feature FeatureOfInterest to add
      */
     public void addFeatureOfInterestToCriteria(Criteria c, FeatureOfInterest feature) {
         c.add(Restrictions.eq(Series.FEATURE_OF_INTEREST, feature));
@@ -236,10 +229,8 @@ public abstract class AbstractSeriesDAO {
     /**
      * Add featuresOfInterest restriction to Hibernate Criteria
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param features
-     *            FeatureOfInterest identifiers to add
+     * @param c Hibernate Criteria to add restriction
+     * @param features FeatureOfInterest identifiers to add
      */
     public void addFeatureOfInterestToCriteria(Criteria c, Collection<String> features) {
         c.createCriteria(Series.FEATURE_OF_INTEREST).add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
@@ -249,10 +240,8 @@ public abstract class AbstractSeriesDAO {
     /**
      * Add observedProperty restriction to Hibernate Criteria
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param observedProperty
-     *            ObservableProperty identifier to add
+     * @param c Hibernate Criteria to add restriction
+     * @param observedProperty ObservableProperty identifier to add
      */
     public void addObservablePropertyToCriteria(Criteria c, String observedProperty) {
         c.createCriteria(Series.OBSERVABLE_PROPERTY)
@@ -262,10 +251,8 @@ public abstract class AbstractSeriesDAO {
     /**
      * Add observedProperty restriction to Hibernate Criteria
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param observedProperty
-     *            ObservableProperty to add
+     * @param c Hibernate Criteria to add restriction
+     * @param observedProperty ObservableProperty to add
      */
     public void addObservablePropertyToCriteria(Criteria c, ObservableProperty observedProperty) {
         c.add(Restrictions.eq(Series.OBSERVABLE_PROPERTY, observedProperty));
@@ -274,10 +261,8 @@ public abstract class AbstractSeriesDAO {
     /**
      * Add observedProperties restriction to Hibernate Criteria
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param observedProperties
-     *            ObservableProperty identifiers to add
+     * @param c Hibernate Criteria to add restriction
+     * @param observedProperties ObservableProperty identifiers to add
      */
     public void addObservablePropertyToCriteria(Criteria c, Collection<String> observedProperties) {
         c.createCriteria(Series.OBSERVABLE_PROPERTY)
@@ -287,10 +272,8 @@ public abstract class AbstractSeriesDAO {
     /**
      * Add procedure restriction to Hibernate Criteria
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param procedure
-     *            Procedure identifier to add
+     * @param c Hibernate Criteria to add restriction
+     * @param procedure Procedure identifier to add
      */
     public void addProcedureToCriteria(Criteria c, String procedure) {
         c.createCriteria(Series.PROCEDURE).add(Restrictions.eq(Procedure.IDENTIFIER, procedure));
@@ -299,10 +282,8 @@ public abstract class AbstractSeriesDAO {
     /**
      * Add procedure restriction to Hibernate Criteria
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param procedure
-     *            Procedure to add
+     * @param c Hibernate Criteria to add restriction
+     * @param procedure Procedure to add
      */
     public void addProcedureToCriteria(Criteria c, Procedure procedure) {
         c.add(Restrictions.eq(Series.PROCEDURE, procedure));
@@ -312,10 +293,8 @@ public abstract class AbstractSeriesDAO {
     /**
      * Add procedures restriction to Hibernate Criteria
      *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param procedures
-     *            Procedure identifiers to add
+     * @param c Hibernate Criteria to add restriction
+     * @param procedures Procedure identifiers to add
      */
     public void addProcedureToCriteria(Criteria c, Collection<String> procedures) {
         c.createCriteria(Series.PROCEDURE).add(Restrictions.in(Procedure.IDENTIFIER, procedures));
@@ -323,11 +302,10 @@ public abstract class AbstractSeriesDAO {
     }
 
     /**
-     * Get default Hibernate Criteria for querying series, deleted flag ==
-     * <code>false</code>
+     * Get default Hibernate Criteria for querying series, deleted flag == <code>false</code>
      *
-     * @param session
-     *            Hibernate Session
+     * @param session Hibernate Session
+     *
      * @return Default criteria
      */
     public Criteria getDefaultSeriesCriteria(Session session) {
@@ -338,8 +316,8 @@ public abstract class AbstractSeriesDAO {
     /**
      * Get default Hibernate Criteria for querying all series
      *
-     * @param session
-     *            Hibernate Session
+     * @param session Hibernate Session
+     *
      * @return Default criteria
      */
     public Criteria getDefaultAllSeriesCriteria(Session session) {
@@ -347,20 +325,17 @@ public abstract class AbstractSeriesDAO {
     }
 
     /**
-     * Update Series for procedure by setting deleted flag and return changed
-     * series
+     * Update Series for procedure by setting deleted flag and return changed series
      *
-     * @param procedure
-     *            Procedure for which the series should be changed
-     * @param deleteFlag
-     *            New deleted flag value
-     * @param session
-     *            Hibernate session
+     * @param procedure Procedure for which the series should be changed
+     * @param deleteFlag New deleted flag value
+     * @param session Hibernate session
+     *
      * @return Updated Series
      */
     @SuppressWarnings("unchecked")
     public List<Series> updateSeriesSetAsDeletedForProcedureAndGetSeries(String procedure, boolean deleteFlag,
-            Session session) {
+                                                                         Session session) {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         addProcedureToCriteria(criteria, procedure);
         List<Series> hSeries = criteria.list();
@@ -373,28 +348,24 @@ public abstract class AbstractSeriesDAO {
     }
 
     /**
-     * Update series values which will be used by the Timeseries API. Can be
-     * later used by the SOS.
+     * Update series values which will be used by the Timeseries API. Can be later used by the SOS.
      *
-     * @param series
-     *            Series object
-     * @param hObservation
-     *            Observation object
-     * @param session
-     *            Hibernate session
+     * @param series Series object
+     * @param hObservation Observation object
+     * @param session Hibernate session
      */
     public void updateSeriesWithFirstLatestValues(Series series, Observation<?> hObservation, Session session) {
         boolean minChanged = false;
         boolean maxChanged = false;
-        if (!series.isSetFirstTimeStamp()
-                || (series.isSetFirstTimeStamp() && series.getFirstTimeStamp().after(
-                        hObservation.getPhenomenonTimeStart()))) {
+        if (!series.isSetFirstTimeStamp() ||
+                 (series.isSetFirstTimeStamp() && series.getFirstTimeStamp().after(
+                  hObservation.getPhenomenonTimeStart()))) {
             minChanged = true;
             series.setFirstTimeStamp(hObservation.getPhenomenonTimeStart());
         }
-        if (!series.isSetLastTimeStamp()
-                || (series.isSetLastTimeStamp() && series.getLastTimeStamp().before(
-                        hObservation.getPhenomenonTimeEnd()))) {
+        if (!series.isSetLastTimeStamp() ||
+                 (series.isSetLastTimeStamp() && series.getLastTimeStamp().before(
+                  hObservation.getPhenomenonTimeEnd()))) {
             maxChanged = true;
             series.setLastTimeStamp(hObservation.getPhenomenonTimeEnd());
         }
@@ -416,18 +387,14 @@ public abstract class AbstractSeriesDAO {
     }
 
     /**
-     * Check {@link Series} if the deleted observation time stamp corresponds to
-     * the first/last series time stamp
+     * Check {@link Series} if the deleted observation time stamp corresponds to the first/last series time stamp
      *
-     * @param series
-     *            Series to update
-     * @param observation
-     *            Deleted observation
-     * @param session
-     *            Hibernate session
+     * @param series Series to update
+     * @param observation Deleted observation
+     * @param session Hibernate session
      */
     public void updateSeriesAfterObservationDeletion(Series series, SeriesObservation<?> observation, Session session) {
-        SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
+        SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO(daoFactory);
         if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
             SeriesObservation<?> firstObservation = seriesObservationDAO.getFirstObservationFor(series, session);
             series.setFirstTimeStamp(firstObservation.getPhenomenonTimeStart());
@@ -465,18 +432,15 @@ public abstract class AbstractSeriesDAO {
     /**
      * Create series query criteria for parameter
      *
-     * @param procedures
-     *            Procedures to get series for
-     * @param observedProperties
-     *            ObservedProperties to get series for
-     * @param features
-     *            FeatureOfInterest to get series for
-     * @param session
-     *            Hibernate session
+     * @param procedures Procedures to get series for
+     * @param observedProperties ObservedProperties to get series for
+     * @param features FeatureOfInterest to get series for
+     * @param session Hibernate session
+     *
      * @return Criteria to query series
      */
     private Criteria createCriteriaFor(Collection<String> procedures, Collection<String> observedProperties,
-            Collection<String> features, Session session) {
+                                       Collection<String> features, Session session) {
         final Criteria c = getDefaultSeriesCriteria(session);
         if (CollectionHelper.isNotEmpty(features)) {
             addFeatureOfInterestToCriteria(c, features);
@@ -491,17 +455,13 @@ public abstract class AbstractSeriesDAO {
     }
 
     /**
-     * Get series query Hibernate Criteria for procedure, observableProperty and
-     * featureOfInterest
+     * Get series query Hibernate Criteria for procedure, observableProperty and featureOfInterest
      *
-     * @param procedure
-     *            Procedure to get series for
-     * @param observedProperty
-     *            ObservedProperty to get series for
-     * @param feature
-     *            FeatureOfInterest to get series for
-     * @param session
-     *            Hibernate session
+     * @param procedure Procedure to get series for
+     * @param observedProperty ObservedProperty to get series for
+     * @param feature FeatureOfInterest to get series for
+     * @param session Hibernate session
+     *
      * @return Criteria to query series
      */
     private Criteria createCriteriaFor(String procedure, String observedProperty, String feature, Session session) {
@@ -516,5 +476,9 @@ public abstract class AbstractSeriesDAO {
             addProcedureToCriteria(c, procedure);
         }
         return c;
+    }
+
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
     }
 }

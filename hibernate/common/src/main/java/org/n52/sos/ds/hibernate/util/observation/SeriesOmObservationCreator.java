@@ -49,6 +49,7 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
@@ -71,8 +72,8 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
 
     protected final Series series;
 
-    public SeriesOmObservationCreator(Series series, AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, Session session) {
-        super(request, language, serviceProvider, session);
+    public SeriesOmObservationCreator(Series series, AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, DaoFactory daoFactory, Session session) {
+        super(request, language, serviceProvider, daoFactory, session);
         this.series = series;
     }
 

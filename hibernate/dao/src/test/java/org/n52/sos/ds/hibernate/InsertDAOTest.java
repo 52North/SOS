@@ -48,8 +48,9 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
 
 import org.n52.iceland.convert.ConverterException;
-import org.n52.janmayen.event.EventBus;
+import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.ogc.ows.ServiceProviderFactory;
+import org.n52.janmayen.event.EventBus;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -102,10 +103,12 @@ import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.ogc.swes.SwesExtensions;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
@@ -321,10 +324,15 @@ public class InsertDAOTest extends HibernateTestCase {
             String offeringId, String featureId, String obsType, Session session) throws OwsExceptionReport,
             ConverterException {
         OmObservationConstellation obsConst = new OmObservationConstellation();
-        Procedure procedure = new ProcedureDAO().getProcedureForIdentifier(procedureId, session);
+        Procedure procedure = new ProcedureDAO(new DaoFactory()).getProcedureForIdentifier(procedureId, session);
         ServiceProviderFactory serviceProviderFactory = Mockito.mock(ServiceProviderFactory.class);
-        SosProcedureDescription<?> spd =
-                new HibernateProcedureConverter(serviceProviderFactory).createSosProcedureDescription(procedure, SensorMLConstants.NS_SML,
+
+
+        SosProcedureDescription<?> spd
+                = new HibernateProcedureConverter(serviceProviderFactory, new DaoFactory(), ConverterRepository
+                                                  .getInstance(), HibernateProcedureDescriptionGeneratorFactoryRepository
+                                                          .getInstance())
+                        .createSosProcedureDescription(procedure, SensorMLConstants.NS_SML,
                         Sos2Constants.SERVICEVERSION, session);
         obsConst.setProcedure(spd);
         OmObservableProperty omObservableProperty = new OmObservableProperty(obsPropId);

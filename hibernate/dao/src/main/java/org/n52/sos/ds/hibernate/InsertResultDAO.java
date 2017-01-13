@@ -79,8 +79,6 @@ import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
@@ -116,11 +114,16 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
     private static final int FLUSH_THRESHOLD = 50;
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
-
     private DecoderRepository decoderRepository;
+    private DaoFactory daoFactory;
 
     public InsertResultDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     @Inject
@@ -166,14 +169,14 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
             final List<OmObservation> observations = getSingleObservationsFromObservation(o);
 
             final Set<ObservationConstellation> obsConsts =
-                    Sets.newHashSet(new ObservationConstellationDAO().getObservationConstellation(
+                    Sets.newHashSet(daoFactory.getObservationConstellationDAO().getObservationConstellation(
                             resultTemplate.getProcedure(),
                             resultTemplate.getObservableProperty(),
                             getCache().getOfferingsForProcedure(resultTemplate.getProcedure().getIdentifier()), session));
 
             int insertion = 0;
             final int size = observations.size();
-            final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            final AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             LOGGER.debug("Start saving {} observations.", size);
             for (final OmObservation observation : observations) {
                 if (observation.getValue() instanceof SingleObservationValue) {
@@ -317,10 +320,10 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
         procedureOfferings.add(resultTemplate.getOffering());
         Set<String> procedureOfferingIds =
                 getCache().getOfferingsForProcedure(resultTemplate.getProcedure().getIdentifier());
-        procedureOfferings.addAll(new OfferingDAO().getOfferingsForIdentifiers(procedureOfferingIds, session));
+        procedureOfferings.addAll(daoFactory.getOfferingDAO().getOfferingsForIdentifiers(procedureOfferingIds, session));
 
         final List<ObservationConstellation> obsConsts =
-                new ObservationConstellationDAO().getObservationConstellationsForOfferings(
+                daoFactory.getObservationConstellationDAO().getObservationConstellationsForOfferings(
                         resultTemplate.getProcedure(), resultTemplate.getObservableProperty(), procedureOfferings,
                         session);
         final Set<String> offerings = Sets.newHashSet();

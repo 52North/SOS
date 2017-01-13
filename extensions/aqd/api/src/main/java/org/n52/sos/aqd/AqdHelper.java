@@ -30,45 +30,28 @@ package org.n52.sos.aqd;
 
 import java.util.Set;
 
+import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.faroe.ConfigurationError;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.ows.extension.Extension;
-import org.n52.shetland.ogc.ows.extension.Extensions;
-import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
-import org.n52.janmayen.function.Functions;
 import org.n52.sos.settings.EReportingSetting;
 
 import com.google.common.base.Strings;
 
 @Configurable
-public class AqdHelper implements Constructable {
-
-    @Deprecated
-    private static AqdHelper instance;
+public class AqdHelper {
 
     private String namespace;
-
     private String observationPrefix;
-
     private Set<Integer> validityFlags;
-
     private Set<Integer> verificationFlags;
-
-    @Override
-    public void init() {
-        AqdHelper.instance = this;
-    }
 
     /**
      * @return the validityFlags
@@ -85,13 +68,13 @@ public class AqdHelper implements Constructable {
         this.validityFlags = JavaHelper.getIntegerSetFromString(validityFlags);
     }
 
-    @Setting(EReportingSetting.EREPORTING_NAMESPACE)
-    public void setEReportingNamespace(final String namespace) throws ConfigurationError {
-        this.namespace = namespace;
-    }
-
     public String getEReportingNamespace() {
         return namespace;
+    }
+
+    @Setting(EReportingSetting.EREPORTING_NAMESPACE)
+    public void setEReportingNamespace(String namespace) throws ConfigurationError {
+        this.namespace = namespace;
     }
 
     public boolean isSetEReportingNamespace() {
@@ -99,7 +82,7 @@ public class AqdHelper implements Constructable {
     }
 
     @Setting(EReportingSetting.EREPORTING_OBSERVATION_PREFIX)
-    public void setEReportingObservationPrefix(final String observationPrefix) throws ConfigurationError {
+    public void setEReportingObservationPrefix(String observationPrefix) throws ConfigurationError {
         this.observationPrefix = observationPrefix;
     }
 
@@ -132,22 +115,6 @@ public class AqdHelper implements Constructable {
 
     public boolean isSetVerificationFlags() {
         return CollectionHelper.isNotEmpty(getVerificationFlags());
-    }
-
-    public boolean hasFlowExtension(Extensions extensions) {
-        if (extensions != null) {
-            return extensions.containsExtension(AqdConstants.EXTENSION_FLOW);
-        }
-        return false;
-    }
-
-    public ReportObligationType getFlow(Extensions extensions) throws OwsExceptionReport {
-        return extensions.getExtension(AqdConstants.EXTENSION_FLOW)
-                .map(Extension::getValue)
-                .flatMap(Functions.castIfInstanceOf(SweText.class))
-                .map(SweText::getValue)
-                .map(ReportObligationType::from)
-                .orElse(ReportObligationType.E2A);
     }
 
     public void processObservation(OmObservation observation, TimePeriod timePeriod, TimeInstant resultTime,
@@ -184,13 +151,4 @@ public class AqdHelper implements Constructable {
         return (isSetEReportingObservationPrefix() ? getEReportingObservationPrefix() : "o_")
                 .concat(Integer.toString(counter));
     }
-
-    /**
-     * @return Returns a singleton instance of the AqdHelper.
-     */
-    @Deprecated
-    public static AqdHelper getInstance() {
-        return instance;
-    }
-
 }

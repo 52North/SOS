@@ -50,6 +50,7 @@ import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.SosHelper;
 
@@ -65,7 +66,7 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     private final OperationHandlerKey key;
     private ContentCacheController contentCacheController;
     private boolean includeChildObservableProperties;
-
+    private ProfileHandler profileHandler;
 
     public AbstractOperationHandler(String service, String operationName) {
         this.key = new OperationHandlerKey(service, operationName);
@@ -80,12 +81,26 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
         this.includeChildObservableProperties = include;
     }
 
+    protected ContentCacheController getCacheController() {
+        return this.contentCacheController;
+    }
+
     @Inject
     public void setCacheController(ContentCacheController contentCacheController) {
         this.contentCacheController = contentCacheController;
     }
-    protected ContentCacheController getCacheController() {
-        return this.contentCacheController;
+
+    protected ProfileHandler getProfileHandler() {
+        return profileHandler;
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
+    }
+
+    protected Profile getActiveProfile() {
+        return getProfileHandler().getActiveProfile();
     }
 
     @Deprecated
@@ -98,12 +113,6 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     protected BindingRepository getBindingRepository() {
         // FIXME use @Inject
         return BindingRepository.getInstance();
-    }
-
-    @Deprecated
-    protected ProfileHandler getProfileHandler() {
-        // FIXME use @Inject
-        return ProfileHandler.getInstance();
     }
 
     @Deprecated

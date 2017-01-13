@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NProcedureMetadata;
@@ -47,10 +48,15 @@ import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NProcedureMetadata;
  * @author Christian Autermann
  */
 public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<Procedure, I18NProcedureMetadata, HibernateI18NProcedureMetadata> {
+    private final DaoFactory daoFactory;
+
+    public ProcedureI18NDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Override
     protected Procedure getEntity(String id, Session session) {
-        return new ProcedureDAO().getProcedureForIdentifier(id, session);
+        return new ProcedureDAO(daoFactory).getProcedureForIdentifier(id, session);
     }
 
     @Override
@@ -97,7 +103,6 @@ public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<Procedure, I18NPr
                                                 h18n.getShortname());
         }
     }
-
 
     @Override
     public Set<I18NDAOKey> getKeys() {

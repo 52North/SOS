@@ -60,6 +60,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -87,8 +88,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations,
             AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider,
-            Locale language, Session session) {
-        super(request, language, serviceProvider, session);
+            Locale language, DaoFactory daoFactory, Session session) {
+        super(request, language, serviceProvider, daoFactory, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -302,7 +303,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             if (!Strings.isNullOrEmpty(getResultModel())) {
                 obsConst.setObservationType(getResultModel());
             }
-            final ObservationConstellationDAO dao = new ObservationConstellationDAO();
+            final ObservationConstellationDAO dao = getDaoFactory().getObservationConstellationDAO();
             final ObservationConstellation hoc =
                     dao.getFirstObservationConstellationForOfferings(hObservation.getProcedure(),
                             hObservation.getObservableProperty(), hObservation.getOfferings(), getSession());

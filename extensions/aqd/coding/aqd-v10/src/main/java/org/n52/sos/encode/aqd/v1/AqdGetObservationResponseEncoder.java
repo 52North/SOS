@@ -49,6 +49,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.aqd.ReportObligationType;
+import org.n52.sos.aqd.ReportObligations;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.aqd.v1.AqdGetObservationResponseXmlStreamWriter;
@@ -146,7 +147,7 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
 
     private ReportObligationType getReportObligationType(GetObservationResponse response)
             throws OwsExceptionReport {
-        return getAqdHelper().getFlow(response.getExtensions());
+        return ReportObligations.getFlow(response.getExtensions());
     }
 
     private TimePeriod addToFeatureCollectionAndGetTimePeriod(FeatureCollection featureCollection,

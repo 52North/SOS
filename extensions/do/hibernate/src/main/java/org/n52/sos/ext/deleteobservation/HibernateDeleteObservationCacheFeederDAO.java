@@ -49,7 +49,6 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 /**
  * Updates the cache after a Observation was deleted. Uses the deleted
  * observation to determine which cache relations have to be updated.
- * <p/>
  *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 1.0.0
@@ -61,8 +60,14 @@ public class HibernateDeleteObservationCacheFeederDAO extends DeleteObservationC
     private HibernateSessionHolder sessionHolder;
     private Session session;
     private AbstractObservationDAO observationDAO = null;
-    private final OfferingDAO offeringDAO = new OfferingDAO();
-    private final ProcedureDAO procedureDAO = new ProcedureDAO();
+
+
+    private DaoFactory daoFactory;
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
@@ -71,13 +76,13 @@ public class HibernateDeleteObservationCacheFeederDAO extends DeleteObservationC
 
     @Override
     protected boolean isLastForProcedure(String feature, String procedure) throws OwsExceptionReport {
-        Criteria criteria = DaoFactory.getInstance().getObservationDAO().getObservationInfoCriteriaForFeatureOfInterestAndProcedure(feature, procedure, getConnection());
+        Criteria criteria = daoFactory.getObservationDAO().getObservationInfoCriteriaForFeatureOfInterestAndProcedure(feature, procedure, getConnection());
         return isEmpty(criteria);
     }
 
     @Override
     protected boolean isLastForOffering(String feature, String offering) throws OwsExceptionReport {
-        Criteria criteria = DaoFactory.getInstance().getObservationDAO().getObservationInfoCriteriaForFeatureOfInterestAndOffering(feature, offering, getConnection());
+        Criteria criteria = daoFactory.getObservationDAO().getObservationInfoCriteriaForFeatureOfInterestAndOffering(feature, offering, getConnection());
         return isEmpty(criteria);
     }
 
@@ -117,32 +122,32 @@ public class HibernateDeleteObservationCacheFeederDAO extends DeleteObservationC
 
     @Override
     protected DateTime getMaxDateForOffering(final String offering) throws OwsExceptionReport {
-        return offeringDAO.getMaxDate4Offering(offering, getConnection());
+        return new OfferingDAO(daoFactory).getMaxDate4Offering(offering, getConnection());
     }
 
     @Override
     protected DateTime getMaxDateForProcedure(final String procedure) throws OwsExceptionReport {
-        return procedureDAO.getMaxDate4Procedure(procedure, getConnection());
+        return new ProcedureDAO(daoFactory).getMaxDate4Procedure(procedure, getConnection());
     }
 
     @Override
     protected DateTime getMinResultTimeForOffering(final String offering) throws OwsExceptionReport {
-        return offeringDAO.getMinResultTime4Offering(offering, getConnection());
+        return new OfferingDAO(daoFactory).getMinResultTime4Offering(offering, getConnection());
     }
 
     @Override
     protected DateTime getMaxResultTimeForOffering(final String offering) throws OwsExceptionReport {
-        return offeringDAO.getMaxResultTime4Offering(offering, getConnection());
+        return new OfferingDAO(daoFactory).getMaxResultTime4Offering(offering, getConnection());
     }
 
     @Override
     protected DateTime getMinDateForOffering(final String offering) throws OwsExceptionReport {
-        return offeringDAO.getMinDate4Offering(offering, getConnection());
+        return new OfferingDAO(daoFactory).getMinDate4Offering(offering, getConnection());
     }
 
     @Override
     protected DateTime getMinDateForProcedure(final String procedure) throws OwsExceptionReport {
-        return procedureDAO.getMinDate4Procedure(procedure, getConnection());
+        return new ProcedureDAO(daoFactory).getMinDate4Procedure(procedure, getConnection());
     }
 
     @Override
@@ -153,7 +158,7 @@ public class HibernateDeleteObservationCacheFeederDAO extends DeleteObservationC
     @Override
     protected void prepare() throws OwsExceptionReport {
         this.session = this.sessionHolder.getSession();
-        this.observationDAO = DaoFactory.getInstance().getObservationDAO();
+        this.observationDAO = daoFactory.getObservationDAO();
     }
 
     @Override

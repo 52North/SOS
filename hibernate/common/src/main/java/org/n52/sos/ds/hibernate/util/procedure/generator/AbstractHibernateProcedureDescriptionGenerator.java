@@ -76,6 +76,11 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
     protected static final Joiner COMMA_JOINER = Joiner.on(",");
 
     private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
+    private final DaoFactory daoFactory;
+
+    public AbstractHibernateProcedureDescriptionGenerator(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     public abstract SosProcedureDescription<?> generateProcedureDescription(Procedure procedure, Locale i18n,
             Session session) throws OwsExceptionReport;
@@ -124,7 +129,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
         Locale requestedLocale = getLocale();
         if (i18nDAO == null) {
             // no locale support
-            ProcedureDAO featureDAO = new ProcedureDAO();
+            ProcedureDAO featureDAO = daoFactory.getProcedureDAO();
             feature.addName(featureDAO.getName(procedure));
             feature.setDescription(featureDAO.getDescription(procedure));
         } else {
@@ -202,7 +207,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
     @VisibleForTesting
     AbstractObservation<?> getExampleObservation(String identifier, String observableProperty, Session session)
             throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
         final Criteria c = observationDAO.getObservationCriteriaFor(identifier, observableProperty, session);
         c.setMaxResults(1);
         LOGGER.debug("QUERY getExampleObservation(identifier, observableProperty): {}",
@@ -235,6 +240,10 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
     @VisibleForTesting
     SosContentCache getCache() {
         return Configurator.getInstance().getCache();
+    }
+
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
     }
 
 }

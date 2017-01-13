@@ -58,6 +58,7 @@ import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -84,27 +85,24 @@ import com.vividsolutions.jts.geom.Geometry;
 public abstract class AbstractHibernateStreamingValue extends StreamingValue<AbstractValuedLegacyObservation<?>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateStreamingValue.class);
-
-    private static final long serialVersionUID = -8355955808723620476L;
-
     protected final HibernateSessionHolder sessionHolder;
-
     protected Session session;
-
     protected final GetObservationRequest request;
-
     protected Criterion temporalFilterCriterion;
+    private final DaoFactory daoFactory;
 
     /**
      * constructor
      *
      * @param request
      *            {@link GetObservationRequest}
+     * @param daoFactory the DAO factory
      * @param connectionProvider the connection provider
      */
-    public AbstractHibernateStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request) {
+    public AbstractHibernateStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request) {
         this.request = request;
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+        this.daoFactory = daoFactory;
     }
 
     @Override
@@ -389,6 +387,10 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         namedValue.setValue(new org.n52.shetland.ogc.om.values.GeometryValue(GeometryHandler.getInstance()
                 .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
+    }
+
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
     }
 
 }

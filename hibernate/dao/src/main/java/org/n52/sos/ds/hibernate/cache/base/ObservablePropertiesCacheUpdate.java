@@ -31,10 +31,14 @@ package org.n52.sos.ds.hibernate.cache.base;
 import java.util.Collection;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
@@ -43,9 +47,6 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -56,11 +57,17 @@ import org.slf4j.LoggerFactory;
 public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservablePropertiesCacheUpdate.class);
 
+    private final DaoFactory daoFactory;
+
+    public ObservablePropertiesCacheUpdate(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     @Override
     public void execute() {
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate");
         startStopwatch();
-        ObservablePropertyDAO observablePropertyDAO = new ObservablePropertyDAO();
+        ObservablePropertyDAO observablePropertyDAO = daoFactory.getObservablePropertyDAO();
         Map<ObservableProperty, Collection<ObservableProperty>> observablePropertyHierarchy = observablePropertyDAO.getObservablePropertyHierarchy(getSession());
 //        Set<String> childObservableProperties = new HashSet<>(observablePropertyHierarchy.size());
 //
@@ -74,7 +81,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
         // if ObservationConstellation is supported load them all at once,
         // otherwise query obs directly
         if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
-            ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
+            ObservationConstellationDAO observationConstellationDAO = daoFactory.getObservationConstellationDAO();
             Map<String, Collection<ObservationConstellationInfo>> ociMap = ObservationConstellationInfo.mapByObservableProperty(observationConstellationDAO.getObservationConstellationInfo(getSession()));
 
             for (ObservableProperty observableProperty : observablePropertyHierarchy.keySet()) {
@@ -104,8 +111,8 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 }
             }
         } else {
-            OfferingDAO offeringDAO = new OfferingDAO();
-            ProcedureDAO procedureDAO = new ProcedureDAO();
+            OfferingDAO offeringDAO = daoFactory.getOfferingDAO();
+            ProcedureDAO procedureDAO = daoFactory.getProcedureDAO();
             for (ObservableProperty op : observablePropertyHierarchy.keySet()) {
                 String observableProperty = op.getIdentifier();
                 try {

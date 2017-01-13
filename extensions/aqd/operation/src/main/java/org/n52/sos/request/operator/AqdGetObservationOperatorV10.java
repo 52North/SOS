@@ -54,6 +54,7 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.DateTimeParseException;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.ReportObligationType;
+import org.n52.sos.aqd.ReportObligations;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
@@ -82,7 +83,7 @@ public class AqdGetObservationOperatorV10 extends
 
     @Override
     public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
-        ReportObligationType flow = getAqdHelper().getFlow(request.getExtensions());
+        ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
         checkReportingHeader(flow);
         checkRequestForFlowAndTemporalFilter(request, flow);
         boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);

@@ -67,8 +67,7 @@ import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.coding.encode.ObservationEncoder;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
@@ -108,8 +107,8 @@ public class HibernateGetObservationHelper {
      *                        If the size limit is exceeded
      */
     public static List<ObservationConstellation> getAndCheckObservationConstellationSize(
-            GetObservationRequest request, Session session) throws CodedException {
-        List<ObservationConstellation> observationConstellations = getObservationConstellations(session, request);
+            GetObservationRequest request, DaoFactory daoFactory, Session session) throws CodedException {
+        List<ObservationConstellation> observationConstellations = getObservationConstellations(session, request, daoFactory);
         checkMaxNumberOfReturnedSeriesSize(observationConstellations.size());
         return observationConstellations;
     }
@@ -174,10 +173,12 @@ public class HibernateGetObservationHelper {
         return getMaxNumberOfReturnedValues();
     }
 
-    public static List<String> getAndCheckFeatureOfInterest(final ObservationConstellation observationConstellation,
-                                                            final Set<String> featureIdentifier, final Session session)
+    public static List<String> getAndCheckFeatureOfInterest(ObservationConstellation observationConstellation,
+                                                            Set<String> featureIdentifier,
+                                                            DaoFactory  daoFactory,
+                                                            Session session)
             throws OwsExceptionReport {
-        final List<String> featuresForConstellation = new FeatureOfInterestDAO()
+        final List<String> featuresForConstellation = daoFactory.getFeatureOfInterestDAO()
                 .getFeatureOfInterestIdentifiersForObservationConstellation(
                         observationConstellation, session);
         if (featureIdentifier == null) {
@@ -187,15 +188,16 @@ public class HibernateGetObservationHelper {
         }
     }
 
-    public static List<OmObservation> toSosObservation(final Collection<Observation<?>> observations,
-                                                       final AbstractObservationRequest request,
-                                                       final LocalizedProducer<OwsServiceProvider> serviceProvider,
-                                                       Locale language, final Session session) throws OwsExceptionReport,
-                                                                                                      ConverterException {
+    public static List<OmObservation> toSosObservation(Collection<Observation<?>> observations,
+                                                       AbstractObservationRequest request,
+                                                       LocalizedProducer<OwsServiceProvider> serviceProvider,
+                                                       Locale language,
+                                                       DaoFactory daoFactory,
+                                                       Session session) throws OwsExceptionReport, ConverterException {
         if (!observations.isEmpty()) {
             final long startProcess = System.currentTimeMillis();
             List<OmObservation> sosObservations = HibernateObservationUtilities.createSosObservationsFromObservations(
-                    new HashSet<>(observations), request, serviceProvider, language, session);
+                    new HashSet<>(observations), request, serviceProvider, language, daoFactory, session);
 
             LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
                          (System.currentTimeMillis() - startProcess));
@@ -207,11 +209,12 @@ public class HibernateGetObservationHelper {
 
     public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request,
                                                  LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language,
-                                                 final Session session) throws OwsExceptionReport, ConverterException {
+                                                 DaoFactory daoFactory, Session session)
+            throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();
             OmObservation sosObservation = HibernateObservationUtilities
-                    .createSosObservationFromObservation(observation, request, serviceProvider, language, session);
+                    .createSosObservationFromObservation(observation, request, serviceProvider, language, daoFactory, session);
             LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));
             return sosObservation;
         }
@@ -348,8 +351,9 @@ public class HibernateGetObservationHelper {
      * @return Resulting ObservationConstellation entities
      */
     public static List<ObservationConstellation> getObservationConstellations(final Session session,
-                                                                              final GetObservationRequest request) {
-        return new ObservationConstellationDAO().getObservationConstellations(request.getProcedures(),
+                                                                              final GetObservationRequest request,
+                                                                              DaoFactory daoFactory) {
+        return daoFactory.getObservationConstellationDAO().getObservationConstellations(request.getProcedures(),
                                                                               request.getObservedProperties(), request
                                                                               .getOfferings(), session);
     }

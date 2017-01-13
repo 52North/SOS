@@ -45,21 +45,13 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 public class EntitiyHelper {
 
     /**
-     * instance
-     */
-    private static EntitiyHelper instance;
-
-    /**
      * Get the EntitiyHelper instance
      *
      * @return Returns the instance of the EntitiyHelper.
      */
     @Deprecated
     public static synchronized EntitiyHelper getInstance() {
-        if (instance == null) {
-            instance = new EntitiyHelper();
-        }
-        return instance;
+        return new EntitiyHelper();
     }
 
     public boolean isSeriesSupported() {
@@ -76,19 +68,15 @@ public class EntitiyHelper {
     }
 
     public boolean isSeriesObservationInfoSupported() {
-        if (isObservationInfoSupported()) {
-            return HibernateHelper.isEntitySupported(ContextualReferencedEReportingObservation.class)
-                    || HibernateHelper.isEntitySupported(ContextualReferencedSeriesObservation.class);
-        }
-        return false;
+        return isObservationInfoSupported() &&
+               (HibernateHelper.isEntitySupported(ContextualReferencedEReportingObservation.class) ||
+                HibernateHelper.isEntitySupported(ContextualReferencedSeriesObservation.class));
     }
 
     public boolean isSeriesObservationTimeSupported() {
-        if (isObservationTimeSupported()) {
-            return HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class)
-                    || HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class);
-        }
-        return false;
+        return isObservationTimeSupported() &&
+               (HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class) ||
+                HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class));
     }
 
     public boolean isObservationTimeSupported() {

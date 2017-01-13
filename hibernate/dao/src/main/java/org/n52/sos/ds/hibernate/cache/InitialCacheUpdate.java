@@ -43,6 +43,7 @@ import org.n52.sos.ds.hibernate.cache.base.ProcedureCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.RelatedFeaturesCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.ResultTemplateCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.SridCacheUpdate;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
 /**
  *
@@ -70,24 +71,26 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
                               I18NDAORepository i18NDAORepository,
                               FeatureQueryHandler featureQueryHandler,
                               ConnectionProvider connectionProvider,
-                              ServiceMetadataRepository serviceMetadataRepository) {
+                              ServiceMetadataRepository serviceMetadataRepository,
+                              DaoFactory daoFactory) {
         //execute all updates except offerings and procedures in parallel, then execute offering and procedure updates
         //(which spawn their own threads)
         super(new ParallelCacheUpdate(threadCount,
                                       connectionProvider,
                                       new SridCacheUpdate(),
-                                      new ObservablePropertiesCacheUpdate(),
-                                      new FeatureOfInterestCacheUpdate(featureQueryHandler),
-                                      new RelatedFeaturesCacheUpdate(),
+                                      new ObservablePropertiesCacheUpdate(daoFactory),
+                                      new FeatureOfInterestCacheUpdate(featureQueryHandler, daoFactory),
+                                      new RelatedFeaturesCacheUpdate(daoFactory),
                                       new ResultTemplateCacheUpdate(),
-                                      new ObservationTimeCacheUpdate()),
+                                      new ObservationTimeCacheUpdate(daoFactory)),
               new I18NCacheUpdate(serviceMetadataRepository,
                                   i18NDAORepository),
               new OfferingCacheUpdate(threadCount,
                                       defaultLocale,
                                       i18NDAORepository,
                                       featureQueryHandler,
-                                      connectionProvider),
-              new ProcedureCacheUpdate(threadCount, connectionProvider));
+                                      connectionProvider,
+                                      daoFactory),
+              new ProcedureCacheUpdate(threadCount, connectionProvider, daoFactory));
     }
 }

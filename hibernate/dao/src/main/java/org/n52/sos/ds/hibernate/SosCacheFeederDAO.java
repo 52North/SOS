@@ -39,29 +39,29 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.cache.WritableContentCache;
+import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.faroe.ConfigurationError;
-import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.iceland.util.Validation;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.sos.ds.CacheFeederHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of the interface CacheFeederDAO
@@ -83,6 +83,7 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     private FeatureQueryHandler featureQueryHandler;
     private ServiceMetadataRepository serviceMetadataRepository;
     private HibernateSessionHolder sessionHolder;
+    private DaoFactory daoFactory;
 
     @Inject
     private ObservationSettingProvider observationSettingProvider;
@@ -112,6 +113,11 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
         this.i18NDAORepository = i18NDAORepository;
     }
 
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     @Setting(CACHE_THREAD_COUNT)
     public void setCacheThreadCount(int threads) throws ConfigurationError {
         Validation.greaterZero("Cache Thread Count", threads);
@@ -130,7 +136,8 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
                     this.i18NDAORepository,
                     this.featureQueryHandler,
                     this.sessionHolder.getConnectionProvider(),
-                    this.serviceMetadataRepository);
+                    this.serviceMetadataRepository,
+                    this.daoFactory);
             session = this.sessionHolder.getSession();
             update.setCache(cache);
             update.setErrors(errors);
@@ -168,7 +175,8 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
                 this.defaultLocale,
                 this.i18NDAORepository,
                 this.featureQueryHandler,
-                this.sessionHolder.getConnectionProvider());
+                this.sessionHolder.getConnectionProvider(),
+                this.daoFactory);
         update.setCache(cache);
         update.setErrors(errors);
         update.setSession(session);
@@ -204,5 +212,4 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
                 PeriodFormat.getDefault().print(cacheLoadPeriod.normalizedStandard()),
                 cacheLoadPeriod.toStandardSeconds());
     }
-
 }

@@ -28,40 +28,47 @@
  */
 package org.n52.sos.ds.hibernate.dao.ereporting;
 
+import java.util.Set;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
+import org.n52.sos.aqd.ReportObligations;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;
 
-public class EReportingDaoHelper {
+public interface EReportingDaoHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EReportingDaoHelper.class);
-
-    public static void addValidityAndVerificationRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
+    default void addValidityAndVerificationRestrictions(Criteria c, GetObservationRequest request)
+            throws OwsExceptionReport {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
-            ReportObligationType flow = AqdHelper.getInstance().getFlow(request.getExtensions());
+            ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
-                if (getAqdHelper().isSetValidityFlags()) {
-                    c.add(Restrictions.in(EReportingObservation.VALIDATION, getAqdHelper().getValidityFlags()));
+                if (isSetValidityFlags()) {
+                    c.add(Restrictions.in(EReportingObservation.VALIDATION, getValidityFlags()));
                 }
-                if (getAqdHelper().isSetVerificationFlags())
-                c.add(Restrictions.in(EReportingObservation.VERIFICATION, getAqdHelper().getVerificationFlags()));
+                if (isSetVerificationFlags()) {
+                    c.add(Restrictions.in(EReportingObservation.VERIFICATION, getVerificationFlags()));
+                }
             }
         }
     }
 
-    private static AqdHelper getAqdHelper() {
-        return AqdHelper.getInstance();
+    Set<Integer> getVerificationFlags();
+
+    Set<Integer> getValidityFlags();
+
+    default boolean isSetVerificationFlags() {
+        return CollectionHelper.isNotEmpty(getVerificationFlags());
     }
 
-    private EReportingDaoHelper() {
+    default boolean isSetValidityFlags() {
+        return CollectionHelper.isNotEmpty(getValidityFlags());
     }
 
 }

@@ -48,8 +48,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -73,29 +71,30 @@ import com.google.common.collect.Lists;
 public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<OfferingCacheUpdateTask> {
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingCacheUpdate.class);
     private static final String THREAD_GROUP_NAME = "offering-cache-update";
-    private final OfferingDAO offeringDAO = new OfferingDAO();
     private Collection<String> offeringsIdToUpdate = Lists.newArrayList();
     private Collection<Offering> offeringsToUpdate;
     private Map<String,Collection<ObservationConstellationInfo>> offObsConstInfoMap;
     private final Locale defaultLanguage;
     private final I18NDAORepository i18NDAORepository;
     private final FeatureQueryHandler featureQueryHandler;
+    private final DaoFactory daoFactory;
 
-    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, FeatureQueryHandler featureQueryHandler, ConnectionProvider connectionProvider) {
-        this(threads, defaultLanguage, i18NDAORepository, featureQueryHandler, connectionProvider, null);
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, FeatureQueryHandler featureQueryHandler, ConnectionProvider connectionProvider, DaoFactory daoFactory) {
+        this(threads, defaultLanguage, i18NDAORepository, featureQueryHandler, connectionProvider, null, daoFactory);
     }
 
-    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, FeatureQueryHandler featureQueryHandler, ConnectionProvider connectionProvider, Collection<String> offeringIdsToUpdate) {
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, FeatureQueryHandler featureQueryHandler, ConnectionProvider connectionProvider, Collection<String> offeringIdsToUpdate, DaoFactory daoFactory) {
         super(threads, THREAD_GROUP_NAME, connectionProvider);
         this.offeringsIdToUpdate = offeringIdsToUpdate;
         this.defaultLanguage = defaultLanguage;
         this.i18NDAORepository = i18NDAORepository;
         this.featureQueryHandler = featureQueryHandler;
+        this.daoFactory = daoFactory;
     }
 
     private Collection<Offering> getOfferingsToUpdate() {
         if (offeringsToUpdate == null) {
-            offeringsToUpdate = offeringDAO.getOfferingObjectsForCacheUpdate(offeringsIdToUpdate, getSession());
+            offeringsToUpdate = daoFactory.getOfferingDAO().getOfferingObjectsForCacheUpdate(offeringsIdToUpdate, getSession());
         }
         return offeringsToUpdate;
     }
@@ -103,7 +102,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     private Map<String,Collection<ObservationConstellationInfo>> getOfferingObservationConstellationInfo() {
         if (offObsConstInfoMap == null) {
             offObsConstInfoMap = ObservationConstellationInfo.mapByOffering(
-                new ObservationConstellationDAO().getObservationConstellationInfo(getSession()));
+                daoFactory.getObservationConstellationDAO().getObservationConstellationInfo(getSession()));
         }
         return offObsConstInfoMap;
     }
@@ -140,7 +139,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         //     in OfferingCacheUpdateTask if needed
         Map<String, OfferingTimeExtrema> offeringTimeExtrema = null;
         try {
-            offeringTimeExtrema = offeringDAO.getOfferingTimeExtrema(offeringsIdToUpdate, getSession());
+            offeringTimeExtrema = daoFactory.getOfferingDAO().getOfferingTimeExtrema(offeringsIdToUpdate, getSession());
         } catch (OwsExceptionReport ce) {
             LOGGER.error("Error while querying offering time ranges!", ce);
             getErrors().add(ce);
@@ -178,7 +177,8 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                         hasSamplingGeometry,
                         this.defaultLanguage,
                         this.i18NDAORepository,
-                        this.featureQueryHandler));
+                        this.featureQueryHandler,
+                        this.daoFactory));
             }
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
@@ -191,7 +191,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
      */
     private boolean checkForSamplingGeometry() {
         try {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             return observationDAO.containsSamplingGeometries(getSession());
         } catch (OwsExceptionReport e) {
             LOGGER.error("Error while getting observation DAO class from factory!", e);
@@ -205,7 +205,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
                 return getOfferingObservationConstellationInfo().containsKey(offeringIdentifier);
             } else {
-                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+                AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
                 Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(getSession());
                 criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));

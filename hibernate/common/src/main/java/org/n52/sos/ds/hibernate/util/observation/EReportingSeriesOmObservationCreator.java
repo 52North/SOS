@@ -39,16 +39,16 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 
 public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
 
-
     public EReportingSeriesOmObservationCreator(EReportingSeries series,
                                                 AbstractObservationRequest request,
                                                 LocalizedProducer<OwsServiceProvider> serviceProvider,
-                                                Locale language, Session session) {
-        super(series, request, serviceProvider, language, session);
+                                                Locale language, DaoFactory daoFactory, Session session) {
+        super(series, request, serviceProvider, language, daoFactory, session);
     }
 
     @Override

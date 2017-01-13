@@ -61,6 +61,7 @@ import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.ds.AbstractGetFeatureOfInterestHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
@@ -104,18 +105,23 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
             "getFeatureForProcedureObservableProperty";
 
     private static final String SQL_QUERY_GET_FEATURE_FOR_OBSERVED_PROPERTY = "getFeatureForObservableProperty";
-    private HibernateSessionHolder sessionHolder;
 
+    private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
+    private DaoFactory daoFactory;
+
+    public GetFeatureOfInterestDAO() {
+        super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Inject
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
         this.featureQueryHandler = featureQueryHandler;
-    }
-
-
-    public GetFeatureOfInterestDAO() {
-        super(SosConstants.SOS);
     }
 
     @Inject
@@ -279,7 +285,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameter(final GetFeatureOfInterestRequest req, final Session session) throws OwsExceptionReport {
         if (req.hasNoParameter()) {
-            return new FeatureOfInterestDAO().getFeatureOfInterestIdentifiers(session);
+            return new FeatureOfInterestDAO(daoFactory).getFeatureOfInterestIdentifiers(session);
         }
         if (req.containsOnlyFeatureParameter() && req.isSetFeatureOfInterestIdentifiers()) {
             final Criteria c =

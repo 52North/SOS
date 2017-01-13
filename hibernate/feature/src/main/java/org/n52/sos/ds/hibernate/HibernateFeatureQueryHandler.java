@@ -107,6 +107,12 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     private Locale defaultLocale;
     private boolean showAllLanguages;
     private I18NDAORepository i18NDAORepository;
+    private DaoFactory daoFactory;
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -226,7 +232,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 } else {
                     final Envelope envelope = new Envelope();
                     final List<FeatureOfInterest> featuresOfInterest =
-                            new FeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatureIdentifiers(),
+                            daoFactory.getFeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatureIdentifiers(),
                                     session);
                     for (final FeatureOfInterest feature : featuresOfInterest) {
                         try {
@@ -375,7 +381,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         if (feature == null) {
             return null;
         }
-        FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
+        FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
         final CodeWithAuthority identifier = featureOfInterestDAO.getIdentifier(feature);
         if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(feature.getIdentifier(), queryObject.getVersion())) {
             identifier.setValue(null);
@@ -453,7 +459,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         if (!getGeometryHandler().isSpatialDatasource()) {
             throw new NotYetSupportedException("Insertion of full encoded features for non spatial datasources");
         }
-        FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
+        FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
         final String newId = samplingFeature.getIdentifierCodeWithAuthority().getValue();
         FeatureOfInterest feature = getFeatureOfInterest(newId, samplingFeature.getGeometry(), session);
         if (feature == null) {
@@ -531,7 +537,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             // getGeometryHandler().switchCoordinateAxisOrderIfNeeded(geom);
         } else {
             if (session != null) {
-                List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
+                List<Geometry> geometries = daoFactory.getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
                 int srid = getGeometryHandler().getStorageEPSG();
                 if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
                     List<Coordinate> coordinates = Lists.newLinkedList();
@@ -581,7 +587,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             }
         }
         final List<FeatureOfInterest> featuresOfInterest =
-                new FeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatureIdentifiers(), session);
+                daoFactory.getFeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatureIdentifiers(), session);
         for (final FeatureOfInterest feature : featuresOfInterest) {
             final SamplingFeature sosAbstractFeature =
                     (SamplingFeature) createSosAbstractFeature(feature, queryObject);

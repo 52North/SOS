@@ -52,9 +52,7 @@ import org.n52.sos.util.GmlHelper;
  *
  */
 public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStreamingValue {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
-    private static final long serialVersionUID = 201732114914686926L;
     protected final AbstractSeriesValueDAO seriesValueDAO;
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
     protected long series;
@@ -63,17 +61,18 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      * constructor
      *
      * @param connectionProvider the connection provider
+     * @param daoFactory the DAO factory
      * @param request
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long series) throws CodedException {
-        super(connectionProvider, request);
+    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long series) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request);
         this.series = series;
-        this.seriesValueDAO = (AbstractSeriesValueDAO) DaoFactory.getInstance().getValueDAO();
-        this.seriesValueTimeDAO = (AbstractSeriesValueTimeDAO) DaoFactory.getInstance().getValueTimeDAO();
+        this.seriesValueDAO = daoFactory.getValueDAO();
+        this.seriesValueTimeDAO = daoFactory.getValueTimeDAO();
     }
 
     @Override

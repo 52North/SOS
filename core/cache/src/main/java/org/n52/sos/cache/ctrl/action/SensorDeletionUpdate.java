@@ -30,12 +30,13 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.util.Action;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -46,7 +47,7 @@ import com.google.common.collect.Sets;
  * <li>Result template</li>
  * <li>Offering &rarr; Result template</li>
  * </ul>
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
@@ -104,6 +105,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
                 for (String observableProperty : cache.getObservablePropertiesForOffering(offering)) {
                     cache.removeOfferingForObservableProperty(observableProperty, offering);
                 }
+                cache.clearCompositePhenomenonForOffering(offering);
                 cache.removeObservablePropertiesForOffering(offering);
                 Set<String> resultTemplatesToRemove = cache.getResultTemplatesForOffering(offering);
                 cache.removeResultTemplatesForOffering(offering);
@@ -121,7 +123,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
         } catch (OwsExceptionReport ex) {
             fail(ex);
         }
-        
+
         cache.removeRolesForRelatedFeatureNotIn(cache.getRelatedFeatures());
         cache.setFeaturesOfInterest(cache.getFeaturesOfInterestWithOffering());
 
@@ -130,10 +132,17 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
             cache.removeProcedureForObservableProperty(observableProperty, procedure);
             cache.removeObservablePropertyForProcedure(procedure, observableProperty);
         }
+
+        cache.clearCompositePhenomenonForProcedure(procedure);
+        
         // At the latest
         cache.removeOfferingsForProcedure(procedure);
         cache.recalculatePhenomenonTime();
         cache.recalculateResultTime();
         cache.recalculateGlobalEnvelope();
+        
+        cache.removeComponentAggregationProcedure(procedure);
+        cache.removeTypeInstanceProcedure(procedure);
+        cache.removeTypeOfProcedure(procedure);
     }
 }

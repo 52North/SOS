@@ -37,8 +37,16 @@ import org.n52.sos.exception.ows.concrete.InvalidSridException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.FeatureWith.FeatureWithEncode;
+import org.n52.sos.ogc.gml.FeatureWith.FeatureWithFeatureType;
+import org.n52.sos.ogc.gml.FeatureWith.FeatureWithGeometry;
+import org.n52.sos.ogc.gml.FeatureWith.FeatureWithUrl;
+import org.n52.sos.ogc.gml.FeatureWith.FeatureWithXmlDescription;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Lists;
@@ -51,7 +59,8 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  * 
  */
-public class SamplingFeature extends AbstractFeature {
+public class SamplingFeature extends AbstractFeature implements FeatureWithGeometry, FeatureWithFeatureType,
+        FeatureWithUrl, FeatureWithXmlDescription, FeatureWithEncode {
 
     /**
      * serial number
@@ -98,6 +107,8 @@ public class SamplingFeature extends AbstractFeature {
      */
     private Collection<SamplingFeatureComplex> relatedSamplingFeatures;
 
+    private boolean wasEncoded = false;
+
     /**
      * constructor
      * 
@@ -105,7 +116,8 @@ public class SamplingFeature extends AbstractFeature {
      *            identifier of sampling feature
      */
     public SamplingFeature(final CodeWithAuthority featureIdentifier) {
-        super(featureIdentifier);
+        this(featureIdentifier, null);
+       
     }
 
     /**
@@ -118,53 +130,46 @@ public class SamplingFeature extends AbstractFeature {
      */
     public SamplingFeature(final CodeWithAuthority featureIdentifier, final String gmlId) {
         super(featureIdentifier, gmlId);
+        setDefaultElementEncoding(SfConstants.NS_SAMS);
     }
 
-    /**
-     * Get XML representation of this feature
-     * 
-     * @return XML representation of this feature
-     */
+    @Override
     public String getXmlDescription() {
         return xmlDescription;
     }
 
-    /**
-     * Check whether XML representation of this feature is set
-     * 
-     * @return <code>true</code>, if XML representation of this feature is set
-     */
+    @Override
     public boolean isSetXmlDescription() {
         return StringHelper.isNotEmpty(getXmlDescription());
     }
 
-    /**
-     * Set XML representation of this feature
-     * 
-     * @param xmlDescription
-     *            XML representation of this feature to set
-     */
+    @Override
     public void setXmlDescription(final String xmlDescription) {
         this.xmlDescription = xmlDescription;
     }
+    
+    @Override
+    public boolean isSetGmlID() {
+        return super.isSetGmlID() && wasEncoded;
+    }
+    
+    @Override
+    public String getGmlId() {
+        if (!super.isSetGmlID()) {
+            final StringBuilder builder = new StringBuilder();
+            builder.append("ssf_");
+            builder.append(JavaHelper.generateID(getIdentifierCodeWithAuthority().getValue()));
+            setGmlId(builder.toString());
+        }
+        return super.getGmlId();
+    }
 
-    /**
-     * Get feature geometry
-     * 
-     * @return Feature geometry
-     */
+    @Override
     public Geometry getGeometry() {
         return geometry;
     }
 
-    /**
-     * Set feature geometry, checks whether srid is valid
-     * 
-     * @param geometry
-     *            Geometry to set
-     * @throws InvalidSridException
-     *             If srid is invalid
-     */
+    @Override
     public void setGeometry(final Geometry geometry) throws InvalidSridException {
         if (geometry != null && geometry.getSRID() == 0) {
             throw new InvalidSridException(0);
@@ -172,67 +177,37 @@ public class SamplingFeature extends AbstractFeature {
         this.geometry = geometry;
     }
 
-    /**
-     * Check whether geometry is set
-     * 
-     * @return <code>true</code>, if geometry is set
-     */
+    @Override
     public boolean isSetGeometry() {
         return getGeometry() != null && !getGeometry().isEmpty();
     }
 
-    /**
-     * Get feature type
-     * 
-     * @return Type of this feature
-     */
+    @Override
     public String getFeatureType() {
         return featureType;
     }
 
-    /**
-     * Set feature type
-     * 
-     * @param featureType
-     *            Type of this feature
-     */
+    @Override
     public void setFeatureType(final String featureType) {
         this.featureType = featureType;
     }
 
-    /**
-     * Check whether feature type is set
-     * 
-     * @return <code>true</code>, if feature type is set
-     */
+    @Override
     public boolean isSetFeatureType() {
         return StringHelper.isNotEmpty(getFeatureType());
     }
 
-    /**
-     * Get URL
-     * 
-     * @return URL
-     */
+    @Override
     public String getUrl() {
         return url;
     }
 
-    /**
-     * Set URL
-     * 
-     * @param url
-     *            URL to set
-     */
+    @Override
     public void setUrl(final String url) {
         this.url = url;
     }
 
-    /**
-     * Check whether URL is set
-     * 
-     * @return <code>true</code>, if URL is set
-     */
+    @Override
     public boolean isSetUrl() {
         return StringHelper.isNotEmpty(getUrl());
     }
@@ -284,7 +259,7 @@ public class SamplingFeature extends AbstractFeature {
      * @param parameters
      *            Parameters to add
      */
-    public void setParameters(final List<NamedValue<?>> parameters) {
+    public void setParameters(final Collection<NamedValue<?>> parameters) {
         this.parameters.addAll(parameters);
     }
 
@@ -297,20 +272,12 @@ public class SamplingFeature extends AbstractFeature {
         return parameters;
     }
 
-    /**
-     * Check whether parameters are set
-     * 
-     * @return <code>true</code>, if parameters are set
-     */
+    @Override
     public boolean isSetParameter() {
         return CollectionHelper.isNotEmpty(parameters);
     }
 
-    /**
-     * Check whether feature should be encoded
-     * 
-     * @return <code>true</code>, if feature should be encoded
-     */
+    @Override
     public boolean isEncode() {
         return encode;
     }
@@ -323,6 +290,10 @@ public class SamplingFeature extends AbstractFeature {
      */
     public void setEncode(final boolean encode) {
         this.encode = encode;
+    }
+    
+    public void wasEncoded() {
+        this.wasEncoded  = true;
     }
 
     /**
@@ -370,7 +341,9 @@ public class SamplingFeature extends AbstractFeature {
      * @return Related sampling features
      */
     public List<SamplingFeatureComplex> getRelatedSamplingFeatures() {
-        return Lists.newArrayList(relatedSamplingFeatures);
+        return relatedSamplingFeatures != null
+                ? Lists.newArrayList(relatedSamplingFeatures)
+                : Collections.<SamplingFeatureComplex>emptyList();
     }
 
     /**
@@ -380,6 +353,11 @@ public class SamplingFeature extends AbstractFeature {
      */
     public boolean isSetRelatedSamplingFeatures() {
         return CollectionHelper.isNotEmpty(relatedSamplingFeatures);
+    }
+    
+    @Override
+    public <X> X accept(FeatureOfInterestVisitor<X> visitor) throws OwsExceptionReport {
+        return visitor.visit(this);
     }
 
     @Override

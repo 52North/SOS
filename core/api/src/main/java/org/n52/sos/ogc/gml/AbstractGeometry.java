@@ -69,8 +69,9 @@ public class AbstractGeometry extends AbstractGML {
      * @param geometry
      *            the geometry to set
      */
-    public void setGeometry(Geometry geometry) {
+    public AbstractGeometry setGeometry(Geometry geometry) {
         this.geometry = geometry;
+        return this;
     }
 
     /**

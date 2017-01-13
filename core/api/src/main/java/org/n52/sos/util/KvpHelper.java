@@ -122,7 +122,7 @@ public final class KvpHelper {
         checkParameterValue(value, name.name());
     }
 
-    private static String getParameterValue(String name, Map<String, String> map) {
+    public static String getParameterValue(String name, Map<String, String> map) {
         if (map.containsKey(name)) {
             return map.get(name);
         }

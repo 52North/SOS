@@ -30,18 +30,26 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Set;
 
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.hibernate.Session;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmObservation;
 
 public interface AdditionalObservationCreator<T extends Series> {
 
     Set<AdditionalObservationCreatorKey> getKeys();
     
-    OmObservation create(OmObservation omObservation, AbstractObservation observation);
-    
     OmObservation create(OmObservation omObservation, T series);
 
-    OmObservation add(OmObservation sosObservation, AbstractObservation hObservation);
+    OmObservation create(OmObservation omObservation, Observation<?> observation);
+    
+    OmObservation add(OmObservation omObservation, Observation<?> observation);
+    
+    OmObservation create(OmObservation omObservation, T series, Session session) throws CodedException;
+
+    OmObservation create(OmObservation omObservation, Observation<?> observation, Session session) throws CodedException;
+    
+    OmObservation add(OmObservation omObservation, Observation<?> observation, Session session) throws CodedException;
 
 }

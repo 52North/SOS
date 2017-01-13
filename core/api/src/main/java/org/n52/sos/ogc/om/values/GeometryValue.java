@@ -28,41 +28,51 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.AbstractGeometry;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Geometry measurement representation for observation
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
     private static final long serialVersionUID = 4634315072352929082L;
     /**
      * Unit of measure
      */
-    private String unit;
-    
+    private UoM unit;
+
     public GeometryValue(AbstractGeometry abstractGeometry) {
         setDescription(abstractGeometry.getDescription());
         setGeometry(abstractGeometry.getGeometry());
         setIdentifier(abstractGeometry.getIdentifierCodeWithAuthority());
         setName(abstractGeometry.getName());
+        setGmlId("sp_" + JavaHelper.generateID(toString()));
     }
 
     /**
      * construcor
+     *
      * @param value Geometry value
      */
     public GeometryValue(Geometry value) {
         setValue(value);
+        setGmlId("sp_" + JavaHelper.generateID(toString()));
     }
 
     @Override
-    public void setValue(Geometry value) {
+    public GeometryValue setValue(Geometry value) {
         setGeometry(value);
+        return this;
     }
 
     @Override
@@ -72,17 +82,36 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override
     public String toString() {
-        return String.format("GeometryValue [value=%s, unit=%s]", getValue(), getUnit());
+        return String
+                .format("GeometryValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
     @Override
@@ -91,8 +120,14 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
     }
 
     @Override
-    public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
     }
 
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
 }

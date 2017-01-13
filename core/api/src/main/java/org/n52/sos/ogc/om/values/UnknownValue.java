@@ -28,13 +28,16 @@
  */
 package org.n52.sos.ogc.om.values;
 
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ogc.UoM;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * Unknown value for observation if type is unknown
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class UnknownValue implements Value<Object> {
     /**
@@ -50,21 +53,22 @@ public class UnknownValue implements Value<Object> {
     /**
      * Unit of measure
      */
-    private String unit;
+    private UoM unit;
 
     /**
      * Constructor
-     * 
+     *
      * @param value
-     *            Measurement value
+     *              Measurement value
      */
     public UnknownValue(Object value) {
         this.value = value;
     }
 
     @Override
-    public void setValue(Object value) {
+    public UnknownValue setValue(Object value) {
         this.value = value;
+        return this;
     }
 
     @Override
@@ -74,17 +78,36 @@ public class UnknownValue implements Value<Object> {
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override
     public String toString() {
-        return String.format("UnknownValue [value=%s, unit=%s]", getValue(), getUnit());
+        return String
+                .format("UnknownValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
     @Override
@@ -93,7 +116,15 @@ public class UnknownValue implements Value<Object> {
     }
 
     @Override
-    public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
     }
+
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
 }

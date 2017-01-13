@@ -83,6 +83,8 @@ public class ProfileImpl implements Profile {
     private Map<String, Boolean> encodeProcedureInObservation = new HashMap<String, Boolean>(0);
 
     private Map<String, String> defaultObservationTypesForEncoding = new HashMap<String, String>(0);
+    
+    private String definition;
 
     public ProfileImpl() {
 
@@ -96,6 +98,10 @@ public class ProfileImpl implements Profile {
     @Override
     public boolean isActiveProfile() {
         return activeProfile;
+    }
+
+    public void setActiveProfile(boolean activeProfile) {
+        this.activeProfile = activeProfile;
     }
 
     @Override
@@ -125,10 +131,6 @@ public class ProfileImpl implements Profile {
             this.identifier = JavaHelper.generateID(Long.toString(System.currentTimeMillis()));
             LOGGER.warn("The identifier is null or empty! This generated identifier {} is set!", this.identifier);
         }
-    }
-
-    public void setActiveProfile(boolean activeProfile) {
-        this.activeProfile = activeProfile;
     }
 
     public void setObservationResponseFormat(String observationResponseFormat) {
@@ -287,4 +289,13 @@ public class ProfileImpl implements Profile {
         return noDataPlaceholder != null && !noDataPlaceholder.isEmpty();
     }
 
+    @Override
+    public void setDefinition(String definition) {
+        this.definition = definition;
+    }
+
+    @Override
+    public String getDefinition() {
+        return definition;
+    }
 }

@@ -28,22 +28,23 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.List;
 
 import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmCompositePhenomenon;
+import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.util.Action;
-import org.n52.sos.util.GeometryHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -69,24 +70,19 @@ import com.vividsolutions.jts.geom.Geometry;
  * <li>Procedure &rarr; temporal bounding box</li>
  * <li>Global temporal bounding box</li>
  * </ul>
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
- * 
+ *
  */
 public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ObservationInsertionUpdate.class);
 
     private final InsertObservationRequest request;
 
     public ObservationInsertionUpdate(InsertObservationRequest request) {
-        if (request == null) {
-            String msg =
-                    String.format("Missing argument: '%s': %s", InsertObservationRequest.class.getName(), request);
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
+        checkArgument(request != null, "Missing argument: '%s': %s",
+                      InsertObservationRequest.class.getName(), request);
         this.request = request;
     }
 
@@ -97,8 +93,7 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
         // SensorInsertionInMemoryCacheUpdate)
         // Always update the javadoc when changing this method!
         for (OmObservation observation : request.getObservations()) {
-            final String observableProperty =
-                    observation.getObservationConstellation().getObservableProperty().getIdentifier();
+            AbstractPhenomenon observableProperty = observation.getObservationConstellation().getObservableProperty();
             final String observationType = observation.getObservationConstellation().getObservationType();
             final String procedure = observation.getObservationConstellation().getProcedure().getIdentifier();
             final Time phenomenonTime = observation.getPhenomenonTime();
@@ -160,20 +155,46 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addProcedureForOffering(offering, procedure);
                 }
                 cache.addOfferingForProcedure(procedure, offering);
-                // observable property
-                cache.addOfferingForObservableProperty(observableProperty, offering);
-                cache.addObservablePropertyForOffering(offering, observableProperty);
                 // observation type
                 cache.addObservationTypesForOffering(offering, observationType);
                 // envelopes/bounding boxes (spatial and temporal)
                 cache.updatePhenomenonTimeForOffering(offering, phenomenonTime);
                 cache.updateResultTimeForOffering(offering, resultTime);
                 cache.updateEnvelopeForOffering(offering, envelope);
-                if (spatialFitleringProfileEnvelope != null && !envelope.isNull()) {
+                if (!envelope.isNull()) {
                     cache.updateSpatialFilteringProfileEnvelopeForOffering(offering, spatialFitleringProfileEnvelope);
                 }
             }
 
+            updateObservableProperties(cache, observableProperty, procedure);
+        }
+    }
+
+    private void updateObservableProperties(WritableContentCache cache,
+                                            AbstractPhenomenon observableProperty,
+                                            String procedure) {
+        // procedure <-> observable property
+        cache.addProcedureForObservableProperty(observableProperty.getIdentifier(), procedure);
+        cache.addObservablePropertyForProcedure(procedure, observableProperty.getIdentifier());
+
+        // offering <-> observable property
+        for (String offering : request.getOfferings()) {
+            cache.addOfferingForObservableProperty(observableProperty.getIdentifier(), offering);
+            cache.addObservablePropertyForOffering(offering, observableProperty.getIdentifier());
+        }
+
+        if (observableProperty instanceof OmCompositePhenomenon) {
+            OmCompositePhenomenon parent = (OmCompositePhenomenon) observableProperty;
+            cache.addCompositePhenomenon(parent.getIdentifier());
+            cache.addCompositePhenomenonForProcedure(procedure, parent.getIdentifier());
+            for (String offering : request.getOfferings()) {
+                cache.addCompositePhenomenonForOffering(offering, parent.getIdentifier());
+            }
+
+            for (OmObservableProperty child : parent) {
+                cache.addObservablePropertyForCompositePhenomenon(parent.getIdentifier(), child.getIdentifier());
+                cache.addCompositePhenomenonForObservableProperty(child.getIdentifier(), parent.getIdentifier());
+            }
         }
     }
 }

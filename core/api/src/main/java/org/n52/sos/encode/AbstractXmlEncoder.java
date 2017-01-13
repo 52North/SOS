@@ -28,55 +28,44 @@
  */
 package org.n52.sos.encode;
 
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
-import org.n52.sos.w3c.SchemaLocation;
-
-import com.google.common.collect.Sets;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 /**
  * @since 4.0.0
  * 
  * @param <S>
  */
-public abstract class AbstractXmlEncoder<S> implements Encoder<XmlObject, S> {
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-    }
+public abstract class AbstractXmlEncoder<S> extends AbstractSpecificXmlEncoder<XmlObject, S> {
 
     @Override
     public XmlObject encode(S element) throws OwsExceptionReport {
         return encode(element, new EnumMap<HelperValues, String>(HelperValues.class));
     }
-
-    @Override
-    public MediaType getContentType() {
-        return MediaTypes.TEXT_XML;
+    
+    
+    protected static XmlObject encodeGML311(Object o) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, o);
     }
 
-    @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet();
+    protected static XmlObject encodeGML311(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, o, helperValues);
+    }
+    
+    protected static XmlObject encodeGML32(Object o) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o);
     }
 
-    @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.emptySet();
+    protected static XmlObject encodeGML32(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
     }
-
+    
 }

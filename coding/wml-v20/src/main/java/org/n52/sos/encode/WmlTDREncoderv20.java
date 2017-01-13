@@ -106,7 +106,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     private static final Set<EncoderKey> ENCODER_KEYS = createEncoderKeys();
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.ObservationType, Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR));;
+            SupportedTypeKey.ObservationType, Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -134,6 +134,11 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
         return Collections.unmodifiableMap(SUPPORTED_TYPES);
     }
+    
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
+        return Collections.singletonMap(WaterMLConstants.NS_WML_20_DR, getSupportedTypes().get(SupportedTypeKey.ObservationType));
+    }
 
     @Override
     public Set<String> getConformanceClasses() {
@@ -159,7 +164,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(WaterMLConstants.WML_20_SCHEMA_LOCATION, WaterMLConstants.WML_20_DR_SCHEMA_LOCATION,
-                GmlCoverageConstants.GML_COVERAGE_10_SCHEMA_LOCATION);
+                GmlCoverageConstants.GML_COVERAGE_10_SCHEMA_LOCATION, WaterMLConstants.WML_20_MP_SCHEMA_LOCATION);
     }
 
     @Override
@@ -194,6 +199,10 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         } else {
             super.encode(objectToEncode, outputStream, encodingValues);
         }
+    }
+    
+    protected OMObservationType createOmObservationType() {
+        return OMObservationType.Factory.newInstance(getXmlOptions());
     }
 
     @Override

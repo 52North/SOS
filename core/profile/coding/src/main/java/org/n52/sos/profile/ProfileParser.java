@@ -75,7 +75,7 @@ public class ProfileParser {
             profile.setEncodingNamespaceForFeatureOfInterest(sosProfile
                     .getEncodingNamespaceForFeatureOfInterestEncoding());
         }
-
+        profile.setDefinition(sosProfileDoc.xmlText());
         return profile;
     }
 

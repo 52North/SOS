@@ -29,6 +29,9 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.joda.time.DateTime;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
 
 /**
  * Hold min and max obs time 
@@ -38,26 +41,70 @@ import org.joda.time.DateTime;
  *
  */
 public class TimeExtrema {
-    private DateTime minTime;
-    private DateTime maxTime;
+    
+    private DateTime minPhenomenonTime;
+    private DateTime maxPhenomenonTime;
+    private DateTime minResultTime;
+    private DateTime maxResultTime;
 
-    public DateTime getMinTime() {
-        return minTime;
+    public DateTime getMinPhenomenonTime() {
+        return minPhenomenonTime;
     }
 
-    public void setMinTime(DateTime minTime) {
-        this.minTime = minTime;
+    public void setMinPhenomenonTime(DateTime minPhenomenonTime) {
+        this.minPhenomenonTime = minPhenomenonTime;
     }
 
-    public DateTime getMaxTime() {
-        return maxTime;
+    public DateTime getMaxPhenomenonTime() {
+        return maxPhenomenonTime;
     }
 
-    public void setMaxTime(DateTime maxTime) {
-        this.maxTime = maxTime;
+    public void setMaxPhenomenonTime(DateTime maxPhenomenonTime) {
+        this.maxPhenomenonTime = maxPhenomenonTime;
+    }
+
+    public DateTime getMinResultTime() {
+        return minResultTime;
+    }
+
+    public void setMinResultTime(DateTime minResultTime) {
+        this.minResultTime = minResultTime;
+    }
+
+    public DateTime getMaxResultTime() {
+        return maxResultTime;
+    }
+
+    public void setMaxResultTime(DateTime maxResultTime) {
+        this.maxResultTime = maxResultTime;
+    }
+    
+    public Time getPhenomenonTime() {
+        if (isSetPhenomenonTimes()) {
+            if (getMinPhenomenonTime().equals(getMaxPhenomenonTime())) {
+                return new TimeInstant(getMaxPhenomenonTime());
+            }
+            return new TimePeriod(getMinPhenomenonTime(), getMaxPhenomenonTime());
+            }
+        return null;
+    }
+    
+    public Time getResultTime() {
+        if (isSetResultTimes()) {
+            return new TimeInstant(getMaxResultTime());
+        }
+        return null;
+    }
+    
+    public boolean isSetPhenomenonTimes() {
+        return getMinPhenomenonTime() != null && getMaxPhenomenonTime() != null;
+    }
+
+    public boolean isSetResultTimes() {
+        return getMinResultTime()!= null && getMaxResultTime() != null;
     }
     
     public boolean isSetTimes() {
-        return getMinTime() != null && getMaxTime() != null;
+        return isSetPhenomenonTimes() && isSetResultTimes();
     }
 }

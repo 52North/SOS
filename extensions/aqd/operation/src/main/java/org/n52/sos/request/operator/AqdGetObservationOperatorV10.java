@@ -232,6 +232,8 @@ public class AqdGetObservationOperatorV10 extends
             exceptions.add(owse);
         }
 
+        request.setCheckForDuplicity(false);
+        
         checkExtensions(request, exceptions);
         exceptions.throwIfNotEmpty();
 

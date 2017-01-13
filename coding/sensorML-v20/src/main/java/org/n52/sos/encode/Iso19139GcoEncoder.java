@@ -39,6 +39,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gco.CodeListValueType;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.iso.GcoConstants;
+import org.n52.sos.iso.gco.AbstractRole;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
@@ -60,13 +61,13 @@ import com.google.common.collect.Sets;
  * @since 4.2.0
  *
  */
-public class Iso19139GcoEncoder extends AbstractXmlEncoder<Object> {
+public class Iso19139GcoEncoder extends AbstractIso19139GcoEncoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Iso19139GcoEncoder.class);
 
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(encoderKeysForElements(GcoConstants.NS_GCO,
-            Role.class));
+            Role.class, org.n52.sos.iso.gco.Role.class, AbstractRole.class));
 
     public Iso19139GcoEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -97,8 +98,8 @@ public class Iso19139GcoEncoder extends AbstractXmlEncoder<Object> {
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
             UnsupportedEncoderInputException {
         XmlObject encodedObject = null;
-        if (element instanceof Role) {
-            encodedObject = encodeRole((Role) element);
+        if (element instanceof AbstractRole) {
+            encodedObject = encodeRole((AbstractRole) element);
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
@@ -109,7 +110,7 @@ public class Iso19139GcoEncoder extends AbstractXmlEncoder<Object> {
         return encodedObject;
     }
 
-    private XmlObject encodeRole(Role role) {
+    private XmlObject encodeRole(AbstractRole role) {
         CodeListValueType circ =
                 CodeListValueType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         circ.setStringValue(role.getValue());
@@ -117,5 +118,5 @@ public class Iso19139GcoEncoder extends AbstractXmlEncoder<Object> {
         circ.setCodeListValue(role.getCodeListValue());
         return circ;
     }
-
+    
 }

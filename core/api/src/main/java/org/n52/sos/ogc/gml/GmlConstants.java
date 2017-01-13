@@ -100,6 +100,8 @@ public interface GmlConstants extends Constants {
     String EN_ABSTRACT_TIME_OBJECT = "_TimeObject";
 
     String EN_ABSTRACT_TIME_OBJECT_32 = "AbstractTimeObject";
+    
+    String EN_ABSTRACT_GEOMETRY_32 = "AbstractGeometry";
 
     String EN_ABSTRACT_ENCODING = "_Encoding";
 
@@ -134,6 +136,8 @@ public interface GmlConstants extends Constants {
     String EN_MULTIPOINT = "MultiPoint";
 
     String EN_POLYGON = "Polygon";
+    
+    String EN_MULTI_POINT = "MultiPoint";
 
     String EN_LOWER_CORNER = "lowerCorner";
 
@@ -142,6 +146,8 @@ public interface GmlConstants extends Constants {
     String EN_FEATURE_MEMBER = "featureMember";
 
     String EN_IDENTIFIER = "identifier";
+    
+    String EN_META_DATA_PROPERTY = "metaDataProperty";
 
     /* attribute names in GML */
 
@@ -171,6 +177,9 @@ public interface GmlConstants extends Constants {
 
     QName QN_POLYGON_32 = new QName(NS_GML_32, EN_POLYGON, NS_GML_PREFIX);
 
+    QName QN_MULTI_POINT_32 = new QName(NS_GML_32, EN_MULTI_POINT, NS_GML_PREFIX);
+
+    
     QName QN_TIME_INSTANT = new QName(NS_GML, EN_TIME_INSTANT, NS_GML_PREFIX);
 
     QName QN_TIME_PERIOD = new QName(NS_GML, EN_TIME_PERIOD, NS_GML_PREFIX);
@@ -209,6 +218,8 @@ public interface GmlConstants extends Constants {
     QName QN_ABSTRACT_FEATURE_GML_32 = new QName(NS_GML_32, EN_ABSTRACT_FEATURE_32, NS_GML_PREFIX);
 
     QName QN_ABSTRACT_TIME_32 = new QName(NS_GML_32, EN_ABSTRACT_TIME_OBJECT_32, NS_GML_PREFIX);
+    
+    QName QN_ABSTRACT_GEOMETRY_32 = new QName(NS_GML_32, EN_ABSTRACT_GEOMETRY_32, NS_GML_PREFIX);
 
     QName QN_REMOTE_SCHEMA = new QName(GmlConstants.NS_GML_32, AN_REMOTE_SCHEMA, NS_GML_PREFIX);
 
@@ -240,6 +251,8 @@ public interface GmlConstants extends Constants {
     QName QN_IDENTIFIER_32 = new QName(NS_GML_32, EN_IDENTIFIER, NS_GML_PREFIX);
 
     QName QN_INDETERMINATE_POSITION_32 = new QName(NS_GML_32, AN_INDETERMINATE_POSITION, NS_GML_PREFIX);
+    
+    QName QN_OM_20_META_DATA_PROPERTY_32 = new QName(NS_GML_32, EN_META_DATA_PROPERTY , NS_GML_PREFIX);
 
     /** string constant for ascending sorting order */
     String SORT_ORDER_ASC = SortingOrder.ASC.name();

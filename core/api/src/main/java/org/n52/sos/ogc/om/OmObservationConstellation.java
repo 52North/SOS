@@ -48,7 +48,9 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     /** Identifier of the procedure by which the observation is made */
     private SosProcedureDescription procedure;
 
-    /** Identifier of the observableProperty to which the observation accords to */
+    /**
+     * Identifier of the observableProperty to which the observation accords to
+     */
     private AbstractPhenomenon observableProperty;
 
     /** Identifiers of the offerings to which this observation belongs */
@@ -71,7 +73,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * constructor
-     * 
+     *
      * @param procedure
      *            Procedure by which the observation is made
      * @param observableProperty
@@ -86,10 +88,31 @@ public class OmObservationConstellation implements Serializable, Cloneable {
         this.observableProperty = observableProperty;
         this.featureOfInterest = featureOfInterest;
     }
-
+    
     /**
      * constructor
      * 
+     * @param procedure
+     *            Procedure by which the observation is made
+     * @param observableProperty
+     *            observableProperty to which the observation accords to
+     * @param featureOfInterest
+     *            featureOfInterest to which this observation belongs
+     * @param offerings
+     *            offering to which this observation belongs
+     */
+    public OmObservationConstellation(SosProcedureDescription procedure, AbstractPhenomenon observableProperty,
+            AbstractFeature featureOfInterest, Set<String> offerings) {
+        super();
+        this.procedure = procedure;
+        this.observableProperty = observableProperty;
+        this.offerings = offerings;
+        this.featureOfInterest = featureOfInterest;
+    }
+
+    /**
+     * constructor
+     *
      * @param procedure
      *            Procedure by which the observation is made
      * @param observableProperty
@@ -113,16 +136,20 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Get the procedure
-     * 
+     *
      * @return the procedure
      */
     public SosProcedureDescription getProcedure() {
         return procedure;
     }
+    
+    public String getProcedureIdentifier() {
+        return getProcedure().getIdentifier();
+    }
 
     /**
      * Set the procedure
-     * 
+     *
      * @param procedure
      *            the procedure to set
      * @return this
@@ -134,7 +161,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Get observableProperty
-     * 
+     *
      * @return the observableProperty
      */
     public AbstractPhenomenon getObservableProperty() {
@@ -143,7 +170,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set observableProperty
-     * 
+     *
      * @param observableProperty
      *            the observableProperty to set
      * @return this
@@ -152,10 +179,14 @@ public class OmObservationConstellation implements Serializable, Cloneable {
         this.observableProperty = observableProperty;
         return this;
     }
+    
+    public String getObservablePropertyIdentifier() {
+        return getObservableProperty().getIdentifier();
+    }
 
     /**
      * Get offering
-     * 
+     *
      * @return the offering
      */
     public Set<String> getOfferings() {
@@ -164,7 +195,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set offering
-     * 
+     *
      * @param offerings
      *            the offering to set
      * @return this
@@ -176,7 +207,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     public OmObservationConstellation setOfferings(List<String> offerings) {
         if (this.offerings == null) {
-            this.offerings = new HashSet<String>(0);
+            this.offerings = new HashSet<>(offerings.size());
         }
         this.offerings.addAll(offerings);
         return this;
@@ -184,7 +215,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     public OmObservationConstellation addOffering(String offering) {
         if (offerings == null) {
-            offerings = new HashSet<String>(0);
+            offerings = new HashSet<>(1);
         }
         offerings.add(offering);
         return this;
@@ -192,7 +223,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Get featureOfInterest
-     * 
+     *
      * @return the featureOfInterest
      */
     public AbstractFeature getFeatureOfInterest() {
@@ -201,7 +232,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set featureOfInterest
-     * 
+     *
      * @param featureOfInterest
      *            the featureOfInterest to set
      * @return this
@@ -210,10 +241,14 @@ public class OmObservationConstellation implements Serializable, Cloneable {
         this.featureOfInterest = featureOfInterest;
         return this;
     }
+    
+    public String getFeatureOfInterestIdentifier() {
+        return getFeatureOfInterest().getIdentifier();
+    }
 
     /**
      * Get observation type
-     * 
+     *
      * @return the observationType
      */
     public String getObservationType() {
@@ -222,7 +257,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set observation type
-     * 
+     *
      * @param observationType
      *            the observationType to set
      * @return this
@@ -242,17 +277,18 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.procedure, Constants.HASH_CODE_19,this.observableProperty,
-                                this.offerings, Constants.HASH_CODE_43,this.featureOfInterest);
+        return Objects.hashCode(this.procedure, Constants.HASH_CODE_19, this.observableProperty, this.offerings,
+                Constants.HASH_CODE_43, this.featureOfInterest);
     }
 
     /**
      * Check if constellations are equal excluding observableProperty
-     * 
+     *
      * @param toCheckObsConst
      *            Observation constellation to chek
      * @return true if equals
      */
+    @Deprecated
     public boolean equalsExcludingObsProp(OmObservationConstellation toCheckObsConst) {
         return (procedure.equals(toCheckObsConst.getProcedure())
                 && featureOfInterest.equals(toCheckObsConst.getFeatureOfInterest())
@@ -260,10 +296,17 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     }
 
-    private boolean checkObservationTypeForMerging() {
-        return (!observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT)
-                && !observationType.equals(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION) && !observationType
-                    .equals(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION));
+    /**
+     * TODO change if currently not supported types could be merged.
+     * 
+     * @return <code>true</code>, if the observation can be merged
+     */
+    @Deprecated
+    public boolean checkObservationTypeForMerging() {
+        return (isSetObservationType() && !OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observationType)
+                && !OmConstants.OBS_TYPE_COMPLEX_OBSERVATION.equals(observationType)
+                && !OmConstants.OBS_TYPE_OBSERVATION.equals(observationType)
+                && !OmConstants.OBS_TYPE_UNKNOWN.equals(observationType));
     }
 
     public boolean isSetObservationType() {

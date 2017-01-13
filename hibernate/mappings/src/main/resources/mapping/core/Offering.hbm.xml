@@ -43,5 +43,39 @@
                 <comment>For later use by the SOS. Indicator if this offering should not be provided by the SOS.</comment>
             </column>
         </property>
+        <set name="childs" table="offeringrelation" inverse="false" fetch="join">
+			<comment>Relation table to store offering hierarchies. E.g. define a parent in a query and all childs are also contained in the response.  Mapping file: mapping/core/Offering.hbm.xml</comment>
+		    <key>
+		        <column name="parentOfferingId" not-null="true">
+	                	<comment>Foreign Key (FK) to the related parent offering. Contains "offering".offeringid</comment>
+	                </column>
+		    </key>
+		    <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="offeringChildFk">
+		        <column name="childOfferingId" not-null="true">
+	                	<comment>Foreign Key (FK) to the related child offering. Contains "offering".offeringid</comment>
+	                </column>
+		    </many-to-many>
+		</set>
+		<set name="parents" table="offeringrelation" inverse="false" fetch="join">
+		    <key>
+		        <column name="childOfferingId" not-null="true" />
+		    </key>
+		    <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="offeringParenfFk">
+		        <column name="parentOfferingId" not-null="true" />
+		    </many-to-many>
+		</set>
+		<set name="observationTypes" table="offeringallowedobservationtype" inverse="false" fetch="select">
+        	<comment>Table to store relations between offering and allowed observationTypes, defined in InsertSensor request. Mapping file: mapping/transactional/TOffering.hbm.xml</comment>
+            <key>
+                <column name="offeringId" not-null="true">
+	            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+	            </column>
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.ObservationType" foreign-key="offeringObservationTypeFk">
+                <column name="observationTypeId" not-null="true">
+            	<comment>Foreign Key (FK) to the related observationType. Contains "observationType".observationTypeId</comment>
+            </column>
+            </many-to-many>
+        </set>
     </class>
 </hibernate-mapping>

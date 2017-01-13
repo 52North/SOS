@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos</artifactId>
-        <version>4.3.7-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
     <artifactId>extensions</artifactId>
     <packaging>pom</packaging>
@@ -15,5 +15,6 @@
         <module>gda</module>
         <module>do</module>
         <module>inspire</module>
+        <module>related-offering</module>
     </modules>
 </project>

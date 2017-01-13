@@ -36,6 +36,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
  * @since 4.0.0
  * 
  */
+@Deprecated
 public class Parameter implements Serializable, HasValue<Object> {
 
     private static final long serialVersionUID = -5823568610931042841L;

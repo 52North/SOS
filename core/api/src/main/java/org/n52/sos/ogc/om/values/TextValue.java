@@ -28,63 +28,79 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.UoM;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.util.StringHelper;
 
 /**
  * Text measurement representation for observation
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
-public class TextValue implements Value<String> {
+public class TextValue extends SweText implements Value<String> {
     /**
      * serial number
      */
     private static final long serialVersionUID = 7540851661208136333L;
 
     /**
-     * Measurement value
-     */
-    private String value;
-
-    /**
      * Unit of measure
      */
-    private String unit;
+    private UoM unit;
 
     /**
      * constructor
-     * 
+     *
      * @param value
-     *            Measurement value
+     *              Measurement value
      */
     public TextValue(String value) {
-        this.value = value;
+        super();
+        super.setValue(value);
     }
 
     @Override
-    public void setValue(String value) {
-        this.value = value;
+    public TextValue setValue(String value) {
+        super.setValue(value);
+        return this;
     }
-
-    @Override
-    public String getValue() {
-        return value;
-    }
-
+    
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override
     public String toString() {
-        return String.format("TextValue [value=%s, unit=%s]", getValue(), getUnit());
+        return String
+                .format("TextValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
     @Override
@@ -93,7 +109,14 @@ public class TextValue implements Value<String> {
     }
 
     @Override
-    public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
     }
 }

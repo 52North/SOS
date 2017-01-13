@@ -35,7 +35,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlPosition;
  * @since 4.0.0
  * 
  */
-public class AbstractComponent extends AbstractProcess {
+public class AbstractComponent extends AbstractProcess implements HasPosition<AbstractComponent> {
 
     private static final long serialVersionUID = -7668360974212650356L;
     private SmlPosition position;
@@ -66,5 +66,15 @@ public class AbstractComponent extends AbstractProcess {
 
     public boolean isSetLocation() {
         return location != null;
+    }
+    
+    @Override
+    public String getDescriptionFormat() {
+        return SensorMLConstants.NS_SML;
+    }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return SensorMLConstants.NS_SML;
     }
 }

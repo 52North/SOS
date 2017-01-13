@@ -34,15 +34,20 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
+import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -53,8 +58,9 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  * @since 4.0.0
  */
-public class OmObservation extends AbstractFeature implements Serializable {
+public class OmObservation extends AbstractFeature implements Serializable, AttributeSimpleAttrs {
     private static final long serialVersionUID = 2703347670924921229L;
+    private SimpleAttrs simpleAttrs;
 
     /**
      * ID of this observation; in the standard 52n SOS PostgreSQL database, this
@@ -95,10 +101,10 @@ public class OmObservation extends AbstractFeature implements Serializable {
     /** no data value for the values contained in the result element */
     private String noDataValue;
 
-    /** separator of value tuples, which are contained in the resulte element */
+    /** separator of value tuples, which are contained in the result element */
     private String tupleSeparator;
     
-    /** separator of decimal values, which are contained in the resulte element */
+    /** separator of decimal values, which are contained in the result element */
     private String decimalSeparator;
 
     /**
@@ -106,7 +112,11 @@ public class OmObservation extends AbstractFeature implements Serializable {
      */
     private Set<OmResultQuality> qualityList = Sets.newHashSet();
 
+    private Set<OmObservationContext> relatedObservations = Sets.newHashSet();
+    
     private String additionalMergeIndicator;
+    
+    private String seriesType;
 
     /**
      * constructor
@@ -114,6 +124,21 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public OmObservation() {
         super();
     }
+    
+    @Override
+    public void setSimpleAttrs(SimpleAttrs simpleAttrs) {
+        this.simpleAttrs = simpleAttrs;
+     }
+
+     @Override
+     public SimpleAttrs getSimpleAttrs() {
+         return simpleAttrs;
+     }
+
+     @Override
+     public boolean isSetSimpleAttrs() {
+         return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
+     }
 
     /**
      * Get the observation constellation
@@ -331,19 +356,19 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public void mergeWithObservation(final OmObservation sosObservation) {
         mergeValues(sosObservation.getValue());
         mergeResultTimes(sosObservation);
-        setObservationTypeToSweArrayObservation();
+//        setObservationTypeToSweArrayObservation();
     }
 
     /**
      * Merge this observation with passed observation
      * 
-     * @param sosObservation
+     * @param observationValue
      *            Observation to merge
      */
     public void mergeWithObservation(ObservationValue<?> observationValue) {
         mergeValues(observationValue);
         // mergeResultTimes(sosObservation);
-        setObservationTypeToSweArrayObservation();
+//        setObservationTypeToSweArrayObservation();
     }
 
     /**
@@ -376,7 +401,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
      * @param observationValue
      *            Observation to merge
      */
-    private void mergeValues(final ObservationValue<?> observationValue) {
+    protected void mergeValues(final ObservationValue<?> observationValue) {
         TVPValue tvpValue;
         if (getValue() instanceof SingleObservationValue) {
             tvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>) value);
@@ -516,7 +541,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
      */
     public void addParameter(NamedValue<?> namedValue) {
         if (parameter == null) {
-            parameter = Sets.newHashSet();
+            parameter = Sets.newTreeSet();
         }
         parameter.add(namedValue);
     }
@@ -544,6 +569,38 @@ public class OmObservation extends AbstractFeature implements Serializable {
             }
         }
         return false;
+    }
+    
+    /**
+     * Remove spatial filtering profile parameter
+     */
+    public void removeSpatialFilteringProfileParameter() {
+        removeParameter(getSpatialFilteringProfileParameter());
+    }
+
+    /**
+     * Remove parameter from list
+     * 
+     * @param parameter
+     *            Parameter to remove
+     */
+    public void removeParameter(NamedValue<?> parameter) {
+        getParameter().remove(parameter);
+    }
+    
+    /**
+     * Add sampling geometry to observation
+     * 
+     * @param samplingGeometry
+     *            The sampling geometry to set
+     * @return this
+     */
+    public OmObservation addSpatialFilteringProfileParameter(Geometry samplingGeometry) {
+        final NamedValue<Geometry> namedValue = new NamedValue<>();
+        namedValue.setName(new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY));
+        namedValue.setValue(new GeometryValue(samplingGeometry));
+        addParameter(namedValue);
+        return this;
     }
 
     /**
@@ -574,17 +631,158 @@ public class OmObservation extends AbstractFeature implements Serializable {
                 && namedValue.getName().getHref().equals(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)
                 && namedValue.getValue() instanceof GeometryValue;
     }
+    
+    /**
+     * Check whether height parameter is set
+     * 
+     * @return <code>true</code>, if height parameter is set
+     */
+    public boolean isSetHeightParameter() {
+        if (isSetParameter()) {
+            for (NamedValue<?> namedValue : getParameter()) {
+                if (isHeightParameter(namedValue)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
+    /**
+     * Get height parameter
+     * 
+     * @return Height parameter
+     */
+    @SuppressWarnings("unchecked")
+    public NamedValue<Double> getHeightParameter() {
+        if (isSetParameter()) {
+            for (NamedValue<?> namedValue : getParameter()) {
+                if (isHeightParameter(namedValue)) {
+                    return (NamedValue<Double>) namedValue;
+                }
+            }
+        }
+        return null;
+    }
+    
+    private boolean isHeightParameter(NamedValue<?> namedValue) {
+        return namedValue.isSetName() && namedValue.getName().isSetHref()
+                && (namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_HEIGHT_URL)
+                 || namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_HEIGHT)
+                 || namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_ELEVATION))
+                && namedValue.getValue() instanceof QuantityValue;
+    }
+
+    /**
+     * Check whether depth parameter is set
+     * 
+     * @return <code>true</code>, if depth parameter is set
+     */
+    public boolean isSetDepthParameter() {
+        if (isSetParameter()) {
+            for (NamedValue<?> namedValue : getParameter()) {
+                if (isDepthParameter(namedValue)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get depth parameter
+     * 
+     * @return Depth parameter
+     */
+    @SuppressWarnings("unchecked")
+    public NamedValue<Double> getDepthParameter() {
+        if (isSetParameter()) {
+            for (NamedValue<?> namedValue : getParameter()) {
+                if (isHeightDepthParameter(namedValue)) {
+                    return (NamedValue<Double>) namedValue;
+                }
+            }
+        }
+        return null;
+    }
+    
+    private boolean isDepthParameter(NamedValue<?> namedValue) {
+        return namedValue.isSetName() && namedValue.getName().isSetHref()
+                && (namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_DEPTH_URL)
+                || namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_DEPTH))
+                && namedValue.getValue() instanceof QuantityValue;
+    }
+    
+    public boolean isSetHeightDepthParameter() {
+        if (isSetParameter()) {
+            for (NamedValue<?> namedValue : getParameter()) {
+                if (isHeightDepthParameter(namedValue)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public NamedValue<Double> getHeightDepthParameter() {
+        if (isSetDepthParameter()) {
+            return getDepthParameter();
+        }
+        return getHeightParameter();
+    }
+
+    private boolean isHeightDepthParameter(NamedValue<?> namedValue) {
+        return isHeightParameter(namedValue) || isDepthParameter(namedValue);
+    }
+    
     public OmObservation cloneTemplate() {
-        OmObservation clone = new OmObservation();
+       return cloneTemplate(new OmObservation());
+    }
+    
+    public OmObservation cloneTemplate(boolean withIdentifierNameDesription) {
+        OmObservation clonedTemplate = cloneTemplate(new OmObservation());
+        if (withIdentifierNameDesription) {
+            clonedTemplate.setIdentifier(this.getIdentifier());
+            clonedTemplate.setName(this.getName());
+            clonedTemplate.setDescription(this.getDescription());
+            
+        }
+        return clonedTemplate;
+     }
+    
+    protected OmObservation cloneTemplate(OmObservation clone) {
         clone.setObservationConstellation(this.getObservationConstellation());
-        clone.setParameter(this.getParameter());
+        clone.setMetaDataProperty(this.getMetaDataProperty());
+        if (this.getParameter() != null) {
+            clone.setParameter(Sets.newTreeSet(this.getParameter()));
+        }
+        clone.setRelatedObservations(this.getRelatedObservations());
         clone.setResultType(this.getResultType());
         clone.setTokenSeparator(this.getTokenSeparator());
         clone.setTupleSeparator(this.getTupleSeparator());
         clone.setDecimalSeparator(this.getDecimalSeparator());
+        clone.setSeriesType(this.getSeriesType());
         return clone;
     }
+    
+    public OmObservation copyTo(OmObservation copyOf) {
+        super.copyTo(copyOf);
+        copyOf.setObservationID(getObservationID());
+        copyOf.setResultTime(getResultTime());
+        copyOf.setValidTime(getValidTime());
+        copyOf.setObservationConstellation(getObservationConstellation());
+        copyOf.setResultType(getResultType());
+        copyOf.setParameter(getParameter());
+        copyOf.setValue(getValue());
+        copyOf.setTokenSeparator(getTokenSeparator());
+        copyOf.setNoDataValue(getNoDataValue());
+        copyOf.setTupleSeparator(getTupleSeparator());
+        copyOf.setDecimalSeparator(getDecimalSeparator());
+        copyOf.setResultQuality(getResultQuality());
+        copyOf.setRelatedObservations(getRelatedObservations());
+        copyOf.setAdditionalMergeIndicator(getAdditionalMergeIndicator());
+        return copyOf;
+    } 
 
     @Override
     public String getGmlId() {
@@ -628,6 +826,55 @@ public class OmObservation extends AbstractFeature implements Serializable {
         return CollectionHelper.isNotEmpty(getResultQuality());
     }
 
+    /**
+     * Get related observations
+     * 
+     * @return the relatedObservations
+     */
+    public Set<OmObservationContext> getRelatedObservations() {
+        return relatedObservations;
+    }
+
+    /**
+     * Set related observations
+     * 
+     * @param relatedObservations
+     *            the relatedObservations to set
+     */
+    public void setRelatedObservations(Set<OmObservationContext> relatedObservations) {
+        this.relatedObservations.clear();
+        this.relatedObservations.addAll(relatedObservations);
+    }
+
+    /**
+     * Add related observations
+     * 
+     * @param relatedObservations
+     *            the relatedObservations to set
+     */
+    public void addRelatedObservations(Set<OmObservationContext> relatedObservations) {
+        this.relatedObservations.addAll(relatedObservations);
+    }
+
+    /**
+     * Add a related observation
+     * 
+     * @param relatedObservations
+     *            the relatedObservations to set
+     */
+    public void addRelatedObservation(OmObservationContext relatedObservation) {
+        this.relatedObservations.add(relatedObservation);
+    }
+
+    /**
+     * Check if related observations are set
+     * 
+     * @return <code>true</code>, if related observations are set
+     */
+    public boolean isSetRelatedObservations() {
+        return CollectionHelper.isNotEmpty(getRelatedObservations());
+    }
+
     public OmObservation setAdditionalMergeIndicator(String additionalMergeIndicator) {
         this.additionalMergeIndicator = additionalMergeIndicator;
         return this;
@@ -649,7 +896,24 @@ public class OmObservation extends AbstractFeature implements Serializable {
                 || (!isSetAdditionalMergeIndicator() && observation.isSetAdditionalMergeIndicator())) {
             merge = false;
         }
-        return getObservationConstellation().equals(observation.getObservationConstellation()) && merge;
+        return getObservationConstellation().equals(observation.getObservationConstellation()) && merge && getObservationConstellation().checkObservationTypeForMerging();
     }
 
+    /**
+     * @return the seriesType
+     */
+    public String getSeriesType() {
+        return seriesType;
+    }
+
+    /**
+     * @param seriesType the seriesType to set
+     */
+    public void setSeriesType(String seriesType) {
+        this.seriesType = seriesType;
+    }
+    
+    public boolean isSetSeriesType() {
+        return !Strings.isNullOrEmpty(getSeriesType());
+    }
 }

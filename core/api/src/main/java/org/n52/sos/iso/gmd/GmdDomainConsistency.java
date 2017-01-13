@@ -28,10 +28,11 @@
  */
 package org.n52.sos.iso.gmd;
 
+import org.n52.sos.iso.gco.AbtractGmd;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.quality.OmResultQuality;
 
-public abstract class GmdDomainConsistency implements OmResultQuality {
+public abstract class GmdDomainConsistency extends AbtractGmd implements OmResultQuality {
 
     public static GmdConformanceResult dataCapture(boolean pass) {
         return new GmdConformanceResult(pass, GmdSpecification.dataCapture());

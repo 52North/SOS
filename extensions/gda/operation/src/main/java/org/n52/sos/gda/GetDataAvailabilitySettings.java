@@ -43,6 +43,8 @@ public class GetDataAvailabilitySettings implements SettingDefinitionProvider {
 
     public static final String FORCE_GDA_VALUE_COUNT = "operation.gda.forceValueCount";
     
+    public static final String FORCE_GDA_20_RESPONSE = "operation.gda.forceVersion20";
+    
     public static final BooleanSettingDefinition FORCE_GDA_VALUE_COUNT_DEFINITION = new BooleanSettingDefinition()
                 .setGroup(MiscSettings.GROUP)
                 .setOrder(ORDER_17)
@@ -52,8 +54,18 @@ public class GetDataAvailabilitySettings implements SettingDefinitionProvider {
                 .setDescription(
                         "Should the SOS include the value count for each timeseries in the GetDataAvailability response?");
     
-    private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(FORCE_GDA_VALUE_COUNT_DEFINITION);
+    public static final BooleanSettingDefinition FORCE_GDA_20_RESPONSE_DEFINITION = new BooleanSettingDefinition()
+            .setGroup(MiscSettings.GROUP)
+            .setOrder(ORDER_18)
+            .setKey(FORCE_GDA_20_RESPONSE)
+            .setDefaultValue(false)
+            .setTitle("Should the SOS forced returning DataAvailability v2.0?")
+            .setDescription(
+                    "Should the SOS forced returning DataAvailability v2.0?");
     
+    private static final Set<SettingDefinition<?, ?>> DEFINITIONS =
+            ImmutableSet.<SettingDefinition<?, ?>> of(FORCE_GDA_VALUE_COUNT_DEFINITION, FORCE_GDA_20_RESPONSE_DEFINITION);
+
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
         return Collections.unmodifiableSet(DEFINITIONS);

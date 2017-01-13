@@ -32,12 +32,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
+import org.n52.sos.ogc.sensorML.elements.SmlConnection;
 
-public class ProcessChain extends AbstractProcess implements HasComponents<ProcessChain> {
+public class ProcessChain extends AbstractProcess implements HasComponents<ProcessChain>, HasConnections<ProcessChain> {
 
     private static final long serialVersionUID = -3101809476636384049L;
     
     private final List<SmlComponent> components = new ArrayList<SmlComponent>(0);
+    
+    private SmlConnection connections;
 
     @Override
     public List<SmlComponent> getComponents() {
@@ -66,5 +69,33 @@ public class ProcessChain extends AbstractProcess implements HasComponents<Proce
     public boolean isSetComponents() {
         return components != null && !components.isEmpty();
     }
+    
+    public SmlConnection getConnections() {
+        return connections;
+    }
 
+    public ProcessChain setConnections(SmlConnection connections) {
+        this.connections = connections;
+        return this;
+    }
+    
+    public boolean isSetConnections() {
+        return getConnections() != null && getConnections().isSetConnections();
+    }
+
+    @Override
+    public boolean isAggragation() {
+        return true;
+    }
+    
+    @Override
+    public String getDescriptionFormat() {
+        return SensorMLConstants.NS_SML;
+    }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return SensorMLConstants.NS_SML;
+    }
+    
 }

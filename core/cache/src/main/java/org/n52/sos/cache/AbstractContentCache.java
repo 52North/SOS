@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -51,7 +52,10 @@ import com.google.common.base.Objects;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
+
+import org.slf4j.Logger;
 
 /**
  * Abstract {@code ContentCache} implementation that encapsulates the needed
@@ -186,6 +190,29 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(new HashSet<T>(set));
+        }
+    }
+    
+    /**
+     * Creates a unmodifiable copy of the specified collection of sets.
+     *
+     * @param <T>
+     *            the element type
+     * @param set
+     *            the set
+     *
+     * @return a unmodifiable copy
+     */
+    protected static <T> Set<T> copyOf(Collection<Set<T>> set) {
+        if (set == null) {
+            return Collections.emptySet();
+        } else {
+            HashSet<T> newHashSet = Sets.newHashSet();
+            Iterator<Set<T>> iterator = set.iterator();
+            while (iterator.hasNext()) {
+                newHashSet.addAll((Set<T>) iterator.next());
+            }
+            return Collections.unmodifiableSet(newHashSet);
         }
     }
 
@@ -335,7 +362,27 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
             throw new NullPointerException(name + " may not be null!");
         }
     }
-
+    
+    /**
+     * Remove value from map or complete entry if values for key are empty
+     * 
+     * @param map
+     *            Map to check
+     * @param value
+     *            Value to remove
+     */
+    protected static <K, V> void removeValue(Map<K, Set<String>> map, String value) {
+        for (K key : map.keySet()) {
+            if (map.get(key).contains(value)) {
+                if (map.get(key).size() > 1) {
+                    map.get(key).remove(value);
+                } else {
+                    map.remove(key);
+                }
+            }
+        }
+    }
+    
     /**
      * @return the updateTime
      */
@@ -373,6 +420,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     private SetMultiMap<String, String> childFeaturesForFeatureOfInterest = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> childProceduresForProcedures = newSynchronizedSetMultiMap();
+    
+    private SetMultiMap<String, String> childOfferingsForOfferings = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> compositePhenomenonForOfferings = newSynchronizedSetMultiMap();
 
@@ -399,6 +448,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     private SetMultiMap<String, String> parentFeaturesForFeaturesOfInterest = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> parentProceduresForProcedures = newSynchronizedSetMultiMap();
+    
+    private SetMultiMap<String, String> parentOfferingsForOfferings = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> proceduresForFeaturesOfInterest = newSynchronizedSetMultiMap();
 
@@ -460,6 +511,17 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     private BiMap<String, String> offeringIdentifierHumanReadableName = newSynchronizedBiMap();
     
 //    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
+    
+    private Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
+    
+    private Map<ComponentAggregation, Set<String>> componentAggregationProcedures = newSynchronizedMap();
+    
+    private Map<String, Set<String>> typeOfProceduresMap = newSynchronizedMap();
+    
+    protected static Logger getLogger() {
+        return null;
+    }
+    
     
     /**
      * @return the relating offering -> max phenomenon time
@@ -698,12 +760,26 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected SetMultiMap<String, String> getParentProceduresForProceduresMap() {
         return this.parentProceduresForProcedures;
     }
-
+    
     /**
      * @return the relating procedure -> child procedure
      */
     protected SetMultiMap<String, String> getChildProceduresForProceduresMap() {
         return this.childProceduresForProcedures;
+    }
+    
+    /**
+     * @return the relating offering -> parent offering
+     */
+    protected SetMultiMap<String, String> getParentOfferingsForOfferingsMap() {
+        return this.parentOfferingsForOfferings;
+    }
+    
+    /**
+     * @return the relating offering -> child offering
+     */
+    protected SetMultiMap<String, String> getChildOfferingsForOfferingsMap() {
+        return this.childOfferingsForOfferings;
     }
 
     /**
@@ -812,6 +888,18 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected Map<String, String> getOfferingHumanReadableNameForIdentifier() {
     	return offeringIdentifierHumanReadableName.inverse();
     }
+    
+    protected Map<TypeInstance, Set<String>> getTypeIntanceProcedureMap() {
+        return typeInstanceProcedures;
+    }
+    
+    protected Map<ComponentAggregation, Set<String>> getComponentAggregationProcedureMap() {
+        return componentAggregationProcedures;
+    }
+    
+    protected Map<String, Set<String>> getTypeOfProcedureMap() {
+        return typeOfProceduresMap;
+    }
 
     /**
      * @param defaultEpsgCode
@@ -832,18 +920,19 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
         return Objects.hashCode(updateTime,defaultEpsgCode, maxPhenomenonTimeForOfferings, minPhenomenonTimeForOfferings,
                 maxResultTimeForOfferings, minResultTimeForOfferings, maxPhenomenonTimeForProcedures,
                 minPhenomenonTimeForProcedures, allowedObservationTypeForOfferings, childFeaturesForFeatureOfInterest,
-                childProceduresForProcedures, compositePhenomenonForOfferings, featuresOfInterestForOfferings,
+                childProceduresForProcedures, childOfferingsForOfferings, compositePhenomenonForOfferings, featuresOfInterestForOfferings,
                 featuresOfInterestForResultTemplates, observablePropertiesForCompositePhenomenons,
                 observablePropertiesForOfferings, observablePropertiesForProcedures,
                 observationTypesForOfferings, observedPropertiesForResultTemplates, offeringsForObservableProperties, offeringsForProcedures,
-                parentFeaturesForFeaturesOfInterest, parentProceduresForProcedures, proceduresForFeaturesOfInterest,
+                parentFeaturesForFeaturesOfInterest, parentProceduresForProcedures, parentOfferingsForOfferings, proceduresForFeaturesOfInterest,
                 proceduresForObservableProperties, proceduresForOfferings, hiddenChildProceduresForOfferings,
                 relatedFeaturesForOfferings, resultTemplatesForOfferings, rolesForRelatedFeatures,
                 envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest,
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
                 globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats,
                 featureOfInterestIdentifierHumanReadableName, observablePropertyIdentifierHumanReadableName,
-				procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName);
+		procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName,
+		typeInstanceProcedures, componentAggregationProcedures, typeOfProceduresMap);
     }
 
     @Override
@@ -865,6 +954,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.childFeaturesForFeatureOfInterest,
                             other.getChildFeaturesForFeaturesOfInterestMap())
                     && Objects.equal(this.childProceduresForProcedures, other.getChildProceduresForProceduresMap())
+                    && Objects.equal(this.childOfferingsForOfferings, other.getChildOfferingsForOfferingsMap())
                     && Objects.equal(this.compositePhenomenonForOfferings,
                             other.getCompositePhenomenonsForOfferingsMap())
                     && Objects.equal(this.featuresOfInterestForOfferings, other.getFeaturesOfInterestForOfferingMap())
@@ -884,6 +974,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.parentFeaturesForFeaturesOfInterest,
                             other.getParentFeaturesForFeaturesOfInterestMap())
                     && Objects.equal(this.parentProceduresForProcedures, other.getParentProceduresForProceduresMap())
+                    && Objects.equal(this.parentOfferingsForOfferings, other.getParentOfferingsForOfferingsMap())
                     && Objects.equal(this.proceduresForFeaturesOfInterest,
                             other.getProceduresForFeaturesOfInterestMap())
                     && Objects.equal(this.proceduresForObservableProperties,
@@ -911,7 +1002,10 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.getFeatureOfInterestIdentifierForHumanReadableName(), other.getFeatureOfInterestIdentifierForHumanReadableName())
                     && Objects.equal(this.getObservablePropertyIdentifierForHumanReadableName(), other.getObservablePropertyIdentifierForHumanReadableName())
                     && Objects.equal(this.getProcedureIdentifierForHumanReadableName(), other.getProcedureIdentifierForHumanReadableName())
-                    && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName());
+                    && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName())
+                    && Objects.equal(this.typeInstanceProcedures, other.getTypeIntanceProcedureMap())
+                    && Objects.equal(this.componentAggregationProcedures, other.getComponentAggregationProcedureMap())
+                    && Objects.equal(this.typeOfProceduresMap, other.getTypeOfProcedureMap());
         }
         return false;
     }

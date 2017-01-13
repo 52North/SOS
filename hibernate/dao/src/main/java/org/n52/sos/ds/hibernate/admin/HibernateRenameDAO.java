@@ -35,7 +35,6 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.RenameDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.NoSuchObservablePropertyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 

@@ -46,17 +46,20 @@ import org.n52.sos.ogc.sos.SosEnvelope;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
+@Deprecated
 public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
 
     @Override
+    @Deprecated
     public Collection<String> getFeatureIDs(SpatialFilter filter, Object connection) throws OwsExceptionReport {
         return Collections.emptyList();
     }
 
     @Override
+    @Deprecated
     public SosEnvelope getEnvelopeForFeatureIDs(Collection<String> featureIDs, Object connection) throws
             OwsExceptionReport {
         return new SosEnvelope(null, getStorageEPSG());
@@ -64,16 +67,21 @@ public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
 
     @Override
     public String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
+        if (samplingFeature.isSetIdentifier()) {
+            return samplingFeature.getIdentifier();
+        }
         return UUID.randomUUID().toString();
     }
 
     @Override
+    @Deprecated
     public AbstractFeature getFeatureByID(String featureID, Object connection, String version)
             throws OwsExceptionReport {
         return new SamplingFeature(new CodeWithAuthority("feature"));
     }
 
     @Override
+    @Deprecated
     public Map<String, AbstractFeature> getFeatures(Collection<String> foiIDs, List<SpatialFilter> list,
             Object connection, String version) throws OwsExceptionReport {
         // TODO Auto-generated method stub
@@ -103,12 +111,12 @@ public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
 
     @Override
     public int getStorageEPSG() {
-        return getStorageEPSG();
+        return super.getStorageEPSG();
     }
 
     @Override
     public int getStorage3DEPSG() {
-        return getStorage3DEPSG();
+        return super.getStorage3DEPSG();
     }
     @Override
     public String getDatasourceDaoIdentifier() {

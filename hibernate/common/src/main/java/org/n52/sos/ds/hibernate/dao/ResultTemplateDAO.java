@@ -36,11 +36,12 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -206,7 +207,7 @@ public class ResultTemplateDAO {
      *             If the requested structure/encoding is invalid
      */
     public void checkOrInsertResultTemplate(final InsertResultTemplateRequest request,
-            final ObservationConstellation observationConstellation, final FeatureOfInterest featureOfInterest,
+            final ObservationConstellation observationConstellation, final AbstractFeatureOfInterest featureOfInterest,
             final Session session) throws OwsExceptionReport {
         final List<ResultTemplate> resultTemplates =
                 getResultTemplateObject(observationConstellation.getOffering().getIdentifier(),
@@ -264,7 +265,7 @@ public class ResultTemplateDAO {
      * @throws OwsExceptionReport
      */
     private void createAndSaveResultTemplate(final InsertResultTemplateRequest request,
-            final ObservationConstellation observationConstellation, final FeatureOfInterest featureOfInterest,
+            final ObservationConstellation observationConstellation, final AbstractFeatureOfInterest featureOfInterest,
             final Session session) throws OwsExceptionReport {
         final ResultTemplate resultTemplate = new ResultTemplate();
         resultTemplate.setIdentifier(request.getIdentifier());

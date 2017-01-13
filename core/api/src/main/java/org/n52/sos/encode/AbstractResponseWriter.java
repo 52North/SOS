@@ -79,25 +79,23 @@ public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
     }
 
     
-	@Override
-	public MediaType getEncodedContentType(ResponseFormat responseFormat) {
-		if (responseFormat.isSetResponseFormat()) {
-			MediaType contentTypeFromResponseFormat = null;
-			try {
-				contentTypeFromResponseFormat = MediaType.parse(
-						responseFormat.getResponseFormat())
-						.withoutParameters();
-			} catch (IllegalArgumentException iae) {
-				LOGGER.debug("Requested responseFormat {} is not a MediaType",
-						responseFormat.getResponseFormat());
-			}
-			if (contentTypeFromResponseFormat != null) {
-				if (MediaTypes.COMPATIBLE_TYPES.containsEntry(contentTypeFromResponseFormat, getContentType())) {
-					return getContentType();
-				}
-				return contentTypeFromResponseFormat;
-			}
-		}
-		return getContentType();
-	}
+    @Override
+    public MediaType getEncodedContentType(ResponseFormat responseFormat) {
+        if (responseFormat.isSetResponseFormat()) {
+            MediaType contentTypeFromResponseFormat = null;
+            try {
+                contentTypeFromResponseFormat = MediaType.parse(responseFormat.getResponseFormat());
+            } catch (IllegalArgumentException iae) {
+                LOGGER.debug("Requested responseFormat {} is not a MediaType", responseFormat.getResponseFormat());
+            }
+            if (contentTypeFromResponseFormat != null) {
+                if (MediaTypes.COMPATIBLE_TYPES.containsEntry(contentTypeFromResponseFormat.withoutParameters(),
+                        getContentType())) {
+                    return getContentType();
+                }
+                return contentTypeFromResponseFormat;
+            }
+        }
+        return getContentType();
+    }
 }

@@ -87,7 +87,7 @@ public class SosGetResultOperatorV20 extends AbstractV2RequestOperator<AbstractG
         }
         try {
             checkObservedProperty(request.getObservedProperty(),
-                                  Sos2Constants.GetResultTemplateParams.observedProperty);
+                                  Sos2Constants.GetResultTemplateParams.observedProperty, false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

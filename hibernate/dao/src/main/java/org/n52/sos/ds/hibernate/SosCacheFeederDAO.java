@@ -33,7 +33,6 @@ import static org.n52.sos.ds.hibernate.CacheFeederSettingDefinitionProvider.CACH
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;

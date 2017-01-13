@@ -30,7 +30,7 @@ package org.n52.sos.ogc.sos;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public interface ConformanceClasses {
@@ -75,6 +75,8 @@ public interface ConformanceClasses {
 
     String OM_V2_CATEGORY_OBSERVATION = "http://www.opengis.net/spec/OMXML/2.0/conf/categoryObservation";
 
+    String OM_V2_COMPLEX_OBSERVATION = "http://www.opengis.net/spec/OMXML/2.0/conf/complexObservation";
+
     String OM_V2_SAMPLING_POINT = "http://www.opengis.net/spec/OMXML/2.0/conf/samplingPoint";
 
     String OM_V2_SAMPLING_CURVE = "http://www.opengis.net/spec/OMXML/2.0/conf/samplingCurve";
@@ -82,7 +84,7 @@ public interface ConformanceClasses {
     String OM_V2_SAMPLING_SURFACE = "http://www.opengis.net/spec/OMXML/2.0/conf/samplingSurface";
 
     String OM_V2_SPATIAL_SAMPLING = "http://www.opengis.net/spec/OMXML/2.0/conf/spatialSampling";
-
+    
     String SWE_V2_CORE = "http://www.opengis.net/spec/SWE/2.0/conf/core";
 
     String SWE_V2_UML_SIMPLE_COMPONENTS = "http://www.opengis.net/spec/SWE/2.0/conf/uml-simple-components";

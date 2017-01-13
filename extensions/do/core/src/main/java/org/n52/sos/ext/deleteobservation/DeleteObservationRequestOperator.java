@@ -34,9 +34,12 @@ import static org.n52.sos.ogc.sos.SosConstants.SOS;
 import java.util.Set;
 
 import org.n52.sos.event.SosEventBus;
+import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
+import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.operator.AbstractTransactionalRequestOperator;
 import org.n52.sos.request.operator.RequestOperator;
 import org.n52.sos.service.Configurator;
@@ -81,12 +84,75 @@ public class DeleteObservationRequestOperator
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        try {
-            checkObservationID(sosRequest.getObservationIdentifier(), DeleteObservationConstants.PARAMETER_NAME);
-        } catch (OwsExceptionReport owse) {
-            exceptions.add(owse);
+        if (DeleteObservationConstants.NS_SOSDO_1_0.equals(sosRequest.getResponseFormat())) {
+            try {
+                checkObservationIDs(sosRequest.getObservationIdentifiers(), DeleteObservationConstants.PARAM_OBSERVATION);
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+        } else {
+            if (sosRequest.isSetObservationIdentifiers()) {
+                try {
+                    checkObservationIDs(sosRequest.getObservationIdentifiers(), DeleteObservationConstants.PARAM_OBSERVATION);
+                } catch (OwsExceptionReport owse) {
+                    exceptions.add(owse);
+                }
+            }
+            try {
+                checkOfferingId(sosRequest.getOfferings());
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+            try {
+                checkObservedProperties(sosRequest.getObservedProperties(), DeleteObservationConstants.PARAM_OBSERVED_PROPERTY, false);
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+            try {
+                checkProcedureIDs(sosRequest.getProcedures(), DeleteObservationConstants.PARAM_PROCEDURE);
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+            try {
+                checkFeatureOfInterestIdentifiers(sosRequest.getFeatureIdentifiers(), DeleteObservationConstants.PARAM_FEATURE_OF_INTEREST);
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+            
         }
         exceptions.throwIfNotEmpty();
+    }
+    
+    /**
+     * checks if the passed offeringId is supported
+     * 
+     * @param offeringIds
+     *            the offeringId to be checked
+     * 
+     * 
+     * @throws OwsExceptionReport
+     *             if the passed offeringId is not supported
+     */
+    private void checkOfferingId(final Set<String> offeringIds) throws OwsExceptionReport {
+        if (offeringIds != null) {
+            final Set<String> offerings = Configurator.getInstance().getCache().getOfferings();
+            final CompositeOwsException exceptions = new CompositeOwsException();
+            for (final String offeringId : offeringIds) {
+                if (offeringId == null || offeringId.isEmpty()) {
+                    exceptions.add(new MissingOfferingParameterException());
+                } else if (offeringId.contains(SosConstants.SEPARATOR_4_OFFERINGS)) {
+                    final String[] offArray = offeringId.split(SosConstants.SEPARATOR_4_OFFERINGS);
+                    if (!offerings.contains(offArray[0])
+                            || !getCache().getProceduresForOffering(offArray[0]).contains(offArray[1])) {
+                        exceptions.add(new InvalidOfferingParameterException(offeringId));
+                    }
+
+                } else if (!offerings.contains(offeringId)) {
+                    exceptions.add(new InvalidOfferingParameterException(offeringId));
+                }
+            }
+            exceptions.throwIfNotEmpty();
+        }
     }
 
     @Override

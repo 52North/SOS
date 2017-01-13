@@ -68,7 +68,7 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     /**
      * @param observationID the observationID to set
      */
-    private void setObservationID(String observationID) {
+    public void setObservationID(String observationID) {
         this.observationID = observationID;
     }
     

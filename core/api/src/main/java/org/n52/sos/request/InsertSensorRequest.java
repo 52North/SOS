@@ -30,11 +30,13 @@ package org.n52.sos.request;
 
 import java.util.List;
 
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.util.CollectionHelper;
@@ -47,6 +49,8 @@ import com.google.common.collect.Lists;
  * 
  */
 public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResponse> {
+    
+    private static final String SENSOR_TYPE_FLAG = "isType";
 
     private String procedureDescriptionFormat;
 
@@ -204,5 +208,15 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
     @Override
     public InsertSensorResponse getResponse() throws OwsExceptionReport {
         return (InsertSensorResponse) new InsertSensorResponse().set(this);
+    }
+    
+    /**
+     * @return <code>true</code>, if the sensor type flag is set
+     */
+    public boolean isType() {
+        if (hasExtension(SENSOR_TYPE_FLAG)) {
+            return getExtensions().isBooleanExtensionSet(SENSOR_TYPE_FLAG);
+        }
+        return false;
     }
 }

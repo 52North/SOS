@@ -38,12 +38,14 @@ import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.iso.gmd.CiOnlineResource;
 import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.gml.GenericMetaData;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
@@ -59,6 +61,7 @@ import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.GeometryHandler;
 
+import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -73,16 +76,13 @@ public abstract class AbstractOmObservationCreator {
     private final Locale i18n;
 
     public AbstractOmObservationCreator(AbstractObservationRequest request, Session session) {
-        super();
-        this.request = request;
-        this.session = session;
-        this.i18n = ServiceConfiguration.getInstance().getDefaultLanguage();
+        this(request, null, session);
     }
 
     public AbstractOmObservationCreator(AbstractObservationRequest request, Locale i18n, Session session) {
         this.request = request;
         this.session = session;
-        this.i18n = i18n;
+        this.i18n = i18n == null ?  ServiceConfiguration.getInstance().getDefaultLanguage() : i18n;
     }
 
     protected ContentCache getCache() {
@@ -108,9 +108,26 @@ public abstract class AbstractOmObservationCreator {
     protected String getDecimalSeparator() {
         return ServiceConfiguration.getInstance().getDecimalSeparator();
     }
-
+    
     protected String getNoDataValue() {
         return getActiveProfile().getResponseNoDataPlaceholder();
+    }
+    
+    protected void addDefaultValuesToObservation(OmObservation o) {
+        o.setNoDataValue(getActiveProfile().getResponseNoDataPlaceholder());
+        o.setNoDataValue(getNoDataValue());
+        o.setTokenSeparator(getTokenSeparator());
+        o.setTupleSeparator(getTupleSeparator());
+        o.setDecimalSeparator(getDecimalSeparator());
+        addMetadata(o);
+    }
+
+    private void addMetadata(OmObservation o) {
+        if (MetaDataConfigurations.getInstance().isShowCiOnlineReourceInObservations()) {
+            CiOnlineResource ciOnlineResource = new CiOnlineResource(ServiceConfiguration.getInstance().getServiceURL());
+            ciOnlineResource.setProtocol("OGC:SOS-2.0.0");
+            o.addMetaDataProperty(new GenericMetaData(ciOnlineResource));
+        }
     }
 
     public abstract List<OmObservation> create() throws OwsExceptionReport,
@@ -135,10 +152,9 @@ public abstract class AbstractOmObservationCreator {
         return i18n;
     }
 
-    
-    protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
-            throws OwsExceptionReport {
-        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
+    @Deprecated
+    protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry) throws OwsExceptionReport {
+        final NamedValue<Geometry> namedValue = new NamedValue<>();
         final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
         namedValue.setName(referenceType);
         // TODO add lat/long version
@@ -147,8 +163,8 @@ public abstract class AbstractOmObservationCreator {
                 .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }
-    
-    
+
+
     protected OmObservableProperty createObservableProperty(ObservableProperty observableProperty) {
         String phenID = observableProperty.getIdentifier();
         String description = observableProperty.getDescription();
@@ -159,10 +175,10 @@ public abstract class AbstractOmObservationCreator {
         }
         return omObservableProperty;
     }
-    
+
     /**
      * Get procedure object from series
-     * @param encodeProcedureInObservation 
+     * @param identifier
      *
      * @return Procedure object
      * @throws ConverterException
@@ -186,7 +202,7 @@ public abstract class AbstractOmObservationCreator {
             return sosProcedure;
         }
     }
-    
+
     /**
      * @param abstractFeature
      * @param hAbstractFeature
@@ -202,6 +218,7 @@ public abstract class AbstractOmObservationCreator {
     /**
      * Get featureOfInterest object from series
      *
+     * @param identifier
      * @return FeatureOfInerest object
      * @throws OwsExceptionReport
      *             If an error occurs
@@ -213,21 +230,26 @@ public abstract class AbstractOmObservationCreator {
                 getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;
     }
-    
-    protected void checkForAdditionalObservationCreator(AbstractObservation hObservation, OmObservation sosObservation) {
-        AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
-        if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
-            AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
-            creator.create(sosObservation, hObservation);
-        } else {
-            AdditionalObservationCreatorKey key2 = new AdditionalObservationCreatorKey(null, hObservation.getClass());
-            if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key2)) {
-                AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key2);
-                creator.add(sosObservation, hObservation);
-            }
+
+    protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) throws CodedException {
+        for (AdditionalObservationCreatorKey key : getAdditionalObservationCreatorKeys(hObservation)) {
+            if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
+                AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
+                creator.create(sosObservation, hObservation, getSession());
+                break;
+            } 
         }
     }
     
+    private List<AdditionalObservationCreatorKey> getAdditionalObservationCreatorKeys(Observation<?> hObservation) {
+        List<AdditionalObservationCreatorKey> keys = Lists.newArrayList();
+        keys.add(new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass()));
+        keys.add(new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass().getSuperclass()));
+        keys.add(new AdditionalObservationCreatorKey(null, hObservation.getClass()));
+        keys.add(new AdditionalObservationCreatorKey(null, hObservation.getClass().getSuperclass()));
+        return keys;
+    }
+
     public static String checkVersion(AbstractObservationRequest request) {
         if (request != null) {
             return request.getVersion();

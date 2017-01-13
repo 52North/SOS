@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos</artifactId>
-        <version>4.3.7-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
     <artifactId>coding</artifactId>
     <packaging>pom</packaging>
@@ -21,5 +21,11 @@
 		<module>json</module>
 		<module>json-common</module>
 		<module>exi</module>
+		<module>netcdf</module>
+		<module>cv-gml</module>
+		<module>gml</module>
+		<module>gml-cov</module>
+		<module>inspire</module>
+		<module>gwml</module>
     </modules>
 </project>

@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -171,6 +172,10 @@ public abstract class AbstractOperationDAO implements OperationDAO {
     protected void addProcedureParameter(OwsOperation opsMeta) {
         addProcedureParameter(opsMeta, getCache().getProcedures());
     }
+    
+    protected void addQueryableProcedureParameter(OwsOperation opsMeta) {
+        addProcedureParameter(opsMeta, getCache().getQueryableProcedures());
+    }
 
     protected void addProcedureParameter(OwsOperation opsMeta, Collection<String> procedures) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
@@ -193,12 +198,24 @@ public abstract class AbstractOperationDAO implements OperationDAO {
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta) {
-        addObservablePropertyParameter(opsMeta, getCache().getObservableProperties());
+        addObservablePropertyParameter(opsMeta, getObservableProperties());
+    }
+
+    protected Collection<String> getObservableProperties() {
+        Set<String> observableProperties = getCache().getObservableProperties();
+        if (ServiceConfiguration.getInstance().isIncludeChildObservableProperties()) {
+            Set<String> compositePhenomenons = getCache().getCompositePhenomenons();
+            observableProperties.removeAll(compositePhenomenons);
+            for (String compositePhenomenon : compositePhenomenons) {
+                observableProperties.addAll(getCache().getObservablePropertiesForCompositePhenomenon(compositePhenomenon));
+            }
+        }
+        return observableProperties;
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta, Collection<String> observedProperties) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
-        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, observedProperties);
+            opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, observedProperties);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.observedProperty);
         }

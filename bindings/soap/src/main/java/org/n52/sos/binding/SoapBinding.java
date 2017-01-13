@@ -33,7 +33,6 @@ import static org.n52.sos.util.http.HTTPStatus.BAD_REQUEST;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -208,7 +207,7 @@ public class SoapBinding extends SimpleBinding {
             }
             checkSoapInjection(chain);
             HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain),
-                    encodeSoapResponse(chain));
+                    encodeSoapResponse(chain), this);
         } catch (OwsExceptionReport t) {
             throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, t);
         }
@@ -222,10 +221,10 @@ public class SoapBinding extends SimpleBinding {
         // TODO allow other bindings to encode response as soap messages
         if (contentType.isCompatible(getDefaultContentType())) {
             checkSoapInjection(chain);
-            HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain), chain);
+            HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), checkMediaType(chain), chain, this);
         } else {
             HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), contentType,
-                    chain.getBodyResponse());
+                    chain.getBodyResponse(), this);
         }
     }
 
@@ -292,9 +291,10 @@ public class SoapBinding extends SimpleBinding {
      * @param chain
      * @throws IOException
      * @throws OwsExceptionReport
+     * @throws HTTPException 
      */
     @Deprecated
-    private void writeSoapResponse(SoapChain chain) throws IOException, OwsExceptionReport {
+    private void writeSoapResponse(SoapChain chain) throws IOException, OwsExceptionReport, HTTPException {
         Object encodedSoapResponse = encodeSoapResponse(chain);
         if (chain.getSoapResponse().hasException() && chain.getSoapResponse().getException().hasStatus()) {
             chain.getHttpResponse().setStatus(chain.getSoapResponse().getException().getStatus().getCode());
@@ -306,6 +306,6 @@ public class SoapBinding extends SimpleBinding {
                 mt = MediaType.parse(r.getAcceptFormats().get(0));
             }
         }
-        HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), mt, encodedSoapResponse);
+        HTTPUtils.writeObject(chain.getHttpRequest(), chain.getHttpResponse(), mt, encodedSoapResponse, this);
     }
 }

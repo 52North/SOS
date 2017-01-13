@@ -44,6 +44,26 @@
 		         </sml:capability>
 		      </sml:CapabilityList>
 		   </sml:capabilities>
+       <sml:capabilities name="metadata">
+            <sml:CapabilityList>
+                <!-- status indicates, whether sensor is insitu (true) 
+                    or remote (false) -->
+                <sml:capability name="insitu">
+                    <swe:Boolean definition="insitu">
+                        <swe:value>true</swe:value>
+                    </swe:Boolean>
+                </sml:capability>
+                <!-- status indicates, whether sensor is mobile (true) 
+                    or fixed/stationary (false) -->
+                <sml:capability name="mobile">
+                    <swe:Boolean definition="mobile">
+                        <swe:value>false</swe:value>
+                    </swe:Boolean>
+                </sml:capability>
+            </sml:CapabilityList>
+        </sml:capabilities>
+
+
           <sml:featuresOfInterest>
             <sml:FeatureList definition="http://www.opengis.net/def/featureOfInterest/identifier">
               <swe:label>featuresOfInterest</swe:label>
@@ -106,6 +126,32 @@
 							</swe:elementType>
 						</swe:DataArray>
 					</sml:output>
+					<sml:output name="test_observable_property_9_8">
+						<swe:DataRecord>
+							<swe:field name="test_observable_property_9_8_1">
+								<swe:Quantity definition="http://www.52north.org/test/observableProperty/9_8_1">
+									<swe:uom code="test_unit_9_8_1"/>
+								</swe:Quantity>
+							</swe:field>
+							<swe:field name="test_observable_property_9_8_2">
+								<swe:Category definition="http://www.52north.org/test/observableProperty/9_8_2">
+									<swe:codeSpace xlink:href="NOT_DEFINED" />
+								</swe:Category>
+							</swe:field>
+							<swe:field name="test_observable_property_9_8_3">
+								<swe:Count definition="http://www.52north.org/test/observableProperty/9_8_3">
+								</swe:Count>
+							</swe:field>
+							<swe:field name="test_observable_property_9_8_4">
+								<swe:Text definition="http://www.52north.org/test/observableProperty/9_8_4">
+								</swe:Text>
+							</swe:field>
+							<swe:field name="test_observable_property_9_8_5">
+								<swe:Boolean definition="http://www.52north.org/test/observableProperty/9_8_5">
+								</swe:Boolean>
+							</swe:field>
+						</swe:DataRecord>
+					</sml:output>
 				</sml:OutputList>
 			</sml:outputs>
 			<sml:attachedTo xlink:href="http://www.52north.org/test/procedure/1" xlink:title="http://www.52north.org/test/procedure/1"/>
@@ -141,6 +187,7 @@
 	<swes:observableProperty>http://www.52north.org/test/observableProperty/9_5</swes:observableProperty>
 	<swes:observableProperty>http://www.52north.org/test/observableProperty/9_6</swes:observableProperty>
 	<swes:observableProperty>http://www.52north.org/test/observableProperty/9_7</swes:observableProperty>
+	<swes:observableProperty>http://www.52north.org/test/observableProperty/9_8</swes:observableProperty>
 	<swes:metadata>
 		<sos:SosInsertionMetadata>
 			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement</sos:observationType>
@@ -149,6 +196,7 @@
 			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation</sos:observationType>
 			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation</sos:observationType>
 			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation</sos:observationType>
+			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation</sos:observationType>
 			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation</sos:observationType>
 			<!-- multiple values possible -->
 			<sos:featureOfInterestType>http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint</sos:featureOfInterestType>

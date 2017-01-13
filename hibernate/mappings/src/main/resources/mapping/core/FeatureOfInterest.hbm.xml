@@ -2,9 +2,11 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" table="featureOfInterest">
-        <comment>Table to store the FeatureOfInterest information. Mapping file: mapping/core/FeatureOfInterest.hbm.xml</comment>
-        <id name="featureOfInterestId" type="long">
+    <class name="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest"
+           abstract="true"
+           table="featureofinterest">
+        <id name="featureOfInterestId"
+            type="long">
             <column name="featureOfInterestId">
                 <comment>Table primary key, used for relations</comment>
             </column>
@@ -12,8 +14,7 @@
                 <param name="sequence">featureOfInterestId_seq</param>
             </generator>
         </id>
-        <!-- only needed for internal purposes  -->
-        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
+        <discriminator column="hibernatediscriminator" type="string" not-null="false"/>
         <many-to-one name="featureOfInterestType" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" foreign-key="featureFeatureTypeFk">
             <column name="featureOfInterestTypeId" not-null="true">
                 <comment>Relation/foreign key to the featureOfInterestType table. Describes the type of the featureOfInterest. Contains "featureOfInterestType".featureOfInterestTypeId</comment>
@@ -44,7 +45,7 @@
                 <comment>Description of the featureOfInterest, gml:description. Optional</comment>
             </column>
         </property>
-        <property name="geom" type="org.hibernate.spatial.GeometryType">
+        <property name="geom" type="org.hibernate.spatial.GeometryType" index="featureGeomIdx">
             <column name="geom">
                 <comment>The geometry of the featureOfInterest (composed of the “latitude” and “longitude”) . Optional</comment>
             </column>
@@ -82,7 +83,38 @@
             </column>
         </property> 
         -->
+        <set name="childs" table="featurerelation" inverse="false">
+            <comment>Relation table to store feature hierarchies. E.g. define a parent in a query and all childs are also contained in the response. Mapping file: mapping/transactional/TFeatureOfInterest.hbm.xml</comment>
+            <key>
+                <column name="parentFeatureId" not-null="true">
+                    <comment>Foreign Key (FK) to the related parent featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
+                </column>
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest" foreign-key="featureOfInterestChildFk">
+                <column name="childFeatureId" not-null="true">
+                    <comment>Foreign Key (FK) to the related child featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
+                </column>
+            </many-to-many>
+        </set>
+        <set name="parents" table="featurerelation" inverse="false">
+            <key>
+                <column name="childFeatureId" not-null="true" />
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest" foreign-key="featureOfInterestParentFk">
+                <column name="parentFeatureId" not-null="true" />
+            </many-to-many>
+        </set>
+        <set name="parameters" table="featureparameter" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="featureOfInterestId" not-null="true" />
+            </key>
+            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter" />
+        </set>
     </class>
+    <subclass name="org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest" 
+              extends="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest" 
+              discriminator-value="null">
+    </subclass>
     
     <sql-query name="getEpsgPostgis">
         <return-scalar column="srid" type="int"/>

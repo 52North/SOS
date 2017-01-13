@@ -29,8 +29,8 @@
 package org.n52.sos.inspire.aqd;
 
 import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.util.Nillable;
-import org.n52.sos.util.Referenceable;
+import org.n52.sos.w3c.Nillable;
+import org.n52.sos.w3c.xlink.Referenceable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;

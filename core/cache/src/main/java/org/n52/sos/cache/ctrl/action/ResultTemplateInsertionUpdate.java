@@ -28,13 +28,17 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.OmCompositePhenomenon;
+import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.util.Action;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations
@@ -43,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * <li>Result template</li>
  * <li>Offering &rarr; Result template</li>
  * </ul>
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
@@ -79,6 +83,21 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
         AbstractFeature featureOfInterest = request.getObservationTemplate().getFeatureOfInterest();
         if (featureOfInterest != null && featureOfInterest.isSetName()) {
         	cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
+        }
+        
+        AbstractPhenomenon observableProperty = request.getObservationTemplate().getObservableProperty();
+        if (observableProperty instanceof OmCompositePhenomenon) {
+            OmCompositePhenomenon parent = (OmCompositePhenomenon) observableProperty;
+            cache.addCompositePhenomenon(parent.getIdentifier());
+            cache.addCompositePhenomenonForProcedure(request.getObservationTemplate().getProcedureIdentifier(), parent.getIdentifier());
+            for (String offering : request.getObservationTemplate().getOfferings()) {
+                cache.addCompositePhenomenonForOffering(offering, parent.getIdentifier());
+            }
+
+            for (OmObservableProperty child : parent) {
+                cache.addObservablePropertyForCompositePhenomenon(parent.getIdentifier(), child.getIdentifier());
+                cache.addCompositePhenomenonForObservableProperty(child.getIdentifier(), parent.getIdentifier());
+            }
         }
     }
 }

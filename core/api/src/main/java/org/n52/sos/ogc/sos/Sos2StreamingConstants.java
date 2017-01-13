@@ -39,4 +39,12 @@ public interface Sos2StreamingConstants extends Sos2Constants {
     public static final QName GET_OBSERVATION_RESPONSE = new QName(NS_SOS_20, EN_GET_OBSERVATION_RESPONSE, NS_SOS_PREFIX);
 
     public static final QName OBSERVATION_DATA = new QName(NS_SOS_20, EN_OBSERVATION_DATA, NS_SOS_PREFIX);
+    
+    public static final String EN_GET_FEATURE_OF_INTEREST_RESPONSE = "GetFeatureOfInterestResponse";
+    
+    public static final String EN_FEATURE_MEMBER = "featureMember";
+
+    public static final QName QN_GET_FEATURE_OF_INTEREST_RESPONSE = new QName(NS_SOS_20, EN_GET_FEATURE_OF_INTEREST_RESPONSE, NS_SOS_PREFIX);
+
+    public static final QName QN_FEATURE_MEMBER = new QName(NS_SOS_20, EN_FEATURE_MEMBER, NS_SOS_PREFIX);
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.n52.sensorweb.sos</groupId>
+        <artifactId>coding</artifactId>
+        <version>4.4.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>netcdf</artifactId>
+    <packaging>pom</packaging>
+    <name>52°North SOS - netCDF</name>
+    <description>52°North Sensor Observation Service netCDF</description>
+    <modules>
+    	<module>api</module>
+    	<module>coding</module>
+    	<module>oceansites</module>
+    </modules>
+</project>

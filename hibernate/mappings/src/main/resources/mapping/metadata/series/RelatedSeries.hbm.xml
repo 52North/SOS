@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class
+		name="org.n52.sos.ds.hibernate.entities.observation.series.RelatedSeries"
+		table="relatedseries">
+		<comment>The series relation should be used if the series table represents a timeseries.</comment>
+		<id name="relationId" type="long">
+            <column name="relationId">
+                <comment>Table primary key</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">seriesRelationId_seq</param>
+            </generator>
+        </id>
+         <property name="seriesId" type="long">
+            <column name="seriesId" not-null="true" index="seriesRelationIdx">
+                <comment>Foreign Key (FK) to the series. Contains "series".seriesId</comment>
+            </column>
+        </property>
+        <many-to-one name="relatedSeries"
+                     class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
+                     foreign-key="relatedSeriesFk">
+            <column name="relatedSeries"
+                    not-null="false">
+                   <comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
+               </column>
+        </many-to-one>
+		<property name="role" type="string">
+			<column name="role">
+				<comment>The role of the relation</comment>
+			</column>
+		</property>
+		<property name="relatedUrl" type="string" not-null="false">
+			<column name="relatedUrl">
+				<comment>An url to a related observation</comment>
+			</column>
+		</property>
+	</class>
+</hibernate-mapping>

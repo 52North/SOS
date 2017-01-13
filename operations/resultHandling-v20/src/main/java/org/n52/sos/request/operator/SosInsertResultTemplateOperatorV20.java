@@ -38,23 +38,24 @@ import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.DuplicateIdentifierException;
-import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosInsertResultTemplateOperatorV20
         extends
@@ -83,6 +84,7 @@ public class SosInsertResultTemplateOperatorV20
 
     @Override
     protected void checkParameters(InsertResultTemplateRequest request) throws OwsExceptionReport {
+        createCompositePhenomenons(request);
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());
@@ -108,7 +110,7 @@ public class SosInsertResultTemplateOperatorV20
         }
         // check procedure
         try {
-            checkProcedureID(request.getObservationTemplate().getProcedure().getIdentifier(),
+            checkTransactionalProcedureID(request.getObservationTemplate().getProcedure().getIdentifier(),
                     Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
@@ -116,7 +118,14 @@ public class SosInsertResultTemplateOperatorV20
         // check observedProperty
         try {
             checkObservedProperty(request.getObservationTemplate().getObservableProperty().getIdentifier(),
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
+                    Sos2Constants.InsertResultTemplateParams.proposedTemplate, true);
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        // check for observed character of featureOfInterest
+        try {
+            checkReservedCharacter(request.getObservationTemplate().getFeatureOfInterest().getIdentifier(),
+                    Sos2Constants.InsertResultTemplateParams.featureOfInterest);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -137,18 +146,18 @@ public class SosInsertResultTemplateOperatorV20
 
         /*
          * check observation template
-         * 
+         *
          * same resultSTructure for procedure, obsProp and Offering
-         * 
+         *
          * empty phenTime, resultTime and result
-         * 
+         *
          * phenTime and resultTime nilReason = 'template'
-         * 
+         *
          * proc, foi, obsProp not empty
-         * 
+         *
          * resultStructure: swe:Time or swe:TimeRange with value
          * "http://www.opengis.net/def/property/OGC/0/PhenomenonTime"
-         * 
+         *
          * If the resultStructure in the SosResultTemplate has a swe:Time
          * component with definition property set to the value
          * "http://www.opengis.net/def/property/OGC/0/ResultTime" then the value
@@ -161,7 +170,7 @@ public class SosInsertResultTemplateOperatorV20
          * each SosResultTemplate). In case the om:phenomenonTime is not a
          * TimeInstant, an InvalidParameterValue exception shall be returned,
          * with locator ‘resultTime’.
-         * 
+         *
          * A client shall encode the om:phenomenonTime as a swe:Time or
          * swe:TimeRange component with definition
          * "http://www.opengis.net/def/property/OGC/0/PhenomenonTime". in the
@@ -172,7 +181,7 @@ public class SosInsertResultTemplateOperatorV20
          * different to the phenomenonTime then the resultStructure of the
          * SosResultTemplate shall also have a swe:Time component with
          * definition "http://www.opengis.net/def/property/OGC/0/ResultTime".
-         * 
+         *
          * If a result template with differing observationType or (SWE Common
          * encoded) result structure is inserted for the same constellation of
          * procedure, observedProperty and ObservationOffering (for which
@@ -182,21 +191,40 @@ public class SosInsertResultTemplateOperatorV20
          */
     }
 
+    private void createCompositePhenomenons(InsertResultTemplateRequest request) throws OwsExceptionReport {
+        if (request.getResultStructure().getResultStructure() instanceof SweDataRecord) {
+            SweDataRecord record = (SweDataRecord) request.getResultStructure().getResultStructure();
+            String observablePropertyIdentifier = request.getObservationTemplate().getObservablePropertyIdentifier();
+            if (record.existsFieldForIdentifier(observablePropertyIdentifier)) {
+                if (record.getFieldByIdentifier(observablePropertyIdentifier).getElement() instanceof SweDataRecord) {
+                    ComplexValue cv = new ComplexValue((SweDataRecord)record.getFieldByIdentifier(observablePropertyIdentifier).getElement());
+                    OmObservation observation = new OmObservation();
+                    observation.setObservationConstellation(request.getObservationTemplate());
+                    observation.setValue(new SingleObservationValue<>(cv));
+                    createCompositePhenomenon(observation);
+                }
+            }
+        }
+    }
+
     private void checkResultTemplateIdentifier(String identifier) throws OwsExceptionReport {
         if (getCache().hasResultTemplate(identifier)) {
             throw new DuplicateIdentifierException("resultTemplate", identifier);
         }
-
+        // check for reserved character
+        checkReservedCharacter(identifier, "resultTemplateIdentifier");
     }
 
     private void checkObservationType(InsertResultTemplateRequest request) throws OwsExceptionReport {
         OmObservationConstellation observationConstellation = request.getObservationTemplate();
-        if (!observationConstellation.isSetObservationType()) {
-            observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+        if (observationConstellation.isSetObservationType()) {
+            // TODO check why setting SweArray_Observation as type
+            //observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            // check if observation type is supported
+            checkObservationType(observationConstellation.getObservationType(),
+                    Sos2Constants.InsertResultTemplateParams.observationType.name());
         }
-        // check if observation type is supported
-        checkObservationType(observationConstellation.getObservationType(),
-                Sos2Constants.InsertResultTemplateParams.observationType.name());
+       
         Set<String> validObservationTypesForOffering = new HashSet<String>(0);
         for (String offering : observationConstellation.getOfferings()) {
             validObservationTypesForOffering.addAll(Configurator.getInstance().getCache()

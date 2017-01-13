@@ -32,6 +32,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.sos.exception.ows.CodedOwsException;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.gda.GetDataAvailabilityConstants.GetDataAvailabilityParams;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -43,9 +46,9 @@ import org.n52.sos.wsdl.WSDLOperation;
 
 /**
  * {@code IRequestOperator} to handle {@link GetDataAvailabilityRequest}s.
- * 
+ *
  * @author Christian Autermann
- * 
+ *
  * @since 4.0.0
  */
 public class GetDataAvailabilityOperator
@@ -75,44 +78,72 @@ public class GetDataAvailabilityOperator
     }
 
     @Override
-    protected void checkParameters(GetDataAvailabilityRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(GetDataAvailabilityRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
 
         try {
-            checkServiceParameter(sosRequest.getService());
+            checkServiceParameter(request.getService());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkSingleVersionParameter(sosRequest);
+            checkSingleVersionParameter(request);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
 
         try {
-            checkObservedProperties(sosRequest.getObservedProperties(),
-                    GetDataAvailabilityParams.observedProperty.name());
+            checkObservedProperties(request.getObservedProperties(),
+                    GetDataAvailabilityParams.observedProperty.name(), false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(sosRequest.getProcedures(), GetDataAvailabilityParams.procedure.name());
+            checkQueryableProcedureIDs(request.getProcedures(), GetDataAvailabilityParams.procedure.name());
+            // add instance and child procedures to request
+            if (request.isSetProcedure()) {
+                request.setProcedures(addChildProcedures(addInstanceProcedures(request.getProcedures())));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkFeatureOfInterestIdentifiers(sosRequest.getFeaturesOfInterest(),
+            checkFeatureOfInterestIdentifiers(request.getFeaturesOfInterest(),
                     GetDataAvailabilityParams.featureOfInterest.name());
+            if (request.isSetFeaturesOfInterest()) {
+                request.setFeatureOfInterest(addChildFeatures(request.getFeaturesOfInterest()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkOfferings(sosRequest.getOfferings(),
-                    GetDataAvailabilityParams.offering);
+            checkOfferings(request.getOfferings(), GetDataAvailabilityParams.offering);
+            // add child offerings to request
+            if (request.isSetOfferings()) {
+                request.setOfferings(addChildOfferings(request.getOfferings()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
+        try {
+            if (request.isSetResponseFormat()) {
+                checkResponseFormat(request.getResponseFormat());
+            }
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        
         exceptions.throwIfNotEmpty();
+    }
+
+    private void checkResponseFormat(String responseFormat) throws CodedOwsException {
+        if (responseFormat == null || responseFormat.isEmpty()) {
+            throw new MissingParameterValueException("responseFormat");
+        }
+        if (!(GetDataAvailabilityConstants.NS_GDA.equals(responseFormat)
+                || GetDataAvailabilityConstants.NS_GDA_20.equals(responseFormat))) {
+            throw new InvalidParameterValueException("responseFormat", responseFormat);
+        }
     }
 
     @Override

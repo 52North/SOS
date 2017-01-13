@@ -1,0 +1,46 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="close();">&times;</button>
+        <div class="modal-title">
+            <span>{{'map.platformSelection.platform' | translate}}</span>:
+            <span>{{platform.label}}</span>
+        </div>
+    </div>
+    <div class="modal-body stationContent">
+        <div ng-repeat="dataset in platform.datasets" ng-if="phenomenonId == null || dataset.seriesParameters.phenomenon.id === phenomenonId">
+            <h4>{{dataset.label}}</h4>
+            <div class="tsItem" ng-class="{selected : selected}">
+                <div class="checkbox">
+                    <div class="glyphicon glyphicon-refresh loading icon-spin" ng-hide="dataset.id"></div>
+                    <label>
+                        <input type="checkbox" ng-disabled="!dataset.id" ng-model="dataset.selected" ng-change="toggled()">
+                        <span>{{timeseries.procedure.label}}</span>
+                        <span ng-show="dataset.seriesParameters.category.label">({{dataset.seriesParameters.category.label}})</span>
+                    </label>
+                    <swc-favorite-add-star timeseries="dataset"></swc-favorite-add-star>
+                    <div class="additionalInfo" ng-show="dataset.lastValue">
+                        <span>{{dataset.lastValue.value}}</span>
+                        <span>{{dataset.uom}}</span>
+                        <span>({{dataset.lastValue.timestamp| date: 'dd.MM.yy HH:mm'}})</span>
+                    </div>
+                    <div class="additionalInfo">
+                        <span translate="map.platformSelection.datasetType"></span>:
+                        <span>{{dataset.datasetType}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="selectAllOption" ng-show="platform.datasets.length > 1">
+            <hr>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-click="toggleAll()" ng-model="isAllSelected">
+                    <span translate="map.stationSelection.selectAllTimeseries"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" ng-click="presentSelection()" translate="ok"></button>
+    </div>
+</div>

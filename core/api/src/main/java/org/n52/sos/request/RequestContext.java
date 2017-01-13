@@ -31,10 +31,14 @@ package org.n52.sos.request;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.n52.sos.exception.HTTPException;
 import org.n52.sos.util.http.HTTPHeaders;
+import org.n52.sos.util.http.HTTPUtils;
+import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.net.IPAddress;
 import org.n52.sos.util.net.ProxyChain;
 import org.slf4j.Logger;
@@ -59,6 +63,8 @@ public class RequestContext {
     private Optional<IPAddress> address = Optional.absent();
     private Optional<String> token = Optional.absent();
     private Optional<ProxyChain> proxyChain = Optional.absent();
+    private Optional<String> contentType = Optional.absent();
+    private Optional<List<MediaType>> acceptType = Optional.absent();
 
     public Optional<IPAddress> getIPAddress() {
         return address;
@@ -67,7 +73,7 @@ public class RequestContext {
     public Optional<ProxyChain> getForwardedForChain() {
         return proxyChain;
     }
-    
+
     public void setForwaredForChain(ProxyChain chain) {
         this.proxyChain = Optional.fromNullable(chain);
     }
@@ -96,13 +102,26 @@ public class RequestContext {
         this.token = Preconditions.checkNotNull(token);
     }
 
+    public Optional<String> getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = Optional.fromNullable(contentType);
+    }
+
+    public Optional<List<MediaType>> getAcceptType() {
+        return acceptType;
+    }
+
+    public void setAcceptType(List<MediaType> list) {
+        this.acceptType = Optional.fromNullable(list);
+    }
+
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).omitNullValues()
-                .add("address", getIPAddress().orNull())
-                .add("token", getToken().orNull())
-                .add("proxyChain", getForwardedForChain().orNull())
-                .toString();
+        return Objects.toStringHelper(this).omitNullValues().add("address", getIPAddress().orNull()).add("token", getToken().orNull()).add("proxyChain", getForwardedForChain().orNull())
+                .add("contenType", getContentType().orNull()).add("acceptType", getAcceptType().orNull()).toString();
     }
 
     public static RequestContext fromRequest(HttpServletRequest req) {
@@ -110,6 +129,12 @@ public class RequestContext {
         rc.setIPAddress(getIPAddress(req));
         rc.setForwaredForChain(ProxyChain.fromForwardedForHeader(req.getHeader(HTTPHeaders.X_FORWARDED_FOR)));
         rc.setToken(req.getHeader(HTTPHeaders.AUTHORIZATION));
+        rc.setContentType(req.getHeader(HTTPHeaders.CONTENT_TYPE));
+        try {
+            rc.setAcceptType(HTTPUtils.getAcceptHeader(req));
+        } catch (HTTPException e) {
+            // do nothing somebody will catch this if it fails.
+        }
         return rc;
 
     }
@@ -133,12 +158,12 @@ public class RequestContext {
                 // ::1 is not handled by InetAddresses.isCompatIPv4Address()
                 return new IPAddress("127.0.0.1");
             } else {
-                LOG.warn("Ignoring not v4 compatible IP address: {}",
-                         req.getRemoteAddr());
+                LOG.warn("Ignoring not v4 compatible IP address: {}", req.getRemoteAddr());
             }
         } else {
             LOG.warn("Ignoring unknown InetAddress: {}", addr);
         }
         return null;
     }
+
 }

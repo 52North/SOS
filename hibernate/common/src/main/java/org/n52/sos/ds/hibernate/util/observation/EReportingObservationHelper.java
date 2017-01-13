@@ -35,8 +35,8 @@ import org.n52.sos.aqd.AqdConstants.ProcessParameter;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingStation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
@@ -46,7 +46,7 @@ import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 import com.google.common.collect.Lists;
 
 public class EReportingObservationHelper {
-    
+
     public Collection<NamedValue<?>> createOmParameterForEReporting(EReportingSeries series) {
         Collection<NamedValue<?>> namedValues = Lists.newArrayList(createSamplingPointParameter(series));
         EReportingSamplingPoint samplingPoint = series.getSamplingPoint();
@@ -81,7 +81,7 @@ public class EReportingObservationHelper {
     }
 
     private NamedValue<?> getAssessmentType(EReportingSamplingPoint samplingPoint) {
-        NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();
+        NamedValue<W3CHrefAttribute> namedValue = new NamedValue<>();
         namedValue.setName(new ReferenceType(ProcessParameter.AssessmentType.getConceptURI()));
         namedValue.setValue(createHrefAttributeValueFromAssessmentType(samplingPoint.getAssessmentType()));
         return namedValue;
@@ -89,19 +89,19 @@ public class EReportingObservationHelper {
 
     private NamedValue<?> getAssesmentMethod(EReportingSamplingPoint samplingPoint) {
         if (samplingPoint.isSetName()) {
-            NamedValue<ReferenceType> namedValue = new NamedValue<ReferenceType>();
+            NamedValue<ReferenceType> namedValue = new NamedValue<>();
             namedValue.setName(new ReferenceType(ProcessParameter.SamplingPoint.getConceptURI()));
             ReferenceValue value = createReferenceValue(samplingPoint.getIdentifier());
 //            value.getValue().setTitle(samplingPoint.getName());
             namedValue.setValue(value);
             return namedValue;
         }
-        NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();
+        NamedValue<W3CHrefAttribute> namedValue = new NamedValue<>();
         namedValue.setName(new ReferenceType(ProcessParameter.SamplingPoint.getConceptURI()));
         namedValue.setValue(createHrefAttributeValue(samplingPoint.getIdentifier()));
         return namedValue;
     }
-    
+
     private ReferenceValue createReferenceValue(String value) {
         ReferenceValue referenceValue = new ReferenceValue();
         referenceValue.setValue(new ReferenceType(value));

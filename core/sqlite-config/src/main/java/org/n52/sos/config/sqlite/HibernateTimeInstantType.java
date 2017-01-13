@@ -30,6 +30,7 @@ package org.n52.sos.config.sqlite;
 
 import org.hibernate.HibernateException;
 import org.hibernate.TypeMismatchException;
+import org.n52.sos.ds.hibernate.type.AbstractStringBasedHibernateUserType;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;

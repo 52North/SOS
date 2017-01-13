@@ -42,6 +42,7 @@ import java.util.Set;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.decode.Decoder;
 import org.n52.sos.decode.DecoderKey;
+import org.n52.sos.decode.ProcedureDecoder;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
@@ -70,6 +71,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * 
  * @since 4.0.0
  */
@@ -77,11 +79,11 @@ public class CodingRepository {
     private static final Logger LOG = LoggerFactory.getLogger(CodingRepository.class);
 
     private static class LazyHolder {
-		private static final CodingRepository INSTANCE = new CodingRepository();
-		
-		private LazyHolder() {};
-	}
+        private static final CodingRepository INSTANCE = new CodingRepository();
 
+        private LazyHolder() {
+        };
+    }
 
     @SuppressWarnings("rawtypes")
     private final ServiceLoader<Decoder> serviceLoaderDecoder;
@@ -104,12 +106,19 @@ public class CodingRepository {
     private final Map<String, Map<String, Set<String>>> responseFormats = Maps.newHashMap();
 
     private final Map<ResponseFormatKey, Boolean> responseFormatStatus = Maps.newHashMap();
+    
+    private final Map<String, Set<String>> responseFormatObservationTypes = Maps.newHashMap();
 
     private final Map<String, Set<SchemaLocation>> schemaLocations = Maps.newHashMap();
 
     private final Map<String, Map<String, Set<String>>> procedureDescriptionFormats = Maps.newHashMap();
 
     private final Map<ProcedureDescriptionFormatKey, Boolean> procedureDescriptionFormatsStatus = Maps.newHashMap();
+
+    private final Map<String, Map<String, Set<String>>> transactionalProcedureDescriptionFormats = Maps.newHashMap();
+
+    private final Map<ProcedureDescriptionFormatKey, Boolean> transactionalProcedureDescriptionFormatsStatus =
+            Maps.newHashMap();
 
     /**
      * @return Returns a singleton instance of the CodingRepository.
@@ -131,7 +140,9 @@ public class CodingRepository {
         generateTypeMap();
         generateResponseFormatMaps();
         generateProcedureDescriptionFormatMaps();
+        generateTransactionalProcedureDescriptionFormatMaps();
         generateSchemaLocationMap();
+        generateResponseFormatObservationTypeMaps();
     }
 
     @SuppressWarnings("unchecked")
@@ -145,8 +156,8 @@ public class CodingRepository {
             return null;
         } else if (matches.size() > 1) {
             final Decoder<?, ?> dec = Collections.min(matches, new DecoderComparator(key));
-            LOG.debug("Requested ambiguous Decoder implementations for {}: Found {}; Choosing {}.", key, Joiner
-                    .on(", ").join(matches), dec);
+            LOG.debug("Requested ambiguous Decoder implementations for {}: Found {}; Choosing {}.", key,
+                    Joiner.on(", ").join(matches), dec);
             return unsafeCast(dec);
         } else {
             return unsafeCast(matches.iterator().next());
@@ -159,8 +170,8 @@ public class CodingRepository {
             return null;
         } else if (matches.size() > 1) {
             final Encoder<?, ?> enc = Collections.min(matches, new EncoderComparator(key));
-            LOG.debug("Requested ambiguous Encoder implementations for {}: Found {}; Choosing {}.", key, Joiner
-                    .on(", ").join(matches), enc);
+            LOG.debug("Requested ambiguous Encoder implementations for {}: Found {}; Choosing {}.", key,
+                    Joiner.on(", ").join(matches), enc);
             return unsafeCast(enc);
         } else {
             return unsafeCast(matches.iterator().next());
@@ -184,7 +195,9 @@ public class CodingRepository {
         generateTypeMap();
         generateResponseFormatMaps();
         generateProcedureDescriptionFormatMaps();
+        generateTransactionalProcedureDescriptionFormatMaps();
         generateSchemaLocationMap();
+        generateResponseFormatObservationTypeMaps();
         LOG.debug("Reloaded Encoder implementations");
     }
 
@@ -207,6 +220,25 @@ public class CodingRepository {
             }
         }
     }
+    
+    private void generateResponseFormatObservationTypeMaps() {
+        responseFormatObservationTypes.clear();
+        for (final Encoder<?, ?> e : getEncoders()) {
+            if (e instanceof ObservationEncoder) {
+                final ObservationEncoder<?, ?> oe = (ObservationEncoder<?, ?>) e;
+                Map<String, Set<String>> supportedResponseFormatObsrevationTypes = oe.getSupportedResponseFormatObservationTypes();
+                if (supportedResponseFormatObsrevationTypes != null && !supportedResponseFormatObsrevationTypes.isEmpty()) {
+                    for (final String responseFormat : supportedResponseFormatObsrevationTypes.keySet()) {
+                        Set<String> values = Sets.newHashSet(supportedResponseFormatObsrevationTypes.get(responseFormat));
+                        if (responseFormatObservationTypes.containsKey(responseFormat)) {
+                            values.addAll(responseFormatObservationTypes.get(responseFormat));
+                        }
+                        responseFormatObservationTypes.put(responseFormat, values);
+                    }
+                }
+            }
+        }
+    }
 
     private void generateProcedureDescriptionFormatMaps() {
         procedureDescriptionFormatsStatus.clear();
@@ -217,10 +249,32 @@ public class CodingRepository {
             if (e instanceof ProcedureEncoder) {
                 final ProcedureEncoder<?, ?> oe = (ProcedureEncoder<?, ?>) e;
                 for (final ServiceOperatorKey sokt : serviceOperatorKeyTypes) {
-                    final Set<String> rfs = oe.getSupportedProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
+                    final Set<String> rfs =
+                            oe.getSupportedProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
                     if (rfs != null) {
                         for (final String rf : rfs) {
                             addProcedureDescriptionFormat(new ProcedureDescriptionFormatKey(sokt, rf));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void generateTransactionalProcedureDescriptionFormatMaps() {
+        transactionalProcedureDescriptionFormatsStatus.clear();
+        transactionalProcedureDescriptionFormats.clear();
+        final Set<ServiceOperatorKey> serviceOperatorKeyTypes =
+                ServiceOperatorRepository.getInstance().getServiceOperatorKeyTypes();
+        for (final Decoder<?, ?> e : getDecoders()) {
+            if (e instanceof ProcedureDecoder) {
+                final ProcedureDecoder<?, ?> oe = (ProcedureDecoder<?, ?>) e;
+                for (final ServiceOperatorKey sokt : serviceOperatorKeyTypes) {
+                    final Set<String> rfs =
+                            oe.getSupportedProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
+                    if (rfs != null) {
+                        for (final String rf : rfs) {
+                            addTransactionalProcedureDescriptionFormat(new ProcedureDescriptionFormatKey(sokt, rf));
                         }
                     }
                 }
@@ -262,15 +316,25 @@ public class CodingRepository {
     }
 
     protected void addProcedureDescriptionFormat(final ProcedureDescriptionFormatKey pdfkt) {
+        addProcedureDescriptionFormat(pdfkt, procedureDescriptionFormatsStatus, procedureDescriptionFormats);
+    }
+
+    protected void addTransactionalProcedureDescriptionFormat(final ProcedureDescriptionFormatKey pdfkt) {
+        addProcedureDescriptionFormat(pdfkt, transactionalProcedureDescriptionFormatsStatus,
+                transactionalProcedureDescriptionFormats);
+    }
+
+    private void addProcedureDescriptionFormat(ProcedureDescriptionFormatKey pdfkt,
+            Map<ProcedureDescriptionFormatKey, Boolean> status, Map<String, Map<String, Set<String>>> pdf) {
         try {
-            procedureDescriptionFormatsStatus.put(pdfkt, SettingsManager.getInstance().isActive(pdfkt));
+            status.put(pdfkt, SettingsManager.getInstance().isActive(pdfkt));
         } catch (final ConnectionProviderException ex) {
             throw new ConfigurationException(ex);
         }
-        Map<String, Set<String>> byService = procedureDescriptionFormats.get(pdfkt.getService());
+        Map<String, Set<String>> byService = pdf.get(pdfkt.getService());
         if (byService == null) {
             byService = Maps.newHashMap();
-            procedureDescriptionFormats.put(pdfkt.getService(), byService);
+            pdf.put(pdfkt.getService(), byService);
         }
         Set<String> byVersion = byService.get(pdfkt.getVersion());
         if (byVersion == null) {
@@ -395,8 +459,8 @@ public class CodingRepository {
         if (keys.length == 0) {
             return getDecoderSingleKey(key);
         } else {
-            return getDecoderCompositeKey(new CompositeDecoderKey(ImmutableList.<DecoderKey> builder().add(key)
-                    .add(keys).build()));
+            return getDecoderCompositeKey(
+                    new CompositeDecoderKey(ImmutableList.<DecoderKey> builder().add(key).add(keys).build()));
         }
     }
 
@@ -408,8 +472,8 @@ public class CodingRepository {
         if (keys.length == 0) {
             return getEncoderSingleKey(key);
         } else {
-            return getEncoderCompositeKey(new CompositeEncoderKey(ImmutableList.<EncoderKey> builder().add(key)
-                    .add(keys).build()));
+            return getEncoderCompositeKey(
+                    new CompositeEncoderKey(ImmutableList.<EncoderKey> builder().add(key).add(keys).build()));
         }
     }
 
@@ -549,6 +613,19 @@ public class CodingRepository {
     public Set<String> getAllSupportedResponseFormats(final ServiceOperatorKey sokt) {
         return getAllSupportedResponseFormats(sokt.getService(), sokt.getVersion());
     }
+    
+    public Set<String> getResponseFormatsForObservationType(String observationType, String service, String version) {
+        Set<String> responseFormats = Sets.newHashSet();
+        Collection<String> values = getSupportedResponseFormats(service, version);
+        for (String responseFormat : responseFormatObservationTypes.keySet()) {
+            for (String rf : values) {
+                if (rf.equals(responseFormat) && responseFormatObservationTypes.get(responseFormat).contains(observationType)) {
+                        responseFormats.add(responseFormat);
+                }
+            }
+        }
+        return responseFormats;
+    }
 
     public Map<ServiceOperatorKey, Set<String>> getSupportedProcedureDescriptionFormats() {
         final Map<ServiceOperatorKey, Set<String>> map = Maps.newHashMap();
@@ -563,7 +640,94 @@ public class CodingRepository {
     }
 
     public Set<String> getSupportedProcedureDescriptionFormats(final String service, final String version) {
-        final Map<String, Set<String>> byService = procedureDescriptionFormats.get(service);
+        return getSupportedProcedureDescriptionFormats(service, version, procedureDescriptionFormatsStatus,
+                procedureDescriptionFormats);
+    }
+
+    public Map<ServiceOperatorKey, Set<String>> getAllProcedureDescriptionFormats() {
+        final Map<ServiceOperatorKey, Set<String>> map = Maps.newHashMap();
+        for (final ServiceOperatorKey sokt : ServiceOperatorRepository.getInstance().getServiceOperatorKeyTypes()) {
+            map.put(sokt, getAllSupportedProcedureDescriptionFormats(sokt));
+        }
+        return map;
+    }
+
+    public void setActive(final ProcedureDescriptionFormatKey pdfk, final boolean active) {
+        if (procedureDescriptionFormatsStatus.containsKey(pdfk)) {
+            procedureDescriptionFormatsStatus.put(pdfk, active);
+        }
+    }
+
+    public String getNamespaceFor(String prefix) {
+        Map<String, String> prefixNamspaceMap = getPrefixNamspaceMap();
+        for (String namespace : prefixNamspaceMap.keySet()) {
+            if (prefix.equals(prefixNamspaceMap.get(prefix))) {
+                return namespace;
+            }
+        }
+        return null;
+    }
+
+    public String getPrefixFor(String namespace) {
+        return getPrefixNamspaceMap().get(namespace);
+
+    }
+
+    private Map<String, String> getPrefixNamspaceMap() {
+        Map<String, String> prefixMap = Maps.newHashMap();
+        for (final Encoder<?, ?> encoder : CodingRepository.getInstance().getEncoders()) {
+            encoder.addNamespacePrefixToMap(prefixMap);
+        }
+        return prefixMap;
+    }
+
+    public Set<String> getAllSupportedProcedureDescriptionFormats(final String service, final String version) {
+        return getAllSupportedProcedureDescriptionFormats(service, version, procedureDescriptionFormats);
+    }
+
+    public Set<String> getAllSupportedProcedureDescriptionFormats(final ServiceOperatorKey sokt) {
+        return getAllSupportedProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
+    }
+
+    public Set<String> getSupportedTransactionalProcedureDescriptionFormats(final String service,
+            final String version) {
+        return getSupportedProcedureDescriptionFormats(service, version,
+                transactionalProcedureDescriptionFormatsStatus, transactionalProcedureDescriptionFormats);
+    }
+
+    public Map<ServiceOperatorKey, Set<String>> getAllTransactionalProcedureDescriptionFormats() {
+        final Map<ServiceOperatorKey, Set<String>> map = Maps.newHashMap();
+        for (final ServiceOperatorKey sokt : ServiceOperatorRepository.getInstance().getServiceOperatorKeyTypes()) {
+            map.put(sokt, getAllSupportedTransactionalProcedureDescriptionFormats(sokt));
+        }
+        return map;
+    }
+
+    public Set<String> getAllSupportedTransactionalProcedureDescriptionFormats(final String service,
+            final String version) {
+        return getAllSupportedProcedureDescriptionFormats(service, version, transactionalProcedureDescriptionFormats);
+    }
+
+    public Set<String> getAllSupportedTransactionalProcedureDescriptionFormats(final ServiceOperatorKey sokt) {
+        return getAllSupportedTransactionalProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
+    }
+
+    public Set<String> getAllSupportedProcedureDescriptionFormats(final String service, final String version,
+            Map<String, Map<String, Set<String>>> pdf) {
+        final Map<String, Set<String>> byService = pdf.get(service);
+        if (byService == null) {
+            return Collections.emptySet();
+        }
+        final Set<String> rfs = byService.get(version);
+        if (rfs == null) {
+            return Collections.emptySet();
+        }
+        return Collections.unmodifiableSet(rfs);
+    }
+
+    public Set<String> getSupportedProcedureDescriptionFormats(final String service, final String version,
+            Map<ProcedureDescriptionFormatKey, Boolean> statusMap, Map<String, Map<String, Set<String>>> pdf) {
+        final Map<String, Set<String>> byService = pdf.get(service);
         if (byService == null) {
             return Collections.emptySet();
         }
@@ -576,7 +740,7 @@ public class CodingRepository {
         final Set<String> result = Sets.newHashSet();
         for (final String a : rfs) {
             final ProcedureDescriptionFormatKey pdfkt = new ProcedureDescriptionFormatKey(sokt, a);
-            final Boolean status = procedureDescriptionFormatsStatus.get(pdfkt);
+            final Boolean status = statusMap.get(pdfkt);
             if (status != null && status.booleanValue()) {
                 result.add(a);
             }
@@ -584,63 +748,10 @@ public class CodingRepository {
         return result;
     }
 
-    public Map<ServiceOperatorKey, Set<String>> getAllProcedureDescriptionFormats() {
-        final Map<ServiceOperatorKey, Set<String>> map = Maps.newHashMap();
-        for (final ServiceOperatorKey sokt : ServiceOperatorRepository.getInstance().getServiceOperatorKeyTypes()) {
-            map.put(sokt, getAllSupportedProcedureDescriptionFormats(sokt));
-        }
-        return map;
-    }
-
-    public Set<String> getAllSupportedProcedureDescriptionFormats(final String service, final String version) {
-        final Map<String, Set<String>> byService = procedureDescriptionFormats.get(service);
-        if (byService == null) {
-            return Collections.emptySet();
-        }
-        final Set<String> rfs = byService.get(version);
-        if (rfs == null) {
-            return Collections.emptySet();
-        }
-        return Collections.unmodifiableSet(rfs);
-    }
-
-    public Set<String> getAllSupportedProcedureDescriptionFormats(final ServiceOperatorKey sokt) {
-        return getAllSupportedProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
-    }
-
     public void setActive(final ResponseFormatKey rfkt, final boolean active) {
         if (responseFormatStatus.containsKey(rfkt)) {
             responseFormatStatus.put(rfkt, active);
         }
-    }
-
-    public void setActive(final ProcedureDescriptionFormatKey pdfk, final boolean active) {
-        if (procedureDescriptionFormatsStatus.containsKey(pdfk)) {
-            procedureDescriptionFormatsStatus.put(pdfk, active);
-        }
-    }
-    
-    public String getNamespaceFor(String prefix) {
-        Map<String, String> prefixNamspaceMap = getPrefixNamspaceMap();
-        for (String namespace : prefixNamspaceMap.keySet()) {
-            if (prefix.equals(prefixNamspaceMap.get(prefix))) {
-                return namespace; 
-            }
-        }
-        return null;
-    }
-    
-    public String getPrefixFor(String namespace) {
-        return getPrefixNamspaceMap().get(namespace);
-        
-    }
-    
-    private Map<String, String> getPrefixNamspaceMap() {
-        Map<String, String> prefixMap = Maps.newHashMap();
-        for (final Encoder<?, ?> encoder : CodingRepository.getInstance().getEncoders()) {
-            encoder.addNamespacePrefixToMap(prefixMap);
-        }
-        return prefixMap;
     }
 
     private class DecoderComparator extends ProxySimilarityComparator<Decoder<?, ?>, DecoderKey> {

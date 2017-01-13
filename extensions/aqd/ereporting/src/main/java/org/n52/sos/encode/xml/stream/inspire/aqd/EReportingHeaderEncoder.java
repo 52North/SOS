@@ -61,10 +61,10 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.Nillable;
-import org.n52.sos.util.Reference;
-import org.n52.sos.util.Referenceable;
+import org.n52.sos.w3c.Nillable;
 import org.n52.sos.w3c.W3CConstants;
+import org.n52.sos.w3c.xlink.Reference;
+import org.n52.sos.w3c.xlink.Referenceable;
 
 import com.google.common.base.Optional;
 
@@ -212,7 +212,7 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
 
     private void encodeReferenceAttr(Reference v)
             throws XMLStreamException {
-        attr(W3CConstants.QN_XLINK_HREF, v.getHref().toString());
+        attr(W3CConstants.QN_XLINK_HREF, v.getHref());
         attr(W3CConstants.QN_XLINK_ACTUATE, v.getActuate());
         attr(W3CConstants.QN_XLINK_ARCROLE, v.getArcrole());
         attr(W3CConstants.QN_XLINK_ROLE, v.getRole());

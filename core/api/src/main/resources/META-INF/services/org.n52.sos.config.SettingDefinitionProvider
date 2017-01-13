@@ -7,3 +7,5 @@ org.n52.sos.service.ProcedureDescriptionSettings
 org.n52.sos.service.TransactionalSecuritySettings
 org.n52.sos.ds.FeatureQuerySettingsProvider
 org.n52.sos.i18n.I18NSettings
+org.n52.sos.request.ProcedureRequestSettings
+org.n52.sos.ogc.swe.CoordinateSettings

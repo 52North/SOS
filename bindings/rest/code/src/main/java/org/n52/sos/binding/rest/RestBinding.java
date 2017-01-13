@@ -152,7 +152,17 @@ public class RestBinding extends Binding {
         doOperation(request, response);
     }
 
-     /*
+    @Override
+	public ServiceResponse handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
+			OwsExceptionReport oer) throws HTTPException {
+		try {
+			 return encodeOwsExceptionReport(oer);
+		} catch (IOException e) {
+			throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
+		}
+	}
+
+	/*
      * (non-Javadoc)
      *
      * @see org.n52.sos.binding.rest.Binding#doGetOperation(javax.servlet.http.
@@ -176,7 +186,8 @@ public class RestBinding extends Binding {
             SosEventBus.fire(new ExceptionEvent(oer));
             serviceResponse = encodeOwsExceptionReport(oer);
         }
-        HTTPUtils.writeObject(request, response, serviceResponse);
+        HTTPUtils.writeObject(request, response, serviceResponse, this);
+        
     }
 
     private ServiceResponse encodeOwsExceptionReport(OwsExceptionReport oer) throws HTTPException, IOException {

@@ -40,7 +40,9 @@ import net.opengis.sos.x20.GetObservationByIdResponseType;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.ObservationEncoder;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -50,6 +52,7 @@ import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.SchemaLocation;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -72,7 +75,7 @@ public class GetObservationByIdResponseEncoder extends AbstractObservationRespon
         GetObservationByIdResponseDocument doc =
                 GetObservationByIdResponseDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         GetObservationByIdResponseType xbResponse = doc.addNewGetObservationByIdResponse();
-        List<OmObservation> oc = response.getObservationCollection();
+        List<OmObservation> oc = getObservationsAndCheckForStreaming(response, encoder);
         HashMap<CodeWithAuthority, String> gmlID4sfIdentifier = new HashMap<CodeWithAuthority, String>(oc.size());
         for (OmObservation observation : oc) {
             Map<HelperValues, String> foiHelper = new EnumMap<HelperValues, String>(HelperValues.class);
@@ -91,6 +94,25 @@ public class GetObservationByIdResponseEncoder extends AbstractObservationRespon
         }
         XmlHelper.makeGmlIdsUnique(xbResponse.getDomNode());
         return doc;
+    }
+
+    private List<OmObservation> getObservationsAndCheckForStreaming(GetObservationByIdResponse response, ObservationEncoder<XmlObject, OmObservation> encoder) throws OwsExceptionReport {
+       if (response.hasStreamingData()) {
+           if (encoder.shouldObservationsWithSameXBeMerged()) {
+               response.mergeStreamingData();
+           } else { 
+               List<OmObservation> observations = Lists.newArrayList();
+               for (OmObservation observation : response.getObservationCollection()) {
+                   if (observation.getValue() instanceof StreamingValue<?>) {
+                       observations.addAll(((AbstractStreaming)observation.getValue()).getObservation());
+                   } else {
+                       observations.add(observation);
+                   }
+               }
+               return observations;
+           }
+       }
+       return response.getObservationCollection();
     }
 
     @Override

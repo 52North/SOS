@@ -37,9 +37,10 @@ import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.ogc.om.OmConstants;
@@ -67,6 +68,7 @@ import org.n52.sos.response.InsertResultTemplateResponse;
 public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO implements CapabilitiesExtensionProvider {
 
     private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private ResultHandlingHelper helper = new  ResultHandlingHelper();
 
     /**
      * constructor
@@ -100,7 +102,7 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                                 session, Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
                 if (obsConst != null) {
                     FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
-                    FeatureOfInterest feature =
+                    AbstractFeatureOfInterest feature =
                             featureOfInterestDAO.checkOrInsertFeatureOfInterest(sosObsConst.getFeatureOfInterest(),
                                     session);
                     featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(feature,
@@ -138,7 +140,7 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
         insertionCapabilities.addFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
         insertionCapabilities.addObservationTypes(getCache().getObservationTypes());
         insertionCapabilities.addProcedureDescriptionFormats(CodingRepository.getInstance()
-                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
+                .getSupportedTransactionalProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         // TODO dynamic
         insertionCapabilities.addSupportedEncoding(SweConstants.ENCODING_TEXT);
         return insertionCapabilities;
@@ -160,35 +162,51 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
     }
     
 
-	private void checkResultStructure(SosResultStructure resultStructure,
-			String observedProperty) throws OwsExceptionReport {
-		// TODO modify or remove if complex field elements are supported
-		final SweDataRecord record = setRecordFrom(resultStructure
-				.getResultStructure());
+    private void checkResultStructure(SosResultStructure resultStructure, String observedProperty)
+            throws OwsExceptionReport {
+        // TODO modify or remove if complex field elements are supported
+        final SweDataRecord record = setRecordFrom(resultStructure.getResultStructure());
+    
+        for (final SweField swefield : record.getFields()) {
+            if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>)
+                    || helper.isDataRecord(swefield) 
+                    || helper.isVector(swefield))) {
+                throw new NoApplicableCodeException().withMessage(
+                        "The swe:Field element of type %s is not yet supported!",
+                        swefield.getElement().getClass().getName());
+            }
+            helper.checkDataRecordForObservedProperty(swefield, observedProperty);
+            helper.checkVectorForSamplingGeometry(swefield);
+        }
+        if (helper.hasPhenomenonTime(record) == -1) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage("Missing swe:Time or swe:TimeRange with definition %s", OmConstants.PHENOMENON_TIME);
+        }
+        if (helper.checkFields(record.getFields(), observedProperty) == -1) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage("Missing swe:field content with element definition %s", observedProperty);
+        }
+        if (record.getFields().size() > getAllowedSize(record)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage(
+                            "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition '%s', "
+                            + " optional swe:Time with element definition '%s' and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
+                            + "with element definition '%s' or swe:Vector with element defintion '%s'",
+                            OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
+        }
+    }
 
-		for (final SweField swefield : record.getFields()) {
-			if (!(swefield.getElement() instanceof SweAbstractSimpleType<?>)) {
-				throw new NoApplicableCodeException()
-						.withMessage(
-								"The swe:Field element of type %s is not yet supported!",
-								swefield.getElement().getClass().getName());
-			}
-		}
-		if (ResultHandlingHelper.hasPhenomenonTime(record) == -1) {
-			throw new NoApplicableCodeException()
-					.at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-					.withMessage(
-							"Missing swe:Time or swe:TimeRange with definition %s",
-							OmConstants.PHENOMENON_TIME);
-		}
-		if (ResultHandlingHelper.checkFields(record.getFields(),
-				observedProperty) == -1) {
-			throw new NoApplicableCodeException()
-					.at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-					.withMessage(
-							"Missing swe:field content with element definition %s",
-							observedProperty);
-		}
-	}
-
+    private int getAllowedSize(SweDataRecord record) throws CodedException {
+        int allowedSize = 2;
+        if (helper.hasResultTime(record) > -1) {
+            allowedSize++;
+        }
+        boolean hasSamplingGeometry = false;
+        for (final SweField swefield : record.getFields()) {
+            if (helper.isVector(swefield) && helper.checkVectorForSamplingGeometry(swefield)) {
+                hasSamplingGeometry = true;
+            }
+        }
+        return hasSamplingGeometry ? (allowedSize + 1) : allowedSize;
+    }
 }

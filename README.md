@@ -1,4 +1,7 @@
-# 52°North SOS [![OpenHUB](https://www.openhub.net/p/SensorObservationService/widgets/project_thin_badge.gif)](https://www.openhub.net/p/SensorObservationService)
+# 52°North Sensor Observation Service (SOS)
+| Master | Develop | OpenHUB |
+| ------------- | ------------- | ------------- |
+| [![Master Build Status](https://travis-ci.org/52North/SOS.png?branch=master)](https://travis-ci.org/52North/SOS) | [![Develop Build Status](https://travis-ci.org/52North/SOS.png?branch=develop)](https://travis-ci.org/52North/SOS) | [![OpenHUB](https://www.openhub.net/p/SensorObservationService/widgets/project_thin_badge.gif)](https://www.openhub.net/p/SensorObservationService) |
 
 ## Description
 

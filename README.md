@@ -21,10 +21,6 @@ The 52°North SOS enables the user to:
  - insert and retrieve sensor descriptions (encoded according to the OGC SensorML standard - SML 1.0.1, SML 2.0)
  - publish measuremnt data (near real-time, as well as archived data) 
 
-## Build Status
-* Master: [![Master Build Status](https://travis-ci.org/52North/SOS.png?branch=master)](https://travis-ci.org/52North/SOS)
-* Develop: [![Develop Build Status](https://travis-ci.org/52North/SOS.png?branch=develop)](https://travis-ci.org/52North/SOS)
-
 ## Features
 
   - [INSPIRE Download Service](http://inspire.ec.europa.eu/id/document/tg/download-sos)

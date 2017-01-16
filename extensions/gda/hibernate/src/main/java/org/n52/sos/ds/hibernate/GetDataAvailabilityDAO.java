@@ -126,6 +126,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
+    private DaoFactory daoFactory;
+
 
     public GetDataAvailabilityDAO() {
         super(SosConstants.SOS);
@@ -296,11 +298,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
         boolean supportsNamedQuery =
                 HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_DATA_AVAILABILITY_FOR_SERIES, session);
         boolean supportsSeriesObservationTime = EntitiyHelper.getInstance().isSeriesObservationTimeSupported();
-        for (final Series series : DaoFactory
-                .getInstance()
-                .getSeriesDAO()
-                .getSeries(request.getProcedures(), request.getObservedProperties(), request.getFeaturesOfInterest(),
-                        session)) {
+        for (Series series : daoFactory.getSeriesDAO().getSeries(request.getProcedures(),
+                                                                 request.getObservedProperties(),
+                                                                 request.getFeaturesOfInterest(), session)) {
             TimePeriod timePeriod = null;
             if (!request.isSetOfferings()) {
                 // get time information from series object
@@ -316,7 +316,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
             // supported
             if (timePeriod == null && supportsSeriesObservationTime) {
                 SeriesObservationTimeDAO seriesObservationTimeDAO =
-                        (SeriesObservationTimeDAO) DaoFactory.getInstance().getObservationTimeDAO();
+                        (SeriesObservationTimeDAO) daoFactory.getObservationTimeDAO();
                 timePeriod =
                         getTimePeriodFromSeriesGetDataAvailability(seriesObservationTimeDAO, series, request,
                                 seriesMinMaxTransformer, session);
@@ -676,7 +676,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
     }
 
     protected AbstractSeriesObservationDAO getSeriesObservationDAO() throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
         if (observationDAO instanceof AbstractSeriesObservationDAO) {
             return (AbstractSeriesObservationDAO) observationDAO;
         } else {

@@ -51,11 +51,11 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
 import org.n52.shetland.ogc.swes.SwesConstants;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.svalbard.EncodingContext;
-import org.n52.svalbard.UpdateSensorResponseEncoder;
-import org.n52.svalbard.XmlEncoderKey;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.OperationResponseEncoderKey;
+import org.n52.svalbard.encode.UpdateSensorResponseEncoder;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 

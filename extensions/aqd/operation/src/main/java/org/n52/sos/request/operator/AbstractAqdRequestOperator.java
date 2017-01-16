@@ -44,7 +44,8 @@ import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
-import org.n52.svalbard.AqdHelper;
+import org.n52.svalbard.util.AqdHelper;
+import org.n52.svalbard.util.ReportObligations;
 
 public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
@@ -81,8 +82,8 @@ public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q e
 
     protected void checkExtensions(OwsServiceRequest request, CompositeOwsException exceptions)
             throws OwsExceptionReport {
-        if (aqdHelper.hasFlowExtension(request.getExtensions())) {
-            aqdHelper.getFlow(request.getExtensions());
+        if (ReportObligations.hasFlow(request.getExtensions())) {
+            ReportObligations.getFlow(request.getExtensions());
         }
     }
 

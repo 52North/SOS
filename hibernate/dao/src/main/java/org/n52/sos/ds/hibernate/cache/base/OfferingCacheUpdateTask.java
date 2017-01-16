@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -43,8 +44,8 @@ import org.hibernate.Session;
 
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.OGCConstants;
@@ -58,7 +59,6 @@ import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -69,7 +69,6 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -82,7 +81,6 @@ import com.google.common.collect.Sets;
  */
 public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
 
-    private final FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
     private final String offeringId;
     private final Collection<ObservationConstellationInfo> observationConstellationInfos;
     private final Offering offering;
@@ -92,6 +90,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     private final Locale defaultLanguage;
     private final I18NDAORepository i18NDAORepository;
     private final FeatureQueryHandler featureQueryHandler;
+    private final DaoFactory daoFactory;
+
 
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded
@@ -111,7 +111,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                                    boolean hasSamplingGeometry,
                                    Locale defaultLanguage,
                                    I18NDAORepository i18NDAORepository,
-                                   FeatureQueryHandler featureQueryHandler) {
+                                   FeatureQueryHandler featureQueryHandler,
+                                   DaoFactory daoFactory) {
         this.offering = offering;
         this.offeringId = offering.getIdentifier();
         this.observationConstellationInfos = observationConstellationInfos;
@@ -119,6 +120,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         this.defaultLanguage = defaultLanguage;
         this.i18NDAORepository = i18NDAORepository;
         this.featureQueryHandler = featureQueryHandler;
+        this.daoFactory = daoFactory;
     }
 
     protected void getOfferingInformationFromDbAndAddItToCacheMaps(Session session) throws OwsExceptionReport {
@@ -152,7 +154,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
         // Features of Interest
         List<String> featureOfInterestIdentifiers =
-                featureDAO.getFeatureOfInterestIdentifiersForOffering(offeringId, session);
+                daoFactory.getFeatureOfInterestDAO().getFeatureOfInterestIdentifiersForOffering(offeringId, session);
         getCache().setFeaturesOfInterestForOffering(offeringId,
                 getValidFeaturesOfInterestFrom(featureOfInterestIdentifiers));
         getCache().setFeatureOfInterestTypesForOffering(offeringId,
@@ -182,7 +184,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             if (offering.isSetName()) {
                 final Locale locale;
                 if (offering.isSetCodespaceName()) {
-                    locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
+                    locale = LocaleHelper.decode(offering.getCodespaceName().getCodespace(), defaultLanguage);
                 } else {
                     locale = defaultLanguage;
 
@@ -203,7 +205,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             if (offering.isSetDescription()) {
                 final Locale locale;
                 if (offering.isSetCodespaceName()) {
-                    locale = LocaleHelper.fromString(offering.getCodespaceName().getCodespace());
+                    locale = LocaleHelper.decode(offering.getCodespaceName().getCodespace(), defaultLanguage);
                 } else {
                     locale = defaultLanguage;
                 }
@@ -245,7 +247,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                                 ProcedureFlag.HIDDEN_CHILD));
             }
         } else {
-            new ProcedureDAO().getProcedureIdentifiersForOffering(offeringId, session).forEach(procedures::add);
+            new ProcedureDAO(daoFactory).getProcedureIdentifiersForOffering(offeringId, session).forEach(procedures::add);
         }
         Map<ProcedureFlag, Set<String>> allProcedures = Maps.newEnumMap(ProcedureFlag.class);
         allProcedures.put(ProcedureFlag.PARENT, procedures);
@@ -270,7 +272,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                 return Sets.newHashSet();
             }
         } else {
-            return new HashSet<>(new ObservablePropertyDAO().getObservablePropertyIdentifiersForOffering(offeringId, session));
+            return new HashSet<>(new ObservablePropertyDAO(daoFactory).getObservablePropertyIdentifiersForOffering(offeringId, session));
         }
     }
 
@@ -291,7 +293,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     }
 
     private Set<String> getObservationTypesFromObservations(Session session) throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
         Set<String> observationTypes = Sets.newHashSet();
         if (observationDAO.checkNumericObservationsFor(offeringId, session)) {
             observationTypes.add(OmConstants.OBS_TYPE_MEASUREMENT);
@@ -316,7 +318,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     }
 
     protected Set<String> getFeatureOfInterestTypes(List<String> featureOfInterestIdentifiers, Session session) {
-        return featureDAO.getFeatureOfInterestObject(featureOfInterestIdentifiers, session).stream()
+        return daoFactory.getFeatureOfInterestDAO().getFeatureOfInterestObject(featureOfInterestIdentifiers, session).stream()
                 .map(FeatureOfInterest::getFeatureOfInterestType)
                 .map(FeatureOfInterestType::getFeatureOfInterestType)
                 .map(Strings::emptyToNull).filter(Objects::nonNull)
@@ -348,10 +350,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     protected void addSpatialFilteringProfileEnvelopeForOffering(String offeringID,
             Session session) throws OwsExceptionReport {
         if (hasSamplingGeometry) {
-            getCache().setSpatialFilteringProfileEnvelopeForOffering(
-                    offeringId,
-                    DaoFactory.getInstance().getObservationDAO()
-                            .getSpatialFilteringProfileEnvelopeForOfferingId(offeringID, session));
+            getCache().setSpatialFilteringProfileEnvelopeForOffering(offeringId,
+                    daoFactory.getObservationDAO().getSpatialFilteringProfileEnvelopeForOfferingId(offeringID, session));
         }
     }
 

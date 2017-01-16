@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.web.common.AbstractController;
@@ -72,7 +72,7 @@ public class AdminCacheController extends AbstractController {
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_SUMMARY, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
     public String getCacheSummary() {
-        return JSONUtils.print(JSONUtils.toJSON(CacheSummaryHandler.getCacheValues()));
+        return Json.print(Json.toJSON(CacheSummaryHandler.getCacheValues()));
     }
 
     @ResponseBody

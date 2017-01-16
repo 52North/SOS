@@ -109,7 +109,7 @@ import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.svalbard.SweHelper;
+import org.n52.svalbard.util.SweHelper;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -563,7 +563,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
         }
         return position;
     }
-    
+
     /**
      * Create a {@link SweQuantity} from parameter
      *

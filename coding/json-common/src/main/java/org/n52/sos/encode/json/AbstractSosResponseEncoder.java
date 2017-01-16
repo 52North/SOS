@@ -31,7 +31,7 @@ package org.n52.sos.encode.json;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.svalbard.encode.OperationResponseEncoderKey;
@@ -60,7 +60,7 @@ public abstract class AbstractSosResponseEncoder<T extends OwsServiceResponse> e
 
     @Override
     public JsonNode encodeJSON(T t) throws EncodingException {
-        ObjectNode n = JSONUtils.nodeFactory().objectNode();
+        ObjectNode n = Json.nodeFactory().objectNode();
         n.put(JSONConstants.REQUEST, t.getOperationName());
         n.put(JSONConstants.VERSION, t.getVersion());
         n.put(JSONConstants.SERVICE, t.getService());

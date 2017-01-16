@@ -46,10 +46,10 @@ import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
 import org.n52.shetland.ogc.sensorML.System;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
-import org.n52.svalbard.CodingHelper;
-import org.n52.svalbard.XmlHelper;
-import org.n52.svalbard.XmlOptionsHelper;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlHelper;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 import com.google.common.collect.Lists;
 
@@ -102,7 +102,9 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     private SystemType encodeSystem(final SensorML sensorMl) throws EncodingException {
-        final XmlObject encodedSml = CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, sensorMl);
+        // FIXME
+//        final XmlObject encodedSml = CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, sensorMl);
+        final XmlObject encodedSml = XmlObject.Factory.newInstance();
         assertThat(encodedSml, instanceOf(SensorMLDocument.class));
         final net.opengis.sensorML.x101.SensorMLDocument.SensorML xbSml = ((SensorMLDocument) encodedSml).getSensorML();
         assertThat(xbSml.getMemberArray().length, is(1));

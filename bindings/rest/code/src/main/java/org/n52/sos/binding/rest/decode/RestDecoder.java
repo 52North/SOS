@@ -28,7 +28,7 @@
  */
 package org.n52.sos.binding.rest.decode;
 
-import static org.n52.svalbard.CodingHelper.decoderKeysForElements;
+import static org.n52.svalbard.util.CodingHelper.decoderKeysForElements;
 
 import java.util.Collections;
 import java.util.List;

@@ -33,8 +33,8 @@ import static org.n52.shetland.ogc.sos.SosConstants.SOS;
 import static org.n52.shetland.util.CollectionHelper.union;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0;
-import static org.n52.svalbard.CodingHelper.decoderKeysForElements;
-import static org.n52.svalbard.CodingHelper.xmlDecoderKeysForOperation;
+import static org.n52.svalbard.util.CodingHelper.decoderKeysForElements;
+import static org.n52.svalbard.util.CodingHelper.xmlDecoderKeysForOperation;
 
 import java.util.Collections;
 import java.util.Set;
@@ -48,10 +48,10 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.svalbard.UnsupportedDecoderXmlInputException;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.UnsupportedDecoderXmlInputException;
 
 import com.google.common.base.Joiner;
 

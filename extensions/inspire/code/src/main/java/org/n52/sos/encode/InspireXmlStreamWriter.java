@@ -33,7 +33,7 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.svalbard.EncodingValues;
+import org.n52.svalbard.encode.EncodingValues;
 import org.n52.svalbard.encode.XmlStreamWriter;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.gml.time.Time;

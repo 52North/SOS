@@ -39,6 +39,7 @@ import org.hibernate.Session;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -61,13 +62,14 @@ import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
@@ -95,18 +97,22 @@ public abstract class AbstractOmObservationCreator {
     private String decimalSeparator;
     private EncoderRepository encoderRepository;
     private String pdf;
+    private DaoFactory daoFactory;
 
     public AbstractOmObservationCreator(AbstractObservationRequest request,
                                         Locale i18n,
                                         LocalizedProducer<OwsServiceProvider> serviceProvider,
-                                        String pdf, Session session) {
+                                        String pdf,
+                                        DaoFactory daoFactory,
+                                        Session session) {
         this.request = request;
         this.session = session;
         this.i18n = i18n == null ?  ServiceConfiguration.getInstance().getDefaultLanguage() : i18n;
         this.serviceProvider = serviceProvider;
         this.pdf = pdf;
+        this.daoFactory = daoFactory;
     }
-    
+
     @Inject
     public void setEncoderRepository(EncoderRepository encoderRepository) {
         this.encoderRepository = encoderRepository;
@@ -129,7 +135,11 @@ public abstract class AbstractOmObservationCreator {
         Validation.notNullOrEmpty("Decimal separator", separator);
         decimalSeparator = separator;
     }
-    
+
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
     protected SosContentCache getCache() {
         return Configurator.getInstance().getCache();
     }
@@ -141,7 +151,6 @@ public abstract class AbstractOmObservationCreator {
     protected AdditionalObservationCreatorRepository getAdditionalObservationCreatorRepository() {
         return AdditionalObservationCreatorRepository.getInstance();
     }
-
 
     protected Profile getActiveProfile() {
         return ProfileHandler.getInstance().getActiveProfile();
@@ -159,6 +168,18 @@ public abstract class AbstractOmObservationCreator {
         return decimalSeparator;
     }
 
+     private ConverterRepository getConverterRepository() {
+        return ConverterRepository.getInstance();
+    }
+
+    private HibernateProcedureDescriptionGeneratorFactoryRepository getProcedureDescriptionGeneratorFactoryRepository() {
+        return HibernateProcedureDescriptionGeneratorFactoryRepository.getInstance();
+    }
+
+    private GeometryHandler getGeometryHandler() {
+        return GeometryHandler.getInstance();
+    }
+
     protected String getNoDataValue() {
         return getActiveProfile().getResponseNoDataPlaceholder();
     }
@@ -171,10 +192,9 @@ public abstract class AbstractOmObservationCreator {
     }
 
     public String getResponseFormat() {
-        if (request.isSetResponseFormat()) {
-            return request.getResponseFormat();
-        }
-        return ProfileHandler.getInstance().getActiveProfile().getObservationResponseFormat();
+        return request.isSetResponseFormat()
+                       ? request.getResponseFormat()
+                       : getActiveProfile().getObservationResponseFormat();
     }
 
     public Session getSession() {
@@ -193,8 +213,7 @@ public abstract class AbstractOmObservationCreator {
         namedValue.setName(referenceType);
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
-        namedValue.setValue(new GeometryValue(GeometryHandler.getInstance()
-                .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
+        namedValue.setValue(new GeometryValue(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }
 
@@ -222,12 +241,12 @@ public abstract class AbstractOmObservationCreator {
      */
     protected SosProcedureDescription<?> createProcedure(String identifier)
             throws ConverterException, OwsExceptionReport {
-        Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(identifier, getSession());
+        Procedure hProcedure = getDaoFactory().getProcedureDAO().getProcedureForIdentifier(identifier, getSession());
         String pdf = !Strings.isNullOrEmpty(this.pdf) ? this.pdf
                 : hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
         if (getActiveProfile().isEncodeProcedureInObservation()) {
-            return new HibernateProcedureConverter(this.serviceProvider).createSosProcedureDescription(hProcedure, pdf,
-                    getVersion(), getSession());
+            return new HibernateProcedureConverter(this.serviceProvider, getDaoFactory(), getConverterRepository(), getProcedureDescriptionGeneratorFactoryRepository())
+                    .createSosProcedureDescription(hProcedure, pdf, getVersion(), getSession());
         } else {
             SosProcedureDescriptionUnknownType sosProcedure =
                     new SosProcedureDescriptionUnknownType(identifier, pdf, null);
@@ -311,9 +330,6 @@ public abstract class AbstractOmObservationCreator {
     }
 
     public static String checkVersion(AbstractObservationRequest request) {
-        if (request != null) {
-            return request.getVersion();
-        }
-        return null;
+        return request != null ? request.getVersion() : null;
     }
 }

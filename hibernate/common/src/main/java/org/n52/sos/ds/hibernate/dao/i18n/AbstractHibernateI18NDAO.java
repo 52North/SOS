@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -53,7 +54,6 @@ import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity
 import org.n52.sos.ds.hibernate.entities.i18n.AbstractHibernateI18NMetadata;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameDescriptionEntity,
@@ -263,9 +263,7 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
 
     protected S createSosObject(String id, List<H> h18ns) {
         S i18n = createSosObject(id);
-        for (H h18n : h18ns) {
-            fillSosObject(h18n, i18n);
-        }
+        h18ns.forEach(h18n -> fillSosObject(h18n, i18n));
         return i18n;
     }
 

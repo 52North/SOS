@@ -31,7 +31,7 @@ package org.n52.sos.encode.json.inspire;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.util.AQDJSONConstants;
-import org.n52.sos.util.Reference;
+import org.n52.shetland.w3c.xlink.Reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

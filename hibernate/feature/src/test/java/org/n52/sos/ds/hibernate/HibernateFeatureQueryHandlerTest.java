@@ -50,7 +50,7 @@ import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSHelperForTesting;
 import org.n52.sos.util.builder.SamplingFeatureBuilder;
-import org.n52.svalbard.JTSHelper;
+import org.n52.svalbard.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;

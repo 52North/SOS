@@ -72,11 +72,11 @@ import org.n52.sos.binding.rest.resources.sensors.SensorsPostEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPostResponse;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutResponse;
-import org.n52.svalbard.CodingHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.SchemaAwareEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.CodingHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;

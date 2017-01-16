@@ -59,7 +59,7 @@ import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 import org.n52.svalbard.ConformanceClasses;
-import org.n52.svalbard.OMHelper;
+import org.n52.svalbard.util.OMHelper;
 
 public class SosInsertObservationOperatorV20 extends
         AbstractV2TransactionalRequestOperator<AbstractInsertObservationHandler, InsertObservationRequest, InsertObservationResponse> {

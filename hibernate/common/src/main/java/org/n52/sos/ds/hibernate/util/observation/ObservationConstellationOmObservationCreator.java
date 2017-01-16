@@ -50,6 +50,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.generator.AbstractHibernateProcedureDescriptionGeneratorSml;
@@ -71,8 +72,14 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
     protected final List<String> featureIds;
 
     public ObservationConstellationOmObservationCreator(ObservationConstellation observationConstellation,
-            List<String> featureOfInterestIdentifiers, AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, String pdf, Session session) {
-        super(request, language, serviceProvider, pdf, session);
+                                                        List<String> featureOfInterestIdentifiers,
+                                                        AbstractObservationRequest request,
+                                                        LocalizedProducer<OwsServiceProvider> serviceProvider,
+                                                        Locale language,
+                                                        String pdf,
+                                                        DaoFactory daoFactory,
+                                                        Session session) {
+        super(request, language, serviceProvider, pdf, daoFactory, session);
         this.oc = observationConstellation;
         this.featureIds = featureOfInterestIdentifiers;
     }

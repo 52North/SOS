@@ -45,7 +45,7 @@ import org.n52.shetland.inspire.GeographicalName;
 import org.n52.shetland.inspire.Spelling;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.util.Nillable;
+import org.n52.shetland.w3c.Nillable;
 
 /**
  * TODO JavaDoc

@@ -11,10 +11,6 @@
 	<name>52°North SOS - AQD Split and Merge observations module</name>
 	<description>52°North SOS - Module to support AQD split and merge observations</description>
 	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>api</artifactId>
-		</dependency>
         <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
@@ -22,10 +18,6 @@
         <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>api-aqd-v10</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -36,17 +28,4 @@
             <artifactId>guava</artifactId>
         </dependency>
 	</dependencies>
-    <build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <configuration>
-                <usedDependencies>
-                    <usedDependency>${project.groupId}:api-aqd-v10</usedDependency>
-                </usedDependencies>
-            </configuration>
-        </plugin>
-    </plugins>
-</build>
 </project>

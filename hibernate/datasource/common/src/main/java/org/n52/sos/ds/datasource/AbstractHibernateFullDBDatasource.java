@@ -34,8 +34,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.settings.StringSettingDefinition;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.settings.BooleanSettingDefinition;
+import org.n52.faroe.settings.IntegerSettingDefinition;
+import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
@@ -60,8 +62,8 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        Set<SettingDefinition<?, ?>> set = super.getSettingDefinitions();
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
+        Set<SettingDefinition<?>> set = super.getSettingDefinitions();
         if (supportsSchema) {
             set.add(createSchemaDefinition(schemaDefault));
         }
@@ -78,11 +80,11 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(final Properties current) {
+    public Set<SettingDefinition<?>> getChangableSettingDefinitions(final Properties current) {
         final Map<String, Object> settings = parseDatasourceProperties(current);
         StringSettingDefinition schemaSetting = createSchemaDefinition((String) settings.get(SCHEMA_KEY));
-        HashSet<SettingDefinition<?, ?>> settingDefinitions
-                = Sets.<SettingDefinition<?, ?>>newHashSet(
+        HashSet<SettingDefinition<?>> settingDefinitions
+                = Sets.<SettingDefinition<?>>newHashSet(
                         createUsernameDefinition((String) settings.get(USERNAME_KEY)),
                         createPasswordDefinition((String) settings.get(PASSWORD_KEY)),
                         createDatabaseDefinition((String) settings.get(DATABASE_KEY)),
@@ -99,15 +101,22 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
     }
 
     protected StringSettingDefinition createSchemaDefinition(final String defaultValue) {
-        return createSchemaDefinition().setDescription(schemaDescription).setDefaultValue(defaultValue);
+        StringSettingDefinition def = createSchemaDefinition();
+        def.setDescription(schemaDescription);
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
-    protected SettingDefinition<?, ?> createBatchSizeDefinition(final Integer defaultValue) {
-        return createBatchSizeDefinition().setDefaultValue(defaultValue);
+    protected SettingDefinition<?> createBatchSizeDefinition(final Integer defaultValue) {
+        IntegerSettingDefinition def = createBatchSizeDefinition();
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
-    protected SettingDefinition<?, ?> createProvidedJdbcDriverDefinition(final Boolean defaultValue) {
-        return createProvidedJdbcDriverDefinition().setDefaultValue(defaultValue);
+    protected SettingDefinition<?> createProvidedJdbcDriverDefinition(final Boolean defaultValue) {
+        BooleanSettingDefinition def = createProvidedJdbcDriverDefinition();
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
     @Override

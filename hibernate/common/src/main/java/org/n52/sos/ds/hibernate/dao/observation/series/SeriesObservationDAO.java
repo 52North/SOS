@@ -40,12 +40,17 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 
 
 public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
+
+    public SeriesObservationDAO(DaoFactory daoFactory) {
+        super(daoFactory);
+    }
 
     /**
      * Query series observation for series and offerings

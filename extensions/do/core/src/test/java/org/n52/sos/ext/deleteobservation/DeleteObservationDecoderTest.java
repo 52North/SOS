@@ -35,8 +35,8 @@ import static org.n52.shetland.ogc.sos.SosConstants.SOS;
 import static org.n52.shetland.util.CollectionHelper.union;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0;
-import static org.n52.svalbard.CodingHelper.decoderKeysForElements;
-import static org.n52.svalbard.CodingHelper.xmlDecoderKeysForOperation;
+import static org.n52.svalbard.util.CodingHelper.decoderKeysForElements;
+import static org.n52.svalbard.util.CodingHelper.xmlDecoderKeysForOperation;
 
 import java.util.Set;
 

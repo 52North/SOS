@@ -60,6 +60,7 @@ import net.opengis.swe.x101.DataComponentPropertyType;
 import net.opengis.swe.x101.DataRecordType;
 import net.opengis.swe.x101.SimpleDataRecordType;
 
+import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
 
 import org.n52.shetland.ogc.OGCConstants;
@@ -75,10 +76,10 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
-import org.n52.svalbard.CodingHelper;
-import org.n52.svalbard.XmlHelper;
-import org.n52.svalbard.XmlOptionsHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlHelper;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author Shane StClair
@@ -230,7 +231,9 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     private AbstractProcess decodeAbstractProcess(SensorMLDocument xbSmlDoc) throws DecodingException {
-        Object decoded = CodingHelper.decodeXmlObject(xbSmlDoc);
+        // FIXME
+//        Object decoded = CodingHelper.decodeXmlObject(xbSmlDoc);
+        Object decoded = XmlObject.Factory.newInstance();
         assertThat(decoded, instanceOf(SensorML.class));
         SensorML sml = (SensorML) decoded;
         assertThat(sml.getMembers().size(), is(1));

@@ -55,7 +55,7 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.util.SosHelper;
-import org.n52.svalbard.OMHelper;
+import org.n52.svalbard.util.OMHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;

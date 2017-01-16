@@ -47,9 +47,9 @@ import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.svalbard.XmlEncoderKey;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.OperationResponseEncoderKey;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.shetland.ogc.sos.Sos2Constants;

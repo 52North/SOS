@@ -29,10 +29,14 @@
 package org.n52.sos.config.sqlite;
 
 
-import org.n52.iceland.config.AbstractSettingValueFactory;
-import org.n52.iceland.config.SettingValue;
+import java.io.File;
+import java.net.URI;
+
+import org.joda.time.DateTime;
+
+import org.n52.faroe.AbstractSettingValueFactory;
+import org.n52.faroe.SettingValue;
 import org.n52.janmayen.i18n.MultilingualString;
-import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
 import org.n52.sos.config.sqlite.entities.ChoiceSettingValue;
 import org.n52.sos.config.sqlite.entities.FileSettingValue;
@@ -50,48 +54,48 @@ import org.n52.sos.config.sqlite.entities.UriSettingValue;
 public class SQLiteSettingValueFactory extends AbstractSettingValueFactory {
 
     @Override
-    public BooleanSettingValue newBooleanSettingValue() {
-        return new BooleanSettingValue();
+    public BooleanSettingValue newBooleanSettingValue(String key, Boolean value) {
+        return new BooleanSettingValue(key, value);
     }
 
     @Override
-    public IntegerSettingValue newIntegerSettingValue() {
-        return new IntegerSettingValue();
+    public IntegerSettingValue newIntegerSettingValue(String key, Integer value) {
+        return new IntegerSettingValue(key, value);
     }
 
     @Override
-    public StringSettingValue newStringSettingValue() {
-        return new StringSettingValue();
+    public StringSettingValue newStringSettingValue(String key, String value) {
+        return new StringSettingValue(key, value);
     }
 
     @Override
-    public FileSettingValue newFileSettingValue() {
-        return new FileSettingValue();
+    public FileSettingValue newFileSettingValue(String key, File value) {
+        return new FileSettingValue(key, value);
     }
 
     @Override
-    public UriSettingValue newUriSettingValue() {
-        return new UriSettingValue();
+    public UriSettingValue newUriSettingValue(String key, URI value) {
+        return new UriSettingValue(key, value);
     }
 
     @Override
-    protected SettingValue<Double> newNumericSettingValue() {
-        return new NumericSettingValue();
+    protected SettingValue<Double> newNumericSettingValue(String key, Double value) {
+        return new NumericSettingValue(key, value);
     }
 
     @Override
-    protected SettingValue<TimeInstant> newTimeInstantSettingValue() {
-        return new TimeInstantSettingValue();
+    protected SettingValue<DateTime> newDateTimeSettingValue(String key, DateTime value) {
+        return new TimeInstantSettingValue(key, value);
     }
 
     @Override
-    protected SettingValue<MultilingualString> newMultiLingualStringSettingValue() {
-        return new MultilingualStringSettingValue();
+    protected SettingValue<MultilingualString> newMultiLingualStringSettingValue(String key, MultilingualString value) {
+        return new MultilingualStringSettingValue(key, value);
     }
 
     @Override
-    protected SettingValue<String> newChoiceSettingValue() {
-        return new ChoiceSettingValue();
+    protected SettingValue<String> newChoiceSettingValue(String key, String value) {
+        return new ChoiceSettingValue(key, value);
     }
 
 }

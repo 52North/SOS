@@ -36,7 +36,7 @@ import org.n52.iceland.convert.ConverterKey;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.wml.ObservationProcess;
+import org.n52.shetland.ogc.wml.ObservationProcess;
 import org.n52.shetland.ogc.wml.WaterMLConstants;
 
 import org.slf4j.Logger;

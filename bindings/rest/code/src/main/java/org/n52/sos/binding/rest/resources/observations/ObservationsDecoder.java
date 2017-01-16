@@ -61,8 +61,8 @@ import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
-import org.n52.svalbard.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.XmlHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

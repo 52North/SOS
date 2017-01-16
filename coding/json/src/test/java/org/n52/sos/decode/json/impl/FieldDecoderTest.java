@@ -43,7 +43,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
@@ -373,7 +373,7 @@ public class FieldDecoderTest {
     }
 
     protected ObjectNode createField() {
-        return JSONUtils.nodeFactory().objectNode().put(JSONConstants.NAME, NAME).put(JSONConstants.LABEL, LABEL)
+        return Json.nodeFactory().objectNode().put(JSONConstants.NAME, NAME).put(JSONConstants.LABEL, LABEL)
                 .put(JSONConstants.DEFINITION, DEFINITION).put(JSONConstants.DESCRIPTION, DESCRIPTION)
                 .put(JSONConstants.IDENTIFIER, IDENTIFIER);
     }

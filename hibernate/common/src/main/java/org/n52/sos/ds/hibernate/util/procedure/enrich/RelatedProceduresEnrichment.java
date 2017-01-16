@@ -42,7 +42,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
@@ -61,6 +61,11 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
     private HibernateProcedureConverter converter;
     private Map<String, Procedure> procedureCache;
     private TimePeriod validTime;
+    private final DaoFactory daoFactory;
+
+    public RelatedProceduresEnrichment(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     public RelatedProceduresEnrichment setProcedureDescriptionFormat(String pdf) {
         this.procedureDescriptionFormat = checkNotNull(pdf);
@@ -186,7 +191,7 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
 
     private Map<String, Procedure> createProcedureCache() {
         Set<String> identifiers = getCache().getChildProcedures(getIdentifier(), true, false);
-        List<Procedure> children = new ProcedureDAO().getProceduresForIdentifiers(identifiers, getSession());
+        List<Procedure> children = daoFactory.getProcedureDAO().getProceduresForIdentifiers(identifiers, getSession());
         Map<String, Procedure> cache = Maps.newHashMapWithExpectedSize(children.size());
         for (Procedure child : children) {
             cache.put(child.getIdentifier(), child);

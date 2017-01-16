@@ -48,7 +48,7 @@ import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
-import org.n52.svalbard.EncodingValues;
+import org.n52.svalbard.encode.EncodingValues;
 import org.n52.svalbard.encode.XmlEventWriter;
 import org.n52.svalbard.encode.exception.EncodingException;
 

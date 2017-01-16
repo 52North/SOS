@@ -44,7 +44,7 @@ import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncoderKey;
-import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**

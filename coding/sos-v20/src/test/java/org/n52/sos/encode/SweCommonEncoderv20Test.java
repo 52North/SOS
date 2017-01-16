@@ -31,9 +31,9 @@ package org.n52.sos.encode;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-import org.n52.svalbard.SweCommonEncoderv20;
-import org.n52.svalbard.XmlHelper;
+import org.n52.svalbard.encode.SweCommonEncoderv20;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.XmlHelper;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;

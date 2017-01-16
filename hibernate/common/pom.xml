@@ -32,6 +32,10 @@
             <artifactId>janmayen</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
@@ -124,10 +128,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb.sos</groupId>
-            <artifactId>api-aqd-v10</artifactId>
         </dependency>
     </dependencies>
     <build>

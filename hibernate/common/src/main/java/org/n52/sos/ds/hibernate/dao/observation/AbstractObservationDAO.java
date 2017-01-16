@@ -94,6 +94,7 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
@@ -141,6 +142,17 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDAO.class);
 
     private static final String SQL_QUERY_OBSERVATION_TIME_EXTREMA = "getObservationTimeExtrema";
+
+    private final DaoFactory daoFactory;
+
+    public AbstractObservationDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
+    protected DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
 
     /**
      * Add observation identifier (procedure, observableProperty,
@@ -586,6 +598,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         ObservationPersister persister = new ObservationPersister(
                 getGeometryHandler(),
                 this,
+                this.daoFactory,
                 sosObservation,
                 hObservationConstellations,
                 hFeature,
@@ -1371,16 +1384,16 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         private final ObservationFactory observationFactory;
         private final OmObservation sosObservation;
         private final boolean childObservation;
-
         ObservationPersister(GeometryHandler geometryHandler,
                              AbstractObservationDAO observationDao,
+                             DaoFactory daoFactory,
                              OmObservation sosObservation,
                              Set<ObservationConstellation> observationConstellations,
                              FeatureOfInterest featureOfInterest,
                              Map<String, Codespace> codespaceCache,
                              Map<String, Unit> unitCache,
                              Session session) throws OwsExceptionReport {
-            this(new DAOs(observationDao), new Caches(codespaceCache, unitCache), sosObservation,
+            this(new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache), sosObservation,
                  observationConstellations, featureOfInterest, getSamplingGeometry(geometryHandler, sosObservation), session, false);
         }
 
@@ -1618,12 +1631,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             private final ObservationTypeDAO observationType;
             private final ParameterDAO parameter;
 
-            DAOs(AbstractObservationDAO observationDAO) {
-                this.observation = observationDAO;
-                this.observableProperty = new ObservablePropertyDAO();
-                this.observationConstellation = new ObservationConstellationDAO();
-                this.observationType = new ObservationTypeDAO();
-                this.parameter = new ParameterDAO();
+            DAOs(AbstractObservationDAO observationDao, DaoFactory daoFactory) {
+                this.observation = observationDao;
+                this.observableProperty = daoFactory.getObservablePropertyDAO();
+                this.observationConstellation = daoFactory.getObservationConstellationDAO();
+                this.observationType = daoFactory.getObservationTypeDAO();
+                this.parameter = daoFactory.getParameterDAO();
             }
 
             public ObservablePropertyDAO observableProperty() {

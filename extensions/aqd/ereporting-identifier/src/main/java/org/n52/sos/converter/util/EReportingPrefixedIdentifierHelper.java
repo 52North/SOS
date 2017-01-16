@@ -31,7 +31,7 @@ package org.n52.sos.converter.util;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.sos.settings.EReportingSetting;
+import org.n52.svalbard.EReportingSetting;
 
 import com.google.common.base.Strings;
 

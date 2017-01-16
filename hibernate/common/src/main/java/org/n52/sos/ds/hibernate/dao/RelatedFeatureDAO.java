@@ -58,6 +58,12 @@ public class RelatedFeatureDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RelatedFeatureDAO.class);
 
+    private final DaoFactory daoFactory;
+
+    public RelatedFeatureDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     /**
      * Get related feature objects for offering identifier
      *
@@ -125,7 +131,7 @@ public class RelatedFeatureDAO {
         // TODO: create featureOfInterest and link to relatedFeature
         List<RelatedFeature> relFeats = getRelatedFeatures(feature.getIdentifierCodeWithAuthority().getValue(), session);
         if (relFeats == null) {
-            relFeats = new LinkedList<RelatedFeature>();
+            relFeats = new LinkedList<>();
         }
         if (relFeats.isEmpty()) {
             final RelatedFeature relFeat = new RelatedFeature();
@@ -137,9 +143,9 @@ public class RelatedFeatureDAO {
                                 .insertFeature((SamplingFeature) feature, session);
                 url = ((SamplingFeature) feature).getUrl();
             }
-            relFeat.setFeatureOfInterest(new FeatureOfInterestDAO().getOrInsertFeatureOfInterest(identifier, url,
+            relFeat.setFeatureOfInterest(new FeatureOfInterestDAO(daoFactory).getOrInsertFeatureOfInterest(identifier, url,
                     session));
-            relFeat.setRelatedFeatureRoles(new HashSet<RelatedFeatureRole>(roles));
+            relFeat.setRelatedFeatureRoles(new HashSet<>(roles));
             session.save(relFeat);
             session.flush();
             relFeats.add(relFeat);

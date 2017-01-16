@@ -43,18 +43,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingDefinitionGroup;
-import org.n52.iceland.config.SettingsService;
 import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingDefinitionGroup;
+import org.n52.faroe.SettingsService;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.StringHelper;
 
 import com.google.common.base.Strings;
-
-
 
 /**
  * TODO JavaDoc
@@ -65,35 +63,40 @@ import com.google.common.base.Strings;
  */
 @Controller
 public class SettingDefinitonController extends AbstractController {
+    private static final SettingDefinitionGroup DEFAULT_GROUP;
 
-    private static final SettingDefinitionGroup DEFAULT_SETTINGS_GROUP = new SettingDefinitionGroup().setTitle("Settings");
+    static {
+        DEFAULT_GROUP = new SettingDefinitionGroup();
+        DEFAULT_GROUP.setTitle("Settings");
+    }
 
     @Inject
     private SettingsService settingsManager;
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.SETTING_DEFINITIONS, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
-    public String get(@RequestParam(value = "showAll", defaultValue="true") boolean showAll ,
+    @RequestMapping(value = ControllerConstants.Paths.SETTING_DEFINITIONS, method = RequestMethod.GET, produces
+                    = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
+    public String get(@RequestParam(value = "showAll", defaultValue = "true") boolean showAll,
                       @RequestParam(value = "only", required = false) String only)
             throws ConfigurationError, JSONException {
-        Set<SettingDefinition<?, ?>> defs = this.settingsManager.getSettingDefinitions();
-        Map<SettingDefinitionGroup, Set<SettingDefinition<?,?>>> grouped;
+        Set<SettingDefinition<?>> defs = this.settingsManager.getSettingDefinitions();
+        Map<SettingDefinitionGroup, Set<SettingDefinition<?>>> grouped;
         if (!Strings.isNullOrEmpty(only)) {
             grouped = sortByGroup(defs, false, StringHelper.splitToSet(only));
         } else {
             grouped = sortByGroup(defs, showAll, Collections.emptySet());
         }
-        return JSONUtils.print(getSettingsEncoder().encode(grouped));
+        return Json.print(getSettingsEncoder().encode(grouped));
     }
 
-    protected Map<SettingDefinitionGroup, Set<SettingDefinition<?,?>>> sortByGroup(
-            Set<SettingDefinition<?, ?>> defs, boolean showAll, Set<String> only) {
+    protected Map<SettingDefinitionGroup, Set<SettingDefinition<?>>> sortByGroup(
+            Set<SettingDefinition<?>> defs, boolean showAll, Set<String> only) {
         return defs.stream()
                 .filter(def -> checkGroup(def, showAll, only))
                 .collect(groupingBy(this::getGroup, toSet()));
     }
 
-    protected boolean checkGroup(SettingDefinition<?, ?> def, boolean showAll, Set<String> only) {
+    protected boolean checkGroup(SettingDefinition<?> def, boolean showAll, Set<String> only) {
         if (!showAll) {
             SettingDefinitionGroup group = getGroup(def);
             if (CollectionHelper.isEmpty(only)) {
@@ -104,8 +107,8 @@ public class SettingDefinitonController extends AbstractController {
         return true;
     }
 
-    protected SettingDefinitionGroup getGroup(SettingDefinition<?, ?> def) {
-        return def.getGroup(DEFAULT_SETTINGS_GROUP);
+    protected SettingDefinitionGroup getGroup(SettingDefinition<?> def) {
+        return def.getGroup(DEFAULT_GROUP);
     }
 
 }

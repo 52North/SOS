@@ -152,13 +152,7 @@ public class ObservationUnfolder {
                         else if (dataComponent instanceof SweAbstractSimpleType) {
                             observedValue = parseSweAbstractSimpleType(dataComponent, token);
                         } else if (dataComponent instanceof SweDataRecord) {
-                            try {
-                                observedValue =
-                                        parseSweDataRecord(((SweDataRecord) dataComponent).clone(), block, tokenIndex);
-                            } catch (CloneNotSupportedException e) {
-                                throw new NoApplicableCodeException().causedBy(e).withMessage(
-                                        "Unable to copy element '%s'.", dataComponent.getClass().getName());
-                            }
+                            observedValue = parseSweDataRecord(((SweDataRecord) dataComponent).copy(), block, tokenIndex);
                         } else {
                             throw new NoApplicableCodeException().withMessage("sweField type '%s' not supported",
                                     dataComponent != null ? dataComponent.getClass().getName() : "null");

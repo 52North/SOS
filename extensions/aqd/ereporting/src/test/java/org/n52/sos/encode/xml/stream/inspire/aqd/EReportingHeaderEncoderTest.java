@@ -63,9 +63,9 @@ import org.n52.shetland.inspire.Spelling;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.util.Nillable;
-import org.n52.sos.util.Reference;
-import org.n52.sos.util.Referenceable;
+import org.n52.shetland.w3c.Nillable;
+import org.n52.shetland.w3c.xlink.Reference;
+import org.n52.shetland.w3c.xlink.Referenceable;
 
 public class EReportingHeaderEncoderTest {
     @Test

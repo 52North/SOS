@@ -39,15 +39,21 @@ import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.svalbard.AqdHelper;
+import org.n52.svalbard.util.AqdHelper;
+import org.n52.svalbard.util.ReportObligations;
 
 public class EReportingSeriesDAO extends AbstractSeriesDAO {
+
+    public EReportingSeriesDAO(DaoFactory daoFactory) {
+        super(daoFactory);
+    }
 
     @Override
     protected Class<?> getSeriesClass() {
@@ -124,13 +130,21 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     @Override
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
-            ReportObligationType flow = AqdHelper.getInstance().getFlow(request.getExtensions());
-            if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E2A.equals(flow)) {
-                addAssessmentType(c, AqdConstants.AssessmentType.Fixed.name());
-            } else if (ReportObligationType.E1B.equals(flow)) {
-                addAssessmentType(c, AqdConstants.AssessmentType.Model.name());
-            } else {
+            ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
+            if (null == flow) {
                 throw new OptionNotSupportedException().withMessage("The requested e-Reporting flow %s is not supported!", flow.name());
+            } else {
+                switch (flow) {
+                    case E1A:
+                    case E2A:
+                        addAssessmentType(c, AqdConstants.AssessmentType.Fixed.name());
+                        break;
+                    case E1B:
+                        addAssessmentType(c, AqdConstants.AssessmentType.Model.name());
+                        break;
+                    default:
+                        throw new OptionNotSupportedException().withMessage("The requested e-Reporting flow %s is not supported!", flow.name());
+                }
             }
         }
     }

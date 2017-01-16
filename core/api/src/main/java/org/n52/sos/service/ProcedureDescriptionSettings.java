@@ -47,10 +47,6 @@ import org.n52.svalbard.Validation;
 @Configurable
 public class ProcedureDescriptionSettings implements Constructable {
 
-    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Procedure Description Enrichment")
-            .setDescription("Settings to configure the procedure description generation and enrichment feature.")
-            .setOrder(4.2023f);
-
     public static final String IDENTIFIER_LONG_NAME_DEFINITION = "procedureDesc.IDENTIFIER_LONG_NAME_DEFINITION";
 
     public static final String IDENTIFIER_SHORT_NAME_DEFINITION = "procedureDesc.IDENTIFIER_SHORT_NAME_DEFINITION";

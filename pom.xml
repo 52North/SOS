@@ -92,6 +92,7 @@
         <svalbard.version>1-SNAPSHOT</svalbard.version>
         <janmayen.version>1-SNAPSHOT</janmayen.version>
         <n52.common.xml.version>2.2.0</n52.common.xml.version>
+        <faroe.version>1-SNAPSHOT</faroe.version>
         <org.springframework.security.version>4.0.3.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.2.3.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
@@ -103,6 +104,11 @@
                 <groupId>org.n52.iceland</groupId>
                 <artifactId>iceland</artifactId>
                 <version>${iceland.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.faroe</groupId>
+                <artifactId>faroe</artifactId>
+                <version>${faroe.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.shetland</groupId>
@@ -322,11 +328,6 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>coding-soap</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>enhanced-v20</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -415,11 +416,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>core-aqd-v10</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>api-aqd-v10</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1163,10 +1159,10 @@
                 <artifactId>gt-epsg-hsql</artifactId>
                 <version>${geotools.version}</version>
                 <exclusions>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1174,10 +1170,10 @@
                 <artifactId>gt-main</artifactId>
                 <version>${geotools.version}</version>
                 <exclusions>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1189,10 +1185,10 @@
                         <groupId>java3d</groupId>
                         <artifactId>vecmath</artifactId>
                     </exclusion>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1200,10 +1196,10 @@
                 <artifactId>gt-metadata</artifactId>
                 <version>${geotools.version}</version>
                 <exclusions>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1211,10 +1207,10 @@
                 <artifactId>gt-opengis</artifactId>
                 <version>${geotools.version}</version>
                 <exclusions>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1227,10 +1223,10 @@
                 <artifactId>gt-api</artifactId>
                 <version>${geotools.version}</version>
                 <exclusions>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>

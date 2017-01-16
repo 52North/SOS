@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
-import org.n52.svalbard.XmlEncoderKey;
+import org.n52.svalbard.encode.XmlEncoderKey;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>

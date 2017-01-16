@@ -44,8 +44,8 @@ import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.wsdl.WSDLConstants.Operations;
-import org.n52.svalbard.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.XmlHelper;
 
 import com.google.common.annotations.VisibleForTesting;
 

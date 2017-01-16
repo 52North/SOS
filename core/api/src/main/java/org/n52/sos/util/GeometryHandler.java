@@ -30,7 +30,6 @@ package org.n52.sos.util;
 
 import static java.util.stream.Collectors.toSet;
 import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -69,8 +68,8 @@ import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.FeatureQuerySettingsProvider;
 import org.n52.svalbard.CodingSettings;
-import org.n52.svalbard.JTSHelper;
 import org.n52.svalbard.Validation;
+import org.n52.svalbard.util.JTSHelper;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;

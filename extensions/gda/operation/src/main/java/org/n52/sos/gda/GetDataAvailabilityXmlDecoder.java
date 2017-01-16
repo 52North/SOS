@@ -46,13 +46,13 @@ import org.n52.shetland.ogc.swes.SwesConstants;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.ogc.swes.SwesExtensions;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.svalbard.CodingHelper;
 import org.n52.svalbard.XPathConstants;
-import org.n52.svalbard.XmlHelper;
 import org.n52.svalbard.decode.AbstractXmlDecoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.decode.exception.XmlDecodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlHelper;
 
 import com.google.common.base.Joiner;
 

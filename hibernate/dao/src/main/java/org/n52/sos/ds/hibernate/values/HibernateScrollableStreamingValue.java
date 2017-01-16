@@ -38,6 +38,7 @@ import org.n52.shetland.ogc.om.TimeValuePair;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 
 /**
@@ -55,18 +56,17 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     /**
      * constructor
      *
-     * @param request
-     *            {@link GetObservationRequest}
-     * @param procedure
-     *            Datasource procedure id
-     * @param observableProperty
-     *            Datasource observableProperty id
-     * @param featureOfInterest
-     *            Datasource featureOfInterest id
+     * @param connectionProvider the connection provider
+     * @param daoFactory         the DAO factory
+     * @param request            {@link GetObservationRequest}
+     * @param procedure          Datasource procedure id
+     * @param observableProperty Datasource observableProperty id
+     * @param featureOfInterest  Datasource featureOfInterest id
      */
-    public HibernateScrollableStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long procedure, long observableProperty,
-            long featureOfInterest) {
-        super(connectionProvider, request, procedure, observableProperty, featureOfInterest);
+    public HibernateScrollableStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
+                                             GetObservationRequest request, long procedure, long observableProperty,
+                                             long featureOfInterest) {
+        super(connectionProvider, daoFactory, request, procedure, observableProperty, featureOfInterest);
     }
 
     @Override

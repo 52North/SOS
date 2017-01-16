@@ -47,13 +47,14 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.janmayen.NcNameResolver;
+import org.n52.janmayen.NcName;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.OwsRange;
@@ -79,6 +80,7 @@ import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.service.Configurator;
+import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.encode.Encoder;
 
 import com.google.common.base.Joiner;
@@ -578,16 +580,9 @@ public class SosHelper {
      * @see SosHelper#setConfiguration(org.n52.sos.util.SosHelper.Configuration)
      */
     protected static class Configuration {
+
         protected Collection<String> getObservationTypes() {
             return Configurator.getInstance().getCache().getObservationTypes();
-        }
-
-        protected String getSrsNamePrefix() {
-            return ServiceConfiguration.getInstance().getSrsNamePrefix();
-        }
-
-        protected String getSrsNamePrefixSosV2() {
-            return ServiceConfiguration.getInstance().getSrsNamePrefixSosV2();
         }
 
         protected Set<Encoder<?, ?>> getEncoders() {
@@ -602,8 +597,8 @@ public class SosHelper {
     public static Map<String, String> getNcNameResolvedOfferings(Collection<String> offerings) {
         Map<String, String> resolvedOfferings = new HashMap<>();
         for (String offering : offerings) {
-            if (!NcNameResolver.isNCName(offering)) {
-                resolvedOfferings.put(NcNameResolver.fixNcName(offering), offering);
+            if (!NcName.isValid(offering)) {
+                resolvedOfferings.put(NcName.makeValid(offering), offering);
             } else {
                 resolvedOfferings.put(offering, offering);
             }

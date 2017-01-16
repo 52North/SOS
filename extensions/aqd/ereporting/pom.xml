@@ -20,6 +20,10 @@
             <artifactId>iceland</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.janmayen</groupId>
+            <artifactId>janmayen</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard</artifactId>
         </dependency>
@@ -62,10 +66,6 @@
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>api-aqd-v10</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -31,6 +31,7 @@ package org.n52.sos.config.sqlite.entities;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -40,12 +41,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 
-import org.n52.iceland.config.SettingType;
-import org.n52.iceland.config.SettingValue;
+import org.n52.faroe.SettingType;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 
-import com.google.common.collect.Maps;
 
 @Entity(name = "multilingual_string_settings")
 public class MultilingualStringSettingValue extends AbstractSettingValue<MultilingualString> {
@@ -60,6 +59,15 @@ public class MultilingualStringSettingValue extends AbstractSettingValue<Multili
                              referencedColumnName = "identifier"))
     private Map<String, String> value;
 
+    public MultilingualStringSettingValue(String identifier, MultilingualString value) {
+        super(identifier);
+        setValue(value);
+    }
+
+    public MultilingualStringSettingValue(Map<String, String> value) {
+    this(null, null);
+    }
+
     @Override
     public MultilingualString getValue() {
         if (this.value == null) {
@@ -67,26 +75,19 @@ public class MultilingualStringSettingValue extends AbstractSettingValue<Multili
         } else {
             MultilingualString value = new MultilingualString();
             for (Entry<String, String> e : this.value.entrySet()) {
-                value.addLocalization(
-                        new LocalizedString(new Locale(e.getKey()), e.getValue()));
+                value.addLocalization(new LocalizedString(new Locale(e.getKey()), e.getValue()));
             }
             return value;
         }
     }
 
     @Override
-    public SettingValue<MultilingualString> setValue(MultilingualString value) {
+    public void setValue(MultilingualString value) {
         if (value == null) {
             this.value = null;
         } else {
-
-            this.value = Maps.newHashMapWithExpectedSize(value.size());
-            for (Locale locale : value.getLocales()) {
-                this.value.put(locale.toString(),
-                               value.getLocalization(locale).get().getText());
-            }
+            this.value = value.stream().collect(Collectors.toMap(x -> x.getLang().toString(), LocalizedString::getText));
         }
-        return this;
     }
 
     @Override

@@ -31,9 +31,9 @@ package org.n52.sos.encode.json.impl;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlOptions;
-import org.n52.svalbard.CodingHelper;
-import org.n52.svalbard.XmlOptionsHelper;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlOptionsHelper;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;

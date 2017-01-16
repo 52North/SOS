@@ -40,7 +40,8 @@ import java.util.Set;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.n52.iceland.config.SettingDefinition;
+
+import org.n52.faroe.SettingDefinition;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
@@ -64,12 +65,12 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     }
 
     public void testGetSettingDefinitions() throws Exception {
-        final Set<SettingDefinition<?, ?>> settings = ds.getSettingDefinitions();
+        final Set<SettingDefinition<?>> settings = ds.getSettingDefinitions();
         checkSettingDefinitionsTransactional(settings);
     }
 
     public void testGetChangableSettingDefinitions() throws Exception {
-        final Set<SettingDefinition<?, ?>> settings = ds.getChangableSettingDefinitions(new Properties());
+        final Set<SettingDefinition<?>> settings = ds.getChangableSettingDefinitions(new Properties());
         checkSettingDefinitionsChangableSetting(settings);
     }
 
@@ -89,18 +90,18 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         checkSettingKeys(settings.keySet(), false, false);
     }
 
-    private void checkSettingDefinitionsTransactional(final Set<SettingDefinition<?, ?>> settings) {
+    private void checkSettingDefinitionsTransactional(final Set<SettingDefinition<?>> settings) {
         checkSettingDefinitions(settings, false, true);
     }
 
-    private void checkSettingDefinitionsChangableSetting(final Set<SettingDefinition<?, ?>> settings) {
+    private void checkSettingDefinitionsChangableSetting(final Set<SettingDefinition<?>> settings) {
         checkSettingDefinitions(settings, true, false);
 
     }
 
-    private void checkSettingDefinitions(final Set<SettingDefinition<?, ?>> settings, final boolean changeable, final boolean settingsDefinitions) {
+    private void checkSettingDefinitions(final Set<SettingDefinition<?>> settings, final boolean changeable, final boolean settingsDefinitions) {
         final List<String> keys = new ArrayList<>();
-        final Iterator<SettingDefinition<?, ?>> iterator = settings.iterator();
+        final Iterator<SettingDefinition<?>> iterator = settings.iterator();
         while (iterator.hasNext()) {
             keys.add(iterator.next().getKey());
         }

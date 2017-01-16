@@ -63,6 +63,7 @@ import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterExceptio
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.util.SosHelper;
+import org.n52.svalbard.util.ReportObligations;
 
 import com.google.common.collect.Lists;
 
@@ -82,7 +83,7 @@ public class AqdGetObservationOperatorV10 extends
 
     @Override
     public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
-        ReportObligationType flow = getAqdHelper().getFlow(request.getExtensions());
+        ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
         checkReportingHeader(flow);
         checkRequestForFlowAndTemporalFilter(request, flow);
         boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);

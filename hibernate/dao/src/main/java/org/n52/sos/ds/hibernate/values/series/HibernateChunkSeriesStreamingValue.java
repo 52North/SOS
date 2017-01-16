@@ -42,6 +42,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 
@@ -69,14 +70,16 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     /**
      * constructor
      *
+     * @param connectionProvider the connection provider
+     * @param daoFactory the DAO factory
      * @param request
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long series) throws CodedException {
-        super(connectionProvider, request, series);
+    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long series) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, series);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 

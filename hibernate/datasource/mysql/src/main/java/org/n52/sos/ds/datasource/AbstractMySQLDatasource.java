@@ -44,6 +44,7 @@ import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

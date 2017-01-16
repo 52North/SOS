@@ -39,7 +39,7 @@ import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.wsdl.WSDLFault;
 import org.n52.sos.wsdl.WSDLOperation;
-import org.n52.svalbard.XmlHelper;
+import org.n52.svalbard.util.XmlHelper;
 
 /**
  * Constants for the GetDataAvailability SOS operation.

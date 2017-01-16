@@ -50,7 +50,7 @@ import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.JSONConstants;
 
@@ -86,16 +86,16 @@ public class AdminEncodingController extends AbstractAdminController {
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String getAll() {
-        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        ObjectNode node = Json.nodeFactory().objectNode();
         node.set(JSONConstants.OBSERVATION_ENCODINGS_KEY, getObservationEncodings());
         node.set(JSONConstants.PROCEDURE_ENCODINGS_KEY, getProcedureEncodings());
-        return JSONUtils.print(node);
+        return Json.print(node);
     }
 
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS_JSON_ENDPOINT, method = RequestMethod.POST, consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public void change(@RequestBody String request) throws IOException {
-        JsonNode json = JSONUtils.loadString(request);
+        JsonNode json = Json.loadString(request);
 
         if (json.has(JSONConstants.RESPONSE_FORMAT_KEY)) {
             OwsServiceKey sokt =
@@ -117,7 +117,7 @@ public class AdminEncodingController extends AbstractAdminController {
     }
 
     protected ArrayNode getObservationEncodings() {
-        ArrayNode joes = JSONUtils.nodeFactory().arrayNode();
+        ArrayNode joes = Json.nodeFactory().arrayNode();
         final Map<OwsServiceKey, Set<String>> oes =
                 this.responseFormatRepository.getAllSupportedResponseFormats();
         for (OwsServiceKey sokt : oes.keySet()) {
@@ -134,7 +134,7 @@ public class AdminEncodingController extends AbstractAdminController {
     }
 
     protected ArrayNode getProcedureEncodings() {
-        ArrayNode jpes = JSONUtils.nodeFactory().arrayNode();
+        ArrayNode jpes = Json.nodeFactory().arrayNode();
         final Map<OwsServiceKey, Set<String>> oes =
                 this.procedureDescriptionFormatRepository.getAllProcedureDescriptionFormats();
         for (OwsServiceKey sokt : oes.keySet()) {

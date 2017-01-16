@@ -46,7 +46,8 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingQuality;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
-import org.n52.svalbard.AqdHelper;
+import org.n52.svalbard.util.AqdHelper;
+import org.n52.svalbard.util.ReportObligations;
 
 import com.google.common.base.Strings;
 
@@ -218,7 +219,7 @@ public abstract class AbstractValuedEReportingObservation<T>
             Time obsPhenTime = observation.getValue().getPhenomenonTime();
             Time valuePhenTime = createPhenomenonTime();
             if (obsPhenTime != null) {
-                TimePeriod timePeriod = null;
+                TimePeriod timePeriod;
                 if (obsPhenTime instanceof TimePeriod) {
                     timePeriod = (TimePeriod) obsPhenTime;
                 } else {
@@ -248,8 +249,8 @@ public abstract class AbstractValuedEReportingObservation<T>
     @Override
     public void addValueSpecificDataToObservation(OmObservation observation, Session session, Extensions extensions)
             throws OwsExceptionReport {
-        if (AqdHelper.getInstance().hasFlowExtension(extensions)) {
-            ReportObligationType flow = AqdHelper.getInstance().getFlow(extensions);
+        if (ReportObligations.hasFlow(extensions)) {
+            ReportObligationType flow = ReportObligations.getFlow(extensions);
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
                 int year = DateTimeHelper.makeDateTime(getPhenomenonTimeStart()).getYear();
                 EReportingQuality eReportingQuality =

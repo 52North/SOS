@@ -35,7 +35,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.n52.iceland.event.ServiceEventBus;
+import org.n52.janmayen.event.EventBus;
 import org.n52.iceland.event.events.CountingOutputStreamEvent;
 import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.iceland.event.events.OutgoingResponseEvent;
@@ -60,7 +60,7 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
     private AbstractStatisticsServiceEventListener listener;
 
     @Autowired
-    private ServiceEventBus serviceBus;
+    private EventBus serviceBus;
 
     @Test
     public void sendSosNormalFlowToElasticSearch() throws InterruptedException {

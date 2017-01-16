@@ -36,7 +36,7 @@ import org.junit.Test;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
-import org.n52.iceland.util.GroupedAndNamedThreadFactory;
+import org.n52.janmayen.GroupedAndNamedThreadFactory;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>

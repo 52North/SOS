@@ -66,11 +66,11 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.utils.EXIUtils;
-import org.n52.svalbard.CodingHelper;
 import org.n52.svalbard.OperationKey;
-import org.n52.svalbard.XmlHelper;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlHelper;
 
 import com.google.common.collect.ImmutableSet;
 import com.siemens.ct.exi.EXIFactory;

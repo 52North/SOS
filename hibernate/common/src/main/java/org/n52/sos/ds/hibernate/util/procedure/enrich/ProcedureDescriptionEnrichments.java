@@ -38,6 +38,7 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 
@@ -62,10 +63,12 @@ public class ProcedureDescriptionEnrichments {
     private final LocalizedProducer<OwsServiceProvider> serviceProvider;
     private String typeOfIdentifier;
     private String typeOfFormat;
+    private final DaoFactory daoFactory;
 
-    private ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider) {
+    private ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, DaoFactory daoFactory) {
         this.serviceProvider = serviceProvider;
         this.language = locale;
+        this.daoFactory = daoFactory;
     }
 
     public ProcedureDescriptionEnrichments setIdentifier(String identifier) {
@@ -172,7 +175,7 @@ public class ProcedureDescriptionEnrichments {
     }
 
     public RelatedProceduresEnrichment createRelatedProceduresEnrichment() {
-        return setValues(new RelatedProceduresEnrichment())
+        return setValues(new RelatedProceduresEnrichment(daoFactory))
                 .setConverter(converter).setProcedureCache(procedureCache)
                 .setProcedureDescriptionFormat(procedureDescriptionFormat)
                 .setValidTime(validTime);
@@ -203,7 +206,7 @@ public class ProcedureDescriptionEnrichments {
         return enrichment;
     }
 
-    public static ProcedureDescriptionEnrichments create(Locale language, LocalizedProducer<OwsServiceProvider> serviceProvider) {
-        return new ProcedureDescriptionEnrichments(language, serviceProvider);
+    public static ProcedureDescriptionEnrichments create(Locale language, LocalizedProducer<OwsServiceProvider> serviceProvider, DaoFactory daoFactory) {
+        return new ProcedureDescriptionEnrichments(language, serviceProvider, daoFactory);
     }
 }

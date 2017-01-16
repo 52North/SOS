@@ -36,7 +36,7 @@ import org.n52.shetland.inspire.InspireID;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.decode.xml.stream.NillableStringReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
-import org.n52.sos.util.Nillable;
+import org.n52.shetland.w3c.Nillable;
 
 /**
  * TODO JavaDoc

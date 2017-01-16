@@ -45,6 +45,7 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
@@ -89,7 +90,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     @Test
     public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
         List<OmObservation> resultList =
-                HibernateObservationUtilities.createSosObservationsFromObservations(null, null, null, null, null);
+                HibernateObservationUtilities.createSosObservationsFromObservations(null, null, null, null, null, null);
         assertThat("result is null", resultList, is(not(nullValue())));
         assertThat("elements in list", resultList.size(), is(0));
     }
@@ -159,7 +160,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             // CALL
             List<OmObservation> resultList =
                     HibernateObservationUtilities.createSosObservationsFromObservations(observationsFromDataBase,
-                            request, null, null, session);
+                            request, null, null, new DaoFactory(), session);
             // TEST RESULTS
             assertThat(resultList, is(notNullValue()));
             assertThat(resultList.size(), is(1));

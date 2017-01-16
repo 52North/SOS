@@ -55,7 +55,7 @@ import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.svalbard.OMHelper;
+import org.n52.svalbard.util.OMHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 

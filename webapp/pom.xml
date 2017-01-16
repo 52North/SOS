@@ -298,11 +298,6 @@
             <artifactId>coding-kvp</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-soap</artifactId>
-            <scope>runtime</scope>
-        </dependency>
 
         <!-- OPERATIONS -->
 
@@ -562,11 +557,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>core-aqd-v10</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>api-aqd-v10</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

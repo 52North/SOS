@@ -385,7 +385,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     public LocalizedString getI18nNameForOffering(String offering, Locale i18n) {
         MultilingualString map = this.i18nNameForOfferings.get(offering);
         if (map != null) {
-            return map.getLocalization(i18n).orNull();
+            return map.getLocalization(i18n).orElse(null);
         }
         return null;
     }
@@ -405,7 +405,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     public LocalizedString getI18nDescriptionForOffering(String offering, Locale i18n) {
         MultilingualString map = this.i18nDescriptionForOfferings.get(offering);
         if (map != null) {
-            return map.getLocalization(i18n).orNull();
+            return map.getLocalization(i18n).orElse(null);
         }
         return null;
     }

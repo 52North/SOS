@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
+import java.util.Set;
+
 import org.hibernate.Criteria;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -36,17 +38,34 @@ import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
 
-public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO {
+public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implements EReportingDaoHelper {
+    private final Set<Integer> verificationFlags;
+    private final Set<Integer> validityFlags;
 
-        @Override
-        protected Class<?> getSeriesValueTimeClass() {
-            return TemporalReferencedEReportingObservation.class;
-        }
+    public EReportingValueTimeDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags) {
+        this.verificationFlags = verificationFlags;
+        this.validityFlags = validityFlags;
+    }
 
-        @Override
-        protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
-            // add quality restrictions
-            EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
-        }
+    @Override
+    public Set<Integer> getVerificationFlags() {
+        return this.verificationFlags;
+    }
+
+    @Override
+    public Set<Integer> getValidityFlags() {
+        return this.validityFlags;
+    }
+
+    @Override
+    protected Class<?> getSeriesValueTimeClass() {
+        return TemporalReferencedEReportingObservation.class;
+    }
+
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
+        // add quality restrictions
+        addValidityAndVerificationRestrictions(c, request);
+    }
 
 }

@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchIdentifierException;
 import org.n52.sos.web.common.ControllerConstants;
@@ -68,7 +68,7 @@ public class StaticCapabilitiesAjaxEndpoint extends AbstractAdminCapabiltiesAjax
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getStaticCapabilities() throws SQLException, OwsExceptionReport {
-        ObjectNode response = JSONUtils.nodeFactory().objectNode();
+        ObjectNode response = Json.nodeFactory().objectNode();
         String current = getSelectedStaticCapabilities();
         ObjectNode staticCapabilities = response.putObject(STATIC_CAPABILITIES);
         for (StaticCapabilities sc : getCapabilitiesExtensionService().getStaticCapabilities().values()) {
@@ -89,7 +89,7 @@ public class StaticCapabilitiesAjaxEndpoint extends AbstractAdminCapabiltiesAjax
                                                                         NoSuchExtensionException,
                                                                         IOException {
         String id = null;
-        JsonNode node = JSONUtils.loadString(json);
+        JsonNode node = Json.loadString(json);
         if (node.path(CURRENT).isTextual()) {
             id = node.path(CURRENT).asText();
         }

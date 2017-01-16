@@ -39,8 +39,8 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsDao;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingsDao;
 import org.n52.sos.config.sqlite.entities.AbstractSettingValue;
 
 public class SQLiteSettingsDao

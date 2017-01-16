@@ -40,6 +40,7 @@ import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ServiceIdentificationDocument.ServiceIdentification;
 
 import org.apache.xmlbeans.XmlObject;
+import org.junit.Before;
 import org.junit.Test;
 
 import org.n52.shetland.ogc.ows.OWSConstants;
@@ -47,11 +48,12 @@ import org.n52.shetland.ogc.ows.OwsCode;
 import org.n52.shetland.ogc.ows.OwsServiceIdentification;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.svalbard.CodingHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.OwsEncoderv110;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.CodingHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -63,6 +65,13 @@ import org.n52.svalbard.encode.exception.EncodingException;
 public class OwsEncoderv110Test {
 
     private final OwsEncoderv110 encoder = new OwsEncoderv110();
+
+    private EncoderRepository encoderRepository = new EncoderRepository();
+
+    @Before
+    public void init() {
+        encoderRepository.init();
+    }
 
     @Test
     public final void should_encode_Exception_into_owsExceptionReport_by_default() throws EncodingException {
@@ -92,7 +101,7 @@ public class OwsEncoderv110Test {
     public void should_encode_service_identification_without_service_type_codespace() throws EncodingException {
         String serviceTypeValue = "serviceType";
         OwsServiceIdentification serviceId = new OwsServiceIdentification(new OwsCode(serviceTypeValue), null, null, null, null, null, null, null);
-        XmlObject xbEncoded = CodingHelper.encodeObjectToXml(OWSConstants.NS_OWS, serviceId);
+        XmlObject xbEncoded = encodeObjectToXml(OWSConstants.NS_OWS, serviceId);
         assertThat(xbEncoded, instanceOf(ServiceIdentification.class));
         ServiceIdentification xbServiceId = (ServiceIdentification) xbEncoded;
         assertThat(xbServiceId.getServiceType().getStringValue(), equalTo(serviceTypeValue));
@@ -104,10 +113,14 @@ public class OwsEncoderv110Test {
         String serviceTypeValue = "serviceType";
         String serviceTypeCodeSpaceValue = "codeSpace";
         OwsServiceIdentification serviceId = new OwsServiceIdentification(new OwsCode(serviceTypeValue, URI.create(serviceTypeCodeSpaceValue)), null, null, null, null, null, null, null);
-        XmlObject xbEncoded = CodingHelper.encodeObjectToXml(OWSConstants.NS_OWS, serviceId);
+        XmlObject xbEncoded = encodeObjectToXml(OWSConstants.NS_OWS, serviceId);
         assertThat(xbEncoded, instanceOf(ServiceIdentification.class));
         ServiceIdentification xbServiceId = (ServiceIdentification) xbEncoded;
         assertThat(xbServiceId.getServiceType().getStringValue(), equalTo(serviceTypeValue));
         assertThat(xbServiceId.getServiceType().getCodeSpace(), equalTo(serviceTypeCodeSpaceValue));
+    }
+
+    private XmlObject encodeObjectToXml(String namespace, OwsServiceIdentification o) throws EncodingException {
+        return (XmlObject)encoderRepository.getEncoder(CodingHelper.getEncoderKey(namespace, o)).encode(o);
     }
 }

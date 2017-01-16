@@ -75,7 +75,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
-import org.n52.svalbard.SweCommonEncoderv101;
+import org.n52.svalbard.encode.SweCommonEncoderv101;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Lists;
@@ -321,7 +321,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
                     }
 
                     @Override
-                    public SweAbstractDataComponent clone() throws CloneNotSupportedException {
+                    public SweAbstractDataComponent copy() {
                         return null;
                     }
                 })));

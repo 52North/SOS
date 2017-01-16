@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.PathBindingKey;
-import org.n52.iceland.event.ServiceEventBus;
+import org.n52.janmayen.event.EventBus;
 import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.response.ServiceResponse;
@@ -84,7 +84,6 @@ import org.n52.sos.binding.rest.resources.offerings.OfferingsRequest;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsRequestHandler;
 import org.n52.sos.binding.rest.resources.sensors.ISensorsRequest;
 import org.n52.sos.binding.rest.resources.sensors.SensorsRequestHandler;
-import org.n52.svalbard.XmlEncoderKey;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.exception.DecodingException;
@@ -92,6 +91,7 @@ import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ExceptionEncoderKey;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
@@ -108,7 +108,7 @@ public class RestBinding extends Binding implements Constructable {
     private static final Set<BindingKey> KEYS = Collections.<BindingKey>singleton(new PathBindingKey(URI_PATTERN));
     private Set<String> conformanceClasses;
     private Constants bindingConstants;
-    private ServiceEventBus eventBus;
+    private EventBus eventBus;
     private EncoderRepository encoderRepository;
     private DecoderRepository decoderRepository;
 
@@ -152,11 +152,11 @@ public class RestBinding extends Binding implements Constructable {
     }
 
     @Inject
-    public void setEventBus(ServiceEventBus eventBus) {
+    public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
     }
 
-    public ServiceEventBus getEventBus() {
+    public EventBus getEventBus() {
         return eventBus;
     }
 

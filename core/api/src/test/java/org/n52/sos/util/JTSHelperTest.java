@@ -43,8 +43,8 @@ import static org.n52.sos.util.ReverseOf.reverseOf;
 import org.junit.Test;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.svalbard.JTSHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;

@@ -28,12 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+import java.util.function.Predicate;
+
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.elements.SmlClassifier;
 import org.n52.shetland.ogc.sensorML.elements.SmlClassifierPredicates;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
 /**

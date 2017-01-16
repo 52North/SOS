@@ -38,8 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCacheUpdate;
-import org.n52.iceland.event.ServiceEvent;
-import org.n52.iceland.event.ServiceEventListener;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
@@ -55,16 +53,19 @@ import org.n52.sos.event.events.SensorInsertion;
 
 import com.google.common.collect.Sets;
 
+import org.n52.janmayen.event.Event;
+import org.n52.janmayen.event.EventListener;
+
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
-public class DefaultContentModificationListener implements ServiceEventListener {
+public class DefaultContentModificationListener implements EventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultContentModificationListener.class);
 
     @SuppressWarnings("unchecked")
-    private static final Set<Class<? extends ServiceEvent>> TYPES = Sets
-            .<Class<? extends ServiceEvent>> newHashSet(
+    private static final Set<Class<? extends Event>> TYPES = Sets
+            .<Class<? extends Event>> newHashSet(
                     SensorInsertion.class,
                     ObservationInsertion.class,
                     ResultTemplateInsertion.class,
@@ -75,12 +76,12 @@ public class DefaultContentModificationListener implements ServiceEventListener 
     private ContentCacheController controller;
 
     @Override
-    public Set<Class<? extends ServiceEvent>> getTypes() {
+    public Set<Class<? extends Event>> getTypes() {
         return Collections.unmodifiableSet(TYPES);
     }
 
     @Override
-    public void handle(ServiceEvent event) {
+    public void handle(Event event) {
         if (event instanceof SensorInsertion) {
             SensorInsertion e = (SensorInsertion) event;
             handle(new SensorInsertionUpdate(e.getRequest(), e.getResponse()));

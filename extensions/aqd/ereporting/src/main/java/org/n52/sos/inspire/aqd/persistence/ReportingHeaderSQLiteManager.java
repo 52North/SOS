@@ -45,7 +45,7 @@ import org.n52.shetland.aqd.ReportObligation;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.inspire.RelatedParty;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.config.sqlite.AbstractSQLiteDao;
 import org.n52.sos.config.sqlite.AbstractSQLiteDao.ThrowingHibernateAction;
 import org.n52.sos.config.sqlite.AbstractSQLiteDao.VoidHibernateAction;
@@ -124,7 +124,7 @@ public class ReportingHeaderSQLiteManager
                 Encoder<JsonNode, Object> encoder =
                         encoderRepository.getEncoder(new JSONEncoderKey(o.getClass()));
                 JsonNode node = encoder.encode(o);
-                String json = JSONUtils.print(node);
+                String json = Json.print(node);
                 session.saveOrUpdate(new JSONFragment().setID(key).setJSON(json));
             } catch (EncodingException ex) {
                 throw new RuntimeException(ex);
@@ -151,7 +151,7 @@ public class ReportingHeaderSQLiteManager
 
         protected T decode(JSONFragment entity) throws OwsExceptionReport, DecodingException {
             Decoder<T, JsonNode> decoder = decoderRepository.getDecoder(new JsonDecoderKey(type));
-            JsonNode node = JSONUtils.loadString(entity.getJSON());
+            JsonNode node = Json.loadString(entity.getJSON());
             return decoder.decode(node);
         }
 

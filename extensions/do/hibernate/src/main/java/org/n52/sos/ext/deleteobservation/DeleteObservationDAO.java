@@ -67,8 +67,13 @@ import org.n52.svalbard.LocaleHelper;
 public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
 
     private HibernateSessionHolder hibernateSessionHolder;
-
     private ServiceMetadataRepository serviceMetadataRepository;
+    private DaoFactory daoFactory;
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Inject
     public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
@@ -94,7 +99,7 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
             String id = request.getObservationIdentifier();
             Observation<?> observation = null;
             try {
-                observation = DaoFactory.getInstance().getObservationDAO().getObservationByIdentifier(id, session);
+                observation = daoFactory.getObservationDAO().getObservationByIdentifier(id, session);
             } catch (HibernateException he) {
                 if (transaction != null) {
                     transaction.rollback();
@@ -106,8 +111,8 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
             if (observation != null) {
                 Set<Observation<?>> oberservations = Collections.singleton(observation);
                 LocalizedProducer<OwsServiceProvider> serviceProvider = this.serviceMetadataRepository.getServiceProviderFactory(request.getService());
-                Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
-                so = HibernateObservationUtilities.createSosObservationsFromObservations(oberservations, getRequest(request), serviceProvider, locale, session).iterator().next();
+                Locale locale = getRequestedLocale(request);
+                so = HibernateObservationUtilities.createSosObservationsFromObservations(oberservations, getRequest(request), serviceProvider, locale, daoFactory, session).iterator().next();
                 observation.setDeleted(true);
                 session.saveOrUpdate(observation);
                 checkSeriesForFirstLatest(observation, session);
@@ -149,12 +154,12 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
      *            Hibernate session
      * @throws CodedException
      */
-    private void checkSeriesForFirstLatest(Observation<?> observation, Session session) throws CodedException {
+    private void checkSeriesForFirstLatest(Observation<?> observation, Session session) throws OwsExceptionReport {
         if (observation instanceof SeriesObservation) {
             Series series = ((SeriesObservation<?>) observation).getSeries();
             if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())
                     || series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
-                DaoFactory.getInstance().getSeriesDAO()
+                daoFactory.getSeriesDAO()
                         .updateSeriesAfterObservationDeletion(series, (SeriesObservation<?>) observation, session);
             }
         }

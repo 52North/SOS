@@ -48,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
@@ -62,6 +61,7 @@ import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.ds.AbstractGetFeatureOfInterestHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
@@ -105,18 +105,23 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
             "getFeatureForProcedureObservableProperty";
 
     private static final String SQL_QUERY_GET_FEATURE_FOR_OBSERVED_PROPERTY = "getFeatureForObservableProperty";
-    private HibernateSessionHolder sessionHolder;
 
+    private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
+    private DaoFactory daoFactory;
+
+    public GetFeatureOfInterestDAO() {
+        super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Inject
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
         this.featureQueryHandler = featureQueryHandler;
-    }
-
-
-    public GetFeatureOfInterestDAO() {
-        super(SosConstants.SOS);
     }
 
     @Inject
@@ -238,7 +243,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
                 .setSpatialFilters(request.getSpatialFilters())
                 .setConnection(session)
                 .setVersion(request.getVersion())
-                .setI18N(LocaleHelper.fromRequest(request));
+                .setI18N(getRequestedLocale(request));
         return new FeatureCollection(this.featureQueryHandler.getFeatures(queryObject));
     }
 
@@ -280,7 +285,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameter(final GetFeatureOfInterestRequest req, final Session session) throws OwsExceptionReport {
         if (req.hasNoParameter()) {
-            return new FeatureOfInterestDAO().getFeatureOfInterestIdentifiers(session);
+            return new FeatureOfInterestDAO(daoFactory).getFeatureOfInterestIdentifiers(session);
         }
         if (req.containsOnlyFeatureParameter() && req.isSetFeatureOfInterestIdentifiers()) {
             final Criteria c =

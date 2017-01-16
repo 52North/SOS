@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -40,8 +41,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
-
-import com.google.common.base.Optional;
 
 /**
  * TODO JavaDoc

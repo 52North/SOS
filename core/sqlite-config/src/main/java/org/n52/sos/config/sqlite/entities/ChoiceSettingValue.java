@@ -30,12 +30,20 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.iceland.config.SettingType;
+import org.n52.faroe.SettingType;
 
 
 @Entity(name = "choice_settings")
 public class ChoiceSettingValue extends StringSettingValue {
     private static final long serialVersionUID = 2279087332211345464L;
+
+    public ChoiceSettingValue(String value, String identifier) {
+        super(value, identifier);
+    }
+
+    public ChoiceSettingValue() {
+        super();
+    }
 
     @Override
     public SettingType getType() {

@@ -43,13 +43,13 @@ import org.hibernate.sql.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -67,6 +67,13 @@ import com.google.common.collect.Sets;
 public class ObservationConstellationDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationConstellationDAO.class);
+
+    private final DaoFactory daoFactory;
+
+    public ObservationConstellationDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
 
     /**
      * Get observation constellation objects for procedure and observable
@@ -331,7 +338,7 @@ public class ObservationConstellationDAO {
         // add parent/childs
         if (observableProperty instanceof OmCompositePhenomenon) {
             OmCompositePhenomenon omCompositePhenomenon = (OmCompositePhenomenon) observableProperty;
-            ObservablePropertyDAO dao = new ObservablePropertyDAO();
+            ObservablePropertyDAO dao = new ObservablePropertyDAO(daoFactory);
             Map<String, ObservableProperty> obsprop = dao.getOrInsertObservablePropertyAsMap(Arrays.asList(observableProperty), false, session);
             for (OmObservableProperty child : omCompositePhenomenon) {
                 checkOrInsertObservationConstellation(

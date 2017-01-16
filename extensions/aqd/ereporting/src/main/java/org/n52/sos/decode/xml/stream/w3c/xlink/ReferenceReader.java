@@ -35,7 +35,7 @@ import javax.xml.stream.XMLStreamException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.decode.xml.stream.XmlReader;
-import org.n52.sos.util.Reference;
+import org.n52.shetland.w3c.xlink.Reference;
 
 /**
  * TODO JavaDoc

@@ -88,9 +88,9 @@ import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.DecoderRepository;
-import org.n52.svalbard.decode.NoDecoderForKeyException;
 import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
 
 import com.google.common.collect.Sets;
 
@@ -108,9 +108,15 @@ public class GetResultDAO extends AbstractGetResultHandler {
     private FeatureQueryHandler featureQueryHandler;
     private final EntitiyHelper entitiyHelper = new EntitiyHelper();
     private DecoderRepository decoderRepository;
+    private DaoFactory daoFactory;
 
     public GetResultDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     @Inject
@@ -271,7 +277,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
         final Criteria c = createCriteriaFor(AbstractSeriesObservation.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
 
-        List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(request.getObservedProperty(), featureIdentifiers, session);
+        List<Series> series = daoFactory.getSeriesDAO().getSeries(request.getObservedProperty(), featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {

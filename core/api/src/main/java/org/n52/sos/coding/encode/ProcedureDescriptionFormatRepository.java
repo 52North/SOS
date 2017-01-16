@@ -39,7 +39,7 @@ import javax.inject.Inject;
 
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
-import org.n52.iceland.coding.encode.ProcedureEncoder;
+import org.n52.svalbard.encode.ProcedureEncoder;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;

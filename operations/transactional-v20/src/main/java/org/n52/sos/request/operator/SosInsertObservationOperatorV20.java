@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -57,9 +56,10 @@ import org.n52.sos.exception.ows.concrete.MissingObservationParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
-import org.n52.sos.util.OMHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.ConformanceClasses;
+import org.n52.svalbard.OMHelper;
 
 public class SosInsertObservationOperatorV20 extends
         AbstractV2TransactionalRequestOperator<AbstractInsertObservationHandler, InsertObservationRequest, InsertObservationResponse> {

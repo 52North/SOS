@@ -33,7 +33,7 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
-
+import org.n52.svalbard.JTSHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -49,7 +49,6 @@ import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
-import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 

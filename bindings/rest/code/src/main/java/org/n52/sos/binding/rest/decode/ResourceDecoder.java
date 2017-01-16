@@ -65,7 +65,7 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.DateTimeParseException;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestRequest;
-import org.n52.sos.util.JTSHelper;
+import org.n52.svalbard.JTSHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Strings;

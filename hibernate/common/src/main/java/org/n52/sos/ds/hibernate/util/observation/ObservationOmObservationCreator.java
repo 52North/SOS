@@ -87,8 +87,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations,
             AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider,
-            Locale language, Session session) {
-        super(request, language, serviceProvider, session);
+            Locale language, String pdf, Session session) {
+        super(request, language, serviceProvider, pdf, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -275,7 +275,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Feature...");
         final String foiID = hObservation.getFeatureOfInterest().getIdentifier();
         if (!features.containsKey(foiID)) {
-            final AbstractFeature featureByID = createFeatureOfInterest(foiID);
+            final AbstractFeature featureByID = createFeatureOfInterest(hObservation.getFeatureOfInterest());
             features.put(foiID, featureByID);
         }
         LOGGER.trace("Creating Feature done.");

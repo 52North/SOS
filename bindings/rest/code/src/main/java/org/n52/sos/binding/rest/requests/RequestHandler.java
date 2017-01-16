@@ -44,9 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.EncoderResponseUnsupportedException;
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.exception.ows.concrete.ServiceOperatorNotFoundException;
 import org.n52.iceland.service.operator.ServiceOperator;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
@@ -59,7 +57,9 @@ import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.binding.rest.Constants;
+import org.n52.svalbard.OperationKey;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.OperationResponseEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 

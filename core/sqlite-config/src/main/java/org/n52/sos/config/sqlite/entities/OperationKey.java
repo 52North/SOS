@@ -35,7 +35,7 @@ import javax.persistence.Embeddable;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Embeddable
 public class OperationKey implements Serializable {

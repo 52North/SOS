@@ -53,9 +53,10 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.CodingHelper;
 import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.FesEncoderv20;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 

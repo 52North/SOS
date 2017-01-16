@@ -46,7 +46,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingDefinitionGroup;
 import org.n52.iceland.config.SettingsService;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.shetland.util.CollectionHelper;

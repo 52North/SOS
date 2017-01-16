@@ -51,10 +51,11 @@ import org.n52.shetland.iso.gmd.GmdQuantitativeResult;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.NamespaceContextBuilder;
-import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.Iso19139GmdEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 public class Iso19139GmdEncoderTest {

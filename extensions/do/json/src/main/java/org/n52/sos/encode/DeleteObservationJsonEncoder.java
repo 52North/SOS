@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class DeleteObservationJsonEncoder extends AbstractSosResponseEncoder<DeleteObservationResponse> {
 

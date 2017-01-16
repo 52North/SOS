@@ -39,7 +39,10 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.aqd.AqdSamplingPoint;
+import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.aqd.AqdConstants.AssessmentType;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
@@ -52,11 +55,6 @@ import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
-import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.AqdConstants.AssessmentType;
-import org.n52.sos.aqd.AqdHelper;
-import org.n52.sos.aqd.AqdSamplingPoint;
-import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationContext;
@@ -72,6 +70,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
+import org.n52.svalbard.AqdHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;

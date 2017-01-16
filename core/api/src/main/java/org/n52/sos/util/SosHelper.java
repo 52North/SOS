@@ -53,8 +53,7 @@ import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.MinMax;
-import org.n52.oxf.xml.NcNameResolver;
+import org.n52.janmayen.NcNameResolver;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.OwsRange;
@@ -67,17 +66,18 @@ import org.n52.shetland.ogc.sensorML.elements.SmlIo;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.MinMax;
 import org.n52.shetland.util.SosQueryBuilder;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
-import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.service.Configurator;
 import org.n52.svalbard.encode.Encoder;
 
@@ -433,6 +433,7 @@ public class SosHelper {
      *            the envelope
      * @return the {@code MinMax} describing the envelope
      */
+    @Deprecated
     public static MinMax<String> getMinMaxFromEnvelope(final Envelope envelope) {
         // TODO for full 3D support add minz to parameter in setStringValue
         return new MinMax<String>()

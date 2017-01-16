@@ -33,10 +33,10 @@ import java.net.URISyntaxException;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.xml.stream.XmlReader;
 
 /**

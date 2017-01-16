@@ -46,9 +46,9 @@ import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
 import org.n52.shetland.ogc.sensorML.System;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.CodingHelper;
+import org.n52.svalbard.XmlHelper;
+import org.n52.svalbard.XmlOptionsHelper;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Lists;

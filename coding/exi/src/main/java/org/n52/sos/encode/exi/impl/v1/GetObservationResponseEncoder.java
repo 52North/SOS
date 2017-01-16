@@ -29,8 +29,8 @@
 package org.n52.sos.encode.exi.impl.v1;
 
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.sos.encode.exi.AbstractSosV1ResponseEncoder;
-import org.n52.sos.response.GetObservationResponse;
 
 
 /**

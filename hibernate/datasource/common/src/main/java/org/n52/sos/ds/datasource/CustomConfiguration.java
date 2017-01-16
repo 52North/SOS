@@ -67,7 +67,7 @@ import org.hibernate.tool.hbm2ddl.UniqueConstraintSchemaUpdateStrategy;
 import com.google.common.base.Strings;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

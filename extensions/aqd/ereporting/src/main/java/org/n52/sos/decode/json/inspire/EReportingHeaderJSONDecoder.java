@@ -29,11 +29,11 @@
 package org.n52.sos.decode.json.inspire;
 
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.aqd.EReportingChange;
+import org.n52.shetland.aqd.EReportingHeader;
+import org.n52.shetland.inspire.InspireID;
+import org.n52.shetland.inspire.RelatedParty;
 import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.sos.inspire.aqd.EReportingChange;
-import org.n52.sos.inspire.aqd.EReportingHeader;
-import org.n52.sos.inspire.aqd.InspireID;
-import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;

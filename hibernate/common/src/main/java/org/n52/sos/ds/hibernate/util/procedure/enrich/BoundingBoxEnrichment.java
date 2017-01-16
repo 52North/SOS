@@ -51,7 +51,7 @@ import com.google.common.base.Predicate;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class BoundingBoxEnrichment extends SensorMLEnrichment {
     public static final Predicate<SmlCapabilities> BBOX_PREDICATE =

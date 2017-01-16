@@ -45,12 +45,12 @@ import com.google.common.collect.Sets;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public abstract class AbstractObservationResponseEncoder<T extends AbstractObservationResponse> extends
-        AbstractSosResponseEncoder<T> implements org.n52.sos.coding.encode.ObservationEncoder<JsonNode, T>{
+        AbstractSosResponseEncoder<T> implements org.n52.svalbard.encode.ObservationEncoder<JsonNode, T>{
     public AbstractObservationResponseEncoder(Class<T> type, String operation) {
         super(type, operation);
     }

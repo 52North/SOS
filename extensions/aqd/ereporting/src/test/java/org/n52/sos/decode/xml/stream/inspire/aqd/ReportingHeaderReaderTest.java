@@ -39,22 +39,21 @@ import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-
+import org.n52.shetland.aqd.EReportingChange;
+import org.n52.shetland.aqd.EReportingHeader;
+import org.n52.shetland.inspire.Address;
+import org.n52.shetland.inspire.Contact;
+import org.n52.shetland.inspire.GeographicalName;
+import org.n52.shetland.inspire.InspireID;
+import org.n52.shetland.inspire.Pronunciation;
+import org.n52.shetland.inspire.RelatedParty;
+import org.n52.shetland.inspire.Spelling;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
-import org.n52.sos.encode.xml.stream.inspire.aqd.EReportingHeaderEncoder;
-import org.n52.sos.inspire.aqd.Address;
-import org.n52.sos.inspire.aqd.Contact;
-import org.n52.sos.inspire.aqd.EReportingChange;
-import org.n52.sos.inspire.aqd.EReportingHeader;
-import org.n52.sos.inspire.aqd.GeographicalName;
-import org.n52.sos.inspire.aqd.InspireID;
-import org.n52.sos.inspire.aqd.Pronunciation;
-import org.n52.sos.inspire.aqd.RelatedParty;
-import org.n52.sos.inspire.aqd.Spelling;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Reference;
 import org.n52.sos.util.Referenceable;
+import org.n52.svalbard.encode.EReportingHeaderEncoder;
 
 /**
  * TODO JavaDoc

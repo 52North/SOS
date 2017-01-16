@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderKey;
 import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderRepository;

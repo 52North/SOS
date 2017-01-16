@@ -33,7 +33,7 @@ import javax.persistence.Entity;
 import org.n52.iceland.config.SettingType;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name = "string_settings")
 public class StringSettingValue extends AbstractSettingValue<String>{

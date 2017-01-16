@@ -28,7 +28,7 @@
  */
 package org.n52.sos.binding.rest.decode;
 
-import static org.n52.sos.util.CodingHelper.decoderKeysForElements;
+import static org.n52.svalbard.CodingHelper.decoderKeysForElements;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,10 +59,10 @@ import org.n52.sos.binding.rest.resources.features.FeaturesDecoder;
 import org.n52.sos.binding.rest.resources.observations.ObservationsDecoder;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsDecoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsDecoder;
+import org.n52.svalbard.decode.AbstractXmlDecoder;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Joiner;
 

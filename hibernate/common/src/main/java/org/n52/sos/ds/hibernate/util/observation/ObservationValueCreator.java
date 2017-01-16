@@ -30,7 +30,8 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
+import org.n52.svalbard.CodingHelper;
+import org.n52.svalbard.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
@@ -57,8 +58,6 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObserv
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
 
 /**
  * TODO JavaDoc

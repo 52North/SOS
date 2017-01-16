@@ -28,9 +28,9 @@
  */
 package org.n52.sos.decode.xml.stream.inspire.gn;
 
+import org.n52.shetland.inspire.GeographicalName;
 import org.n52.sos.decode.xml.stream.NillableReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
-import org.n52.sos.inspire.aqd.GeographicalName;
 
 
 public class NillableGeographicalNameReader extends NillableReader<GeographicalName> {

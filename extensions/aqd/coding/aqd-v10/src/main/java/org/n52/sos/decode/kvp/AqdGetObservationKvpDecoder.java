@@ -28,8 +28,8 @@
  */
 package org.n52.sos.decode.kvp;
 
+import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.kvp.v2.GetObservationKvpDecoderv20;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 

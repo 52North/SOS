@@ -48,7 +48,7 @@ import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.settings.StringSettingDefinition;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;

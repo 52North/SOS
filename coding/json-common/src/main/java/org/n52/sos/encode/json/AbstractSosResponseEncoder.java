@@ -28,13 +28,13 @@
  */
 package org.n52.sos.encode.json;
 
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
+import org.n52.svalbard.encode.OperationResponseEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @param <T> the response type
  *
  * @since 4.0.0

@@ -31,7 +31,7 @@ package org.n52.sos.config.sqlite;
 
 import org.n52.iceland.config.AbstractSettingValueFactory;
 import org.n52.iceland.config.SettingValue;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
 import org.n52.sos.config.sqlite.entities.ChoiceSettingValue;

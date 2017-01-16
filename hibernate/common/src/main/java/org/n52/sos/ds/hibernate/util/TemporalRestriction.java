@@ -50,7 +50,7 @@ import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
  * </li>
  * </ul>
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 public abstract class TemporalRestriction {

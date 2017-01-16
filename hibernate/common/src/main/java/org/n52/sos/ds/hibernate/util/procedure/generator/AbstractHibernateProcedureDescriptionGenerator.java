@@ -42,7 +42,7 @@ import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.shetland.i18n.LocalizedString;
+import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;

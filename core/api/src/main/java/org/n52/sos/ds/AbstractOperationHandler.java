@@ -36,8 +36,8 @@ import javax.inject.Inject;
 
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.handler.OperationHandlerKey;
 import org.n52.iceland.service.ServiceConfiguration;

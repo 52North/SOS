@@ -75,9 +75,9 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.CodingHelper;
+import org.n52.svalbard.XmlHelper;
+import org.n52.svalbard.XmlOptionsHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 /**

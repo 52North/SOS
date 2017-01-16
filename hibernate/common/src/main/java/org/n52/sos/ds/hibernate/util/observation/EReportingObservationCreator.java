@@ -31,11 +31,11 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
-import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;

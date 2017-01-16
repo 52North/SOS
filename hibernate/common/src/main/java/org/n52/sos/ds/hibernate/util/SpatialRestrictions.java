@@ -37,7 +37,7 @@ import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

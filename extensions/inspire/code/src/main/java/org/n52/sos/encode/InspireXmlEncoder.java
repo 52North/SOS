@@ -51,12 +51,12 @@ import org.n52.sos.inspire.InspireSupportedLanguages;
 import org.n52.sos.inspire.capabilities.FullInspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.InspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.MinimalInspireExtendedCapabilities;
-import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.CodingHelper;
 import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.AbstractXmlEncoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
-import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.collect.Sets;
 

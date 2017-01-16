@@ -35,7 +35,7 @@ import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.config.SettingValueFactory;
 import org.n52.iceland.config.SettingsService;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 
 public class MockSettingsService implements SettingsService {
 

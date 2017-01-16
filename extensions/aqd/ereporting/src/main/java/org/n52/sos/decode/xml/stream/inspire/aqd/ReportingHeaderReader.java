@@ -31,12 +31,12 @@ package org.n52.sos.decode.xml.stream.inspire.aqd;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.aqd.EReportingChange;
+import org.n52.shetland.aqd.EReportingHeader;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.xml.stream.XmlReader;
 import org.n52.sos.decode.xml.stream.w3c.xlink.ReferenceableFeatureReader;
-import org.n52.sos.inspire.aqd.EReportingChange;
-import org.n52.sos.inspire.aqd.EReportingHeader;
 
 public class ReportingHeaderReader extends XmlReader<EReportingHeader> {
 

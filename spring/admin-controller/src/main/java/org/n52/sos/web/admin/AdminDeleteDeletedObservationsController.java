@@ -44,7 +44,7 @@ import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.web.common.ControllerConstants;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 @Controller

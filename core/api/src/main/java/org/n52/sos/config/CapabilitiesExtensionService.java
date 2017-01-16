@@ -31,17 +31,17 @@ package org.n52.sos.config;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.iceland.ogc.ows.extension.OfferingExtension;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
-import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
+import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
+import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchOfferingException;
 
 public interface CapabilitiesExtensionService {
 
-    Map<String, List<OfferingExtension>> getOfferingExtensions();
+    Map<String, List<SosObservationOfferingExtension>> getOfferingExtensions();
 
-    Map<String, List<OfferingExtension>> getActiveOfferingExtensions();
+    Map<String, List<SosObservationOfferingExtension>> getActiveOfferingExtensions();
 
     void saveOfferingExtension(String offering, String identifier, String value)
             throws NoSuchOfferingException;

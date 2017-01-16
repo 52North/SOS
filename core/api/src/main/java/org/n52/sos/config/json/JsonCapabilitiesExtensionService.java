@@ -44,12 +44,12 @@ import javax.inject.Inject;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.config.json.AbstractJsonDao;
 import org.n52.iceland.config.json.JsonConstants;
-import org.n52.iceland.ogc.ows.extension.DisableableExtension;
-import org.n52.iceland.ogc.ows.extension.OfferingExtension;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
-import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
-import org.n52.iceland.ogc.ows.extension.StringBasedExtension;
+import org.n52.shetland.ogc.ows.extension.DisableableExtension;
 import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
+import org.n52.shetland.ogc.ows.extension.StringBasedExtension;
+import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.config.CapabilitiesExtensionService;
@@ -77,23 +77,23 @@ public class JsonCapabilitiesExtensionService
     }
 
     @Override
-    public Map<String, List<OfferingExtension>> getOfferingExtensions() {
+    public Map<String, List<SosObservationOfferingExtension>> getOfferingExtensions() {
         readLock().lock();
         try {
             return offeringExtensionStream()
-                    .collect(groupingBy(OfferingExtension::getOfferingName, toList()));
+                    .collect(groupingBy(SosObservationOfferingExtension::getOfferingName, toList()));
         } finally {
             readLock().unlock();
         }
     }
 
     @Override
-    public Map<String, List<OfferingExtension>> getActiveOfferingExtensions() {
+    public Map<String, List<SosObservationOfferingExtension>> getActiveOfferingExtensions() {
         readLock().lock();
         try {
             return offeringExtensionStream()
                     .filter(ce -> !ce.isDisabled())
-                    .collect(groupingBy(OfferingExtension::getOfferingName, toList()));
+                    .collect(groupingBy(SosObservationOfferingExtension::getOfferingName, toList()));
         } finally {
             readLock().unlock();
         }
@@ -189,7 +189,7 @@ public class JsonCapabilitiesExtensionService
         }
     }
 
-     private Stream<OfferingExtension> offeringExtensionStream() {
+     private Stream<SosObservationOfferingExtension> offeringExtensionStream() {
         return createEntryStream(getConfiguration().with(JsonConstants.OFFERING_EXTENSIONS))
                 .flatMap(entry -> {
                     return createEntryStream(entry.getValue())
@@ -479,7 +479,7 @@ public class JsonCapabilitiesExtensionService
 
     private static class OfferingExtensionImpl
             extends AbstractSwesExtension
-            implements OfferingExtension {
+            implements SosObservationOfferingExtension {
 
         private String offeringName;
 

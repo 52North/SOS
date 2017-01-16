@@ -33,6 +33,8 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.svalbard.EncodingValues;
+import org.n52.svalbard.encode.XmlStreamWriter;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -40,8 +42,6 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.gml.time.TimePosition;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.janmayen.http.MediaType;
-import org.n52.sos.coding.encode.EncodingValues;
-import org.n52.sos.coding.encode.XmlStreamWriter;
 import org.n52.sos.inspire.InspireCitation;
 import org.n52.sos.inspire.InspireConformity;
 import org.n52.sos.inspire.InspireConformity.InspireDegreeOfConformity;

@@ -43,11 +43,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.util.JSONUtils;
+import org.n52.shetland.aqd.ReportObligation;
+import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.inspire.RelatedParty;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.encode.json.JSONEncoderKey;
-import org.n52.sos.inspire.aqd.RelatedParty;
-import org.n52.sos.inspire.aqd.ReportObligation;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
 import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.web.common.AbstractController;

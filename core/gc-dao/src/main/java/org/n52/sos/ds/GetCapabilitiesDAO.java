@@ -57,14 +57,12 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.shetland.ogc.ows.extension.MergableExtension;
-import org.n52.iceland.ogc.ows.extension.OfferingExtension;
+import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProvider;
 import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderRepository;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
-import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository;
 import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
@@ -72,7 +70,6 @@ import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
-import org.n52.iceland.service.ConformanceClass;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.collections.MultiMaps;
@@ -116,10 +113,13 @@ import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.shetland.ogc.sos.SosCapabilities;
 import org.n52.shetland.ogc.sos.SosObservationOffering;
 import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
-import org.n52.sos.util.OMHelper;
+import org.n52.svalbard.ConformanceClass;
+import org.n52.svalbard.LocaleHelper;
+import org.n52.svalbard.OMHelper;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
 
@@ -532,7 +532,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
         final Collection<String> offerings = getCache().getOfferings();
         final List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
-        final Map<String, List<OfferingExtension>> extensions = this.capabilitiesExtensionService
+        final Map<String, List<SosObservationOfferingExtension>> extensions = this.capabilitiesExtensionService
                 .getActiveOfferingExtensions();
 
         if (CollectionHelper.isEmpty(offerings)) {

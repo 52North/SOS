@@ -47,15 +47,15 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.w3c.W3CConstants;
-import org.n52.sos.coding.encode.EncodingValues;
-import org.n52.sos.coding.encode.XmlEventWriter;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
+import org.n52.svalbard.EncodingValues;
+import org.n52.svalbard.encode.XmlEventWriter;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * GetDataAvailability response stream writer.
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

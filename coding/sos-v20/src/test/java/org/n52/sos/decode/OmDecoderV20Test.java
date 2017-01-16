@@ -47,7 +47,7 @@ import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
 import org.n52.shetland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.shetland.ogc.swe.SweField;
-import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.CodingHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 /**

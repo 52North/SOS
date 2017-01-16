@@ -37,7 +37,7 @@ import javax.servlet.http.HttpSession;
 
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.settings.MultilingualStringSettingDefinition;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.web.common.ControllerConstants;
 

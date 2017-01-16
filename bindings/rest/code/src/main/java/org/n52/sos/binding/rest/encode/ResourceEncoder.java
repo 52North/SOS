@@ -48,7 +48,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.binding.rest.RestBinding;
 import org.n52.sos.binding.rest.requests.RestResponse;
 import org.n52.sos.exception.ows.concrete.ErrorWhileSavingResponseToOutputStreamException;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.XmlOptionsHelper;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**

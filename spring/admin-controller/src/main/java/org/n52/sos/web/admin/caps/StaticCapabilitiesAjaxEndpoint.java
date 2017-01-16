@@ -45,7 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
 import org.n52.iceland.util.JSONUtils;

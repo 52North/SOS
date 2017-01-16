@@ -32,13 +32,12 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.AqdHelper;
-import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;
+import org.n52.svalbard.AqdHelper;
 
 public class EReportingDaoHelper {
 

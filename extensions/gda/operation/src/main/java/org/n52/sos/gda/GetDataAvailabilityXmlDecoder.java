@@ -41,18 +41,18 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swes.SwesConstants;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.ogc.swes.SwesExtensions;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.exception.ows.concrete.XmlDecodingException;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XPathConstants;
-import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.CodingHelper;
+import org.n52.svalbard.XPathConstants;
+import org.n52.svalbard.XmlHelper;
+import org.n52.svalbard.decode.AbstractXmlDecoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.xml.AbstractXmlDecoder;
+import org.n52.svalbard.decode.exception.XmlDecodingException;
 
 import com.google.common.base.Joiner;
 

@@ -11,10 +11,12 @@
     <name>52°North SOS - Abstract SensorML Coding Module</name>
     <description>52°North SOS - Abstract SensorML Module</description>
     <dependencies>
+    <!-- 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
+         -->
         <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
@@ -85,10 +87,6 @@
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>third-party-ncname-resolver</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -30,13 +30,13 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
 
+import org.n52.shetland.aqd.AqdConstants.AssessmentType;
+import org.n52.shetland.aqd.AqdConstants.ProcessParameter;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
-import org.n52.sos.aqd.AqdConstants.AssessmentType;
-import org.n52.sos.aqd.AqdConstants.ProcessParameter;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;

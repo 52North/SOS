@@ -42,8 +42,8 @@ import javax.persistence.MapKeyColumn;
 
 import org.n52.iceland.config.SettingType;
 import org.n52.iceland.config.SettingValue;
-import org.n52.shetland.i18n.LocalizedString;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.janmayen.i18n.MultilingualString;
 
 import com.google.common.collect.Maps;
 

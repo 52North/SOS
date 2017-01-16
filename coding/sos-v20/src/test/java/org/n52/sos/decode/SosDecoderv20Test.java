@@ -44,6 +44,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.svalbard.SosDecoderv20;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 /**

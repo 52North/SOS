@@ -33,17 +33,23 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
 
-import org.hibernate.Session;
+import javax.inject.Inject;
 
+import org.hibernate.Session;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -57,6 +63,7 @@ import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
+import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -65,13 +72,17 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.svalbard.CodingSettings;
+import org.n52.svalbard.Validation;
+import org.n52.svalbard.encode.EncoderRepository;
 
+import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 public abstract class AbstractOmObservationCreator {
@@ -79,17 +90,46 @@ public abstract class AbstractOmObservationCreator {
     private final Session session;
     private final Locale i18n;
     private final LocalizedProducer<OwsServiceProvider> serviceProvider;
+    private String tokenSeparator;
+    private String tupleSeparator;
+    private String decimalSeparator;
+    private EncoderRepository encoderRepository;
+    private String pdf;
 
     public AbstractOmObservationCreator(AbstractObservationRequest request,
                                         Locale i18n,
                                         LocalizedProducer<OwsServiceProvider> serviceProvider,
-                                        Session session) {
+                                        String pdf, Session session) {
         this.request = request;
         this.session = session;
         this.i18n = i18n == null ?  ServiceConfiguration.getInstance().getDefaultLanguage() : i18n;
         this.serviceProvider = serviceProvider;
+        this.pdf = pdf;
+    }
+    
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
     }
 
+    @Setting(CodingSettings.TOKEN_SEPARATOR)
+    public void setTokenSeparator(final String separator) throws ConfigurationError {
+        Validation.notNullOrEmpty("Token separator", separator);
+        tokenSeparator = separator;
+    }
+
+    @Setting(CodingSettings.TUPLE_SEPARATOR)
+    public void setTupleSeparator(final String separator) throws ConfigurationError {
+        Validation.notNullOrEmpty("Tuple separator", separator);
+        tupleSeparator = separator;
+    }
+
+    @Setting(CodingSettings.DECIMAL_SEPARATOR)
+    public void setDecimalSeparator(final String separator) throws ConfigurationError {
+        Validation.notNullOrEmpty("Decimal separator", separator);
+        decimalSeparator = separator;
+    }
+    
     protected SosContentCache getCache() {
         return Configurator.getInstance().getCache();
     }
@@ -108,15 +148,15 @@ public abstract class AbstractOmObservationCreator {
     }
 
     protected String getTokenSeparator() {
-        return ServiceConfiguration.getInstance().getTokenSeparator();
+        return tokenSeparator;
     }
 
     protected String getTupleSeparator() {
-        return ServiceConfiguration.getInstance().getTupleSeparator();
+        return tupleSeparator;
     }
 
     protected String getDecimalSeparator() {
-        return ServiceConfiguration.getInstance().getDecimalSeparator();
+        return decimalSeparator;
     }
 
     protected String getNoDataValue() {
@@ -180,12 +220,14 @@ public abstract class AbstractOmObservationCreator {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected SosProcedureDescription<?> createProcedure(String identifier) throws ConverterException, OwsExceptionReport {
+    protected SosProcedureDescription<?> createProcedure(String identifier)
+            throws ConverterException, OwsExceptionReport {
         Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(identifier, getSession());
-        String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
+        String pdf = !Strings.isNullOrEmpty(this.pdf) ? this.pdf
+                : hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
         if (getActiveProfile().isEncodeProcedureInObservation()) {
-            return new HibernateProcedureConverter(this.serviceProvider)
-                    .createSosProcedureDescription(hProcedure, pdf, getVersion(), getSession());
+            return new HibernateProcedureConverter(this.serviceProvider).createSosProcedureDescription(hProcedure, pdf,
+                    getVersion(), getSession());
         } else {
             SosProcedureDescriptionUnknownType sosProcedure =
                     new SosProcedureDescriptionUnknownType(identifier, pdf, null);
@@ -222,12 +264,35 @@ public abstract class AbstractOmObservationCreator {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected AbstractFeature createFeatureOfInterest(String identifier) throws OwsExceptionReport {
-        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
-        queryObject.addFeatureIdentifier(identifier).setConnection(getSession()).setVersion(getVersion());
-        final AbstractFeature feature =
-                getFeatureQueryHandler().getFeatureByID(queryObject);
-        return feature;
+    protected AbstractFeature createFeatureOfInterest(FeatureOfInterest foi) throws OwsExceptionReport {
+        if (getActiveProfile().isEncodeFeatureOfInterestInObservations()) {
+            FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
+            queryObject.addFeatureIdentifier(foi.getIdentifier()).setConnection(getSession()).setVersion(getVersion());
+            final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
+            if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null
+                    && !feature.getDefaultElementEncoding()
+                            .equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
+                feature.setDefaultElementEncoding(getActiveProfile().getEncodingNamespaceForFeatureOfInterest());
+            }
+            return feature;
+        } else {
+            SamplingFeature samplingFeature = new SamplingFeature(new CodeWithAuthority(foi.getIdentifier()));
+            if (foi.isSetCodespace()) {
+                samplingFeature.getIdentifierCodeWithAuthority().setCodeSpace(foi.getCodespace().getCodespace());
+            }
+            if (foi.isSetName()) {
+                CodeType codeType = new CodeType(foi.getName());
+                if (foi.isSetCodespaceName()) {
+                    try {
+                        codeType.setCodeSpace(new URI(foi.getCodespaceName().getCodespace()));
+                    } catch (URISyntaxException e) {
+                        throw new NoApplicableCodeException().causedBy(e).withMessage("The codespace '{}' of the name is not an URI!", foi.getCodespaceName().getCodespace());
+                    }
+                }
+                samplingFeature.setName(codeType);
+            }
+            return samplingFeature;
+        }
     }
 
     protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) throws CodedException {

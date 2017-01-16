@@ -33,8 +33,7 @@ import java.net.URISyntaxException;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.oxf.xml.NcNameResolver;
+import org.n52.janmayen.NcNameResolver;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -63,8 +62,8 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObserv
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.CodingHelper;
+import org.n52.svalbard.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 /**

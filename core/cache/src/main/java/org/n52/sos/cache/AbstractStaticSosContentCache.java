@@ -53,7 +53,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * Readable content cache that gets static information from the configurator (or
  * its delegates).
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 public abstract class AbstractStaticSosContentCache implements SosContentCache {

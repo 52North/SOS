@@ -31,12 +31,12 @@ package org.n52.sos.decode.xml.stream.inspire.base2;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.inspire.RelatedParty;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.xml.stream.XmlReader;
 import org.n52.sos.decode.xml.stream.inspire.gco.NillableFreeTextReader;
 import org.n52.sos.decode.xml.stream.w3c.xlink.NillableReferenceReader;
-import org.n52.sos.inspire.aqd.RelatedParty;
 
 /**
  * TODO JavaDoc

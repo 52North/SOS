@@ -49,9 +49,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlHelper.LaxValidationCase;
 import org.n52.sos.web.common.ControllerConstants;
+import org.n52.svalbard.XmlHelper;
+import org.n52.svalbard.XmlHelper.LaxValidationCase;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

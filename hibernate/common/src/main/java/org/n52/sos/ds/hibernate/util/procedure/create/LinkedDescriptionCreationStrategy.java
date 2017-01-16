@@ -44,7 +44,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Strings;

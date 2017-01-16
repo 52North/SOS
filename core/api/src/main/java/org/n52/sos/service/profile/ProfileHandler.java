@@ -30,7 +30,7 @@ package org.n52.sos.service.profile;
 
 import java.util.Map;
 
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.janmayen.lifecycle.Constructable;
 
 /**

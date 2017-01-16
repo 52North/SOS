@@ -31,11 +31,11 @@ package org.n52.sos.decode.xml.stream.inspire.gn;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.inspire.Spelling;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.xml.stream.NillableStringReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
-import org.n52.sos.inspire.aqd.Spelling;
 
 /**
  * TODO JavaDoc

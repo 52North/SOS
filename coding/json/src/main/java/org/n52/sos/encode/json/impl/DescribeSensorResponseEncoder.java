@@ -31,7 +31,8 @@ package org.n52.sos.encode.json.impl;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlOptions;
-
+import org.n52.svalbard.CodingHelper;
+import org.n52.svalbard.XmlOptionsHelper;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -40,8 +41,6 @@ import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -50,7 +49,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

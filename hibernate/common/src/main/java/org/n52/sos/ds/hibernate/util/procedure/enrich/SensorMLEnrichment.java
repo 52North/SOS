@@ -40,7 +40,7 @@ import com.google.common.base.Predicate;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public abstract class SensorMLEnrichment extends ProcedureDescriptionEnrichment {
     protected Predicate<SmlIdentifier> longNamePredicate() {

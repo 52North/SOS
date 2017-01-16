@@ -45,7 +45,6 @@
         <module>extensions</module>
         <module>spring</module>
         <module>statistics</module>
-        <module>third-party</module>
         <module>webapp</module>
         <module>webapp-bundle</module>
     </modules>
@@ -92,9 +91,7 @@
         <shetland.version>1-SNAPSHOT</shetland.version>
         <svalbard.version>1-SNAPSHOT</svalbard.version>
         <janmayen.version>1-SNAPSHOT</janmayen.version>
-        <n52.common.xml.version>2.1.0</n52.common.xml.version>
-        <!-- Remove third party ncname resolver from SOS and use OXF instead -->
-        <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
+        <n52.common.xml.version>2.2.0</n52.common.xml.version>
         <org.springframework.security.version>4.0.3.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.2.3.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
@@ -1144,13 +1141,6 @@
                         <artifactId>servlet-api</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <!-- third party dialects -->
-            <!-- Remove third party ncname resolver from SOS and use OXF instead -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>third-party-ncname-resolver</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>

@@ -32,7 +32,7 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.sos.event.events.SosDeletionEvent;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 1.0.0
  */

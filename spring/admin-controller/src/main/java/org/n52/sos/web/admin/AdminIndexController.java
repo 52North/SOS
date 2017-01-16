@@ -33,7 +33,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.MetaDataHandler;

@@ -30,10 +30,10 @@ package org.n52.sos.decode.xml.stream.inspire.gn;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.aqd.AqdConstants;
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.inspire.Pronunciation;
 import org.n52.sos.decode.xml.stream.NillableSubtagReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
-import org.n52.sos.inspire.aqd.Pronunciation;
 
 /**
  * TODO JavaDoc

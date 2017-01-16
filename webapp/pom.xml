@@ -539,13 +539,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- THIRD PARTY -->
-        <dependency>
-            <groupId>org.n52.sensorweb.sos</groupId>
-            <artifactId>third-party-ncname-resolver</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- EREPORTING -->
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -46,11 +46,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.ogc.ows.extension.OfferingExtension;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
-import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.iceland.util.collections.LinkedListMultiMap;
 import org.n52.iceland.util.collections.ListMultiMap;
+import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
+import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.config.sqlite.entities.Activatable;
@@ -167,12 +167,12 @@ public class SQLiteCapabilitiesExtensionService
     }
 
     @Override
-    public ListMultiMap<String, OfferingExtension> getOfferingExtensions() {
+    public ListMultiMap<String, SosObservationOfferingExtension> getOfferingExtensions() {
         return execute(new GetOfferingExtensionsAction());
     }
 
     @Override
-    public ListMultiMap<String, OfferingExtension> getActiveOfferingExtensions() {
+    public ListMultiMap<String, SosObservationOfferingExtension> getActiveOfferingExtensions() {
         boolean load = false;
         oeLock.readLock().lock();
         try {
@@ -186,13 +186,13 @@ public class SQLiteCapabilitiesExtensionService
             oeLock.writeLock().lock();
             try {
                 if (cachedOe == null) {
-                    final ListMultiMap<String, OfferingExtension> execute
+                    final ListMultiMap<String, SosObservationOfferingExtension> execute
                             = execute(new GetActiveOfferingExtensionsAction());
                     cachedOe = new HashMap<>(execute.size());
                     for (final String offering : execute.keySet()) {
-                        final List<OfferingExtension> oes = execute.get(offering);
+                        final List<SosObservationOfferingExtension> oes = execute.get(offering);
                         final Map<String, String> map = new HashMap<>(oes.size());
-                        for (final OfferingExtension oe : oes) {
+                        for (final SosObservationOfferingExtension oe : oes) {
                             map.put(oe.getIdentifier(), oe.getExtension());
                         }
                         cachedOe.put(offering, map);
@@ -202,7 +202,7 @@ public class SQLiteCapabilitiesExtensionService
                 oeLock.writeLock().unlock();
             }
         }
-        final ListMultiMap<String, OfferingExtension> map = new LinkedListMultiMap<>();
+        final ListMultiMap<String, SosObservationOfferingExtension> map = new LinkedListMultiMap<>();
         for (final String offering : cachedOe.keySet()) {
             final Map<String, String> oes = cachedOe.get(offering);
             if (oes != null) {
@@ -248,7 +248,7 @@ public class SQLiteCapabilitiesExtensionService
                 if (disabled) {
                     forOffering.remove(identifier);
                 } else if (!forOffering.containsKey(identifier)) {
-                    final OfferingExtension oe = execute(new GetOfferingExtensionAction(offering, identifier));
+                    final SosObservationOfferingExtension oe = execute(new GetOfferingExtensionAction(offering, identifier));
                     forOffering.put(oe.getIdentifier(), oe.getExtension());
                 }
             }
@@ -453,12 +453,12 @@ public class SQLiteCapabilitiesExtensionService
         }
     }
 
-    private class GetOfferingExtensionsAction implements HibernateAction<ListMultiMap<String, OfferingExtension>> {
+    private class GetOfferingExtensionsAction implements HibernateAction<ListMultiMap<String, SosObservationOfferingExtension>> {
         @Override
-        public ListMultiMap<String, OfferingExtension> call(final Session session) {
+        public ListMultiMap<String, SosObservationOfferingExtension> call(final Session session) {
             @SuppressWarnings("unchecked")
             final List<OfferingExtensionImpl> extensions = session.createCriteria(OfferingExtensionImpl.class).list();
-            final ListMultiMap<String, OfferingExtension> map = new LinkedListMultiMap<>(
+            final ListMultiMap<String, SosObservationOfferingExtension> map = new LinkedListMultiMap<>(
                     getCache().getOfferings().size());
 
             for (final OfferingExtensionImpl extension : extensions) {
@@ -469,7 +469,7 @@ public class SQLiteCapabilitiesExtensionService
         }
     }
 
-    private class GetOfferingExtensionAction implements HibernateAction<OfferingExtension> {
+    private class GetOfferingExtensionAction implements HibernateAction<SosObservationOfferingExtension> {
         private final String offering;
         private final String identifier;
 
@@ -479,21 +479,21 @@ public class SQLiteCapabilitiesExtensionService
         }
 
         @Override
-        public OfferingExtension call(final Session session) {
-            return (OfferingExtension) session.createCriteria(OfferingExtensionImpl.class)
+        public SosObservationOfferingExtension call(final Session session) {
+            return (SosObservationOfferingExtension) session.createCriteria(OfferingExtensionImpl.class)
                     .add(and(eq(Activatable.COMPOSITE_KEY + "." + OfferingExtensionIdentifier.IDENTIFIER, identifier),
                              eq(Activatable.COMPOSITE_KEY + "." + OfferingExtensionIdentifier.OFFERING, offering)))
                     .uniqueResult();
         }
     }
 
-    private class GetActiveOfferingExtensionsAction implements HibernateAction<ListMultiMap<String, OfferingExtension>> {
+    private class GetActiveOfferingExtensionsAction implements HibernateAction<ListMultiMap<String, SosObservationOfferingExtension>> {
         @Override
-        public ListMultiMap<String, OfferingExtension> call(final Session session) {
+        public ListMultiMap<String, SosObservationOfferingExtension> call(final Session session) {
             @SuppressWarnings("unchecked")
             final List<OfferingExtensionImpl> extensions = session.createCriteria(OfferingExtensionImpl.class)
                     .add(eq(OfferingExtensionImpl.ACTIVE, true)).list();
-            final ListMultiMap<String, OfferingExtension> map = new LinkedListMultiMap<>(
+            final ListMultiMap<String, SosObservationOfferingExtension> map = new LinkedListMultiMap<>(
                     getCache().getOfferings().size());
 
             for (final OfferingExtensionImpl extension : extensions) {

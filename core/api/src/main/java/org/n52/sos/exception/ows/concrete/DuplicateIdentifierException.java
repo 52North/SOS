@@ -31,7 +31,7 @@ package org.n52.sos.exception.ows.concrete;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

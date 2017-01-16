@@ -47,7 +47,7 @@ import com.google.common.collect.Lists;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class ProcedureDescriptionEnrichments {
     private String identifier;

@@ -88,7 +88,6 @@ import org.n52.shetland.ogc.sos.response.BinaryAttachmentResponse;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
-import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.netcdf.Nc4ForceTimeChunkingStategy;
@@ -102,6 +101,7 @@ import org.n52.sos.netcdf.data.subsensor.ProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import org.n52.sos.netcdf.om.NetCDFObservation;
 import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 

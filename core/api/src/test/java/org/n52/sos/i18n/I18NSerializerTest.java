@@ -41,7 +41,7 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
 import org.n52.iceland.i18n.I18NSerializer;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.MultilingualString;
 
 /**
  * TODO JavaDoc

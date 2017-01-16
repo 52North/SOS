@@ -27,7 +27,6 @@
  * Public License for more details.
  */
 package org.n52.sos.exception.ows.concrete;
-
 import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.io.IOException;
@@ -35,7 +34,7 @@ import java.io.IOException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  *

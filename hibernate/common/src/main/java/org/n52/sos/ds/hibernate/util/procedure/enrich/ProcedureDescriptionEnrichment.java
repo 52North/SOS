@@ -51,7 +51,7 @@ import com.google.common.collect.Lists;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public abstract class ProcedureDescriptionEnrichment {
     private static final IsApplicable IS_APPLICABLE = new IsApplicable();

@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-
+import org.n52.svalbard.encode.GmlEncoderv321;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.shetland.ogc.om.values.QuantityValue;

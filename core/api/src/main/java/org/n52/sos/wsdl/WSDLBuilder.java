@@ -43,14 +43,14 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.XmlHelper;
 import org.n52.sos.wsdl.WSDLConstants.Operations;
+import org.n52.svalbard.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.annotations.VisibleForTesting;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

@@ -61,7 +61,7 @@ import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
-import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 /**

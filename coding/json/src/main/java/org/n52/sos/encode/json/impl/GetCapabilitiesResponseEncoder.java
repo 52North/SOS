@@ -64,12 +64,11 @@ import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.n52.svalbard.LocaleHelper;
 import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.filter.FilterCapabilities;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
@@ -114,7 +113,7 @@ import com.vividsolutions.jts.geom.Envelope;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

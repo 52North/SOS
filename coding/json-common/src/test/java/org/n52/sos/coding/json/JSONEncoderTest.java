@@ -50,7 +50,7 @@ import org.n52.svalbard.encode.exception.EncodingException;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  */
 public class JSONEncoderTest {

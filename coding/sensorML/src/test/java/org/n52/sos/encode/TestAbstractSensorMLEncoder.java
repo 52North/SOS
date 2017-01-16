@@ -31,8 +31,8 @@ package org.n52.sos.encode;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-
 import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.AbstractSensorMLEncoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;

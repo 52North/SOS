@@ -31,6 +31,11 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.List;
 import java.util.Set;
 
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.aqd.AqdUomRepository;
+import org.n52.shetland.aqd.ElementType;
+import org.n52.shetland.aqd.AqdConstants.PrimaryObservation;
+import org.n52.shetland.aqd.AqdUomRepository.Uom;
 import org.n52.shetland.iso.gmd.GmdDomainConsistency;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.gml.time.Time;
@@ -53,15 +58,10 @@ import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.JavaHelper;
-import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.AqdConstants.PrimaryObservation;
-import org.n52.sos.aqd.AqdUomRepository;
-import org.n52.sos.aqd.AqdUomRepository.Uom;
-import org.n52.sos.aqd.ElementType;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingQualityData;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
-import org.n52.sos.util.SweHelper;
+import org.n52.svalbard.SweHelper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

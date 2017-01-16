@@ -42,11 +42,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.config.SettingsService;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.service.ServiceSettings;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

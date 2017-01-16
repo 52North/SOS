@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.OfferingExtensionKey;

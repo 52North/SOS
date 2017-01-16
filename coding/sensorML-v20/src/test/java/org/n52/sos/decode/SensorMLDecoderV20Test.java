@@ -43,6 +43,7 @@ import org.junit.Test;
 import org.n52.shetland.ogc.sensorML.v20.SmlDataInterface;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
+import org.n52.svalbard.SensorMLDecoderV20;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 

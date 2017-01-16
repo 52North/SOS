@@ -40,11 +40,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
-
+import org.n52.svalbard.decode.exception.XmlDecodingException;
+import org.n52.svalbard.encode.GetCapabilitiesResponseEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 
 
 public class GetCapabilitiesResponseEncoderTest {

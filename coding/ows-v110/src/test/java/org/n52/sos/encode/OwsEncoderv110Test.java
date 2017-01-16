@@ -47,9 +47,10 @@ import org.n52.shetland.ogc.ows.OwsCode;
 import org.n52.shetland.ogc.ows.OwsServiceIdentification;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.CodingHelper;
 import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.OwsEncoderv110;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**

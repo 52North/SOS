@@ -47,8 +47,8 @@ public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCre
     public EReportingSeriesOmObservationCreator(EReportingSeries series,
                                                 AbstractObservationRequest request,
                                                 LocalizedProducer<OwsServiceProvider> serviceProvider,
-                                                Locale language, Session session) {
-        super(series, request, serviceProvider, language, session);
+                                                Locale language, String pdf, Session session) {
+        super(series, request, serviceProvider, language, pdf, session);
     }
 
     @Override

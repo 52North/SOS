@@ -11,10 +11,6 @@
 	<name>52°North SOS - eReporting Prefixed identifier convert module</name>
 	<description>52°North SOS - Module to support eReporting prefixed identifiers in requests and responses</description>
 	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>api</artifactId>
-		</dependency>
         <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>

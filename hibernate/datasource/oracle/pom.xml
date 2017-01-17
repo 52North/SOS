@@ -11,9 +11,9 @@
 	<name>52°North SOS - Hibernate Oracle Datasource</name>
 	<description>52°North Sensor Observation Service Hibernate Oracle module</description>
 	<dependencies>
-		<dependency>
-            <groupId>org.n52.iceland</groupId>
-            <artifactId>iceland</artifactId>
+         <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe</artifactId>
          </dependency>
          <dependency>
             <groupId>com.mchange</groupId>

@@ -27,9 +27,5 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>gda-operation</artifactId>
-		</dependency>
 	</dependencies>
 </project>

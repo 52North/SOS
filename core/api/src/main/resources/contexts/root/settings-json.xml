@@ -14,6 +14,6 @@
     <bean id="activationDao" class="org.n52.iceland.config.json.JsonActivationDao" />
     <bean id="sosActivationDao" class="org.n52.sos.config.json.SosJsonActivationDao" />
     <bean id="adminUserDao" class="org.n52.iceland.config.json.JsonAdminUserDao" />
-    <bean id="settingValueFactory" class="org.n52.iceland.config.json.JsonSettingValueFactory" />
+    <bean id="settingValueFactory" class="org.n52.faroe.json.JsonSettingValueFactory" />
 
 </beans>

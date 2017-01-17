@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-	<bean id="statisticsDefinitionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+	<bean id="statisticsDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
 		<property name="title" value="Statistics" />
 		<property name="description"
 			value="On this settings page you can enable and configure the statistics collection module.

@@ -9,7 +9,7 @@
     <bean class="org.n52.svalbard.decode.GetDataAvailabilityXmlDecoder"/>
 
     <!-- Encoder implementations from svalbard -->
-    <bean class="org.n52.svalbard.decode.GetDataAvailabilityXmlEncoder"/>
+    <bean class="org.n52.svalbard.encode.GetDataAvailabilityXmlEncoder"/>
 
     <!-- Decoder implementations from extensions/gda/operation -->
     <bean class="org.n52.sos.gda.GetDataAvailabilityJsonDecoder"/>

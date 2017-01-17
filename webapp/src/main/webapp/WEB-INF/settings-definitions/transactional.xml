@@ -5,7 +5,7 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
 
-    <bean id="transactionalSecuritySettingsDefinitionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+    <bean id="transactionalSecuritySettingsDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
         <property name="title" value="Transactional Security" />
         <property name="description" value="Simple security settings to restrict access to transactional methods (InsertSensor, InsertObservation, etc.). Users requiring more control over security should use &lt;a href=&quot;http://52north.org/communities/security/wss/2.2/&quot;&gt;52&amp;deg;North &lt;abbr title=&quot;Web Security Service&quot;&gt;WSS&lt;/abbr&gt;&lt;/a&gt;." />
         <property name="order" value="1.0" />

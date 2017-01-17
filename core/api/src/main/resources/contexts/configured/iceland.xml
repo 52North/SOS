@@ -10,18 +10,18 @@
     <bean id="jsonBinding" class="org.n52.iceland.binding.json.JSONBinding" />
     <bean id="soapBinding" class="org.n52.iceland.binding.soap.SoapBinding" />
 
-    <bean id="serviceMetadataRepository" class="org.n52.iceland.ogc.ows.ServiceMetadataRepositoryImpl" />
+    <bean id="serviceMetadataRepository" class="org.n52.iceland.ogc.ows.OwsServiceMetadataRepositoryImpl" />
 
 
     <bean id="documentBuilderProvider" class="org.n52.iceland.coding.DocumentBuilderProvider" />
 	<bean id="bindingRepository" class="org.n52.iceland.binding.BindingRepository" />
 	<bean id="codingRepository" class="org.n52.iceland.coding.CodingRepository" />
 	<bean id="supportedTypeRepository" class="org.n52.iceland.coding.SupportedTypeRepository" />
-	<bean id="owsExtendedCapabilitiesRepository" class="org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderRepository" />
-	<bean id="offeringExtensionRepository" class="org.n52.iceland.ogc.swes.OfferingExtensionRepository" />
-	<bean id="capabilitiesExtensionRepository" class="org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository" />
+	<bean id="owsOperationMetadataExtensionProviderRepository" class="org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderRepository" />
+	<bean id="sosObservationOfferingExtensionRepository" class="org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository" />
+	<bean id="owsCapabilitiesExtensionRepository" class="org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionRepository" />
 	<bean id="i18nDaoRepository" class="org.n52.iceland.i18n.I18NDAORepository" />
-	<bean id="schemaRepository" class="org.n52.iceland.coding.encode.SchemaRepository" />
+	<bean id="schemaRepository" class="org.n52.svalbard.encode.SchemaRepository" />
 	<bean id="operationHandlerRepository" class="org.n52.iceland.request.handler.OperationHandlerRepository" />
 	<bean id="requestResponseModifierRepository" class="org.n52.iceland.convert.RequestResponseModifierRepository" />
 	<bean id="responseWriterRepository" class="org.n52.iceland.coding.encode.ResponseWriterRepository" />
@@ -34,7 +34,7 @@
 	<bean id="httpUtils" class="org.n52.iceland.util.http.HttpUtils" />
 
 	<bean id="icelandServlet" class="org.n52.iceland.service.Service" />
-	<bean id="eventListenerRegistrator" class="org.n52.iceland.event.ServiceEventListenerRegistrator">
+	<bean id="eventListenerRegistrator" class="org.n52.janmayen.event.EventListenerRegistrator">
 		<description>Used to decouple EventListener and EventBus creation.</description>
 	</bean>
 
@@ -45,17 +45,17 @@
 		<description>Used to wire up activation persistence.</description>
 		<property name="listeners">
 			<map>
-				<entry key-ref="offeringExtensionRepository" value="#{activationService.offeringExtensionListener}" />
+				<entry key-ref="sosObservationOfferingExtensionRepository" value="#{activationService.sosObservationOfferingExtensionListener}" />
 				<entry key-ref="bindingRepository" value="#{activationService.bindingListener}" />
-				<entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesListener}" />
+				<entry key-ref="owsOperationMetadataExtensionProviderRepository" value="#{activationService.owsOperationMetadataExtensionProviderListener}" />
 				<entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorListener}" />
 			</map>
 		</property>
 		<property name="initializers">
 			<map>
-				<entry key-ref="offeringExtensionRepository" value="#{activationService.offeringExtensionInitializer}" />
+				<entry key-ref="sosObservationOfferingExtensionRepository" value="#{activationService.sosObservationOfferingExtensionInitializer}" />
 				<entry key-ref="bindingRepository" value="#{activationService.bindingInitializer}" />
-				<entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesInitializer}" />
+				<entry key-ref="owsOperationMetadataExtensionProviderRepository" value="#{activationService.owsOperationMetadataExtensionProviderInitializer}" />
 				<entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorInitializer}" />
 			</map>
 		</property>

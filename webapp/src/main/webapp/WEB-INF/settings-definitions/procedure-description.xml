@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-    <bean id="procedureDescriptionSettingDefinitionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+    <bean id="procedureDescriptionSettingDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
         <property name="title" value="Procedure Description" />
         <property name="description" value="Settings to configure the procedure description generation and enrichment feature." />
         <property name="order" value="4.2023" />

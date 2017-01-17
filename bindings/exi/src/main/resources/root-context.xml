@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-    <bean id="exiBindingSettingDefintionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+    <bean id="exiBindingSettingDefintionGroup" class="org.n52.faroe.SettingDefinitionGroup">
         <property name="title" value="EXI Binding" />
         <property name="description" value="&lt;abbr title=&quot;Efficient XML Interchange&quot;&gt;EXI&lt;/abbr&gt; is a very compact representation for the &lt;a href=&quot;http://www.w3.org/TR/exi/&quot; target=&quot;_blank&quot;&gt;&lt;abbr title=&quot;Extensible Markup Language&quot;&gt;XML&lt;/abbr&gt;&lt;/a&gt; Information Set that is intended to simultaneously optimize performance and the utilization of computational resources. EXI encoding is available via content type &lt;code&gt;application/exi&lt;/code&gt;." />
         <property name="order" value="4.22" />

@@ -8,7 +8,7 @@
         <property name="title" value="CRS" />
         <property name="order" value="4.0" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.IntegerSettingDefinition">
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="service.defaultEpsg" />
         <property name="title" value="Storage EPSG Code" />
         <property name="description" value="The EPSG code in which the geometries are stored." />
@@ -16,7 +16,7 @@
         <property name="group" ref="crsSettingDefinitionGroup" />
         <property name="defaultValue" value="4326" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.SpatialDatasource" />
         <property name="title" value="Is datasource spatial enabled" />
         <property name="description" value="The underlying datasource supports spatial queries and geometry data types. If not, the SOS only supports Get... operations and only BBOX spatial filtering." />
@@ -24,7 +24,7 @@
         <property name="group" ref="crsSettingDefinitionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="misc.switchCoordinatesForEpsgCodes" />
         <property name="title" value="EPSG Codes with Switched Coordinates" />
         <property name="description" value="A list of all EPSG codes with northing first coordinate axis order. The SOS transforms the axis order if the underlying datasource uses a differnent orderfor example from lat/lon to lon/lat, or from x/y to y/x." />
@@ -32,7 +32,7 @@
         <property name="group" ref="crsSettingDefinitionGroup" />
         <property name="defaultValue" value="2044-2045;2081-2083;2085-2086;2093;2096-2098;2105-2132;2169-2170;2176-2180;2193;2200;2206-2212;2319;2320-2462;2523-2549;2551-2735;2738-2758;2935-2941;2953;3006-3030;3034-3035;3058-3059;3068;3114-3118;3126-3138;3300-3301;3328-3335;3346;3350-3352;3366;3416;4001-4999;20004-20032;20064-20092;21413-21423;21473-21483;21896-21899;22171;22181-22187;22191-22197;25884;27205-27232;27391-27398;27492;28402-28432;28462-28492;30161-30179;30800;31251-31259;31275-31279;31281-31290;31466-31700" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.IntegerSettingDefinition">
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="service.defaultRespopnse3DEpsg" />
         <property name="title" value="Default response 3D EPSG Code" />
         <property name="description" value="The default 3D EPSG code in which the geometries are returned." />
@@ -40,7 +40,7 @@
         <property name="group" ref="crsSettingDefinitionGroup" />
         <property name="defaultValue" value="4979" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="service.supportedCrs" />
         <property name="title" value="Supported crs" />
         <property name="description" value="Set the supported crs for this service as &apos;,&apos; separated list! If empty, this tool supported CRS are used!" />
@@ -48,7 +48,7 @@
         <property name="group" ref="crsSettingDefinitionGroup" />
         <property name="defaultValue" value="4326,31466,31467,4258" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="misc.datasourceNorthingFirst" />
         <property name="title" value="Are the geometries stored in datasource with northing first" />
         <property name="description" value="Indicates if the geometries stored in the datasource with northing first axis order" />
@@ -56,7 +56,7 @@
         <property name="group" ref="crsSettingDefinitionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.IntegerSettingDefinition">
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="service.defaultResponseEpsg" />
         <property name="title" value="Default response EPSG Code" />
         <property name="description" value="The default EPSG code in which the geometries are returned." />
@@ -64,7 +64,7 @@
         <property name="group" ref="crsSettingDefinitionGroup" />
         <property name="defaultValue" value="4326" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.IntegerSettingDefinition">
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="service.default3DEpsg" />
         <property name="title" value="Storage 3D EPSG Code" />
         <property name="description" value="The 3D EPSG code in which the geometries are stored." />
@@ -72,7 +72,7 @@
         <property name="group" ref="crsSettingDefinitionGroup" />
         <property name="defaultValue" value="4979" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="service.crsAuthority" />
         <property name="title" value="CRS authority" />
         <property name="description" value="Set the CRS authority for this service, e.g. EPSG!" />

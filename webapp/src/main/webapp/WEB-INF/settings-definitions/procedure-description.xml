@@ -9,7 +9,7 @@
         <property name="description" value="Settings to configure the procedure description generation and enrichment feature." />
         <property name="order" value="4.2023" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="procedureDesc.CLASSIFIER_INTENDED_APPLICATION_VALUE" />
         <property name="title" value="IntendedApplication Value" />
         <property name="description" value="The value that will be used for all procedures/sensors of this SOS instance as term for the classifier &apos;intendedApllication&apos; if the classification generation is activated. In addition, if this field is &lt;b&gt;empty&lt;/b&gt;, the classifier &apos;intendedApplication&apos; will &lt;b&gt;not&lt;/b&gt; be added." />
@@ -17,7 +17,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="optional" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="procedureDesc.DESCRIPTION_TEMPLATE" />
         <property name="title" value="Description template" />
         <property name="description" value="The template used to generate a description using the sensor identifier and the observed properties related. The template MUST contain &apos;%s&apos; three times. The first one will be replaced with &apos;sensor system&apos; or &apos;procedure&apos; depending if it&apos;s spatial or non-spatial. The second one will be replaced with the sensor id and the third with a comma separated list of properties: e.g. &lt;i&gt;The %s with the id &apos;%s&apos; observes the following properties: &apos;%s&apos;.&lt;/i&gt;." />
@@ -25,7 +25,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="The &apos;%s&apos; with the id &apos;%s&apos; observes the following properties: &apos;%s&apos;." />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="procedureDesc.ENRICH_WITH_DISCOVERY_INFORMATION" />
         <property name="title" value="Enrich with discovery information?" />
         <property name="description" value="If selected, the service enriches each procedure description with discovery relevant information according to &lt;a target=&quot;_blank&quot; href=&quot;https://portal.opengeospatial.org/files/?artifact_id=33284&quot;&gt;OGC#09-033 &apos;SensorML Profile for Discovery&apos;&lt;/a&gt;." />
@@ -33,7 +33,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="procedureDesc.ENRICH_WITH_FEATURES" />
         <property name="title" value="Enrich with feature information?" />
         <property name="description" value="If selected, the service enriches each procedure description with available observed feature information: listing all features observed by this procedure, for example. If disabled, the returned description of an DescribeSensor response might differ from the document  used during the related InsertSensor call." />
@@ -41,7 +41,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="procedureDesc.IDENTIFIER_LONG_NAME_DEFINITION" />
         <property name="title" value="Identifier &apos;longname&apos; definition" />
         <property name="description" value="The definition for the sml:identification holding the &apos;longname&apos;. Used only if the procedure description is enriched according to OGC#09-033." />
@@ -49,7 +49,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="urn:ogc:def:identifier:OGC:1.0:longname" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="procedureDesc.IDENTIFIER_SHORT_NAME_DEFINITION" />
         <property name="title" value="Identifier &apos;shortname&apos; definition" />
         <property name="description" value="The definition for the sml:identification holding the &apos;shortname&apos;. Used only if the sensor description is enriched according to OGC#09-033." />
@@ -57,7 +57,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="urn:ogc:def:identifier:OGC:1.0:shortname" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="procedureDesc.CLASSIFIER_INTENDED_APPLICATION_DEFINITION" />
         <property name="title" value="IntendedApplication definition" />
         <property name="description" value="The definition that will be used for all procedures/sensors of this SOS instance as definition for the classifier &apos;intendedApllication&apos; if the classification generation is activated." />
@@ -65,7 +65,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="urn:ogc:def:classifier:OGC:1.0:application" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="procedureDesc.CLASSIFIER_PROCEDURE_TYPE_VALUE" />
         <property name="title" value="ProcedureType Value" />
         <property name="description" value="The value that will be used for all procedures of this SOS instance as term for the classifier &apos;procedureType&apos; if the classification generation is activated. In addition, if this field is &lt;b&gt;empty&lt;/b&gt;, the classifier &apos;procedureType&apos; will &lt;b&gt;not&lt;/b&gt; be added." />
@@ -73,7 +73,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="optional" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="procedureDesc.PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE" />
         <property name="title" value="Description Template for the rules definition" />
         <property name="description" value="The template used to generate a description using the procedure identifier and the observed properties. The template MUST contain &apos;%s&apos; two times. The first one will be replaced with the sensor id and the second with a comma separated list of properties: e.g. &lt;i&gt;The procedure &apos;%s&apos; generates the following output(s): &apos;%s&apos;. The input(s) is/are unknown (this description is generated).&lt;/i&gt;" />
@@ -81,7 +81,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="The procedure &apos;%s&apos; generates the following output(s): &apos;%s&apos;. The input(s) is/are unknown (this description is generated)." />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="procedureDesc.USE_SERVICE_CONTACT_AS_SENSOR_CONTACT" />
         <property name="title" value="Use service contact as procedure contact" />
         <property name="description" value="Should the service contact be encoded as procedure contact if procedure description enrichment is activated." />
@@ -89,7 +89,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="procedureDesc.ENRICH_WITH_OFFERINGS" />
         <property name="title" value="Enrich with offering information?" />
         <property name="description" value="If selected, the service enriches each procedure description with available offering information: listing all procedure related offering ids, for example. If disabled, the returned description of an DescribeSensor response might differ from the document used during the related InsertSensor call." />
@@ -97,7 +97,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="procedureDesc.GENERATE_CLASSIFICATION" />
         <property name="title" value="Generate classification" />
         <property name="description" value="Should the classifiers for &apos;intendedApplication&apos; and/or &apos;sensorType&apos; be generated using the values from the next two settings?" />
@@ -105,7 +105,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="procedureDesc.ALTITUDE_UOM" />
         <property name="title" value="Altitude UOM" />
         <property name="description" value="The UOM for the altitude value of spatial procedures (e.g. sml:System). Something like &apos;m&apos;." />
@@ -113,7 +113,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="m" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="procedureDesc.LAT_LONG_UOM" />
         <property name="title" value="Latitude &amp;amp; Longitude UOM" />
         <property name="description" value="The UOM for the latitude  &amp;amp; longitude values of spatial procedures (e.g. sml:System). Something like &apos;degree&apos;, &apos;m&apos;." />
@@ -121,7 +121,7 @@
         <property name="group" ref="procedureDescriptionSettingDefinitionGroup" />
         <property name="defaultValue" value="degree" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="procedureDesc.CLASSIFIER_PROCEDURE_TYPE_DEFINITION" />
         <property name="title" value="ProcedureType definition" />
         <property name="description" value="The definition that will be used for all procedures/sensors of this SOS instance as definition for the classifier &apos;procedureType&apos; if the classification generation is activated." />

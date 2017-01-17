@@ -2,7 +2,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="swe.coordinate.northing" />
         <property name="title" value="SweCoordinate names for northing/latitude" />
         <property name="description" value="Comma separated definitions for northing/latitude. By default, support northing, latitude, southing" />
@@ -11,7 +11,7 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="swe.coordinate.easting" />
         <property name="title" value="SweCoordinate names for easting/longitude" />
         <property name="description" value="Comma separated definitions for easting/longitude. By default, support easting, longitude, westing" />
@@ -20,7 +20,7 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="swe.coordinate.altitude" />
         <property name="title" value="SweCoordinate names for altitude" />
         <property name="description" value="Comma separated definitions for altitude. By default, support altitude, height, depth" />

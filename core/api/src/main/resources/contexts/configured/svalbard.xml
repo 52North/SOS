@@ -5,4 +5,5 @@
 	<bean id="decoderRepository" class="org.n52.svalbard.decode.DecoderRepository" />
 	<!-- <bean id="encoderRepository" class="org.n52.svalbard.encode.EncoderRepository" /> -->
 
+    <bean id="xmlOptionsHelper" class="org.n52.svalbard.util.XmlOptionsHelper" />
 </beans>

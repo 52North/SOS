@@ -4,7 +4,7 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
     <bean id="xmlResponseWriterFactory"
-          class="org.n52.sos.coding.encode.XmlResponseWriterFactory" />
+          class="org.n52.iceland.response.XmlResponseWriterFactory" />
 
     <bean id="abstractServiceResponseWriterFactory"
           class="org.n52.sos.coding.encode.AbstractServiceResponseWriterFactory"/>
@@ -35,9 +35,6 @@
 
     <bean id="transactionalSecurityConfiguration"
           class="org.n52.sos.service.TransactionalSecurityConfiguration" />
-
-    <bean id="xmlOptionsHelper"
-          class="org.n52.sos.util.XmlOptionsHelper" />
 
     <bean id="driverCleanupListener"
           class="org.n52.sos.service.DriverCleanupListener" />

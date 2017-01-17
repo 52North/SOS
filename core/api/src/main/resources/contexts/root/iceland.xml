@@ -3,7 +3,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-    <bean id="eventBus" class="org.n52.iceland.event.ServiceEventBus">
+    <bean id="eventBus" class="org.n52.janmayen.event.EventBus">
         <property name="async" value="false" />
     </bean>
 
@@ -21,10 +21,9 @@
 
     <!--  settings related beans -->
     <bean id="configLocationProvider" class="org.n52.iceland.service.ServletConfigLocationProvider" />
-    <bean id="settingsService" class="org.n52.iceland.config.SettingsServiceImpl" />
+    <bean id="settingsService" class="org.n52.faroe.SettingsServiceImpl" />
     <bean id="adminUserService" class="org.n52.iceland.config.AdminUserServiceImpl" />
     <bean id="activationService" class="org.n52.iceland.config.ActivationService" />
-    <bean id="settingsEncoder" class="org.n52.iceland.config.json.JsonSettingsEncoder" />
     <bean id="sosActivationService" class="org.n52.sos.config.SosActivationService" />
 
 </beans>

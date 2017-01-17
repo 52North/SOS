@@ -28,36 +28,38 @@
  */
 package org.n52.sos.binding.rest.resources.sensors;
 
-
 import net.opengis.sosREST.x10.SensorDocument;
 
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class SensorsPutEncoder extends ASensorsEncoder {
+    public SensorsPutEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
 
     @Override
-    public ServiceResponse encodeRestResponse(RestResponse restResponse) throws OwsExceptionReport
-    {
+    public ServiceResponse encodeRestResponse(RestResponse restResponse) throws OwsExceptionReport {
         if (restResponse != null && restResponse instanceof SensorsPutResponse) {
             SensorsPutResponse sensorsPutResponse = (SensorsPutResponse) restResponse;
             SensorDocument xb_SensorRestDoc = SensorDocument.Factory.newInstance();
             createRestDefaultRestSensor(sensorsPutResponse, xb_SensorRestDoc);
 
-            ServiceResponse response = createServiceResponseFromXBDocument(xb_SensorRestDoc,
-                    bindingConstants.getResourceSensors(),
-                    HTTPStatus.OK,
-                    false,true);
+            return createServiceResponseFromXBDocument(xb_SensorRestDoc,
+                                                       Constants.REST_RESOURCE_SENSORS,
+                                                       HTTPStatus.OK,
+                                                       false, true);
 
-            return response;
         }
-        throw createResponseNotSupportedException(SensorsPutResponse.class.getName(),restResponse);
+        throw createResponseNotSupportedException(SensorsPutResponse.class.getName(), restResponse);
     }
 
 }

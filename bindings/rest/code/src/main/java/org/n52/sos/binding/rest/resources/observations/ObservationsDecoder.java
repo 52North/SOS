@@ -28,6 +28,7 @@
  */
 package org.n52.sos.binding.rest.resources.observations;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
@@ -71,6 +73,10 @@ import org.n52.svalbard.decode.exception.DecodingException;
 public class ObservationsDecoder extends ResourceDecoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationsDecoder.class);
+
+    public ObservationsDecoder(Constants constants) {
+        super(constants);
+    }
 
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
@@ -92,7 +98,7 @@ public class ObservationsDecoder extends ResourceDecoder {
             // pathpayload and querystring == null. if paging is implemented the querystring will not be empty
             result = decoderObservationsFeedRequest(httpRequest);
         }*/ else {
-            String errorMsg = createBadGetRequestMessage(bindingConstants.getResourceObservations(), false, true, true);
+            String errorMsg = createBadGetRequestMessage(Constants.REST_RESOURCE_RELATION_OBSERVATIONS, false, true, true);
             BadRequestException bR = new BadRequestException(errorMsg);
             throw new NoApplicableCodeException().causedBy(bR).withMessage(errorMsg);
         }
@@ -103,24 +109,19 @@ public class ObservationsDecoder extends ResourceDecoder {
     @Override
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
                                               String pathPayload) throws DecodingException {
-        // 0 variables
-        RestRequest result = null;
-
         if (pathPayload != null && !pathPayload.isEmpty()) {
-            result = decodeObservationsDeleteRequest(pathPayload);
+            return decodeObservationsDeleteRequest(pathPayload);
+        } else {
+            return null;
         }
-
-        return result;
     }
 
     private RestRequest decodeObservationsDeleteRequest(String pathPayload) {
-        DeleteObservationRequest deleteObservationRequest = new DeleteObservationRequest();
-
-        deleteObservationRequest.setService(bindingConstants.getSosService());
-        deleteObservationRequest.setVersion(bindingConstants.getSosVersion());
-        deleteObservationRequest.setObservationIdentifier(pathPayload);
-
-        return new ObservationsDeleteRequest(deleteObservationRequest);
+        DeleteObservationRequest request = new DeleteObservationRequest();
+        request.setService(bindingConstants.getSosService());
+        request.setVersion(bindingConstants.getSosVersion());
+        request.setObservationIdentifier(pathPayload);
+        return new ObservationsDeleteRequest(request);
     }
 
     @Override
@@ -175,8 +176,7 @@ public class ObservationsDecoder extends ResourceDecoder {
             }
         }
         String errorMsg = String.format(bindingConstants.getErrorMessageHttpMethodNotAllowedForResource(),
-                                        "POST",
-                                        bindingConstants.getResourceObservations());
+                                        "POST", Constants.REST_RESOURCE_RELATION_OBSERVATIONS);
         LOGGER.error(errorMsg);
         throw new OperationNotSupportedException("HTTP POST").withMessage(errorMsg);
     }
@@ -211,8 +211,7 @@ public class ObservationsDecoder extends ResourceDecoder {
     @Override
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
                                            String pathPayload) throws DecodingException, OwsExceptionReport {
-        throw new OperationNotSupportedException(String.format("HTTP-PUT + '%s'",
-                                                               bindingConstants.getResourceObservations()));
+        throw new OperationNotSupportedException(String.format("HTTP-PUT + '%s'", Constants.REST_RESOURCE_RELATION_OBSERVATIONS));
     }
 
     private ObservationsSearchRequest decodeObservationsSearchRequest(HttpServletRequest httpRequest) throws
@@ -251,31 +250,31 @@ public class ObservationsDecoder extends ResourceDecoder {
         for (String parameter : parameterMap.keySet()) {
 
             String value = parameterMap.get(parameter);
-            if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameFoi()) &&
+            if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_FEATURE) &&
                 value != null && value.length() > 0) {
                 request.setFeatureIdentifiers(splitKvpParameterValueToList(value));
                 parameterMapValid = true;
-            } else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameObservedProperty()) &&
+            } else if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_OBSERVED_PROPERTIES) &&
                        value != null && value.length() > 0) {
                 request.setObservedProperties(splitKvpParameterValueToList(value));
                 parameterMapValid = true;
-            } else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameOffering()) &&
+            } else if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_OFFERING) &&
                        value != null && value.length() > 0) {
                 request.setOfferings(splitKvpParameterValueToList(value));
                 parameterMapValid = true;
-            } else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameProcedure()) &&
+            } else if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_PROCEDURES) &&
                        value != null && value.length() > 0) {
                 request.setProcedures(splitKvpParameterValueToList(value));
                 parameterMapValid = true;
-            } else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameSpatialFilter()) &&
+            } else if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_SPATIAL_FILTER) &&
                        value != null && value.length() > 0) {
                 request.setSpatialFilter(parseSpatialFilter(splitKvpParameterValueToList(value), parameter));
                 parameterMapValid = true;
-            } else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameTemporalFilter()) &&
+            } else if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_TEMPORAL_FILTER) &&
                        value != null && value.length() > 0) {
                 request.setTemporalFilters(parseTemporalFilter(splitKvpParameterValueToList(value)));
                 parameterMapValid = true;
-            } else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameNamespaces()) &&
+            } else if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_NAMESPACES) &&
                        value != null && value.length() > 0) {
                 request.setNamespaces(parseNamespaces(value));
                 parameterMapValid = true;
@@ -327,8 +326,7 @@ public class ObservationsDecoder extends ResourceDecoder {
     }
 
     private boolean isOfferingLink(LinkType xb_Link) {
-        return !xb_Link.isNil() && xb_Link.getRel().equalsIgnoreCase(getRelationIdentifierWithNamespace(bindingConstants
-               .getResourceRelationOfferingGet()));
+        return !xb_Link.isNil() && xb_Link.getRel().equalsIgnoreCase(getRelationIdentifierWithNamespace(Constants.REST_RESOURCE_RELATION_OFFERING_GET));
     }
 
     @Override
@@ -346,7 +344,7 @@ public class ObservationsDecoder extends ResourceDecoder {
             isGlobal = false;
             isCollection = false;
         }
-        return new OptionsRestRequest(bindingConstants.getResourceObservations(), isGlobal, isCollection);
+        return new OptionsRestRequest((Constants.REST_RESOURCE_RELATION_OBSERVATIONS), isGlobal, isCollection);
     }
 
 }

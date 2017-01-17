@@ -57,16 +57,16 @@ import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.response.AbstractStreaming;
 import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.EncodingValues;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;
 

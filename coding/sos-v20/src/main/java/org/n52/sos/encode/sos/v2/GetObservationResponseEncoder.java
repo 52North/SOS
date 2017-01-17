@@ -38,13 +38,11 @@ import net.opengis.sos.x20.GetObservationResponseType;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.sos.v2.GetObservationResponseXmlStreamWriter;
@@ -52,7 +50,9 @@ import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.response.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.encode.EncodingValues;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.collect.Sets;
 

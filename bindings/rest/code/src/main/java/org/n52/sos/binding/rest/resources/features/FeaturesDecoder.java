@@ -44,6 +44,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.util.DateTimeException;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
@@ -58,35 +59,32 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FeaturesDecoder.class);
 
+    public FeaturesDecoder(Constants constants) {
+        super(constants);
+    }
+
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport, DateTimeException, DecodingException
-    {
+                                           String pathPayload) throws OwsExceptionReport, DateTimeException,
+                                                                      DecodingException {
         // variables
         RestRequest result = null;
 
-        LOGGER.debug("pathpayload: {}; querystring: {}",pathPayload,httpRequest.getQueryString());
+        LOGGER.debug("pathpayload: {}; querystring: {}", pathPayload, httpRequest.getQueryString());
 
         // Case A: By ID
-        if (isByIdRequest(httpRequest, pathPayload))
-        {
-             result = decodeFeatureByIdRequest(pathPayload);
+        if (isByIdRequest(httpRequest, pathPayload)) {
+            result = decodeFeatureByIdRequest(pathPayload);
 
-        }
-        // Case B: Search
-        else if (pathPayload == null && httpRequest.getQueryString() != null)
-        {
+        } // Case B: Search
+        else if (pathPayload == null && httpRequest.getQueryString() != null) {
             result = decodeFeaturesSearchRequest(httpRequest);
 
-        }
-        // Case C: Global Resource
-        else if (pathPayload == null && httpRequest.getQueryString() == null)
-        {
+        } // Case C: Global Resource
+        else if (pathPayload == null && httpRequest.getQueryString() == null) {
             result = decodeFeaturesRequest();
-        }
-        else
-        {
-            String errorMsg = createBadGetRequestMessage(bindingConstants.getResourceFeatures(),true,true,true);
+        } else {
+            String errorMsg = createBadGetRequestMessage(Constants.REST_RESOURCE_RELATION_FEATURES, true, true, true);
             BadRequestException bR = new BadRequestException(errorMsg);
             throw new NoApplicableCodeException().causedBy(bR);
         }
@@ -94,82 +92,69 @@ public class FeaturesDecoder extends ResourceDecoder {
         return result;
     }
 
-
     private boolean isByIdRequest(HttpServletRequest httpRequest,
-            String pathPayload)
-    {
-        return pathPayload != null && !pathPayload.isEmpty() && httpRequest != null && httpRequest.getQueryString() == null;
+                                  String pathPayload) {
+        return pathPayload != null && !pathPayload.isEmpty() && httpRequest != null && httpRequest.getQueryString() ==
+                                                                                       null;
     }
 
-    private RestRequest decodeFeaturesRequest()
-    {
+    private RestRequest decodeFeaturesRequest() {
         return new FeaturesRequest(createBasicGetFeatureOfInterestRequest());
     }
 
-    private FeaturesRequest decodeFeaturesSearchRequest(HttpServletRequest httpRequest) throws OwsExceptionReport, DateTimeException, DecodingException
-    {
+    private FeaturesRequest decodeFeaturesSearchRequest(HttpServletRequest httpRequest) throws OwsExceptionReport,
+                                                                                               DateTimeException,
+                                                                                               DecodingException {
         GetFeatureOfInterestRequest featureOfInterestRequest = createBasicGetFeatureOfInterestRequest();
 
-        Map<String,String> parameterMap = getKvPEncodedParameters(httpRequest);
+        Map<String, String> parameterMap = getKvPEncodedParameters(httpRequest);
 
         boolean parameterMapValid = false; // if at least one parameter is valid
 
         for (String parameter : parameterMap.keySet()) {
 
             String value = parameterMap.get(parameter);
-            if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameFoi()) &&
-                    value != null &&  value.length() > 0)
-            {
+            if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_FEATURE) &&
+                value != null && value.length() > 0) {
                 featureOfInterestRequest.setFeatureIdentifiers(splitKvpParameterValueToList(value));
                 parameterMapValid = true;
-            }
-            else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameObservedProperty()) &&
-                    value != null &&  value.length() > 0)
-            {
+            } else if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_OBSERVED_PROPERTIES) &&
+                       value != null && value.length() > 0) {
                 featureOfInterestRequest.setObservedProperties(splitKvpParameterValueToList(value));
                 parameterMapValid = true;
-            }
-            else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameProcedure()) &&
-                    value != null &&  value.length() > 0)
-            {
+            } else if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_PROCEDURES) &&
+                       value != null && value.length() > 0) {
                 featureOfInterestRequest.setProcedures(splitKvpParameterValueToList(value));
                 parameterMapValid = true;
-            }
-            else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameSpatialFilter()) &&
-                    value != null &&  value.length() > 0)
-            {
-                featureOfInterestRequest.setSpatialFilters(parseSpatialFilters(splitKvpParameterValueToList(value),parameter));
+            } else if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_SPATIAL_FILTER) &&
+                       value != null && value.length() > 0) {
+                featureOfInterestRequest
+                        .setSpatialFilters(parseSpatialFilters(splitKvpParameterValueToList(value), parameter));
                 parameterMapValid = true;
-            }
-            else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameTemporalFilter()) &&
-                    value != null &&  value.length() > 0)
-            {
+            } else if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_TEMPORAL_FILTER) &&
+                       value != null && value.length() > 0) {
                 featureOfInterestRequest.setTemporalFilters(parseTemporalFilter(splitKvpParameterValueToList(value)));
                 parameterMapValid = true;
-            }
-            else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameNamespaces()) &&
-                    value != null &&  value.length() > 0)
-            {
+            } else if (parameter.equalsIgnoreCase(Constants.REST_HTTP_GET_PARAMETERNAME_NAMESPACES) &&
+                       value != null && value.length() > 0) {
                 featureOfInterestRequest.setNamespaces(parseNamespaces(value));
                 parameterMapValid = true;
-            }
-            else
-            {
+            } else {
                 throw new InvalidParameterValueException(parameter, value);
             }
         }
 
-        if (!parameterMapValid)
-        {
-            throw new InvalidParameterValueException().withMessage(bindingConstants.getErrorMessageBadGetRequestNoValidKvpParameter());
+        if (!parameterMapValid) {
+            throw new InvalidParameterValueException().withMessage(bindingConstants
+                    .getErrorMessageBadGetRequestNoValidKvpParameter());
         }
 
-        return new FeaturesSearchRequest(featureOfInterestRequest,httpRequest.getQueryString());
+        return new FeaturesSearchRequest(featureOfInterestRequest, httpRequest.getQueryString());
 
     }
 
-    private List<SpatialFilter> parseSpatialFilters(List<String> splitKvpParameterValueToList, String parameterName) throws OwsExceptionReport, DecodingException
-    {
+    private List<SpatialFilter> parseSpatialFilters(List<String> splitKvpParameterValueToList, String parameterName)
+            throws OwsExceptionReport, DecodingException {
         List<SpatialFilter> spatialFilters = new ArrayList<SpatialFilter>(1);
 
         spatialFilters.add(parseSpatialFilter(splitKvpParameterValueToList, parameterName));
@@ -177,8 +162,7 @@ public class FeaturesDecoder extends ResourceDecoder {
         return spatialFilters;
     }
 
-    private FeatureByIdRequest decodeFeatureByIdRequest(String pathPayload)
-    {
+    private FeatureByIdRequest decodeFeatureByIdRequest(String pathPayload) {
         List<String> featureIDs = new ArrayList<String>(1);
 
         featureIDs.add(pathPayload);
@@ -188,8 +172,7 @@ public class FeaturesDecoder extends ResourceDecoder {
         return new FeatureByIdRequest(featureOfInterestRequest, pathPayload);
     }
 
-    private GetFeatureOfInterestRequest createBasicGetFeatureOfInterestRequest()
-    {
+    private GetFeatureOfInterestRequest createBasicGetFeatureOfInterestRequest() {
         GetFeatureOfInterestRequest featureOfInterestRequest = new GetFeatureOfInterestRequest();
 
         featureOfInterestRequest.setService(bindingConstants.getSosService());
@@ -200,39 +183,31 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport, DecodingException
-    {
-        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.DELETE,
-                bindingConstants.getResourceFeatures());
+                                              String pathPayload) throws OwsExceptionReport, DecodingException {
+        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.DELETE, Constants.REST_RESOURCE_RELATION_FEATURES);
     }
 
     @Override
     protected RestRequest decodePostRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport, DecodingException
-    {
-        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.POST,
-                bindingConstants.getResourceFeatures());
+                                            String pathPayload) throws OwsExceptionReport, DecodingException {
+        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.POST, Constants.REST_RESOURCE_RELATION_FEATURES);
     }
 
     @Override
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport, DecodingException
-    {
-        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT,
-                bindingConstants.getResourceFeatures());
+                                           String pathPayload) throws OwsExceptionReport, DecodingException {
+        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT, Constants.REST_RESOURCE_RELATION_FEATURES);
     }
 
     @Override
-    protected RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload)
-    {
+    protected RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload) {
         boolean isGlobal = false;
         boolean isCollection = false;
-        if (httpRequest != null && httpRequest.getQueryString() != null)
-        {
+        if (httpRequest != null && httpRequest.getQueryString() != null) {
             isGlobal = true;
             isCollection = true;
         }
-        return new OptionsRestRequest(bindingConstants.getResourceFeatures(), isGlobal,isCollection);
+        return new OptionsRestRequest((Constants.REST_RESOURCE_RELATION_FEATURES), isGlobal, isCollection);
     }
 
 }

@@ -30,8 +30,8 @@ package org.n52.sos.coding.encode;
 
 import java.util.Set;
 
+import org.n52.svalbard.ConformanceClass;
 import org.n52.svalbard.encode.Encoder;
-import org.n52.iceland.service.ConformanceClass;
 
 /**
  * @since 4.0.0

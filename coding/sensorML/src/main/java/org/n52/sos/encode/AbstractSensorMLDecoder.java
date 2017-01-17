@@ -32,11 +32,11 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.decode.ProcedureDecoder;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.ProcedureDecoder;
 import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Strings;

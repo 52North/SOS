@@ -38,8 +38,8 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.DecoderRepository;
-import org.n52.svalbard.decode.NoDecoderForKeyException;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
 
 public abstract class AbstractStringRequestDecoder implements Decoder<OwsServiceCommunicationObject, String> {
 

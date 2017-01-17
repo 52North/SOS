@@ -52,7 +52,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.ProcedureEncoder;
 import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
@@ -78,11 +77,12 @@ import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.ProcedureEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 

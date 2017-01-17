@@ -40,12 +40,12 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.iceland.w3c.soap.SoapFault;
-import org.n52.iceland.w3c.soap.SoapHelper;
-import org.n52.iceland.w3c.soap.SoapRequest;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.w3c.soap.SoapFault;
+import org.n52.shetland.w3c.soap.SoapHelper;
+import org.n52.shetland.w3c.soap.SoapRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Joiner;
 

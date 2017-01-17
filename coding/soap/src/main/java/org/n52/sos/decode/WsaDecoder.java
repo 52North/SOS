@@ -39,15 +39,15 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.shetland.w3c.wsa.WsaActionHeader;
+import org.n52.shetland.w3c.wsa.WsaConstants;
+import org.n52.shetland.w3c.wsa.WsaHeader;
+import org.n52.shetland.w3c.wsa.WsaMessageIDHeader;
+import org.n52.shetland.w3c.wsa.WsaReplyToHeader;
+import org.n52.shetland.w3c.wsa.WsaToHeader;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
-import org.n52.iceland.w3c.wsa.WsaActionHeader;
-import org.n52.iceland.w3c.wsa.WsaConstants;
-import org.n52.iceland.w3c.wsa.WsaHeader;
-import org.n52.iceland.w3c.wsa.WsaMessageIDHeader;
-import org.n52.iceland.w3c.wsa.WsaReplyToHeader;
-import org.n52.iceland.w3c.wsa.WsaToHeader;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -60,12 +60,12 @@ public class WsaDecoder implements Decoder<List<WsaHeader>, List<SOAPHeaderEleme
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WsaDecoder.class);
 
-    private static final Set<DecoderKey> DECODER_KEYS = Collections.<DecoderKey> singleton(new XmlNamespaceDecoderKey(
+    private static final Set<DecoderKey> DECODER_KEYS = Collections.<DecoderKey>singleton(new XmlNamespaceDecoderKey(
             WsaConstants.NS_WSA, SOAPHeaderElement.class));
 
     public WsaDecoder() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
-                .join(DECODER_KEYS));
+                     .join(DECODER_KEYS));
     }
 
     @Override

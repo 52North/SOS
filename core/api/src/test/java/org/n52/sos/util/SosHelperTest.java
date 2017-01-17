@@ -39,12 +39,12 @@ import java.net.URLEncoder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.n52.iceland.util.MinMax;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.util.MinMax;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;

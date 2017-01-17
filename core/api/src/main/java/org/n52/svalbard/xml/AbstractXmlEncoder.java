@@ -33,16 +33,16 @@ import javax.inject.Inject;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
-import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.janmayen.Producer;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.AbstractDelegatingEncoder;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.SchemaAwareEncoder;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 

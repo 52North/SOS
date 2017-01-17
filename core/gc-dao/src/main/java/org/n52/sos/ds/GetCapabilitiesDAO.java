@@ -57,25 +57,19 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
-import org.n52.janmayen.i18n.LocaleHelper;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.iceland.ogc.ows.extension.OfferingExtension;
-import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProvider;
-import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderRepository;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderRepository;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
-import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository;
-import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionRepository;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.service.ConformanceClass;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.collections.MultiMaps;
 import org.n52.iceland.util.collections.SetMultiMap;
 import org.n52.janmayen.Comparables;
 import org.n52.janmayen.function.Functions;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.filter.FilterCapabilities;
 import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
@@ -102,6 +96,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.exception.VersionNegotiationFailedException;
 import org.n52.shetland.ogc.ows.extension.MergableExtension;
+import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.sos.Sos1Constants;
@@ -110,6 +105,7 @@ import org.n52.shetland.ogc.sos.SosCapabilities;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosObservationOffering;
 import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
@@ -121,8 +117,12 @@ import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
 import org.n52.sos.util.OMHelper;
+import org.n52.svalbard.ConformanceClass;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 
 /**
  * Implementation of the interface AbstractGetCapabilitiesHandler
@@ -155,7 +155,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     @Inject
     private BindingRepository bindingRepository;
     @Inject
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
     @Inject
     private RequestOperatorRepository requestOperatorRepository;
     @Inject
@@ -165,11 +165,11 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     @Inject
     private GeometryHandler geometryHandler;
     @Inject
-    private OwsExtendedCapabilitiesProviderRepository owsExtendedCapabilitiesProviderRepository;
+    private OwsOperationMetadataExtensionProviderRepository owsExtendedCapabilitiesProviderRepository;
     @Inject
-    private OfferingExtensionRepository offeringExtensionRepository;
+    private SosObservationOfferingExtensionRepository offeringExtensionRepository;
     @Inject
-    private CapabilitiesExtensionRepository capabilitiesExtensionRepository;
+    private OwsCapabilitiesExtensionRepository capabilitiesExtensionRepository;
     @Inject
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
 
@@ -363,7 +363,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         * service and check if this provider provides OwsExtendedCapabilities
         * for the request
          */
-        OwsExtendedCapabilitiesProvider provider = owsExtendedCapabilitiesProviderRepository.getExtendedCapabilitiesProvider(service, version);
+        OwsOperationMetadataExtensionProvider provider = owsExtendedCapabilitiesProviderRepository.getExtendedCapabilitiesProvider(service, version);
         if (provider != null && provider.hasExtendedCapabilitiesFor(request)) {
             owsExtendedCapabilities = provider.getOwsExtendedCapabilities(request);
         }
@@ -533,7 +533,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
         final Collection<String> offerings = getCache().getOfferings();
         final List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
-        final Map<String, List<OfferingExtension>> extensions = this.capabilitiesExtensionService
+        final Map<String, List<SosObservationOfferingExtension>> extensions = this.capabilitiesExtensionService
                 .getActiveOfferingExtensions();
 
         if (CollectionHelper.isEmpty(offerings)) {
@@ -783,13 +783,13 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private List<OwsCapabilitiesExtension> getAndMergeExtensions(String service, String version)
             throws OwsExceptionReport {
-        List<CapabilitiesExtensionProvider> providers = capabilitiesExtensionRepository
+        List<OwsCapabilitiesExtensionProvider> providers = capabilitiesExtensionRepository
                 .getCapabilitiesExtensionProvider(service, version);
         List<OwsCapabilitiesExtension> extensions = new LinkedList<>();
         if (CollectionHelper.isNotEmpty(providers)) {
             HashMap<String, MergableExtension> map = new HashMap<>(providers.size());
             providers.stream().filter(Objects::nonNull)
-                    .map(CapabilitiesExtensionProvider::getExtension)
+                    .map(OwsCapabilitiesExtensionProvider::getExtension)
                     .forEachOrdered(extension -> {
                         if (extension instanceof MergableExtension) {
                             map.merge(extension.getSectionName(),

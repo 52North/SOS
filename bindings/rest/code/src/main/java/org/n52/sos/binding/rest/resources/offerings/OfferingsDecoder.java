@@ -28,12 +28,10 @@
  */
 package org.n52.sos.binding.rest.resources.offerings;
 
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.n52.janmayen.http.HTTPMethods;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
@@ -48,23 +46,26 @@ import com.google.common.base.Strings;
  */
 public class OfferingsDecoder extends ResourceDecoder {
 
+    public OfferingsDecoder(Constants constants) {
+        super(constants);
+    }
+
     @Override
-    protected RestRequest decodeGetRequest(final HttpServletRequest httpRequest,
-            final String pathPayload) throws DecodingException
-    {
+    protected RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException {
         // 0 variables
         RestRequest result = null;
 
         // 1 identify type of request: by id OR search (OR atom feed)
         if (pathPayload != null && !pathPayload.isEmpty() && httpRequest.getQueryString() == null) {
-             result = decodeOfferingByIdRequest(pathPayload);
+            result = decodeOfferingByIdRequest(pathPayload);
 
         } else if (pathPayload == null && Strings.isNullOrEmpty(httpRequest.getQueryString())) {
             // 2.2 global resource
             result = decodeOfferingsGetRequest(httpRequest);
         } else {
-            final String errorMsg = createBadGetRequestMessage(bindingConstants.getResourceOfferings(),true,true,false);
-            final BadRequestException bR = new BadRequestException(errorMsg);
+            String errorMsg
+                    = createBadGetRequestMessage(org.n52.sos.binding.rest.Constants.REST_RESOURCE_RELATION_OFFERINGS, true, true, false);
+            BadRequestException bR = new BadRequestException(errorMsg);
             throw new DecodingException(bR);
         }
 
@@ -72,50 +73,32 @@ public class OfferingsDecoder extends ResourceDecoder {
         return result;
     }
 
-    private RestRequest decodeOfferingsGetRequest(final HttpServletRequest httpRequest)
-    {
-        final GetCapabilitiesRequest request = createGetCapabilitiesRequestWithContentSectionOnly();
-
-        return new OfferingsRequest(request);
+    private RestRequest decodeOfferingsGetRequest(HttpServletRequest httpRequest) {
+        return new OfferingsRequest(createGetCapabilitiesRequestWithContentSectionOnly());
     }
 
-    private RestRequest decodeOfferingByIdRequest(final String pathPayload)
-    {
-        final GetCapabilitiesRequest request = createGetCapabilitiesRequestWithContentSectionOnly();
-
-        return new OfferingByIdRequest(request, pathPayload);
+    private RestRequest decodeOfferingByIdRequest(String pathPayload) {
+        return new OfferingByIdRequest(createGetCapabilitiesRequestWithContentSectionOnly(), pathPayload);
     }
 
     @Override
-    protected RestRequest decodeDeleteRequest(final HttpServletRequest httpRequest,
-            final String pathPayload) throws DecodingException
-    {
-        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.DELETE,
-                bindingConstants.getResourceOfferings());
+    protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException {
+        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.DELETE, Constants.REST_RESOURCE_RELATION_OFFERINGS);
     }
 
     @Override
-    protected RestRequest decodePostRequest(final HttpServletRequest httpRequest,
-            final String pathPayload) throws DecodingException
-    {
-        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.POST,
-                bindingConstants.getResourceOfferings());
+    protected RestRequest decodePostRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException {
+        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.POST, Constants.REST_RESOURCE_RELATION_OFFERINGS);
     }
 
     @Override
-    protected RestRequest decodePutRequest(final HttpServletRequest httpRequest,
-            final String pathPayload) throws DecodingException
-    {
-        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT,
-                bindingConstants.getResourceOfferings());
+    protected RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException {
+        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT, Constants.REST_RESOURCE_RELATION_OFFERINGS);
     }
 
     @Override
-    protected RestRequest decodeOptionsRequest(final HttpServletRequest httpRequest,
-            final String pathPayload)
-    {
-        return new OptionsRestRequest(bindingConstants.getResourceOfferings(),false,false);
+    protected RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload) {
+        return new OptionsRestRequest((Constants.REST_RESOURCE_RELATION_OFFERINGS), false, false);
     }
-
 
 }

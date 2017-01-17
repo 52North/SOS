@@ -45,8 +45,9 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.N52XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.encode.EncodingValues;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Strings;

@@ -46,7 +46,6 @@ import org.apache.xmlbeans.XmlString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.om.AbstractObservationValue;
@@ -77,14 +76,16 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.OmV20XmlStreamWriter;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SweHelper;
-import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlBeansEncodingFlags;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.EncodingValues;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Joiner;
@@ -387,7 +388,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                 if (value.isSetValue()) {
                     return encodeGML(value.getValue(), EncodingContext.empty()
                         .with(SosHelperValues.GMLID, SosConstants.OBS_ID_PREFIX + this.observationId)
-                        .with(SosHelperValues.PROPERTY_TYPE));
+                        .with(XmlBeansEncodingFlags.PROPERTY_TYPE));
                 } else {
                     return null;
                 }

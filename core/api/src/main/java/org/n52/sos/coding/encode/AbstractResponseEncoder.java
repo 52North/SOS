@@ -35,12 +35,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.svalbard.OperationKey;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingValues;
+import org.n52.svalbard.encode.OperationResponseEncoderKey;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 

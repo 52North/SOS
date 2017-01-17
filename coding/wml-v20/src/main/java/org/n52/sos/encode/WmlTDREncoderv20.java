@@ -76,13 +76,13 @@ import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.wml.WaterMLConstants;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.WmlTDREncoderv20XmlStreamWriter;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.EncodingValues;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 

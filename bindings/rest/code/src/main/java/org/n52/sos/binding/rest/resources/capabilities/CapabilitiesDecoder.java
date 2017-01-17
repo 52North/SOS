@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.n52.janmayen.http.HTTPMethods;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
@@ -45,6 +46,9 @@ import org.n52.svalbard.decode.exception.DecodingException;
  *
  */
 public class CapabilitiesDecoder extends ResourceDecoder {
+    public CapabilitiesDecoder(Constants constants) {
+        super(constants);
+    }
 
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
@@ -73,30 +77,27 @@ public class CapabilitiesDecoder extends ResourceDecoder {
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
             String pathPayload) throws DecodingException
     {
-        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.DELETE,
-                bindingConstants.getResourceCapabilities());
+        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.DELETE, org.n52.sos.binding.rest.Constants.REST_RESOURCE_RELATION_CAPABILITIES);
     }
 
     @Override
     protected RestRequest decodePostRequest(HttpServletRequest httpRequest,
             String pathPayload) throws DecodingException
     {
-        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.POST,
-                bindingConstants.getResourceCapabilities());
+        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.POST, org.n52.sos.binding.rest.Constants.REST_RESOURCE_RELATION_CAPABILITIES);
     }
 
     @Override
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
             String pathPayload) throws DecodingException
     {
-        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT,
-                bindingConstants.getResourceCapabilities());
+        throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT, org.n52.sos.binding.rest.Constants.REST_RESOURCE_RELATION_CAPABILITIES);
     }
 
     @Override
     protected RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload)
     {
-        return new OptionsRestRequest(bindingConstants.getResourceCapabilities(),true,false);
+        return new OptionsRestRequest((Constants.REST_RESOURCE_RELATION_CAPABILITIES),true,false);
     }
 
 }

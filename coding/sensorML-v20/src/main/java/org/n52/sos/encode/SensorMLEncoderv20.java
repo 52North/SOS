@@ -144,9 +144,9 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.EncodingContext;
-import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlBeansEncodingFlags;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
@@ -251,9 +251,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
 
     private XmlObject checkForAdditionalValues(XmlObject element, EncodingContext additionalValues) {
-        boolean doc = additionalValues.has(SosHelperValues.DOCUMENT);
-        boolean propertyType = additionalValues.has(SosHelperValues.PROPERTY_TYPE);
-        boolean type = additionalValues.has(SosHelperValues.TYPE);
+        boolean doc = additionalValues.has(XmlBeansEncodingFlags.DOCUMENT);
+        boolean propertyType = additionalValues.has(XmlBeansEncodingFlags.PROPERTY_TYPE);
+        boolean type = additionalValues.has(XmlBeansEncodingFlags.TYPE);
         if (element instanceof PhysicalSystemDocument) {
             if (propertyType) {
                 PhysicalSystemPropertyType pspt = PhysicalSystemPropertyType.Factory.newInstance(getXmlOptions());
@@ -399,10 +399,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             throws EncodingException {
         SimpleProcessPropertyType sppt = SimpleProcessPropertyType.Factory.newInstance(getXmlOptions());
         addSimpleProcessValues(sppt.addNewSimpleProcess(), abstractProcess);
-        if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+        if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
             SimpleProcessDocument spd = SimpleProcessDocument.Factory.newInstance(getXmlOptions());
             spd.setSimpleProcess(sppt.getSimpleProcess());
-        } else if (additionalValues.has(SosHelperValues.TYPE)) {
+        } else if (additionalValues.has(XmlBeansEncodingFlags.TYPE)) {
             return sppt.getSimpleProcess();
         }
         return sppt;
@@ -422,10 +422,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                                              EncodingContext additionalValues) throws EncodingException {
         AggregateProcessPropertyType appt = AggregateProcessPropertyType.Factory.newInstance(getXmlOptions());
         addAggregateProcessValues(appt.addNewAggregateProcess(), abstractProcess);
-        if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+        if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
             AggregateProcessDocument apd = AggregateProcessDocument.Factory.newInstance(getXmlOptions());
             apd.setAbstractProcess(appt.getAggregateProcess());
-        } else if (additionalValues.has(SosHelperValues.TYPE)) {
+        } else if (additionalValues.has(XmlBeansEncodingFlags.TYPE)) {
             return appt.getAggregateProcess();
         }
         return appt;
@@ -470,10 +470,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                                               EncodingContext additionalValues) throws EncodingException {
         PhysicalComponentPropertyType pcpt = PhysicalComponentPropertyType.Factory.newInstance(getXmlOptions());
         addPhysicalComponentValues(pcpt.addNewPhysicalComponent(), abstractPhysicalProcess);
-        if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+        if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
             PhysicalComponentDocument pcd = PhysicalComponentDocument.Factory.newInstance(getXmlOptions());
             pcd.setPhysicalComponent(pcpt.getPhysicalComponent());
-        } else if (additionalValues.has(SosHelperValues.TYPE)) {
+        } else if (additionalValues.has(XmlBeansEncodingFlags.TYPE)) {
             return pcpt.getPhysicalComponent();
         }
         return pcpt;
@@ -494,10 +494,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                                            EncodingContext additionalValues) throws EncodingException {
         PhysicalSystemPropertyType pspt = PhysicalSystemPropertyType.Factory.newInstance(getXmlOptions());
         addPhysicalSystemValues(pspt.addNewPhysicalSystem(), abstractPhysicalProcess);
-        if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+        if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
             PhysicalSystemDocument psd = PhysicalSystemDocument.Factory.newInstance(getXmlOptions());
             psd.setPhysicalSystem(pspt.getPhysicalSystem());
-        } else if (additionalValues.has(SosHelperValues.TYPE)) {
+        } else if (additionalValues.has(XmlBeansEncodingFlags.TYPE)) {
             return pspt.getPhysicalSystem();
         }
         return pspt;
@@ -637,7 +637,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             for (SmlContact contact : describedObject.getContact()) {
                 if (contact instanceof SmlResponsibleParty) {
                     if (contact.isSetHref()) {
-                        XmlObject xml = encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact, EncodingContext.of(SosHelperValues.PROPERTY_TYPE));
+                        XmlObject xml = encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact, EncodingContext.of(XmlBeansEncodingFlags.PROPERTY_TYPE));
                         cl.addNewContact().set(xml);
                     } else {
                         XmlObject encodeObjectToXml = encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact);
@@ -1313,7 +1313,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     component.setTitle(sosSMLComponent.getTitle());
                 }
             } else if (sosSMLComponent.isSetProcess()) {
-                XmlObject xmlObject = encode(sosSMLComponent.getProcess(), EncodingContext.of(SosHelperValues.TYPE));
+                XmlObject xmlObject = encode(sosSMLComponent.getProcess(), EncodingContext.of(XmlBeansEncodingFlags.TYPE));
                 // if
                 // (sosSMLComponent.getProcess().getXml()
                 // != null

@@ -40,16 +40,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.HTTPException;
-import org.n52.iceland.exception.ows.concrete.ContentTypeNotSupportedException;
-import org.n52.iceland.util.http.HttpUtils;
 import org.n52.janmayen.http.HTTPHeaders;
-import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
-import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.RestBinding;
 import org.n52.sos.binding.rest.requests.RestRequest;
@@ -143,17 +136,17 @@ public class RestDecoder extends AbstractXmlDecoder<HttpServletRequest, RestRequ
     private ResourceDecoder getDecoderForResource(
             final String httpRequestPathInfo) throws DecodingException {
         if (isSensorsRequest(httpRequestPathInfo)) {
-            return new SensorsDecoder();
+            return new SensorsDecoder(constants);
         } else if (isObservationsRequest(httpRequestPathInfo)) {
-            return new ObservationsDecoder();
+            return new ObservationsDecoder(constants);
         } else if (isCapabilitiesRequest(httpRequestPathInfo)) {
-            return new CapabilitiesDecoder();
+            return new CapabilitiesDecoder(constants);
         } else if (isOfferingsRequest(httpRequestPathInfo)) {
-            return new OfferingsDecoder();
+            return new OfferingsDecoder(constants);
         } else if (isFeaturesRequest(httpRequestPathInfo)) {
-            return new FeaturesDecoder();
+            return new FeaturesDecoder(constants);
         } else if (isServiceDefaultEndpoint(httpRequestPathInfo)) {
-            return new ServiceEndpointDecoder();
+            return new ServiceEndpointDecoder(constants);
         }
         final String exceptionText = String
                 .format("Requested resource type \"%s\" is not supported by this decoder \"%s\"!",
@@ -169,28 +162,23 @@ public class RestDecoder extends AbstractXmlDecoder<HttpServletRequest, RestRequ
     }
 
     private boolean isOfferingsRequest(final String pathInfo) {
-        return (pathInfo != null) && pathInfo.startsWith(bindingConstants()
-                .getResourceOfferings());
+        return (pathInfo != null) && pathInfo.startsWith(org.n52.sos.binding.rest.Constants.REST_RESOURCE_RELATION_OFFERINGS);
     }
 
     private boolean isFeaturesRequest(final String pathInfo) {
-        return (pathInfo != null) && pathInfo.startsWith(bindingConstants()
-                .getResourceFeatures());
+        return (pathInfo != null) && pathInfo.startsWith(org.n52.sos.binding.rest.Constants.REST_RESOURCE_RELATION_FEATURES);
     }
 
     private boolean isCapabilitiesRequest(final String pathInfo) {
-        return (pathInfo != null) && pathInfo.startsWith(bindingConstants()
-                .getResourceCapabilities());
+        return (pathInfo != null) && pathInfo.startsWith(org.n52.sos.binding.rest.Constants.REST_RESOURCE_RELATION_CAPABILITIES);
     }
 
     private boolean isObservationsRequest(final String pathInfo) {
-        return (pathInfo != null) && pathInfo.startsWith(bindingConstants()
-                .getResourceObservations());
+        return (pathInfo != null) && pathInfo.startsWith(org.n52.sos.binding.rest.Constants.REST_RESOURCE_RELATION_OBSERVATIONS);
     }
 
     private boolean isSensorsRequest(final String pathInfo) {
-        return (pathInfo != null) && pathInfo.startsWith(bindingConstants()
-                .getResourceSensors());
+        return (pathInfo != null) && pathInfo.startsWith(org.n52.sos.binding.rest.Constants.REST_RESOURCE_SENSORS);
     }
 
     @Override

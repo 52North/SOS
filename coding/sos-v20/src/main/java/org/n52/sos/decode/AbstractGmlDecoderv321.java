@@ -38,12 +38,12 @@ import net.opengis.gml.x32.CodeType;
 import net.opengis.gml.x32.CodeWithAuthorityType;
 import net.opengis.gml.x32.ReferenceType;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.iceland.service.ConformanceClass;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.AbstractGML;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.svalbard.ConformanceClass;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Strings;

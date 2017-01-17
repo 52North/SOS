@@ -49,7 +49,7 @@ import org.mockito.Mockito;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
-import org.n52.iceland.ogc.ows.ServiceProviderFactory;
+import org.n52.iceland.ogc.ows.OwsServiceProviderFactory;
 import org.n52.janmayen.event.EventBus;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -325,7 +325,7 @@ public class InsertDAOTest extends HibernateTestCase {
             ConverterException {
         OmObservationConstellation obsConst = new OmObservationConstellation();
         Procedure procedure = new ProcedureDAO(new DaoFactory()).getProcedureForIdentifier(procedureId, session);
-        ServiceProviderFactory serviceProviderFactory = Mockito.mock(ServiceProviderFactory.class);
+        OwsServiceProviderFactory serviceProviderFactory = Mockito.mock(OwsServiceProviderFactory.class);
 
 
         SosProcedureDescription<?> spd

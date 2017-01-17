@@ -38,6 +38,7 @@ import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 
 import org.n52.iceland.util.Constants;
+import org.n52.svalbard.encode.EncodingValues;
 
 import com.google.common.xml.XmlEscapers;
 

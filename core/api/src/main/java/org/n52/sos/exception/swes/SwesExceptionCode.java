@@ -29,7 +29,7 @@
 package org.n52.sos.exception.swes;
 
 import org.n52.shetland.ogc.ows.exception.ExceptionCode;
-import org.n52.iceland.ogc.swes.SwesConstants;
+import org.n52.shetland.ogc.swes.SwesConstants;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

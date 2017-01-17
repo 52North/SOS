@@ -33,7 +33,6 @@ import static java.util.stream.Collectors.joining;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,9 +71,6 @@ import org.apache.xmlbeans.XmlString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.service.ConformanceClass;
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -98,12 +94,16 @@ import org.n52.shetland.ogc.swe.simpleType.SweQuantityRange;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
+import org.n52.shetland.ogc.swes.SwesConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.ConformanceClass;
+import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlBeansEncodingFlags;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NotYetSupportedEncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
@@ -173,7 +173,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<XmlObject, Object>
             encodedObject = createCoordinate((SweCoordinate) sosSweType);
         } else if (sosSweType instanceof SweAbstractEncoding) {
             encodedObject = createAbstractEncoding((SweAbstractEncoding) sosSweType);
-            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+            if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
                 if (encodedObject instanceof TextEncodingType) {
                     final TextEncodingDocument textEncodingDoc = TextEncodingDocument.Factory.newInstance(getXmlOptions());
                     textEncodingDoc.setTextEncoding((TextEncodingType) encodedObject);
@@ -254,7 +254,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<XmlObject, Object>
                 dataRecordProperty.setDataRecord((DataRecordType) abstractDataComponentType);
                 return dataRecordProperty;
             }
-            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+            if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
                 final DataRecordDocument dataRecordDoc = DataRecordDocument.Factory.newInstance(getXmlOptions());
                 dataRecordDoc.setDataRecord((DataRecordType) abstractDataComponentType);
                 return dataRecordDoc;

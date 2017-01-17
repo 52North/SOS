@@ -38,7 +38,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.n52.faroe.annotation.Configurable;
-import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
@@ -77,6 +76,7 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.collect.Lists;

@@ -32,12 +32,16 @@ import java.io.IOException;
 
 import org.apache.xmlbeans.XmlException;
 
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.svalbard.encode.EncoderRepository;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -45,23 +49,36 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  */
 public class SensorsRequestHandler extends RequestHandler {
 
-    Constants bindingConstants = Constants.getInstance();
+    private final ContentCacheController contentCacheController;
+
+    public SensorsRequestHandler(ContentCacheController contentCacheController, Constants bindingConstants,
+                                 EncoderRepository encoderRepository,
+                                 ServiceOperatorRepository serviceOperatorRepository) {
+        super(bindingConstants, encoderRepository, serviceOperatorRepository);
+        this.contentCacheController = contentCacheController;
+    }
 
     @Override
-    public RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException
-    {
+    public RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException {
         if (request instanceof GetSensorByIdRequest || request instanceof GetSensorsRequest) {
-            return new SensorsGetRequestHandler().handleRequest(request);
-
+            return new SensorsGetRequestHandler(getContentCacheController(), getConstants(), getEncoderRepository(), getServiceOperatorRepository())
+                    .handleRequest(request);
+        } else if (request instanceof SensorsPostRequest) {
+            return new SensorsPostRequestHandler(getContentCacheController(), getConstants(), getEncoderRepository(), getServiceOperatorRepository())
+                    .handleRequest(request);
+        } else if (request instanceof SensorsPutRequest) {
+            return new SensorsPutRequestHandler(getContentCacheController(), getConstants(), getEncoderRepository(), getServiceOperatorRepository())
+                    .handleRequest(request);
+        } else {
+            throw new OperationNotSupportedException(request.getClass().getName());
         }
-        if (request instanceof SensorsPostRequest) {
-            return new SensorsPostRequestHandler().handleRequest(request);
+    }
 
-        }
-        if (request instanceof SensorsPutRequest) {
-            return new SensorsPutRequestHandler().handleRequest(request);
+    protected ContentCacheController getContentCacheController() {
+        return contentCacheController;
+    }
 
-        }
-        throw new OperationNotSupportedException(request.getClass().getName());
+    protected SosContentCache getCache() {
+        return (SosContentCache) getContentCacheController().getCache();
     }
 }

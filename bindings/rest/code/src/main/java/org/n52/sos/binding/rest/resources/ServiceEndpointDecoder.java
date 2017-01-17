@@ -30,46 +30,44 @@ package org.n52.sos.binding.rest.resources;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.RestRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class ServiceEndpointDecoder extends ResourceDecoder {
+
+    public ServiceEndpointDecoder(Constants constants) {
+        super(constants);
+    }
+
     @Override
-    protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
-                                           String pathPayload) throws
+    protected RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException {
+        return new ServiceEndpointRequest();
+    }
+
+    @Override
+    protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest, String pathPayload) throws
             DecodingException {
         return new ServiceEndpointRequest();
     }
 
     @Override
-    protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
-                                              String pathPayload) throws
-            DecodingException {
+    protected RestRequest decodePostRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException {
         return new ServiceEndpointRequest();
     }
 
     @Override
-    protected RestRequest decodePostRequest(HttpServletRequest httpRequest,
-                                            String pathPayload) throws
-            DecodingException {
+    protected RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException {
         return new ServiceEndpointRequest();
     }
 
     @Override
-    protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
-                                           String pathPayload) throws
-            DecodingException {
-        return new ServiceEndpointRequest();
-    }
-
-    @Override
-    protected RestRequest decodeOptionsRequest(HttpServletRequest httpRequest,
-                                               String pathPayload) {
+    protected RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload) {
         return new ServiceEndpointRequest();
     }
 }

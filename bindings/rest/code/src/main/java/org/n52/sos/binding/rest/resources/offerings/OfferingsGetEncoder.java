@@ -38,32 +38,32 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class OfferingsGetEncoder extends ResourceEncoder {
+    public OfferingsGetEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
 
     @Override
-    public ServiceResponse encodeRestResponse(RestResponse response) throws OwsExceptionReport
-    {
+    public ServiceResponse encodeRestResponse(RestResponse response) throws OwsExceptionReport {
         if (response instanceof OfferingsResponse) {
-
             return encodeOfferingsResponse((OfferingsResponse) response);
-
         } else if (response instanceof OfferingByIdResponse) {
-
             return encodeOfferingByIdResponse((OfferingByIdResponse) response);
 
         }
         return null;
     }
 
-    private ServiceResponse encodeOfferingByIdResponse(OfferingByIdResponse response) throws OwsExceptionReport
-    {
+    private ServiceResponse encodeOfferingByIdResponse(OfferingByIdResponse response) throws OwsExceptionReport {
         // 0 create observation offering document
         ObservationOfferingDocument xb_ObservationOfferingDoc = ObservationOfferingDocument.Factory.newInstance();
         ObservationOfferingType xb_ObservationOfferingRest = xb_ObservationOfferingDoc.addNewObservationOffering();
@@ -76,46 +76,37 @@ public class OfferingsGetEncoder extends ResourceEncoder {
 
         // 2 add self link
         setValuesOfLinkToUniqueResource(xb_ObservationOfferingRest.addNewLink(),
-                offeringIdentifier,
-                bindingConstants.getResourceRelationSelf(),
-                bindingConstants.getResourceOfferings());
+                                        offeringIdentifier, Constants.REST_RESOURCE_RELATION_SELF, Constants.REST_RESOURCE_RELATION_OFFERINGS);
 
         // 2.1 add link to sensor
         setValuesOfLinkToUniqueResource(xb_ObservationOfferingRest.addNewLink(),
-                procedureIdentifier,
-                bindingConstants.getResourceRelationSensorGet(),
-                bindingConstants.getResourceSensors());
+                                        procedureIdentifier, Constants.REST_RESOURCE_RELATION_SENSOR_GET, Constants.REST_RESOURCE_SENSORS);
 
         // 3 create result and return
-        return createOfferingResponseWithStatusOK(xb_ObservationOfferingDoc,false,false);
+        return createOfferingResponseWithStatusOK(xb_ObservationOfferingDoc, false, false);
     }
 
-    private ServiceResponse encodeOfferingsResponse(OfferingsResponse response) throws OwsExceptionReport
-    {
+    private ServiceResponse encodeOfferingsResponse(OfferingsResponse response) throws OwsExceptionReport {
         // 0 create offering collection
         OfferingCollectionDocument xb_OfferingCollectionDoc = OfferingCollectionDocument.Factory.newInstance();
         ResourceCollectionType xb_OfferingCollection = xb_OfferingCollectionDoc.addNewOfferingCollection();
 
         // 1 add self link
-        setValuesOfLinkToGlobalResource(xb_OfferingCollection.addNewLink(),
-                bindingConstants.getResourceRelationSelf(),
-                bindingConstants.getResourceOfferings());
+        setValuesOfLinkToGlobalResource(xb_OfferingCollection.addNewLink(), Constants.REST_RESOURCE_RELATION_SELF, Constants.REST_RESOURCE_RELATION_OFFERINGS);
 
         // 2 add offering links
         setOfferingLinks(xb_OfferingCollection, response.getOfferingIdentifiers());
 
         // 3 create result and return
-        return createOfferingResponseWithStatusOK(xb_OfferingCollectionDoc,true,true);
+        return createOfferingResponseWithStatusOK(xb_OfferingCollectionDoc, true, true);
     }
 
-    private ServiceResponse createOfferingResponseWithStatusOK(XmlObject xb_AnyXml, boolean isResourceCollection, boolean isGlobalResource) throws OwsExceptionReport
-    {
-        return createServiceResponseFromXBDocument(
-                xb_AnyXml,
-                bindingConstants.getResourceOfferings(),
-                HTTPStatus.OK,
-                isResourceCollection,
-                isGlobalResource);
+    private ServiceResponse createOfferingResponseWithStatusOK(XmlObject xb_AnyXml, boolean isResourceCollection,
+                                                               boolean isGlobalResource) throws OwsExceptionReport {
+        return createServiceResponseFromXBDocument(xb_AnyXml, Constants.REST_RESOURCE_RELATION_OFFERINGS,
+                                                   HTTPStatus.OK,
+                                                   isResourceCollection,
+                                                   isGlobalResource);
     }
 
 }

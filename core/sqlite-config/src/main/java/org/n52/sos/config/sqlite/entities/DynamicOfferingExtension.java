@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.iceland.ogc.swes.OfferingExtensionKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 
 /**
  * Entity to store the active/inactive dynamic offering extensions
@@ -55,9 +55,9 @@ public class DynamicOfferingExtension extends Activatable<DynamicOfferingExtensi
      * constructor
      *
      * @param oek
-     *            the {@link OfferingExtensionKey} to set
+     *            the {@link SosObservationOfferingExtensionKey} to set
      */
-    public DynamicOfferingExtension(OfferingExtensionKey oek) {
+    public DynamicOfferingExtension(SosObservationOfferingExtensionKey oek) {
         super(new DynamicOfferingExtensionKey(oek));
     }
 

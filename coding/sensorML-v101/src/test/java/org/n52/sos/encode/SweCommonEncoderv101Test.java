@@ -74,7 +74,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
-import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Lists;
@@ -85,7 +84,7 @@ import com.vividsolutions.jts.geom.Envelope;
  *
  * @since 4.0.0
  */
-public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsManagerTest {
+public class SweCommonEncoderv101Test {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 

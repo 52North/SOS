@@ -30,8 +30,8 @@ package org.n52.sos.encode.streaming;
 
 import java.io.OutputStream;
 
-import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncodingValues;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**

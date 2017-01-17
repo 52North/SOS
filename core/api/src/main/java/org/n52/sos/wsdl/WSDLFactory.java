@@ -32,11 +32,10 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.coding.OperationKey;
-import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
@@ -45,6 +44,7 @@ import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.Producer;
 import org.n52.sos.request.operator.WSDLAwareRequestOperator;
 import org.n52.sos.service.Configurator;
+import org.n52.svalbard.OperationKey;
 
 /**
  *

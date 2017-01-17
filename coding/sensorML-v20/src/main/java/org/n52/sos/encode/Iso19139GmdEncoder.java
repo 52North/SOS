@@ -78,9 +78,9 @@ import org.n52.shetland.ogc.sensorML.Role;
 import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.EncodingContext;
-import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlBeansEncodingFlags;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
@@ -194,12 +194,12 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<XmlObject, Object> {
         encodeContact(cirpt.addNewContactInfo().addNewCIContact(), responsibleParty);
         // set role
         encodeRole(cirpt.addNewRole(), responsibleParty.getRoleObject());
-        if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
+        if (additionalValues.has(XmlBeansEncodingFlags.PROPERTY_TYPE)) {
             CIResponsiblePartyPropertyType cirppt =
                     CIResponsiblePartyPropertyType.Factory.newInstance(getXmlOptions());
             cirppt.setCIResponsibleParty(cirpt);
             return cirppt;
-        } else if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+        } else if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
             CIResponsiblePartyDocument cirpd =
                     CIResponsiblePartyDocument.Factory.newInstance(getXmlOptions());
             cirpd.setCIResponsibleParty(cirpt);
@@ -266,13 +266,13 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<XmlObject, Object> {
     }
 
     private XmlObject encodeGmdDomainConsistency(GmdDomainConsistency element, EncodingContext additionalValues) throws EncodingException {
-        if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+        if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
             DQDomainConsistencyDocument document =
                     DQDomainConsistencyDocument.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = document.addNewDQDomainConsistency().addNewResult();
             encodeGmdDomainConsistency(addNewResult, element);
             return document;
-        } else if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
+        } else if (additionalValues.has(XmlBeansEncodingFlags.PROPERTY_TYPE)) {
             DQDomainConsistencyPropertyType propertyType =
                     DQDomainConsistencyPropertyType.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = propertyType.addNewDQDomainConsistency().addNewResult();

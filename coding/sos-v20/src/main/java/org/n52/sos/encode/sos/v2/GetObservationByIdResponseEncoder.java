@@ -46,9 +46,9 @@ import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.HelperValues;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;

@@ -41,9 +41,8 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.coding.CodingRepository;
 import org.n52.janmayen.function.Functions;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.GmlConstants;
@@ -58,7 +57,6 @@ import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.w3c.W3CConstants;
-import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.coding.encode.XmlStreamWriter;
 import org.n52.sos.encode.AbstractOmEncoderv20;
@@ -66,12 +64,15 @@ import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlBeansEncodingFlags;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.EncodingValues;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 import com.google.common.base.Strings;
 
@@ -502,7 +503,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      * @return
      */
     protected EncodingContext getDocumentAdditionalHelperValues() {
-        return EncodingContext.of(SosHelperValues.DOCUMENT);
+        return EncodingContext.of(XmlBeansEncodingFlags.DOCUMENT);
     }
 
     /**

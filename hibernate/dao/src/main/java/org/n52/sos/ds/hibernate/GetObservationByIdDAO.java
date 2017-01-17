@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -57,6 +56,7 @@ import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 
 
 /**
@@ -70,7 +70,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationByIdDAO.class);
 
     private HibernateSessionHolder sessionHolder;
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
     private DaoFactory daoFactory;
 
     public GetObservationByIdDAO() {
@@ -83,7 +83,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
     }
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 

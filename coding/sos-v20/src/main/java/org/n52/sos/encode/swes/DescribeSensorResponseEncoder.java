@@ -34,21 +34,20 @@ import net.opengis.swes.x20.DescribeSensorResponseDocument;
 import net.opengis.swes.x20.DescribeSensorResponseType;
 import net.opengis.swes.x20.SensorDescriptionType;
 
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.GmlConstants;
-import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.swes.SwesConstants;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
 

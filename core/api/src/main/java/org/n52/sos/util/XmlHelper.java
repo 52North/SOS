@@ -60,7 +60,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.iceland.util.FileIOHelper;
 import org.n52.iceland.util.http.HttpUtils;
 import org.n52.janmayen.exception.CompositeException;
@@ -69,6 +68,7 @@ import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.swes.SwesConstants;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.StringHelper;
 import org.n52.shetland.w3c.W3CConstants;

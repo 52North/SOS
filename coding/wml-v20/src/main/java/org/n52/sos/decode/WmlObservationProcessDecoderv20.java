@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.coding.decode.ProcedureDecoder;
 import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.sos.ProcedureDescriptionFormat;
@@ -44,6 +43,7 @@ import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +55,8 @@ import com.google.common.collect.Lists;
 import net.opengis.waterml.x20.ObservationProcessDocument;
 import net.opengis.waterml.x20.ObservationProcessPropertyType;
 import net.opengis.waterml.x20.ObservationProcessType;
+
+import org.n52.svalbard.decode.ProcedureDecoder;
 
 public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 implements ProcedureDecoder<Object, Object> {
 

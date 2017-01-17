@@ -35,8 +35,6 @@ import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.ows.OWSConstants;
@@ -54,8 +52,10 @@ import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.OperationKey;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.OperationResponseEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 

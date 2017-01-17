@@ -30,7 +30,6 @@ package org.n52.sos.util;
 
 import static java.util.stream.Collectors.toSet;
 import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
-import static org.n52.iceland.service.MiscSettings.SRS_NAME_PREFIX_SOS_V2;
 import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
 
 import java.util.Collection;
@@ -54,13 +53,12 @@ import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.util.Range;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
-import org.n52.iceland.util.Range;
-import org.n52.iceland.util.Validation;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
@@ -70,6 +68,7 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.FeatureQuerySettingsProvider;
+import org.n52.svalbard.Validation;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;

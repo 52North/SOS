@@ -35,21 +35,22 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
-import org.n52.svalbard.decode.NoDecoderForKeyException;
 import org.n52.svalbard.decode.OperationDecoderKey;
 import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
 import org.n52.svalbard.decode.XmlStringOperationDecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org> TODO implement

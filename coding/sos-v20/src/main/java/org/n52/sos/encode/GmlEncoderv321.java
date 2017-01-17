@@ -71,7 +71,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.MinMax;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.AbstractGeometry;
@@ -90,6 +89,7 @@ import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.util.MinMax;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.CodingHelper;
@@ -97,9 +97,10 @@ import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlBeansEncodingFlags;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
@@ -209,8 +210,8 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
                 FeatureCollectionDocument.Factory.newInstance(getXmlOptions());
         final FeatureCollectionType featureCollection = featureCollectionDoc.addNewFeatureCollection();
         featureCollection.setId(element.getGmlId());
-        boolean document = additionalValues.has(SosHelperValues.DOCUMENT);
-        EncodingContext ctx = additionalValues.with(SosHelperValues.PROPERTY_TYPE).without(SosHelperValues.DOCUMENT);
+        boolean document = additionalValues.has(XmlBeansEncodingFlags.DOCUMENT);
+        EncodingContext ctx = additionalValues.with(XmlBeansEncodingFlags.PROPERTY_TYPE).without(XmlBeansEncodingFlags.DOCUMENT);
 
         if (element.isSetMembers()) {
             for (final AbstractFeature abstractFeature : element.getMembers().values()) {
@@ -318,11 +319,11 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
         if (time instanceof TimeInstant) {
             TimeInstant instant = (TimeInstant) time;
 
-            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+            if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
                 return createTimeInstantDocument(instant);
             }
 
-            if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
+            if (additionalValues.has(XmlBeansEncodingFlags.PROPERTY_TYPE)) {
                 return createTimeInstantPropertyType(instant);
             }
 
@@ -332,11 +333,11 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
         if (time instanceof TimePeriod) {
             TimePeriod period = (TimePeriod) time;
 
-            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+            if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
                 return createTimePeriodDocument(period);
             }
 
-            if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
+            if (additionalValues.has(XmlBeansEncodingFlags.PROPERTY_TYPE)) {
                 return createTimePeriodPropertyType(period);
             }
 
@@ -490,12 +491,12 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
             final PointType xbPoint = PointType.Factory.newInstance(getXmlOptions());
             xbPoint.setId("point_" + foiId);
             createPointFromJtsGeometry((Point) geom, xbPoint);
-            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+            if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
                 PointDocument xbPointDoc =
                         PointDocument.Factory.newInstance(getXmlOptions());
                 xbPointDoc.setPoint(xbPoint);
                 return xbPointDoc;
-            } else if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
+            } else if (additionalValues.has(XmlBeansEncodingFlags.PROPERTY_TYPE)) {
                 GeometryPropertyType geometryPropertyType =
                         GeometryPropertyType.Factory.newInstance(getXmlOptions());
                 geometryPropertyType.setAbstractGeometry(xbPoint);
@@ -510,12 +511,12 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
                     LineStringType.Factory.newInstance(getXmlOptions());
             xbLineString.setId("lineString_" + foiId);
             createLineStringFromJtsGeometry((LineString) geom, xbLineString);
-            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+            if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
                 LineStringDocument xbLineStringDoc =
                         LineStringDocument.Factory.newInstance(getXmlOptions());
                 xbLineStringDoc.setLineString(xbLineString);
                 return xbLineStringDoc;
-            } else if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
+            } else if (additionalValues.has(XmlBeansEncodingFlags.PROPERTY_TYPE)) {
                 GeometryPropertyType geometryPropertyType =
                         GeometryPropertyType.Factory.newInstance(getXmlOptions());
                 geometryPropertyType.setAbstractGeometry(xbLineString);
@@ -531,12 +532,12 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
                     PolygonType.Factory.newInstance(getXmlOptions());
             xbPolygon.setId("polygon_" + foiId);
             createPolygonFromJtsGeometry((Polygon) geom, xbPolygon);
-            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+            if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
                 PolygonDocument xbPolygonDoc =
                         PolygonDocument.Factory.newInstance(getXmlOptions());
                 xbPolygonDoc.setPolygon(xbPolygon);
                 return xbPolygonDoc;
-            } else if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
+            } else if (additionalValues.has(XmlBeansEncodingFlags.PROPERTY_TYPE)) {
                 GeometryPropertyType geometryPropertyType =
                         GeometryPropertyType.Factory.newInstance(getXmlOptions());
                 geometryPropertyType.setAbstractGeometry(xbPolygon);

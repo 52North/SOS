@@ -29,6 +29,7 @@
 package org.n52.sos.util;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -37,7 +38,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,7 +53,6 @@ import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.MinMax;
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.om.OmObservableProperty;
@@ -72,6 +71,7 @@ import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.MinMax;
 import org.n52.shetland.util.SosQueryBuilder;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
@@ -310,12 +310,10 @@ public class SosHelper {
      */
     // FIXME move to ReadableCache
     public static Set<String> getHierarchy(final Map<String, Set<String>> hierarchy, final Set<String> keys,
-            final boolean fullHierarchy, final boolean includeStartKeys) {
-        final Set<String> parents = new HashSet<>();
-        for (final String key : keys) {
-            parents.addAll(getHierarchy(hierarchy, key, fullHierarchy, includeStartKeys));
-        }
-        return parents;
+                                           final boolean fullHierarchy, final boolean includeStartKeys) {
+        return keys.stream()
+                .flatMap(key -> getHierarchy(hierarchy, key, fullHierarchy, includeStartKeys).stream())
+                .collect(toSet());
     }
 
     /**

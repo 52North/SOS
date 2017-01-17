@@ -70,9 +70,10 @@ import org.n52.sos.response.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Referenceable;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlBeansEncodingFlags;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
@@ -180,7 +181,7 @@ public class AqdEncoder extends AbstractXmlEncoder<XmlObject, Object> implements
             }
             EncodingContext ctx = EncodingContext.empty()
                             .with(SosHelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2)
-                            .with(SosHelperValues.DOCUMENT, null);
+                            .with(XmlBeansEncodingFlags.DOCUMENT, null);
             return encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection, ctx);
         } catch (OwsExceptionReport ex) {
             throw new EncodingException(ex);

@@ -42,8 +42,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
@@ -84,6 +82,8 @@ import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.OMHelper;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.OperationResponseEncoderKey;
+import org.n52.svalbard.encode.XmlEncoderKey;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

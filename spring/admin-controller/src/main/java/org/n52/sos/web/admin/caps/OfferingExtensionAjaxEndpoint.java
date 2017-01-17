@@ -37,11 +37,6 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.exception.NoSuchExtensionException;
-import org.n52.sos.exception.NoSuchOfferingException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -53,8 +48,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.ogc.ows.extension.OfferingExtension;
 import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchOfferingException;
 import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -68,17 +66,17 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingExtensionAjaxEndpoint.class);
 
-    private ObjectNode toJson(final Collection<OfferingExtension> extensionsForOffering) {
+    private ObjectNode toJson(final Collection<SosObservationOfferingExtension> extensionsForOffering) {
         ObjectNode jsonOffering = Json.nodeFactory().objectNode();
         if (extensionsForOffering != null) {
-            for (final OfferingExtension e : extensionsForOffering) {
+            for (final SosObservationOfferingExtension e : extensionsForOffering) {
                 jsonOffering.set(e.getIdentifier(), toJson(e));
             }
         }
         return jsonOffering;
     }
 
-    private ObjectNode toJson(final OfferingExtension extensionForOffering) {
+    private ObjectNode toJson(final SosObservationOfferingExtension extensionForOffering) {
         return Json.nodeFactory().objectNode()
             .put(IDENTIFIER_PROPERTY, extensionForOffering.getIdentifier())
             .put(DISABLED_PROPERTY, extensionForOffering.isDisabled())
@@ -90,7 +88,7 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getOfferingExtensions() throws OwsExceptionReport {
-        final Map<String, List<OfferingExtension>> offeringExtensions = getCapabilitiesExtensionService().getOfferingExtensions();
+        final Map<String, List<SosObservationOfferingExtension>> offeringExtensions = getCapabilitiesExtensionService().getOfferingExtensions();
         final List<String> offerings = Lists.newArrayList(getCache().getOfferings());
         Collections.sort(offerings);
         ObjectNode response = Json.nodeFactory().objectNode();

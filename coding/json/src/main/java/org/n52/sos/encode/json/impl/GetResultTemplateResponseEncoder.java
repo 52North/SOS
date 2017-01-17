@@ -51,9 +51,9 @@ import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderRepository;
-import org.n52.svalbard.decode.NoDecoderForKeyException;
 import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;

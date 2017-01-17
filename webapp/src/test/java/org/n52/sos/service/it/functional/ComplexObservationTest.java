@@ -105,8 +105,8 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.it.AbstractComplianceSuiteTest;
 import org.n52.sos.service.it.Client;
 import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableBiMap;

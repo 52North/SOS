@@ -28,14 +28,19 @@
  */
 package org.n52.sos.config.sqlite;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.n52.iceland.coding.encode.ResponseFormatKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.config.SosActivationDao;
+import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
+import org.n52.sos.config.sqlite.entities.DynamicOfferingExtensionKey;
 import org.n52.sos.config.sqlite.entities.ObservationEncoding;
 import org.n52.sos.config.sqlite.entities.ObservationEncodingKey;
 import org.n52.sos.config.sqlite.entities.ProcedureEncoding;
@@ -50,7 +55,28 @@ public class SosSQLiteActivationDao
         extends SQLiteActivationDao
         implements SosActivationDao {
 
-    // RESPONSE FORMAT
+
+    @Override
+    public void setSosObservationOfferingExtensionStatus(SosObservationOfferingExtensionKey key, boolean active) {
+        setActive(DynamicOfferingExtension.class, new DynamicOfferingExtension(key), active);
+    }
+
+    @Override
+    public boolean isSosObservationOfferingExtensionActive(SosObservationOfferingExtensionKey key) {
+        return isActive(DynamicOfferingExtension.class, new DynamicOfferingExtensionKey(key));
+    }
+
+    @Override
+    public Set<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionKeys() {
+        return asOfferingExtensionKeys(getKeys(DynamicOfferingExtension.class));
+    }
+
+    private Set<SosObservationOfferingExtensionKey> asOfferingExtensionKeys(List<DynamicOfferingExtensionKey> keys) {
+        return keys.stream()
+                .map(k -> new SosObservationOfferingExtensionKey(k.getService(), k.getVersion(), k.getDomain()))
+                .collect(toSet());
+    }
+
     @Override
     public void setResponseFormatStatus(ResponseFormatKey rfkt, boolean active) {
         setActive(ObservationEncoding.class, new ObservationEncoding(rfkt), active);

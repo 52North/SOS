@@ -32,12 +32,12 @@ import java.io.OutputStream;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.sos.coding.encode.EncodingValues;
-import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncodingValues;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**

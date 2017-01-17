@@ -40,9 +40,9 @@ import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.AbstractDelegatingDecoder;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
-import org.n52.svalbard.decode.NoDecoderForKeyException;
 import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
 
 /**
  * TODO JavaDoc

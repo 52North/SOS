@@ -45,10 +45,7 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.request.handler.OperationHandler;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.janmayen.http.MediaType;
@@ -102,7 +99,7 @@ import org.n52.sos.netcdf.data.subsensor.BinProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.ProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import org.n52.sos.netcdf.om.NetCDFObservation;
-import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
@@ -135,6 +132,8 @@ import ucar.nc2.constants.CDM;
 import ucar.nc2.constants.CF;
 import ucar.nc2.jni.netcdf.Nc4Iosp;
 
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+
 /**
  * Abstract class of {@link ObservationEncoder} for netCDF encoding.
  *
@@ -145,23 +144,36 @@ import ucar.nc2.jni.netcdf.Nc4Iosp;
  */
 public abstract class AbstractNetcdfEncoder implements ObservationEncoder<BinaryAttachmentResponse, Object> {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(AbstractNetcdfEncoder.class);
-
     private final Set<SupportedType> SUPPORTED_TYPES =
-            ImmutableSet
-            .<SupportedType>builder()
-            .add(OmConstants.OBS_TYPE_TRUTH_OBSERVATION_TYPE)
-            .build();
+            ImmutableSet.<SupportedType>builder().add(OmConstants.OBS_TYPE_TRUTH_OBSERVATION_TYPE).build();
 
     private final Set<String> CONFORMANCE_CLASSES = ImmutableSet
             .of("http://www.opengis.net/spec/OMXML/1.0/conf/measurement");
 
-    @Inject
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
+    private OperationHandlerRepository operationHandlerRepository;
+    private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
 
     public AbstractNetcdfEncoder() {
 
     }
+
+    @Inject
+    public void setProcedureDescriptionFormatRepository(
+            ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
+        this.procedureDescriptionFormatRepository = procedureDescriptionFormatRepository;
+    }
+
+    @Inject
+    public void setOperationHandlerRepository(OperationHandlerRepository operationHandlerRepository) {
+        this.operationHandlerRepository = operationHandlerRepository;
+    }
+
+    @Inject
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository serviceMetadataRepository) {
+        this.serviceMetadataRepository = serviceMetadataRepository;
+    }
+
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
@@ -339,7 +351,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         // }
 
         // set up z dimensions
-        String dimensionName = "";
+        String dimensionName;
         if (useHeight()) {
             dimensionName = getVariableDimensionCaseName(CFStandardNames.HEIGHT.getName());
         } else {
@@ -1014,7 +1026,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
             throws EncodingException {
         // query full procedure description if necessary
         if (procedureDescription == null || procedureDescription instanceof SosProcedureDescriptionUnknownType) {
-            procedureDescription = queryProcedureDescription(procedure);
+            return getProcedureDescription(procedure, queryProcedureDescription(procedure));
         }
         AbstractSensorML abstractSensor = null;
         if (procedureDescription instanceof AbstractSensorML) {
@@ -1044,7 +1056,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         req.setVersion(Sos2Constants.SERVICEVERSION);
         req.setProcedure(procedure);
         Set<String> pdfs =
-                getProcedureDescriptionFormatRepository().getAllSupportedProcedureDescriptionFormats(SosConstants.SOS,
+                (this.procedureDescriptionFormatRepository).getAllSupportedProcedureDescriptionFormats(SosConstants.SOS,
                         Sos2Constants.SERVICEVERSION);
         if (pdfs.contains(SensorML20Constants.NS_SML)) {
             req.setProcedureDescriptionFormat(SensorML20Constants.NS_SML);
@@ -1066,7 +1078,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
 
     protected AbstractDescribeSensorHandler getDescribeSensorHandler() throws CodedException {
         OperationHandler operationHandler =
-                getOperationHandlerRepository().getOperationHandler(SosConstants.SOS,
+                (this.operationHandlerRepository).getOperationHandler(SosConstants.SOS,
                         SosConstants.Operations.DescribeSensor.toString());
         if (operationHandler != null && operationHandler instanceof AbstractDescribeSensorHandler) {
             return (AbstractDescribeSensorHandler) operationHandler;
@@ -1336,14 +1348,6 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         // }
         pathBuffer.append("_").append(Long.toString(java.lang.System.nanoTime())).append(".nc");
         return pathBuffer.toString();
-    }
-
-    private static ProcedureDescriptionFormatRepository getProcedureDescriptionFormatRepository() {
-        return ProcedureDescriptionFormatRepository.getInstance();
-    }
-
-    private static OperationHandlerRepository getOperationHandlerRepository() {
-        return OperationHandlerRepository.getInstance();
     }
 
     private static NetcdfHelper getNetcdfHelper() {

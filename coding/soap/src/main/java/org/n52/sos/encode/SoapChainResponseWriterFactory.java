@@ -32,15 +32,15 @@ import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlOptions;
 
-import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
-import org.n52.janmayen.component.SingleTypeComponentFactory;
-import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.service.StreamingSettings;
 import org.n52.janmayen.Producer;
-import org.n52.iceland.w3c.soap.SoapChain;
+import org.n52.janmayen.component.SingleTypeComponentFactory;
+import org.n52.shetland.w3c.soap.SoapChain;
+import org.n52.svalbard.encode.EncoderRepository;
 
 /**
  * {@link ResponseWriterFactory} implementation for {@link SoapChain} and

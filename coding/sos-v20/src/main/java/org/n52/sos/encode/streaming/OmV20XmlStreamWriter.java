@@ -30,9 +30,9 @@ package org.n52.sos.encode.streaming;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.svalbard.encode.EncodingValues;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * Implementation of {@link AbstractOmV20XmlStreamWriter} to write O&M 2.0 encoded

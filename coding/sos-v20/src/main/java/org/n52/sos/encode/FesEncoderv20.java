@@ -59,7 +59,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.service.ConformanceClass;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
@@ -73,9 +72,10 @@ import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.CodingHelper;
-import org.n52.svalbard.EncodingContext;
-import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.ConformanceClass;
+import org.n52.svalbard.XmlBeansEncodingFlags;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
@@ -151,7 +151,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<XmlObject, Object> impleme
                 DuringDocument.Factory.newInstance(getXmlOptions());
         final BinaryTemporalOpType during = duringDoc.addNewDuring();
         if (temporalFilter.getTime() instanceof TimePeriod) {
-            during.set(encodeObjectToXml(GmlConstants.NS_GML_32, temporalFilter.getTime(), EncodingContext.of(SosHelperValues.DOCUMENT)));
+            during.set(encodeObjectToXml(GmlConstants.NS_GML_32, temporalFilter.getTime(), EncodingContext.of(XmlBeansEncodingFlags.DOCUMENT)));
         } else {
             throw new EncodingException("The temporal filter value is not a TimePeriod!");
         }
@@ -164,7 +164,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<XmlObject, Object> impleme
                 TEqualsDocument.Factory.newInstance(getXmlOptions());
         final BinaryTemporalOpType equals = equalsDoc.addNewTEquals();
         if (temporalFilter.getTime() instanceof TimeInstant) {
-            equals.set(encodeObjectToXml(GmlConstants.NS_GML_32, temporalFilter.getTime(), EncodingContext.of(SosHelperValues.DOCUMENT)));
+            equals.set(encodeObjectToXml(GmlConstants.NS_GML_32, temporalFilter.getTime(), EncodingContext.of(XmlBeansEncodingFlags.DOCUMENT)));
         } else {
             throw new EncodingException("The temporal filter value is not a TimeInstant!");
         }

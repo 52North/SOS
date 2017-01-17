@@ -36,7 +36,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.n52.iceland.coding.encode.ResponseFormatKey;
-import org.n52.iceland.config.json.AbstractJsonActivationDao;
+import org.n52.iceland.config.json.JsonActivationDao;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.config.SosActivationDao;
@@ -49,30 +50,37 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  *
  * @author Christian Autermann
  */
-public class SosJsonActivationDao extends AbstractJsonActivationDao
-        implements SosActivationDao {
+public class SosJsonActivationDao extends JsonActivationDao implements SosActivationDao {
     protected static final String RESPONSE_FORMATS = "responseFormats";
-    protected static final String PROCEDURE_DESCRIPTION_FORMATS
-            = "procedureDescriptionFormats";
+    protected static final String PROCEDURE_DESCRIPTION_FORMATS = "procedureDescriptionFormats";
     protected static final String FORMAT = "format";
-    private static final Function<ProcedureDescriptionFormatKey, OwsServiceKey> PDF_SOK
-            = ProcedureDescriptionFormatKey::getServiceOperatorKey;
-    private static final Function<ProcedureDescriptionFormatKey, String> PDF_FORMAT
-            = ProcedureDescriptionFormatKey::getProcedureDescriptionFormat;
-    private static final Function<ResponseFormatKey, OwsServiceKey> RF_SOK
-            = ResponseFormatKey::getServiceOperatorKey;
-    private static final Function<ResponseFormatKey, String> RF_FORMAT
-            = ResponseFormatKey::getResponseFormat;
+    protected static final String OFFERING_EXTENSIONS = "offeringExtensions";
+
+    @Override
+    public boolean isSosObservationOfferingExtensionActive(SosObservationOfferingExtensionKey key) {
+        return isActive(OFFERING_EXTENSIONS, matches(key), true);
+    }
+
+    @Override
+    public void setSosObservationOfferingExtensionStatus(SosObservationOfferingExtensionKey key, boolean active) {
+        setStatus(OFFERING_EXTENSIONS, matches(key), s -> encode(s, key), active);
+    }
+
+    @Override
+    public Set<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionKeys() {
+        Function<JsonNode, SosObservationOfferingExtensionKey> fun = createDomainDecoder(SosObservationOfferingExtensionKey::new);
+        return getKeys(OFFERING_EXTENSIONS, fun);
+    }
 
     @Override
     public boolean isResponseFormatActive(ResponseFormatKey key) {
-        return isActive(RESPONSE_FORMATS, matches(key, RF_SOK, RF_FORMAT), true);
+        return isActive(RESPONSE_FORMATS, matches(key, ResponseFormatKey::getServiceOperatorKey, ResponseFormatKey::getResponseFormat), true);
     }
 
     @Override
     public void setResponseFormatStatus(ResponseFormatKey key, boolean active) {
-        setStatus(RESPONSE_FORMATS, matches(key, RF_SOK, RF_FORMAT),
-                  s -> createFormatEncoder(s, key, RF_SOK, RF_FORMAT), active);
+        setStatus(RESPONSE_FORMATS, matches(key, ResponseFormatKey::getServiceOperatorKey, ResponseFormatKey::getResponseFormat),
+                  s -> createFormatEncoder(s, key, ResponseFormatKey::getServiceOperatorKey, ResponseFormatKey::getResponseFormat), active);
     }
 
     @Override
@@ -82,13 +90,13 @@ public class SosJsonActivationDao extends AbstractJsonActivationDao
 
     @Override
     public boolean isProcedureDescriptionFormatActive(ProcedureDescriptionFormatKey key) {
-        return isActive(PROCEDURE_DESCRIPTION_FORMATS, matches(key, PDF_SOK, PDF_FORMAT), true);
+        return isActive(PROCEDURE_DESCRIPTION_FORMATS, matches(key, ProcedureDescriptionFormatKey::getServiceOperatorKey, ProcedureDescriptionFormatKey::getProcedureDescriptionFormat), true);
     }
 
     @Override
     public void setProcedureDescriptionFormatStatus(ProcedureDescriptionFormatKey key, boolean active) {
-        setStatus(PROCEDURE_DESCRIPTION_FORMATS, matches(key, PDF_SOK, PDF_FORMAT),
-                  s -> createFormatEncoder(s, key, PDF_SOK, PDF_FORMAT), active);
+        setStatus(PROCEDURE_DESCRIPTION_FORMATS, matches(key, ProcedureDescriptionFormatKey::getServiceOperatorKey, ProcedureDescriptionFormatKey::getProcedureDescriptionFormat),
+                  s -> createFormatEncoder(s, key, ProcedureDescriptionFormatKey::getServiceOperatorKey, ProcedureDescriptionFormatKey::getProcedureDescriptionFormat), active);
     }
 
     @Override
@@ -96,17 +104,14 @@ public class SosJsonActivationDao extends AbstractJsonActivationDao
         return getKeys(PROCEDURE_DESCRIPTION_FORMATS, createFormatDecoder(ProcedureDescriptionFormatKey::new));
     }
 
-    protected <K> Function<JsonNode, K> createFormatDecoder(
-            BiFunction<OwsServiceKey, String, K> fun) {
+    protected <K> Function<JsonNode, K> createFormatDecoder(BiFunction<OwsServiceKey, String, K> fun) {
         Objects.requireNonNull(fun);
-        return n -> fun.apply(decodeServiceOperatorKey(n),
-                              n.path(FORMAT).textValue());
+        return n -> fun.apply(decodeServiceOperatorKey(n), n.path(FORMAT).textValue());
     }
 
-    protected <K> Supplier<ObjectNode> createFormatEncoder(
-            Supplier<ObjectNode> supplier, K key,
-            Function<K, OwsServiceKey> sokFun,
-            Function<K, String> formatFun) {
+    protected <K> Supplier<ObjectNode> createFormatEncoder(Supplier<ObjectNode> supplier, K key,
+                                                           Function<K, OwsServiceKey> sokFun,
+                                                           Function<K, String> formatFun) {
         Objects.requireNonNull(supplier);
         Objects.requireNonNull(sokFun);
         Objects.requireNonNull(formatFun);
@@ -117,9 +122,7 @@ public class SosJsonActivationDao extends AbstractJsonActivationDao
         };
     }
 
-    protected <K> Predicate<JsonNode> matches(K key,
-                                              Function<K, OwsServiceKey> sokFun,
-                                              Function<K, String> formatFun) {
+    protected <K> Predicate<JsonNode> matches(K key, Function<K, OwsServiceKey> sokFun, Function<K, String> formatFun) {
         OwsServiceKey sok = key == null ? null : sokFun.apply(key);
         String responseFormat = key == null ? null : formatFun.apply(key);
         return matches(sok).and(matchesFormat(responseFormat));

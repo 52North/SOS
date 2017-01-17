@@ -65,7 +65,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.MinMax;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.GmlConstants;
@@ -82,16 +81,18 @@ import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.util.MinMax;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlBeansEncodingFlags;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
@@ -174,13 +175,13 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<XmlObject, Object> {
     private XmlObject createTime(Time time, EncodingContext additionalValues) throws EncodingException {
         if (time != null) {
             if (time instanceof TimeInstant) {
-                if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+                if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
                     return createTimeInstantDocument((TimeInstant) time);
                 } else {
                     return createTimeInstantType((TimeInstant) time, null);
                 }
             } else if (time instanceof TimePeriod) {
-                if (additionalValues.has(SosHelperValues.DOCUMENT)) {
+                if (additionalValues.has(XmlBeansEncodingFlags.DOCUMENT)) {
                     return createTimePeriodDocument((TimePeriod) time);
                 } else {
                     return createTimePeriodType((TimePeriod) time, null);

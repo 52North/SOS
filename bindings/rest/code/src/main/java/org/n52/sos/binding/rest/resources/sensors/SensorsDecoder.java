@@ -37,7 +37,6 @@ import net.opengis.sensorML.x101.AbstractProcessType;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.IoComponentPropertyType;
 import net.opengis.sensorML.x101.SystemType;
-import net.opengis.sos.x20.impl.SosInsertionMetadataPropertyTypeImpl;
 import net.opengis.sosREST.x10.SensorDocument;
 import net.opengis.sosREST.x10.SensorType;
 import net.opengis.swe.x101.AnyScalarPropertyType;
@@ -74,9 +73,10 @@ import org.n52.svalbard.decode.exception.DecodingException;
  */
 public class SensorsDecoder extends ResourceDecoder {
 
-    public SensorsDecoder() {
-        bindingConstants = Constants.getInstance();
+    public SensorsDecoder(Constants constants) {
+        super(constants);
     }
+
 
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
             String pathPayload) throws OwsExceptionReport
@@ -98,7 +98,7 @@ public class SensorsDecoder extends ResourceDecoder {
             return new GetSensorsRequest(capabilitiesRequest);
 
         } else {
-            String errorMsg = createBadGetRequestMessage(bindingConstants.getResourceSensors(),true,true,false);
+            String errorMsg = createBadGetRequestMessage(org.n52.sos.binding.rest.Constants.REST_RESOURCE_SENSORS,true,true,false);
             BadRequestException bR = new BadRequestException(errorMsg);
             throw new NoApplicableCodeException().causedBy(bR);
         }
@@ -108,8 +108,7 @@ public class SensorsDecoder extends ResourceDecoder {
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
             String pathPayload) throws OwsExceptionReport
     {
-        throw new OperationNotSupportedException(String.format("HTTP-DELETE + \"%s\"",
-                bindingConstants.getResourceSensors()));
+        throw new OperationNotSupportedException(String.format("HTTP-DELETE + \"%s\"", org.n52.sos.binding.rest.Constants.REST_RESOURCE_SENSORS));
     }
 
     @Override
@@ -305,7 +304,7 @@ public class SensorsDecoder extends ResourceDecoder {
             isGlobal = true;
             isCollection = true;
         }
-        return new OptionsRestRequest(bindingConstants.getResourceSensors(),isGlobal,isCollection);
+        return new OptionsRestRequest((Constants.REST_RESOURCE_SENSORS),isGlobal,isCollection);
     }
 
 

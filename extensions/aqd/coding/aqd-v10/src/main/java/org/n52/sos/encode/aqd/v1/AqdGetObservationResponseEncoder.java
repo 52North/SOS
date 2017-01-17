@@ -50,7 +50,6 @@ import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.aqd.ReportObligations;
-import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.aqd.v1.AqdGetObservationResponseXmlStreamWriter;
 import org.n52.sos.inspire.aqd.EReportingHeader;
@@ -58,8 +57,10 @@ import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.response.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.Referenceable;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlBeansEncodingFlags;
+import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.EncodingValues;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder<GetObservationResponse>
@@ -114,7 +115,7 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
             }
             EncodingContext ctx = EncodingContext.empty()
                     .with(SosHelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2)
-                    .with(SosHelperValues.DOCUMENT);
+                    .with(XmlBeansEncodingFlags.DOCUMENT);
             return encodeGml(ctx, featureCollection);
         } catch (OwsExceptionReport ex) {
             throw new EncodingException(ex);
@@ -137,7 +138,7 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
             eReportingHeader.setReportingPeriod(Referenceable.of((Time) timePeriod));
         }
         encodingValues.setEncodingNamespace(OmConstants.NS_OM_2);
-        encodingValues.setAdditionalValues(encodingValues.getAdditionalValues().with(SosHelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2).with(SosHelperValues.DOCUMENT));
+        encodingValues.setAdditionalValues(encodingValues.getAdditionalValues().with(SosHelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2).with(XmlBeansEncodingFlags.DOCUMENT));
         try {
             new AqdGetObservationResponseXmlStreamWriter().write(featureCollection, outputStream, encodingValues);
         } catch (XMLStreamException xmlse) {

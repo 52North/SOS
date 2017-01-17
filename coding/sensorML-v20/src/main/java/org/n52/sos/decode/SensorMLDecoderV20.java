@@ -185,7 +185,6 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
-
     @Override
     public Set<String> getSupportedProcedureDescriptionFormats(final String service, final String version) {
         if (SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.containsKey(service)

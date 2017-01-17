@@ -31,6 +31,8 @@ package org.n52.sos.config.sqlite;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -83,10 +85,10 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         execute(new DeleteAllAction());
     }
 
-    private class DeleteAllAction extends VoidHibernateAction {
+    private class DeleteAllAction implements Consumer<Session> {
         @Override
         @SuppressWarnings("unchecked")
-        protected void run(Session session) {
+        public void accept(Session session) {
             List<AdministratorUser> users = session
                     .createCriteria(AdministratorUser.class)
                     .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
@@ -94,7 +96,7 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         }
     }
 
-    private class GetAdminUserAction implements HibernateAction<AdminUser> {
+    private class GetAdminUserAction implements Function<Session, AdminUser> {
         private final String username;
 
         GetAdminUserAction(String username) {
@@ -102,14 +104,14 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         }
 
         @Override
-        public AdminUser call(Session session) {
+        public AdminUser apply(Session session) {
             return (AdminUser) session.createCriteria(AdminUser.class)
                     .add(Restrictions.eq(AdminUser.USERNAME_PROPERTY, username))
                     .uniqueResult();
         }
     }
 
-    private class DeleteAdminUserAction extends VoidHibernateAction {
+    private class DeleteAdminUserAction implements Consumer<Session> {
         private final String username;
 
         DeleteAdminUserAction(String username) {
@@ -117,7 +119,7 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         }
 
         @Override
-        protected void run(Session session) {
+        public void accept(Session session) {
             AdministratorUser au = (AdministratorUser) session
                     .createCriteria(AdministratorUser.class)
                     .add(Restrictions.eq(AdminUser.USERNAME_PROPERTY, username))
@@ -128,17 +130,16 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         }
     }
 
-    private class GetAdminUsersAction implements
-            HibernateAction<Set<AdministratorUser>> {
+    private class GetAdminUsersAction implements Function<Session, Set<AdministratorUser>> {
         @Override
         @SuppressWarnings("unchecked")
-        public Set<AdministratorUser> call(Session session) {
+        public Set<AdministratorUser> apply(Session session) {
             return new HashSet<>(session.createCriteria(AdministratorUser.class)
                     .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list());
         }
     }
 
-    private class SaveAdminUserAction extends VoidHibernateAction {
+    private class SaveAdminUserAction implements Consumer<Session> {
         private final AdministratorUser user;
 
         SaveAdminUserAction(AdministratorUser user) {
@@ -146,13 +147,13 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         }
 
         @Override
-        protected void run(Session session) {
+        public void accept(Session session) {
             LOG.debug("Updating AdministratorUser {}", user);
             session.update(user);
         }
     }
 
-    private class CreateAdminUserAction implements HibernateAction<AdminUser> {
+    private class CreateAdminUserAction implements Function<Session, AdminUser> {
         private final String username;
 
         private final String password;
@@ -163,7 +164,7 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         }
 
         @Override
-        public AdminUser call(Session session) {
+        public AdminUser apply(Session session) {
             AdminUser user = new AdminUser().setUsername(username)
                     .setPassword(password);
             LOG.debug("Creating AdministratorUser {}", user);

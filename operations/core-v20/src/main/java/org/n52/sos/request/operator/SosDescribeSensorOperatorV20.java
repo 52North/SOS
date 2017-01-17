@@ -40,7 +40,6 @@ import javax.inject.Inject;
 
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -78,6 +77,7 @@ import org.n52.sos.request.ProcedureRequestSettingProvider;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Strings;

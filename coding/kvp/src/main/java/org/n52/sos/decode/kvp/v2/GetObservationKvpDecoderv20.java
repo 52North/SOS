@@ -40,16 +40,16 @@ import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
-import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.DecoderRepository;
-import org.n52.svalbard.decode.NoDecoderForKeyException;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
 
 /**
  * @since 4.0.0

@@ -51,7 +51,6 @@ import org.isotc211.x2005.gmd.DQElementPropertyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
@@ -88,16 +87,18 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.w3c.W3CConstants;
-import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlBeansEncodingFlags;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.EncodingValues;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
@@ -254,9 +255,9 @@ public abstract class AbstractOmEncoderv20
         setResultQualities(xbObservation, sosObservation);
         setResult(sosObservation, xbObservation);
 
-        if (context.has(SosHelperValues.PROPERTY_TYPE)) {
+        if (context.has(XmlBeansEncodingFlags.PROPERTY_TYPE)) {
             return createObservationPropertyType(xbObservation);
-        } else if (context.has(SosHelperValues.DOCUMENT)) {
+        } else if (context.has(XmlBeansEncodingFlags.DOCUMENT)) {
             return createObservationDocument(xbObservation);
         } else {
             return xbObservation;
@@ -592,7 +593,7 @@ public abstract class AbstractOmEncoderv20
             throws EncodingException {
         for (OmResultQuality quality : resultQuality) {
             AbstractDQElementDocument encodedQuality = (AbstractDQElementDocument) encodeObjectToXml(null,
-                    quality, EncodingContext.of(SosHelperValues.DOCUMENT));
+                    quality, EncodingContext.of(XmlBeansEncodingFlags.DOCUMENT));
             DQElementPropertyType addNewResultQuality = xbObservation.addNewResultQuality();
             addNewResultQuality.setAbstractDQElement(encodedQuality.getAbstractDQElement());
             XmlHelper.substituteElement(addNewResultQuality.getAbstractDQElement(),
@@ -717,7 +718,7 @@ public abstract class AbstractOmEncoderv20
         }
 
         private EncodingContext createHelperValues(Value<?> value) {
-            return EncodingContext.of(SosHelperValues.PROPERTY_TYPE)
+            return EncodingContext.of(XmlBeansEncodingFlags.PROPERTY_TYPE)
                     .with(SosHelperValues.GMLID, JavaHelper.generateID(value.toString()));
         }
 

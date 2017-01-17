@@ -48,10 +48,10 @@ import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.w3c.W3CConstants;
-import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.wml.WaterMLConstants;
 import org.n52.shetland.util.DateTimeFormatException;
+import org.n52.svalbard.encode.EncodingValues;
 
 import com.google.common.base.Strings;
 

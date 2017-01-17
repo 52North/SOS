@@ -46,16 +46,16 @@ import net.opengis.swes.x20.InsertSensorResponseDocument;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
 
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
+import org.n52.shetland.ogc.swes.SwesConstants;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.OperationResponseEncoderKey;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 

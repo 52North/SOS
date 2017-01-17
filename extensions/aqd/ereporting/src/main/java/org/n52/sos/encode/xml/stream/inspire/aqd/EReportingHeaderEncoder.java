@@ -37,7 +37,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.joda.time.DateTime;
 
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.shetland.iso.GcoConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -51,7 +50,6 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.XmlStreamWriter;
 import org.n52.sos.inspire.aqd.Address;
 import org.n52.sos.inspire.aqd.Contact;
@@ -65,6 +63,8 @@ import org.n52.sos.inspire.aqd.Spelling;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Reference;
 import org.n52.sos.util.Referenceable;
+import org.n52.svalbard.encode.EncodingValues;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Optional;
 

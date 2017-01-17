@@ -40,17 +40,17 @@ import javax.xml.soap.SOAPMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.w3c.soap.SoapHeader;
-import org.n52.iceland.w3c.soap.SoapHelper;
-import org.n52.iceland.w3c.soap.SoapResponse;
-import org.n52.iceland.w3c.wsa.WsaActionHeader;
-import org.n52.iceland.w3c.wsa.WsaConstants;
-import org.n52.iceland.w3c.wsa.WsaHeader;
 import org.n52.shetland.w3c.W3CConstants;
+import org.n52.shetland.w3c.soap.SoapHeader;
+import org.n52.shetland.w3c.soap.SoapHelper;
+import org.n52.shetland.w3c.soap.SoapResponse;
+import org.n52.shetland.w3c.wsa.WsaActionHeader;
+import org.n52.shetland.w3c.wsa.WsaConstants;
+import org.n52.shetland.w3c.wsa.WsaHeader;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 

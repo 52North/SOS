@@ -26,48 +26,51 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate;
+package org.n52.sos.ogc.sos;
 
-import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionKey;
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
+import org.n52.janmayen.component.Component;
+import org.n52.shetland.ogc.ows.extension.Extensions;
 
 /**
- * TODO JavaDoc
- * @author Christian Autermann
+ * Interface for OfferingExtensionProvider. Implementations of this interface
+ * are loaded by the {@link OfferingExtensionRepository}.
+ *
+ * @since 1.0.0
+ *
  */
-public abstract class AbstractCapabilitiesExtensionProvider implements OwsCapabilitiesExtensionProvider {
-    private final String operation;
-    private final OwsCapabilitiesExtensionKey key;
+public interface SosObservationOfferingExtensionProvider extends Component<SosObservationOfferingExtensionKey> {
 
-    public AbstractCapabilitiesExtensionProvider(String service,
-                                                 String version,
-                                                 String operation) {
-        this.operation = operation;
-        this.key = new OwsCapabilitiesExtensionKey(service, version);
-    }
+    /**
+     * Get the offering extension for the specific offering identifier this
+     * provider provides.
+     *
+     * @param identifier
+     *            the identifier to get extension for
+     * @return provided offering extensions
+     */
+   Extensions getOfferingExtensions(String identifier);
 
-    @Override
+    /**
+     * Check if this provider provide offering extensions for the specific
+     * identifier
+     *
+     * @param identifier
+     *            the identifier to check
+     * @return <code>true</code>, if offering extensions provided for this
+     *         identifier
+     */
+    boolean hasExtendedOfferingFor(String identifier);
+
+    /**
+     * Get the offering extension keys
+     *
+     * @return the offering extension keys
+     */
     @Deprecated
-    public OwsCapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return this.key;
-    }
-
-    @Override
-    public boolean hasRelatedOperation() {
-        return this.operation != null;
-    }
-
-    @Override
-    public String getRelatedOperation() {
-        return this.operation;
-    }
-
-    @Override
-    public Set<OwsCapabilitiesExtensionKey> getKeys() {
-        return Collections.singleton(this.key);
+    default Set<SosObservationOfferingExtensionKey> getOfferingExtensionKeyTypes() {
+        return getKeys();
     }
 
 }

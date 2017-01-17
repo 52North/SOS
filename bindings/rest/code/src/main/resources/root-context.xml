@@ -10,22 +10,6 @@
         <property name="order" value="4.2" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.sensor.create" />
-        <property name="title" value="Resource Relation Sensor Create" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="50.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="sensor-create" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.sensor.get" />
-        <property name="title" value="Resource Relation Sensor Get" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="52.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="sensor-get" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.errorMsg.badGetRequest.noValidKvpParameter" />
         <property name="title" value="Error Message - No valid KVP parameter" />
         <property name="description" value="The bad GET request error message when no valid KVP paramter is found." />
@@ -98,28 +82,12 @@
         <property name="defaultValue" value="unknown/unknown" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.observableproperty.get" />
-        <property name="title" value="Resource Relation Observableproperty Get" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="42.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="property-get" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.kvp.encoding.valuesplitter" />
         <property name="title" value="Kvp Encoding Valuesplitter" />
         <property name="description" value="TODO: Add description." />
         <property name="order" value="34.0" />
         <property name="group" ref="restBindingSettingsDefinitionGroup" />
         <property name="defaultValue" value="," />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.http.get.parametername.spatialfilter" />
-        <property name="title" value="Http Get Parametername Spatialfilter" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="23.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="spatialfilter" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.errorMsg.badGetRequest.byId" />
@@ -130,28 +98,12 @@
         <property name="defaultValue" value="&quot;../%s/$RESOURCE_ID&quot;" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.http.get.parametername.namespaces" />
-        <property name="title" value="Http Get Parametername Namespaces" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="19.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="namespaces" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.urlEncoding" />
         <property name="title" value="URL encoding - default" />
         <property name="description" value="The default value fo the URL encoding." />
         <property name="order" value="5.0" />
         <property name="group" ref="restBindingSettingsDefinitionGroup" />
         <property name="defaultValue" value="UTF-8" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.observations.get" />
-        <property name="title" value="Resource Relation Observations Get" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="46.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="observations-get" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.errorMsg.badGetRequest" />
@@ -162,22 +114,6 @@
         <property name="defaultValue" value="Received GET request invalid for resource type &quot;%s&quot;. Try " />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.http.get.parametername.foi" />
-        <property name="title" value="Http Get Parametername Foi" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="18.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="feature" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.observation.create" />
-        <property name="title" value="Resource Relation Observation Create" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="43.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="observation-create" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.errorMsg.badGetRequest.globalResource" />
         <property name="title" value="Error Message - Bad GET request global resource" />
         <property name="description" value="The bad GET request global resource error message" />
@@ -186,36 +122,12 @@
         <property name="defaultValue" value="&quot;..%s&quot;" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.sensor.delete" />
-        <property name="title" value="Resource Relation Sensor Delete" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="51.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="sensor-delete" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.contentType.default" />
         <property name="title" value="Content type - default" />
         <property name="description" value="Default content type returned by this binding" />
         <property name="order" value="1.0" />
         <property name="group" ref="restBindingSettingsDefinitionGroup" />
         <property name="defaultValue" value="application/gml+xml" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.sensors.get" />
-        <property name="title" value="Resource Relation Sensors Get" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="53.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="sensors-get" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.http.get.parametername.temporalfilter" />
-        <property name="title" value="Http Get Parametername Temporalfilter" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="24.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="temporalfilter" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.sos.service" />
@@ -241,14 +153,6 @@
         <property name="group" ref="restBindingSettingsDefinitionGroup" />
         <property name="defaultValue" value="InsertionMetadata" />
     </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.http.get.parametername.offering" />
-        <property name="title" value="Http Get Parametername Offering" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="21.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="offering" />
-    </bean>
     <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="rest.epsgcode.default" />
         <property name="title" value="EPSG Code - default" />
@@ -256,30 +160,6 @@
         <property name="order" value="4.0" />
         <property name="group" ref="restBindingSettingsDefinitionGroup" />
         <property name="defaultValue" value="4326" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.observation.delete" />
-        <property name="title" value="Resource Relation Observation Delete" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="44.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="observation-delete" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.observation.get" />
-        <property name="title" value="Resource Relation Observation Get" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="45.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="observation-get" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.feature.get" />
-        <property name="title" value="Resource Relation Feature Get" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="40.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="feature-get" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.sos.version" />
@@ -297,14 +177,6 @@
         <property name="group" ref="restBindingSettingsDefinitionGroup" />
         <property name="defaultValue" value="offerings" />
     </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.features.get" />
-        <property name="title" value="Resource Relation Features Get" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="41.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="features-get" />
-    </bean>
     <bean class="org.n52.faroe.settings.UriSettingDefinition">
         <property name="key" value="rest.encodingNamspace" />
         <property name="title" value="RESTful encoding - namespace URI" />
@@ -314,76 +186,12 @@
         <property name="defaultValue" value="http://www.opengis.net/sosREST/1.0" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.sensor.update" />
-        <property name="title" value="Resource Relation Sensor Update" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="54.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="sensor-update" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.sos.capabilities.section.name.contents" />
         <property name="title" value="Sos Capabilities Section Name Contents" />
         <property name="description" value="TODO: Add description." />
         <property name="order" value="60.0" />
         <property name="group" ref="restBindingSettingsDefinitionGroup" />
         <property name="defaultValue" value="Contents" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.self" />
-        <property name="title" value="Resource Relation Self" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="49.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="self" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.features" />
-        <property name="title" value="Resource Features" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="36.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="features" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.observations" />
-        <property name="title" value="Resource Observations" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="38.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="observations" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.http.get.parametername.observedproperty" />
-        <property name="title" value="Http Get Parametername Observedproperty" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="20.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="observedproperties" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.http.get.parametername.procedures" />
-        <property name="title" value="Http Get Parametername Procedures" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="22.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="procedures" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.relation.offerings.get" />
-        <property name="title" value="Resource Relation Offerings Get" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="48.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="offerings-get" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.capabilities" />
-        <property name="title" value="Resource Capabilities" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="35.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="capabilities" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.sos.terms.procedureidentifier" />
@@ -400,22 +208,6 @@
         <property name="order" value="14.0" />
         <property name="group" ref="restBindingSettingsDefinitionGroup" />
         <property name="defaultValue" value="request with wrong content type received." />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.sensors" />
-        <property name="title" value="Resource Sensors" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="55.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="sensors" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="rest.resource.observableproperties" />
-        <property name="title" value="Resource Observableproperties" />
-        <property name="description" value="TODO: Add description." />
-        <property name="order" value="37.0" />
-        <property name="group" ref="restBindingSettingsDefinitionGroup" />
-        <property name="defaultValue" value="properties" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="rest.errorMsg.badGetRequest.search" />

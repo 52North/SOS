@@ -46,7 +46,6 @@ import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -61,6 +60,7 @@ import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.svalbard.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 
 /**
  * Implementation of the interface CacheFeederDAO
@@ -80,7 +80,7 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     private Locale defaultLocale;
     private I18NDAORepository i18NDAORepository;
     private FeatureQueryHandler featureQueryHandler;
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
     private HibernateSessionHolder sessionHolder;
     private DaoFactory daoFactory;
 
@@ -98,7 +98,7 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     }
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 

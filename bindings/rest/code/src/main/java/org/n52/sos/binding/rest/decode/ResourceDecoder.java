@@ -56,8 +56,6 @@ import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
-import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
-import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -70,7 +68,6 @@ import org.n52.shetland.util.DateTimeParseException;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestRequest;
-import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.JTSHelper;
@@ -85,18 +82,25 @@ public abstract class ResourceDecoder extends RestDecoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceDecoder.class);
 
+    protected final Constants bindingConstants;
     private String srsNamePrefixUrl;
     private String srsNamePrefixUrn;
 
-    protected Constants bindingConstants = Constants.getInstance();
+    public ResourceDecoder(Constants constants) {
+        this.bindingConstants = constants;
+    }
 
-    protected abstract RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
+    protected abstract RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws
+            DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodeDeleteRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
+    protected abstract RestRequest decodeDeleteRequest(HttpServletRequest httpRequest, String pathPayload) throws
+            DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodePostRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
+    protected abstract RestRequest decodePostRequest(HttpServletRequest httpRequest, String pathPayload) throws
+            DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
+    protected abstract RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws
+            DecodingException, OwsExceptionReport;
 
     protected abstract RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload);
 
@@ -110,79 +114,75 @@ public abstract class ResourceDecoder extends RestDecoder {
         this.srsNamePrefixUrl = srsNamePrefixUrl;
     }
 
-    protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws DecodingException
-    {
+    protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws DecodingException {
         String resourceType = null;
         String pathPayload = null;
 
         if (httpRequest != null && httpRequest.getPathInfo() != null) {
 
-            final String resourceTypeWithOrWithoutId = getResourceTypeFromPathInfoWithWorkingUrl(httpRequest.getPathInfo());
+            final String resourceTypeWithOrWithoutId = getResourceTypeFromPathInfoWithWorkingUrl(httpRequest
+                    .getPathInfo());
             final int indexOfPotentialSecondSlash = resourceTypeWithOrWithoutId.indexOf('/');
 
             if (indexOfPotentialSecondSlash > 1) {
-                resourceType = resourceTypeWithOrWithoutId.substring(0,indexOfPotentialSecondSlash);
+                resourceType = resourceTypeWithOrWithoutId.substring(0, indexOfPotentialSecondSlash);
                 pathPayload = resourceTypeWithOrWithoutId.substring(indexOfPotentialSecondSlash + 1);
             } else {
                 resourceType = resourceTypeWithOrWithoutId;
             }
 
-            LOGGER.debug("resourceType: {}; pathPayload: {} ",resourceType,pathPayload);
+            LOGGER.debug("resourceType: {}; pathPayload: {} ", resourceType, pathPayload);
             try {
-            // delegate to HTTP method specific decoders for parsing this resource's request
-            if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.GET) ||
-                httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.HEAD)) {
-                return decodeGetRequest(httpRequest, pathPayload);
-            } else if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.DELETE)) {
-                return decodeDeleteRequest(httpRequest,pathPayload);
-            } else if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.POST)) {
-                return decodePostRequest(httpRequest,pathPayload);
-            } else if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.PUT)) {
-                return decodePutRequest(httpRequest,pathPayload);
-            } else if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.OPTIONS)) {
-                return decodeOptionsRequest(httpRequest,pathPayload);
-            }
+                // delegate to HTTP method specific decoders for parsing this resource's request
+                if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.GET) ||
+                    httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.HEAD)) {
+                    return decodeGetRequest(httpRequest, pathPayload);
+                } else if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.DELETE)) {
+                    return decodeDeleteRequest(httpRequest, pathPayload);
+                } else if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.POST)) {
+                    return decodePostRequest(httpRequest, pathPayload);
+                } else if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.PUT)) {
+                    return decodePutRequest(httpRequest, pathPayload);
+                } else if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.OPTIONS)) {
+                    return decodeOptionsRequest(httpRequest, pathPayload);
+                }
             } catch (OwsExceptionReport owse) {
                 throw new DecodingException(owse);
             }
         }
 
-        final String exceptionText = String.format("The resource type \"%s\" via HTTP method \"%s\" is not supported by this IDecoder implementiation.",
-                resourceType,
-                httpRequest.getMethod());
+        final String exceptionText = String
+                .format("The resource type \"%s\" via HTTP method \"%s\" is not supported by this IDecoder implementiation.",
+                        resourceType,
+                        httpRequest.getMethod());
         LOGGER.debug(exceptionText);
         throw new DecodingException(resourceType);
 
     }
 
-    protected String getRelationIdentifierWithNamespace(final String resourceRelationIdentifier)
-    {
+    protected String getRelationIdentifierWithNamespace(final String resourceRelationIdentifier) {
         return bindingConstants.getEncodingNamespace()
                 .concat("/")
                 .concat(resourceRelationIdentifier);
     }
 
-    protected GetCapabilitiesRequest createGetCapabilitiesRequest()
-    {
-        final GetCapabilitiesRequest getCapabilitiesRequest = new GetCapabilitiesRequest(SosConstants.SOS);
-        getCapabilitiesRequest.setVersion(bindingConstants.getSosVersion());
-        getCapabilitiesRequest.setService(bindingConstants.getSosService());
-        final String[] acceptedVersions = { bindingConstants.getSosVersion() };
-        getCapabilitiesRequest.setAcceptVersions(Arrays.asList(acceptedVersions));
-
-        return getCapabilitiesRequest;
+    protected GetCapabilitiesRequest createGetCapabilitiesRequest() {
+        GetCapabilitiesRequest request = new GetCapabilitiesRequest(SosConstants.SOS);
+        request.setVersion(bindingConstants.getSosVersion());
+        request.setService(bindingConstants.getSosService());
+        String[] acceptedVersions = { bindingConstants.getSosVersion() };
+        request.setAcceptVersions(Arrays.asList(acceptedVersions));
+        return request;
     }
 
-    protected String getResourceIdFromRestfulHref(final String restfulHref)
-    {
-        return restfulHref.substring(restfulHref.lastIndexOf("/")+1);
+    protected String getResourceIdFromRestfulHref(final String restfulHref) {
+        return restfulHref.substring(restfulHref.lastIndexOf('/') + 1);
     }
 
-    protected GetCapabilitiesRequest createGetCapabilitiesRequestWithContentSectionOnly()
-    {
-        final GetCapabilitiesRequest getCapabilitiesRequestOnlyContents = createGetCapabilitiesRequest();
+    protected GetCapabilitiesRequest createGetCapabilitiesRequestWithContentSectionOnly() {
+        GetCapabilitiesRequest getCapabilitiesRequestOnlyContents = createGetCapabilitiesRequest();
 
-        final ArrayList<String> sections = new ArrayList<String>();
+        ArrayList<String> sections = new ArrayList<>(1);
         sections.add(bindingConstants.getSosCapabilitiesSectionNameContents());
         getCapabilitiesRequestOnlyContents.setSections(sections);
 
@@ -190,19 +190,18 @@ public abstract class ResourceDecoder extends RestDecoder {
     }
 
     // TODO use this to return operation not allowed response
-    protected DecodingException createHttpMethodForThisResourceNotSupportedException(final String httpMethod, final String resourceType)
-    {
-        final String exceptionText = String.format("The HTTP-%s %s \"%s\"!",
-                httpMethod,
-                bindingConstants.getHttpOperationNotAllowedForResourceTypeMessagePart(),
-                resourceType);
-        final OperationNotSupportedException onse = new OperationNotSupportedException(exceptionText);
-        return new DecodingException(onse);
+    protected DecodingException createHttpMethodForThisResourceNotSupportedException(String httpMethod,
+                                                                                     String resourceType) {
+        String exceptionText = String.format("The HTTP-%s %s \"%s\"!",
+                                             httpMethod,
+                                             bindingConstants
+                                                     .getHttpOperationNotAllowedForResourceTypeMessagePart(),
+                                             resourceType);
+        return new DecodingException(new OperationNotSupportedException(exceptionText));
     }
 
-    protected Map<String, String> getKvPEncodedParameters(final HttpServletRequest httpRequest)
-    {
-        final Map<String, String> kvp = new HashMap<String, String>();
+    protected Map<String, String> getKvPEncodedParameters(HttpServletRequest httpRequest) {
+        final Map<String, String> kvp = new HashMap<>();
         final Enumeration<?> parameterNames = httpRequest.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             // all key names to lower case
@@ -212,7 +211,7 @@ public abstract class ResourceDecoder extends RestDecoder {
         return kvp;
     }
 
-    protected String checkParameterSingleValue(final String parameterValue, final String parameterName)
+    protected String checkParameterSingleValue(String parameterValue, String parameterName)
             throws DecodingException {
         if (!parameterValue.isEmpty() && (parameterValue.split(",").length == 1)) {
             return parameterValue;
@@ -223,18 +222,16 @@ public abstract class ResourceDecoder extends RestDecoder {
         }
     }
 
-    protected List<String> splitKvpParameterValueToList(final String value)
-    {
+    protected List<String> splitKvpParameterValueToList(String value) {
         return Arrays.asList(value.split(bindingConstants.getKvPEncodingValueSplitter()));
     }
-
 
     /**
      * {@link org.n52.sos.decode.SosKvpDecoderv20#parseNamespaces(String)}
      */
-    protected Map<String, String> parseNamespaces(final String values) {
-        final List<String> array = Arrays.asList(values.replaceAll("\\),", "").replaceAll("\\)", "").split("xmlns\\("));
-        final Map<String, String> namespaces = new HashMap<>(array.size());
+    protected Map<String, String> parseNamespaces(String values) {
+        List<String> array = Arrays.asList(values.replaceAll("\\),", "").replaceAll("\\)", "").split("xmlns\\("));
+        Map<String, String> namespaces = new HashMap<>(array.size());
         array.stream()
                 .map(Strings::emptyToNull)
                 .filter(Objects::nonNull)
@@ -247,12 +244,12 @@ public abstract class ResourceDecoder extends RestDecoder {
      * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#parseTemporalFilter(List<String>, String)}
      * TODO move to KVP map decoder to share code
      */
-    protected List<TemporalFilter> parseTemporalFilter(final List<String> parameterValues)
+    protected List<TemporalFilter> parseTemporalFilter(List<String> parameterValues)
             throws DateTimeException, DecodingException {
-        final List<TemporalFilter> filterList = new ArrayList<>(1);
+        List<TemporalFilter> filterList = new ArrayList<>(1);
         if (parameterValues.size() != 2) {
             throw new DecodingException(
-                    bindingConstants.getHttpGetParameterNameTemporalFilter(),
+                    (Constants.REST_HTTP_GET_PARAMETERNAME_TEMPORAL_FILTER),
                     Arrays.toString(parameterValues.toArray()));
         }
         filterList.add(createTemporalFilterFromValue(parameterValues.get(1), parameterValues.get(0)));
@@ -264,10 +261,11 @@ public abstract class ResourceDecoder extends RestDecoder {
      * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#createTemporalFilterFromValue(String, String)}
      * TODO move to KVP map decoder to share code
      */
-    private TemporalFilter createTemporalFilterFromValue(final String value, final String valueReference) throws DateTimeException, DecodingException {
-        final TemporalFilter temporalFilter = new TemporalFilter();
+    private TemporalFilter createTemporalFilterFromValue(String value, String valueReference) throws
+            DateTimeException, DecodingException {
+        TemporalFilter temporalFilter = new TemporalFilter();
         temporalFilter.setValueReference(valueReference);
-        final String[] times = value.split("/");
+        String[] times = value.split("/");
 
         switch (times.length) {
             case 1:
@@ -277,7 +275,8 @@ public abstract class ResourceDecoder extends RestDecoder {
                     ti.setRequestedTimeLength(DateTimeHelper.getTimeLengthBeforeTimeZone(times[0]));
                 } catch (DateTimeParseException e) {
                     ti.setIndeterminateValue(new IndeterminateValue(times[0]));
-                }   temporalFilter.setOperator(TimeOperator.TM_Equals);
+                }
+                temporalFilter.setOperator(TimeOperator.TM_Equals);
                 temporalFilter.setTime(ti);
                 break;
             case 2:
@@ -292,16 +291,16 @@ public abstract class ResourceDecoder extends RestDecoder {
                 temporalFilter.setTime(tp);
                 break;
             default:
-                throw new DecodingException(bindingConstants.getHttpGetParameterNameTemporalFilter(),"The value '%s' of the parameter '%s' is invalid", value);
+                throw new DecodingException((Constants.REST_HTTP_GET_PARAMETERNAME_TEMPORAL_FILTER), "The value '%s' of the parameter '%s' is invalid", value);
         }
         return temporalFilter;
     }
 
     /**
-     * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#parseSpatialFilter(List<String>, String)}
-     * TODO move to KVP map decoder to share code
+     * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#parseSpatialFilter(List<String>, String)} TODO move to KVP
+     * map decoder to share code
      */
-    protected SpatialFilter parseSpatialFilter(List<String> parameterValues, final String parameterName)
+    protected SpatialFilter parseSpatialFilter(List<String> parameterValues, String parameterName)
             throws DecodingException {
         if (!parameterValues.isEmpty()) {
             if (!(parameterValues instanceof RandomAccess)) {
@@ -330,9 +329,12 @@ public abstract class ResourceDecoder extends RestDecoder {
             if (coordinates.size() != 4) {
                 throw new DecodingException(parameterName, "The parameter value of '%s' is not valid!", parameterName);
             }
-            final String lowerCorner = String.format(Locale.US, "%f %f", new Float(coordinates.get(0)), new Float(coordinates.get(1)));
-            final String upperCorner = String.format(Locale.US, "%f %f", new Float(coordinates.get(2)), new Float(coordinates.get(3)));
-            spatialFilter.setGeometry(JTSHelper.createGeometryFromWKT(JTSHelper.createWKTPolygonFromEnvelope(lowerCorner, upperCorner), srid));
+            final String lowerCorner = String
+                    .format(Locale.US, "%f %f", new Float(coordinates.get(0)), new Float(coordinates.get(1)));
+            final String upperCorner = String
+                    .format(Locale.US, "%f %f", new Float(coordinates.get(2)), new Float(coordinates.get(3)));
+            spatialFilter.setGeometry(JTSHelper.createGeometryFromWKT(JTSHelper
+                    .createWKTPolygonFromEnvelope(lowerCorner, upperCorner), srid));
             spatialFilter.setOperator(SpatialOperator.BBOX);
             return spatialFilter;
         }
@@ -347,50 +349,39 @@ public abstract class ResourceDecoder extends RestDecoder {
         return srsNamePrefixUrl;
     }
 
-
-    protected boolean isContentOfPostRequestValid(final HttpServletRequest httpRequest) throws DecodingException
-    {
-        if ((httpRequest == null) || (httpRequest.getContentType() == null))
-        {
+    protected boolean isContentOfPostRequestValid(final HttpServletRequest httpRequest) throws DecodingException {
+        if ((httpRequest == null) || (httpRequest.getContentType() == null)) {
             final String errorMessage = "HTTP header 'Content-Type'";
             LOGGER.debug("{} is missing", errorMessage);
             throw new DecodingException(errorMessage);
         }
-        if (!httpRequest.getContentType().contains(bindingConstants.getContentTypeDefault().toString()))
-        {
+        if (!httpRequest.getContentType().contains(bindingConstants.getContentTypeDefault().toString())) {
             final String errorMessage = String.format("POST %s Type \"%s\" is not supported. Please use type \"%s\"",
-                    bindingConstants.getErrorMessageWrongContentType(),
-                    httpRequest.getContentType(),
-                    bindingConstants.getContentTypeDefault());
+                                                      bindingConstants.getErrorMessageWrongContentType(),
+                                                      httpRequest.getContentType(),
+                                                      bindingConstants.getContentTypeDefault());
             LOGGER.debug(errorMessage);
             throw new DecodingException("Content-Type", errorMessage);
         }
         return true;
     }
 
-    protected String createBadGetRequestMessage(final String resourceType,
-            final boolean globalResoureAllowed,
-            final boolean byIdAllowed,
-            final boolean searchAllowed)
-    {
+    protected String createBadGetRequestMessage(String resourceType, boolean globalResoureAllowed, boolean byIdAllowed,
+                                                boolean searchAllowed) {
         final StringBuilder errorMsgBuilder = new StringBuilder();
         errorMsgBuilder.append(String.format(bindingConstants.getErrorMessageBadGetRequest(), resourceType));
-        if (globalResoureAllowed)
-        {
-            errorMsgBuilder.append(String.format(bindingConstants.getErrorMessageBadGetRequestGlobalResource(), resourceType));
+        if (globalResoureAllowed) {
+            errorMsgBuilder.append(String
+                    .format(bindingConstants.getErrorMessageBadGetRequestGlobalResource(), resourceType));
         }
-        if (byIdAllowed)
-        {
-            if (globalResoureAllowed)
-            {
+        if (byIdAllowed) {
+            if (globalResoureAllowed) {
                 errorMsgBuilder.append(" or ");
             }
             errorMsgBuilder.append(String.format(bindingConstants.getErrorMessageBadGetRequestById(), resourceType));
         }
-        if (searchAllowed)
-        {
-            if (globalResoureAllowed || byIdAllowed)
-            {
+        if (searchAllowed) {
+            if (globalResoureAllowed || byIdAllowed) {
                 errorMsgBuilder.append(" or ");
             }
             errorMsgBuilder.append(String.format(bindingConstants.getErrorMessageBadGetRequestSearch(), resourceType));

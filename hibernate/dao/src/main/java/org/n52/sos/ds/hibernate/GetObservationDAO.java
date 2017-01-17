@@ -47,7 +47,6 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.service.MiscSettings;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.http.HTTPStatus;
@@ -97,10 +96,13 @@ import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.XmlEncoderKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.n52.svalbard.ConformanceClasses;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 
 /**
  * Implementation of the abstract class AbstractGetObservationHandler
@@ -114,7 +116,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
 
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
     private EncoderRepository encoderRepository;
     private DaoFactory daoFactory;
     private final EntitiyHelper entitiyHelper = new EntitiyHelper();
@@ -138,7 +140,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     }
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 

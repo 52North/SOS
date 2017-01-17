@@ -28,7 +28,6 @@
  */
 package org.n52.sos.binding.rest.resources.sensors;
 
-
 import net.opengis.sosREST.x10.ResourceCollectionType;
 import net.opengis.sosREST.x10.SensorCollectionDocument;
 import net.opengis.sosREST.x10.SensorDocument;
@@ -38,25 +37,26 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class SensorsGetEncoder extends ASensorsEncoder {
+    public SensorsGetEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
 
-    public ServiceResponse encodeRestResponse(RestResponse restResponse) throws OwsExceptionReport
-    {
-        if (restResponse != null)
-        {
-            if(restResponse instanceof GetSensorByIdResponse)
-            {
-                return encodeGetSensorByIdRequest((GetSensorByIdResponse)restResponse);
-            }
-            else if (restResponse instanceof SensorsGetResponse)
-            {
-                return encodeGetSensorsResponse((SensorsGetResponse)restResponse);
+    @Override
+    public ServiceResponse encodeRestResponse(RestResponse restResponse) throws OwsExceptionReport {
+        if (restResponse != null) {
+            if (restResponse instanceof GetSensorByIdResponse) {
+                return encodeGetSensorByIdRequest((GetSensorByIdResponse) restResponse);
+            } else if (restResponse instanceof SensorsGetResponse) {
+                return encodeGetSensorsResponse((SensorsGetResponse) restResponse);
             }
         }
         throw createResponseNotSupportedException(
@@ -64,41 +64,34 @@ public class SensorsGetEncoder extends ASensorsEncoder {
                 restResponse);
     }
 
-    private ServiceResponse encodeGetSensorsResponse(SensorsGetResponse restResponse) throws OwsExceptionReport
-    {
+    private ServiceResponse encodeGetSensorsResponse(SensorsGetResponse restResponse) throws OwsExceptionReport {
         SensorCollectionDocument xb_SensorsDoc = SensorCollectionDocument.Factory.newInstance();
         ResourceCollectionType xb_Sensors = xb_SensorsDoc.addNewSensorCollection();
 
         // 0 add self link
-        setValuesOfLinkToGlobalResource(xb_Sensors.addNewLink(),
-                bindingConstants.getResourceRelationSelf(),
-                bindingConstants.getResourceSensors());
+        setValuesOfLinkToGlobalResource(xb_Sensors.addNewLink(), Constants.REST_RESOURCE_RELATION_SELF, Constants.REST_RESOURCE_SENSORS);
 
         // 1 add sensor links
         for (String sensorId : restResponse.getSensorIds()) {
             setValuesOfLinkToUniqueResource(xb_Sensors.addNewLink(),
-                    sensorId,
-                    bindingConstants.getResourceRelationSensorGet(),
-                    bindingConstants.getResourceSensors());
+                                            sensorId, Constants.REST_RESOURCE_RELATION_SENSOR_GET, Constants.REST_RESOURCE_SENSORS);
         }
 
-        return createSensorResponseWithStatusOk(xb_SensorsDoc,true,true);
+        return createSensorResponseWithStatusOk(xb_SensorsDoc, true, true);
     }
 
-    private ServiceResponse encodeGetSensorByIdRequest(GetSensorByIdResponse sensorsGetResponse) throws OwsExceptionReport
-    {
+    private ServiceResponse encodeGetSensorByIdRequest(GetSensorByIdResponse sensorsGetResponse) throws
+            OwsExceptionReport {
         SensorDocument xb_SensorRestDoc = SensorDocument.Factory.newInstance();
         createRestDefaultRestSensor(sensorsGetResponse, xb_SensorRestDoc);
-        return createSensorResponseWithStatusOk(xb_SensorRestDoc,false,false);
+        return createSensorResponseWithStatusOk(xb_SensorRestDoc, false, false);
     }
 
-    private ServiceResponse createSensorResponseWithStatusOk(XmlObject xb_SensorsDoc, boolean isResourceCollection, boolean isGlobalResource) throws OwsExceptionReport
-    {
-        return createServiceResponseFromXBDocument(
-                xb_SensorsDoc,
-                bindingConstants.getResourceSensors(),
-                HTTPStatus.OK,
-                isResourceCollection,isGlobalResource);
+    private ServiceResponse createSensorResponseWithStatusOk(XmlObject xb_SensorsDoc, boolean isResourceCollection,
+                                                             boolean isGlobalResource) throws OwsExceptionReport {
+        return createServiceResponseFromXBDocument(xb_SensorsDoc, Constants.REST_RESOURCE_SENSORS,
+                                                   HTTPStatus.OK,
+                                                   isResourceCollection, isGlobalResource);
     }
 
 }

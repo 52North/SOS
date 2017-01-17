@@ -37,9 +37,9 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.cache.ContentCacheController;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.inspire.InspireLanguageISO6392B;

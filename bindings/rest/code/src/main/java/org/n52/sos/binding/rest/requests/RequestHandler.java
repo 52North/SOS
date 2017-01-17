@@ -43,7 +43,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.EncoderResponseUnsupportedException;
 import org.n52.iceland.exception.ows.concrete.ServiceOperatorNotFoundException;
 import org.n52.iceland.service.operator.ServiceOperator;
@@ -59,6 +58,7 @@ import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.svalbard.OperationKey;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.OperationResponseEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
@@ -70,7 +70,18 @@ public abstract class RequestHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
 
-    protected Constants bindingConstants = Constants.getInstance();
+    private final Constants constants;
+    private final EncoderRepository encoderRepository;
+    private final ServiceOperatorRepository serviceOperatorRepository;
+
+    public RequestHandler(Constants bindingConstants,
+                          EncoderRepository encoderRepository,
+                          ServiceOperatorRepository serviceOperatorRepository) {
+        this.constants = bindingConstants;
+        this.encoderRepository = encoderRepository;
+        this.serviceOperatorRepository = serviceOperatorRepository;
+    }
+
 
     public abstract RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException;
 
@@ -141,7 +152,6 @@ public abstract class RequestHandler {
     {
         String service = req.getService();
         String version = req.getVersion();
-        ServiceOperatorRepository serviceOperatorRepository = ServiceOperatorRepository.getInstance();
         if (req instanceof GetCapabilitiesRequest) {
             GetCapabilitiesRequest gcr = (GetCapabilitiesRequest) req;
             if (gcr.isSetAcceptVersions()) {
@@ -169,11 +179,23 @@ public abstract class RequestHandler {
         OperationResponseEncoderKey key = new OperationResponseEncoderKey(
                 new OperationKey(response), MediaTypes.TEXT_XML);
         Encoder<XmlObject, OwsServiceResponse> encoder =
-                CodingRepository.getInstance().getEncoder(key);
+                encoderRepository.getEncoder(key);
         if (encoder == null) {
             throw new NoEncoderForKeyException(key);
         }
         return encoder.encode(response);
+    }
+
+    public Constants getConstants() {
+        return constants;
+    }
+
+    public EncoderRepository getEncoderRepository() {
+        return encoderRepository;
+    }
+
+    public ServiceOperatorRepository getServiceOperatorRepository() {
+        return serviceOperatorRepository;
     }
 
 }

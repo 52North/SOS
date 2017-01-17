@@ -28,9 +28,9 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>

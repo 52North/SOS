@@ -26,48 +26,45 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate;
+package org.n52.sos.ogc.sos;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionKey;
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
+import org.n52.iceland.ogc.AbstractComparableServiceVersionDomainKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 
 /**
- * TODO JavaDoc
- * @author Christian Autermann
+ * Key class to identify {@link OfferingExtensionProvider}.
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 1.0.0
+ *
  */
-public abstract class AbstractCapabilitiesExtensionProvider implements OwsCapabilitiesExtensionProvider {
-    private final String operation;
-    private final OwsCapabilitiesExtensionKey key;
+public class SosObservationOfferingExtensionKey
+        extends AbstractComparableServiceVersionDomainKey<SosObservationOfferingExtensionKey> {
 
-    public AbstractCapabilitiesExtensionProvider(String service,
-                                                 String version,
-                                                 String operation) {
-        this.operation = operation;
-        this.key = new OwsCapabilitiesExtensionKey(service, version);
+    /**
+     * constructor
+     *
+     * @param sok
+     *            the {@link OwsServiceKey} to set
+     * @param domain
+     *            the domain to set
+     */
+    public SosObservationOfferingExtensionKey(OwsServiceKey sok, String domain) {
+        super(sok, domain);
     }
 
-    @Override
-    @Deprecated
-    public OwsCapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return this.key;
-    }
-
-    @Override
-    public boolean hasRelatedOperation() {
-        return this.operation != null;
-    }
-
-    @Override
-    public String getRelatedOperation() {
-        return this.operation;
-    }
-
-    @Override
-    public Set<OwsCapabilitiesExtensionKey> getKeys() {
-        return Collections.singleton(this.key);
+    /**
+     * constructor
+     *
+     * @param service
+     *            the service to set
+     * @param version
+     *            the version to set
+     * @param domain
+     *            the domain to set
+     */
+    public SosObservationOfferingExtensionKey(String service, String version, String domain) {
+        super(service, version, domain);
     }
 
 }

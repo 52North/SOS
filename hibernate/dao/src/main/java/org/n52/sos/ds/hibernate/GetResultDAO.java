@@ -81,6 +81,7 @@ import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.ConformanceClasses;
+import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.DecoderRepository;

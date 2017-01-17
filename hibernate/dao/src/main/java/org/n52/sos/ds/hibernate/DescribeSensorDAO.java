@@ -42,7 +42,6 @@ import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
@@ -72,6 +71,8 @@ import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescr
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+
 
 /**
  * Implementation of the abstract class AbstractDescribeSensorHandler
@@ -87,7 +88,7 @@ import com.google.common.collect.Sets;
 public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements Constructable {
     private HibernateSessionHolder sessionHolder;
 
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
     private HibernateProcedureConverter procedureConverter;
     private ConverterRepository converterRepository;
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
@@ -115,7 +116,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
     }
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 

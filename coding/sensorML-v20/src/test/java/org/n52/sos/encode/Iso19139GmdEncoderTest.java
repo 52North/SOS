@@ -51,7 +51,7 @@ import org.n52.shetland.iso.gmd.GmdQuantitativeResult;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.NamespaceContextBuilder;
-import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.XmlBeansEncodingFlags;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.Iso19139GmdEncoder;
@@ -59,9 +59,9 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.util.XmlHelper;
 
 public class Iso19139GmdEncoderTest {
-    private static final EncodingContext TYPE = EncodingContext.of(SosHelperValues.TYPE);
-    private static final EncodingContext PROPERTY_TYPE = EncodingContext.of(SosHelperValues.PROPERTY_TYPE);
-    private static final EncodingContext DOCUMENT_TYPE = EncodingContext.of(SosHelperValues.DOCUMENT);
+    private static final EncodingContext TYPE = EncodingContext.of(XmlBeansEncodingFlags.TYPE);
+    private static final EncodingContext PROPERTY_TYPE = EncodingContext.of(XmlBeansEncodingFlags.PROPERTY_TYPE);
+    private static final EncodingContext DOCUMENT_TYPE = EncodingContext.of(XmlBeansEncodingFlags.DOCUMENT);
     private static final NamespaceContext NS_CTX = new NamespaceContextBuilder()
             .add(GmlConstants.NS_GML_32, GmlConstants.NS_GML_PREFIX)
             .add(GcoConstants.NS_GCO, GcoConstants.NS_GCO_PREFIX)

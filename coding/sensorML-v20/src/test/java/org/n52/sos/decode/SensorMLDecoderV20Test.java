@@ -42,7 +42,6 @@ import org.junit.Test;
 
 import org.n52.shetland.ogc.sensorML.v20.SmlDataInterface;
 import org.n52.shetland.ogc.swe.SweDataRecord;
-import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.svalbard.decode.SensorMLDecoderV20;
 import org.n52.svalbard.decode.exception.DecodingException;
 
@@ -53,7 +52,7 @@ import org.n52.svalbard.decode.exception.DecodingException;
  *
  * @since 4.3.0
  */
-public class SensorMLDecoderV20Test extends AbstractBeforeAfterClassSettingsManagerTest {
+public class SensorMLDecoderV20Test {
 
     @Test
     public void shouldDecodeDataInterface() throws DecodingException {

@@ -41,6 +41,7 @@ import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
 import org.n52.shetland.ogc.sos.request.BatchRequest;
 import org.n52.shetland.ogc.sos.BatchConstants;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

@@ -63,6 +63,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
 public class JsonCapabilitiesExtensionService
@@ -129,13 +130,14 @@ public class JsonCapabilitiesExtensionService
     }
 
     @Override
-    public void disableOfferingExtension(String offering, String identifier, boolean disabled) throws NoSuchExtensionException, NoSuchOfferingException {
+    public void disableOfferingExtension(String offering, String identifier, boolean disabled) throws
+            NoSuchExtensionException, NoSuchOfferingException {
         writeLock().lock();
         try {
             checkOfferingName(offering);
             ObjectNode extensions = getConfiguration()
-                            .with(JsonConstants.OFFERING_EXTENSIONS)
-                            .with(offering);
+                    .with(JsonConstants.OFFERING_EXTENSIONS)
+                    .with(offering);
 
             if (!extensions.has(identifier)) {
                 throw new NoSuchExtensionException(identifier);
@@ -167,7 +169,6 @@ public class JsonCapabilitiesExtensionService
         configuration().scheduleWrite();
     }
 
-
     @Override
     public Map<String, StringBasedCapabilitiesExtension> getActiveCapabilitiesExtensions() {
         readLock().lock();
@@ -189,7 +190,7 @@ public class JsonCapabilitiesExtensionService
         }
     }
 
-     private Stream<SosObservationOfferingExtension> offeringExtensionStream() {
+    private Stream<SosObservationOfferingExtension> offeringExtensionStream() {
         return createEntryStream(getConfiguration().with(JsonConstants.OFFERING_EXTENSIONS))
                 .flatMap(entry -> {
                     return createEntryStream(entry.getValue())
@@ -201,10 +202,10 @@ public class JsonCapabilitiesExtensionService
                 });
     }
 
-    private OfferingExtensionImpl decodeOfferingExtension(Entry<String, JsonNode> entry) {
+    private SosObservationOfferingExtensionImpl decodeOfferingExtension(Entry<String, JsonNode> entry) {
         String identifier = entry.getKey();
         JsonNode n = entry.getValue();
-        OfferingExtensionImpl oe = new OfferingExtensionImpl();
+        SosObservationOfferingExtensionImpl oe = new SosObservationOfferingExtensionImpl();
         oe.setIdentifier(identifier);
         oe.setDefinition(n.path(JsonConstants.DEFINITION).textValue());
         oe.setDisabled(n.path(JsonConstants.DISABLED).booleanValue());
@@ -342,7 +343,8 @@ public class JsonCapabilitiesExtensionService
         try {
             JsonNode node = getConfiguration().path(JsonConstants.STATIC_CAPABILITIES).path(JsonConstants.CAPABILITIES);
             return createEntryStream(node).collect(toMap(Entry::getKey,
-                                                         e -> new StaticCapabilitiesImpl(e.getKey(), e.getValue().textValue())));
+                                                         e -> new StaticCapabilitiesImpl(e.getKey(), e.getValue()
+                                                                                         .textValue())));
         } finally {
             readLock().unlock();
         }
@@ -397,12 +399,11 @@ public class JsonCapabilitiesExtensionService
         return toMap(Extension<?>::getIdentifier, Function.identity());
     }
 
-
     private static class StaticCapabilitiesImpl implements StaticCapabilities {
         private String document;
         private String identifier;
 
-        public StaticCapabilitiesImpl(String identifier, String document) {
+        StaticCapabilitiesImpl(String identifier, String document) {
             this.identifier = identifier;
             this.document = document;
         }
@@ -451,7 +452,6 @@ public class JsonCapabilitiesExtensionService
             return this.disabled;
         }
 
-
         public void setExtension(String extension) {
             setValue(extension);
         }
@@ -476,9 +476,7 @@ public class JsonCapabilitiesExtensionService
         }
     }
 
-
-    private static class OfferingExtensionImpl
-            extends AbstractSwesExtension
+    private static class SosObservationOfferingExtensionImpl extends AbstractSwesExtension
             implements SosObservationOfferingExtension {
 
         private String offeringName;

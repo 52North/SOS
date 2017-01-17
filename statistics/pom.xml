@@ -6,6 +6,8 @@
         <version>5.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>statistics</artifactId>
+    <name>52°North SOS - OGC Statistics</name>
+    <description>52°North SOS - OGC Statistics</description>
     <dependencies>
         <dependency>
             <groupId>org.n52.svalbard</groupId>
@@ -118,10 +120,6 @@
 
         <!-- N52 -->
         <dependency>
-            <groupId>org.n52.sensorweb.sos</groupId>
-            <artifactId>gda-operation</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
         </dependency>
@@ -133,9 +131,6 @@
             <groupId>org.n52.iceland</groupId>
             <artifactId>statistics-geolocation</artifactId>
         </dependency>
-        
-
-
     </dependencies>
 
     <build>
@@ -150,7 +145,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <name>52°North SOS - OGC Statistics</name>
-    <description>52°North SOS - OGC Statistics</description>
 </project>

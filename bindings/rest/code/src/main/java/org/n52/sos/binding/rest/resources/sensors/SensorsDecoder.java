@@ -73,9 +73,10 @@ import org.n52.svalbard.util.XmlHelper;
  */
 public class SensorsDecoder extends ResourceDecoder {
 
-    public SensorsDecoder() {
-        bindingConstants = Constants.getInstance();
+    public SensorsDecoder(Constants constants) {
+        super(constants);
     }
+
 
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
             String pathPayload) throws OwsExceptionReport
@@ -97,7 +98,7 @@ public class SensorsDecoder extends ResourceDecoder {
             return new GetSensorsRequest(capabilitiesRequest);
 
         } else {
-            String errorMsg = createBadGetRequestMessage(bindingConstants.getResourceSensors(),true,true,false);
+            String errorMsg = createBadGetRequestMessage(org.n52.sos.binding.rest.Constants.REST_RESOURCE_SENSORS,true,true,false);
             BadRequestException bR = new BadRequestException(errorMsg);
             throw new NoApplicableCodeException().causedBy(bR);
         }
@@ -107,8 +108,7 @@ public class SensorsDecoder extends ResourceDecoder {
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
             String pathPayload) throws OwsExceptionReport
     {
-        throw new OperationNotSupportedException(String.format("HTTP-DELETE + \"%s\"",
-                bindingConstants.getResourceSensors()));
+        throw new OperationNotSupportedException(String.format("HTTP-DELETE + \"%s\"", org.n52.sos.binding.rest.Constants.REST_RESOURCE_SENSORS));
     }
 
     @Override
@@ -304,7 +304,7 @@ public class SensorsDecoder extends ResourceDecoder {
             isGlobal = true;
             isCollection = true;
         }
-        return new OptionsRestRequest(bindingConstants.getResourceSensors(),isGlobal,isCollection);
+        return new OptionsRestRequest((Constants.REST_RESOURCE_SENSORS),isGlobal,isCollection);
     }
 
 

@@ -28,7 +28,6 @@
  */
 package org.n52.sos.binding.rest.resources.features;
 
-
 import net.opengis.sosREST.x10.FeatureCollectionDocument;
 import net.opengis.sosREST.x10.FeatureDocument;
 import net.opengis.sosREST.x10.FeatureType;
@@ -37,33 +36,35 @@ import net.opengis.sosREST.x10.ResourceCollectionType;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class FeaturesGetEncoder extends ResourceEncoder {
-
+    public FeaturesGetEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
     @Override
-    public ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport
-    {
+    public ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport {
         if (objectToEncode != null) {
 
             if (objectToEncode instanceof FeatureByIdResponse) {
-                return encodeFeatureByIdResponse((FeatureByIdResponse)objectToEncode);
+                return encodeFeatureByIdResponse((FeatureByIdResponse) objectToEncode);
 
             } else if (objectToEncode instanceof FeaturesResponse) {
-                return encodeFeaturesResponse((FeaturesResponse)objectToEncode);
+                return encodeFeaturesResponse((FeaturesResponse) objectToEncode);
             }
 
         }
         return null;
     }
 
-    private ServiceResponse encodeFeaturesResponse(FeaturesResponse featuresResponse) throws OwsExceptionReport
-    {
+    private ServiceResponse encodeFeaturesResponse(FeaturesResponse featuresResponse) throws OwsExceptionReport {
         String[] featureIds = featuresResponse.getFeatureIds();
         // add feature links
         if (featureIds != null && featureIds.length > 0) {
@@ -77,37 +78,27 @@ public class FeaturesGetEncoder extends ResourceEncoder {
             if (featuresResponse instanceof FeaturesSearchResponse) {
                 // Case A: search -> link with query string
                 setValuesOfLinkToDynamicResource(xb_FeatureCollection.addNewLink(),
-                        ((FeaturesSearchResponse)featuresResponse).getQueryString(),
-                        bindingConstants.getResourceRelationSelf(),
-                        bindingConstants.getResourceFeatures());
+                                                 ((FeaturesSearchResponse) featuresResponse).getQueryString(),
+                                                 Constants.REST_RESOURCE_RELATION_SELF,
+                                                 Constants.REST_RESOURCE_RELATION_FEATURES);
             } else {
                 // Case B: global resource
-                setValuesOfLinkToGlobalResource(xb_FeatureCollection.addNewLink(),
-                        bindingConstants.getResourceRelationSelf(),
-                        bindingConstants.getResourceFeatures());
+                setValuesOfLinkToGlobalResource(xb_FeatureCollection.addNewLink(), Constants.REST_RESOURCE_RELATION_SELF, Constants.REST_RESOURCE_RELATION_FEATURES);
             }
-            return createServiceResponseFromXBDocument(
-                    xb_FeatureCollectionDoc,
-                    bindingConstants.getResourceFeatures(),
-                    HTTPStatus.OK, true, true);
-        }
-        else
-        {
-            return createNoContentResponse(bindingConstants.getResourceFeatures(),true,true);
+            return createServiceResponseFromXBDocument(xb_FeatureCollectionDoc, Constants.REST_RESOURCE_RELATION_FEATURES,
+                                                       HTTPStatus.OK, true, true);
+        } else {
+            return createNoContentResponse(Constants.REST_RESOURCE_RELATION_FEATURES, true, true);
         }
     }
 
     private void addFeatureLink(ResourceCollectionType xb_FeatureCollection,
-            String featureId)
-    {
+                                String featureId) {
         setValuesOfLinkToUniqueResource(xb_FeatureCollection.addNewLink(),
-                featureId,
-                bindingConstants.getResourceRelationFeatureGet(),
-                bindingConstants.getResourceFeatures());
+                                        featureId, Constants.REST_RESOURCE_RELATION_FEATURE_GET, Constants.REST_RESOURCE_RELATION_FEATURES);
     }
 
-    private ServiceResponse encodeFeatureByIdResponse(FeatureByIdResponse featureByIdResponse) throws OwsExceptionReport
-    {
+    private ServiceResponse encodeFeatureByIdResponse(FeatureByIdResponse featureByIdResponse) throws OwsExceptionReport {
         FeatureDocument xb_feature = FeatureDocument.Factory.newInstance();
         FeatureType xb_RestFeature = xb_feature.addNewFeature();
 
@@ -116,13 +107,10 @@ public class FeaturesGetEncoder extends ResourceEncoder {
 
         // add selflink
         setValuesOfLinkToUniqueResource(xb_RestFeature.addNewLink(),
-                featureByIdResponse.getFeatureResourceIdentifier(),
-                bindingConstants.getResourceRelationSelf(),
-                bindingConstants.getResourceFeatures());
+                                        featureByIdResponse.getFeatureResourceIdentifier(), Constants.REST_RESOURCE_RELATION_SELF, Constants.REST_RESOURCE_RELATION_FEATURES);
 
-        return createServiceResponseFromXBDocument(
-                xb_feature, bindingConstants.getResourceFeatures(),
-                HTTPStatus.OK, false, false);
+        return createServiceResponseFromXBDocument(xb_feature, Constants.REST_RESOURCE_RELATION_FEATURES,
+                                                   HTTPStatus.OK, false, false);
     }
 
 }

@@ -32,10 +32,10 @@ import java.net.URI;
 
 import javax.xml.namespace.QName;
 
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.janmayen.http.HTTPMethods;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosSoapConstants;
 import org.n52.shetland.ogc.swes.SwesConstants;
 

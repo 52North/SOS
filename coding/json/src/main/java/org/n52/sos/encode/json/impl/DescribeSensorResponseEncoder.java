@@ -46,6 +46,7 @@ import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

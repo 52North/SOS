@@ -34,6 +34,7 @@ import java.util.Set;
 import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.encode.OwsEncodingException;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;

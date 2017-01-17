@@ -34,9 +34,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.ComponentsDocument.Components.ComponentList;
@@ -70,12 +67,8 @@ import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.SmlContactList;
 import org.n52.shetland.ogc.sensorML.SmlPerson;
 import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
-import org.n52.shetland.ogc.sensorML.System;
-import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.CodingHelper;
 import org.n52.svalbard.util.XmlHelper;
@@ -86,7 +79,7 @@ import org.n52.svalbard.util.XmlOptionsHelper;
  *
  * @since 4.0.0
  */
-public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsManagerTest {
+public class SensorMLDecoderV101Test {
     private static final String TEST_ID_1 = "test-id-1";
 
     private static final String TEST_NAME_1 = "test-name-1";

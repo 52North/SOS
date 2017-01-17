@@ -36,23 +36,6 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.apache.xmlbeans.XmlObject;
-import org.junit.Test;
-import org.n52.shetland.ogc.OGCConstants;
-import org.n52.shetland.ogc.sensorML.SensorML;
-import org.n52.shetland.ogc.sensorML.SensorMLConstants;
-import org.n52.shetland.ogc.sensorML.SmlPerson;
-import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
-import org.n52.shetland.ogc.sensorML.System;
-import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.util.CodingHelper;
-import org.n52.svalbard.util.XmlHelper;
-import org.n52.svalbard.util.XmlOptionsHelper;
-
-import com.google.common.collect.Lists;
-
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.ContactInfoDocument.ContactInfo;
 import net.opengis.sensorML.x101.ContactInfoDocument.ContactInfo.Address;
@@ -68,12 +51,29 @@ import net.opengis.sensorML.x101.SystemType;
 import net.opengis.swe.x101.AnyScalarPropertyType;
 import net.opengis.swe.x101.SimpleDataRecordType;
 
+import org.apache.xmlbeans.XmlObject;
+import org.junit.Test;
+
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.SmlPerson;
+import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
+import org.n52.shetland.ogc.sensorML.System;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlHelper;
+import org.n52.svalbard.util.XmlOptionsHelper;
+
+import com.google.common.collect.Lists;
+
 /**
  * @author Shane StClair
  *
  * @since 4.0.0
  */
-public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsManagerTest {
+public class SensorMLEncoderV101Test {
 
     private static final String TEST_ID_1 = "test-id-1";
 

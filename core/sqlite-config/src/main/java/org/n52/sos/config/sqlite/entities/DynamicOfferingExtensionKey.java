@@ -32,7 +32,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import org.n52.iceland.ogc.swes.OfferingExtensionKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 
 /**
  * Storage key for the entity {@link DynamicOfferingExtension}
@@ -68,9 +68,9 @@ public class DynamicOfferingExtensionKey implements Serializable {
     /**
      * constructor
      *
-     * @param key the {@link OfferingExtensionKey} to set
+     * @param key the {@link SosObservationOfferingExtensionKey} to set
      */
-    public DynamicOfferingExtensionKey(OfferingExtensionKey key) {
+    public DynamicOfferingExtensionKey(SosObservationOfferingExtensionKey key) {
         this(key.getService(), key.getVersion(), key.getDomain());
     }
 

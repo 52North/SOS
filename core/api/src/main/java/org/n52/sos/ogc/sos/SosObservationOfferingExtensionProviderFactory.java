@@ -26,48 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate;
+package org.n52.sos.ogc.sos;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionKey;
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
+import org.n52.janmayen.component.ComponentFactory;
 
 /**
- * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
-public abstract class AbstractCapabilitiesExtensionProvider implements OwsCapabilitiesExtensionProvider {
-    private final String operation;
-    private final OwsCapabilitiesExtensionKey key;
-
-    public AbstractCapabilitiesExtensionProvider(String service,
-                                                 String version,
-                                                 String operation) {
-        this.operation = operation;
-        this.key = new OwsCapabilitiesExtensionKey(service, version);
-    }
-
-    @Override
-    @Deprecated
-    public OwsCapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return this.key;
-    }
-
-    @Override
-    public boolean hasRelatedOperation() {
-        return this.operation != null;
-    }
-
-    @Override
-    public String getRelatedOperation() {
-        return this.operation;
-    }
-
-    @Override
-    public Set<OwsCapabilitiesExtensionKey> getKeys() {
-        return Collections.singleton(this.key);
-    }
+public interface SosObservationOfferingExtensionProviderFactory extends
+        ComponentFactory<SosObservationOfferingExtensionKey, SosObservationOfferingExtensionProvider> {
 
 }

@@ -28,12 +28,12 @@
  */
 package org.n52.sos.gda;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.ogc.sos.GetDataAvailabilityConstants;
-import org.n52.shetland.ogc.sos.response.GetDataAvailabilityResponse;
-import org.n52.shetland.ogc.sos.response.GetDataAvailabilityResponse.DataAvailability;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

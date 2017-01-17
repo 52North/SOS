@@ -34,9 +34,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProvider;
-import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderKey;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.iceland.service.ServiceConfiguration;
@@ -77,6 +75,9 @@ import org.n52.sos.util.SosHelper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+
 /**
  * Provider for the INSPIRE ExtendedCapabilities
  *
@@ -86,15 +87,15 @@ import com.google.common.collect.Sets;
  */
 public class InspireExtendedCapabilitiesProvider
         extends AbstractInspireProvider
-        implements OwsExtendedCapabilitiesProvider {
+        implements OwsOperationMetadataExtensionProvider {
 
-    private final OwsExtendedCapabilitiesProviderKey key
-            = new OwsExtendedCapabilitiesProviderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
+    private final OwsOperationMetadataExtensionProviderKey key
+            = new OwsOperationMetadataExtensionProviderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
 
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 
@@ -104,7 +105,7 @@ public class InspireExtendedCapabilitiesProvider
     }
 
     @Override
-    public Set<OwsExtendedCapabilitiesProviderKey> getKeys() {
+    public Set<OwsOperationMetadataExtensionProviderKey> getKeys() {
         return Collections.singleton(key);
     }
 

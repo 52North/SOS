@@ -45,6 +45,7 @@ import org.n52.janmayen.http.HTTPHeaders;
 import org.n52.janmayen.http.HTTPMethods;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.RestBinding;
 import org.n52.sos.binding.rest.requests.RestResponse;
 import org.n52.sos.exception.ows.concrete.ErrorWhileSavingResponseToOutputStreamException;
@@ -56,20 +57,22 @@ import org.n52.svalbard.util.XmlOptionsHelper;
  *
  */
 public abstract class ResourceEncoder extends RestEncoder {
+    public ResourceEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
 
-    public  abstract ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws EncodingException, OwsExceptionReport;
+    public abstract ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws EncodingException,
+                                                                                           OwsExceptionReport;
 
-    protected String createHrefForResourceType(String resourceType)
-    {
-        return bindingConstants.getServiceUrl()
+    protected String createHrefForResourceType(String resourceType) {
+        return getConstants().getServiceUrl()
                 .concat(RestBinding.URI_PATTERN)
                 .concat("/")
                 .concat(resourceType);
     }
 
     protected String createHrefForResourceAndIdentifier(String resourceType,
-            String identifier)
-    {
+                                                        String identifier) {
         return createHrefForResourceType(resourceType)
                 .concat("/")
                 .concat(identifier);
@@ -81,30 +84,29 @@ public abstract class ResourceEncoder extends RestEncoder {
                 .concat(queryString);
     }
 
-    protected void setValuesOfLinkToDynamicResource(LinkType xb_RestLink, String resourceQueryString, String relation, String resourceTypeIdentifier)
-    {
+    protected void setValuesOfLinkToDynamicResource(LinkType xb_RestLink, String resourceQueryString, String relation,
+                                                    String resourceTypeIdentifier) {
         setLinkValues(xb_RestLink,
-                createRelationWithNamespace(relation),
-                createHrefForResourceTypeAndQueryString(resourceTypeIdentifier, resourceQueryString),
-                bindingConstants.getContentTypeDefault().toString());
+                      createRelationWithNamespace(relation),
+                      createHrefForResourceTypeAndQueryString(resourceTypeIdentifier, resourceQueryString),
+                      getConstants().getContentTypeDefault().toString());
     }
 
     protected void setValuesOfLinkToGlobalResource(LinkType xb_Link,
-            String relationIdentifier,
-            String resourceType)
-    {
+                                                   String relationIdentifier,
+                                                   String resourceType) {
         setLinkValues(xb_Link,
-                createRelationWithNamespace(relationIdentifier),
-                createHrefForResourceType(resourceType),
-                bindingConstants.getContentTypeDefault().toString());
+                      createRelationWithNamespace(relationIdentifier),
+                      createHrefForResourceType(resourceType),
+                      getConstants().getContentTypeDefault().toString());
     }
 
-    protected void setValuesOfLinkToUniqueResource(LinkType xb_RestLink, String resourceId, String relation, String resourceType)
-    {
+    protected void setValuesOfLinkToUniqueResource(LinkType xb_RestLink, String resourceId, String relation,
+                                                   String resourceType) {
         setLinkValues(xb_RestLink,
-                createRelationWithNamespace(relation),
-                createHrefForResourceAndIdentifier(resourceType, resourceId),
-                bindingConstants.getContentTypeDefault().toString());
+                      createRelationWithNamespace(relation),
+                      createHrefForResourceAndIdentifier(resourceType, resourceId),
+                      getConstants().getContentTypeDefault().toString());
     }
 
     protected void setLinkValues(LinkType xb_Link, String rel, String href, String type) {
@@ -113,44 +115,38 @@ public abstract class ResourceEncoder extends RestEncoder {
         xb_Link.setType(type);
     }
 
-    protected String createRelationWithNamespace(String relation)
-    {
-        return bindingConstants.getEncodingNamespace().concat("/").concat(relation);
+    protected String createRelationWithNamespace(String relation) {
+        return getConstants().getEncodingNamespace().concat("/").concat(relation);
     }
 
-    protected void setOfferingLinks(XmlObject xb_AnyType,
-            List<String> offeringIdentifiers)
-    {
-        if (xb_AnyType instanceof net.opengis.sosREST.x10.CapabilitiesType || xb_AnyType instanceof ResourceCollectionType) {
-            LinkType xb_RestLink = null;
-
+    protected void setOfferingLinks(XmlObject xb_AnyType, List<String> offeringIdentifiers) {
+        if (xb_AnyType instanceof net.opengis.sosREST.x10.CapabilitiesType ||
+            xb_AnyType instanceof ResourceCollectionType) {
             for (String offeringIdentifier : offeringIdentifiers) {
+                LinkType xb_RestLink;
                 if (xb_AnyType instanceof net.opengis.sosREST.x10.CapabilitiesType) {
-                    xb_RestLink = ((net.opengis.sosREST.x10.CapabilitiesType)xb_AnyType).addNewLink();
+                    xb_RestLink = ((net.opengis.sosREST.x10.CapabilitiesType) xb_AnyType).addNewLink();
                 } else {
-                    xb_RestLink = ((ResourceCollectionType)xb_AnyType).addNewLink();
+                    xb_RestLink = ((ResourceCollectionType) xb_AnyType).addNewLink();
                 }
                 setValuesOfLinkToUniqueResource(xb_RestLink,
-                        offeringIdentifier,
-                        bindingConstants.getResourceRelationOfferingGet(),
-                        bindingConstants.getResourceOfferings());
+                                                offeringIdentifier, Constants.REST_RESOURCE_RELATION_OFFERING_GET, Constants.REST_RESOURCE_RELATION_OFFERINGS);
             }
 
         }
     }
 
     protected ServiceResponse createServiceResponseFromXBDocument(XmlObject xb_RestDoc,
-            String resourceType,
-            HTTPStatus httpResponseCode,
-            boolean isResourceCollection,
-            boolean isGlobalResource) throws OwsExceptionReport
-    {
+                                                                  String resourceType,
+                                                                  HTTPStatus httpResponseCode,
+                                                                  boolean isResourceCollection,
+                                                                  boolean isGlobalResource) throws OwsExceptionReport {
         return createServiceResponseFromXBDocument(xb_RestDoc,
-                resourceType,
-                null,
-                httpResponseCode,
-                isResourceCollection,
-                isGlobalResource);
+                                                   resourceType,
+                                                   null,
+                                                   httpResponseCode,
+                                                   isResourceCollection,
+                                                   isGlobalResource);
     }
 
     protected ServiceResponse createServiceResponseFromXBDocument(
@@ -168,29 +164,28 @@ public abstract class ResourceEncoder extends RestEncoder {
         }
         ServiceResponse response = new ServiceResponse(
                 baos,
-                bindingConstants.getContentTypeDefault(),
+                getConstants().getContentTypeDefault(),
                 status);
         setAllowHeadersForResourceType(response, resourceType, isResourceCollection, isGlobalResource);
 
         if (additionalHeaders != null && additionalHeaders.size() > 0) {
-            for (String headerIdentifier : additionalHeaders.keySet()) {
-                if (headerIdentifier != null && !headerIdentifier.isEmpty()) {
-                    String value = additionalHeaders.get(headerIdentifier);
-                    if (value != null) {
-                        response.setHeader(headerIdentifier, value);
-                    }
-                }
-            }
+            additionalHeaders.keySet().stream()
+                    .filter(headerIdentifier -> headerIdentifier != null && !headerIdentifier.isEmpty())
+                    .forEachOrdered((headerIdentifier) -> {
+                        String value = additionalHeaders.get(headerIdentifier);
+                        if (value != null) {
+                            response.setHeader(headerIdentifier, value);
+                        }
+                    });
         }
 
         return response;
     }
 
     private void setAllowHeadersForResourceType(ServiceResponse response,
-            String resourceType,
-            boolean isResourceCollection,
-            boolean isGlobalResource)
-    {
+                                                String resourceType,
+                                                boolean isResourceCollection,
+                                                boolean isGlobalResource) {
         String allowedMethods = getAllowedHttpMethodsForResourceType(
                 resourceType, isResourceCollection, isGlobalResource);
         response.setHeader(HTTPHeaders.ACCESS_CONTROL_ALLOW_METHODS, allowedMethods);
@@ -198,33 +193,23 @@ public abstract class ResourceEncoder extends RestEncoder {
     }
 
     private String getAllowedHttpMethodsForResourceType(String bindingOperation,
-            boolean isResourceCollection,
-            boolean isGlobalResource)
-    {
+                                                        boolean isResourceCollection,
+                                                        boolean isGlobalResource) {
         StringBuffer allowedOperations = new StringBuffer("");
         allowHttpGet(allowedOperations);
         appendAllowHttpOptions(allowedOperations);
 
-        if (bindingOperation.equalsIgnoreCase(bindingConstants.getResourceObservations()))
-        {
-            if (isGlobalResource && !isResourceCollection)
-            {
+        if (bindingOperation.equalsIgnoreCase(Constants.REST_RESOURCE_RELATION_OBSERVATIONS)) {
+            if (isGlobalResource && !isResourceCollection) {
                 appendAllowHttpPost(allowedOperations);
-            }
-            else if (!isGlobalResource && !isResourceCollection)
-            {
+            } else if (!isGlobalResource && !isResourceCollection) {
                 appendAllowHttpDelete(allowedOperations);
             }
-        }
-        else if (bindingOperation.equalsIgnoreCase(bindingConstants.getResourceSensors()))
-        {
-            if (!isGlobalResource && !isResourceCollection)
-            {
+        } else if (bindingOperation.equalsIgnoreCase(Constants.REST_RESOURCE_SENSORS)) {
+            if (!isGlobalResource && !isResourceCollection) {
                 appendAllowHttpPut(allowedOperations);
                 appendAllowHttpDelete(allowedOperations);
-            }
-            else if (isGlobalResource && isResourceCollection)
-            {
+            } else if (isGlobalResource && isResourceCollection) {
                 appendAllowHttpPost(allowedOperations);
             }
         }
@@ -251,14 +236,11 @@ public abstract class ResourceEncoder extends RestEncoder {
         allowedOperations.append(HTTPMethods.GET);
     }
 
-    protected XmlOptions getDefaultXMLOptions()
-    {
-
-        XmlOptions bindingXmlOptions = new XmlOptions(XmlOptionsHelper.getInstance().getXmlOptions());
+    protected XmlOptions getDefaultXMLOptions() {
+        XmlOptions bindingXmlOptions = new XmlOptions(getXmlOptionsHelper().getXmlOptions());
         @SuppressWarnings("unchecked")
-        Map<String,String> prefixes =
-                (Map<String,String>) bindingXmlOptions.get(XmlOptions.SAVE_SUGGESTED_PREFIXES);
-        prefixes.put(bindingConstants.getEncodingNamespace(), bindingConstants.getEncodingPrefix());
+        Map<String, String> prefixes = (Map<String, String>) bindingXmlOptions.get(XmlOptions.SAVE_SUGGESTED_PREFIXES);
+        prefixes.put(getConstants().getEncodingNamespace(), getConstants().getEncodingPrefix());
         bindingXmlOptions.setSaveSuggestedPrefixes(prefixes);
         bindingXmlOptions.setSaveImplicitNamespaces(prefixes);
 
@@ -266,24 +248,21 @@ public abstract class ResourceEncoder extends RestEncoder {
 
     }
 
-    protected OwsExceptionReport createResponseNotSupportedException(String expectedClassString, Object receivedObject)
-    {
+    protected OwsExceptionReport createResponseNotSupportedException(String expectedClassString, Object receivedObject) {
         return new EncoderResponseUnsupportedException().
                 withMessage("Received RestResponse is not a '%s' but of type '%s'",
-                        expectedClassString,
-                        receivedObject!=null?receivedObject.getClass().getName():"null");
+                            expectedClassString,
+                            receivedObject != null ? receivedObject.getClass().getName() : "null");
     }
 
     protected void addLocationHeader(ServiceResponse response,
-            String resourceType)
-    {
+                                     String resourceType) {
         addLocationHeader(response, null, resourceType);
     }
 
     protected void addLocationHeader(ServiceResponse response,
-            String resourceId,
-            String resourceType)
-    {
+                                     String resourceId,
+                                     String resourceType) {
         final String location;
         if (resourceId == null) {
             location = createHrefForResourceType(resourceType);
@@ -295,18 +274,16 @@ public abstract class ResourceEncoder extends RestEncoder {
     }
 
     protected ServiceResponse createNoContentResponse(String resourceType,
-            boolean isResourceCollection,
-            boolean isGlobalResource)
-    {
-        return createContentlessResponse(resourceType, HTTPStatus.NO_CONTENT,isResourceCollection,isGlobalResource);
+                                                      boolean isResourceCollection,
+                                                      boolean isGlobalResource) {
+        return createContentlessResponse(resourceType, HTTPStatus.NO_CONTENT, isResourceCollection, isGlobalResource);
     }
 
     protected ServiceResponse createContentlessResponse(String resourceType,
-            HTTPStatus httpStatusCode,
-            boolean isResourceCollection,
-            boolean isGlobalResource)
-    {
-        ServiceResponse response = new ServiceResponse(bindingConstants.getContentTypeDefault(),httpStatusCode);
+                                                        HTTPStatus httpStatusCode,
+                                                        boolean isResourceCollection,
+                                                        boolean isGlobalResource) {
+        ServiceResponse response = new ServiceResponse(getConstants().getContentTypeDefault(), httpStatusCode);
         setAllowHeadersForResourceType(response, resourceType, isResourceCollection, isGlobalResource);
         return response;
     }

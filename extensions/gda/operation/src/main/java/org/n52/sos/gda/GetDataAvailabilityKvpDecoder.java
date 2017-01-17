@@ -28,9 +28,9 @@
  */
 package org.n52.sos.gda;
 
-import org.n52.shetland.ogc.sos.GetDataAvailabilityConstants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.request.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 
 /**

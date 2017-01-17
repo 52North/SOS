@@ -32,7 +32,6 @@ import java.util.Locale;
 
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.base.FeatureOfInterestCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.I18NCacheUpdate;
@@ -44,6 +43,7 @@ import org.n52.sos.ds.hibernate.cache.base.RelatedFeaturesCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.ResultTemplateCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.SridCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 
 /**
  *
@@ -71,7 +71,7 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
                               I18NDAORepository i18NDAORepository,
                               FeatureQueryHandler featureQueryHandler,
                               ConnectionProvider connectionProvider,
-                              ServiceMetadataRepository serviceMetadataRepository,
+                              OwsServiceMetadataRepository serviceMetadataRepository,
                               DaoFactory daoFactory) {
         //execute all updates except offerings and procedures in parallel, then execute offering and procedure updates
         //(which spawn their own threads)

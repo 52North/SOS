@@ -43,22 +43,22 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
+import org.n52.shetland.ogc.sos.response.DeleteObservationResponse;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.svalbard.encode.DeleteObservationEncoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.OperationResponseEncoderKey;
 import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
-import org.n52.shetland.ogc.sos.response.DeleteObservationResponse;
-import org.n52.janmayen.http.MediaTypes;
-import org.n52.shetland.w3c.SchemaLocation;
+
+import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

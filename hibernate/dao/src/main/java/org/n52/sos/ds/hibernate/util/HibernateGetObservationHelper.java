@@ -45,6 +45,9 @@ import org.hibernate.criterion.HibernateCriterionHelper;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.filter.BinaryLogicFilter;
@@ -73,8 +76,6 @@ import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.XmlEncoderKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 

@@ -37,10 +37,6 @@
         </dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>gda-operation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>abstract-identifier</artifactId>
 		</dependency>
 	</dependencies>

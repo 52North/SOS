@@ -29,6 +29,8 @@
 package org.n52.sos.ext.deleteobservation;
 
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
+import org.n52.shetland.ogc.sos.response.DeleteObservationResponse;
 import org.n52.sos.event.events.SosDeletionEvent;
 
 /**

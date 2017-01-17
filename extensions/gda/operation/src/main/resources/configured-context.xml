@@ -3,14 +3,19 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
+
+    <!-- Decoder implementations from svalbard -->
+    <bean class="org.n52.svalbard.decode.GetDataAvailabilityStringDecoder"/>
+    <bean class="org.n52.svalbard.decode.GetDataAvailabilityXmlDecoder"/>
+
+    <!-- Encoder implementations from svalbard -->
+    <bean class="org.n52.svalbard.decode.GetDataAvailabilityXmlEncoder"/>
+
     <!-- Decoder implementations from extensions/gda/operation -->
-    <bean class="org.n52.sos.gda.GetDataAvailabilityStringDecoder"/>
-    <bean class="org.n52.sos.gda.GetDataAvailabilityXmlDecoder"/>
     <bean class="org.n52.sos.gda.GetDataAvailabilityJsonDecoder"/>
     <bean class="org.n52.sos.gda.GetDataAvailabilityKvpDecoder"/>
 
     <!-- Encoder implementations from extensions/gda/operation -->
-    <bean class="org.n52.sos.gda.GetDataAvailabilityXmlEncoder"/>
     <bean class="org.n52.sos.gda.GetDataAvailabilityJsonEncoder"/>
 
     <!-- RequestOperator implementations from extensions/gda/operation -->

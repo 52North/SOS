@@ -37,10 +37,10 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.ogc.swes.OfferingExtensionProvider;
+import org.n52.shetland.inspire.InspireConstants;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.inspire.AbstractInspireProvider;
-import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.settings.InspireSettings;
 
 /**

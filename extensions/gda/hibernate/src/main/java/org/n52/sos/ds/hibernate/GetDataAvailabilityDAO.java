@@ -65,6 +65,9 @@ import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -84,9 +87,6 @@ import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSe
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.gda.AbstractGetDataAvailabilityHandler;
-import org.n52.sos.gda.GetDataAvailabilityRequest;
-import org.n52.sos.gda.GetDataAvailabilityResponse;
-import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -332,7 +332,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
                 DataAvailability dataAvailability =
                         new DataAvailability(getProcedureReference(series, procedures), getObservedPropertyReference(
                                 series, observableProperties), getFeatureOfInterestReference(series,
-                                featuresOfInterest, session), timePeriod);
+                                featuresOfInterest, session), null, timePeriod);
                 if (isShowCount(request)) {
                     dataAvailability.setCount(getCountFor(series, request, session));
                 }
@@ -749,7 +749,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
                         }
                     }
                     if (timePeriod != null && !timePeriod.isEmpty()) {
-                        return new DataAvailability(procedure, observableProperty, featureOfInterest, timePeriod,
+                        return new DataAvailability(procedure, observableProperty, featureOfInterest, null, timePeriod,
                                 valueCount);
                     }
                 } catch (OwsExceptionReport e) {

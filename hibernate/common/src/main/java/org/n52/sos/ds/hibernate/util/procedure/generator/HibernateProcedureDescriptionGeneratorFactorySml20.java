@@ -33,7 +33,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-
+import org.n52.faroe.annotation.Configurable;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -57,7 +57,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactorySml20 implements HibernateProcedureDescriptionGeneratorFactory {
+public class HibernateProcedureDescriptionGeneratorFactorySml20 extends HibernateProcedureDescriptionGeneratorFactorySml {
 
     private static final Set<HibernateProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES = CollectionHelper.set(
             new HibernateProcedureDescriptionGeneratorFactoryKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
@@ -81,7 +81,7 @@ public class HibernateProcedureDescriptionGeneratorFactorySml20 implements Hiber
     private class HibernateProcedureDescriptionGeneratorSml20 extends AbstractHibernateProcedureDescriptionGeneratorSml {
 
         public HibernateProcedureDescriptionGeneratorSml20(DaoFactory daoFactory) {
-            super(daoFactory);
+            super(daoFactory, getSrsNamePrefixUrl());
         }
 
         @Override

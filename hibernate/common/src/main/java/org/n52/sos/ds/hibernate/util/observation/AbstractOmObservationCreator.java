@@ -205,7 +205,6 @@ public abstract class AbstractOmObservationCreator {
         return i18n;
     }
 
-
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
             throws OwsExceptionReport {
         final NamedValue<Geometry> namedValue = new NamedValue<>();

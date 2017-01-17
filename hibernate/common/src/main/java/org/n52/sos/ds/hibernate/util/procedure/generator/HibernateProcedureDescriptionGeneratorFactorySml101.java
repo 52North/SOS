@@ -52,7 +52,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactorySml101 implements HibernateProcedureDescriptionGeneratorFactory {
+public class HibernateProcedureDescriptionGeneratorFactorySml101 extends HibernateProcedureDescriptionGeneratorFactorySml {
 
     private static final Set<HibernateProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES = CollectionHelper.set(
             new HibernateProcedureDescriptionGeneratorFactoryKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
@@ -77,7 +77,7 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101 implements Hibe
 
     private class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibernateProcedureDescriptionGeneratorSml {
         public HibernateProcedureDescriptionGeneratorSml101(DaoFactory daoFactory) {
-            super(daoFactory);
+            super(daoFactory, getSrsNamePrefixUrl());
         }
 
         /**

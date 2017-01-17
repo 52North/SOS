@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
+import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.PARAMETER_NAME;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -38,6 +38,9 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
+import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
+import org.n52.shetland.ogc.sos.response.DeleteObservationResponse;
 import org.n52.sos.ds.AbstractOperationHandler;
 
 /**

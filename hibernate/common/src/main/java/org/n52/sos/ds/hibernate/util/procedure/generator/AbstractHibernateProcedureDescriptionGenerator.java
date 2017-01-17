@@ -222,11 +222,6 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
     }
 
     @VisibleForTesting
-    ServiceConfiguration getServiceConfig() {
-        return ServiceConfiguration.getInstance();
-    }
-
-    @VisibleForTesting
     String[] getObservablePropertiesForProcedure(String identifier) {
         Set<String> props = getCache().getObservablePropertiesForProcedure(identifier);
         return props.toArray(new String[props.size()]);

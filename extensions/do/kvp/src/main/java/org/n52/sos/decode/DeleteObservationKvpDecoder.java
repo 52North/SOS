@@ -30,9 +30,9 @@ package org.n52.sos.decode;
 
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
+import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
 import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
-import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
-import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

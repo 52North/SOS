@@ -28,9 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.mockito.Matchers.refEq;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -44,9 +41,6 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
@@ -57,7 +51,6 @@ import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.service.MiscSettings;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
@@ -102,6 +95,8 @@ import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.XmlEncoderKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -135,6 +130,11 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
+    }
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
     }
 
     @Inject
@@ -284,9 +284,10 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
 
         int metadataObservationsCount = 0;
 
-        List<OmObservation> result = HibernateGetObservationHelper
-                .toSosObservation(observations, request, this.serviceMetadataRepository
-                                  .getServiceProviderFactory(request.getService()), getRequestedLocale(request), daoFactory, session);
+        List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request,
+                this.serviceMetadataRepository.getServiceProviderFactory(request.getService()),
+                getRequestedLocale(request), getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory,
+                session);
         Set<OmObservationConstellation> timeSeries = Sets.newHashSet();
         if (isShowMetadataOfEmptyObservations() || getMaxNumberOfReturnedTimeSeries() > 0) {
             result.stream().map(OmObservation::getObservationConstellation).forEach(timeSeries::add);
@@ -412,9 +413,10 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         Collection<Observation<?>> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
-        result.addAll(HibernateGetObservationHelper
-                .toSosObservation(abstractObservations, request, this.serviceMetadataRepository
-                                  .getServiceProviderFactory(request.getService()), getRequestedLocale(request), daoFactory, session));
+        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request,
+                this.serviceMetadataRepository.getServiceProviderFactory(request.getService()),
+                getRequestedLocale(request), getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory,
+                session));
         return result;
     }
 
@@ -450,7 +452,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
                     .getAndCheckFeatureOfInterest(oc, features, daoFactory, session);
             for (OmObservation observationTemplate : HibernateObservationUtilities
                     .createSosObservationFromObservationConstellation(oc, featureIds, request, this.serviceMetadataRepository
-                                                                      .getServiceProviderFactory(request.getService()), getRequestedLocale(request), daoFactory, session)) {
+                                                                      .getServiceProviderFactory(request.getService()), getRequestedLocale(request), getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session)) {
                 FeatureOfInterest featureOfInterest = new FeatureOfInterestDAO(daoFactory)
                         .getFeatureOfInterest(observationTemplate
                                 .getObservationConstellation().getFeatureOfInterest().getIdentifier(),
@@ -501,7 +503,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
             LocalizedProducer<OwsServiceProvider> serviceProviderFactory
                     = this.serviceMetadataRepository.getServiceProviderFactory(service);
             Collection<? extends OmObservation> createSosObservationFromSeries = HibernateObservationUtilities
-                    .createSosObservationFromSeries(series, request, serviceProviderFactory, locale, daoFactory, session);
+                    .createSosObservationFromSeries(series, request, serviceProviderFactory, locale, getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session);
             OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
             HibernateSeriesStreamingValue streamingValue = getSeriesStreamingValue(request, series.getSeriesId());
             streamingValue.setResponseFormat(request.getResponseFormat());
@@ -562,7 +564,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     private boolean isSpatialFilteringProfile() {
         return false;
     }
-    
+
     private String getProcedureDescriptionFormat(String responseFormat) {
         Encoder<Object, Object> encoder = encoderRepository.getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
         if (encoder != null && encoder instanceof ObservationEncoder) {
@@ -570,7 +572,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         }
         return null;
     }
-    
+
     private boolean isShowMetadataOfEmptyObservations() throws ConfigurationError {
         return getActiveProfile().isShowMetadataOfEmptyObservations();
     }

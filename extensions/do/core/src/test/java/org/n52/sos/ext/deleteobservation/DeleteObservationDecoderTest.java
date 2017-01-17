@@ -32,9 +32,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.n52.shetland.ogc.sos.SosConstants.SOS;
+import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.CONFORMANCE_CLASSES;
+import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.NS_SOSDO_1_0;
 import static org.n52.shetland.util.CollectionHelper.union;
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0;
 import static org.n52.svalbard.util.CodingHelper.decoderKeysForElements;
 import static org.n52.svalbard.util.CodingHelper.xmlDecoderKeysForOperation;
 
@@ -46,11 +46,13 @@ import org.apache.xmlbeans.XmlObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DeleteObservationDecoder;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
+import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**

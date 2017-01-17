@@ -35,8 +35,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.n52.shetland.ogc.sos.SosConstants.SOS;
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0;
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0_PREFIX;
+import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.NS_SOSDO_1_0;
+import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.NS_SOSDO_1_0_PREFIX;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,6 +47,7 @@ import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.n52.svalbard.encode.DeleteObservationEncoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.OperationResponseEncoderKey;
 import org.n52.svalbard.encode.XmlEncoderKey;
@@ -54,6 +55,8 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
+import org.n52.shetland.ogc.sos.response.DeleteObservationResponse;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.w3c.SchemaLocation;
 

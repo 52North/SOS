@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -106,7 +105,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     @Override
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
-            OmObservation observation = observationTemplate.cloneTemplate();
+            OmObservation observation = getObservationTemplate().cloneTemplate();
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
             resultObject.addValuesToObservation(observation, getResponseFormat());
 //            addValuesToObservation(observation, resultObject);

@@ -64,6 +64,7 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.GeometryTransformer;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.FeatureQuerySettingsProvider;
@@ -86,7 +87,7 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  */
 @Configurable
-public class GeometryHandler implements Constructable, Destroyable {
+public class GeometryHandler implements GeometryTransformer, Constructable, Destroyable {
 
     /*
      * longitude = east-west latitude = north-south
@@ -108,11 +109,11 @@ public class GeometryHandler implements Constructable, Destroyable {
     private String authority;
     private CRSAuthorityFactory crsAuthority;
     private final Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();
-    private String srsNamePrefixSosV2;
+    private String srsNamePrefixUrl;
 
     @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
-    public GeometryHandler setSrsNamePrefixSosV2(String srsNamePrefixSosV2) {
-        this.srsNamePrefixSosV2 = srsNamePrefixSosV2;
+    public GeometryHandler setSrsNamePrefixUrl(String srsNamePrefixUrl) {
+        this.srsNamePrefixUrl = srsNamePrefixUrl;
         return this;
     }
 
@@ -686,7 +687,7 @@ public class GeometryHandler implements Constructable, Destroyable {
     }
 
     public String addOgcCrsPrefix(int crs) {
-        return this.srsNamePrefixSosV2 + crs;
+        return this.srsNamePrefixUrl + crs;
     }
 
     /**

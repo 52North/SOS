@@ -42,6 +42,7 @@ import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.inspire.InspireLanguageISO6392B;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.inspire.settings.InspireSettings;

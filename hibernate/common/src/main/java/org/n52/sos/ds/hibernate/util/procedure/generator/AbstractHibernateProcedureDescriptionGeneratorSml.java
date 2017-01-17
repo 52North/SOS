@@ -38,7 +38,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.n52.faroe.annotation.Configurable;
+import org.n52.iceland.service.ServiceSettings;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.om.OmConstants;
@@ -106,8 +107,11 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
 
     protected static final String POSITION_NAME = "sensorPosition";
 
-    public AbstractHibernateProcedureDescriptionGeneratorSml(DaoFactory daoFactory) {
+    private String srsNamePrefixUrl;
+
+    public AbstractHibernateProcedureDescriptionGeneratorSml(DaoFactory daoFactory, String srsNamePrefixUrl) {
         super(daoFactory);
+        this.srsNamePrefixUrl = srsNamePrefixUrl;
     }
 
     /**
@@ -373,7 +377,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         if (procedure.isSetSrid()) {
             srid = procedure.getSrid();
         }
-        position.setReferenceFrame(getServiceConfig().getSrsNamePrefixSosV2() + srid);
+        position.setReferenceFrame(srsNamePrefixUrl + srid);
         return position;
     }
 

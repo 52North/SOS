@@ -30,7 +30,12 @@ package org.n52.sos.encode.json.impl;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.util.CodingHelper;
 import org.n52.svalbard.util.XmlOptionsHelper;
@@ -54,8 +59,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * @since 4.0.0
  */
 public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<DescribeSensorResponse> {
+
+    private EncoderRepository encoderRepository;
+
     public DescribeSensorResponseEncoder() {
         super(DescribeSensorResponse.class, SosConstants.Operations.DescribeSensor);
+    }
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
     }
 
     @Override
@@ -68,10 +81,11 @@ public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<De
 
     private String toString(AbstractFeature desc, String format) throws EncodingException {
         if (desc instanceof SosProcedureDescriptionUnknownType && desc.isSetXml()) {
-           return desc.getXml();
+            return desc.getXml();
         }
         XmlOptions options = XmlOptionsHelper.getInstance().getXmlOptions();
-        return CodingHelper.encodeObjectToXml(format, desc).xmlText(options);
+        return ((XmlObject) encoderRepository.getEncoder(CodingHelper.getEncoderKey(format, desc)).encode(desc))
+                .xmlText(options);
     }
 
     private JsonNode encodeDescription(SosProcedureDescription<?> desc, String format) throws EncodingException {

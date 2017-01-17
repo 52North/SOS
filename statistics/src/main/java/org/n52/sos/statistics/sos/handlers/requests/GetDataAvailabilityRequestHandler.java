@@ -28,7 +28,7 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
-import org.n52.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.request.GetDataAvailabilityRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
 public class GetDataAvailabilityRequestHandler extends AbstractSosRequestHandler<GetDataAvailabilityRequest> {

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.binding.rest.decode;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -43,8 +44,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.http.HttpUtils;
 import org.n52.janmayen.http.HTTPMethods;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
@@ -53,8 +55,10 @@ import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
@@ -63,8 +67,11 @@ import org.n52.shetland.util.CRSHelper;
 import org.n52.shetland.util.DateTimeException;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.DateTimeParseException;
+import org.n52.shetland.util.StringHelper;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestRequest;
+import org.n52.sos.util.GeometryHandler;
+import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.JTSHelper;
 
@@ -78,6 +85,9 @@ public abstract class ResourceDecoder extends RestDecoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceDecoder.class);
 
+    private String srsNamePrefixUrl;
+    private String srsNamePrefixUrn;
+
     protected Constants bindingConstants = Constants.getInstance();
 
     protected abstract RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
@@ -89,6 +99,16 @@ public abstract class ResourceDecoder extends RestDecoder {
     protected abstract RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
     protected abstract RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload);
+
+    @Setting(CodingSettings.SRS_NAME_PREFIX_URN)
+    public void setSrsNamePrefixUrn(String srsNamePrefixUrn) {
+        this.srsNamePrefixUrn = srsNamePrefixUrn;
+    }
+
+    @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
+    public void setSrsNamePrefixUrl(String srsNamePrefixUrl) {
+        this.srsNamePrefixUrl = srsNamePrefixUrl;
+    }
 
     protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws DecodingException
     {
@@ -294,8 +314,8 @@ public abstract class ResourceDecoder extends RestDecoder {
             spatialFilter.setValueReference(parameterValues.get(0));
 
             int srid = 4326;
-            if (parameterValues.get(parameterValues.size() - 1).startsWith(getSrsNamePrefixSosV2())
-                    || parameterValues.get(parameterValues.size() - 1).startsWith(getSrsNamePrefix())) {
+            if (parameterValues.get(parameterValues.size() - 1).startsWith(getSrsNamePrefixUrl())
+                    || parameterValues.get(parameterValues.size() - 1).startsWith(getSrsNamePrefixUrn())) {
                 hasSrid = true;
                 srid = CRSHelper.parseSrsName(parameterValues.get(parameterValues.size() - 1));
             }
@@ -319,12 +339,12 @@ public abstract class ResourceDecoder extends RestDecoder {
         return null;
     }
 
-    protected String getSrsNamePrefix() {
-        return ServiceConfiguration.getInstance().getSrsNamePrefix();
+    protected String getSrsNamePrefixUrn() {
+        return srsNamePrefixUrn;
     }
 
-    protected String getSrsNamePrefixSosV2() {
-        return ServiceConfiguration.getInstance().getSrsNamePrefixSosV2();
+    protected String getSrsNamePrefixUrl() {
+        return srsNamePrefixUrl;
     }
 
 
@@ -377,5 +397,57 @@ public abstract class ResourceDecoder extends RestDecoder {
         }
         errorMsgBuilder.append('.');
         return errorMsgBuilder.toString();
+    }
+
+    protected String xmlToString(HttpServletRequest request) throws OwsExceptionReport {
+        try {
+            if (request.getParameterMap().isEmpty()) {
+                return StringHelper.convertStreamToString(HttpUtils.getInputStream(request), getCharacterEncoding(request));
+            } else {
+                return parseHttpPostBodyWithParameter(request.getParameterNames(), request.getParameterMap());
+            }
+        } catch (final IOException ioe) {
+            throw new NoApplicableCodeException().causedBy(ioe).withMessage(
+                    "Error while reading request! Message: %s", ioe.getMessage());
+        }
+    }
+
+    private String getCharacterEncoding(HttpServletRequest request) {
+        return !Strings.isNullOrEmpty(request.getCharacterEncoding()) ? request.getCharacterEncoding() : "UTF-8";
+    }
+
+    /**
+     * Parses the HTTP-Post body with a parameter
+     *
+     * @param paramNames
+     *            Parameter names
+     * @param parameterMap
+     *            Parameter map
+     * @return Value of the parameter
+     *
+     * @throws OwsExceptionReport
+     *             * If the parameter is not supported by this service.
+     */
+    private String parseHttpPostBodyWithParameter(final Enumeration<?> paramNames, final Map<?, ?> parameterMap)
+            throws OwsExceptionReport {
+        while (paramNames.hasMoreElements()) {
+            final String paramName = (String) paramNames.nextElement();
+            if (RequestParams.request.name().equalsIgnoreCase(paramName)) {
+                final String[] paramValues = (String[]) parameterMap.get(paramName);
+                if (paramValues.length == 1) {
+                    return paramValues[0];
+                } else {
+                    throw new NoApplicableCodeException()
+                            .withMessage(
+                                    "The parameter '%s' has more than one value or is empty for HTTP-Post requests to this service!",
+                                    paramName);
+                }
+            } else {
+                throw new NoApplicableCodeException().withMessage(
+                        "The parameter '%s' is not supported for HTTP-Post requests to this service!", paramName);
+            }
+        }
+        // FIXME: valid exception
+        throw new NoApplicableCodeException();
     }
 }

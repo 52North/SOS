@@ -28,9 +28,9 @@
  */
 package org.n52.sos.encode.exi.impl;
 
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.encode.exi.AbstractSosV2ResponseEncoder;
-import org.n52.sos.gda.GetDataAvailabilityConstants;
-import org.n52.sos.gda.GetDataAvailabilityResponse;
 
 /**
  * Response encoder for {@link GetDataAvailabilityResponse}

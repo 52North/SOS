@@ -41,7 +41,6 @@ import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.http.HTTPStatus;

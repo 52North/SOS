@@ -46,9 +46,9 @@ import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialectSpatialIndex;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.settings.StringSettingDefinition;
 import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -133,30 +133,31 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
 
     @SuppressWarnings("unchecked")
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        Set<SettingDefinition<?, ?>> settingDefinitions = super.getSettingDefinitions();
-        return CollectionHelper.union(Sets.<SettingDefinition<?, ?>> newHashSet(createInstanceDefinition(null)),
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
+        Set<SettingDefinition<?>> settingDefinitions = super.getSettingDefinitions();
+        return CollectionHelper.union(Sets.<SettingDefinition<?>> newHashSet(createInstanceDefinition(null)),
                 settingDefinitions);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(final Properties current) {
+    public Set<SettingDefinition<?>> getChangableSettingDefinitions(final Properties current) {
         final Map<String, Object> settings = parseDatasourceProperties(current);
         return CollectionHelper.union(Sets
-                .<SettingDefinition<?, ?>> newHashSet(createInstanceDefinition((String) settings.get(INSTANCE_KEY))),
+                .<SettingDefinition<?>> newHashSet(createInstanceDefinition((String) settings.get(INSTANCE_KEY))),
                 super.getChangableSettingDefinitions(current));
     }
 
     protected StringSettingDefinition createInstanceDefinition(String instanceValue) {
-        return new StringSettingDefinition()
-            .setGroup(BASE_GROUP)
-            .setOrder(2)
-            .setKey(INSTANCE_KEY)
-            .setTitle(INSTANCE_TITLE)
-            .setDescription(INSTANCE_DESCRIPTION)
-                .setDefaultValue(instanceValue == null ? "" : instanceValue)
-            .setOptional(true);
+        StringSettingDefinition def = new StringSettingDefinition();
+        def.setGroup(BASE_GROUP);
+        def.setOrder(2);
+        def.setKey(INSTANCE_KEY);
+        def.setTitle(INSTANCE_TITLE);
+        def.setDescription(INSTANCE_DESCRIPTION);
+        def.setDefaultValue(instanceValue == null ? "" : instanceValue);
+        def.setOptional(true);
+        return def;
     }
 
     @Override
@@ -218,13 +219,13 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     @Override
     protected String toURL(Map<String, Object> settings) {
         StringBuilder builder = new StringBuilder("jdbc:sqlserver://");
-        builder.append(settings.get(HOST_KEY)).append(Constants.COLON_CHAR);
-        builder.append(settings.get(PORT_KEY)).append(Constants.SEMICOLON_CHAR);
+        builder.append(settings.get(HOST_KEY)).append(':');
+        builder.append(settings.get(PORT_KEY)).append(';');
         if (settings.containsKey(INSTANCE_KEY) &&
                 settings.get(INSTANCE_KEY) != null &&
                 settings.get(INSTANCE_KEY) instanceof String &&
                 !((String)settings.get(INSTANCE_KEY)).isEmpty()) {
-            builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(Constants.SEMICOLON_CHAR);
+            builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(';');
         }
         builder.append(URL_DATABASE_NAME).append(settings.get(DATABASE_KEY));
         return builder.toString();

@@ -37,7 +37,6 @@ import net.opengis.sensorML.x101.AbstractProcessType;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.IoComponentPropertyType;
 import net.opengis.sensorML.x101.SystemType;
-import net.opengis.sos.x20.impl.SosInsertionMetadataPropertyTypeImpl;
 import net.opengis.sosREST.x10.SensorDocument;
 import net.opengis.sosREST.x10.SensorType;
 import net.opengis.swe.x101.AnyScalarPropertyType;
@@ -124,7 +123,7 @@ public class SensorsDecoder extends ResourceDecoder {
             insertSensorRequest.setProcedureDescriptionFormat(bindingConstants.getDefaultDescribeSensorOutputFormat());
 
             // parse request in xml object and get procedure description
-            XmlObject sensorPostContent = XmlHelper.parseXmlRequest(httpRequest);
+            XmlObject sensorPostContent = XmlHelper.parseXmlString(xmlToString(httpRequest));
             if (sensorPostContent instanceof SensorDocument)
             {
                 SensorDocument xb_SensorRestDoc = (SensorDocument) sensorPostContent;
@@ -270,7 +269,7 @@ public class SensorsDecoder extends ResourceDecoder {
             updateSensorRequest.setProcedureDescriptionFormat(bindingConstants.getDefaultDescribeSensorOutputFormat());
             updateSensorRequest.setProcedureIdentifier(pathPayload);
 
-            XmlObject sensorPostContent = XmlHelper.parseXmlRequest(httpRequest);
+            XmlObject sensorPostContent = XmlHelper.parseXmlString(xmlToString(httpRequest));
             if(sensorPostContent instanceof SensorDocument) {
                 SensorDocument xb_RestSensorDoc = (SensorDocument) sensorPostContent;
                 SensorType xb_RestSensor = xb_RestSensorDoc.getSensor();

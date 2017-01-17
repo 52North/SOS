@@ -92,7 +92,7 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
             SosProcedureDescription procedure = createProcedure(getObservationConstellation().getProcedure().getIdentifier());
             OmObservableProperty obsProp = createObservableProperty(getObservationConstellation().getObservableProperty());
             obsProp.setUnit(queryUnit());
-            FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
+            FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO(getDaoFactory());
             for (final String featureId : getFeatureIds()) {
                 final AbstractFeature feature = createFeatureOfInterest(featureOfInterestDAO.getFeatureOfInterest(featureId, getSession()));
                 final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);

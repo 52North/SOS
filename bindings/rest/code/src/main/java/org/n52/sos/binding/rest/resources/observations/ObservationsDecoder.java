@@ -52,6 +52,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
@@ -60,7 +61,6 @@ import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
-import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.XmlHelper;
 
@@ -128,7 +128,7 @@ public class ObservationsDecoder extends ResourceDecoder {
                                             String pathPayload) throws DecodingException, OwsExceptionReport {
         if (isContentOfPostRequestValid(httpRequest) && pathPayload == null) {
             // 0 read xml encoded post content
-            XmlObject requestDoc = XmlHelper.parseXmlRequest(httpRequest);
+            XmlObject requestDoc = XmlHelper.parseXmlString(xmlToString(httpRequest));
             if (requestDoc instanceof ObservationDocument) {
                 ObservationDocument xb_ObservationRestDoc = (ObservationDocument) requestDoc;
                 ObservationType xb_ObservationRest = xb_ObservationRestDoc.getObservation();

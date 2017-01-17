@@ -45,10 +45,6 @@ import org.hibernate.criterion.HibernateCriterionHelper;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.filter.BinaryLogicFilter;
@@ -63,10 +59,10 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -74,8 +70,11 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObserv
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.ObservationEncoder;
+import org.n52.svalbard.encode.XmlEncoderKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -192,12 +191,13 @@ public class HibernateGetObservationHelper {
                                                        AbstractObservationRequest request,
                                                        LocalizedProducer<OwsServiceProvider> serviceProvider,
                                                        Locale language,
+                                                       String pdf,
                                                        DaoFactory daoFactory,
                                                        Session session) throws OwsExceptionReport, ConverterException {
         if (!observations.isEmpty()) {
             final long startProcess = System.currentTimeMillis();
             List<OmObservation> sosObservations = HibernateObservationUtilities.createSosObservationsFromObservations(
-                    new HashSet<>(observations), request, serviceProvider, language, daoFactory, session);
+                    new HashSet<>(observations), request, serviceProvider, language, pdf, daoFactory, session);
 
             LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
                          (System.currentTimeMillis() - startProcess));
@@ -209,12 +209,12 @@ public class HibernateGetObservationHelper {
 
     public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request,
                                                  LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language,
-                                                 DaoFactory daoFactory, Session session)
+                                                 String pdf, DaoFactory daoFactory, Session session)
             throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();
             OmObservation sosObservation = HibernateObservationUtilities
-                    .createSosObservationFromObservation(observation, request, serviceProvider, language, daoFactory, session);
+                    .createSosObservationFromObservation(observation, request, serviceProvider, language, pdf, daoFactory, session);
             LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));
             return sosObservation;
         }

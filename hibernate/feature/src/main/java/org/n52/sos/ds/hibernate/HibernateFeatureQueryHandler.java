@@ -87,7 +87,6 @@ import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
-import org.n52.svalbard.LocaleHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.JTSHelper;
 

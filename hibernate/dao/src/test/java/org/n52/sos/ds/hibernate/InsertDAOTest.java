@@ -37,6 +37,7 @@ import net.opengis.sensorML.x101.SystemDocument;
 import net.opengis.swe.x20.DataRecordDocument;
 import net.opengis.swe.x20.TextEncodingDocument;
 
+import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -65,6 +66,7 @@ import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.om.features.SfConstants;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.values.QuantityValue;
@@ -86,6 +88,7 @@ import org.n52.shetland.ogc.sos.request.InsertResultRequest;
 import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
@@ -114,13 +117,12 @@ import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
-import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
-import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.CodingHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -199,6 +201,7 @@ public class InsertDAOTest extends HibernateTestCase {
     private final InsertResultDAO insertResultDAO = new InsertResultDAO();
     private final GetObservationDAO getObsDAO = new GetObservationDAO();
     private final SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
+    private final EncoderRepository encoderRepository = new EncoderRepository();
 
     // optionally run these tests multiple times to expose intermittent faults
     // (use -DrepeatDaoTest=x)
@@ -215,7 +218,7 @@ public class InsertDAOTest extends HibernateTestCase {
 
     @Before
     public void setUp() throws OwsExceptionReport, ConverterException, EncodingException, DecodingException {
-
+        encoderRepository.init();
         Session session = getSession();
         insertSensor(PROCEDURE1, OFFERING1, OBSPROP1, null);
         insertSensor(PROCEDURE2, OFFERING2, OBSPROP2, PROCEDURE1);
@@ -260,7 +263,7 @@ public class InsertDAOTest extends HibernateTestCase {
             }
         }
         SystemDocument xbSystemDoc = SystemDocument.Factory.newInstance();
-        xbSystemDoc.addNewSystem().set(CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, system));
+        xbSystemDoc.addNewSystem().set((XmlObject)encoderRepository.getEncoder(CodingHelper.getEncoderKey(SensorMLConstants.NS_SML, system)).encode(system));
         system.setXml(xbSystemDoc.xmlText());
         req.setProcedureDescription(pd);
         req.setAssignedOfferings(assignedOfferings);
@@ -290,7 +293,10 @@ public class InsertDAOTest extends HibernateTestCase {
         textEncoding.setBlockSeparator(BLOCK_SEPARATOR);
         SosResultEncoding resultEncoding = new SosResultEncoding(textEncoding);
         TextEncodingDocument xbTextEncDoc = TextEncodingDocument.Factory.newInstance();
-        xbTextEncDoc.addNewTextEncoding().set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, textEncoding));
+        xbTextEncDoc.addNewTextEncoding()
+                .set((XmlObject) encoderRepository
+                        .getEncoder(CodingHelper.getEncoderKey(SweConstants.NS_SWE_20, textEncoding))
+                        .encode(textEncoding));
         resultEncoding.setXml(xbTextEncDoc.xmlText());
         req.setResultEncoding(resultEncoding);
 
@@ -305,7 +311,10 @@ public class InsertDAOTest extends HibernateTestCase {
         dataRecord.addField(new SweField("air_temperature", airTemp));
         SosResultStructure resultStructure = new SosResultStructure(dataRecord);
         DataRecordDocument xbDataRecordDoc = DataRecordDocument.Factory.newInstance();
-        xbDataRecordDoc.addNewDataRecord().set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord));
+        xbDataRecordDoc.addNewDataRecord()
+                .set((XmlObject) encoderRepository
+                        .getEncoder(CodingHelper.getEncoderKey(SweConstants.NS_SWE_20, dataRecord))
+                        .encode(dataRecord));
         resultStructure.setXml(xbDataRecordDoc.xmlText());
         req.setResultStructure(resultStructure);
         InsertResultTemplateResponse resp = insertResultTemplateDAO.insertResultTemplate(req);

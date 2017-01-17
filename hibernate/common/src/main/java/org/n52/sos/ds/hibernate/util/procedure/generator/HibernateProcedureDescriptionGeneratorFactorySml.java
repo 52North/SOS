@@ -26,48 +26,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.datasource;
+package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.util.Properties;
-import java.util.Set;
+import javax.inject.Inject;
 
-import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.annotation.Configurable;
 
-import com.google.common.collect.ImmutableSet;
+@Configurable
+public abstract class HibernateProcedureDescriptionGeneratorFactorySml
+        implements HibernateProcedureDescriptionGeneratorFactory {
 
-/**
- * Oracle datasource for core mapping
- * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since 4.3.0
- *
- */
-public class OracleCoreDatasource extends AbstractOracleDatasource {
+    private String srsNamePrefixUrl;
 
-    private static final String DIALECT_NAME = "Oracle Spatial Core";
-
-    public OracleCoreDatasource() {
-        super();
-        super.setTransactional(false);
+    /**
+     * @return the srsNamePrefixUrl
+     */
+    public String getSrsNamePrefixUrl() {
+        return srsNamePrefixUrl;
     }
 
-    @Override
-    public String getDialectName() {
-        return DIALECT_NAME;
-    }
-
-    @Override
-    public boolean supportsClear() {
-        return false;
-    }
-
-    @Override
-    public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties current) {
-        return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
-    }
-
-    @Override
-    public Set<SettingDefinition<?>> getSettingDefinitions() {
-        return filter(super.getSettingDefinitions(), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
+    /**
+     * @param srsNamePrefixUrl the srsNamePrefixUrl to set
+     */
+    @Inject
+    public void setSrsNamePrefixUrl(String srsNamePrefixUrl) {
+        this.srsNamePrefixUrl = srsNamePrefixUrl;
     }
 
 }

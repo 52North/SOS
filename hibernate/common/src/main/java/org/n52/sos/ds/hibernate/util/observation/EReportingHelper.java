@@ -207,7 +207,7 @@ public class EReportingHelper {
     }
 
     private static SweAbstractEncoding createEncoding(OmObservation omObservation) {
-        return SweHelper.createTextEncoding(omObservation);
+        return new SweHelper().createTextEncoding(omObservation);
     }
 
     private static void addDoubleValue(List<String> list, Double value) {

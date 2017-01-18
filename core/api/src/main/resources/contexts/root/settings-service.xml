@@ -22,14 +22,6 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.addOutputsToSensorML" />
-        <property name="title" value="Add outputs to DescribeSensor SensorML responses" />
-        <property name="description" value="Whether to query example observations and dynamically add outputs to DescribeSensor SensorML responses." />
-        <property name="order" value="14.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="true" />
-    </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="service.sensorDirectory" />
         <property name="title" value="Sensor Directory" />
@@ -78,14 +70,6 @@
         <property name="order" value="12.0" />
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
-    </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.encodeFullChildrenInDescribeSensor" />
-        <property name="title" value="Encode full for child procedure SensorML in parent DescribeSensor responses" />
-        <property name="description" value="Whether to encode full SensorML for each child procedures in a DescribeSensor response for a parent procedure." />
-        <property name="order" value="12.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="true" />
     </bean>
     <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="service.cacheThreadCount" />

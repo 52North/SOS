@@ -30,11 +30,11 @@ package org.n52.sos.coding.encode;
 
 import javax.inject.Inject;
 
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.coding.encode.ResponseWriterRepository;
-import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.service.StreamingSettings;
 import org.n52.janmayen.component.SingleTypeComponentFactory;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;

@@ -38,8 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.faroe.annotation.Setting;
-import org.n52.janmayen.lifecycle.Destroyable;
 import org.n52.iceland.service.ServiceSettings;
+import org.n52.janmayen.lifecycle.Destroyable;
 
 import com.google.common.collect.Sets;
 

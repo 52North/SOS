@@ -35,20 +35,19 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.activation.ActivationListener;
 import org.n52.iceland.util.activation.ActivationListeners;
 import org.n52.iceland.util.activation.ActivationManager;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ObservationEncoder;
-import org.n52.iceland.coding.encode.ResponseFormatKey;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc

@@ -28,12 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Contains;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_During;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Equals;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Meets;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_MetBy;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Overlaps;
 
 import java.util.Collection;
 import java.util.Map;
@@ -138,6 +132,13 @@ public class TemporalRestrictions {
      */
     public static final TimePrimitiveFieldDescriptor VALID_TIME_DESCRIBE_SENSOR_FIELDS =
             new TimePrimitiveFieldDescriptor(ValidProcedureTime.START_TIME, ValidProcedureTime.END_TIME);
+
+    /**
+     * Private constructor due to static access.
+     */
+    private TemporalRestrictions() {
+        // noop
+    }
 
     /**
      * Creates a temporal restriction for the specified time and property.
@@ -999,35 +1000,52 @@ public class TemporalRestrictions {
             UnsupportedValueReferenceException, UnsupportedOperatorException {
         TimePrimitiveFieldDescriptor property = getFields(filter.getValueReference());
         Time value = filter.getTime();
-        switch (filter.getOperator()) {
-        case TM_Before:
-            return before(property, value);
-        case TM_After:
-            return after(property, value);
-        case TM_Begins:
-            return begins(property, value);
-        case TM_Ends:
-            return ends(property, value);
-        case TM_EndedBy:
-            return endedBy(property, value);
-        case TM_BegunBy:
-            return begunBy(property, value);
-        case TM_During:
-            return during(property, value);
-        case TM_Equals:
-            return tEquals(property, value);
-        case TM_Contains:
-            return contains(property, value);
-        case TM_Overlaps:
-            return overlaps(property, value);
-        case TM_Meets:
-            return meets(property, value);
-        case TM_MetBy:
-            return metBy(property, value);
-        case TM_OverlappedBy:
-            return overlappedBy(property, value);
-        default:
-            throw new UnsupportedOperatorException(filter.getOperator());
+        return filter(filter.getOperator(), property, value);
+    }
+
+    /**
+     * Create a new {@code Criterion} using the specified operator, fields and value
+     *
+     * @param operator the operator
+     * @param property the property
+     * @param value    the value
+     *
+     * @return the {@code Criterion}
+     *
+     * @throws UnsupportedOperatorException if no restriction definition for the {@link TimeOperator} is found
+     * @throws UnsupportedTimeException     if the value and property combination is not applicable for this restriction
+     */
+    public static Criterion filter(TimeOperator operator, TimePrimitiveFieldDescriptor property, Time value)
+            throws UnsupportedOperatorException, UnsupportedTimeException {
+        switch (operator) {
+            case TM_Before:
+                return before(property, value);
+            case TM_After:
+                return after(property, value);
+            case TM_Begins:
+                return begins(property, value);
+            case TM_Ends:
+                return ends(property, value);
+            case TM_EndedBy:
+                return endedBy(property, value);
+            case TM_BegunBy:
+                return begunBy(property, value);
+            case TM_During:
+                return during(property, value);
+            case TM_Equals:
+                return tEquals(property, value);
+            case TM_Contains:
+                return contains(property, value);
+            case TM_Overlaps:
+                return overlaps(property, value);
+            case TM_Meets:
+                return meets(property, value);
+            case TM_MetBy:
+                return metBy(property, value);
+            case TM_OverlappedBy:
+                return overlappedBy(property, value);
+            default:
+                throw new UnsupportedOperatorException(operator);
         }
     }
 
@@ -1056,9 +1074,7 @@ public class TemporalRestrictions {
         if (disjunctions.size() == 1) {
             return disjunctions.iterator().next();
         }
-        for (Disjunction disjunction : disjunctions) {
-            conjunction.add(disjunction);
-        }
+        disjunctions.forEach(conjunction::add);
         return conjunction;
     }
 
@@ -1127,10 +1143,4 @@ public class TemporalRestrictions {
         }
     }
 
-    /**
-     * Private constructor due to static access.
-     */
-    private TemporalRestrictions() {
-        // noop
-    }
 }

@@ -186,6 +186,16 @@ public interface SosContentCache
     Set<String> getObservablePropertiesForProcedure(String procedure);
 
     /**
+     * Checks if the specified procedure has the specified observable property.
+     *
+     * @param procedure          the procedure
+     * @param observableProperty the observable property
+     *
+     * @return if there exists an association
+     */
+    boolean hasObservablePropertyForProcedure(String procedure, String observableProperty);
+
+    /**
      * @return all observation types
      */
     Set<String> getObservationTypes();

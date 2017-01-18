@@ -484,6 +484,12 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     }
 
     @Override
+    public boolean hasObservablePropertyForProcedure(final String procedure, String observableProperty) {
+        return this.observablePropertiesForProcedures.containsKey(procedure) &&
+               this.observablePropertiesForProcedures.get(procedure).contains(observableProperty);
+    }
+
+    @Override
     public Set<String> getObservationTypesForOffering(final String offering) {
         return copyOf(this.observationTypesForOfferings.get(offering));
     }

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+
 import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.valueOf;
 
 import java.util.EnumSet;
@@ -101,7 +102,7 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     private Set<Identifier> filter(TimePrimitiveFieldDescriptor d, TemporalRestriction r, Time time, Session session)
             throws OwsExceptionReport {
         List<String> list =
-                session.createCriteria(getObservationClass()).add(r.get(d, time))
+                session.createCriteria(getObservationClass()).add(r.getCriterion(d, time))
                         .setProjection(Projections.distinct(Projections.property(AbstractObservation.IDENTIFIER))).list();
         Set<Identifier> s = EnumSet.noneOf(Identifier.class);
         for (String id : list) {
@@ -111,11 +112,11 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     }
 
     protected Set<Identifier> filterPhenomenonTime(Session session, TemporalRestriction r) throws OwsExceptionReport {
-        return filter(TemporalRestrictions.PHENOMENON_TIME_FIELDS, r, filter, session);
+        return filter(SosTemporalRestrictions.PHENOMENON_TIME_FIELDS, r, filter, session);
     }
 
     protected Set<Identifier> filterResultTime(Session session, TemporalRestriction r) throws OwsExceptionReport {
-        return filter(TemporalRestrictions.RESULT_TIME_FIELDS, r, filter, session);
+        return filter(SosTemporalRestrictions.RESULT_TIME_FIELDS, r, filter, session);
     }
 
     public enum Identifier {

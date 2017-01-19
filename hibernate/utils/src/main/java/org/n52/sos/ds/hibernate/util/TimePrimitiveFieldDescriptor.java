@@ -37,7 +37,6 @@ package org.n52.sos.ds.hibernate.util;
  */
 public class TimePrimitiveFieldDescriptor {
     private final String begin;
-
     private final String end;
 
     /**

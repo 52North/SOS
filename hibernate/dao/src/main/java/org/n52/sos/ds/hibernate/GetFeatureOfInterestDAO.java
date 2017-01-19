@@ -44,6 +44,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -69,7 +70,8 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferenced
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -406,7 +408,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
         } else {
             c = getCriteriaForFeatureIdentifiersOfParameterFromOldObservations(req, session);
             if (req.isSetTemporalFilters()) {
-                c.add(TemporalRestrictions.filter(req.getTemporalFilters()));
+                c.add(SosTemporalRestrictions.filter(req.getTemporalFilters()));
             }
         }
 
@@ -515,7 +517,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
         }
         // temporal filter
         if (req.isSetTemporalFilters()) {
-            detachedCriteria.add(TemporalRestrictions.filter(req.getTemporalFilters()));
+            detachedCriteria.add(SosTemporalRestrictions.filter(req.getTemporalFilters()));
         }
 
         detachedCriteria.setProjection(Projections.distinct(Projections.property(ContextualReferencedSeriesObservation.SERIES)));

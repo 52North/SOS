@@ -26,21 +26,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.exception.ows.concrete;
+package org.n52.sos.ds.hibernate.util;
 
-import org.n52.shetland.ogc.gml.time.Time;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
+
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Restrictions;
+
+import org.n52.janmayen.function.Functions;
+import org.n52.janmayen.stream.Streams;
 
 /**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- * @since 4.0.0
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann
  */
-public class UnsupportedTimeException extends NoApplicableCodeException {
-
-    private static final long serialVersionUID = -6897786883586612395L;
-
-    public UnsupportedTimeException(Time time) {
-        withMessage("Time %s is not supported", time);
+public final class HibernateCollectors {
+    private HibernateCollectors() {
     }
 
+    public static Collector<Criterion, ?, Disjunction> toDisjunction() {
+        return toJunktion(Restrictions::disjunction);
+    }
+
+    public static Collector<Criterion, ?, Conjunction> toConjunction() {
+        return toJunktion(Restrictions::conjunction);
+    }
+
+    public static <T extends Junction> Collector<Criterion, ?, T> toJunktion(Supplier<T> supplier) {
+        BiConsumer<T, Criterion> accumulator = Junction::add;
+        BinaryOperator<T> combiner = Functions.mergeLeft((d1, d2) -> Streams.stream(d2.conditions()).forEach(d1::add));
+        return Collector.of(supplier, accumulator, combiner, Collector.Characteristics.UNORDERED);
+    }
 }

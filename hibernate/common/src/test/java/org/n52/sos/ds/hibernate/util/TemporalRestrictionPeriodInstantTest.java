@@ -80,7 +80,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testAfterPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestriction.after());
+            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.after());
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(PI_AFTER_ID));
             assertThat(filtered, hasSize(1));
@@ -93,7 +93,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testAfterResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterResultTime(session, TemporalRestriction.after());
+            Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.after());
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(PI_AFTER_ID));
             assertThat(filtered, hasSize(1));
@@ -106,7 +106,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testBeforePhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestriction.before());
+            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.before());
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(PI_BEFORE_ID));
             assertThat(filtered, hasSize(1));
@@ -119,7 +119,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testBeforeResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterResultTime(session, TemporalRestriction.before());
+            Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.before());
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItems(PI_BEFORE_ID, PI_ENDED_BY_ID, PI_CONTAINS_ID));
             assertThat(filtered, hasSize(3));
@@ -132,7 +132,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testEqualsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestriction.equals());
+            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.equals());
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, is(empty()));
         } finally {
@@ -144,7 +144,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testEqualsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterResultTime(session, TemporalRestriction.equals());
+            Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.equals());
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(PI_BEGUN_BY_ID));
             assertThat(filtered, hasSize(1));
@@ -157,7 +157,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testContainsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestriction.contains());
+            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.contains());
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(PI_CONTAINS_ID));
             assertThat(filtered, hasSize(1));
@@ -170,7 +170,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testContainsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestriction.contains());
+            filterResultTime(session, TemporalRestrictions.contains());
         } finally {
             returnSession(session);
         }
@@ -180,7 +180,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testDuringPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterPhenomenonTime(session, TemporalRestriction.during());
+            filterPhenomenonTime(session, TemporalRestrictions.during());
         } finally {
             returnSession(session);
         }
@@ -190,7 +190,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testDuringResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestriction.during());
+            filterResultTime(session, TemporalRestrictions.during());
         } finally {
             returnSession(session);
         }
@@ -200,7 +200,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testBeginsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterPhenomenonTime(session, TemporalRestriction.begins());
+            filterPhenomenonTime(session, TemporalRestrictions.begins());
         } finally {
             returnSession(session);
         }
@@ -210,7 +210,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testBeginsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestriction.begins());
+            filterResultTime(session, TemporalRestrictions.begins());
         } finally {
             returnSession(session);
         }
@@ -220,7 +220,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testBegunByPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestriction.begunBy());
+            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.begunBy());
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(PI_BEGUN_BY_ID));
             assertThat(filtered, hasSize(1));
@@ -233,7 +233,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testBegunByResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestriction.begunBy());
+            filterResultTime(session, TemporalRestrictions.begunBy());
         } finally {
             returnSession(session);
         }
@@ -243,7 +243,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testEndsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterPhenomenonTime(session, TemporalRestriction.ends());
+            filterPhenomenonTime(session, TemporalRestrictions.ends());
         } finally {
             returnSession(session);
         }
@@ -253,7 +253,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testEndsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestriction.ends());
+            filterResultTime(session, TemporalRestrictions.ends());
         } finally {
             returnSession(session);
         }
@@ -263,7 +263,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testEndedByPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestriction.endedBy());
+            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.endedBy());
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(PI_ENDED_BY_ID));
             assertThat(filtered, hasSize(1));
@@ -276,7 +276,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testEndedByResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestriction.endedBy());
+            filterResultTime(session, TemporalRestrictions.endedBy());
         } finally {
             returnSession(session);
         }
@@ -286,7 +286,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testOverlapsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterPhenomenonTime(session, TemporalRestriction.overlaps());
+            filterPhenomenonTime(session, TemporalRestrictions.overlaps());
         } finally {
             returnSession(session);
         }
@@ -296,7 +296,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testOverlapsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestriction.overlaps());
+            filterResultTime(session, TemporalRestrictions.overlaps());
         } finally {
             returnSession(session);
         }
@@ -306,7 +306,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testOverlappedByPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterPhenomenonTime(session, TemporalRestriction.overlappedBy());
+            filterPhenomenonTime(session, TemporalRestrictions.overlappedBy());
         } finally {
             returnSession(session);
         }
@@ -316,7 +316,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testOverlappedByResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestriction.overlappedBy());
+            filterResultTime(session, TemporalRestrictions.overlappedBy());
         } finally {
             returnSession(session);
         }
@@ -326,7 +326,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testMeetsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterPhenomenonTime(session, TemporalRestriction.meets());
+            filterPhenomenonTime(session, TemporalRestrictions.meets());
         } finally {
             returnSession(session);
         }
@@ -336,7 +336,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testMeetsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestriction.meets());
+            filterResultTime(session, TemporalRestrictions.meets());
         } finally {
             returnSession(session);
         }
@@ -346,7 +346,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testMetByPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterPhenomenonTime(session, TemporalRestriction.metBy());
+            filterPhenomenonTime(session, TemporalRestrictions.metBy());
         } finally {
             returnSession(session);
         }
@@ -356,7 +356,7 @@ public class TemporalRestrictionPeriodInstantTest extends TemporalRestrictionTes
     public void testMetByResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestriction.metBy());
+            filterResultTime(session, TemporalRestrictions.metBy());
         } finally {
             returnSession(session);
         }

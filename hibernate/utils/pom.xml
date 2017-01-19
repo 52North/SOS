@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.n52.sensorweb.sos</groupId>
+        <artifactId>hibernate</artifactId>
+        <version>5.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>hibernate-utils</artifactId>
+    <name>52°North SOS - Hibernate Utils</name>
+    <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.n52.shetland</groupId>
+            <artifactId>shetland</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb.sos</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.janmayen</groupId>
+            <artifactId>janmayen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+    </dependencies>
+</project>

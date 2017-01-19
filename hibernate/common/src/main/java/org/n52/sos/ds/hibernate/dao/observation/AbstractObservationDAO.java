@@ -120,7 +120,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.util.GeometryHandler;
@@ -1247,7 +1247,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         List<TemporalFilter> filters = Lists.newArrayListWithCapacity(2);
         filters.add(getPhenomeonTimeFilter(c, sosObservation.getPhenomenonTime()));
         filters.add(getResultTimeFilter(c, sosObservation.getResultTime(), sosObservation.getPhenomenonTime()));
-        c.add(TemporalRestrictions.filter(filters));
+        c.add(SosTemporalRestrictions.filter(filters));
         if (sosObservation.isSetHeightDepthParameter()) {
             NamedValue<Double> hdp = sosObservation.getHeightDepthParameter();
             addParameterRestriction(c, hdp);

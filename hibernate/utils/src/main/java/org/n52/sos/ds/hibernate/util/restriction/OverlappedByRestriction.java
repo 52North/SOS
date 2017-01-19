@@ -26,21 +26,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.exception.ows.concrete;
+package org.n52.sos.ds.hibernate.util.restriction;
 
-import org.n52.shetland.ogc.gml.time.Time;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import java.util.Date;
+
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
+
+import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 
 /**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- * @since 4.0.0
+ * Creates filters according to the following table.
+ * <table>
+ * <tr>
+ * <td><i>Self/Other</i></td>
+ * <td><b>Period</b></td>
+ * <td><b>Instant</b></td>
+ * </tr>
+ * <tr>
+ * <td><b>Period</b></td>
+ * <td> {@code self.begin &gt; other.begin AND self.begin &lt; other.end AND self.end &gt; other.end}
+ * </td>
+ * <td><i>not defined</i></td>
+ * </tr>
+ * <tr>
+ * <td><b>Instant</b></td>
+ * <td><i>not defined</i></td>
+ * <td><i>not defined</i></td>
+ * </tr>
+ * </table>
  */
-public class UnsupportedTimeException extends NoApplicableCodeException {
-
-    private static final long serialVersionUID = -6897786883586612395L;
-
-    public UnsupportedTimeException(Time time) {
-        withMessage("Time %s is not supported", time);
+public class OverlappedByRestriction implements TemporalRestriction {
+    @Override
+    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
+        return Restrictions.and(Restrictions.gt(selfBegin, otherBegin),
+                                Restrictions.lt(selfBegin, otherEnd),
+                                Restrictions.gt(selfEnd, otherEnd));
     }
 
 }

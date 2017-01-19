@@ -28,26 +28,28 @@
  */
 package org.n52.sos.binding.rest.resources.capabilities;
 
-
 import net.opengis.sosREST.x10.CapabilitiesDocument;
 import net.opengis.sosREST.x10.CapabilitiesType;
 
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.n52.sos.binding.rest.requests.RestResponse;
-
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class CapabilitiesGetEncoder extends ResourceEncoder {
+    public CapabilitiesGetEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
 
     @Override
-    public ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport
-    {
+    public ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport {
         if (objectToEncode != null && objectToEncode instanceof CapabilitiesGetResponse) {
             CapabilitiesGetResponse capabilitiesGetResponse = (CapabilitiesGetResponse) objectToEncode;
             CapabilitiesDocument xb_CapabilitiesRestDoc = CapabilitiesDocument.Factory.newInstance();
@@ -73,72 +75,46 @@ public class CapabilitiesGetEncoder extends ResourceEncoder {
             addObservationCreateLink(xb_CapabilitiesRest);
             addObservationLink(xb_CapabilitiesRest);
 
-            return createServiceResponseFromXBDocument(
-                    xb_CapabilitiesRestDoc,
-                    bindingConstants.getResourceCapabilities(),
-                    HTTPStatus.OK,
-                    false,
-                    true);
+            return createServiceResponseFromXBDocument(xb_CapabilitiesRestDoc, Constants.REST_RESOURCE_RELATION_CAPABILITIES,
+                                                       HTTPStatus.OK, false, true);
 
         }
         return null;
     }
 
-    private void addObservationLink(CapabilitiesType xb_CapabilitiesRest)
-    {
-        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(),
-                bindingConstants.getResourceRelationObservationGet(),
-                bindingConstants.getResourceObservations());
+    private void addObservationLink(CapabilitiesType xb_CapabilitiesRest) {
+        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(), Constants.REST_RESOURCE_RELATION_OBSERVATION_GET, Constants.REST_RESOURCE_RELATION_OBSERVATIONS);
     }
 
-    private void addObservationCreateLink(CapabilitiesType xb_CapabilitiesRest)
-    {
-        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(),
-                bindingConstants.getResourceRelationObservationCreate(),
-                bindingConstants.getResourceObservations());
+    private void addObservationCreateLink(CapabilitiesType xb_CapabilitiesRest) {
+        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(), Constants.REST_RESOURCE_RELATION_OBSERVATION_CREATE, Constants.REST_RESOURCE_RELATION_OBSERVATIONS);
     }
 
-    private void addSensorCreateLink(CapabilitiesType xb_CapabilitiesRest)
-    {
-        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(),
-                bindingConstants.getResourceRelationSensorCreate(),
-                bindingConstants.getResourceSensors());
+    private void addSensorCreateLink(CapabilitiesType xb_CapabilitiesRest) {
+        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(), Constants.REST_RESOURCE_RELATION_SENSOR_CREATE, Constants.REST_RESOURCE_SENSORS);
     }
 
-    private void addSensorsLink(CapabilitiesType xb_CapabilitiesRest)
-    {
-        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(),
-                bindingConstants.getResourceRelationSensorsGet(),
-                bindingConstants.getResourceSensors());
+    private void addSensorsLink(CapabilitiesType xb_CapabilitiesRest) {
+        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(), Constants.REST_RESOURCE_RELATION_SENSORS_GET, Constants.REST_RESOURCE_SENSORS);
     }
 
-    private void addFeaturesLink(CapabilitiesType xb_CapabilitiesRest)
-    {
-        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(),
-                bindingConstants.getResourceRelationFeaturesGet(),
-                bindingConstants.getResourceFeatures());
+    private void addFeaturesLink(CapabilitiesType xb_CapabilitiesRest) {
+        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(), Constants.REST_RESOURCE_RELATION_FEATURES_GET, Constants.REST_RESOURCE_RELATION_FEATURES);
     }
 
-    private void addOfferingsLink(CapabilitiesType xb_CapabilitiesRest)
-    {
-        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(),
-                bindingConstants.getResourceRelationOfferingsGet(),
-                bindingConstants.getResourceOfferings());
+    private void addOfferingsLink(CapabilitiesType xb_CapabilitiesRest) {
+        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(), Constants.REST_RESOURCE_RELATION_OFFERINGS_GET, Constants.REST_RESOURCE_RELATION_OFFERINGS);
     }
 
     protected void addOfferingLinks(CapabilitiesGetResponse capabilitiesGetResponse,
-            CapabilitiesType xb_CapabilitiesRest)
-    {
+                                    CapabilitiesType xb_CapabilitiesRest) {
         if (capabilitiesGetResponse.getOfferingIdentifiers() != null) {
-            setOfferingLinks(xb_CapabilitiesRest,capabilitiesGetResponse.getOfferingIdentifiers());
+            setOfferingLinks(xb_CapabilitiesRest, capabilitiesGetResponse.getOfferingIdentifiers());
         }
     }
 
-    protected void addSelfLink(CapabilitiesType xb_CapabilitiesRest)
-    {
-        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(),
-                bindingConstants.getResourceRelationSelf(),
-                bindingConstants.getResourceCapabilities());
+    protected void addSelfLink(CapabilitiesType xb_CapabilitiesRest) {
+        setValuesOfLinkToGlobalResource(xb_CapabilitiesRest.addNewLink(), Constants.REST_RESOURCE_RELATION_SELF, Constants.REST_RESOURCE_RELATION_CAPABILITIES);
     }
 
 }

@@ -33,6 +33,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheController;
+import org.n52.shetland.inspire.InspireSupportedCRS;
+import org.n52.shetland.inspire.InspireSupportedLanguages;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.inspire.capabilities.InspireExtendedCapabilitiesProvider;
 import org.n52.sos.inspire.offering.InspireOfferingExtensionProvider;

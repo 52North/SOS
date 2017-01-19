@@ -43,6 +43,7 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 
 /**
@@ -51,11 +52,17 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactorySml101 implements HibernateProcedureDescriptionGeneratorFactory {
+public class HibernateProcedureDescriptionGeneratorFactorySml101 extends HibernateProcedureDescriptionGeneratorFactorySml {
 
     private static final Set<HibernateProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES = CollectionHelper.set(
             new HibernateProcedureDescriptionGeneratorFactoryKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
             new HibernateProcedureDescriptionGeneratorFactoryKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL));
+
+    private final DaoFactory daoFactory;
+
+    public HibernateProcedureDescriptionGeneratorFactorySml101(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Override
     public Set<HibernateProcedureDescriptionGeneratorFactoryKey> getKeys() {
@@ -64,11 +71,14 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101 implements Hibe
 
     @Override
     public SosProcedureDescription<?> create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-        return new HibernateProcedureDescriptionGeneratorSml101().generateProcedureDescription(procedure, i18n, session);
+        return new HibernateProcedureDescriptionGeneratorSml101(daoFactory).generateProcedureDescription(procedure, i18n, session);
     }
 
 
     private class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibernateProcedureDescriptionGeneratorSml {
+        public HibernateProcedureDescriptionGeneratorSml101(DaoFactory daoFactory) {
+            super(daoFactory, getSrsNamePrefixUrl());
+        }
 
         /**
          * Generate procedure description from Hibernate procedure entity if no

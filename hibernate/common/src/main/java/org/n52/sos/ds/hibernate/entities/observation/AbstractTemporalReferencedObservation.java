@@ -34,7 +34,7 @@ import org.joda.time.DateTime;
 
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.util.DateTimeHelper;
-import org.n52.sos.util.GmlHelper;
+import org.n52.svalbard.util.GmlHelper;
 
 /**
  * Abstract implementation of {@link TemporalReferencedObservation}.

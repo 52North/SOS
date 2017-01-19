@@ -66,6 +66,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+
 public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailabilityDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDao.class);

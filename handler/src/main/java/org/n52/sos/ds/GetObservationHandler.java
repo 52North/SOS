@@ -45,8 +45,8 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.sos.ds.dao.GetObservationDao;
-import org.n52.sos.response.GetObservationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

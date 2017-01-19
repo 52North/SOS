@@ -36,7 +36,7 @@ import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.util.Constants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -48,9 +48,9 @@ import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.JTSHelperForTesting;
 import org.n52.sos.util.builder.SamplingFeatureBuilder;
+import org.n52.svalbard.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -58,7 +58,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

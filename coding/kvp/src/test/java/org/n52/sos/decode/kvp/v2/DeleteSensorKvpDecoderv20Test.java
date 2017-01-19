@@ -47,7 +47,7 @@ import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 public class DeleteSensorKvpDecoderv20Test extends DeleteSensorKvpDecoderv20 {

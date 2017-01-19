@@ -47,8 +47,8 @@ import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -64,9 +64,15 @@ import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler {
 
     private HibernateSessionHolder sessionHolder;
+    private DaoFactory daoFactory;
 
     public InsertResultTemplateDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     @Inject
@@ -89,10 +95,10 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler
             OmObservationConstellation sosObsConst = request.getObservationTemplate();
             ObservationConstellation obsConst = null;
             for (String offeringID : sosObsConst.getOfferings()) {
-                obsConst = new ObservationConstellationDAO().checkObservationConstellation(sosObsConst, offeringID,
+                obsConst = daoFactory.getObservationConstellationDAO().checkObservationConstellation(sosObsConst, offeringID,
                         session, Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
                 if (obsConst != null) {
-                    FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
+                    FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
                     FeatureOfInterest feature = featureOfInterestDAO
                             .checkOrInsertFeatureOfInterest(sosObsConst.getFeatureOfInterest(), session);
                     featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(feature,

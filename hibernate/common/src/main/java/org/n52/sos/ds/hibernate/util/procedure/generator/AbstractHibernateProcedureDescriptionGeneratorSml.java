@@ -38,7 +38,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.n52.faroe.annotation.Configurable;
+import org.n52.iceland.service.ServiceSettings;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.om.OmConstants;
@@ -60,7 +61,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -106,6 +106,13 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
             "getUnitForObservablePropertyProcedureOffering";
 
     protected static final String POSITION_NAME = "sensorPosition";
+
+    private String srsNamePrefixUrl;
+
+    public AbstractHibernateProcedureDescriptionGeneratorSml(DaoFactory daoFactory, String srsNamePrefixUrl) {
+        super(daoFactory);
+        this.srsNamePrefixUrl = srsNamePrefixUrl;
+    }
 
     /**
      * Set common values to procedure description
@@ -196,7 +203,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
     private SmlIo createOutputFromObservationConstellation(String procedure, String observableProperty,
             Session session) throws OwsExceptionReport {
         List<ObservationConstellation> observationConstellations =
-                new ObservationConstellationDAO().getObservationConstellations(procedure, observableProperty, session);
+                getDaoFactory().getObservationConstellationDAO().getObservationConstellations(procedure, observableProperty, session);
         if (CollectionHelper.isNotEmpty(observationConstellations)) {
             ObservationConstellation oc = observationConstellations.iterator().next();
             String unit = queryUnit(oc, session);
@@ -268,7 +275,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
                     SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
             return (String) namedQuery.uniqueResult();
         } else if (EntitiyHelper.getInstance().isSeriesSupported()) {
-            List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(Lists.newArrayList(oc.getProcedure().getIdentifier()), Lists.newArrayList(oc.getObservableProperty().getIdentifier()), Lists.<String>newArrayList(), session);
+            List<Series> series = getDaoFactory().getSeriesDAO().getSeries(Lists.newArrayList(oc.getProcedure().getIdentifier()), Lists.newArrayList(oc.getObservableProperty().getIdentifier()), Lists.<String>newArrayList(), session);
             if (series.iterator().hasNext()) {
                 Series next = series.iterator().next();
                 if (next.isSetUnit() ) {
@@ -370,7 +377,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         if (procedure.isSetSrid()) {
             srid = procedure.getSrid();
         }
-        position.setReferenceFrame(getServiceConfig().getSrsNamePrefixSosV2() + srid);
+        position.setReferenceFrame(srsNamePrefixUrl + srid);
         return position;
     }
 

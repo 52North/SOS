@@ -28,10 +28,8 @@
  */
 package org.n52.sos.ds.procedure.generator;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -72,7 +70,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -91,6 +88,12 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
             .getLogger(AbstractProcedureDescriptionGeneratorSml.class);
 
     protected static final String POSITION_NAME = "sensorPosition";
+
+    private String srsNamePrefixUrl;
+
+    public AbstractProcedureDescriptionGeneratorSml(String srsNamePrefixUrl) {
+        this.srsNamePrefixUrl = srsNamePrefixUrl;
+    }
 
     /**
      * Set common values to procedure description
@@ -276,7 +279,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
                     position.setPosition(createCoordinatesForPosition(c.y, c.x, c.z));
                 }
             }
-            position.setReferenceFrame(getServiceConfig().getSrsNamePrefixSosV2() + srid);
+            position.setReferenceFrame(srsNamePrefixUrl  + srid);
             return position;
         } catch (Exception e) {
             throw new NoApplicableCodeException().causedBy(e).withMessage(

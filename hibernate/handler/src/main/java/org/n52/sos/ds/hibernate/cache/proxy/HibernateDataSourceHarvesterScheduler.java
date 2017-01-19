@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.cache.proxy;
 
 import static org.quartz.TriggerBuilder.newTrigger;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

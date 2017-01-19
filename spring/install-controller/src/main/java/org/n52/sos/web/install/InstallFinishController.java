@@ -46,10 +46,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsService;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingsService;
 import org.n52.iceland.ds.Datasource;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.MetaDataHandler;

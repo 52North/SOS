@@ -59,7 +59,7 @@ import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
-import org.n52.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.sos.response.GetResultResponse;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 

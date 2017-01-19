@@ -32,6 +32,7 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -44,12 +45,12 @@ import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
+import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.PhenomenonDao;
-import org.n52.shetland.i18n.LocalizedString;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -65,7 +66,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -149,10 +149,8 @@ public abstract class AbstractProcedureDescriptionGenerator {
                     I18NProcedureMetadata i18n = i18nDAO.getMetadata(procedure.getDomainId(), requestedLocale);
                     Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
                     if (name.isPresent()) {
-                        try {
-                            feature.addName(name.get().asCodeType());
-                        } catch (URISyntaxException e) {
-                            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", name.get().getLang().toString());
+                        if (name.isPresent()) {
+                            feature.addName(new CodeType(name.get()));
                         }
                     }
                     Optional<LocalizedString> description = i18n.getDescription().getLocalization(requestedLocale);
@@ -171,11 +169,7 @@ public abstract class AbstractProcedureDescriptionGenerator {
                     }
                     for (LocalizedString name : i18n.getName()) {
                         // either all or default only
-                        try {
-                            feature.addName(name.asCodeType());
-                        } catch (URISyntaxException e) {
-                            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", name.getLang().toString());
-                        }
+                        feature.addName(new CodeType(name));
                     }
                     // choose always the description in the default locale
                     Optional<LocalizedString> description = i18n.getDescription().getLocalization(defaultLocale);

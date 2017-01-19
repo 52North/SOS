@@ -37,7 +37,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Setting;
 import org.n52.janmayen.lifecycle.Destroyable;
 import org.n52.iceland.service.ServiceSettings;
 

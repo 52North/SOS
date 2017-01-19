@@ -33,7 +33,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name = "bindings")
 public class Binding extends Activatable<String, Binding> implements Serializable {

@@ -55,7 +55,7 @@ import org.n52.shetland.ogc.sos.response.BatchResponse;
  *
  * Renamed, in version 4.x called BatchOperationDAO
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 5.0.0
  */

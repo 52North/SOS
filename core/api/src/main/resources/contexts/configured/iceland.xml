@@ -38,6 +38,9 @@
 		<description>Used to decouple EventListener and EventBus creation.</description>
 	</bean>
 
+    <bean id="xmlResponseWriterFactory"
+              class="org.n52.iceland.response.XmlResponseWriterFactory" />
+
 	<bean class="org.n52.iceland.util.activation.ActivationRegistrator">
 		<description>Used to wire up activation persistence.</description>
 		<property name="listeners">

@@ -33,7 +33,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-
+import org.n52.faroe.annotation.Configurable;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -47,6 +47,7 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 
 /**
@@ -56,11 +57,16 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactorySml20 implements HibernateProcedureDescriptionGeneratorFactory {
+public class HibernateProcedureDescriptionGeneratorFactorySml20 extends HibernateProcedureDescriptionGeneratorFactorySml {
 
     private static final Set<HibernateProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES = CollectionHelper.set(
             new HibernateProcedureDescriptionGeneratorFactoryKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
             new HibernateProcedureDescriptionGeneratorFactoryKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
+    private final DaoFactory daoFactory;
+
+    public HibernateProcedureDescriptionGeneratorFactorySml20(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Override
     public Set<HibernateProcedureDescriptionGeneratorFactoryKey> getKeys() {
@@ -69,11 +75,14 @@ public class HibernateProcedureDescriptionGeneratorFactorySml20 implements Hiber
 
     @Override
     public SosProcedureDescription<?> create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-        return new HibernateProcedureDescriptionGeneratorSml20().generateProcedureDescription(procedure, i18n, session);
+        return new HibernateProcedureDescriptionGeneratorSml20(daoFactory).generateProcedureDescription(procedure, i18n, session);
     }
 
     private class HibernateProcedureDescriptionGeneratorSml20 extends AbstractHibernateProcedureDescriptionGeneratorSml {
 
+        public HibernateProcedureDescriptionGeneratorSml20(DaoFactory daoFactory) {
+            super(daoFactory, getSrsNamePrefixUrl());
+        }
 
         @Override
         public SosProcedureDescription<?> generateProcedureDescription(Procedure procedure, Locale i18n, Session session)

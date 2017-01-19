@@ -39,7 +39,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.OmObservableProperty;
@@ -55,6 +54,7 @@ import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -82,10 +82,16 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
  */
 public class InsertSensorDAO extends AbstractInsertSensorHandler {
 
-private HibernateSessionHolder sessionHolder;
+    private HibernateSessionHolder sessionHolder;
+    private DaoFactory daoFactory;
 
     public InsertSensorDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     @Inject
@@ -112,10 +118,10 @@ private HibernateSessionHolder sessionHolder;
                             request.getProcedureDescriptionFormat(), session);
             if (procedureDescriptionFormat != null)  {
                 final Procedure hProcedure =
-                        new ProcedureDAO().getOrInsertProcedure(assignedProcedureID, procedureDescriptionFormat,
+                        new ProcedureDAO(daoFactory).getOrInsertProcedure(assignedProcedureID, procedureDescriptionFormat,
                                 request.getProcedureDescription(), request.isType(),session);
                 // TODO: set correct validTime,
-                new ValidProcedureTimeDAO().insertValidProcedureTime(
+                new ValidProcedureTimeDAO(daoFactory).insertValidProcedureTime(
                         hProcedure,
                         procedureDescriptionFormat,
                         getSensorDescriptionFromProcedureDescription(request.getProcedureDescription()), new DateTime(DateTimeZone.UTC), session);
@@ -129,12 +135,12 @@ private HibernateSessionHolder sessionHolder;
                     if (observationTypes != null && featureOfInterestTypes != null) {
                         final List<ObservableProperty> hObservableProperties =
                                 getOrInsertNewObservableProperties(request.getObservableProperty(), session);
-                        final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
-                        final OfferingDAO offeringDAO = new OfferingDAO();
+                        final ObservationConstellationDAO observationConstellationDAO = daoFactory.getObservationConstellationDAO();
+                        final OfferingDAO offeringDAO = daoFactory.getOfferingDAO();
                         for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
-                            final List<RelatedFeature> hRelatedFeatures = new LinkedList<RelatedFeature>();
+                            final List<RelatedFeature> hRelatedFeatures = new LinkedList<>();
                             if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
-                                final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO();
+                                final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO(daoFactory);
                                 final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
                                 for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
                                     final List<RelatedFeatureRole> relatedFeatureRoles =
@@ -248,7 +254,7 @@ private HibernateSessionHolder sessionHolder;
         for (final String observableProperty : obsProps) {
             observableProperties.add(new OmObservableProperty(observableProperty));
         }
-        return new ObservablePropertyDAO().getOrInsertObservableProperty(observableProperties, false, session);
+        return new ObservablePropertyDAO(daoFactory).getOrInsertObservableProperty(observableProperties, false, session);
     }
 
     /**

@@ -28,28 +28,28 @@
  */
 package org.n52.sos.ds.procedure.enrich;
 
+import java.util.Optional;
+import java.util.function.Predicate;
+
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.shetland.ogc.sensorML.elements.SmlCapabilitiesPredicates;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.swe.DataRecord;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweEnvelope;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.util.ReferencedEnvelope;
-import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.util.GeometryHandler;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class BoundingBoxEnrichment extends SensorMLEnrichment {
     public static final Predicate<SmlCapabilities> BBOX_PREDICATE =
@@ -120,7 +120,7 @@ public class BoundingBoxEnrichment extends SensorMLEnrichment {
                     .setName(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX)
                     .setDataRecord(new SweDataRecord().addField(field)));
         } else {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 

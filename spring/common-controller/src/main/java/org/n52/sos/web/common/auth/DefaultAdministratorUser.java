@@ -31,7 +31,7 @@ package org.n52.sos.web.common.auth;
 import org.n52.iceland.config.AdministratorUser;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

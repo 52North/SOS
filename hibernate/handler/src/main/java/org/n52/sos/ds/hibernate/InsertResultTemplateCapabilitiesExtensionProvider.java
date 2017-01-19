@@ -34,9 +34,8 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionKey;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionKey;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
 import org.n52.shetland.ogc.ows.OwsCapabilitiesExtension;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -51,15 +50,15 @@ import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
  * @author Christian Autermann
  */
 public class InsertResultTemplateCapabilitiesExtensionProvider
-        implements CapabilitiesExtensionProvider {
-    private static final CapabilitiesExtensionKey KEY
-            = new CapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
+        implements OwsCapabilitiesExtensionProvider {
+    private static final OwsCapabilitiesExtensionKey KEY
+            = new OwsCapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
     @Inject
     private ContentCacheController contentCacheController;
 
     @Override
     @Deprecated
-    public CapabilitiesExtensionKey getCapabilitiesExtensionKey() {
+    public OwsCapabilitiesExtensionKey getCapabilitiesExtensionKey() {
         return KEY;
     }
 
@@ -91,7 +90,7 @@ public class InsertResultTemplateCapabilitiesExtensionProvider
     }
 
     @Override
-    public Set<CapabilitiesExtensionKey> getKeys() {
+    public Set<OwsCapabilitiesExtensionKey> getKeys() {
         return Collections.singleton(KEY);
     }
 

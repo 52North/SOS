@@ -55,20 +55,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
-import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.iceland.ogc.ows.extension.OfferingExtension;
-import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProvider;
-import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderRepository;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionRepository;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderRepository;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
-import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository;
-import org.n52.iceland.ogc.swes.OfferingExtensionProvider;
-import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.service.ConformanceClass;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.collections.MultiMaps;
@@ -77,6 +71,7 @@ import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.janmayen.Comparables;
 import org.n52.janmayen.function.Functions;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.OfferingEntity;
@@ -112,6 +107,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.exception.VersionNegotiationFailedException;
 import org.n52.shetland.ogc.ows.extension.MergableExtension;
+import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.sos.Sos1Constants;
@@ -120,15 +116,19 @@ import org.n52.shetland.ogc.sos.SosCapabilities;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosObservationOffering;
 import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.config.CapabilitiesExtensionService;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionProvider;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
+import org.n52.svalbard.ConformanceClass;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.slf4j.Logger;
@@ -170,7 +170,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
     @Inject
     private BindingRepository bindingRepository;
     @Inject
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
     @Inject
     private RequestOperatorRepository requestOperatorRepository;
     @Inject
@@ -179,12 +179,11 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
     private ResponseFormatRepository responseFormatRepository;
     @Inject
     private GeometryHandler geometryHandler;
+    private OwsOperationMetadataExtensionProviderRepository OwsOperationMetadataExtensionProviderRepository;
     @Inject
-    private OwsExtendedCapabilitiesProviderRepository owsExtendedCapabilitiesProviderRepository;
+    private SosObservationOfferingExtensionRepository offeringExtensionRepository;
     @Inject
-    private OfferingExtensionRepository offeringExtensionRepository;
-    @Inject
-    private CapabilitiesExtensionRepository capabilitiesExtensionRepository;
+    private OwsCapabilitiesExtensionRepository capabilitiesExtensionRepository;
     @Inject
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
 
@@ -319,7 +318,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
     private OwsServiceIdentification getServiceIdentification(GetCapabilitiesRequest request, String service,
                                                               String version) throws OwsExceptionReport {
-        Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+        Locale locale = LocaleHelper.decode(request.getRequestedLanguage());
         LocalizedProducer<OwsServiceIdentification> serviceIdentificationFactory
                 = this.serviceMetadataRepository.getServiceIdentificationFactory(service);
         OwsServiceIdentification serviceIdentification = serviceIdentificationFactory.get(locale);
@@ -378,7 +377,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         * service and check if this provider provides OwsExtendedCapabilities
         * for the request
          */
-        OwsExtendedCapabilitiesProvider provider = owsExtendedCapabilitiesProviderRepository.getExtendedCapabilitiesProvider(service, version);
+        OwsOperationMetadataExtensionProvider provider = OwsOperationMetadataExtensionProviderRepository.getExtendedCapabilitiesProvider(service, version);
         if (provider != null && provider.hasExtendedCapabilitiesFor(request)) {
             owsExtendedCapabilities = provider.getOwsExtendedCapabilities(request);
         }
@@ -555,7 +554,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
             String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
             final Collection<OfferingEntity> offerings = new OfferingDao(session).getAllInstances(new DbQuery(IoParameters.createDefaults()));
             final List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
-            final Map<String, List<OfferingExtension>> extensions = this.capabilitiesExtensionService
+            final Map<String, List<SosObservationOfferingExtension>> extensions = this.capabilitiesExtensionService
                     .getActiveOfferingExtensions();
 
             if (CollectionHelper.isEmpty(offerings)) {
@@ -590,7 +589,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
                                 // add offering extension
                                 if (offeringExtensionRepository.hasOfferingExtensionProviderFor(
                                         sectionSpecificContentObject.getGetCapabilitiesRequest())) {
-                                    for (OfferingExtensionProvider provider : offeringExtensionRepository
+                                    for (SosObservationOfferingExtensionProvider provider : offeringExtensionRepository
                                             .getOfferingExtensionProvider(
                                                     sectionSpecificContentObject.getGetCapabilitiesRequest())) {
                                         if (provider != null && provider.hasExtendedOfferingFor(offering.getDomainId())) {
@@ -599,10 +598,10 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
                                     }
                                 }
                                 if (extensions.containsKey(sosObservationOffering.getOffering().getIdentifier())) {
-                                    for (OfferingExtension offeringExtension : extensions
+                                    for (SosObservationOfferingExtension offeringExtension : extensions
                                             .get(sosObservationOffering.getOffering().getIdentifier())) {
                                         sosObservationOffering.addExtension(
-                                                new SwesExtension<OfferingExtension>().setValue(offeringExtension));
+                                                new SwesExtension<SosObservationOfferingExtension>().setValue(offeringExtension));
                                     }
                                 }
 
@@ -646,9 +645,9 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         SosOffering sosOffering = new SosOffering(offering.getDomainId(), false);
         sosObservationOffering.setOffering(sosOffering);
         // add offering name
-        I18NHelper.addOfferingNames(getCache(), sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()), Locale.ROOT, false);
+        I18NHelper.addOfferingNames(getCache(), sosOffering, LocaleHelper.decode(request.getRequestedLanguage()), Locale.ROOT, false);
         // add offering description
-        I18NHelper.addOfferingDescription(sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()), Locale.ROOT, getCache());
+        I18NHelper.addOfferingDescription(sosOffering, LocaleHelper.decode(request.getRequestedLanguage()), Locale.ROOT, getCache());
     }
 
     /**
@@ -823,13 +822,13 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private List<OwsCapabilitiesExtension> getAndMergeExtensions(String service, String version)
             throws OwsExceptionReport {
-        List<CapabilitiesExtensionProvider> providers = capabilitiesExtensionRepository
+        List<OwsCapabilitiesExtensionProvider> providers = capabilitiesExtensionRepository
                 .getCapabilitiesExtensionProvider(service, version);
         List<OwsCapabilitiesExtension> extensions = new LinkedList<>();
         if (CollectionHelper.isNotEmpty(providers)) {
             HashMap<String, MergableExtension> map = new HashMap<>(providers.size());
             providers.stream().filter(Objects::nonNull)
-                    .map(CapabilitiesExtensionProvider::getExtension)
+                    .map(OwsCapabilitiesExtensionProvider::getExtension)
                     .forEachOrdered(extension -> {
                         if (extension instanceof MergableExtension) {
                             map.merge(extension.getSectionName(),
@@ -1159,7 +1158,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
     private OwsDomain getLanguageParameter(String service, String version) {
         Set<Locale> languages = getCache().getSupportedLanguages();
-        Stream<OwsValue> allowedValues = languages.stream().map(LocaleHelper::toString).map(OwsValue::new);
+        Stream<OwsValue> allowedValues = languages.stream().map(LocaleHelper::encode).map(OwsValue::new);
         return new OwsDomain(OWSConstants.AdditionalRequestParams.language, new OwsAllowedValues(allowedValues));
     }
 
@@ -1241,12 +1240,12 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //import org.n52.iceland.i18n.LocaleHelper;
 //import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 //import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProvider;
-//import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderRepository;
+//import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderRepository;
 //import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
 //import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
 //import org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository;
 //import org.n52.iceland.ogc.swes.OfferingExtensionProvider;
-//import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
+//import org.n52.iceland.ogc.swes.SosObservationOfferingExtensionRepository;
 //import org.n52.iceland.request.handler.OperationHandlerRepository;
 //import org.n52.iceland.request.operator.RequestOperatorKey;
 //import org.n52.iceland.request.operator.RequestOperatorRepository;
@@ -1360,10 +1359,10 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //    private GeometryHandler geometryHandler;
 //
 //    @Inject
-//    private OwsExtendedCapabilitiesProviderRepository owsExtendedCapabilitiesProviderRepository;
+//    private OwsOperationMetadataExtensionProviderRepository OwsOperationMetadataExtensionProviderRepository;
 //
 //    @Inject
-//    private OfferingExtensionRepository offeringExtensionRepository;
+//    private SosObservationOfferingExtensionRepository SosObservationOfferingExtensionRepository;
 //
 //    @Inject
 //    private CapabilitiesExtensionRepository capabilitiesExtensionRepository;
@@ -1566,9 +1565,9 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //         * service and check if this provider provides OwsExtendedCapabilities
 //         * for the request
 //         */
-//        if (owsExtendedCapabilitiesProviderRepository.hasExtendedCapabilitiesProvider(request)) {
+//        if (OwsOperationMetadataExtensionProviderRepository.hasExtendedCapabilitiesProvider(request)) {
 //            OwsExtendedCapabilitiesProvider extendedCapabilitiesProvider =
-//                    owsExtendedCapabilitiesProviderRepository.getExtendedCapabilitiesProvider(request);
+//                    OwsOperationMetadataExtensionProviderRepository.getExtendedCapabilitiesProvider(request);
 //            if (extendedCapabilitiesProvider != null
 //                    && extendedCapabilitiesProvider.hasExtendedCapabilitiesFor(request)) {
 //                operationsMetadata
@@ -1709,9 +1708,9 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //                            addSosOfferingToObservationOffering(offering, sosObservationOffering,
 //                                    sectionSpecificContentObject.getGetCapabilitiesRequest());
 //                            // add offering extension
-//                            if (offeringExtensionRepository.hasOfferingExtensionProviderFor(
+//                            if (SosObservationOfferingExtensionRepository.hasOfferingExtensionProviderFor(
 //                                    sectionSpecificContentObject.getGetCapabilitiesRequest())) {
-//                                for (OfferingExtensionProvider provider : offeringExtensionRepository
+//                                for (OfferingExtensionProvider provider : SosObservationOfferingExtensionRepository
 //                                        .getOfferingExtensionProvider(
 //                                                sectionSpecificContentObject.getGetCapabilitiesRequest())) {
 //                                    if (provider != null && provider.hasExtendedOfferingFor(offering.getDomainId())) {

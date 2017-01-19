@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import static org.n52.shetland.util.DateTimeHelper.formatDateTime2IsoString;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -272,11 +270,11 @@ public class ResultHandlingHelper {
 
         final StringBuilder builder = new StringBuilder();
         if (phenomenonTimeEnd == null || phenomenonTimeStart.equals(phenomenonTimeEnd)) {
-            builder.append(formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
+            builder.append(DateTimeHelper.formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
         } else {
-            builder.append(formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
+            builder.append(DateTimeHelper.formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
             builder.append('/');
-            builder.append(formatDateTime2IsoString(new DateTime(phenomenonTimeEnd, DateTimeZone.UTC)));
+            builder.append(DateTimeHelper.formatDateTime2IsoString(new DateTime(phenomenonTimeEnd, DateTimeZone.UTC)));
         }
         return builder.toString();
     }

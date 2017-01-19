@@ -46,8 +46,10 @@ import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestResponse;
 import org.n52.sos.util.SosHelper;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -57,9 +59,12 @@ public class ObservationsGetEncoder extends AObservationsEncoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationsGetEncoder.class);
 
+    public ObservationsGetEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
+
     @Override
-    public ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport
-    {
+    public ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport {
         if (objectToEncode != null) {
             if (objectToEncode instanceof ObservationsGetByIdResponse) {
 
@@ -70,66 +75,62 @@ public class ObservationsGetEncoder extends AObservationsEncoder {
                 return encodeObservationsSearch(objectToEncode);
 
             }
-            String exceptionText = String.format("No encoder implementation is available for RestBinding and namespace \"%s\" to encode Type \"%s\"!",
-                    bindingConstants.getEncodingNamespace(),
-                    (objectToEncode!=null?objectToEncode.getClass().getName():"null"));
+            String exceptionText = String
+                    .format("No encoder implementation is available for RestBinding and namespace \"%s\" to encode Type \"%s\"!",
+                            getConstants().getEncodingNamespace(), objectToEncode.getClass().getName());
             LOGGER.debug(exceptionText);
             throw new NoEncoderForResponseException().withMessage(exceptionText);
         }
         return null;
     }
 
-    private ServiceResponse encodeObservationsSearch(RestResponse objectToEncode) throws OwsExceptionReport
-    {
+    private ServiceResponse encodeObservationsSearch(RestResponse objectToEncode) throws OwsExceptionReport {
         ObservationsSearchResponse observationsSearchResponse = (ObservationsSearchResponse) objectToEncode;
-        ServiceResponse response;
         if (observationsSearchResponse.getObservationDataArrayXB() == null) {
-            response = createNoContentResponse(bindingConstants.getResourceObservations(),true,false);
+            return createNoContentResponse(Constants.REST_RESOURCE_RELATION_OBSERVATIONS, true, false);
         } else {
-            ObservationCollectionDocument xb_ObservationCollectionDoc = ObservationCollectionDocument.Factory.newInstance();
-            ObservationCollectionType xb_ObservationCollection = xb_ObservationCollectionDoc.addNewObservationCollection();
-            ArrayList<ObservationType> xb_observationList = new ArrayList<ObservationType>();
+            ObservationCollectionDocument xb_ObservationCollectionDoc = ObservationCollectionDocument.Factory
+                    .newInstance();
+            ObservationCollectionType xb_ObservationCollection = xb_ObservationCollectionDoc
+                    .addNewObservationCollection();
+            ArrayList<ObservationType> xb_observationList = new ArrayList<>();
 
             collectAndUpdateOMObservationFromSOSCore(observationsSearchResponse, xb_observationList);
 
-            ObservationType[] xb_obsTypeArray = xb_observationList.toArray(new ObservationType[xb_observationList.size()]);
+            ObservationType[] xb_obsTypeArray = xb_observationList
+                    .toArray(new ObservationType[xb_observationList.size()]);
             xb_ObservationCollection.setObservationArray(xb_obsTypeArray);
 
             // rel:self
             setValuesOfLinkToDynamicResource(xb_ObservationCollection.addNewLink(),
-                    observationsSearchResponse.getResourceIdentifier(),
-                    bindingConstants.getResourceRelationSelf(),
-                    bindingConstants.getResourceObservations());
+                                             observationsSearchResponse.getResourceIdentifier(),
+                                             Constants.REST_RESOURCE_RELATION_SELF,
+                                             Constants.REST_RESOURCE_RELATION_OBSERVATIONS);
 
-            response = createServiceResponseFromXBDocument(
-                    xb_ObservationCollectionDoc,
-                    bindingConstants.getResourceObservations(),
-                    HTTPStatus.OK, true, false);
+            return createServiceResponseFromXBDocument(xb_ObservationCollectionDoc,
+                                                           Constants.REST_RESOURCE_RELATION_OBSERVATIONS,
+                                                           HTTPStatus.OK, true, false);
         }
-        return response;
     }
 
-    private ServiceResponse encodeObservationsGetById(RestResponse restResponse) throws OwsExceptionReport
-    {
+    private ServiceResponse encodeObservationsGetById(RestResponse restResponse) throws OwsExceptionReport {
         ObservationsGetByIdResponse observationsGetResponse = (ObservationsGetByIdResponse) restResponse;
-        ObservationDocument xb_ObservationRestDoc = createRestObservationDocumentFrom( observationsGetResponse.getObservationXB() );
+        ObservationDocument xb_ObservationRestDoc = createRestObservationDocumentFrom(observationsGetResponse
+                .getObservationXB());
 
-        return createServiceResponseFromXBDocument(
-                xb_ObservationRestDoc,
-                bindingConstants.getResourceObservations(),
-                HTTPStatus.OK, false, false);
+        return createServiceResponseFromXBDocument(xb_ObservationRestDoc, Constants.REST_RESOURCE_RELATION_OBSERVATIONS,
+                                                   HTTPStatus.OK, false, false);
     }
 
     private void collectAndUpdateOMObservationFromSOSCore(ObservationsSearchResponse observationsSearchResponse,
-            ArrayList<ObservationType> xb_observationList) throws OwsExceptionReport
-    {
-        Map<String,String> inDocumentReferenceToFeatureId = new HashMap<String, String>();
-        for (ObservationData xb_obsData : observationsSearchResponse.getObservationDataArrayXB())
-        {
+                                                          ArrayList<ObservationType> xb_observationList) throws
+            OwsExceptionReport {
+        Map<String, String> inDocumentReferenceToFeatureId = new HashMap<>();
+        for (ObservationData xb_obsData : observationsSearchResponse.getObservationDataArrayXB()) {
             SosHelper.checkFreeMemory();
             OMObservationType xb_observation = xb_obsData.getOMObservation();
-            ObservationType xb_restObservation = createRestObservationFromOMObservation(ObservationType.Factory.newInstance(),
-                    xb_observation, inDocumentReferenceToFeatureId);
+            ObservationType xb_restObservation = createRestObservationFromOMObservation(ObservationType.Factory
+                    .newInstance(), xb_observation, inDocumentReferenceToFeatureId);
             xb_observationList.add(xb_restObservation);
         }
     }

@@ -28,30 +28,36 @@
  */
 package org.n52.sos.ds.hibernate.cache.base;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationTimeCacheUpdate.class);
 
+    private final DaoFactory daoFactory;
+
+    public ObservationTimeCacheUpdate(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     @Override
     public void execute() {
         LOGGER.debug("Executing ObservationTimeCacheUpdate");
         startStopwatch();
         try {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             TimeExtrema timeExtrema = observationDAO.getObservationTimeExtrema(getSession());
             if (timeExtrema != null) {
                 getCache().setMinPhenomenonTime(timeExtrema.getMinPhenomenonTime());

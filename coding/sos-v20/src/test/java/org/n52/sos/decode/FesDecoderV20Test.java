@@ -39,7 +39,7 @@ import net.opengis.fes.x20.PropertyIsEqualToDocument;
 
 import org.apache.xmlbeans.XmlString;
 import org.junit.Test;
-
+import org.n52.svalbard.decode.FesDecoderv20;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.FilterConstants;

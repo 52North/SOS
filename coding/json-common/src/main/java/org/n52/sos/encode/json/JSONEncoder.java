@@ -42,7 +42,7 @@ import java.util.stream.Collector;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.janmayen.exception.CompositeException;
 import org.n52.janmayen.function.ThrowingFunction;
 import org.n52.janmayen.http.MediaType;
@@ -51,10 +51,10 @@ import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.OwsCode;
 import org.n52.sos.coding.json.JSONConstants;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
@@ -71,7 +71,7 @@ import com.google.common.collect.ImmutableSet.Builder;
  *
  * @param <T>
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -128,7 +128,7 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     }
 
     protected JsonNodeFactory nodeFactory() {
-        return JSONUtils.nodeFactory();
+        return Json.nodeFactory();
     }
 
     protected <T> void encodeOptional(ObjectNode json, String name, Optional<T> obj, Function<T, JsonNode> encoder) {

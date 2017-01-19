@@ -56,7 +56,7 @@ import com.google.common.collect.Iterables;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class ContactsEnrichment extends SensorMLEnrichment {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContactsEnrichment.class);

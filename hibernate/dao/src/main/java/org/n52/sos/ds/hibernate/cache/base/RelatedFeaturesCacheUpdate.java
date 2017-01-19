@@ -32,21 +32,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.dao.RelatedFeatureDAO;
-import org.n52.sos.ds.hibernate.entities.RelatedFeature;
-import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.entities.RelatedFeature;
+import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
+
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(RelatedFeaturesCacheUpdate.class);
+    private final DaoFactory daoFactory;
+
+    public RelatedFeaturesCacheUpdate(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
 
     @Override
     public void execute() {
@@ -54,9 +61,9 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
         startStopwatch();
         // TODO Carsten: use RelatedFeatures and query...
         if (HibernateHelper.isEntitySupported(RelatedFeature.class)) {
-            List<RelatedFeature> relatedFeatures = new RelatedFeatureDAO().getRelatedFeatureObjects(getSession());
+            List<RelatedFeature> relatedFeatures = daoFactory.getRelatedFeatureDAO().getRelatedFeatureObjects(getSession());
             for (RelatedFeature relatedFeature : relatedFeatures) {
-                Set<String> roles = new HashSet<String>(relatedFeature.getRelatedFeatureRoles().size());
+                Set<String> roles = new HashSet<>(relatedFeature.getRelatedFeatureRoles().size());
                 for (RelatedFeatureRole relatedFeatureRole : relatedFeature.getRelatedFeatureRoles()) {
                     roles.add(relatedFeatureRole.getRelatedFeatureRole());
                 }

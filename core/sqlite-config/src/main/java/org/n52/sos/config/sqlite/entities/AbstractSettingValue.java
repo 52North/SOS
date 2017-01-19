@@ -36,7 +36,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
-import org.n52.iceland.config.SettingValue;
+import org.n52.faroe.SettingValue;
 
 import com.google.common.base.MoreObjects;
 
@@ -53,15 +53,23 @@ public abstract class AbstractSettingValue<T> implements SettingValue<T>, Serial
     @Id
     private String identifier;
 
+
+    public AbstractSettingValue(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public AbstractSettingValue() {
+        this(null);
+    }
+
     @Override
     public String getKey() {
         return this.identifier;
     }
 
     @Override
-    public SettingValue<T> setKey(String key) {
+    public void setKey(String key) {
         this.identifier = key;
-        return this;
     }
 
     @Override

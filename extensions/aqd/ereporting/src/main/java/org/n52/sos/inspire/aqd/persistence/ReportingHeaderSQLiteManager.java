@@ -29,34 +29,32 @@
 package org.n52.sos.inspire.aqd.persistence;
 
 
+
 import javax.inject.Inject;
 
 import org.hibernate.Session;
 
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.shetland.aqd.ReportObligation;
+import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.inspire.RelatedParty;
+import org.n52.janmayen.Json;
+import org.n52.janmayen.function.ThrowingFunction;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.config.sqlite.AbstractSQLiteDao;
+import org.n52.sos.encode.json.JSONEncoderKey;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderRepository;
-import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.decode.JsonDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.config.sqlite.AbstractSQLiteDao;
-import org.n52.sos.config.sqlite.AbstractSQLiteDao.ThrowingHibernateAction;
-import org.n52.sos.config.sqlite.AbstractSQLiteDao.VoidHibernateAction;
-import org.n52.sos.encode.json.JSONEncoderKey;
-import org.n52.sos.inspire.aqd.RelatedParty;
-import org.n52.sos.inspire.aqd.ReportObligation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class ReportingHeaderSQLiteManager
-        extends AbstractSQLiteDao  {
+public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
     protected static final String REPORTING_AUTHORITY_KEY = "reportingAuthority";
-
     protected static final String REPORT_OBLIGATION_KEY_PREFIX = "reportObligation_";
 
     @Inject
@@ -96,8 +94,19 @@ public class ReportingHeaderSQLiteManager
         }
     }
 
-    private void save(final String key, final Object o) throws ConnectionProviderException {
-        execute(new SaveAction(o, key));
+    private void save(String key, Object o) throws ConnectionProviderException {
+        Encoder<JsonNode, Object> encoder = encoderRepository.getEncoder(new JSONEncoderKey(o.getClass()));
+        JsonNode node;
+        try {
+            node = encoder.encode(o);
+        } catch (EncodingException ex) {
+            throw new RuntimeException(ex);
+
+        }
+        String json = Json.print(node);
+        execute(session -> {
+            session.saveOrUpdate(new JSONFragment().setID(key).setJSON(json));
+        });
     }
 
     private class LoadReportingAuthorityAction extends LoadJSONFragmentAction<RelatedParty> {
@@ -108,34 +117,9 @@ public class ReportingHeaderSQLiteManager
 
     }
 
-    private class SaveAction extends VoidHibernateAction {
-        private final String key;
-
-        private final Object o;
-
-        SaveAction(Object o, String key) {
-            this.o = o;
-            this.key = key;
-        }
-
-        @Override
-        protected void run(Session session) {
-            try {
-                Encoder<JsonNode, Object> encoder =
-                        encoderRepository.getEncoder(new JSONEncoderKey(o.getClass()));
-                JsonNode node = encoder.encode(o);
-                String json = JSONUtils.print(node);
-                session.saveOrUpdate(new JSONFragment().setID(key).setJSON(json));
-            } catch (EncodingException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-    }
-
-    private class LoadJSONFragmentAction<T> implements ThrowingHibernateAction<T> {
+    private class LoadJSONFragmentAction<T> implements ThrowingFunction<Session, T, Exception> {
 
         private final String key;
-
         private final Class<T> type;
 
         LoadJSONFragmentAction(String key, Class<T> type) {
@@ -144,14 +128,14 @@ public class ReportingHeaderSQLiteManager
         }
 
         @Override
-        public T call(Session session) throws OwsExceptionReport, DecodingException {
+        public T apply(Session session) throws OwsExceptionReport, DecodingException {
             JSONFragment entity = (JSONFragment) session.get(JSONFragment.class, this.key);
             return entity == null ? null : decode(entity);
         }
 
         protected T decode(JSONFragment entity) throws OwsExceptionReport, DecodingException {
             Decoder<T, JsonNode> decoder = decoderRepository.getDecoder(new JsonDecoderKey(type));
-            JsonNode node = JSONUtils.loadString(entity.getJSON());
+            JsonNode node = Json.loadString(entity.getJSON());
             return decoder.decode(node);
         }
 

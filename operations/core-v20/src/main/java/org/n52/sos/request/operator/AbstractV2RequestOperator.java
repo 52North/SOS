@@ -45,7 +45,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
  * @param <A>
  *            the response type
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>

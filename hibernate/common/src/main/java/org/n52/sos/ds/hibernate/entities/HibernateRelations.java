@@ -43,7 +43,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * which entities have which relations. Allows to throw compile time errors for
  * non existing relations.
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 public interface HibernateRelations {

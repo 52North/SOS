@@ -30,7 +30,6 @@ package org.n52.sos.util;
 
 import static java.util.stream.Collectors.toSet;
 import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
-import static org.n52.iceland.service.MiscSettings.SRS_NAME_PREFIX_SOS_V2;
 import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
 
 import java.util.Collection;
@@ -54,22 +53,25 @@ import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.util.Range;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
-import org.n52.iceland.util.Range;
-import org.n52.iceland.util.Validation;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.GeometryTransformer;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.FeatureQuerySettingsProvider;
+import org.n52.svalbard.CodingSettings;
+import org.n52.svalbard.Validation;
+import org.n52.svalbard.util.JTSHelper;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -86,7 +88,7 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  */
 @Configurable
-public class GeometryHandler implements Constructable, Destroyable {
+public class GeometryHandler implements GeometryTransformer, Constructable, Destroyable {
 
     /*
      * longitude = east-west latitude = north-south
@@ -108,11 +110,11 @@ public class GeometryHandler implements Constructable, Destroyable {
     private String authority;
     private CRSAuthorityFactory crsAuthority;
     private final Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();
-    private String srsNamePrefixSosV2;
+    private String srsNamePrefixUrl;
 
-    @Setting(SRS_NAME_PREFIX_SOS_V2)
-    public GeometryHandler setSrsNamePrefixSosV2(String srsNamePrefixSosV2) {
-        this.srsNamePrefixSosV2 = srsNamePrefixSosV2;
+    @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
+    public GeometryHandler setSrsNamePrefixUrl(String srsNamePrefixUrl) {
+        this.srsNamePrefixUrl = srsNamePrefixUrl;
         return this;
     }
 
@@ -686,7 +688,7 @@ public class GeometryHandler implements Constructable, Destroyable {
     }
 
     public String addOgcCrsPrefix(int crs) {
-        return this.srsNamePrefixSosV2 + crs;
+        return this.srsNamePrefixUrl + crs;
     }
 
     /**

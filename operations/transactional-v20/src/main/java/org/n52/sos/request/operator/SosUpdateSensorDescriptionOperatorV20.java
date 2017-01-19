@@ -34,18 +34,18 @@ import java.util.Set;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
+import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
 import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
 import org.n52.sos.event.events.SensorModification;
 import org.n52.sos.exception.ows.concrete.InvalidProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
-import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.ConformanceClasses;
 
 /**
  * @since 4.0.0

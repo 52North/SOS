@@ -41,14 +41,15 @@ import org.hibernate.criterion.Projections;
 import org.junit.After;
 import org.junit.Before;
 
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -93,7 +94,7 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     protected abstract Time createScenario(Session session) throws OwsExceptionReport;
 
     protected HibernateObservationBuilder getBuilder(Session session) throws OwsExceptionReport {
-        return new HibernateObservationBuilder(session);
+        return new HibernateObservationBuilder(session, new DaoFactory());
     }
 
     @SuppressWarnings("unchecked")

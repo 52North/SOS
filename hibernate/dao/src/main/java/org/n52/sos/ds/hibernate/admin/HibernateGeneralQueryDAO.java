@@ -57,7 +57,7 @@ import org.n52.iceland.ds.ConnectionProvider;
  * class that deals with crud operations related to SOS DB.
  *
  * @author Shubham Sachdeva
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  *

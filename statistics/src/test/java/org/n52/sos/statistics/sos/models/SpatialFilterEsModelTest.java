@@ -32,13 +32,12 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.JTSHelper;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 

@@ -31,7 +31,7 @@ package org.n52.sos.config.sqlite.entities;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
+import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 
 @Entity(name = "capabilities_extension")
 public class CapabilitiesExtensionImpl extends Activatable<String, CapabilitiesExtensionImpl> implements

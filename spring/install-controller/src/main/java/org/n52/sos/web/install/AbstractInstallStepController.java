@@ -43,9 +43,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
 
@@ -59,7 +59,7 @@ public abstract class AbstractInstallStepController extends AbstractInstallContr
 
     protected Map<String, Object> toModel(InstallationConfiguration c) throws ConfigurationError, JSONException {
         Map<String, Object> model = new HashMap<>(4);
-        model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, JSONUtils.print(encodeValues(c.getSettings())));
+        model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, Json.print(encodeValues(c.getSettings())));
         model.put(ControllerConstants.DATABASE_SETTINGS_MODEL_ATTRIBUTE, c.getDatabaseSettings());
         model.put(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER, c.getUsername());
         model.put(ControllerConstants.ADMIN_PASSWORD_REQUEST_PARAMETER, c.getPassword());

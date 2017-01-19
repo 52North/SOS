@@ -58,7 +58,7 @@ import org.n52.shetland.util.CollectionHelper;
  * @since 4.2.0
  *
  */
-public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescriptionGeneratorFactory {
+public class ProcedureDescriptionGeneratorFactorySml20 extends AbstractProcedureDescriptionGeneratorFactorySml {
 
     private static final Set<ProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES = CollectionHelper.set(
             new ProcedureDescriptionGeneratorFactoryKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
@@ -75,6 +75,10 @@ public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescr
     }
 
     private class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGeneratorSml {
+
+        public ProcedureDescriptionGeneratorSml20() {
+            super(getSrsNamePrefixUrl());
+        }
 
         @Override
         public SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, I18NDAORepository i18nDaoRepository, Session session)

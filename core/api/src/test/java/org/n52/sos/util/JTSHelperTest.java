@@ -44,6 +44,7 @@ import org.junit.Test;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -55,7 +56,7 @@ import com.vividsolutions.jts.geom.Polygon;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

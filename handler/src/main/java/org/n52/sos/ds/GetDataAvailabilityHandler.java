@@ -46,9 +46,11 @@ import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.ObservationType;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extension;
@@ -61,9 +63,9 @@ import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.FormatDescriptor;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ObservationFormatDescriptor;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ProcedureDescriptionFormatDescriptor;
-import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.ds.dao.GetDataAvailabilityDao;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.ObservationEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
@@ -417,10 +419,14 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         for (Encoder<?, ?> e : codingRepository.getEncoders()) {
             if (e instanceof ObservationEncoder) {
                 final ObservationEncoder<?, ?> oe = (ObservationEncoder<?, ?>) e;
-                Map<String, Set<String>> supportedResponseFormatObservationTypes = oe.getSupportedResponseFormatObservationTypes();
+                Map<String, Set<SupportedType>> supportedResponseFormatObservationTypes = oe.getSupportedResponseFormatObservationTypes();
                 if (supportedResponseFormatObservationTypes != null && !supportedResponseFormatObservationTypes.isEmpty()) {
                     for (final String responseFormat : supportedResponseFormatObservationTypes.keySet()) {
-                        responseFormats.addAll(supportedResponseFormatObservationTypes.get(responseFormat));
+                        for (SupportedType st : supportedResponseFormatObservationTypes.get(responseFormat)) {
+                            if (st instanceof ObservationType) {
+                                responseFormats.add(((ObservationType) st).getValue());
+                            }
+                        }
                     }
                 }
             }
@@ -437,7 +443,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             }
         }
         if (notContained) {
-            parentDataAvailabilities.add(childDataAvailability.clone());
+            parentDataAvailabilities.add(childDataAvailability.copy());
         }
         return notContained;
     }

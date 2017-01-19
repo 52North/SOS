@@ -45,11 +45,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.json.JsonSettingsEncoder;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.json.JsonSettingsEncoder;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -57,7 +57,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -73,11 +73,11 @@ public class InstallDatasourceSettingsController extends AbstractInstallControll
     public String get(HttpSession session) throws JSONException {
         InstallationConfiguration c = getSettings(session);
         Map<String, Datasource> datasources = getDatasources();
-        return JSONUtils.print(encode(c, datasources));
+        return Json.print(encode(c, datasources));
     }
 
     private JsonNode encode(InstallationConfiguration c, Map<String, Datasource> dialects) throws JSONException {
-        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        ObjectNode node = Json.nodeFactory().objectNode();
         JsonSettingsEncoder enc = getSettingsEncoder();
         List<String> orderedDialects = getOrderedDialects(dialects.keySet());
         for (String dialect : orderedDialects) {
@@ -86,9 +86,9 @@ public class InstallDatasourceSettingsController extends AbstractInstallControll
                 selected = true;
             }
             Datasource d = dialects.get(dialect);
-            Set<SettingDefinition<?, ?>> defs = d.getSettingDefinitions();
+            Set<SettingDefinition<?>> defs = d.getSettingDefinitions();
             if (selected) {
-                for (SettingDefinition<?, ?> def : defs) {
+                for (SettingDefinition<?> def : defs) {
                     setDefaultValue(c, def);
                 }
             }
@@ -110,32 +110,32 @@ public class InstallDatasourceSettingsController extends AbstractInstallControll
     }
 
     @SuppressWarnings("unchecked")
-    protected void setDefaultValue(InstallationConfiguration c, SettingDefinition<?, ?> def) {
+    protected void setDefaultValue(InstallationConfiguration c, SettingDefinition<?> def) {
         Object val = c.getDatabaseSetting(def.getKey());
         if (val != null) {
             switch (def.getType()) {
             case BOOLEAN:
-                SettingDefinition<?, Boolean> bsd = (SettingDefinition<?, Boolean>) def;
+                SettingDefinition<Boolean> bsd = (SettingDefinition<Boolean>) def;
                 bsd.setDefaultValue((Boolean) val);
                 break;
             case FILE:
-                SettingDefinition<?, File> fsd = (SettingDefinition<?, File>) def;
+                SettingDefinition<File> fsd = (SettingDefinition<File>) def;
                 fsd.setDefaultValue((File) val);
                 break;
             case INTEGER:
-                SettingDefinition<?, Integer> isd = (SettingDefinition<?, Integer>) def;
+                SettingDefinition<Integer> isd = (SettingDefinition<Integer>) def;
                 isd.setDefaultValue((Integer) val);
                 break;
             case NUMERIC:
-                SettingDefinition<?, Double> dsd = (SettingDefinition<?, Double>) def;
+                SettingDefinition<Double> dsd = (SettingDefinition<Double>) def;
                 dsd.setDefaultValue((Double) val);
                 break;
             case STRING:
-                SettingDefinition<?, String> ssd = (SettingDefinition<?, String>) def;
+                SettingDefinition<String> ssd = (SettingDefinition<String>) def;
                 ssd.setDefaultValue((String) val);
                 break;
             case URI:
-                SettingDefinition<?, URI> usd = (SettingDefinition<?, URI>) def;
+                SettingDefinition<URI> usd = (SettingDefinition<URI>) def;
                 usd.setDefaultValue((URI) val);
                 break;
             default:

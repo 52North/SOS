@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
@@ -48,6 +49,7 @@ import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.om.TimeValuePair;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.Value;
@@ -65,10 +67,9 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
-import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.GmlHelper;
-import org.n52.sos.util.OMHelper;
+import org.n52.svalbard.util.GmlHelper;
+import org.n52.svalbard.util.OMHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +114,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
             if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
                 observation = observations.get(nextEntity.getDiscriminator());
             } else {
-                observation = observationTemplate.cloneTemplate();
+                observation = getObservationTemplate().cloneTemplate();
                 addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
                 if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
                     observations.put(Long.toString(nextEntity.getObservationId()), observation);
@@ -148,15 +149,15 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         }
     }
 
-    /**
-     * Set the observation template which contains all metadata
-     *
-     * @param observationTemplate
-     *            Observation template to set
-     */
-    public void setObservationTemplate(OmObservation observationTemplate) {
-        this.observationTemplate = observationTemplate;
-    }
+//    /**
+//     * Set the observation template which contains all metadata
+//     *
+//     * @param observationTemplate
+//     *            Observation template to set
+//     */
+//    public void setObservationTemplate(OmObservation observationTemplate) {
+//        this.observationTemplate = observationTemplate;
+//    }
 
     /**
      * Set the temporal filter {@link Criterion}

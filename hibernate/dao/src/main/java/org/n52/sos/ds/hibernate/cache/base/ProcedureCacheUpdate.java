@@ -43,10 +43,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
-import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.dao.OfferingDAO;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -58,7 +55,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  *
  * @since 4.0.0
@@ -68,35 +65,32 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
 
     private static final String THREAD_GROUP_NAME = "procedure-cache-update";
 
-    private final ProcedureDAO procedureDAO = new ProcedureDAO();
-
-    private final OfferingDAO offeringDAO = new OfferingDAO();
-
-    private final ObservablePropertyDAO observablePropertyDAO = new ObservablePropertyDAO();
-
     private Map<String, Collection<String>> procedureMap;
 
     private Map<String,Collection<ObservationConstellationInfo>> procObsConstInfoMap;
+    private DaoFactory daoFactory;
+
 
     /**
      * constructor
      * @param threads Thread count
      */
-    public ProcedureCacheUpdate(int threads, ConnectionProvider connectionProvider) {
+    public ProcedureCacheUpdate(int threads, ConnectionProvider connectionProvider, DaoFactory daoFactory) {
         super(threads, THREAD_GROUP_NAME, connectionProvider);
+        this.daoFactory = daoFactory;
     }
 
     private Map<String,Collection<ObservationConstellationInfo>> getProcedureObservationConstellationInfo() {
         if (procObsConstInfoMap == null) {
             procObsConstInfoMap = ObservationConstellationInfo.mapByProcedure(
-                new ObservationConstellationDAO().getObservationConstellationInfo(getSession()));
+                daoFactory.getObservationConstellationDAO().getObservationConstellationInfo(getSession()));
         }
         return procObsConstInfoMap;
     }
 
     private Map<String, Collection<String>> getProcedureMap() {
         if (procedureMap == null) {
-            procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
+            procedureMap = daoFactory.getProcedureDAO().getProcedureIdentifiers(getSession());
         }
         return procedureMap;
     }
@@ -133,7 +127,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         Collection<ProcedureCacheUpdateTask> procedureUpdateTasks = Lists.newArrayList();
         Set<String> procedureIdentifiers = getProcedureMap().keySet();
         for (String procedureIdentifier : procedureIdentifiers) {
-            procedureUpdateTasks.add(new ProcedureCacheUpdateTask(procedureIdentifier));
+            procedureUpdateTasks.add(new ProcedureCacheUpdateTask(procedureIdentifier, daoFactory));
         }
         return procedureUpdateTasks.toArray(new ProcedureCacheUpdateTask[procedureUpdateTasks.size()]);
     }
@@ -147,8 +141,8 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
 
         boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
 
-        Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
-        List<Procedure> procedures = procedureDAO.getProcedureObjects(getSession());
+        Map<String, Collection<String>> procedureMap = daoFactory.getProcedureDAO().getProcedureIdentifiers(getSession());
+        List<Procedure> procedures = daoFactory.getProcedureDAO().getProcedureObjects(getSession());
         for (Procedure procedure : procedures) {
             String procedureIdentifier = procedure.getIdentifier();
              Collection<String> parentProcedures = procedureMap.get(procedureIdentifier);
@@ -172,13 +166,13 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
             } else {
                 try {
                     getCache().setOfferingsForProcedure(procedureIdentifier, Sets.newHashSet(
-                            offeringDAO.getOfferingIdentifiersForProcedure(procedureIdentifier, getSession())));
+                            daoFactory.getOfferingDAO().getOfferingIdentifiersForProcedure(procedureIdentifier, getSession())));
                 } catch (OwsExceptionReport ce) {
                     LOGGER.error("Error while querying offering identifiers for procedure!", ce);
                     getErrors().add(ce);
                 }
                 getCache().setObservablePropertiesForProcedure(procedureIdentifier, Sets.newHashSet(
-                        observablePropertyDAO.getObservablePropertyIdentifiersForProcedure(procedureIdentifier, getSession())));
+                        daoFactory.getObservablePropertyDAO().getObservablePropertyIdentifiersForProcedure(procedureIdentifier, getSession())));
             }
 
             setTypeProcedure(procedure);
@@ -195,7 +189,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         //     in ProcedureCacheUpdateTask if needed
         Map<String, TimeExtrema> procedureTimeExtrema = null;
         try {
-            procedureTimeExtrema = procedureDAO.getProcedureTimeExtrema(getSession());
+            procedureTimeExtrema = daoFactory.getProcedureDAO().getProcedureTimeExtrema(getSession());
         } catch (OwsExceptionReport ce) {
             LOGGER.error("Error while querying offering time ranges!", ce);
             getErrors().add(ce);

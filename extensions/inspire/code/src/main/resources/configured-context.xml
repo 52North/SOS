@@ -3,10 +3,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <bean id="inspireHelper" class="org.n52.sos.inspire.InspireHelper" />
-
+    <!-- Encoder implementation from svalbard -->
     <bean id="inspireXmlEncoder"
-          class="org.n52.sos.encode.InspireXmlEncoder"/>
+          class="org.n52.svalbard.encode.InspireXmlEncoder"/>
+
+    <bean id="inspireHelper" class="org.n52.sos.inspire.InspireHelper" />
 
     <bean id="inspireExtendedCapabilitiesProvider"
           class="org.n52.sos.inspire.capabilities.InspireExtendedCapabilitiesProvider"/>

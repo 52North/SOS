@@ -11,10 +11,10 @@
 	<name>52°North SOS - SensorML 20 Request Coding</name>
 	<description>52°North Sensor Observation Service SML 20 request Coding</description>
 	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>api</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
@@ -26,10 +26,6 @@
         <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.janmayen</groupId>
-            <artifactId>janmayen</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -47,13 +43,15 @@
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
         </dependency>
-		<dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sensorML</artifactId>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-gml-v321</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb.sos</groupId>
-            <artifactId>third-party-ncname-resolver</artifactId>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-gmd-v20120713</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>
@@ -75,10 +73,6 @@
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>52n-xml-sensorML-v20</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-gml-v321</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-sweCommon-v20</artifactId>
@@ -122,9 +116,5 @@
             <artifactId>coding-sos-v20</artifactId>
             <scope>test</scope>
         </dependency>
-		<!-- <dependency>
-			<groupId>xmlunit</groupId>
-			<artifactId>xmlunit</artifactId>
-		</dependency> -->
 	</dependencies>
 </project>

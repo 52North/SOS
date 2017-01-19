@@ -18,8 +18,16 @@
             <artifactId>iceland</artifactId>
          </dependency>
          <dependency>
+            <groupId>org.n52.janmayen</groupId>
+            <artifactId>janmayen</artifactId>
+         </dependency>
+         <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe</artifactId>
         </dependency>
          <dependency>
             <groupId>com.google.guava</groupId>
@@ -28,6 +36,12 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

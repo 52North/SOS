@@ -8,7 +8,7 @@
         <property name="title" value="Identifier Prefix" />
         <property name="order" value="10.0" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="sos.prefix.offering" />
         <property name="title" value="offering prefix" />
         <property name="description" value="offering prefix" />
@@ -16,7 +16,7 @@
         <property name="group" ref="identifierPrefixDefinitionGroup" />
         <property name="optional" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="sos.prefix.obervableProperty" />
         <property name="title" value="obserProp prefix" />
         <property name="description" value="obserProp prefix" />
@@ -24,7 +24,7 @@
         <property name="group" ref="identifierPrefixDefinitionGroup" />
         <property name="optional" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="sos.prefix.global" />
         <property name="title" value="global prefix" />
         <property name="description" value="global prefix" />
@@ -32,7 +32,7 @@
         <property name="group" ref="identifierPrefixDefinitionGroup" />
         <property name="optional" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="sos.prefix.featureOfInterest" />
         <property name="title" value="feature prefix" />
         <property name="description" value="feature prefix" />
@@ -40,7 +40,7 @@
         <property name="group" ref="identifierPrefixDefinitionGroup" />
         <property name="optional" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="sos.prefix.procedure" />
         <property name="title" value="procedure prefix" />
         <property name="description" value="procedure prefix" />

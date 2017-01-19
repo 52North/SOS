@@ -32,17 +32,24 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NOfferingMetadata;
 
 public class OfferingI18NDAO extends AbstractHibernateI18NDAO<Offering, I18NOfferingMetadata, HibernateI18NOfferingMetadata> {
+    private final DaoFactory daoFactory;
+
+    public OfferingI18NDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Override
     protected Offering getEntity(String id, Session session) {
-        return new OfferingDAO().getOfferingForIdentifier(id, session);
+        return new OfferingDAO(daoFactory).getOfferingForIdentifier(id, session);
     }
 
     @Override

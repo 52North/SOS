@@ -39,16 +39,13 @@ import java.util.Objects;
 import java.util.RandomAccess;
 import java.util.function.Supplier;
 
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.kvp.AbstractKvpDecoder;
-import org.n52.svalbard.decode.DecoderKey;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ConfigurationError;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.service.MiscSettings;
-import org.n52.iceland.util.Validation;
+import org.n52.janmayen.function.ThrowingBiConsumer;
+import org.n52.janmayen.function.ThrowingTriConsumer;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator2;
@@ -59,12 +56,16 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.CRSHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.DateTimeParseException;
-import org.n52.janmayen.function.ThrowingBiConsumer;
-import org.n52.janmayen.function.ThrowingTriConsumer;
 import org.n52.sos.ds.FeatureQuerySettingsProvider;
+import org.n52.svalbard.CodingSettings;
+import org.n52.svalbard.Validation;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -84,8 +85,8 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
     private int storage3DEPSG;
     private int defaultResponseEPSG;
     private int defaultResponse3DEPSG;
-    private String srsNamePrefixV2;
-    private String srsNamePrefixV1;
+    private String srsNamePrefixUrl;
+    private String srsNamePrefixUrn;
 
     public AbstractSosKvpDecoder(Supplier<? extends R> supplier, String version, String operation) {
         this(supplier, SosConstants.SOS, version, operation);
@@ -171,14 +172,14 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         this.defaultResponse3DEPSG = epsgCode3D;
     }
 
-    @Setting(MiscSettings.SRS_NAME_PREFIX_SOS_V2)
-    public void setSrsNamePrefixForSosV2(String prefix) {
-        this.srsNamePrefixV2 = CRSHelper.asHttpPrefix(prefix);
+    @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
+    public void setSrsUrlNamePrefix(String prefix) {
+        this.srsNamePrefixUrn = CRSHelper.asHttpPrefix(prefix);
     }
 
-    @Setting(MiscSettings.SRS_NAME_PREFIX_SOS_V1)
-    public void setSrsNamePrefixForSosV1(String prefix) {
-        srsNamePrefixV1 = CRSHelper.asUrnPrefix(prefix);
+    @Setting(CodingSettings.SRS_NAME_PREFIX_URN)
+    public void setSrsUrnNamePrefix(String prefix) {
+        srsNamePrefixUrl = CRSHelper.asUrnPrefix(prefix);
     }
 
     @Override
@@ -335,7 +336,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         values = values.subList(1, values.size());
 
         String crs = values.get(values.size() - 1);
-        if (crs.startsWith(this.srsNamePrefixV2) || crs.startsWith(this.srsNamePrefixV1)) {
+        if (crs.startsWith(this.srsNamePrefixUrl) || crs.startsWith(this.srsNamePrefixUrn)) {
             values = values.subList(0, values.size() - 1);
             srid = CRSHelper.parseSrsName(crs);
         } else {

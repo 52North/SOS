@@ -8,15 +8,15 @@
         <property name="title" value="Miscellaneous" />
         <property name="order" value="3.0" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
-        <property name="key" value="misc.characterEncoding" />
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="coding.characterEncoding" />
         <property name="title" value="Character Encoding" />
         <property name="description" value="The character encoding used for responses." />
         <property name="order" value="6.0" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="UTF-8" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.IntegerSettingDefinition">
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="profile.hydrology.maxReturnedValue" />
         <property name="title" value="Maximum number of returned observation values" />
         <property name="description" value="Set the maximum number of returned observation values for the Hydrology-Profile. Set to &lt;code&gt;0&lt;/code&gt; (zero) for unlimited number of observations." />
@@ -24,7 +24,7 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="0" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.IntegerSettingDefinition">
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="profile.hydrology.maxReturnedTimeSeries" />
         <property name="title" value="Maximum number of returned time series" />
         <property name="description" value="Set the maximum number of returned time series for the Hydrology-Profile. Set to &lt;code&gt;0&lt;/code&gt; (zero) for unlimited number of observations." />
@@ -32,7 +32,7 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="0" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="misc.defaultFeaturePrefix" />
         <property name="title" value="Default Feature Prefix" />
         <property name="description" value="The default prefix for features (values from custom db)." />
@@ -40,7 +40,7 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="http://www.example.org/feature/" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="misc.defaultObservablePropertyPrefix" />
         <property name="title" value="Default ObservableProperty Prefix" />
         <property name="description" value="The default prefix for observableProperty (values from custom db)." />
@@ -48,7 +48,7 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="http://www.example.org/observableProperty/" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="profile.hydrology.overallExtrema" />
         <property name="title" value="Should the SOS return overall extrema?" />
         <property name="description" value="Should the SOS return overall extrema for first/latest observation queries or for each time series" />
@@ -56,7 +56,7 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="misc.defaultProcedurePrefix" />
         <property name="title" value="Default Procedure Prefix" />
         <property name="description" value="The default prefix for procedures (generated if not defined in Register-/InsertSensor requests or values from custom db)." />
@@ -64,15 +64,15 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="http://www.example.org/procedure/" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
-        <property name="key" value="misc.tupleSeparator" />
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="coding.tupleSeparator" />
         <property name="title" value="Tuple separator" />
         <property name="description" value="Tuple separator in result element (a character)" />
         <property name="order" value="1.0" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="@@" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="misc.defaultOfferingPrefix" />
         <property name="title" value="Default Offering Prefix" />
         <property name="description" value="The default prefix for offerings (generated if not defined in Register-/InsertSensor requests or values from custom db)." />
@@ -80,31 +80,31 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="http://www.example.org/offering/" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
-        <property name="key" value="misc.srsNamePrefixSosV2" />
-        <property name="title" value="SOSv2 SRS Prefix" />
-        <property name="description" value="Prefix for the SRS name in SOS v2.0.0." />
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="coding.srsNamePrefixURL" />
+        <property name="title" value="URL SRS Prefix" />
+        <property name="description" value="Prefix for the SRS name as URL." />
         <property name="order" value="5.0" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="http://www.opengis.net/def/crs/EPSG/0/" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
-        <property name="key" value="misc.srsNamePrefixSosV1" />
-        <property name="title" value="SOSv1 SRS Prefix" />
-        <property name="description" value="Prefix for the SRS name in SOS v1.0.0." />
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="coding.srsNamePrefixURN" />
+        <property name="title" value="URN SRS Prefix" />
+        <property name="description" value="Prefix for the SRS name as URN." />
         <property name="order" value="4.0" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="urn:ogc:def:crs:EPSG::" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
-        <property name="key" value="misc.tokenSeparator" />
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="coding.tokenSeparator" />
         <property name="title" value="Token separator" />
         <property name="description" value="Token separator in result element (a character)" />
         <property name="order" value="0.0" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="," />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="misc.includeStackTraceInExceptionReport" />
         <property name="title" value="Detailed Error Messages" />
         <property name="description" value="Should OWS ExceptionReports include a complete stack trace for the causing exception?" />
@@ -112,7 +112,7 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="misc.httpResponseCodeUseInKvpAndPoxBinding" />
         <property name="title" value="Use HTTP Status Codes in KVP and POX Binding?" />
         <property name="description" value="Should the response returned by KVP and POX binding use the exception specific HTTP status code or always &lt;tt&gt;HTTP 200 - OK&lt;/tt&gt;." />
@@ -120,15 +120,15 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
-        <property name="key" value="misc.decimalSeparator" />
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="coding.decimalSeparator" />
         <property name="title" value="Decimal separator" />
         <property name="description" value="Decimal separator in result element (a character)" />
         <property name="order" value="2.0" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="." />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="operation.gda.forceValueCount" />
         <property name="title" value="Should the SOS include value count in GetDataAvailability response?" />
         <property name="description" value="Should the SOS include the value count for each timeseries in the GetDataAvailability response?" />
@@ -136,7 +136,7 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="operation.gda.forceVersion20" />
         <property name="title" value="Should the SOS forced returning DataAvailability v2.0?" />
         <property name="description" value="Should the SOS forced returning DataAvailability v2.0?" />

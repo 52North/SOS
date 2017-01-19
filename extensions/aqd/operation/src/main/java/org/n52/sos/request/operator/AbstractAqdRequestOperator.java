@@ -34,6 +34,8 @@ import javax.inject.Inject;
 
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.request.handler.OperationHandler;
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.MissingServiceParameterException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -41,10 +43,9 @@ import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.AqdHelper;
-import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
+import org.n52.svalbard.util.AqdHelper;
+import org.n52.svalbard.util.ReportObligations;
 
 public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
@@ -81,8 +82,8 @@ public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q e
 
     protected void checkExtensions(OwsServiceRequest request, CompositeOwsException exceptions)
             throws OwsExceptionReport {
-        if (aqdHelper.hasFlowExtension(request.getExtensions())) {
-            aqdHelper.getFlow(request.getExtensions());
+        if (ReportObligations.hasFlow(request.getExtensions())) {
+            ReportObligations.getFlow(request.getExtensions());
         }
     }
 

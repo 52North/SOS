@@ -30,7 +30,7 @@ package org.n52.sos.ds.dao;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>

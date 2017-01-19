@@ -37,7 +37,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.n52.iceland.config.SettingDefinition;
+
+import org.n52.faroe.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 import com.google.common.collect.ImmutableSet;
@@ -45,7 +46,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -61,8 +62,8 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return ImmutableSet.<SettingDefinition<?, ?>> of(getDatabaseConceptDefinition(), getTransactionalDefiniton(),
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
+        return ImmutableSet.<SettingDefinition<?>> of(getDatabaseConceptDefinition(), getTransactionalDefiniton(),
                 getMulitLanguageDefiniton());
     }
 

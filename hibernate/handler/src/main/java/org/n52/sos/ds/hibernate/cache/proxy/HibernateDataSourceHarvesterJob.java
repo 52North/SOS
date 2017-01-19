@@ -29,21 +29,22 @@
 package org.n52.sos.ds.hibernate.cache.proxy;
 
 import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.event.ServiceEventBus;
 import org.n52.io.task.ScheduledJob;
+import org.n52.janmayen.event.EventBus;
 import org.n52.proxy.db.beans.RelatedFeatureEntity;
 import org.n52.proxy.db.da.InsertRepository;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
@@ -73,11 +74,17 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
     @Inject
     private InsertRepository insertRepository;
     private HibernateSessionHolder sessionHolder;
-    private ServiceEventBus serviceEventBus;
+    private EventBus eventBus;
+    private DaoFactory daoFactory;
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     public HibernateSessionHolder getConnectionProvider() {
@@ -93,12 +100,12 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
     }
 
     @Inject
-    public void setServiceEventBus(ServiceEventBus serviceEventBus) {
-        this.serviceEventBus = serviceEventBus;
+    public void setServiceEventBus(EventBus eventBus) {
+        this.eventBus = eventBus;
     }
 
-    public ServiceEventBus getServiceEventBus() {
-        return serviceEventBus;
+    public EventBus getServiceEventBus() {
+        return eventBus;
     }
 
     @Override
@@ -130,7 +137,7 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
     }
 
     private void harvestOfferings(ServiceEntity service, Session session) {
-        for (Offering offering : new OfferingDAO().getOfferings(session)) {
+        for (Offering offering : daoFactory.getOfferingDAO().getOfferings(session)) {
             OfferingEntity offferingEntity = EntityBuilder.createOffering(offering, service, true, true);
             // TODO add phenTime, ResultTime, ...
 
@@ -138,8 +145,8 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
         }
     }
 
-    private void harvestSeries(ServiceEntity service, Session session) throws CodedException {
-        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+    private void harvestSeries(ServiceEntity service, Session session) throws OwsExceptionReport {
+        AbstractSeriesDAO seriesDAO = daoFactory.getSeriesDAO();
         for (Series series : seriesDAO.getSeries(session)) {
             DatasetEntity<?> dataset = EntityBuilder.createDataset(series, service);
             if (dataset != null) {
@@ -151,7 +158,7 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
     private void harvestRelatedFeartures(ServiceEntity service, Session session) {
         if (HibernateHelper.isEntitySupported(TOffering.class)) {
             Set<RelatedFeatureEntity> relatedFeatures = new HashSet<>();
-            for (Offering offering : new OfferingDAO().getOfferings(session)) {
+            for (Offering offering : daoFactory.getOfferingDAO().getOfferings(session)) {
                 if (offering instanceof TOffering && ((TOffering) offering).hasRelatedFeatures()) {
                     for (RelatedFeature relatedFeatureEntity : ((TOffering) offering).getRelatedFeatures()) {
                         relatedFeatures.add(EntityBuilder.createRelatedFeature(relatedFeatureEntity, service));

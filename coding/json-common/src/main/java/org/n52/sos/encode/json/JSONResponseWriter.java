@@ -36,7 +36,7 @@ import java.util.Set;
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.svalbard.encode.EncoderRepository;
@@ -46,7 +46,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -65,7 +65,7 @@ public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
 
     @Override
     public void write(JsonNode t, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        JSONUtils.print(out, t);
+        Json.print(out, t);
     }
 
     @Override

@@ -31,14 +31,14 @@ package org.n52.sos.encode;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-
+import org.n52.svalbard.encode.SweCommonEncoderv20;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.XmlHelper;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
-import org.n52.sos.util.XmlHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

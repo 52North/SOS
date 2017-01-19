@@ -28,10 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import javax.inject.Inject;
+
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
+import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlHelper;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
 import org.n52.shetland.ogc.om.values.ComplexValue;
@@ -57,8 +61,6 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObserv
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
 
 /**
  * TODO JavaDoc
@@ -66,6 +68,13 @@ import org.n52.sos.util.XmlHelper;
  * @author Christian Autermann
  */
 public class ObservationValueCreator implements ValuedObservationVisitor<Value<?>> {
+
+    private DecoderRepository decoderRepository;
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
 
     @Override
     public QuantityValue visit(NumericValuedObservation o) {
@@ -129,7 +138,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
 
         try {
             XmlObject xml = XmlHelper.parseXmlString(o.getValue());
-            SweDataArray array = CodingHelper.decodeXmlElement(xml);
+            SweDataArray array = (SweDataArray)decoderRepository.getDecoder(CodingHelper.getDecoderKey(xml)).decode(xml);
             return new SweDataArrayValue(array);
         } catch (DecodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex);

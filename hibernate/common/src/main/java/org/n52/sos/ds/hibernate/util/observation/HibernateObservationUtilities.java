@@ -38,14 +38,15 @@ import org.hibernate.Session;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.LocalizedProducer;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
@@ -63,30 +64,39 @@ public class HibernateObservationUtilities {
 
     public static List<OmObservation> createSosObservationsFromObservations(
             Collection<Observation<?>> o,
-            AbstractObservationRequest r,
-            LocalizedProducer<OwsServiceProvider> sp,
-            I18NDAORepository i18r,
-            Session s) throws OwsExceptionReport, ConverterException {
-        return new ObservationOmObservationCreator(o, r, sp, LocaleHelper.fromString(r.getRequestedLanguage()), i18r, s).create();
+             AbstractObservationRequest r,
+             LocalizedProducer<OwsServiceProvider> serviceProvider,
+             I18NDAORepository i18nr,
+             String pdf,
+             DaoFactory daoFactory,
+             Session s)
+                     throws OwsExceptionReport, ConverterException {
+        return new ObservationOmObservationCreator(o, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, s).create();
     }
 
     public static List<OmObservation> createSosObservationsFromObservations(
             Collection<Observation<?>> o,
              AbstractObservationRequest r,
-             LocalizedProducer<OwsServiceProvider> sp,
+             LocalizedProducer<OwsServiceProvider> serviceProvider,
              Locale l,
-             I18NDAORepository i18r,
-             Session s) throws OwsExceptionReport, ConverterException {
-        return new ObservationOmObservationCreator(o, r, sp, l, i18r, s).create();
+             I18NDAORepository i18nr,
+             String pdf,
+             DaoFactory daoFactory,
+             Session s)
+                     throws OwsExceptionReport, ConverterException {
+        return new ObservationOmObservationCreator(o, r, serviceProvider, l, i18nr, pdf, daoFactory, s).create();
     }
+
 
     public static OmObservation createSosObservationFromObservation(
             Observation<?> o,
             AbstractObservationRequest r,
-            LocalizedProducer<OwsServiceProvider> sp,
-            I18NDAORepository i18r,
-            Session s) throws OwsExceptionReport, ConverterException {
-        List<OmObservation> c = new ObservationOmObservationCreator(Arrays.asList(o), r, sp, LocaleHelper.fromString(r.getRequestedLanguage()), i18r, s).create();
+            LocalizedProducer<OwsServiceProvider> serviceProvider,
+            I18NDAORepository i18nr,
+            String pdf,
+            DaoFactory daoFactory, Session s)
+                    throws OwsExceptionReport, ConverterException {
+        List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, s).create();
         if (CollectionHelper.isNotEmpty(c)) {
             return c.iterator().next();
         }
@@ -98,9 +108,12 @@ public class HibernateObservationUtilities {
             AbstractObservationRequest r,
             LocalizedProducer<OwsServiceProvider> sp,
             Locale l,
-            I18NDAORepository i18r,
-            Session s) throws OwsExceptionReport, ConverterException {
-        List<OmObservation> c = new ObservationOmObservationCreator(Arrays.asList(o), r, sp, l, i18r, s).create();
+            I18NDAORepository i18nr,
+            String pdf,
+            DaoFactory daoFactory,
+            Session s)
+                    throws OwsExceptionReport, ConverterException {
+        List<OmObservation> c = new ObservationOmObservationCreator(Arrays.asList(o), r, sp, l, i18nr, pdf, daoFactory, s).create();
         if (CollectionHelper.isNotEmpty(c)) {
             return c.iterator().next();
         }
@@ -114,8 +127,9 @@ public class HibernateObservationUtilities {
      *            ObservationConstellation object
      * @param fois
      *            List of featureOfInterest identifiers
-     * @param request
-     *            The request
+     * @param pdf
+     * @param version
+     *            Service version
      * @param session
      *            Hibernate session
      * @return SOS internal observation
@@ -127,12 +141,14 @@ public class HibernateObservationUtilities {
     public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
             ObservationConstellation oc,
             List<String> fois,
-            AbstractObservationRequest request,
-            LocalizedProducer<OwsServiceProvider> sp,
-            I18NDAORepository i18r,
+            AbstractObservationRequest r,
+            LocalizedProducer<OwsServiceProvider> serviceProvider,
+            I18NDAORepository i18nr,
+            String pdf,
+            DaoFactory daoFactory,
             Session session)
-            throws OwsExceptionReport, ConverterException {
-        return createSosObservationFromObservationConstellation(oc, fois, request, sp, LocaleHelper.fromString(request.getRequestedLanguage()), i18r, session);
+                    throws OwsExceptionReport, ConverterException {
+        return new ObservationConstellationOmObservationCreator(oc, fois, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, session).create();
     }
 
     public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
@@ -142,9 +158,11 @@ public class HibernateObservationUtilities {
             LocalizedProducer<OwsServiceProvider> sp,
             Locale language,
             I18NDAORepository i18r,
+            String pdf,
+            DaoFactory daoFactory,
             Session session)
             throws OwsExceptionReport, ConverterException {
-        return new ObservationConstellationOmObservationCreator(oc, fois, request, sp, language, i18r, session).create();
+        return new ObservationConstellationOmObservationCreator(oc, fois, request, sp, language, i18r, pdf, daoFactory, session).create();
     }
 
     /**
@@ -164,33 +182,47 @@ public class HibernateObservationUtilities {
      */
     public static Collection<? extends OmObservation> createSosObservationFromSeries(
             Series series,
-            AbstractObservationRequest request,
-            LocalizedProducer<OwsServiceProvider> sp,
-            I18NDAORepository i18r,
-            Session session) throws OwsExceptionReport, ConverterException {
-        return createSosObservationFromSeries(series, request, sp, LocaleHelper.fromString(request.getRequestedLanguage()), i18r, session);
+            AbstractObservationRequest r,
+            LocalizedProducer<OwsServiceProvider> serviceProvider,
+            I18NDAORepository i18nr,
+            String pdf,
+            DaoFactory daoFactory,
+            Session session)
+                    throws OwsExceptionReport, ConverterException {
+        if (series instanceof EReportingSeries) {
+            return createSosObservationFromEReportingSeries((EReportingSeries) series, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, session);
+        } else {
+            return new SeriesOmObservationCreator(series, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, session).create();
+        }
     }
 
     public static Collection<? extends OmObservation> createSosObservationFromSeries(
-            Series series, AbstractObservationRequest request,
-            LocalizedProducer<OwsServiceProvider> sp,
-            Locale language,
-            I18NDAORepository i18r,
-            Session session) throws OwsExceptionReport, ConverterException {
+            Series series,
+            AbstractObservationRequest r,
+            LocalizedProducer<OwsServiceProvider> serviceProvider,
+            Locale l,
+            I18NDAORepository i18nr,
+            String pdf,
+            DaoFactory daoFactory,
+            Session session)
+                    throws OwsExceptionReport, ConverterException {
         if (series instanceof EReportingSeries) {
-            return createSosObservationFromEReportingSeries((EReportingSeries) series, request, sp, i18r, session);
+            return createSosObservationFromEReportingSeries((EReportingSeries) series, r, serviceProvider, l, i18nr, pdf, daoFactory, session);
         } else {
-            return new SeriesOmObservationCreator(series, request, sp, language, i18r, session).create();
+            return new SeriesOmObservationCreator(series, r, serviceProvider, l, i18nr, pdf, daoFactory, session).create();
         }
     }
 
     public static Collection<? extends OmObservation> createSosObservationFromEReportingSeries(
             EReportingSeries series,
             AbstractObservationRequest r,
-            LocalizedProducer<OwsServiceProvider> sp,
-            I18NDAORepository i18r,
-            Session session) throws OwsExceptionReport, ConverterException {
-        return createSosObservationFromEReportingSeries(series, r, sp, LocaleHelper.fromString(r.getRequestedLanguage()), i18r, session);
+            LocalizedProducer<OwsServiceProvider> serviceProvider,
+            I18NDAORepository i18nr,
+            String pdf,
+            DaoFactory daoFactory,
+            Session session)
+                    throws OwsExceptionReport, ConverterException {
+        return new EReportingSeriesOmObservationCreator(series, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, session).create();
     }
 
     public static Collection<? extends OmObservation> createSosObservationFromEReportingSeries(
@@ -199,8 +231,10 @@ public class HibernateObservationUtilities {
             LocalizedProducer<OwsServiceProvider> sp,
             Locale language,
             I18NDAORepository i18r,
+            String pdf,
+            DaoFactory daoFactory,
             Session session) throws OwsExceptionReport, ConverterException {
-        return new EReportingSeriesOmObservationCreator(series, r, sp, language, i18r, session).create();
+        return new EReportingSeriesOmObservationCreator(series, r, sp, language, i18r, pdf, daoFactory, session).create();
     }
 
     /**

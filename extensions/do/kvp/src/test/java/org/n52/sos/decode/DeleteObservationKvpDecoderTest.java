@@ -34,7 +34,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.n52.shetland.ogc.sos.SosConstants.SOS;
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
+import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.PARAMETER_NAME;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,9 +47,9 @@ import org.junit.Test;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.decode.OperationDecoderKey;
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
+import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
 import org.n52.janmayen.http.MediaTypes;
-import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
-import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

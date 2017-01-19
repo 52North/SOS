@@ -36,22 +36,22 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
+import org.n52.shetland.aqd.EReportingChange;
+import org.n52.shetland.aqd.EReportingHeader;
+import org.n52.shetland.inspire.Address;
+import org.n52.shetland.inspire.Contact;
+import org.n52.shetland.inspire.GeographicalName;
+import org.n52.shetland.inspire.InspireID;
+import org.n52.shetland.inspire.Pronunciation;
+import org.n52.shetland.inspire.RelatedParty;
+import org.n52.shetland.inspire.Spelling;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.inspire.aqd.Address;
-import org.n52.sos.inspire.aqd.Contact;
-import org.n52.sos.inspire.aqd.EReportingChange;
-import org.n52.sos.inspire.aqd.EReportingHeader;
-import org.n52.sos.inspire.aqd.GeographicalName;
-import org.n52.sos.inspire.aqd.InspireID;
-import org.n52.sos.inspire.aqd.Pronunciation;
-import org.n52.sos.inspire.aqd.RelatedParty;
-import org.n52.sos.inspire.aqd.Spelling;
-import org.n52.sos.util.Nillable;
-import org.n52.sos.util.Reference;
-import org.n52.sos.util.Referenceable;
+import org.n52.shetland.w3c.Nillable;
+import org.n52.shetland.w3c.xlink.Reference;
+import org.n52.shetland.w3c.xlink.Referenceable;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -167,6 +167,6 @@ public class EReportingHeaderJSONEncoderTest {
 
         JsonNode o = new EReportingHeaderJSONEncoder().encode(header);
 
-        System.out.println(JSONUtils.print(o));
+        System.out.println(Json.print(o));
     }
 }

@@ -56,7 +56,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * observation to determine which cache relations have to be updated.
  * <p/>
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 1.0.0
  */
 public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpdate {

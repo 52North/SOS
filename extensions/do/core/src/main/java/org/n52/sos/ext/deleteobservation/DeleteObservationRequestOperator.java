@@ -29,13 +29,16 @@
 package org.n52.sos.ext.deleteobservation;
 
 import static org.n52.shetland.ogc.sos.SosConstants.SOS;
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
+import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.CONFORMANCE_CLASSES;
 
 import java.util.Collections;
 import java.util.Set;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
+import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
+import org.n52.shetland.ogc.sos.response.DeleteObservationResponse;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;

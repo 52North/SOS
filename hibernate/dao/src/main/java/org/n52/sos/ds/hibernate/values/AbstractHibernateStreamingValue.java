@@ -38,9 +38,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -51,6 +48,7 @@ import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.om.TimeValuePair;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -58,6 +56,7 @@ import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -66,10 +65,11 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
-import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.GmlHelper;
-import org.n52.sos.util.OMHelper;
+import org.n52.svalbard.util.GmlHelper;
+import org.n52.svalbard.util.OMHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
@@ -84,27 +84,24 @@ import com.vividsolutions.jts.geom.Geometry;
 public abstract class AbstractHibernateStreamingValue extends StreamingValue<AbstractValuedLegacyObservation<?>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateStreamingValue.class);
-
-    private static final long serialVersionUID = -8355955808723620476L;
-
     protected final HibernateSessionHolder sessionHolder;
-
     protected Session session;
-
     protected final GetObservationRequest request;
-
     protected Criterion temporalFilterCriterion;
+    private final DaoFactory daoFactory;
 
     /**
      * constructor
      *
      * @param request
      *            {@link GetObservationRequest}
+     * @param daoFactory the DAO factory
      * @param connectionProvider the connection provider
      */
-    public AbstractHibernateStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request) {
+    public AbstractHibernateStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request) {
         this.request = request;
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+        this.daoFactory = daoFactory;
     }
 
     @Override
@@ -118,7 +115,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
             if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
                 observation = observations.get(nextEntity.getDiscriminator());
             } else {
-                observation = observationTemplate.cloneTemplate();
+                observation = getObservationTemplate().cloneTemplate();
                 addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
                 if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
                     observations.put(Long.toString(nextEntity.getObservationId()), observation);
@@ -151,16 +148,6 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
                 sessionHolder.returnSession(session);
             }
         }
-    }
-
-    /**
-     * Set the observation template which contains all metadata
-     *
-     * @param observationTemplate
-     *            Observation template to set
-     */
-    public void setObservationTemplate(OmObservation observationTemplate) {
-        this.observationTemplate = observationTemplate;
     }
 
     /**
@@ -389,6 +376,10 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         namedValue.setValue(new org.n52.shetland.ogc.om.values.GeometryValue(GeometryHandler.getInstance()
                 .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
+    }
+
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
     }
 
 }

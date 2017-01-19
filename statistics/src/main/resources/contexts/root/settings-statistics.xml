@@ -16,7 +16,7 @@
 		<property name="order" value="11.0" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+	<bean class="org.n52.faroe.settings.BooleanSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.is_logging_enabled" />
 		<property name="title" value="All: Enable statistics collection?" />
 		<property name="description"
@@ -26,7 +26,7 @@
 		<property name="defaultValue" value="false" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
+	<bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.connection_mode" />
 		<property name="title" value="Elasticsearch: Connection mode" />
 		<property name="description"
@@ -54,7 +54,7 @@
 		</property>
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+	<bean class="org.n52.faroe.settings.StringSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.cluster_name" />
 		<property name="title" value="Elasticsearch: Cluster name" />
 		<property name="description"
@@ -65,7 +65,7 @@
 		<property name="defaultValue" value="elasticsearch" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+	<bean class="org.n52.faroe.settings.StringSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.cluster_nodes" />
 		<property name="title" value="Elasticsearch: Address(es) of the cluster" />
 		<property name="description"
@@ -79,7 +79,7 @@
 		<property name="defaultValue" value="localhost" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+	<bean class="org.n52.faroe.settings.StringSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.index_name" />
 		<property name="title" value="Elasticsearch: index name" />
 		<property name="description"
@@ -90,7 +90,7 @@
 		<property name="defaultValue" value="ogc-statistics-index" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+	<bean class="org.n52.faroe.settings.StringSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.type_name" />
 		<property name="title" value="Elasticsearch: type name" />
 		<property name="description"
@@ -101,7 +101,7 @@
 		<property name="defaultValue" value="ogc-type" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+	<bean class="org.n52.faroe.settings.StringSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.uuid" />
 		<property name="title"
 			value="Elasticsearch: Unique id of your statistics collections" />
@@ -112,7 +112,7 @@
 		<property name="group" ref="statisticsDefinitionGroup" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+	<bean class="org.n52.faroe.settings.BooleanSettingDefinition">
 		<property name="key" value="statistics.counting-outputstream" />
 		<property name="title"
 			value="Elasticsearch: The response document size is calculated" />
@@ -123,7 +123,7 @@
 		<property name="defaultValue" value="false" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+	<bean class="org.n52.faroe.settings.BooleanSettingDefinition">
 		<property name="key"
 			value="statistics.elasticsearch.kibana_config_enable" />
 		<property name="title"
@@ -137,7 +137,7 @@
 		<property name="defaultValue" value="false" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+	<bean class="org.n52.faroe.settings.StringSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.kibana_config_file" />
 		<property name="title"
 			value="Kibana: external preconfigured dashboards/visualization" />
@@ -152,7 +152,7 @@
 
 
 	<!-- GEOLITE -->
-	<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+	<bean class="org.n52.faroe.settings.BooleanSettingDefinition">
 		<property name="key" value="statistics.geoloc.enabled" />
 		<property name="title" value="GeoLocation: Enable geolocation" />
 		<property name="description"
@@ -167,7 +167,7 @@
 		<property name="defaultValue" value="false" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
+	<bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
 		<property name="key" value="statistics.geoloc.db_downloader" />
 		<property name="title" value="GeoLocation: Downloading type" />
 		<property name="description"
@@ -183,7 +183,7 @@
 		</property>
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+	<bean class="org.n52.faroe.settings.StringSettingDefinition">
 		<property name="key" value="statistics.geoloc.download_folder" />
 		<property name="title" value="GeoLocation: Download directory" />
 		<property name="description"
@@ -193,7 +193,7 @@
 		<property name="optional" value="true" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+	<bean class="org.n52.faroe.settings.StringSettingDefinition">
 		<property name="key" value="statistics.geoloc.city_location" />
 		<property name="title" value="GeoLocation: City location" />
 		<property name="description"
@@ -203,7 +203,7 @@
 		<property name="optional" value="true" />
 	</bean>
 
-	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+	<bean class="org.n52.faroe.settings.StringSettingDefinition">
 		<property name="key" value="statistics.geoloc.country_location" />
 		<property name="title" value="GeoLocation: Country location" />
 		<property name="description"
@@ -214,7 +214,7 @@
 	</bean>
 
 
-	<bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
+	<bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
 		<property name="key" value="statistics.geoloc.db_type" />
 		<property name="title" value="GeoLocation: GeoLocation database type" />
 		<property name="description" value="Which database should be used." />
@@ -229,7 +229,7 @@
 		</property>
 	</bean>
 
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="statistics.counting-outputstream" />
         <property name="title" value="Elasticsearch: The response document size is calculated" />
         <property name="description" value="The size of the response document which is sent back to the client. This could result in a small performance degradation." />

@@ -3,10 +3,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-	<!-- Encoder implementations from coding/ows-v110 -->
-	<bean class="org.n52.sos.decode.CapabilitiesBaseTypeDecoder"/>
+	<!-- Encoder implementations from svalbard -->
+	<bean class="org.n52.svalbard.decode.CapabilitiesBaseTypeDecoder"/>
 
-    <!-- Encoder implementations from coding/ows-v110 -->
-    <bean class="org.n52.sos.encode.OwsEncoderv110"/>
+    <!-- Encoder implementations from svalbard -->
+    <bean class="org.n52.svalbard.encode.OwsEncoderv110"/>
 
 </beans>

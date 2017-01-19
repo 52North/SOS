@@ -30,11 +30,11 @@ package org.n52.sos.decode;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
+import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
-import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -42,7 +42,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class DeleteObservationJsonDecoder
         extends AbstractSosRequestDecoder<DeleteObservationRequest> {

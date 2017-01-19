@@ -31,17 +31,31 @@ package org.n52.sos.config;
 import java.util.Set;
 
 import org.n52.iceland.coding.encode.ResponseFormatKey;
+import org.n52.iceland.config.ActivationDao;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 
 /**
  *
  * @author Christian Autermann
  */
-public interface SosActivationDao {
+public interface SosActivationDao extends ActivationDao {
 
     /**
-     * Checks if the response format is active for the specified service and
-     * version.
+     * Checks if the offering extension is active.
+     *
+     * @param key the offering extension key
+     *
+     * @return if the offering extension is active
+     */
+    boolean isSosObservationOfferingExtensionActive(SosObservationOfferingExtensionKey key);
+
+    void setSosObservationOfferingExtensionStatus(SosObservationOfferingExtensionKey key, boolean active);
+
+    Set<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionKeys();
+
+    /**
+     * Checks if the response format is active for the specified service and version.
      *
      * @param key the service/version/responseFormat combination
      *
@@ -50,10 +64,9 @@ public interface SosActivationDao {
     boolean isResponseFormatActive(ResponseFormatKey key);
 
     /**
-     * Sets the status of a response format for the specified service and
-     * version.
+     * Sets the status of a response format for the specified service and version.
      *
-     * @param key the service/version/responseFormat combination
+     * @param key    the service/version/responseFormat combination
      * @param active the status
      *
      */
@@ -62,8 +75,7 @@ public interface SosActivationDao {
     Set<ResponseFormatKey> getResponseFormatKeys();
 
     /**
-     * Checks if the procedure description format is active for the specified
-     * service and version.
+     * Checks if the procedure description format is active for the specified service and version.
      *
      * @param key the service/version/procedure description combination
      *
@@ -72,15 +84,13 @@ public interface SosActivationDao {
     boolean isProcedureDescriptionFormatActive(ProcedureDescriptionFormatKey key);
 
     /**
-     * Sets the status of a response format for the specified service and
-     * version.
+     * Sets the status of a response format for the specified service and version.
      *
-     * @param key the service/version/responseFormat combination
+     * @param key    the service/version/responseFormat combination
      * @param active the status
      *
      */
-    void setProcedureDescriptionFormatStatus(ProcedureDescriptionFormatKey key,
-                                             boolean active);
+    void setProcedureDescriptionFormatStatus(ProcedureDescriptionFormatKey key, boolean active);
 
     Set<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatKeys();
 

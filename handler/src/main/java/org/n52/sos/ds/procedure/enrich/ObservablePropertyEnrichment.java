@@ -28,27 +28,25 @@
  */
 package org.n52.sos.ds.procedure.enrich;
 
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.shetland.i18n.LocalizedString;
+import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.om.OmObservableProperty;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
-import com.google.common.base.Optional;
 
 public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment {
 
     @Override
-    public void enrich()
-            throws OwsExceptionReport {
+    public void enrich() throws OwsExceptionReport {
         if (isSetLocale()) {
             I18NDAO<I18NObservablePropertyMetadata> dao = I18NDAORepository.
                     getInstance().getDAO(I18NObservablePropertyMetadata.class);
@@ -59,12 +57,7 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
                     OmObservableProperty observableProperty = new OmObservableProperty(i18n.getIdentifier());
                     Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(getLocale(), getDefaultLocale());
                     if (name.isPresent()) {
-                        try {
-                            observableProperty.addName(name.get().asCodeType());
-                        } catch (URISyntaxException e) {
-                            throw new NoApplicableCodeException().causedBy(e).withMessage(
-                                    "Error while creating URI from '{}'", name.get().getLang().toString());
-                        }
+                        observableProperty.addName(new CodeType(name.get()));
                     }
                     getDescription().addPhenomenon(observableProperty);
                 }

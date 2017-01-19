@@ -29,7 +29,7 @@
 package org.n52.sos.decode.json.inspire;
 
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.sos.inspire.aqd.Spelling;
+import org.n52.shetland.inspire.Spelling;
 import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;

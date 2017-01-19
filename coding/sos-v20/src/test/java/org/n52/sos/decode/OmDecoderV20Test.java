@@ -47,8 +47,8 @@ import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
 import org.n52.shetland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.shetland.ogc.swe.SweField;
-import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.CodingHelper;
 
 /**
  * TODO JavaDoc
@@ -121,10 +121,11 @@ public class OmDecoderV20Test {
     @Test
     public void testComplexObservation()
             throws XmlException, DecodingException {
-        CodingRepository.getInstance();
         XmlObject xml = XmlObject.Factory.parse(getComplexObservationXml());
 
-        Object decoded = CodingHelper.decodeXmlObject(xml);
+        // FIXME
+//        Object decoded = CodingHelper.decodeXmlObject(xml);
+        Object decoded = xml;
 
         assertThat(decoded, is(instanceOf(OmObservation.class)));
 

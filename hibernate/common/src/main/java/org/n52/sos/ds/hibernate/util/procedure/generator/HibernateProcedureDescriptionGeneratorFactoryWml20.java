@@ -43,6 +43,7 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.wml.ObservationProcess;
 import org.n52.shetland.ogc.wml.WaterMLConstants;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 
 /**
@@ -55,9 +56,14 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
         HibernateProcedureDescriptionGeneratorFactory {
 
-    private static final Set<HibernateProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES =
-            CollectionHelper.set(new HibernateProcedureDescriptionGeneratorFactoryKey(
+    private static final Set<HibernateProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES = CollectionHelper
+            .set(new HibernateProcedureDescriptionGeneratorFactoryKey(
                     WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
+    private final DaoFactory daoFactory;
+
+    public HibernateProcedureDescriptionGeneratorFactoryWml20(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Override
     public Set<HibernateProcedureDescriptionGeneratorFactoryKey> getKeys() {
@@ -65,28 +71,31 @@ public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
     }
 
     @Override
-    public SosProcedureDescription<?> create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-        return new SosProcedureDescription<>(new HibernateProcedureDescriptionGeneratorWml20()
+    public SosProcedureDescription<?> create(Procedure procedure, Locale i18n, Session session) throws
+            OwsExceptionReport {
+        return new SosProcedureDescription<>(new HibernateProcedureDescriptionGeneratorWml20(daoFactory)
                 .generateProcedureDescription(procedure, i18n, session));
     }
 
     private class HibernateProcedureDescriptionGeneratorWml20 extends AbstractHibernateProcedureDescriptionGenerator {
 
+        public HibernateProcedureDescriptionGeneratorWml20(DaoFactory daoFactory) {
+            super(daoFactory);
+        }
+
         /**
-         * Generate procedure description from Hibernate procedure entity if no
-         * description (file, XML text) is available
+         * Generate procedure description from Hibernate procedure entity if no description (file, XML text) is
+         * available
          *
-         * @param procedure
-         *            Hibernate procedure entity
-         * @param session
-         *            the session
+         * @param procedure Hibernate procedure entity
+         * @param session the session
          *
          * @return Generated procedure description
          *
-         * @throws OwsExceptionReport
-         *             If an error occurs
+         * @throws OwsExceptionReport If an error occurs
          */
-        public SosProcedureDescription<AbstractFeature> generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
+        public SosProcedureDescription<AbstractFeature> generateProcedureDescription(Procedure procedure, Locale i18n,
+                                                                                     Session session)
                 throws OwsExceptionReport {
             setLocale(i18n);
             final ObservationProcess op = new ObservationProcess();
@@ -99,7 +108,7 @@ public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
         private void addName(Procedure procedure, ObservationProcess op) {
             String name = procedure.getIdentifier();
             if (procedure.isSetName()) {
-               name = procedure.getName();
+                name = procedure.getName();
             }
             op.addParameter(createName("shortName", name));
             op.addParameter(createName("longName", name));

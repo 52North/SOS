@@ -49,7 +49,7 @@ import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.JSONConstants;
 
@@ -89,14 +89,14 @@ public class AdminBindingController extends AbstractAdminController {
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String getAll() {
-        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        ObjectNode node = Json.nodeFactory().objectNode();
         node.set(JSONConstants.BINDINGS_KEY, getBindings());
-        return JSONUtils.print(node);
+        return Json.print(node);
     }
 
     protected ArrayNode getBindings() {
         Map<String, Binding> bindings = bindingRepository.getAllBindingsByPath();
-        ArrayNode a = JSONUtils.nodeFactory().arrayNode();
+        ArrayNode a = Json.nodeFactory().arrayNode();
         for (Entry<String, Binding> e : bindings.entrySet()) {
             String path = e.getKey();
             a.addObject()
@@ -109,7 +109,7 @@ public class AdminBindingController extends AbstractAdminController {
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS_JSON_ENDPOINT, method = RequestMethod.POST, consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public void change(@RequestBody String request) throws IOException {
-        JsonNode json = JSONUtils.loadString(request);
+        JsonNode json = Json.loadString(request);
         if (json.has(JSONConstants.BINDING_KEY)) {
             BindingKey key = new PathBindingKey(json.path(JSONConstants.BINDING_KEY).asText());
             this.bindingRepository.setActive(key, json.path(JSONConstants.ACTIVE_KEY).asBoolean());

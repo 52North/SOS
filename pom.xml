@@ -35,36 +35,35 @@
             <url>dav:https://52north.org/maven/repo/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-	<modules>
-		<module>core</module>
-		<module>bindings</module>
-		<module>coding</module>
-		<module>converter</module>
-		<module>operations</module>
-		<module>hibernate</module>
+    <modules>
+        <module>core</module>
+        <module>bindings</module>
+        <module>coding</module>
+        <module>converter</module>
+        <module>operations</module>
+        <module>hibernate</module>
         <module>handler</module>
-		<module>extensions</module>
-		<module>spring</module>
-		<module>statistics</module>
-		<module>third-party</module>
-		<module>webapp</module>
-		<module>webapp-bundle</module>
-	</modules>
-	<licenses>
-		<license>
-			<name>GPLv2</name>
-			<url>http://www.gnu.org/licenses/gpl-2.0.html</url>
-			<distribution>repo</distribution>
-			<comments>See also http://52north.org/about/licensing/ for all information about 52°North licenses.</comments>
-		</license>
-	</licenses>
-	<properties>
-		<!-- sos name -->
-		<conf.sos.name>52n-sos-webapp</conf.sos.name>
-		<timestamp>${maven.build.timestamp}</timestamp>
-		<!-- Source encoding during build process ** !!! DO NOT CHANGE !!! ** -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <module>extensions</module>
+        <module>spring</module>
+        <module>statistics</module>
+        <module>webapp</module>
+        <module>webapp-bundle</module>
+    </modules>
+    <licenses>
+        <license>
+            <name>GPLv2</name>
+            <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+            <distribution>repo</distribution>
+            <comments>See also http://52north.org/about/licensing/ for all information about 52°North licenses.</comments>
+        </license>
+    </licenses>
+    <properties>
+        <!-- sos name -->
+        <conf.sos.name>52n-sos-webapp</conf.sos.name>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <!-- Source encoding during build process ** !!! DO NOT CHANGE !!! ** -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 
         <!-- Logger configuration -->
@@ -95,6 +94,7 @@
         <janmayen.version>1-SNAPSHOT</janmayen.version>
         <dataset.api.version>2.0.0-SNAPSHOT</dataset.api.version>
         <n52.common.xml.version>2.2.0</n52.common.xml.version>
+        <faroe.version>1-SNAPSHOT</faroe.version>
         <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
         <aspectj.version>1.8.9</aspectj.version>
@@ -107,6 +107,11 @@
                 <groupId>org.n52.iceland</groupId>
                 <artifactId>iceland</artifactId>
                 <version>${iceland.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.faroe</groupId>
+                <artifactId>faroe</artifactId>
+                <version>${faroe.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.shetland</groupId>
@@ -361,11 +366,6 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>coding-soap</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>enhanced-v20</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -454,11 +454,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>core-aqd-v10</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>api-aqd-v10</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -772,6 +767,11 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosgda-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosdo-v10</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
@@ -1221,13 +1221,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- third party dialects -->
-            <!-- Remove third party ncname resolver from SOS and use OXF instead -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>third-party-ncname-resolver</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>xmlunit</groupId>
                 <artifactId>xmlunit</artifactId>
@@ -1249,10 +1242,10 @@
                 <artifactId>gt-epsg-hsql</artifactId>
                 <version>${geotools.version}</version>
                 <exclusions>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1260,10 +1253,10 @@
                 <artifactId>gt-main</artifactId>
                 <version>${geotools.version}</version>
                 <exclusions>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1275,10 +1268,10 @@
                         <groupId>java3d</groupId>
                         <artifactId>vecmath</artifactId>
                     </exclusion>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1286,10 +1279,10 @@
                 <artifactId>gt-metadata</artifactId>
                 <version>${geotools.version}</version>
                 <exclusions>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1297,10 +1290,10 @@
                 <artifactId>gt-opengis</artifactId>
                 <version>${geotools.version}</version>
                 <exclusions>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1313,10 +1306,10 @@
                 <artifactId>gt-api</artifactId>
                 <version>${geotools.version}</version>
                 <exclusions>
-                   <exclusion>
-                       <groupId>javax.media</groupId>
-                       <artifactId>jai_core</artifactId>
-                   </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>

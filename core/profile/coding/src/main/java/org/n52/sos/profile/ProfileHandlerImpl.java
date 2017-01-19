@@ -42,11 +42,11 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.service.profile.DefaultProfile;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
@@ -100,7 +100,7 @@ public class ProfileHandlerImpl extends ProfileHandler implements Constructable 
         Collection<File> listFiles = FileUtils.listFiles(folder, fileFilter, DirectoryFileFilter.DIRECTORY);
         for (File file : listFiles) {
             try {
-                JsonNode profiles = JSONUtils.loadFile(file);
+                JsonNode profiles = Json.loadFile(file);
                 ProfileParser pp = new ProfileParser();
                 JsonNode pNode = profiles.path(PROFILES);
                 if (pNode.isArray()) {

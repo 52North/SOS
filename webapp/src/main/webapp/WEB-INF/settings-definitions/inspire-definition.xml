@@ -9,7 +9,7 @@
         <property name="title" value="INSPIRE" />
         <property name="order" value="10.0" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="inspire.fullExtendedCapabilities" />
         <property name="title" value="Show full INSPIRE ExtendedCapabilities" />
         <property name="description" value="Should the SOS show the full or the minimal INSPIRE ExtendedCapabilities" />
@@ -17,7 +17,7 @@
         <property name="group" ref="inspireDefinitionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="inspire.useAuthority" />
         <property name="title" value="Use authority as CRS prefix " />
         <property name="description" value="Should the SOS use the authority prefix (EPSG::) or the OGC CRS prefix (http://www.opengis.net/def/crs/EPSG/0/)?" />
@@ -25,7 +25,7 @@
         <property name="group" ref="inspireDefinitionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="inspire.conformity.title" />
         <property name="title" value="INSPIRE Conformity title" />
         <property name="description" value="Set the INSPIRE extended capabilities Conformity title" />
@@ -33,7 +33,7 @@
         <property name="group" ref="inspireDefinitionGroup" />
         <property name="defaultValue" value="OGC SOS 2.0 for Inspire" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="inspire.metadataUrl.mediaType" />
         <property name="title" value="INSPIRE MetadataUrl MediaType" />
         <property name="description" value="Set the INSPIRE MetadataUrl MediaType" />
@@ -41,7 +41,7 @@
         <property name="group" ref="inspireDefinitionGroup" />
         <property name="defaultValue" value="application/xml" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="inspire.conformity.dateOfCreation" />
         <property name="title" value="INSPIRE Conformity date of creation" />
         <property name="description" value="Set the INSPIRE extended capabilities Conformity date of creation" />
@@ -49,7 +49,7 @@
         <property name="group" ref="inspireDefinitionGroup" />
         <property name="defaultValue" value="2008-06-01" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="inspire.metadataDate" />
         <property name="title" value="INSPIRE Metadata date" />
         <property name="description" value="Set the INSPIRE extended capabilities metadata date" />
@@ -57,7 +57,7 @@
         <property name="group" ref="inspireDefinitionGroup" />
         <property name="defaultValue" value="2008-06-01" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="inspire.enabled" />
         <property name="title" value="Enable INSPIRE extension" />
         <property name="description" value="Indicator to enable/disable the INSPIRE extension" />
@@ -65,7 +65,7 @@
         <property name="group" ref="inspireDefinitionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.UriSettingDefinition">
+    <bean class="org.n52.faroe.settings.UriSettingDefinition">
         <property name="key" value="inspire.metadataUrl.url" />
         <property name="title" value="INSPIRE MetadataUrl URLs" />
         <property name="description" value="Set the INSPIRE MetadataUrl URL, required if full INSPIRE ExtendedCapabilities is disabled" />
@@ -73,7 +73,7 @@
         <property name="group" ref="inspireDefinitionGroup" />
         <property name="defaultValue" value="http://myserver.org/" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="inspire.namespace" />
         <property name="title" value="INSPIRE namespace" />
         <property name="description" value="Set the INSPIRE namespace for this service." />

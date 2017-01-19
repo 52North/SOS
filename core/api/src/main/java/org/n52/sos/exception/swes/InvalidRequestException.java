@@ -30,8 +30,10 @@ package org.n52.sos.exception.swes;
 
 import static org.n52.janmayen.http.HTTPStatus.BAD_REQUEST;
 
+import org.n52.shetland.ogc.swes.exception.SwesExceptionCode;
+
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  *

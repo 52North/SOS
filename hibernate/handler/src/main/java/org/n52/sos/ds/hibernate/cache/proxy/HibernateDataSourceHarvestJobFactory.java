@@ -33,12 +33,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ctrl.ScheduledContentCacheControllerSettings;
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.util.Validation;
-import org.n52.io.task.ScheduledJob;
+import org.n52.svalbard.Validation;
 import org.quartz.SchedulerException;
 
 @Configurable

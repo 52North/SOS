@@ -57,7 +57,7 @@ import org.n52.sos.web.common.ControllerConstants;
 import com.google.common.collect.Lists;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.ADMIN_RENAME_OBSERVABLE_PROPERTIES)

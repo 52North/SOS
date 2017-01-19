@@ -48,7 +48,7 @@ import net.opengis.swe.x101.UomPropertyType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
-
+import org.n52.svalbard.decode.SweCommonDecoderV101;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.swe.RangeValue;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;

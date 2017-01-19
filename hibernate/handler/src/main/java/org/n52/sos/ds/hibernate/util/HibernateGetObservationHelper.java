@@ -44,11 +44,9 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.filter.BinaryLogicFilter;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
@@ -62,10 +60,11 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.coding.encode.ObservationEncoder;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -73,8 +72,9 @@ import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.ObservationEncoder;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,8 +104,8 @@ public class HibernateGetObservationHelper {
      *             If the size limit is exceeded
      */
     public static List<ObservationConstellation> getAndCheckObservationConstellationSize(
-            GetObservationRequest request, Session session) throws CodedException {
-        List<ObservationConstellation> observationConstellations = getObservationConstellations(session, request);
+            GetObservationRequest request, DaoFactory daoFactory, Session session) throws CodedException {
+        List<ObservationConstellation> observationConstellations = getObservationConstellations(session, request, daoFactory);
         checkMaxNumberOfReturnedSeriesSize(observationConstellations.size());
         return observationConstellations;
     }
@@ -169,9 +169,9 @@ public class HibernateGetObservationHelper {
     }
 
     public static List<String> getAndCheckFeatureOfInterest(final ObservationConstellation observationConstellation,
-            final Collection<String> featureIdentifier, final Session session) throws OwsExceptionReport {
+            final Collection<String> featureIdentifier, DaoFactory daoFactory, final Session session) throws OwsExceptionReport {
         final List<String> featuresForConstellation =
-                new FeatureOfInterestDAO().getFeatureOfInterestIdentifiersForObservationConstellation(
+                daoFactory.getFeatureOfInterestDAO().getFeatureOfInterestIdentifiersForObservationConstellation(
                         observationConstellation, session);
         if (featureIdentifier == null) {
             return featuresForConstellation;
@@ -181,13 +181,14 @@ public class HibernateGetObservationHelper {
     }
 
     public static List<OmObservation> toSosObservation(final Collection<Observation<?>> observations,
-            final AbstractObservationRequest request, final LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, I18NDAORepository i18ndaoRepository, final Session session) throws OwsExceptionReport,
+            final AbstractObservationRequest request, final LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, I18NDAORepository i18ndaoRepository, String pdf,
+            DaoFactory daoFactory, final Session session) throws OwsExceptionReport,
             ConverterException {
         if (!observations.isEmpty()) {
             final long startProcess = System.currentTimeMillis();
             List<OmObservation> sosObservations =
                         HibernateObservationUtilities.createSosObservationsFromObservations(
-                                new HashSet<>(observations), request, serviceProvider, language, i18ndaoRepository, session);
+                                new HashSet<>(observations), request, serviceProvider, language, i18ndaoRepository, pdf, daoFactory, session);
 
 
             LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
@@ -198,10 +199,11 @@ public class HibernateGetObservationHelper {
         }
     }
 
-    public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, I18NDAORepository i18ndaoRepository, final Session session) throws OwsExceptionReport, ConverterException {
+    public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, I18NDAORepository i18ndaoRepository, String pdf,
+            DaoFactory daoFactory, final Session session) throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();
-            OmObservation sosObservation = HibernateObservationUtilities.createSosObservationFromObservation(observation, request, serviceProvider, language, i18ndaoRepository, session);
+            OmObservation sosObservation = HibernateObservationUtilities.createSosObservationFromObservation(observation, request, serviceProvider, language, i18ndaoRepository, pdf, daoFactory, session);
             LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));
             return sosObservation;
         }
@@ -326,8 +328,8 @@ public class HibernateGetObservationHelper {
      * @return Resulting ObservationConstellation entities
      */
     public static List<ObservationConstellation> getObservationConstellations(final Session session,
-            final GetObservationRequest request) {
-        return new ObservationConstellationDAO().getObservationConstellations(request.getProcedures(),
+            final GetObservationRequest request, DaoFactory daoFactory) {
+        return daoFactory.getObservationConstellationDAO().getObservationConstellations(request.getProcedures(),
                 request.getObservedProperties(), request.getOfferings(), session);
     }
 

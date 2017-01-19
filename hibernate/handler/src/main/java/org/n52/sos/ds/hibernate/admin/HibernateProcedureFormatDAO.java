@@ -37,6 +37,7 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 
 /**
@@ -45,10 +46,16 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
 
     private HibernateSessionHolder sessionHolder;
+    private DaoFactory daoFactory;
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     @Override
@@ -57,7 +64,7 @@ public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
         Map<String,String> procedureFormatMap = null;
         try {
             session = this.sessionHolder.getSession();
-            procedureFormatMap = new ProcedureDAO().getProcedureFormatMap(session);
+            procedureFormatMap = daoFactory.getProcedureDAO().getProcedureFormatMap(session);
         } finally {
             this.sessionHolder.returnSession(session);
         }

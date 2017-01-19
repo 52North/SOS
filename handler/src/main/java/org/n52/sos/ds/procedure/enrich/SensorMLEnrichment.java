@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.procedure.enrich;
 
+import java.util.function.Predicate;
+
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
@@ -35,12 +37,11 @@ import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifierPredicates;
 
-import com.google.common.base.Predicate;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public abstract class SensorMLEnrichment extends ProcedureDescriptionEnrichment {
     protected Predicate<SmlIdentifier> longNamePredicate() {

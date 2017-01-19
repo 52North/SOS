@@ -28,38 +28,31 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
-
-import org.hibernate.Session;
 
 import org.n52.iceland.util.LocalizedProducer;
-import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ds.procedure.enrich.AbstractProcedureDescriptionEnrichments;
 import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class ProcedureDescriptionEnrichments extends AbstractProcedureDescriptionEnrichments<Procedure>  {
 
-    public ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider) {
+    private final DaoFactory daoFactory;
+
+    public ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, DaoFactory daoFactory) {
         super(locale, serviceProvider);
+        this.daoFactory = daoFactory;
     }
 
-    public AbstractRelatedProceduresEnrichment createRelatedProceduresEnrichment() {
-        return setValues(new RelatedProceduresEnrichment())
+    public AbstractRelatedProceduresEnrichment<Procedure> createRelatedProceduresEnrichment() {
+        return setValues(new RelatedProceduresEnrichment(daoFactory))
                 .setConverter(getConverter())
                 .setProcedure(getProcedure())
                 .setProcedureDescriptionFormat(getProcedureDescriptionFormat())

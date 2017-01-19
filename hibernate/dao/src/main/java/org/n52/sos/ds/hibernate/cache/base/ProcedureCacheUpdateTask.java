@@ -31,17 +31,17 @@ package org.n52.sos.ds.hibernate.cache.base;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
@@ -51,33 +51,34 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureCacheUpdateTask.class);
 
-    private String procedureId;
+    private final String procedureId;
+    private final DaoFactory daoFactory;
 
     /**
-     * Constructor. Note: never pass in Hibernate objects that have been loaded
-     * by a session in a different thread *
+     * Constructor. Note: never pass in Hibernate objects that have been loaded by a session in a different thread *
      *
-     * @param procedureId
-     *            Procedure identifier
+     * @param procedureId Procedure identifier
+     * @param daoFactory  the daoFactory
      */
-    ProcedureCacheUpdateTask(String procedureId) {
+    ProcedureCacheUpdateTask(String procedureId, DaoFactory daoFactory) {
         this.procedureId = procedureId;
+        this.daoFactory = daoFactory;
     }
 
     protected void getProcedureInformationFromDbAndAddItToCacheMaps() throws OwsExceptionReport {
         // temporal extent
         if (checkTimes()) {
-            ProcedureDAO procedureDAO = new ProcedureDAO();
+            ProcedureDAO procedureDAO = daoFactory.getProcedureDAO();
             TimeExtrema pte = null;
             if (procedureDAO.isProcedureTimeExtremaNamedQuerySupported(getSession())) {
                 pte = procedureDAO.getProcedureTimeExtremaFromNamedQuery(getSession(), procedureId);
             } else {
-                AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+                AbstractSeriesDAO seriesDAO = daoFactory.getSeriesDAO();
                 if (isSetTimeExtremaEmpty(pte) && seriesDAO != null) {
                     pte = seriesDAO.getProcedureTimeExtrema(getSession(), procedureId);
                 }
                 if (isSetTimeExtremaEmpty(pte)) {
-                    pte = new ProcedureDAO().getProcedureTimeExtrema(getSession(), procedureId);
+                    pte = procedureDAO.getProcedureTimeExtrema(getSession(), procedureId);
                 }
             }
             if (pte != null && pte.isSetPhenomenonTimes()) {
@@ -96,12 +97,12 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     }
 
     private boolean checkTimes() {
-        return getCache().getMinPhenomenonTimeForProcedure(procedureId) == null
-                || getCache().getMaxPhenomenonTimeForProcedure(procedureId) == null;
+        return getCache().getMinPhenomenonTimeForProcedure(procedureId) == null ||
+                 getCache().getMaxPhenomenonTimeForProcedure(procedureId) == null;
     }
 
     private boolean isSetTimeExtremaEmpty(TimeExtrema te) {
-        return te == null || (te != null && !te.isSetPhenomenonTimes());
+        return te == null || te.isSetPhenomenonTimes();
     }
 
     @Override

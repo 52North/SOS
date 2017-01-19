@@ -30,6 +30,10 @@
             <groupId>org.n52.janmayen</groupId>
             <artifactId>janmayen</artifactId>
          </dependency>
+         <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
@@ -94,20 +98,16 @@
             <artifactId>52n-xml-sampling-v20</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sosdo-v10</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sos-v20</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sensorML-v101</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-xml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-core</artifactId>
         </dependency>
     </dependencies>
     <build>

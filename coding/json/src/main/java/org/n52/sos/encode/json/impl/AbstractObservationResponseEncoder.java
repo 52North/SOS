@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.janmayen.http.MediaTypes;
@@ -48,12 +49,12 @@ import com.google.common.collect.Sets;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public abstract class AbstractObservationResponseEncoder<T extends AbstractObservationResponse> extends
-        AbstractSosResponseEncoder<T> implements org.n52.sos.coding.encode.ObservationEncoder<JsonNode, T>{
+        AbstractSosResponseEncoder<T> implements org.n52.svalbard.encode.ObservationEncoder<JsonNode, T>{
     public AbstractObservationResponseEncoder(Class<T> type, String operation) {
         super(type, operation);
     }
@@ -91,11 +92,11 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
     }
 
     @Override
-    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
-        return Collections.singletonMap(MediaTypes.APPLICATION_JSON.toString(),
-                (Set<String>) Sets.newHashSet(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
-                        OmConstants.OBS_TYPE_COUNT_OBSERVATION, OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
-                        OmConstants.OBS_TYPE_MEASUREMENT, OmConstants.OBS_TYPE_TEXT_OBSERVATION,
-                        OmConstants.OBS_TYPE_TRUTH_OBSERVATION, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION));
+    public Map<String, Set<SupportedType>> getSupportedResponseFormatObservationTypes() {
+        return Collections.singletonMap(MediaTypes.APPLICATION_JSON.toString(), getSupportedTypes());
+//                (Set<SupportedType>) Sets.newHashSet(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION_TYPE,
+//                        OmConstants.OBS_TYPE_COUNT_OBSERVATION_TYPE, OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION_TYPE,
+//                        OmConstants.OBS_TYPE_MEASUREMENT_TYPE, OmConstants.OBS_TYPE_TEXT_OBSERVATION_TYPE,
+//                        OmConstants.OBS_TYPE_TRUTH_OBSERVATION_TYPE, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION_TYPE));
     }
 }

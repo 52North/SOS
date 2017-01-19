@@ -50,6 +50,7 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
@@ -72,14 +73,8 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
 
     protected final Series series;
 
-    public SeriesOmObservationCreator(
-            Series series,
-            AbstractObservationRequest request,
-            LocalizedProducer<OwsServiceProvider> serviceProvider,
-            Locale language,
-            I18NDAORepository i18NDAORepository,
-            Session session) {
-        super(request, language, serviceProvider, i18NDAORepository, session);
+    public SeriesOmObservationCreator(Series series, AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, I18NDAORepository i18nr, String pdf, DaoFactory daoFactory, Session session) {
+        super(request, language, serviceProvider, i18nr, pdf, daoFactory, session);
         this.series = series;
     }
 
@@ -109,44 +104,6 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
         }
         return observations;
     }
-
-//    /**
-//     * Get featureOfInterest object from series
-//     *
-//     * @return FeatureOfInerest object
-//     * @throws OwsExceptionReport
-//     *             If an error occurs
-//     */
-//    protected AbstractFeature getFeatureOfInterest() throws OwsExceptionReport {
-//        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
-//        queryObject.addFeatureIdentifier(getSeries().getFeatureOfInterest().getIdentifier()).setConnection(getSession()).setVersion(getVersion());
-//        final AbstractFeature feature =
-//                getFeatureQueryHandler().getFeatureByID(queryObject);
-////                        getSeries().getFeatureOfInterest().getIdentifier(),
-////                        getSession(), getVersion(), -1);
-//        return feature;
-//    }
-//
-//    /**
-//     * Get procedure object from series
-//     *
-//     * @return Procedure object
-//     * @throws ConverterException
-//     *             If an error occurs sensor description creation
-//     * @throws OwsExceptionReport
-//     *             If an error occurs
-//     */
-//    protected SosProcedureDescription getProcedure() throws ConverterException, OwsExceptionReport {
-//        String id = getSeries().getProcedure().getIdentifier();
-//        Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(id, getSession());
-//        String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
-//        if (getActiveProfile().isEncodeProcedureInObservation()) {
-//            return new HibernateProcedureConverter().createSosProcedureDescription(hProcedure, pdf, getVersion(),
-//                    getSession());
-//        } else {
-//            return new SosProcedureDescriptionUnknowType(id, pdf, null);
-//        }
-//    }
 
     /**
      * Get {@link OmObservationConstellation} from series information

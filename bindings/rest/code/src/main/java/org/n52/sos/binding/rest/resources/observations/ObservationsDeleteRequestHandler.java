@@ -35,12 +35,16 @@ import net.opengis.sosdo.x10.DeleteObservationResponseType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
-import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
@@ -48,25 +52,30 @@ import org.n52.svalbard.encode.exception.EncodingException;
  *
  */
 public class ObservationsDeleteRequestHandler extends RequestHandler {
+    public ObservationsDeleteRequestHandler(Constants bindingConstants, EncoderRepository encoderRepository,
+                                            ServiceOperatorRepository serviceOperatorRepository) {
+        super(bindingConstants, encoderRepository, serviceOperatorRepository);
+    }
 
     @Override
-    public RestResponse handleRequest(RestRequest req) throws OwsExceptionReport, XmlException, IOException
-    {
+    public RestResponse handleRequest(RestRequest req) throws OwsExceptionReport, XmlException, IOException {
         if (req instanceof ObservationsDeleteRequest) {
             try {
-            DeleteObservationRequest doReq = ((ObservationsDeleteRequest) req).getDeleteObservationRequest();
-            XmlObject xb_deleteObservationResponse  = executeSosRequest(doReq);
-            if (xb_deleteObservationResponse instanceof DeleteObservationResponseDocument) {
-                DeleteObservationResponseType xb_delObsResponse = ((DeleteObservationResponseDocument) xb_deleteObservationResponse).getDeleteObservationResponse();
-                if (xb_delObsResponse.getDeletedObservation().equalsIgnoreCase(doReq.getObservationIdentifier())) {
-                    return new ObservationsDeleteRespone(xb_delObsResponse.getDeletedObservation());
+                DeleteObservationRequest doReq = ((ObservationsDeleteRequest) req).getDeleteObservationRequest();
+                XmlObject xb_deleteObservationResponse = executeSosRequest(doReq);
+                if (xb_deleteObservationResponse instanceof DeleteObservationResponseDocument) {
+                    DeleteObservationResponseType xb_delObsResponse
+                            = ((DeleteObservationResponseDocument) xb_deleteObservationResponse)
+                                    .getDeleteObservationResponse();
+                    if (xb_delObsResponse.getDeletedObservation().equalsIgnoreCase(doReq.getObservationIdentifier())) {
+                        return new ObservationsDeleteRespone(xb_delObsResponse.getDeletedObservation());
+                    }
                 }
-            }
             } catch (EncodingException ee) {
                 throw new NoApplicableCodeException().causedBy(ee);
             }
         }
-        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(req,this.getClass().getName());
+        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(req, this.getClass().getName());
     }
 
 }

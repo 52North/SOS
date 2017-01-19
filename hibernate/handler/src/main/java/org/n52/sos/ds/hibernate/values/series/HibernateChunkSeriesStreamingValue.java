@@ -32,17 +32,17 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.TimeValuePair;
-import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 
 /**
@@ -67,10 +67,10 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
-     * @throws CodedException
+     * @throws OwsExceptionReport
      */
-    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, AbstractObservationRequest request, long series, boolean duplicated) throws CodedException {
-        super(connectionProvider, request, series, duplicated);
+    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request, long series, boolean duplicated) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, series, duplicated);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 
@@ -128,7 +128,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                 OmObservation observation = null;
                 AbstractValuedLegacyObservation resultObject = nextEntity();
                 if (checkValue(resultObject)) {
-                    observation = observationTemplate.cloneTemplate();
+                    observation = getObservationTemplate().cloneTemplate();
                     resultObject.addValuesToObservation(observation, getResponseFormat());
                     checkForModifications(observation);
                 }

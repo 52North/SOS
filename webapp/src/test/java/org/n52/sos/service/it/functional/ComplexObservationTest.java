@@ -104,9 +104,10 @@ import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.it.AbstractComplianceSuiteTest;
 import org.n52.sos.service.it.Client;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableBiMap;
@@ -146,6 +147,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     };
     private static final String UNIT = "unit";
     private static final String CODESPACE = "codespace";
+    private EncoderRepository encoderRepository = new EncoderRepository();
 
     @Rule
     public final ErrorCollector errors = new ErrorCollector();
@@ -153,6 +155,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
 
     @Before
     public void before() throws OwsExceptionReport, EncodingException {
+        encoderRepository.init();
         activate();
         assertThat(pox().entity(createComplexInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
         assertThat(pox().entity(createComplexInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
@@ -399,7 +402,8 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         insertSensor.addObservableProperty(PARENT_OBSERVABLE_PROPERTY);
         insertSensor.setProcedureDescriptionFormat(SensorMLConstants.NS_SML);
         insertSensor.addNewMetadata().addNewInsertionMetadata().set(createSensorInsertionMetadata());
-        insertSensor.addNewProcedureDescription().set(CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, procedure));
+
+        insertSensor.addNewProcedureDescription().set((XmlObject)encoderRepository.getEncoder(CodingHelper.getEncoderKey(SensorMLConstants.NS_SML, procedure)).encode(procedure));
         return document;
     }
 
@@ -455,8 +459,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         insertObservation.setService(SosConstants.SOS);
         insertObservation.setVersion(Sos2Constants.SERVICEVERSION);
         insertObservation.addNewOffering().setStringValue(offering);
-        insertObservation.addNewObservation().addNewOMObservation().set(CodingHelper
-                .encodeObjectToXml(OmConstants.NS_OM_2, observation));
+        insertObservation.addNewObservation().addNewOMObservation().set((XmlObject)encoderRepository.getEncoder(CodingHelper.getEncoderKey(OmConstants.NS_OM_2, observation)).encode(observation));
         return document;
     }
 

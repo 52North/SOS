@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.janmayen.lifecycle.Constructable;
 
 /**
@@ -42,19 +42,15 @@ import org.n52.janmayen.lifecycle.Constructable;
 @Configurable
 public class HibernateStreamingConfiguration implements Constructable {
 
-    public static int DEFAULT_CHUNK_SIZE = 10000;
-
-    public static boolean DEFAULT_STREAMING_DATASOURCE = true;
-
-    public static boolean DEFAULT_CHUNK_STREAMING_DATASOURCE = true;
+    public static final int DEFAULT_CHUNK_SIZE = 10000;
+    public static final boolean DEFAULT_STREAMING_DATASOURCE = true;
+    public static final boolean DEFAULT_CHUNK_STREAMING_DATASOURCE = true;
 
     @Deprecated
     private static HibernateStreamingConfiguration instance;
 
     private boolean streamingDatasource = DEFAULT_STREAMING_DATASOURCE;
-
     private boolean chunkDatasourceStreaming = DEFAULT_CHUNK_STREAMING_DATASOURCE;
-
     private int chunkSize = DEFAULT_CHUNK_SIZE;
 
     @Override

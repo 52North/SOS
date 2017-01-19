@@ -28,29 +28,31 @@
  */
 package org.n52.sos.binding.rest.resources.observations;
 
-
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class ObservationsDeleteEncoder extends ResourceEncoder {
-
+    public ObservationsDeleteEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
     @Override
-    public ServiceResponse encodeRestResponse(RestResponse response) throws OwsExceptionReport
-    {
+    public ServiceResponse encodeRestResponse(RestResponse response) throws OwsExceptionReport {
         if (response instanceof ObservationsDeleteRespone) {
-            ServiceResponse result = createContentlessResponse(
-                    bindingConstants.getResourceObservations(),
-                    HTTPStatus.OK, false, false);
+            ServiceResponse result
+                    = createContentlessResponse(Constants.REST_RESOURCE_RELATION_OBSERVATIONS,
+                                                HTTPStatus.OK, false, false);
 
             result.setHeader(
-                    bindingConstants.getHttpHeaderIdentifierXDeletedResourceId(),
+                    getConstants().getHttpHeaderIdentifierXDeletedResourceId(),
                     ((ObservationsDeleteRespone) response).getDeletedObservation());
 
             return result;

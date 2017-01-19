@@ -35,10 +35,15 @@ import net.opengis.swes.x20.UpdateSensorDescriptionResponseType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
@@ -46,6 +51,11 @@ import org.n52.svalbard.encode.exception.EncodingException;
  *
  */
 public class SensorsPutRequestHandler extends SensorsRequestHandler {
+    public SensorsPutRequestHandler(ContentCacheController contentCacheController, Constants bindingConstants,
+                                    EncoderRepository encoderRepository,
+                                    ServiceOperatorRepository serviceOperatorRepository) {
+        super(contentCacheController, bindingConstants, encoderRepository, serviceOperatorRepository);
+    }
 
     @Override
     public RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException

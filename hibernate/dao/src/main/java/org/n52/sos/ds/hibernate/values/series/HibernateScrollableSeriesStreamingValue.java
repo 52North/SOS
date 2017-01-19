@@ -30,15 +30,14 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.TimeValuePair;
-import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 
 /**
@@ -49,23 +48,21 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacy
  *
  */
 public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStreamingValue {
-
-    private static final long serialVersionUID = -6439122088572009613L;
-
     private ScrollableResults scrollableResult;
 
     /**
      * constructor
      *
      * @param connectionProvider the connection provider
-     * @param request
-     *            {@link GetObservationRequest}
-     * @param series
-     *            Datasource series id
-     * @throws CodedException
+     * @param daoFactory         the DAO factory
+     * @param request            {@link GetObservationRequest}
+     * @param series             Datasource series id
+     *
+     * @throws OwsExceptionReport
      */
-    public HibernateScrollableSeriesStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long series) throws CodedException {
-        super(connectionProvider, request, series);
+    public HibernateScrollableSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
+                                                   GetObservationRequest request, long series) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, series);
     }
 
     @Override
@@ -108,7 +105,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     @Override
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
-            OmObservation observation = observationTemplate.cloneTemplate();
+            OmObservation observation = getObservationTemplate().cloneTemplate();
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
             resultObject.addValuesToObservation(observation, getResponseFormat());
 //            addValuesToObservation(observation, resultObject);

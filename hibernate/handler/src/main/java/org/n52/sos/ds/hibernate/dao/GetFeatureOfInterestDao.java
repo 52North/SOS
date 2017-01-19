@@ -28,19 +28,16 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -48,18 +45,17 @@ import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.service.profile.ProfileHandler;
 
 public class GetFeatureOfInterestDao implements org.n52.sos.ds.dao.GetFeatureOfInterestDao {
 
     private HibernateSessionHolder sessionHolder;
 
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
 
     private FeatureQueryHandler featureQueryHandler;
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 
@@ -80,7 +76,7 @@ public class GetFeatureOfInterestDao implements org.n52.sos.ds.dao.GetFeatureOfI
             session = sessionHolder.getSession();
             FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(session)
                     .setFeatures(request.getFeatureIdentifiers()).setVersion(request.getVersion())
-                    .setI18N(LocaleHelper.fromString(request.getRequestedLanguage()));
+                    .setI18N(LocaleHelper.decode(request.getRequestedLanguage()));
             return featureQueryHandler.getFeatures(queryObject);
         } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")

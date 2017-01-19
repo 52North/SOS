@@ -37,11 +37,11 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.proxy.db.dao.ProxyProcedureDao;
 import org.n52.series.db.DataAccessException;
@@ -67,7 +67,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
     private HibernateSessionStore sessionStore;
     private DescribeSensorDao dao;
 
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
     private ProcedureConverter procedureConverter;
     private I18NDAORepository i18NDAORepository;
 
@@ -90,7 +90,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
     }
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 
@@ -146,7 +146,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
         return procedureConverter.createSosProcedureDescription(procedure,
                 request.getProcedureDescriptionFormat(),
                 request.getVersion(),
-                LocaleHelper.fromString(request.getRequestedLanguage()),
+                LocaleHelper.decode(request.getRequestedLanguage()),
                 i18NDAORepository,
                 session);
     }

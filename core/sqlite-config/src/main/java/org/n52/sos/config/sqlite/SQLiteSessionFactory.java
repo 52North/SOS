@@ -46,11 +46,11 @@ import org.hibernate.service.spi.Stoppable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.service.ConfigLocationProvider;
+import org.n52.janmayen.ConfigLocationProvider;
 import org.n52.sos.config.sqlite.hibernate.HibernateFileType;
 import org.n52.sos.config.sqlite.hibernate.HibernateSQLiteDialect;
 import org.n52.sos.config.sqlite.hibernate.HibernateTimeInstantType;

@@ -30,21 +30,27 @@ package org.n52.sos.binding.rest.resources;
 
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class OptionsRestEncoder extends ResourceEncoder {
+    public OptionsRestEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
 
     @Override
-    public ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport
-    {
+    public ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport {
         if (objectToEncode instanceof OptionsRestResponse) {
             OptionsRestResponse response = (OptionsRestResponse) objectToEncode;
-            return createNoContentResponse(response.getResourceType(),response.isResourceCollection(),response.isGlobalResource());
+            return createNoContentResponse(response.getResourceType(),
+                                           response.isResourceCollection(),
+                                           response.isGlobalResource());
         }
         return null;
     }

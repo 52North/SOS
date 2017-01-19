@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
-import org.n52.sos.aqd.AqdConstants;
+import org.n52.shetland.aqd.AqdConstants;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;

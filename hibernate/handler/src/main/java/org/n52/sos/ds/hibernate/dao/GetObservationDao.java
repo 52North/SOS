@@ -44,11 +44,11 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
@@ -56,9 +56,9 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.sos.response.GlobalObservationResponseValues;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
@@ -72,8 +72,11 @@ import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
-import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.ObservationEncoder;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,13 +88,25 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationDao.class);
 
     private HibernateSessionHolder sessionHolder;
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
     private ProfileHandler profileHandler;
+    private DaoFactory daoFactory;
+    private EncoderRepository encoderRepository;
 
     private I18NDAORepository i18NDAORepository;
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
+    @Inject
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 
@@ -176,8 +191,8 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
                             observationDAO.getObservationsFor(request, features, sosIndeterminateTime, session);
                 } else {
                     for (ObservationConstellation oc : HibernateGetObservationHelper
-                            .getAndCheckObservationConstellationSize(request, session)) {
-                        for (String feature : HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features,
+                            .getAndCheckObservationConstellationSize(request, daoFactory, session)) {
+                        for (String feature : HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, daoFactory,
                                 session)) {
                             observations.addAll(observationDAO.getObservationsFor(oc, Sets.newHashSet(feature),
                                     request, sosIndeterminateTime, session));
@@ -193,7 +208,10 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
 
         int metadataObservationsCount = 0;
 
-        List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), LocaleHelper.fromString(request.getRequestedLanguage()), i18NDAORepository, session);
+        List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request,
+                this.serviceMetadataRepository.getServiceProviderFactory(request.getService()),
+                LocaleHelper.decode(request.getRequestedLanguage()), i18NDAORepository,
+                getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session);
         Set<OmObservationConstellation> timeSeries = Sets.newHashSet();
         if (profileHandler.getActiveProfile().isShowMetadataOfEmptyObservations()
                 || ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
@@ -205,11 +223,12 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
             // create a map of series to check by id, so we don't need to fetch
             // each observation's series from the database
             for (ObservationConstellation oc : HibernateGetObservationHelper.getAndCheckObservationConstellationSize(
-                    request, session)) {
+                    request, daoFactory, session)) {
                 final List<String> featureIds =
-                        HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
+                        HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, daoFactory, session);
                 for (OmObservation omObservation : HibernateObservationUtilities.createSosObservationFromObservationConstellation(oc,
-                        featureIds, request, getLocalizedProducer(request.getService()), i18NDAORepository, session)) {
+                        featureIds, request, getLocalizedProducer(request.getService()), i18NDAORepository,
+                        getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session)) {
                     if (!timeSeries.contains(omObservation.getObservationConstellation())) {
                         result.add(omObservation);
                         timeSeries.add(omObservation.getObservationConstellation());
@@ -244,7 +263,7 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
         if (request.isSetResultFilter()) {
             throw new NotYetSupportedException("result filtering");
         }
-        AbstractSeriesObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractSeriesObservationDAO observationDAO = daoFactory.getObservationDAO();
         final long start = System.currentTimeMillis();
         List<String> features = request.getFeatureIdentifiers();
         // temporal filters
@@ -254,7 +273,7 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
         final List<OmObservation> result = new LinkedList<>();
         Collection<SeriesObservation<?>> seriesObservations = Lists.newArrayList();
 
-        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+        AbstractSeriesDAO seriesDAO = daoFactory.getSeriesDAO();
 
         // query with temporal filter
         if (filterCriterion != null) {
@@ -311,7 +330,7 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
             metadataObservationsCount = seriesToCheckMap.size();
             for (Series series : seriesToCheckMap.values()) {
                 result.addAll(HibernateObservationUtilities.createSosObservationFromSeries(series,
-                        request, getLocalizedProducer(request.getService()), i18NDAORepository, session));
+                        request, getLocalizedProducer(request.getService()), i18NDAORepository, getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session));
             }
         }
         HibernateGetObservationHelper
@@ -321,7 +340,7 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         Collection<Observation<?>> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
-        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), LocaleHelper.fromString(request.getRequestedLanguage()), i18NDAORepository, session));
+        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), LocaleHelper.decode(request.getRequestedLanguage()), i18NDAORepository, getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session));
         return result;
     }
 
@@ -343,7 +362,7 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
         final List<OmObservation> result = new LinkedList<OmObservation>();
         List<String> features = request.getFeatureIdentifiers();
         Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
-        List<Series> serieses = DaoFactory.getInstance().getSeriesDAO().getSeries(request, features, session);
+        List<Series> serieses = daoFactory.getSeriesDAO().getSeries(request, features, session);
         HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
         int maxNumberOfValuesPerSeries = HibernateGetObservationHelper.getMaxNumberOfValuesPerSeries(serieses.size());
         checkSeriesOfferings(serieses, request);
@@ -351,9 +370,9 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
         for (Series series : serieses) {
             Collection<? extends OmObservation> createSosObservationFromSeries =
                     HibernateObservationUtilities
-                            .createSosObservationFromSeries(series, request, getLocalizedProducer(request.getService()), i18NDAORepository, session);
+                            .createSosObservationFromSeries(series, request, getLocalizedProducer(request.getService()), i18NDAORepository, getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session);
             OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
-            HibernateSeriesStreamingValue streamingValue = new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), request, series.getSeriesId(), duplicated.contains(series));
+            HibernateSeriesStreamingValue streamingValue = new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request, series.getSeriesId(), duplicated.contains(series));
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
             streamingValue.setObservationTemplate(observationTemplate);
@@ -362,7 +381,7 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
             result.add(observationTemplate);
         }
 
-        ObservationTimeExtrema timeExtrema = DaoFactory.getInstance().getValueTimeDAO().getTimeExtremaForSeries(serieses, temporalFilterCriterion, session);
+        ObservationTimeExtrema timeExtrema = daoFactory.getValueTimeDAO().getTimeExtremaForSeries(serieses, temporalFilterCriterion, session);
         if (timeExtrema.isSetPhenomenonTimes()) {
             response.setGlobalObservationValues(new GlobalObservationResponseValues().setPhenomenonTime(timeExtrema.getPhenomenonTime()));
         }
@@ -434,5 +453,13 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
 
     private LocalizedProducer<OwsServiceProvider> getLocalizedProducer(String service) {
         return this.serviceMetadataRepository.getServiceProviderFactory(service);
+    }
+
+    private String getProcedureDescriptionFormat(String responseFormat) {
+        Encoder<Object, Object> encoder = encoderRepository.getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
+        if (encoder != null && encoder instanceof ObservationEncoder) {
+            return ((ObservationEncoder)encoder).getProcedureEncodingNamspace();
+        }
+        return null;
     }
 }

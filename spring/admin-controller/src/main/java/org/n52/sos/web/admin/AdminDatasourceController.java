@@ -36,7 +36,7 @@ import java.util.Map;
 
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.ds.GeneralQueryDAO;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -87,17 +87,17 @@ public class AdminDatasourceController extends AbstractDatasourceController {
             String q = URLDecoder.decode(querySQL, "UTF-8");
             LOG.info("Query: {}", q);
             GeneralQueryDAO.QueryResult rs = this.generalQueryDAO.query(q);
-            ObjectNode j = JSONUtils.nodeFactory().objectNode();
+            ObjectNode j = Json.nodeFactory().objectNode();
             if (rs.getMessage() != null) {
                 j.put(rs.isError() ? "error" : "message", rs.getMessage());
-                return JSONUtils.print(j);
+                return Json.print(j);
             }
-            j.putArray(ROWS).addAll(JSONUtils.toJSON(rs.getColumnNames()));
+            j.putArray(ROWS).addAll(Json.toJSON(rs.getColumnNames()));
             ArrayNode names = j.putArray(NAMES);
             for (GeneralQueryDAO.Row row : rs.getRows()) {
-                names.addArray().addAll(JSONUtils.toJSON(row.getValues()));
+                names.addArray().addAll(Json.toJSON(row.getValues()));
             }
-            return JSONUtils.print(j);
+            return Json.print(j);
         } catch (UnsupportedEncodingException ex) {
             LOG.error("Could not decode String", ex);
             return "Could not decode String: " + ex.getMessage();

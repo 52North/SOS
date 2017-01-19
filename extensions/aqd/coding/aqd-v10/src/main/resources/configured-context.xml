@@ -3,15 +3,17 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <!-- Encoder implementations from extensions/aqd/coding/aqd-v10 -->
-    <bean class="org.n52.sos.encode.AqdEncoder"/>
-    <bean class="org.n52.sos.encode.aqd.v1.AqdGetObservationResponseEncoder"/>
-    <bean class="org.n52.sos.encode.aqd.v1.AqdGetCapabilitiesResponseEncoder"/>
-    <bean class="org.n52.sos.encode.aqd.v1.AqdDescribeSensorResponseEncoder"/>
+    <!-- Encoder implementations from svalbard -->
+    <bean class="org.n52.svalbard.encode.AqdEncoder"/>
+    <bean class="org.n52.svalbard.encode.AqdGetObservationResponseEncoder"/>
+    <bean class="org.n52.svalbard.encode.AqdGetCapabilitiesResponseEncoder"/>
+    <bean class="org.n52.svalbard.encode.AqdDescribeSensorResponseEncoder"/>
+
+    <!-- Decoder implementations from svalbard -->
+    <bean class="org.n52.svalbard.decode.AqdDecoderv10"/>
+    <bean class="org.n52.svalbard.decode.AqdStringDecoderv10"/>
 
     <!-- Decoder implementations from extensions/aqd/coding/aqd-v10 -->
-    <bean class="org.n52.sos.decode.AqdDecoderv10"/>
-    <bean class="org.n52.sos.decode.AqdStringDecoderv10"/>
     <bean class="org.n52.sos.decode.kvp.AqdGetCapabilitiesKvpDecoder"/>
     <bean class="org.n52.sos.decode.kvp.AqdDescribeSensorKvpDecoder"/>
     <bean class="org.n52.sos.decode.kvp.AqdGetObservationKvpDecoder"/>

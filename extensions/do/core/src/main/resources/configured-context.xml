@@ -4,10 +4,10 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <bean id="deleteObservationDecoder"
-          class="org.n52.sos.ext.deleteobservation.DeleteObservationDecoder"/>
+          class="org.n52.svalbard.decode.DeleteObservationDecoder"/>
 
     <bean id="deleteObservationEncoder"
-          class="org.n52.sos.ext.deleteobservation.DeleteObservationEncoder"/>
+          class="org.n52.svalbard.encode.DeleteObservationEncoder"/>
 
     <bean id="deleteObservationContentModificationListener"
           class="org.n52.sos.ext.deleteobservation.DeleteObservationContentModificationListener" />

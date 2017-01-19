@@ -51,7 +51,7 @@ import com.google.common.collect.Lists;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public abstract class ProcedureDescriptionEnrichment {
     private static final IsApplicable IS_APPLICABLE = new IsApplicable();
@@ -59,6 +59,7 @@ public abstract class ProcedureDescriptionEnrichment {
     private String version;
     private String identifier;
     private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
+    private boolean showAllLanguageValues = ServiceConfiguration.getInstance().isShowAllLanguageValues();
     private Session session;
 
     protected ProcedureDescriptionSettings procedureSettings() {
@@ -70,6 +71,7 @@ public abstract class ProcedureDescriptionEnrichment {
     }
 
     protected Collection<SosOffering> getSosOfferings() throws CodedException {
+
         Collection<String> identifiers = getCache()
                 .getOfferingsForProcedure(getIdentifier());
         Collection<SosOffering> offerings = Lists
@@ -77,9 +79,9 @@ public abstract class ProcedureDescriptionEnrichment {
         for (String offering : identifiers) {
             SosOffering sosOffering = new SosOffering(offering, false);
             // add offering name
-            I18NHelper.addOfferingNames(sosOffering, getLocale());
+            I18NHelper.addOfferingNames(getCache(), sosOffering, getLocale(), getLocale(), showAllLanguageValues);
             // add offering description
-            I18NHelper.addOfferingDescription(sosOffering, getLocale());
+            I18NHelper.addOfferingDescription(sosOffering, getLocale(), getLocale(), getCache());
             // add to list
             offerings.add(sosOffering);
         }

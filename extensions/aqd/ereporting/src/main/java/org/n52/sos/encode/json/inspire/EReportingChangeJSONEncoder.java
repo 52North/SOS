@@ -28,8 +28,8 @@
  */
 package org.n52.sos.encode.json.inspire;
 
+import org.n52.shetland.aqd.EReportingChange;
 import org.n52.sos.encode.json.JSONEncoder;
-import org.n52.sos.inspire.aqd.EReportingChange;
 import org.n52.sos.util.AQDJSONConstants;
 import org.n52.svalbard.encode.exception.EncodingException;
 

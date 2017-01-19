@@ -32,7 +32,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderKey;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
 
 /**
  * Storage key for the entity {@link DynamicOwsExtendedCapabilities}
@@ -68,10 +68,10 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
     /**
      * constructor
      *
-     * @param key the {@link OwsExtendedCapabilitiesProviderKey} to set
+     * @param key the {@link OwsOperationMetadataExtensionProviderKey} to set
      */
     public DynamicOwsExtendedCapabilitiesKey(
-            OwsExtendedCapabilitiesProviderKey key) {
+            OwsOperationMetadataExtensionProviderKey key) {
         this(key.getService(), key.getVersion(), key.getDomain());
     }
 

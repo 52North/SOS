@@ -46,7 +46,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.n52.iceland.config.AdminUserService;
 import org.n52.iceland.config.AdministratorUser;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 
 /**
  * @since 4.0.0

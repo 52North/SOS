@@ -30,8 +30,11 @@ package org.n52.sos.coding.encode;
 
 import java.util.Set;
 
+import org.n52.janmayen.Producer;
+import org.n52.janmayen.Producers;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.janmayen.Producer;
 import org.n52.janmayen.Producers;
 
@@ -53,12 +56,12 @@ public class SosEncoderRepository extends EncoderRepository {
     public void init() {
         super.init();
         this.observationEncoders.clear();
-        for (Producer<Encoder<?, ?>> producer : getComponentProviders()) {
+        getComponentProviders().forEach(producer -> {
             Encoder<?, ?> encoder = producer.get();
             if (encoder instanceof ObservationEncoder) {
                 this.observationEncoders.add(asObservationEncoderProducer(producer));
             }
-        }
+        });
     }
 
     public Set<ObservationEncoder<?, ?>> getObservationEncoders() {

@@ -39,15 +39,14 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.WritableContentCache;
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.iceland.util.Validation;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -56,6 +55,7 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.sos.ds.cache.InitialCacheUpdate;
 import org.n52.sos.ds.cache.base.OfferingCacheUpdate;
+import org.n52.svalbard.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
     private int cacheThreadCount = 5;
     private Locale defaultLocale;
     private I18NDAORepository i18NDAORepository;
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
     private HibernateSessionStore sessionStore;
 
     @Inject
@@ -86,11 +86,11 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
     public void setDefaultLocale(String defaultLocale) {
-        this.defaultLocale = LocaleHelper.fromString(defaultLocale);
+        this.defaultLocale = LocaleHelper.decode(defaultLocale);
     }
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 

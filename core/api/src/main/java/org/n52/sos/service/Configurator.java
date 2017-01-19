@@ -38,9 +38,9 @@ import javax.servlet.ServletContext;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.DataConnectionProvider;
-import org.n52.iceland.event.ServiceEventBus;
+import org.n52.janmayen.event.EventBus;
 import org.n52.iceland.event.events.ConfiguratorInitializedEvent;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.janmayen.lifecycle.Constructable;
@@ -70,14 +70,14 @@ public class Configurator implements Constructable {
     private ContentCacheController contentCacheController;
     private String connectionProviderIdentificator;
     private String datasourceDaoIdentificator;
-    private ServiceEventBus eventBus;
+    private EventBus eventBus;
 
     public Configurator() {
         // ugly hack for singleton access
     }
 
     @Inject
-    public void setEventBus(ServiceEventBus eventBus) {
+    public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
     }
 

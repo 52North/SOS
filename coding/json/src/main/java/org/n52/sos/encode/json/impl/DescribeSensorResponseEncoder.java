@@ -30,9 +30,15 @@ package org.n52.sos.encode.json.impl;
 
 import java.util.List;
 
-import org.apache.xmlbeans.XmlOptions;
+import javax.inject.Inject;
 
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlOptionsHelper;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
@@ -40,8 +46,7 @@ import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -50,13 +55,21 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<DescribeSensorResponse> {
+
+    private EncoderRepository encoderRepository;
+
     public DescribeSensorResponseEncoder() {
         super(DescribeSensorResponse.class, SosConstants.Operations.DescribeSensor);
+    }
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
     }
 
     @Override
@@ -69,10 +82,11 @@ public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<De
 
     private String toString(AbstractFeature desc, String format) throws EncodingException {
         if (desc instanceof SosProcedureDescriptionUnknownType && desc.isSetXml()) {
-           return desc.getXml();
+            return desc.getXml();
         }
         XmlOptions options = XmlOptionsHelper.getInstance().getXmlOptions();
-        return CodingHelper.encodeObjectToXml(format, desc).xmlText(options);
+        return ((XmlObject) encoderRepository.getEncoder(CodingHelper.getEncoderKey(format, desc)).encode(desc))
+                .xmlText(options);
     }
 
     private JsonNode encodeDescription(SosProcedureDescription<?> desc, String format) throws EncodingException {

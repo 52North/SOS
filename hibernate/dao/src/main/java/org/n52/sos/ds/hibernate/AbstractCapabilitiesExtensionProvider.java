@@ -31,27 +31,27 @@ package org.n52.sos.ds.hibernate;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionKey;
-import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionKey;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
 
 /**
  * TODO JavaDoc
  * @author Christian Autermann
  */
-public abstract class AbstractCapabilitiesExtensionProvider implements CapabilitiesExtensionProvider {
+public abstract class AbstractCapabilitiesExtensionProvider implements OwsCapabilitiesExtensionProvider {
     private final String operation;
-    private final CapabilitiesExtensionKey key;
+    private final OwsCapabilitiesExtensionKey key;
 
     public AbstractCapabilitiesExtensionProvider(String service,
                                                  String version,
                                                  String operation) {
         this.operation = operation;
-        this.key = new CapabilitiesExtensionKey(service, version);
+        this.key = new OwsCapabilitiesExtensionKey(service, version);
     }
 
     @Override
     @Deprecated
-    public CapabilitiesExtensionKey getCapabilitiesExtensionKey() {
+    public OwsCapabilitiesExtensionKey getCapabilitiesExtensionKey() {
         return this.key;
     }
 
@@ -66,7 +66,7 @@ public abstract class AbstractCapabilitiesExtensionProvider implements Capabilit
     }
 
     @Override
-    public Set<CapabilitiesExtensionKey> getKeys() {
+    public Set<OwsCapabilitiesExtensionKey> getKeys() {
         return Collections.singleton(this.key);
     }
 

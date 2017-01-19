@@ -34,11 +34,11 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.iso.GcoConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.w3c.W3CConstants;
-import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.util.Nillable;
+import org.n52.shetland.w3c.Nillable;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;

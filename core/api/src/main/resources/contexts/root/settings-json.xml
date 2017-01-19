@@ -3,20 +3,17 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
+    <bean id="settingsDao" class="org.n52.faroe.json.JsonSettingsDao" />
+    <bean id="jsonConfiguration" class="org.n52.faroe.json.JsonConfiguration" init-method="init">
+        <property name="fileName" value="configuration.json" />
+        <property name="writeTimeout" value="1000" />
+        <property name="configLocationProvider" ref="configLocationProvider"/>
+    </bean>
+
+
     <bean id="activationDao" class="org.n52.iceland.config.json.JsonActivationDao" />
-
     <bean id="sosActivationDao" class="org.n52.sos.config.json.SosJsonActivationDao" />
-
-    <bean id="settingsDao" class="org.n52.iceland.config.json.JsonSettingsDao" />
-
     <bean id="adminUserDao" class="org.n52.iceland.config.json.JsonAdminUserDao" />
-
     <bean id="settingValueFactory" class="org.n52.iceland.config.json.JsonSettingValueFactory" />
-
-    <bean id="jsonConfiguration" class="org.n52.iceland.config.json.JsonConfiguration" init-method="init">
-		<property name="fileName" value="configuration.json" />
-		<property name="writeTimeout" value="1000" />
-		<property name="configLocationProvider" ref="configLocationProvider"/>
-	</bean>
 
 </beans>

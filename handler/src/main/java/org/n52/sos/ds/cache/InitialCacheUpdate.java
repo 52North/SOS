@@ -30,9 +30,8 @@ package org.n52.sos.ds.cache;
 
 import java.util.Locale;
 
-import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.sos.ds.cache.base.FeatureOfInterestCacheUpdate;
 import org.n52.sos.ds.cache.base.I18NCacheUpdate;
@@ -66,7 +65,7 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
                               Locale defaultLocale,
                               I18NDAORepository i18NDAORepository,
                               HibernateSessionStore sessionStore,
-                              ServiceMetadataRepository serviceMetadataRepository) {
+                              OwsServiceMetadataRepository serviceMetadataRepository) {
         //execute all updates except offerings and procedures in parallel, then execute offering and procedure updates
         //(which spawn their own threads)
         super(new ParallelCacheUpdate(threadCount,

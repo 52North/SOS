@@ -29,12 +29,8 @@
 package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
-import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
@@ -44,7 +40,9 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDA
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
-import org.n52.sos.util.GmlHelper;
+import org.n52.svalbard.util.GmlHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract Hibernate series streaming value class for the series concept
@@ -69,14 +67,14 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      *            {@link AbstractObservationRequest}
      * @param series
      *            Datasource series id
-     * @throws CodedException
+     * @throws OwsExceptionReport
      */
-    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, AbstractObservationRequest request, long series, boolean duplicated) throws CodedException {
+    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request, long series, boolean duplicated) throws OwsExceptionReport {
         super(connectionProvider, request);
         this.series = series;
         this.duplicated = duplicated;
-        this.seriesValueDAO = (AbstractSeriesValueDAO) DaoFactory.getInstance().getValueDAO();
-        this.seriesValueTimeDAO = (AbstractSeriesValueTimeDAO) DaoFactory.getInstance().getValueTimeDAO();
+        this.seriesValueDAO = daoFactory.getValueDAO();
+        this.seriesValueTimeDAO = daoFactory.getValueTimeDAO();
     }
 
     @Override

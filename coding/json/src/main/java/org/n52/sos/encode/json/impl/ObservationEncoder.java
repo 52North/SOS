@@ -31,7 +31,7 @@ package org.n52.sos.encode.json.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -60,9 +60,9 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
-import org.n52.sos.util.OMHelper;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.svalbard.util.OMHelper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -72,7 +72,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -397,7 +397,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         private static final TokenConverter COUNT_RANGE_CONVERTER = new RangeTokenConverter(COUNT_CONVERTER);
 
         JsonNodeFactory nodeFactory() {
-            return JSONUtils.nodeFactory();
+            return Json.nodeFactory();
         }
 
         abstract JsonNode convert(String s);

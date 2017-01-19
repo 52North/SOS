@@ -29,8 +29,6 @@
 package org.n52.sos.coding.encode;
 
 
-import org.n52.sos.coding.encode.ObservationEncoder;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +47,7 @@ import com.google.common.collect.Sets;
 
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 
 /**

@@ -57,7 +57,7 @@ import org.n52.shetland.util.CollectionHelper;
  * @since 4.2.0
  *
  */
-public class ProcedureDescriptionGeneratorFactorySml101 implements ProcedureDescriptionGeneratorFactory {
+public class ProcedureDescriptionGeneratorFactorySml101 extends AbstractProcedureDescriptionGeneratorFactorySml {
 
     private static final Set<ProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES = CollectionHelper.set(
             new ProcedureDescriptionGeneratorFactoryKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
@@ -75,6 +75,10 @@ public class ProcedureDescriptionGeneratorFactorySml101 implements ProcedureDesc
 
 
     private class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGeneratorSml {
+
+        public ProcedureDescriptionGeneratorSml101() {
+            super(getSrsNamePrefixUrl());
+        }
 
         /**
          * Generate procedure description from Hibernate procedure entity if no

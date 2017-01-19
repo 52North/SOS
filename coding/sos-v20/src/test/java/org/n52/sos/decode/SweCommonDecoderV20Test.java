@@ -45,7 +45,7 @@ import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
+import org.n52.svalbard.decode.SweCommonDecoderV20;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;

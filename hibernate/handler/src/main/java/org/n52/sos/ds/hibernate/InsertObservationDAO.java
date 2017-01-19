@@ -40,7 +40,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.annotations.common.util.StringHelper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.service.ServiceConfiguration;
@@ -60,10 +59,9 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.AbstractInsertObservationHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -84,8 +82,12 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     private static final String CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY = "obsIdentifierUK";
 
     private HibernateSessionHolder sessionHolder;
-    private final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
-    private final FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
+    private DaoFactory daoFactory;
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
@@ -187,7 +189,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
                 if (!cache.isChecked(sosObsConst, offeringID)) {
                     try {
                         hObservationConstellation =
-                                observationConstellationDAO.checkObservationConstellation(
+                                daoFactory.getObservationConstellationDAO().checkObservationConstellation(
                                         sosObsConst, offeringID, session, Sos2Constants.InsertObservationParams.observationType.name());
                         // add to cache table
                         cache.putConstellation(sosObsConst, offeringID, hObservationConstellation);
@@ -205,7 +207,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
                 // only do feature checking once for each
                 // AbstractFeature/offering combo
                 if (!cache.isChecked(sosObsConst.getFeatureOfInterest(), offeringID)) {
-                    featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(
+                    daoFactory.getFeatureOfInterestDAO().checkOrInsertFeatureOfInterestRelatedFeatureRelation(
                             hFeature, hObservationConstellation.getOffering(), session);
                     cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
                 }
@@ -215,7 +217,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         }
 
         if (!hObservationConstellations.isEmpty()) {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             if (sosObservation.getValue() instanceof SingleObservationValue) {
                 observationDAO.insertObservationSingleValue(
                         hObservationConstellations, hFeature, sosObservation,
@@ -311,7 +313,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
             InsertObservationCache cache, Session session) throws OwsExceptionReport {
         FeatureOfInterest hFeature = cache.getFeature(abstractFeature);
         if (hFeature == null) {
-            hFeature = featureOfInterestDAO.checkOrInsertFeatureOfInterest(abstractFeature, session);
+            hFeature = daoFactory.getFeatureOfInterestDAO().checkOrInsertFeatureOfInterest(abstractFeature, session);
             cache.putFeature(abstractFeature, hFeature);
         }
         return hFeature;

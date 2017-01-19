@@ -46,7 +46,7 @@ import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.JSONConstants;
 
@@ -55,7 +55,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 @Controller
@@ -82,7 +82,7 @@ public class AdminOperationController extends AbstractAdminController {
                     method = RequestMethod.GET,
                     produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String getAll() throws JSONException {
-        ObjectNode json = JSONUtils.nodeFactory().objectNode();
+        ObjectNode json = Json.nodeFactory().objectNode();
         ArrayNode array = json.putArray(JSONConstants.OPERATIONS_KEY);
 
         for (RequestOperatorKey key : this.requestOperatorRepository.getKeys()) {
@@ -98,7 +98,7 @@ public class AdminOperationController extends AbstractAdminController {
                     .put(JSONConstants.ACTIVE_KEY, active);
         }
 
-        return JSONUtils.print(json);
+        return Json.print(json);
     }
 
     @ResponseBody
@@ -106,7 +106,7 @@ public class AdminOperationController extends AbstractAdminController {
                     method = RequestMethod.POST,
                     consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public void change(@RequestBody String request) throws JSONException, IOException {
-        JsonNode json = JSONUtils.loadString(request);
+        JsonNode json = Json.loadString(request);
         String service = json.path(JSONConstants.SERVICE_KEY).asText();
         String version = json.path(JSONConstants.VERSION_KEY).asText();
         String operation = json.path(JSONConstants.OPERATION_KEY).asText();

@@ -40,7 +40,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
@@ -53,9 +53,15 @@ import com.google.common.collect.Sets;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrichment<Procedure> {
+
+    private final DaoFactory daoFactory;
+
+    public RelatedProceduresEnrichment(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Override
     public void enrich() throws OwsExceptionReport {
@@ -151,7 +157,7 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
 
     private Map<String, Procedure> createProcedureCache() {
         Set<String> identifiers = getCache().getChildProcedures(getIdentifier(), true, false);
-        List<Procedure> children = new ProcedureDAO().getProceduresForIdentifiers(identifiers, getSession());
+        List<Procedure> children = daoFactory.getProcedureDAO().getProceduresForIdentifiers(identifiers, getSession());
         Map<String, Procedure> cache = Maps.newHashMapWithExpectedSize(children.size());
         for (Procedure child : children) {
             cache.put(child.getIdentifier(), child);

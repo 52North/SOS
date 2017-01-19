@@ -374,7 +374,7 @@ public class HibernateGetObservationHelper {
 
         final List<TemporalFilter> filters = request.getNotFirstLatestTemporalFilter();
         if (request.hasTemporalFilters() && CollectionHelper.isNotEmpty(filters)) {
-            return TemporalRestrictions.filter(filters);
+            return SosTemporalRestrictions.filter(filters);
         } else {
             return null;
         }

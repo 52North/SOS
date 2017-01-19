@@ -26,21 +26,44 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.exception.ows.concrete;
+package org.n52.sos.ds.hibernate.util.restriction;
 
-import org.n52.shetland.ogc.gml.time.Time;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import java.util.Date;
+
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
+
+import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 
 /**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- * @since 4.0.0
+ * Creates filters according to the following table.
+ * <table>
+ * <tr>
+ * <td><i>Self/Other</i></td>
+ * <td><b>Period</b></td>
+ * <td><b>Instant</b></td>
+ * </tr>
+ * <tr>
+ * <td><b>Period</b></td>
+ * <td>{@code self.begin &lt; other.begin AND self.end &gt; other.end}</td>
+ * <td> {@code self.begin &lt; other.position AND self.end &gt; other.position}</td>
+ * </tr>
+ * <tr>
+ * <td><b>Instant</b></td>
+ * <td><i>not defined</i></td>
+ * <td><i>not defined</i></td>
+ * </tr>
+ * </table>
  */
-public class UnsupportedTimeException extends NoApplicableCodeException {
+public class ContainsRestriction implements TemporalRestriction {
+    @Override
+    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
+        return Restrictions.and(Restrictions.lt(selfBegin, otherBegin), Restrictions.gt(selfEnd, otherEnd));
+    }
 
-    private static final long serialVersionUID = -6897786883586612395L;
-
-    public UnsupportedTimeException(Time time) {
-        withMessage("Time %s is not supported", time);
+    @Override
+    public Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
+        return Restrictions.and(Restrictions.lt(selfBegin, otherPosition), Restrictions.gt(selfEnd, otherPosition));
     }
 
 }

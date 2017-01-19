@@ -159,9 +159,9 @@ public class QueryHelper {
                                                                          UnsupportedValueReferenceException,
                                                                          UnsupportedOperatorException {
         if (validTime instanceof TimeInstant) {
-            return TemporalRestrictions.filter(getFiltersForTimeInstant((TimeInstant) validTime));
+            return SosTemporalRestrictions.filter(getFiltersForTimeInstant((TimeInstant) validTime));
         } else if (validTime instanceof TimePeriod) {
-            return TemporalRestrictions.filter(getFiltersForTimePeriod((TimePeriod) validTime));
+            return SosTemporalRestrictions.filter(getFiltersForTimePeriod((TimePeriod) validTime));
         } else {
             return null;
         }

@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-   <bean id="streamingSettingDefinitionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+   <bean id="streamingSettingDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
         <property name="title" value="Streaming" />
         <property name="order" value="5.0" />
         <property name="description" value="NOTE for Oracle users! Because of an issue in Hibernate ORM the chunk streaming approach throws an exception if the request conatains an offering parameter! Please, uncheck the third checkbox to use scollable values." />

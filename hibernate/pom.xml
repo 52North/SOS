@@ -19,7 +19,8 @@
         <module>feature</module>
 		<module>h2</module>
 		<module>datasource</module>
-	</modules>
+        <module>utils</module>
+    </modules>
 	<profiles>
         <profile>
             <id>generator</id>

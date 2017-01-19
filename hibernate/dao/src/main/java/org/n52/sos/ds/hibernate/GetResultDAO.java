@@ -45,6 +45,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -75,7 +76,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
@@ -89,6 +90,7 @@ import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
 import org.n52.svalbard.util.XmlHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -343,7 +345,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
      */
     private void addTemporalFilter(Criteria c, List<TemporalFilter> temporalFilter) throws UnsupportedTimeException,
             UnsupportedValueReferenceException, UnsupportedOperatorException {
-        c.add(TemporalRestrictions.filter(temporalFilter));
+        c.add(SosTemporalRestrictions.filter(temporalFilter));
     }
 
     /**

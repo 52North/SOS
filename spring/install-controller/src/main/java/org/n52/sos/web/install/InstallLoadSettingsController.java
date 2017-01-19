@@ -96,7 +96,7 @@ public class InstallLoadSettingsController extends AbstractInstallController {
                 continue;
             }
             if (def instanceof MultilingualStringSettingDefinition) {
-                c.setSetting(def, settingsManager.getSettingFactory().newMultiLingualStringValue((MultilingualStringSettingDefinition)def, value));
+                c.setSetting(def, settingsManager.getSettingFactory().newMultiLingualStringSettingValue((MultilingualStringSettingDefinition)def, value));
             } else {
                 c.setSetting(def, settingsManager.getSettingFactory().newSettingValue(def, value));
             }

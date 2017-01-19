@@ -28,7 +28,6 @@
  */
 package org.n52.sos.service;
 
-import org.n52.faroe.SettingDefinitionGroup;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.janmayen.lifecycle.Constructable;

@@ -34,13 +34,13 @@ import java.util.Set;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.BatchConstants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.sos.ds.BatchOperationHandler;
 import org.n52.shetland.ogc.sos.request.BatchRequest;
 import org.n52.shetland.ogc.sos.response.BatchResponse;
-import org.n52.shetland.ogc.sos.BatchConstants;
+import org.n52.sos.ds.BatchOperationHandler;
 
 /**
  * TODO JavaDoc

@@ -88,6 +88,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferenced
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.gda.AbstractGetDataAvailabilityHandler;
 
@@ -261,7 +262,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
                     Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
         if (hasPhenomenonTimeFilter(request.getExtensions())) {
-            c.add(TemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions())));
+            c.add(SosTemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions())));
         }
         c.setProjection(Projections.distinct(Projections.property(ContextualReferencedObservation.RESULT_TIME)));
         c.addOrder(Order.asc(ContextualReferencedObservation.RESULT_TIME));
@@ -439,7 +440,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
             Series series, GetDataAvailabilityRequest request, Session session) throws OwsExceptionReport {
         Criterion filter = null;
         if (hasPhenomenonTimeFilter(request.getExtensions())) {
-            filter = TemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions()));
+            filter = SosTemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions()));
         }
         List<Date> dateTimes =
                 seriesObservationDAO.getResultTimesForSeriesObservation(series, request.getOfferings(), filter,

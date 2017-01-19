@@ -35,8 +35,6 @@ import org.n52.janmayen.Producers;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ObservationEncoder;
-import org.n52.janmayen.Producer;
-import org.n52.janmayen.Producers;
 
 import com.google.common.collect.Sets;
 

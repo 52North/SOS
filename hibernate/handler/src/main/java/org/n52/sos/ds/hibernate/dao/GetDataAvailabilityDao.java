@@ -60,6 +60,7 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +119,7 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
                         Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
             }
             if (hasPhenomenonTimeFilter(request.getExtensions())) {
-                c.add(TemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions())));
+                c.add(SosTemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions())));
             }
             c.setProjection(Projections.distinct(Projections.property(ContextualReferencedObservation.RESULT_TIME)));
             c.addOrder(Order.asc(ContextualReferencedObservation.RESULT_TIME));

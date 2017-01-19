@@ -30,8 +30,8 @@ package org.n52.sos.ds.hibernate.util;
 
 import org.hibernate.criterion.Criterion;
 
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -42,48 +42,46 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  */
 public class SpatialRestrictions {
+    private SpatialRestrictions() {
+    }
+
     /**
      * Get spatial filter restrictions.
      *
-     * @param propertyName
-     *            column name
-     * @param operator
-     *            Spatial filter
-     * @param geometry
-     *            the geometry
+     * @param propertyName column name
+     * @param operator Spatial filter
+     * @param geometry the geometry
      *
      * @return filter restriction
      *
-     * @throws OwsExceptionReport
-     *             If the spatial filter is not supported
+     * @throws OwsExceptionReport If the spatial filter is not supported
      */
     public static Criterion filter(String propertyName, SpatialOperator operator, Geometry geometry)
             throws OwsExceptionReport {
         switch (operator) {
-        case BBOX:
-            return within(propertyName, geometry);
-            // TODO why are these commented?
-        case Contains:
-            // return contains(propertyName, geometry);
-        case Crosses:
-            // return crosses(propertyName, geometry);
-        case Disjoint:
-            // return disjoint(propertyName, geometry);
-        case DWithin:
-            // return distanceWithin(propertyName, geometry, 10);
-        case Equals:
-            // return eq(propertyName, geometry);
-        case Intersects:
-            // return intersects(propertyName, geometry);
-        case Overlaps:
-            // return overlaps(propertyName, geometry);
-        case Touches:
-            // return touches(propertyName, geometry);
-        case Within:
-            // return within(propertyName, geometry);
-        case Beyond:
-        default:
-            throw new UnsupportedOperatorException(operator);
+            case BBOX:
+                return within(propertyName, geometry);
+            case Contains:
+                return contains(propertyName, geometry);
+            case Crosses:
+                return crosses(propertyName, geometry);
+            case Disjoint:
+                return disjoint(propertyName, geometry);
+            case DWithin:
+                return distanceWithin(propertyName, geometry, 10);
+            case Equals:
+                return eq(propertyName, geometry);
+            case Intersects:
+                return intersects(propertyName, geometry);
+            case Overlaps:
+                return overlaps(propertyName, geometry);
+            case Touches:
+                return touches(propertyName, geometry);
+            case Within:
+                return within(propertyName, geometry);
+            case Beyond:
+            default:
+                throw new UnsupportedOperatorException(operator);
         }
     }
 
@@ -139,6 +137,4 @@ public class SpatialRestrictions {
         return org.hibernate.spatial.criterion.SpatialRestrictions.spatialRestriction(relation, propertyName, value);
     }
 
-    private SpatialRestrictions() {
-    }
 }

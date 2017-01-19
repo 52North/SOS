@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <bean id="serviceIdentificationSettingsDefinitionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+    <bean id="serviceIdentificationSettingsDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
         <property name="title" value="Service Identification" />
         <property name="order" value="1.0" />
     </bean>
@@ -23,7 +23,7 @@
         <property name="order" value="3.0" />
         <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
         <property name="defaultValue">
-            <bean class="org.n52.shetland.i18n.MultilingualString">
+            <bean class="org.n52.janmayen.i18n.MultilingualString">
                 <property name="localizations">
                     <map>
                         <entry key="en" value="52North Sensor Observation Service - Data Access for the Sensor Web" />
@@ -47,7 +47,7 @@
         <property name="order" value="1.0" />
         <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
         <property name="defaultValue">
-            <bean class="org.n52.shetland.i18n.MultilingualString">
+            <bean class="org.n52.janmayen.i18n.MultilingualString">
                 <property name="localizations">
                     <map>
                         <entry key="en" value="52N SOS" />

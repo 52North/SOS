@@ -52,14 +52,14 @@
         <description>Used to wire up SOS specific activation persistence.</description>
         <property name="listeners">
             <map>
-                <entry key-ref="procedureDescriptionFormatRepository" value="#{sosActivationService.procedureDescriptionFormatListener}"/>
-                <entry key-ref="responseFormatRepository" value="#{sosActivationService.responseFormatListener}" />
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatListener}"/>
+                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatListener}" />
             </map>
         </property>
         <property name="initializers">
             <map>
-                <entry key-ref="procedureDescriptionFormatRepository" value="#{sosActivationService.procedureDescriptionFormatInitializer}" />
-                <entry key-ref="responseFormatRepository" value="#{sosActivationService.responseFormatInitializer}" />
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatInitializer}" />
+                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatInitializer}" />
             </map>
         </property>
     </bean>

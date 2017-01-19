@@ -45,6 +45,7 @@ public class SosActivationService extends ActivationService {
 
     private SosActivationDao activationDao;
 
+    @Override
     public SosActivationDao getActivationDao() {
         return this.activationDao;
     }

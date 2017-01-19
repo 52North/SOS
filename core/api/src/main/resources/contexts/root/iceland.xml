@@ -23,7 +23,6 @@
     <bean id="configLocationProvider" class="org.n52.iceland.service.ServletConfigLocationProvider" />
     <bean id="settingsService" class="org.n52.faroe.SettingsServiceImpl" />
     <bean id="adminUserService" class="org.n52.iceland.config.AdminUserServiceImpl" />
-    <bean id="activationService" class="org.n52.iceland.config.ActivationService" />
-    <bean id="sosActivationService" class="org.n52.sos.config.SosActivationService" />
+    <bean id="activationService" class="org.n52.sos.config.SosActivationService" />
 
 </beans>

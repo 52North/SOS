@@ -2,7 +2,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
-    <bean id="serviceSettingDefintionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+    <bean id="serviceSettingDefintionGroup" class="org.n52.faroe.SettingDefinitionGroup">
         <property name="title" value="Service" />
         <property name="order" value="2.0" />
     </bean>
@@ -21,14 +21,6 @@
         <property name="order" value="15.0" />
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
-    </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.addOutputsToSensorML" />
-        <property name="title" value="Add outputs to DescribeSensor SensorML responses" />
-        <property name="description" value="Whether to query example observations and dynamically add outputs to DescribeSensor SensorML responses." />
-        <property name="order" value="14.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="true" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="service.sensorDirectory" />
@@ -78,14 +70,6 @@
         <property name="order" value="12.0" />
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
-    </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.encodeFullChildrenInDescribeSensor" />
-        <property name="title" value="Encode full for child procedure SensorML in parent DescribeSensor responses" />
-        <property name="description" value="Whether to encode full SensorML for each child procedures in a DescribeSensor response for a parent procedure." />
-        <property name="order" value="12.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="true" />
     </bean>
     <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="service.cacheThreadCount" />

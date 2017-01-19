@@ -8,8 +8,9 @@ This project includes:
   52North Sensor Web Client PDF report structure under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North SOS Integration and Compliance 2.0 under Eclipse Public License 1.0
   52North SOS Integration and Compliance Common under Eclipse Public License 1.0
-  52°North Aggregated Third Party modules under GPLv2
   52°North AQD - 1.0 XML Coding under GPLv2
+  52°North Faroe under The Apache Software License, Version 2.0
+  52°North Faroe JSON Backend under The Apache Software License, Version 2.0
   52°North Iceland under The Apache Software License, Version 2.0
   52°North Iceland Statistics under The Apache Software License, Version 2.0
   52°North Iceland Statistics Geolocation Feature under The Apache Software License, Version 2.0
@@ -19,7 +20,6 @@ This project includes:
   52°North SOS - 2.0 XML Request Coding under GPLv2
   52°North SOS - Abstract Identifier Modifier Modules under GPLv2
   52°North SOS - Abstract SensorML Coding Module under GPLv2
-  52°North SOS - AQD 1.0 API Operator under GPLv2
   52°North SOS - AQD 1.0 Core Profile Operator under GPLv2
   52°North SOS - AQD Split and Merge observations module under GPLv2
   52°North SOS - Binding Modules under GPLv2
@@ -64,6 +64,7 @@ This project includes:
   52°North SOS - Hibernate Postgres/PostGIS Datasource under GPLv2
   52°North SOS - Hibernate Session Factory under GPLv2
   52°North SOS - Hibernate SQL Server Datasource under GPLv2
+  52°North SOS - Hibernate Utils under GPLv2
   52°North SOS - Identifier Modifier Modules under GPLv2
   52°North SOS - JSON Coding under GPLv2
   52°North SOS - JSON Common under GPLv2
@@ -79,7 +80,6 @@ This project includes:
   52°North SOS - Profile Module under GPLv2
   52°North SOS - SensorML 101 Request Coding under GPLv2
   52°North SOS - SensorML 20 Request Coding under GPLv2
-  52°North SOS - SOAP coding under GPLv2
   52°North SOS - SOS 1.0.0 Core Profile Operator under GPLv2
   52°North SOS - SOS 1.0.0 XML Request Coding under GPLv2
   52°North SOS - SOS 2.0 Core Profile Operator under GPLv2
@@ -101,8 +101,7 @@ This project includes:
   52°North SOS - Web Views under GPLv2
   52°North SOS - Webapp under GPLv2
   52°North SOS - Webapp with Sensor Web REST API under GPLv2
-  52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
-                License
+  52°North Svalbard under The Apache Software License, Version 2.0
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons CLI under Apache License, Version 2.0
@@ -241,6 +240,7 @@ This project includes:
   OGC Sampling schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SensorML schema (spec. v1.0.1) under The Apache Software License, Version 2.0
   OGC SensorML schema (spec. v2.0.0) under The Apache Software License, Version 2.0
+  OGC SOS DeleteObservation schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS GetDataAvailability schema 1.0 (OGC Best Practice 14-004r1) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v2.0) under The Apache Software License, Version 2.0

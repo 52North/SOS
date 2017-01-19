@@ -34,8 +34,8 @@ import java.net.URI;
 
 import org.joda.time.DateTime;
 
-import org.n52.faroe.AbstractSettingValueFactory;
 import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingValueFactory;
 import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
 import org.n52.sos.config.sqlite.entities.ChoiceSettingValue;
@@ -51,7 +51,7 @@ import org.n52.sos.config.sqlite.entities.UriSettingValue;
  * TODO JavaDoc
  * @author Christian Autermann
  */
-public class SQLiteSettingValueFactory extends AbstractSettingValueFactory {
+public class SQLiteSettingValueFactory implements SettingValueFactory {
 
     @Override
     public BooleanSettingValue newBooleanSettingValue(String key, Boolean value) {
@@ -79,22 +79,22 @@ public class SQLiteSettingValueFactory extends AbstractSettingValueFactory {
     }
 
     @Override
-    protected SettingValue<Double> newNumericSettingValue(String key, Double value) {
+    public SettingValue<Double> newNumericSettingValue(String key, Double value) {
         return new NumericSettingValue(key, value);
     }
 
     @Override
-    protected SettingValue<DateTime> newDateTimeSettingValue(String key, DateTime value) {
+    public SettingValue<DateTime> newDateTimeSettingValue(String key, DateTime value) {
         return new TimeInstantSettingValue(key, value);
     }
 
     @Override
-    protected SettingValue<MultilingualString> newMultiLingualStringSettingValue(String key, MultilingualString value) {
+    public SettingValue<MultilingualString> newMultiLingualStringSettingValue(String key, MultilingualString value) {
         return new MultilingualStringSettingValue(key, value);
     }
 
     @Override
-    protected SettingValue<String> newChoiceSettingValue(String key, String value) {
+    public SettingValue<String> newChoiceSettingValue(String key, String value) {
         return new ChoiceSettingValue(key, value);
     }
 

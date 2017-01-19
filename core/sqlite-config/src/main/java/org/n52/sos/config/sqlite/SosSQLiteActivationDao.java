@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.iceland.coding.encode.ResponseFormatKey;
-import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.config.SosActivationDao;
@@ -45,6 +44,7 @@ import org.n52.sos.config.sqlite.entities.ObservationEncoding;
 import org.n52.sos.config.sqlite.entities.ObservationEncodingKey;
 import org.n52.sos.config.sqlite.entities.ProcedureEncoding;
 import org.n52.sos.config.sqlite.entities.ProcedureEncodingKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 
 /**
  * TODO JavaDoc

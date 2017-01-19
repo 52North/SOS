@@ -18,6 +18,9 @@
     <bean id="offeringI18NDAO"
           class="org.n52.sos.ds.hibernate.dao.i18n.OfferingI18NDAO"/>
 
+    <bean id="daoFactory"
+          class="org.n52.sos.ds.hibernate.dao.DaoFactory"/>
+
     <bean id="eReportingObservationCreator"
           class="org.n52.sos.ds.hibernate.util.observation.EReportingObservationCreator"/>
 

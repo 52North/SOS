@@ -31,6 +31,8 @@ package org.n52.sos.ds.hibernate.dao.i18n;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
 
 import org.n52.iceland.i18n.I18NDAOKey;
@@ -43,6 +45,7 @@ import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NOfferingMetadata;
 public class OfferingI18NDAO extends AbstractHibernateI18NDAO<Offering, I18NOfferingMetadata, HibernateI18NOfferingMetadata> {
     private final DaoFactory daoFactory;
 
+    @Inject
     public OfferingI18NDAO(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
     }

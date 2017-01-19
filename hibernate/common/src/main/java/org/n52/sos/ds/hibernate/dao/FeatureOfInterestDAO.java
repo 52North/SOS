@@ -346,14 +346,14 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
      */
     public void checkOrInsertFeatureOfInterestRelatedFeatureRelation(final FeatureOfInterest featureOfInterest,
             final Offering offering, final Session session) {
-        final List<RelatedFeature> relatedFeatures =
-                new RelatedFeatureDAO(daoFactory).getRelatedFeatureForOffering(offering.getIdentifier(), session);
+        final List<RelatedFeature> relatedFeatures = new RelatedFeatureDAO(daoFactory)
+                .getRelatedFeatureForOffering(offering.getIdentifier(), session);
         if (CollectionHelper.isNotEmpty(relatedFeatures)) {
             for (final RelatedFeature relatedFeature : relatedFeatures) {
-            	if (!featureOfInterest.getIdentifier().equals(relatedFeature.getFeatureOfInterest().getIdentifier())) {
-	                insertFeatureOfInterestRelationShip(relatedFeature.getFeatureOfInterest(),
-	                        featureOfInterest, session);
-            	}
+                if (!featureOfInterest.getIdentifier().equals(relatedFeature.getFeatureOfInterest().getIdentifier())) {
+                    insertFeatureOfInterestRelationShip(relatedFeature.getFeatureOfInterest(),
+                                                        featureOfInterest, session);
+                }
             }
         }
     }

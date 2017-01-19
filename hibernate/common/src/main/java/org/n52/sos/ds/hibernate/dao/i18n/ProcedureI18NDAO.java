@@ -32,10 +32,11 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
 
 import org.n52.iceland.i18n.I18NDAOKey;
-import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -51,6 +52,7 @@ import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NProcedureMetadata;
 public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<Procedure, I18NProcedureMetadata, HibernateI18NProcedureMetadata> {
     private final DaoFactory daoFactory;
 
+    @Inject
     public ProcedureI18NDAO(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
     }

@@ -28,6 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import static java.util.stream.Collectors.toSet;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import org.n52.faroe.annotation.Configurable;
@@ -73,14 +78,16 @@ public class DaoFactory {
     private Set<Integer> validityFlags;
     private Set<Integer> verificationFlags;
 
-    @Setting(EReportingSetting.EREPORTING_VALIDITY_FLAGS)
-    public void setValidityFlags(Set<Integer> validityFlags) {
-        this.validityFlags = validityFlags;
+    @Setting(value = EReportingSetting.EREPORTING_VALIDITY_FLAGS, required = false)
+    public void setValidityFlags(String validityFlags) {
+        this.validityFlags = Optional.ofNullable(validityFlags).map(s -> Arrays.stream(s.split(","))
+                .map(Integer::parseInt).collect(toSet())).orElseGet(Collections::emptySet);
     }
 
-    @Setting(EReportingSetting.EREPORTING_VERIFICATION_FLAGS)
-    public void setVerificationFlags(Set<Integer> verificationFlags) {
-        this.verificationFlags = verificationFlags;
+    @Setting(value = EReportingSetting.EREPORTING_VERIFICATION_FLAGS, required = false)
+    public void setVerificationFlags(String verificationFlags) {
+        this.verificationFlags = Optional.ofNullable(verificationFlags).map(s -> Arrays.stream(s.split(","))
+                .map(Integer::parseInt).collect(toSet())).orElseGet(Collections::emptySet);
     }
 
     public AbstractSeriesDAO getSeriesDAO() throws OwsExceptionReport {

@@ -37,6 +37,10 @@
             <groupId>org.n52.faroe</groupId>
             <artifactId>faroe</artifactId>
         </dependency>
+         <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-json</artifactId>
+        </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>

@@ -150,6 +150,8 @@ public abstract class ObservationFactory {
                     return sweDataArrayClass();
                 case OmConstants.OBS_TYPE_UNKNOWN:
                     return blobClass();
+                default:
+                    return observationClass();
             }
         }
         return observationClass();

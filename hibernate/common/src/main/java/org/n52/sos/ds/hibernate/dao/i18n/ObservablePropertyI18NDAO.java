@@ -31,6 +31,8 @@ package org.n52.sos.ds.hibernate.dao.i18n;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
 
 import org.n52.iceland.i18n.I18NDAOKey;
@@ -48,6 +50,7 @@ import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NObservablePropertyMet
 public class ObservablePropertyI18NDAO extends AbstractHibernateI18NDAO<ObservableProperty, I18NObservablePropertyMetadata, HibernateI18NObservablePropertyMetadata> {
     private final DaoFactory daoFactory;
 
+    @Inject
     public ObservablePropertyI18NDAO(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
     }

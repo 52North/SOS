@@ -52,6 +52,7 @@ public class ObservationSettingProvider implements Constructable {
     public void setIncludeChildObservableProperties(boolean include) {
         this.includeChildObservableProperties = include;
     }
+
     @Deprecated
     public static ObservationSettingProvider getInstance() {
         return instance;

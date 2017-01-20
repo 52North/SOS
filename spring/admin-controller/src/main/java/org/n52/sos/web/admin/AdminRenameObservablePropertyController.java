@@ -95,7 +95,10 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
         if (cache.hasObservableProperty(newName)) {
             throw new AlreadyUsedIdentifierException(newName);
         }
-        this.dao.renameObservableProperty(oldName, newName);
+        if (!this.dao.isPresent()) {
+            throw new NoImplementationFoundException(RenameDAO.class);
+        }
+        this.dao.get().renameObservableProperty(oldName, newName);
         updateCache();
 }
 

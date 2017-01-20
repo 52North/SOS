@@ -122,7 +122,10 @@ public class SensorDescriptionController extends AbstractAdminController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() throws OwsExceptionReport {
         Map<String, Object> model = new HashMap<>(5);
-        boolean getKvp = false, getSoap = false, update = false, delete = false;
+        boolean getKvp = false;
+        boolean getSoap = false;
+        boolean update = false;
+        boolean delete = false;
         try {
             for (Binding b : this.bindingRepository.getBindings().values()) {
                 if (b.checkOperationHttpGetSupported(DESCRIBE_SENSOR_DECODER_KEY_KVP)) {

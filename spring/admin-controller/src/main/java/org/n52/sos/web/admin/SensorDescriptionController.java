@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -113,7 +114,7 @@ public class SensorDescriptionController extends AbstractAdminController {
             MediaTypes.APPLICATION_SOAP_XML);
 
     @Inject
-    private ProcedureFormatDAO dao;
+    private Optional<ProcedureFormatDAO> dao;
     @Inject
     private ContentCacheController contentCacheController;
     @Inject
@@ -162,7 +163,9 @@ public class SensorDescriptionController extends AbstractAdminController {
         List<String> procedures = Lists.newArrayList(getCache().getProcedures());
         Collections.sort(procedures);
         model.put(SENSORS, procedures);
-        model.put(PROCEDURE_FORMAT_MAP, this.dao.getProcedureFormatMap());
+        if (this.dao.isPresent()) {
+            model.put(PROCEDURE_FORMAT_MAP, this.dao.get().getProcedureFormatMap());
+        }
         return new ModelAndView(ControllerConstants.Views.ADMIN_SENSOR_DESCRIPTIONS, model);
     }
 

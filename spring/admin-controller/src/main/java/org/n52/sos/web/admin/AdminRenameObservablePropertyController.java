@@ -66,7 +66,7 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
     public static final String OLD_IDENTIFIER_REQUEST_PARAM = "old";
     public static final String NEW_IDENTIFIER_REQUEST_PARAM = "new";
     private static final Logger log = LoggerFactory.getLogger(AdminRenameObservablePropertyController.class);
-    
+
     @Inject
     private Optional<RenameDAO> dao;
 

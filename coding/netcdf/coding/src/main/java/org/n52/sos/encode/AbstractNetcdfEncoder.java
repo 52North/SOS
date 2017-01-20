@@ -189,6 +189,11 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     @Override
+    public Map<String, Set<SupportedType>> getSupportedResponseFormatObservationTypes() {
+        return Collections.emptyMap();
+    }
+
+    @Override
     public boolean isObservationAndMeasurmentV20Type() {
         return false;
     }

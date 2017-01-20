@@ -68,7 +68,7 @@ import ucar.nc2.NetcdfFileWriter.Version;
  * @since 4.4.0
  *
  */
-public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
+public class NetcdfEncoder extends AbstractBasicNetcdfEncoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(NetcdfEncoder.class);
 
     private final Set<String> MEDIA_TYPES = Sets.newHashSet(NetcdfConstants.CONTENT_TYPE_NETCDF.toString(),

@@ -21,6 +21,9 @@
     <bean id="responseFormatRepository"
           class="org.n52.sos.coding.encode.ResponseFormatRepository"/>
 
+    <bean id="responseFormatRepositoryInitializer"
+          class="org.n52.sos.coding.encode.ResponseFormatRepositoryInitializer"/>
+
     <bean id="geometryHandler"
           class="org.n52.sos.util.GeometryHandler" />
 
@@ -45,7 +48,7 @@
     <bean id="batchRequestOperator"
           class="org.n52.sos.request.operator.BatchRequestOperator"/>
 
-	<bean id="procedureRequestSettingProvider"
+    <bean id="procedureRequestSettingProvider"
           class="org.n52.sos.request.ProcedureRequestSettingProvider"/>
 
     <bean class="org.n52.iceland.util.activation.ActivationRegistrator">

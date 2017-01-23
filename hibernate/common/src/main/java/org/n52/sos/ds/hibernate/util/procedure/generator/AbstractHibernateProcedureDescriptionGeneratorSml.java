@@ -38,8 +38,10 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.n52.faroe.annotation.Configurable;
-import org.n52.iceland.service.ServiceSettings;
+
+import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.om.OmConstants;
@@ -53,6 +55,7 @@ import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweConstants.SweCoordinateNames;
 import org.n52.shetland.ogc.swe.SweCoordinate;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweCount;
@@ -75,8 +78,10 @@ import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.request.ProcedureRequestSettingProvider;
+import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.svalbard.CodingSettings;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -91,26 +96,54 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @since 4.2.0
  *
  */
-public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
-        AbstractHibernateProcedureDescriptionGenerator {
+public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
+        extends AbstractHibernateProcedureDescriptionGenerator {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(AbstractHibernateProcedureDescriptionGeneratorSml.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateProcedureDescriptionGeneratorSml.class);
     public static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY = "getUnitForObservableProperty";
-
-    public static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE =
-            "getUnitForObservablePropertyProcedure";
-
-    public static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING =
-            "getUnitForObservablePropertyProcedureOffering";
+    public static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE = "getUnitForObservablePropertyProcedure";
+    public static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING = "getUnitForObservablePropertyProcedureOffering";
 
     protected static final String POSITION_NAME = "sensorPosition";
 
-    private String srsNamePrefixUrl;
+    private final ProfileHandler profileHandler;
+    private final EntitiyHelper entitiyHelper;
+    private final GeometryHandler geometryHandler;
 
-    public AbstractHibernateProcedureDescriptionGeneratorSml(DaoFactory daoFactory, String srsNamePrefixUrl) {
-        super(daoFactory);
+    private String srsNamePrefixUrl;
+    private boolean addOutputsToSensorML;
+    private String latLongUom;
+    private String altitudeUom;
+
+    public AbstractHibernateProcedureDescriptionGeneratorSml(ProfileHandler profileHandler,
+                                                             EntitiyHelper entitiyHelper,
+                                                             GeometryHandler geometryHandler,
+                                                             DaoFactory daoFactory,
+                                                             I18NDAORepository i18NDAORepository,
+                                                             ContentCacheController cacheController) {
+        super(daoFactory, i18NDAORepository, cacheController);
+        this.profileHandler = profileHandler;
+        this.entitiyHelper = entitiyHelper;
+        this.geometryHandler = geometryHandler;
+    }
+
+    @Setting(ProcedureDescriptionSettings.ALTITUDE_UOM)
+    public void setAltitudeUom(String altitudeUom) {
+        this.altitudeUom = altitudeUom;
+    }
+
+    @Setting(ProcedureDescriptionSettings.LAT_LONG_UOM)
+    public void setLatLongUom(String latLongUom) {
+        this.latLongUom = latLongUom;
+    }
+
+    @Setting(ProcedureRequestSettingProvider.ADD_OUTPUTS_TO_SENSOR_ML)
+    public void setAddOutputsToSensorML(boolean addOutputsToSensorML) {
+        this.addOutputsToSensorML = addOutputsToSensorML;
+    }
+
+    @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
+    public void setSrsNamePrefixUrl(String srsNamePrefixUrl) {
         this.srsNamePrefixUrl = srsNamePrefixUrl;
     }
 
@@ -138,9 +171,8 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         abstractProcess.setIdentifications(createIdentifications(identifier));
 
         // 7 set inputs/outputs --> observableProperties
-        if (ProcedureRequestSettingProvider.getInstance().isAddOutputsToSensorML()
-                && !"hydrology".equalsIgnoreCase(ProfileHandler.getInstance().getActiveProfile()
-                        .getIdentifier())) {
+        if (this.addOutputsToSensorML
+                && !"hydrology".equalsIgnoreCase(profileHandler.getActiveProfile().getIdentifier())) {
             TreeSet<String> obsProps = Sets.newTreeSet(Arrays.asList(observableProperties));
             abstractProcess.setInputs(createInputs(obsProps));
             abstractProcess.setOutputs(createOutputs(procedure, obsProps, session));
@@ -203,50 +235,51 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
     private SmlIo createOutputFromObservationConstellation(String procedure, String observableProperty,
             Session session) throws OwsExceptionReport {
         List<ObservationConstellation> observationConstellations =
-                getDaoFactory().getObservationConstellationDAO().getObservationConstellations(procedure, observableProperty, session);
+                getDaoFactory().getObservationConstellationDAO()
+                .getObservationConstellations(procedure, observableProperty, session);
         if (CollectionHelper.isNotEmpty(observationConstellations)) {
             ObservationConstellation oc = observationConstellations.iterator().next();
             String unit = queryUnit(oc, session);
             if (oc.isSetObservationType()) {
                 final String observationType = oc.getObservationType().getObservationType();
-                if (OmConstants.OBS_TYPE_MEASUREMENT.equals(observationType)) {
-                    final SweQuantity quantity = new SweQuantity();
-                    quantity.setDefinition(observableProperty);
-                    if (!Strings.isNullOrEmpty(unit)) {
-                        quantity.setUom(unit);
+                if (null != observationType) {
+                    switch (observationType) {
+                        case OmConstants.OBS_TYPE_MEASUREMENT:
+                            final SweQuantity quantity = new SweQuantity();
+                            quantity.setDefinition(observableProperty);
+                            if (!Strings.isNullOrEmpty(unit)) {
+                                quantity.setUom(unit);
+                            }
+                            return new SmlIo(quantity);
+                        case OmConstants.OBS_TYPE_CATEGORY_OBSERVATION:
+                            final SweCategory category = new SweCategory();
+                            category.setDefinition(observableProperty);
+                            if (!Strings.isNullOrEmpty(unit)) {
+                                category.setUom(unit);
+                            }
+                            return new SmlIo(category);
+                        case OmConstants.OBS_TYPE_COUNT_OBSERVATION:
+                            return new SmlIo(new SweCategory().setDefinition(observableProperty));
+                        case OmConstants.OBS_TYPE_TEXT_OBSERVATION:
+                            return new SmlIo(new SweText().setDefinition(observableProperty));
+                        case OmConstants.OBS_TYPE_TRUTH_OBSERVATION:
+                            return new SmlIo(new SweBoolean().setDefinition(observableProperty));
+                        case OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION:
+                        // TODO implement GeometryObservation
+                        case OmConstants.OBS_TYPE_COMPLEX_OBSERVATION:
+                        // TODO implement ComplexObservation
+                        case OmConstants.OBS_TYPE_UNKNOWN:
+                        // TODO implement UnknownObservation
+                        case OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION:
+                        // TODO implement SWEArrayObservation
+                        default:
+                            logTypeNotSupported(observationType);
                     }
-                    return new SmlIo(quantity);
-                } else if (OmConstants.OBS_TYPE_CATEGORY_OBSERVATION.equals(observationType)) {
-                    final SweCategory category = new SweCategory();
-                    category.setDefinition(observableProperty);
-                    if (!Strings.isNullOrEmpty(unit)) {
-                        category.setUom(unit);
-                    }
-                    return new SmlIo(category);
-                } else if (OmConstants.OBS_TYPE_COUNT_OBSERVATION.equals(observationType)) {
-                    return new SmlIo(new SweCategory().setDefinition(observableProperty));
-                } else if (OmConstants.OBS_TYPE_TEXT_OBSERVATION.equals(observationType)) {
-                    return new SmlIo(new SweText().setDefinition(observableProperty));
-                } else if (OmConstants.OBS_TYPE_TRUTH_OBSERVATION.equals(observationType)) {
-                    return new SmlIo(new SweBoolean().setDefinition(observableProperty));
-                } else if (OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION.equals(observationType)) {
-                    // TODO implement GeometryObservation
-                    logTypeNotSupported(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
-                } else if (OmConstants.OBS_TYPE_COMPLEX_OBSERVATION.equals(observationType)) {
-                    // TODO implement ComplexObservation
-                    logTypeNotSupported(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
-                } else if (OmConstants.OBS_TYPE_UNKNOWN.equals(observationType)) {
-                    // TODO implement UnknownObservation
-                    logTypeNotSupported(OmConstants.OBS_TYPE_UNKNOWN);
-                } else if (OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observationType)) {
-                    // TODO implement SWEArrayObservation
-                    logTypeNotSupported(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
                 }
             }
         }
         return null;
     }
-
     private String queryUnit(ObservationConstellation oc, Session session) throws OwsExceptionReport {
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING,
                 session)) {
@@ -274,7 +307,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
             LOGGER.debug("QUERY queryUnit(observationConstellation) with NamedQuery: {}",
                     SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
             return (String) namedQuery.uniqueResult();
-        } else if (EntitiyHelper.getInstance().isSeriesSupported()) {
+        } else if (entitiyHelper.isSeriesSupported()) {
             List<Series> series = getDaoFactory().getSeriesDAO().getSeries(Lists.newArrayList(oc.getProcedure().getIdentifier()), Lists.newArrayList(oc.getObservableProperty().getIdentifier()), Lists.<String>newArrayList(), session);
             if (series.iterator().hasNext()) {
                 Series next = series.iterator().next();
@@ -283,9 +316,9 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
                 }
             }
         }
-        AbstractObservation exampleObservation =
-                getExampleObservation(oc.getProcedure().getIdentifier(), oc.getObservableProperty().getIdentifier(),
-                        session);
+        AbstractObservation<?> exampleObservation = getExampleObservation(oc.getProcedure().getIdentifier(),
+                                                                          oc.getObservableProperty().getIdentifier(),
+                                                                          session);
         if (exampleObservation != null && exampleObservation.isSetUnit()) {
             return exampleObservation.getUnit().getUnit();
         }
@@ -347,7 +380,6 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         }
         return null;
     }
-
     /**
      * Create SensorML Position from Hibernate procedure entity
      *
@@ -360,7 +392,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         SmlPosition position = new SmlPosition();
         position.setName(POSITION_NAME);
         position.setFixed(true);
-        int srid = GeometryHandler.getInstance().getDefaultResponseEPSG();
+        int srid = geometryHandler.getDefaultResponseEPSG();
         if (procedure.isSetLongLat()) {
             // 8.1 set latlong position
             position.setPosition(createCoordinatesForPosition(procedure.getLongitude(), procedure.getLatitude(),
@@ -394,11 +426,10 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
      * @return List with SWE Coordinate
      */
     private List<SweCoordinate<Double>> createCoordinatesForPosition(Object longitude, Object latitude, Object altitude) {
-        SweQuantity yq = createSweQuantity(latitude, SweConstants.Y_AXIS, procedureSettings().getLatLongUom());
-        SweQuantity xq = createSweQuantity(longitude, SweConstants.X_AXIS, procedureSettings().getLatLongUom());
-        SweQuantity zq = createSweQuantity(altitude, SweConstants.Z_AXIS, procedureSettings().getAltitudeUom());
-        // TODO add Integer: Which SweSimpleType to use?
-        return Lists.<SweCoordinate<Double>> newArrayList(
+        SweAbstractSimpleType<Double> yq = createSweQuantity(latitude, SweConstants.Y_AXIS, latLongUom);
+        SweAbstractSimpleType<Double> xq = createSweQuantity(longitude, SweConstants.X_AXIS, latLongUom);
+        SweAbstractSimpleType<Double> zq = createSweQuantity(altitude, SweConstants.Z_AXIS, altitudeUom);
+        return Lists.newArrayList(
                 new SweCoordinate<>(SweCoordinateNames.NORTHING, yq),
                 new SweCoordinate<>(SweCoordinateNames.EASTING, xq),
                 new SweCoordinate<>(SweCoordinateNames.ALTITUDE, zq));
@@ -420,13 +451,14 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         return new SweQuantity().setAxisID(axis).setUom(uom).setValue(JavaHelper.asDouble(value));
     }
 
-    private List<SmlIdentifier> createIdentifications(final String identifier) {
+    private List<SmlIdentifier> createIdentifications(String identifier) {
         return Lists.newArrayList(createIdentifier(identifier));
     }
 
-    private SmlIdentifier createIdentifier(final String identifier) {
-        return new SmlIdentifier(OGCConstants.URN_UNIQUE_IDENTIFIER_END, OGCConstants.URN_UNIQUE_IDENTIFIER,
-                identifier);
+    private SmlIdentifier createIdentifier(String identifier) {
+        return new SmlIdentifier(OGCConstants.URN_UNIQUE_IDENTIFIER_END,
+                                 OGCConstants.URN_UNIQUE_IDENTIFIER,
+                                 identifier);
     }
 
 }

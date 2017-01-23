@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCacheUpdate;
+import org.n52.janmayen.event.Event;
+import org.n52.janmayen.event.EventListener;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
@@ -54,9 +56,6 @@ import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.event.events.UpdateCache;
 
 import com.google.common.collect.Sets;
-
-import org.n52.janmayen.event.Event;
-import org.n52.janmayen.event.EventListener;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>

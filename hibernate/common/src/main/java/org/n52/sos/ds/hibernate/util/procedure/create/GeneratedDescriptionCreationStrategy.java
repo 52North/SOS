@@ -35,7 +35,7 @@ import org.hibernate.Session;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactory;
+import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGenerator;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -44,8 +44,7 @@ import com.google.common.base.Strings;
 /**
  * Strategy to generate a description.
  */
-public class GeneratedDescriptionCreationStrategy implements
-        DescriptionCreationStrategy {
+public class GeneratedDescriptionCreationStrategy implements DescriptionCreationStrategy {
 
     private final HibernateProcedureDescriptionGeneratorFactoryRepository factoryRepository =
             HibernateProcedureDescriptionGeneratorFactoryRepository.getInstance();
@@ -53,7 +52,7 @@ public class GeneratedDescriptionCreationStrategy implements
     @Override
     public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
-        SosProcedureDescription<?> desc = getFactory(descriptionFormat).create(p, i18n, s);
+        SosProcedureDescription<?> desc = getFactory(descriptionFormat).generateProcedureDescription(p, i18n, s);
         desc.setDescriptionFormat(descriptionFormat);
         return desc;
     }
@@ -64,7 +63,7 @@ public class GeneratedDescriptionCreationStrategy implements
     }
 
     @VisibleForTesting
-    HibernateProcedureDescriptionGeneratorFactory getFactory(String descriptionFormat) {
+    HibernateProcedureDescriptionGenerator getFactory(String descriptionFormat) {
         return factoryRepository.getFactory(descriptionFormat);
     }
 }

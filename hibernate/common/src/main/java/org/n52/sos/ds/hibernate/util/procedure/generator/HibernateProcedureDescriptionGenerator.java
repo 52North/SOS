@@ -28,29 +28,23 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import javax.inject.Inject;
+import java.util.Locale;
 
-import org.n52.faroe.annotation.Configurable;
+import org.hibernate.Session;
 
-@Configurable
-public abstract class HibernateProcedureDescriptionGeneratorFactorySml
-        implements HibernateProcedureDescriptionGeneratorFactory {
+import org.n52.janmayen.component.Component;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ds.hibernate.entities.Procedure;
 
-    private String srsNamePrefixUrl;
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann
+ */
+public interface HibernateProcedureDescriptionGenerator extends Component<HibernateProcedureDescriptionGeneratorKey> {
 
-    /**
-     * @return the srsNamePrefixUrl
-     */
-    public String getSrsNamePrefixUrl() {
-        return srsNamePrefixUrl;
-    }
-
-    /**
-     * @param srsNamePrefixUrl the srsNamePrefixUrl to set
-     */
-    @Inject
-    public void setSrsNamePrefixUrl(String srsNamePrefixUrl) {
-        this.srsNamePrefixUrl = srsNamePrefixUrl;
-    }
+    SosProcedureDescription<?> generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
+            throws OwsExceptionReport;
 
 }

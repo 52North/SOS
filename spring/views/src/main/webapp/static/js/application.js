@@ -104,7 +104,6 @@ function showSuccess(message) {
     showMessage("<strong>Success!</strong> " + message, "success", true);
 }
 
-
 function generateSettings(settings, settingValues, container, tabbed) {
     function required() {
         var valid = $(this).val() === "";
@@ -123,6 +122,8 @@ function generateSettings(settings, settingValues, container, tabbed) {
             // TODO slider
         case "number":
             // TODO slider
+        case "uri":
+        case "file":
         case "string":
             $input = $("<input>").attr("type", "text").attr("name", setting.id).addClass("span8");
             break;
@@ -352,7 +353,9 @@ function generateSettings(settings, settingValues, container, tabbed) {
         //TODO add validation of parameters
         case "integer":
         case "number":
+        case "file":
         case "password":
+        case "uri":
         case "text":
         case "string":
             generateStringSetting($setting, setting, settingValues);

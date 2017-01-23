@@ -29,126 +29,97 @@
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Set;
 
-import org.hibernate.Session;
-import org.n52.faroe.annotation.Configurable;
-import org.n52.shetland.ogc.OGCConstants;
-import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sensorML.SensorML20Constants;
-import org.n52.shetland.ogc.sensorML.v20.AggregateProcess;
-import org.n52.shetland.ogc.sensorML.v20.DescribedObject;
-import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
-import org.n52.shetland.ogc.sensorML.v20.PhysicalSystem;
-import org.n52.shetland.ogc.sensorML.v20.SimpleProcess;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
-import org.n52.shetland.ogc.swe.simpleType.SweText;
-import org.n52.shetland.util.CollectionHelper;
+import javax.inject.Inject;
+
+import org.n52.faroe.SettingsService;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
+import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.sos.util.GeometryHandler;
 
 /**
- * Generator class for SensorML 2.0 procedure descriptions
+ * Generator class for SensorML 1.0.1 procedure descriptions
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactorySml20 extends HibernateProcedureDescriptionGeneratorFactorySml {
+public class HibernateProcedureDescriptionGeneratorFactorySml20
+        implements HibernateProcedureDescriptionGeneratorFactory {
 
-    private static final Set<HibernateProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES = CollectionHelper.set(
-            new HibernateProcedureDescriptionGeneratorFactoryKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
-            new HibernateProcedureDescriptionGeneratorFactoryKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
     private final DaoFactory daoFactory;
+    private final SettingsService settingsService;
+    private final EntitiyHelper entitiyHelper;
+    private final GeometryHandler geometryHandler;
+    private final I18NDAORepository i18NDAORepository;
+    private final ContentCacheController cacheController;
+    private final ProfileHandler profileHandler;
 
-    public HibernateProcedureDescriptionGeneratorFactorySml20(DaoFactory daoFactory) {
+    @Inject
+    public HibernateProcedureDescriptionGeneratorFactorySml20(DaoFactory daoFactory,
+                                                              SettingsService settingsService,
+                                                              EntitiyHelper entitiyHelper,
+                                                              GeometryHandler geometryHandler,
+                                                              I18NDAORepository i18NDAORepository,
+                                                              ContentCacheController cacheController,
+                                                              ProfileHandler profileHandler) {
         this.daoFactory = daoFactory;
+        this.settingsService = settingsService;
+        this.entitiyHelper = entitiyHelper;
+        this.geometryHandler = geometryHandler;
+        this.i18NDAORepository = i18NDAORepository;
+        this.cacheController = cacheController;
+        this.profileHandler = profileHandler;
     }
 
     @Override
-    public Set<HibernateProcedureDescriptionGeneratorFactoryKey> getKeys() {
-        return Collections.unmodifiableSet(GENERATOR_KEY_TYPES);
+    public Set<HibernateProcedureDescriptionGeneratorKey> getKeys() {
+        return Collections.unmodifiableSet(HibernateProcedureDescriptionGeneratorSml20.GENERATOR_KEY_TYPES);
     }
 
     @Override
-    public SosProcedureDescription<?> create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-        return new HibernateProcedureDescriptionGeneratorSml20(daoFactory).generateProcedureDescription(procedure, i18n, session);
+    public HibernateProcedureDescriptionGenerator create(HibernateProcedureDescriptionGeneratorKey key) {
+        HibernateProcedureDescriptionGenerator generator
+                = new HibernateProcedureDescriptionGeneratorSml20(getProfileHandler(),
+                                                                  getEntitiyHelper(),
+                                                                  getGeometryHandler(),
+                                                                  getDaoFactory(),
+                                                                  getI18NDAORepository(),
+                                                                  getCacheController());
+        getSettingsService().configureOnce(key);
+        return generator;
     }
 
-    private class HibernateProcedureDescriptionGeneratorSml20 extends AbstractHibernateProcedureDescriptionGeneratorSml {
-
-        public HibernateProcedureDescriptionGeneratorSml20(DaoFactory daoFactory) {
-            super(daoFactory, getSrsNamePrefixUrl());
-        }
-
-        @Override
-        public SosProcedureDescription<?> generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
-                throws OwsExceptionReport {
-            setLocale(i18n);
-            // 2 try to get position from entity
-            if (procedure.isSpatial()) {
-                // 2.1 if position is available -> system -> own class <- should
-                // be compliant with SWE lightweight profile
-                if (hasChildProcedure(procedure.getIdentifier())) {
-                    return new SosProcedureDescription<>(createPhysicalSystem(procedure, session));
-                } else {
-                    return new SosProcedureDescription<>(createPhysicalComponent(procedure, session));
-                }
-            } else {
-                // 2.2 if no position is available -> SimpleProcess -> own class
-//                if (hasChildProcedure(procedure.getIdentifier())) {
-//                    return createAggregateProcess(procedure, session);
-//                } else {
-                return new SosProcedureDescription<>(createSimpleProcess(procedure, session));
-//                }
-            }
-        }
-
-        private PhysicalComponent createPhysicalComponent(Procedure procedure, Session session) throws OwsExceptionReport {
-            PhysicalComponent physicalComponent = new PhysicalComponent();
-            setIdentifier(physicalComponent, procedure);
-            setCommonValues(procedure, physicalComponent, session);
-            return physicalComponent;
-        }
-
-        private PhysicalSystem createPhysicalSystem(Procedure procedure, Session session) throws OwsExceptionReport {
-            PhysicalSystem physicalSystem = new PhysicalSystem();
-            setIdentifier(physicalSystem, procedure);
-            setCommonValues(procedure, physicalSystem, session);
-            physicalSystem.setPosition(createPosition(procedure));
-            return physicalSystem;
-        }
-
-        private SimpleProcess createSimpleProcess(Procedure procedure, Session session) throws OwsExceptionReport {
-            SimpleProcess simpleProcess = new SimpleProcess();
-            setIdentifier(simpleProcess, procedure);
-            setCommonValues(procedure, simpleProcess, session);
-            return simpleProcess;
-        }
-
-        private AggregateProcess createAggregateProcess(Procedure procedure, Session session) throws OwsExceptionReport {
-            AggregateProcess aggregateProcess = new AggregateProcess();
-            setIdentifier(aggregateProcess, procedure);
-            setCommonValues(procedure, aggregateProcess, session);
-            return aggregateProcess;
-        }
-
-        private void setIdentifier(DescribedObject describedObject, Procedure procedure) {
-            CodeWithAuthority cwa = new CodeWithAuthority(procedure.getIdentifier());
-            if (procedure.isSetCodespace()) {
-                cwa.setCodeSpace(procedure.getCodespace().getCodespace());
-            } else {
-                cwa.setCodeSpace(OGCConstants.UNIQUE_ID);
-            }
-            describedObject.setIdentifier(cwa);
-        }
-
-        @Override
-        protected SweAbstractDataComponent getInputComponent(String observableProperty) {
-            return  new SweText().setDefinition(observableProperty);
-        }
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
     }
+
+    public SettingsService getSettingsService() {
+        return settingsService;
+    }
+
+    public EntitiyHelper getEntitiyHelper() {
+        return entitiyHelper;
+    }
+
+    public GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
+
+    public I18NDAORepository getI18NDAORepository() {
+        return i18NDAORepository;
+    }
+
+    public ContentCacheController getCacheController() {
+        return cacheController;
+    }
+
+    public ProfileHandler getProfileHandler() {
+        return profileHandler;
+    }
+
 }

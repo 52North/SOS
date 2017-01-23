@@ -70,7 +70,7 @@ public class ProcedureRequestSettingProvider implements Constructable {
     /**
      * @param allowQueryingForInstancesOnly the allowQueryingForInstancesOnly to set
      */
-    @Setting(ALLOW_QUERYING_FOR_INSTANCES_ONLY)
+    @Setting(ProcedureRequestSettingProvider.ALLOW_QUERYING_FOR_INSTANCES_ONLY)
     public void setAllowQueryingForInstancesOnly(boolean allowQueryingForInstancesOnly) {
         this.allowQueryingForInstancesOnly = allowQueryingForInstancesOnly;
     }
@@ -88,7 +88,7 @@ public class ProcedureRequestSettingProvider implements Constructable {
     /**
      * @param showOnlyAggregatedProcedures
      */
-    @Setting(SHOW_ONLY_AGGREGATED_PROCEDURES)
+    @Setting(ProcedureRequestSettingProvider.SHOW_ONLY_AGGREGATED_PROCEDURES)
     public void setShowOnlyAggregatedProcedures(boolean showOnlyAggregatedProcedures) {
         this.showOnlyAggregatedProcedures = showOnlyAggregatedProcedures;
     }
@@ -97,7 +97,7 @@ public class ProcedureRequestSettingProvider implements Constructable {
         return encodeFullChildrenInDescribeSensor;
     }
 
-    @Setting(ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR)
+    @Setting(ProcedureRequestSettingProvider.ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR)
     public void setEncodeFullChildrenInDescribeSensor(final boolean encodeFullChildrenInDescribeSensor) {
         this.encodeFullChildrenInDescribeSensor = encodeFullChildrenInDescribeSensor;
     }
@@ -106,7 +106,7 @@ public class ProcedureRequestSettingProvider implements Constructable {
         return addOutputsToSensorML;
     }
 
-    @Setting(ADD_OUTPUTS_TO_SENSOR_ML)
+    @Setting(ProcedureRequestSettingProvider.ADD_OUTPUTS_TO_SENSOR_ML)
     public void setAddOutputsToSensorML(final boolean addOutputsToSensorML) {
         this.addOutputsToSensorML = addOutputsToSensorML;
     }

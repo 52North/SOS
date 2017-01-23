@@ -28,25 +28,31 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
+import static org.n52.sos.service.ProcedureDescriptionSettings.DESCRIPTION_TEMPLATE;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -55,11 +61,10 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ProcedureDescriptionSettings;
+import org.n52.svalbard.Validation;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 /**
@@ -69,32 +74,63 @@ import com.google.common.collect.Lists;
  * @since 4.2.0
  *
  */
-public abstract class AbstractHibernateProcedureDescriptionGenerator {
-
+@Configurable
+public abstract class AbstractHibernateProcedureDescriptionGenerator implements HibernateProcedureDescriptionGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateProcedureDescriptionGenerator.class);
 
-    protected static final Joiner COMMA_JOINER = Joiner.on(",");
-
-    private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
     private final DaoFactory daoFactory;
+    private final I18NDAORepository i18NDAORepository;
+    private final ContentCacheController cacheController;
 
-    public AbstractHibernateProcedureDescriptionGenerator(DaoFactory daoFactory) {
+    private Locale defaultLanguage;
+    private boolean showAllLanguages;
+    private String descriptionTemplate;
+    private Locale locale;
+
+    public AbstractHibernateProcedureDescriptionGenerator(DaoFactory daoFactory,
+                                                          I18NDAORepository i18NDAORepository,
+                                                          ContentCacheController cacheController) {
         this.daoFactory = daoFactory;
+        this.i18NDAORepository = i18NDAORepository;
+        this.cacheController = cacheController;
     }
 
-    public abstract SosProcedureDescription<?> generateProcedureDescription(Procedure procedure, Locale i18n,
-            Session session) throws OwsExceptionReport;
-
-    protected void setLocale(Locale i18n) {
-        this.locale = i18n;
+    @Setting(ProcedureDescriptionSettings.DESCRIPTION_TEMPLATE)
+    public void setDescriptionTemplate(String descriptionTemplate) {
+        Validation.notNullOrEmpty(DESCRIPTION_TEMPLATE, descriptionTemplate);
+        this.descriptionTemplate = descriptionTemplate;
     }
 
-    protected Locale getLocale() {
+    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
+    public void setDefaultLanguage(String defaultLanguage) {
+        Validation.notNullOrEmpty("Default language as three character string", defaultLanguage);
+        this.defaultLanguage = new Locale(defaultLanguage);
+    }
+
+    @Setting(I18NSettings.I18N_SHOW_ALL_LANGUAGE_VALUES)
+    public void setShowAllLanguageValues(boolean showAllLanguages) {
+        this.showAllLanguages = showAllLanguages;
+    }
+
+    public Locale getLocale() {
         return locale;
     }
 
-    protected boolean isSetLocale() {
-        return locale != null;
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
+
+    protected Locale getDefaultLocale() {
+        return this.defaultLanguage;
+    }
+
+    protected DaoFactory getDaoFactory() {
+        return this.daoFactory;
+    }
+
+    protected SosContentCache getCache() {
+        return (SosContentCache) this.cacheController.getCache();
     }
 
     protected boolean hasChildProcedure(String procedure) {
@@ -117,15 +153,12 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
     protected void setCommonData(Procedure procedure, AbstractFeature feature, Session session)
             throws OwsExceptionReport {
         String identifier = procedure.getIdentifier();
-
         addNameAndDescription(procedure, feature);
-
         feature.setIdentifier(identifier);
-
     }
 
     protected void addNameAndDescription(Procedure procedure, AbstractFeature feature) throws OwsExceptionReport {
-        I18NDAO<I18NProcedureMetadata> i18nDAO = I18NDAORepository.getInstance().getDAO(I18NProcedureMetadata.class);
+        I18NDAO<I18NProcedureMetadata> i18nDAO = i18NDAORepository.getDAO(I18NProcedureMetadata.class);
         Locale requestedLocale = getLocale();
         if (i18nDAO == null) {
             // no locale support
@@ -145,21 +178,20 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
                     feature.setDescription(description.get().getText());
                 }
             } else {
-                Locale defaultLocale = ServiceConfiguration.getInstance().getDefaultLanguage();
                 final I18NProcedureMetadata i18n;
-                if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
+                if (this.showAllLanguages) {
                     // load all names
                     i18n = i18nDAO.getMetadata(procedure.getIdentifier());
                 } else {
                     // load only name in default locale
-                    i18n = i18nDAO.getMetadata(procedure.getIdentifier(), defaultLocale);
+                    i18n = i18nDAO.getMetadata(procedure.getIdentifier(), defaultLanguage);
                 }
                 for (LocalizedString name : i18n.getName()) {
                     // either all or default only
                     feature.addName(new CodeType(name));
                 }
                 // choose always the description in the default locale
-                Optional<LocalizedString> description = i18n.getDescription().getLocalization(defaultLocale);
+                Optional<LocalizedString> description = i18n.getDescription().getLocalization(defaultLanguage);
                 if (description.isPresent()) {
                     feature.setDescription(description.get().getText());
                 }
@@ -181,10 +213,9 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
     }
 
     protected List<String> createDescriptions(Procedure procedure, String[] observableProperties) {
-        // locale
-        String template = procedureSettings().getDescriptionTemplate();
+        String template = this.descriptionTemplate;
         String identifier = procedure.getIdentifier();
-        String obsProps = COMMA_JOINER.join(observableProperties);
+        String obsProps = Arrays.stream(observableProperties).collect(Collectors.joining(","));
         String type = procedure.isSpatial() ? "sensor system" : "procedure";
         return Lists.newArrayList(String.format(template, type, identifier, obsProps));
     }
@@ -226,19 +257,4 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
         Set<String> props = getCache().getObservablePropertiesForProcedure(identifier);
         return props.toArray(new String[props.size()]);
     }
-
-    @VisibleForTesting
-    ProcedureDescriptionSettings procedureSettings() {
-        return ProcedureDescriptionSettings.getInstance();
-    }
-
-    @VisibleForTesting
-    SosContentCache getCache() {
-        return Configurator.getInstance().getCache();
-    }
-
-    public DaoFactory getDaoFactory() {
-        return daoFactory;
-    }
-
 }

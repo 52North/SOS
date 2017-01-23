@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
+import java.util.Objects;
+
 /**
  * Key class for {@link HibernateProcedureDescriptionGeneratorFactory}
  *
@@ -35,12 +37,12 @@ package org.n52.sos.ds.hibernate.util.procedure.generator;
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactoryKey implements
-        Comparable<HibernateProcedureDescriptionGeneratorFactoryKey> {
+public class HibernateProcedureDescriptionGeneratorKey
+        implements Comparable<HibernateProcedureDescriptionGeneratorKey> {
 
     private final String procedureDescriptionFormat;
 
-    public HibernateProcedureDescriptionGeneratorFactoryKey(String procedureDescriptionFormat) {
+    public HibernateProcedureDescriptionGeneratorKey(String procedureDescriptionFormat) {
         this.procedureDescriptionFormat = procedureDescriptionFormat;
     }
 
@@ -49,39 +51,27 @@ public class HibernateProcedureDescriptionGeneratorFactoryKey implements
     }
 
     @Override
-    public int compareTo(HibernateProcedureDescriptionGeneratorFactoryKey o) {
-        if (o instanceof HibernateProcedureDescriptionGeneratorFactoryKey) {
-            if (checkParameter(getDescriptionFormat(), o.getDescriptionFormat())) {
-                return 0;
-            }
-            return 1;
+    public int compareTo(HibernateProcedureDescriptionGeneratorKey o) {
+        if (o instanceof HibernateProcedureDescriptionGeneratorKey) {
+            return Objects.equals(getDescriptionFormat(), o.getDescriptionFormat()) ? 0 : 1;
+        } else {
+            return -1;
         }
-        return -1;
     }
 
     @Override
     public boolean equals(Object paramObject) {
-        if (paramObject instanceof HibernateProcedureDescriptionGeneratorFactoryKey) {
-            HibernateProcedureDescriptionGeneratorFactoryKey toCheck =
-                    (HibernateProcedureDescriptionGeneratorFactoryKey) paramObject;
-            return (checkParameter(getDescriptionFormat(), toCheck.getDescriptionFormat()));
+        if (paramObject instanceof HibernateProcedureDescriptionGeneratorKey) {
+            HibernateProcedureDescriptionGeneratorKey toCheck
+                    = (HibernateProcedureDescriptionGeneratorKey) paramObject;
+            return Objects.equals(getDescriptionFormat(), toCheck.getDescriptionFormat());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int hash = 7;
-        hash = prime * hash + (this.getDescriptionFormat() != null ? this.getDescriptionFormat().hashCode() : 0);
-        return hash;
-    }
-
-    private boolean checkParameter(String localParameter, String parameterToCheck) {
-        if (localParameter == null && parameterToCheck == null) {
-            return true;
-        }
-        return localParameter != null && parameterToCheck != null && localParameter.equals(parameterToCheck);
+        return Objects.hash(this.procedureDescriptionFormat);
     }
 
     @Override

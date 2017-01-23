@@ -88,7 +88,7 @@
         <property name="defaultValue" value="120" />
         <property name="minimum" value="0" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="service.capabilitiesCacheUpdate" />
         <property name="title" value="Content cache update interval" />
         <property name="description" value="The update definition for the cache update. See http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html" />
@@ -96,7 +96,7 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="0 0/120 * * * ?" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.exposeChildObservableProperties" />
         <property name="title" value="Should this SOS expose child observable properties?" />
         <property name="description" value="Whether the SOS should expose the children of composite phenomenons (e.g. in complex observations) instead of their parents." />

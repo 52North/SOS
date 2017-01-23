@@ -144,7 +144,7 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="misc.includeOriginalRequest" />
         <property name="title" value="Should the SOS include the original request?" />
         <property name="description" value="Should the SOS include the original request to the internal request?" />

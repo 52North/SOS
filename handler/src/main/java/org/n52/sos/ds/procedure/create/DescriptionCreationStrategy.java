@@ -31,7 +31,6 @@ package org.n52.sos.ds.procedure.create;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
@@ -43,6 +42,6 @@ import com.google.common.base.Predicate;
  */
 public interface DescriptionCreationStrategy
         extends Predicate<ProcedureEntity> {
-    SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n, I18NDAORepository i18NDAORepository, Session s)
+    SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport;
 }

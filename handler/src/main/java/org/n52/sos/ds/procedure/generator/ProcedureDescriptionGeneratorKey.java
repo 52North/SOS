@@ -28,29 +28,48 @@
  */
 package org.n52.sos.ds.procedure.generator;
 
-import javax.inject.Inject;
+import java.util.Objects;
 
-import org.n52.faroe.annotation.Configurable;
 
-@Configurable
-public abstract class AbstractProcedureDescriptionGeneratorFactorySml
-        implements ProcedureDescriptionGeneratorFactory {
+public class ProcedureDescriptionGeneratorKey implements Comparable<ProcedureDescriptionGeneratorKey> {
 
-    private String srsNamePrefixUrl;
+    private final String procedureDescriptionFormat;
 
-    /**
-     * @return the srsNamePrefixUrl
-     */
-    public String getSrsNamePrefixUrl() {
-        return srsNamePrefixUrl;
+    public ProcedureDescriptionGeneratorKey(String procedureDescriptionFormat) {
+        this.procedureDescriptionFormat = procedureDescriptionFormat;
     }
 
-    /**
-     * @param srsNamePrefixUrl the srsNamePrefixUrl to set
-     */
-    @Inject
-    public void setSrsNamePrefixUrl(String srsNamePrefixUrl) {
-        this.srsNamePrefixUrl = srsNamePrefixUrl;
+    public String getDescriptionFormat() {
+        return procedureDescriptionFormat;
+    }
+
+    @Override
+    public int compareTo(ProcedureDescriptionGeneratorKey o) {
+        if (o instanceof ProcedureDescriptionGeneratorKey) {
+            return Objects.equals(getDescriptionFormat(), o.getDescriptionFormat()) ? 0 : 1;
+        } else {
+            return -1;
+        }
+    }
+
+    @Override
+    public boolean equals(Object paramObject) {
+        if (paramObject instanceof ProcedureDescriptionGeneratorKey) {
+            ProcedureDescriptionGeneratorKey toCheck
+                    = (ProcedureDescriptionGeneratorKey) paramObject;
+            return Objects.equals(getDescriptionFormat(), toCheck.getDescriptionFormat());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.procedureDescriptionFormat);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s[format=%s]", getClass().getSimpleName(), getDescriptionFormat());
     }
 
 }

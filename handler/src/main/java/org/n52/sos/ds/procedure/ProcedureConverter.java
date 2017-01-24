@@ -90,7 +90,7 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
                     HTTPStatus.INTERNAL_SERVER_ERROR);
         }
         checkOutputFormatWithDescriptionFormat(procedure.getDomainId(), requestedDescriptionFormat);
-        SosProcedureDescription<?> desc = create(procedure, requestedDescriptionFormat, i18n, i18nDaoRepository, session).orNull();
+        SosProcedureDescription<?> desc = create(procedure, requestedDescriptionFormat, i18n, session).orNull();
         if (desc != null) {
             addHumanReadableName(desc, procedure);
             enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null, i18n,
@@ -109,10 +109,10 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
         }
     }
 
-    private Optional<SosProcedureDescription<?>> create(ProcedureEntity procedure, String descriptionFormat, Locale i18n, I18NDAORepository i18nDaoRepository, Session session) throws OwsExceptionReport {
+    private Optional<SosProcedureDescription<?>> create(ProcedureEntity procedure, String descriptionFormat, Locale i18n, Session session) throws OwsExceptionReport {
         Optional<DescriptionCreationStrategy> strategy = getCreationStrategy(procedure);
         if (strategy.isPresent()) {
-            return Optional.fromNullable(strategy.get().create(procedure, descriptionFormat, i18n, i18nDaoRepository, session));
+            return Optional.fromNullable(strategy.get().create(procedure, descriptionFormat, i18n, session));
         } else {
             return Optional.absent();
         }

@@ -33,11 +33,10 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import org.hibernate.Session;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactory;
+import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGenerator;
 import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository;
 
 /**
@@ -54,9 +53,9 @@ public class GeneratedDescriptionCreationStrategy implements
     }
 
     @Override
-    public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n, I18NDAORepository i18NDAORepository, Session s)
+    public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
-        SosProcedureDescription<?> desc = getFactory(descriptionFormat).create(p, i18n, i18NDAORepository, s);
+        SosProcedureDescription<?> desc = getFactory(descriptionFormat).generateProcedureDescription(p, i18n, s);
         desc.setDescriptionFormat(descriptionFormat);
         return desc;
     }
@@ -66,7 +65,7 @@ public class GeneratedDescriptionCreationStrategy implements
         return true;
     }
 
-    private ProcedureDescriptionGeneratorFactory getFactory(String descriptionFormat) {
+    private ProcedureDescriptionGenerator getFactory(String descriptionFormat) {
         return factoryRepository.getFactory(descriptionFormat);
     }
 }

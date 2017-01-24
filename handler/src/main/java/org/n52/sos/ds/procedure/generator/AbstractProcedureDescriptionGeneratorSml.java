@@ -33,6 +33,9 @@ import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.janmayen.http.HTTPStatus;
@@ -66,6 +69,7 @@ import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.request.ProcedureRequestSettingProvider;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.svalbard.CodingSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,9 +94,19 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
     protected static final String POSITION_NAME = "sensorPosition";
 
     private String srsNamePrefixUrl;
+    private GeometryHandler geometryHandler;
 
-    public AbstractProcedureDescriptionGeneratorSml(String srsNamePrefixUrl) {
+    @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
+    public void setSrsNamePrefixUrl(String srsNamePrefixUrl) {
         this.srsNamePrefixUrl = srsNamePrefixUrl;
+    }
+
+    public AbstractProcedureDescriptionGeneratorSml(ProfileHandler profileHandler,
+            GeometryHandler geometryHandler,
+            I18NDAORepository i18NDAORepository,
+            ContentCacheController cacheController) {
+        super(i18NDAORepository, cacheController);
+        this.geometryHandler = geometryHandler;
     }
 
     /**

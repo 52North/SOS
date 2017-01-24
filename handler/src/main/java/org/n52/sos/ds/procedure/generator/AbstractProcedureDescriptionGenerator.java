@@ -28,19 +28,16 @@
  */
 package org.n52.sos.ds.procedure.generator;
 
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.hibernate.Session;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
-//import org.n52.iceland.i18n.I18NDAO;
-//import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.io.request.IoParameters;
@@ -56,7 +53,6 @@ import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.service.Configurator;
@@ -76,7 +72,7 @@ import com.google.common.collect.Sets;
  * @since 4.2.0
  *
  */
-public abstract class AbstractProcedureDescriptionGenerator {
+public abstract class AbstractProcedureDescriptionGenerator implements ProcedureDescriptionGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProcedureDescriptionGenerator.class);
 
@@ -84,8 +80,16 @@ public abstract class AbstractProcedureDescriptionGenerator {
 
     private Locale locale;
     private I18NDAORepository i18NDAORepository;
+    private ContentCacheController cacheController;
 
-    public abstract SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, I18NDAORepository i18nDaoRepository,
+    public AbstractProcedureDescriptionGenerator(I18NDAORepository i18NDAORepository,
+            ContentCacheController cacheController) {
+        this.i18NDAORepository = i18NDAORepository;
+        this.cacheController = cacheController;
+
+    }
+
+    public abstract SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n,
             Session session) throws OwsExceptionReport;
 
     protected void setLocale(Locale i18n) {
@@ -243,7 +247,7 @@ public abstract class AbstractProcedureDescriptionGenerator {
 
     @VisibleForTesting
     SosContentCache getCache() {
-        return Configurator.getInstance().getCache();
+        return (SosContentCache) this.cacheController.getCache();
     }
 
 }

@@ -29,21 +29,15 @@
 package org.n52.sos.ds.procedure.generator;
 
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Set;
 
-import org.hibernate.Session;
+import javax.inject.Inject;
+
+import org.n52.faroe.SettingsService;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.gml.ReferenceType;
-import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.om.values.TextValue;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.ogc.wml.ObservationProcess;
-import org.n52.shetland.ogc.wml.WaterMLConstants;
-import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.sos.util.GeometryHandler;
 
 /**
  * Generator class for WaterML 2.0 procedure descriptions
@@ -52,67 +46,60 @@ import org.n52.shetland.util.CollectionHelper;
  * @since 4.2.0
  *
  */
-public class ProcedureDescriptionGeneratorFactoryWml20 implements
-        ProcedureDescriptionGeneratorFactory {
+public class ProcedureDescriptionGeneratorFactoryWml20 implements ProcedureDescriptionGeneratorFactory {
 
-    private static final Set<ProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES =
-            CollectionHelper.set(new ProcedureDescriptionGeneratorFactoryKey(
-                    WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
+    private final SettingsService settingsService;
+    private final GeometryHandler geometryHandler;
+    private final I18NDAORepository i18NDAORepository;
+    private final ContentCacheController cacheController;
+    private final ProfileHandler profileHandler;
 
-    @Override
-    public Set<ProcedureDescriptionGeneratorFactoryKey> getKeys() {
-        return Collections.unmodifiableSet(GENERATOR_KEY_TYPES);
+    @Inject
+    public ProcedureDescriptionGeneratorFactoryWml20(SettingsService settingsService,
+                                                               GeometryHandler geometryHandler,
+                                                               I18NDAORepository i18NDAORepository,
+                                                               ContentCacheController cacheController,
+                                                               ProfileHandler profileHandler) {
+        this.settingsService = settingsService;
+        this.geometryHandler = geometryHandler;
+        this.i18NDAORepository = i18NDAORepository;
+        this.cacheController = cacheController;
+        this.profileHandler = profileHandler;
     }
 
     @Override
-    public SosProcedureDescription<?> create(ProcedureEntity procedure, Locale i18n, I18NDAORepository i18nDaoRepository, Session session) throws OwsExceptionReport {
-        return new SosProcedureDescription<>(new ProcedureDescriptionGeneratorWml20()
-                .generateProcedureDescription(procedure, i18n, i18nDaoRepository, session));
+    public Set<ProcedureDescriptionGeneratorKey> getKeys() {
+        return Collections.unmodifiableSet(ProcedureDescriptionGeneratorSml20.GENERATOR_KEY_TYPES);
     }
 
-    private class ProcedureDescriptionGeneratorWml20 extends AbstractProcedureDescriptionGenerator {
+    @Override
+    public ProcedureDescriptionGenerator create(ProcedureDescriptionGeneratorKey key) {
+        ProcedureDescriptionGenerator generator
+                = new ProcedureDescriptionGeneratorWml20(getProfileHandler(),
+                                                                   getGeometryHandler(),
+                                                                   getI18NDAORepository(),
+                                                                   getCacheController());
+        getSettingsService().configureOnce(key);
+        return generator;
+    }
 
-        /**
-         * Generate procedure description from Hibernate procedure entity if no
-         * description (file, XML text) is available
-         *
-         * @param procedure
-         *            Hibernate procedure entity
-         * @param session
-         *            the session
-         *
-         * @return Generated procedure description
-         *
-         * @throws OwsExceptionReport
-         *             If an error occurs
-         */
-        public SosProcedureDescription<AbstractFeature> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, I18NDAORepository i18nDaoRepository, Session session)
-                throws OwsExceptionReport {
-            setLocale(i18n);
-            setI18NDAORepository(i18nDaoRepository);
-            final ObservationProcess op = new ObservationProcess();
-            setCommonData(procedure, op, session);
-            addName(procedure, op);
-            op.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_ALGORITHM));
-            return new SosProcedureDescription<>(op);
-        }
+    public SettingsService getSettingsService() {
+        return settingsService;
+    }
 
-        private void addName(ProcedureEntity procedure, ObservationProcess op) {
-            String name = procedure.getDomainId();
-            if (procedure.isSetName()) {
-               name = procedure.getName();
-            }
-            op.addParameter(createName("shortName", name));
-            op.addParameter(createName("longName", name));
-        }
+    public GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
 
-        private NamedValue<String> createName(String type, String name) {
-            final NamedValue<String> namedValueProperty = new NamedValue<>();
-            final ReferenceType refType = new ReferenceType(type);
-            refType.setTitle(name);
-            namedValueProperty.setName(refType);
-            namedValueProperty.setValue(new TextValue(name));
-            return namedValueProperty;
-        }
+    public I18NDAORepository getI18NDAORepository() {
+        return i18NDAORepository;
+    }
+
+    public ContentCacheController getCacheController() {
+        return cacheController;
+    }
+
+    public ProfileHandler getProfileHandler() {
+        return profileHandler;
     }
 }

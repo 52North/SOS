@@ -29,27 +29,15 @@
 package org.n52.sos.ds.procedure.generator;
 
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Set;
 
-import org.hibernate.Session;
+import javax.inject.Inject;
+
+import org.n52.faroe.SettingsService;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.series.db.DataAccessException;
-import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.shetland.ogc.OGCConstants;
-import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sensorML.SensorML20Constants;
-import org.n52.shetland.ogc.sensorML.v20.AggregateProcess;
-import org.n52.shetland.ogc.sensorML.v20.DescribedObject;
-import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
-import org.n52.shetland.ogc.sensorML.v20.PhysicalSystem;
-import org.n52.shetland.ogc.sensorML.v20.SimpleProcess;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
-import org.n52.shetland.ogc.swe.simpleType.SweText;
-import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.sos.util.GeometryHandler;
 
 /**
  * Generator class for SensorML 2.0 procedure descriptions
@@ -58,94 +46,60 @@ import org.n52.shetland.util.CollectionHelper;
  * @since 4.2.0
  *
  */
-public class ProcedureDescriptionGeneratorFactorySml20 extends AbstractProcedureDescriptionGeneratorFactorySml {
+public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescriptionGeneratorFactory {
 
-    private static final Set<ProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES = CollectionHelper.set(
-            new ProcedureDescriptionGeneratorFactoryKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
-            new ProcedureDescriptionGeneratorFactoryKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
+    private final SettingsService settingsService;
+    private final GeometryHandler geometryHandler;
+    private final I18NDAORepository i18NDAORepository;
+    private final ContentCacheController cacheController;
+    private final ProfileHandler profileHandler;
 
-    @Override
-    public Set<ProcedureDescriptionGeneratorFactoryKey> getKeys() {
-        return Collections.unmodifiableSet(GENERATOR_KEY_TYPES);
+    @Inject
+    public ProcedureDescriptionGeneratorFactorySml20(SettingsService settingsService,
+                                                               GeometryHandler geometryHandler,
+                                                               I18NDAORepository i18NDAORepository,
+                                                               ContentCacheController cacheController,
+                                                               ProfileHandler profileHandler) {
+        this.settingsService = settingsService;
+        this.geometryHandler = geometryHandler;
+        this.i18NDAORepository = i18NDAORepository;
+        this.cacheController = cacheController;
+        this.profileHandler = profileHandler;
     }
 
     @Override
-    public SosProcedureDescription<?> create(ProcedureEntity procedure, Locale i18n, I18NDAORepository i18nDaoRepository, Session session) throws OwsExceptionReport {
-        return new ProcedureDescriptionGeneratorSml20().generateProcedureDescription(procedure, i18n, i18nDaoRepository, session);
+    public Set<ProcedureDescriptionGeneratorKey> getKeys() {
+        return Collections.unmodifiableSet(ProcedureDescriptionGeneratorSml20.GENERATOR_KEY_TYPES);
     }
 
-    private class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGeneratorSml {
-
-        public ProcedureDescriptionGeneratorSml20() {
-            super(getSrsNamePrefixUrl());
-        }
-
-        @Override
-        public SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, I18NDAORepository i18nDaoRepository, Session session)
-                throws OwsExceptionReport {
-            setLocale(i18n);
-            setI18NDAORepository(i18nDaoRepository);
-            try {
-                // 2 try to get position from entity
-                if (isStation(procedure, session)) {
-                    // 2.1 if position is available -> system -> own class <- should
-                    // be compliant with SWE lightweight profile
-                    if (procedure.hasChilds()) {
-                        return new SosProcedureDescription<>(createPhysicalSystem(procedure, session));
-                    } else {
-                        return new SosProcedureDescription<>(createPhysicalComponent(procedure, session));
-                    }
-                } else {
-                    // 2.2 if no position is available -> SimpleProcess -> own class
-                    if (procedure.hasChilds()) {
-                        return new SosProcedureDescription<>(createAggregateProcess(procedure, session));
-                    } else {
-                        return new SosProcedureDescription<>(createSimpleProcess(procedure, session));
-                    }
-                }
-            } catch (DataAccessException e) {
-                throw new NoApplicableCodeException().causedBy(e)
-                .withMessage("Error while querying data for DescribeSensor document!");
+    @Override
+    public ProcedureDescriptionGenerator create(ProcedureDescriptionGeneratorKey key) {
+        ProcedureDescriptionGenerator generator
+                = new ProcedureDescriptionGeneratorSml20(getProfileHandler(),
+                                                                   getGeometryHandler(),
+                                                                   getI18NDAORepository(),
+                                                                   getCacheController());
+        getSettingsService().configureOnce(key);
+        return generator;
     }
-        }
 
-        private PhysicalComponent createPhysicalComponent(ProcedureEntity procedure, Session session) throws OwsExceptionReport {
-            PhysicalComponent physicalComponent = new PhysicalComponent();
-            setIdentifier(physicalComponent, procedure);
-            setCommonValues(procedure, physicalComponent, session);
-            return physicalComponent;
-        }
+    public SettingsService getSettingsService() {
+        return settingsService;
+    }
 
-        private PhysicalSystem createPhysicalSystem(ProcedureEntity procedure, Session session) throws OwsExceptionReport {
-            PhysicalSystem physicalSystem = new PhysicalSystem();
-            setIdentifier(physicalSystem, procedure);
-            setCommonValues(procedure, physicalSystem, session);
-            physicalSystem.setPosition(createPosition(procedure, session));
-            return physicalSystem;
-        }
+    public GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
 
-        private SimpleProcess createSimpleProcess(ProcedureEntity procedure, Session session) throws OwsExceptionReport {
-            SimpleProcess simpleProcess = new SimpleProcess();
-            setIdentifier(simpleProcess, procedure);
-            setCommonValues(procedure, simpleProcess, session);
-            return simpleProcess;
-        }
+    public I18NDAORepository getI18NDAORepository() {
+        return i18NDAORepository;
+    }
 
-        private AggregateProcess createAggregateProcess(ProcedureEntity procedure, Session session) throws OwsExceptionReport {
-            AggregateProcess aggregateProcess = new AggregateProcess();
-            setIdentifier(aggregateProcess, procedure);
-            setCommonValues(procedure, aggregateProcess, session);
-            return aggregateProcess;
-        }
+    public ContentCacheController getCacheController() {
+        return cacheController;
+    }
 
-        private void setIdentifier(DescribedObject describedObject, ProcedureEntity procedure) {
-            CodeWithAuthority cwa = new CodeWithAuthority(procedure.getDomainId(), OGCConstants.UNIQUE_ID);
-            describedObject.setIdentifier(cwa);
-        }
-
-        @Override
-        protected SweAbstractDataComponent getInputComponent(String observableProperty) {
-            return  new SweText().setDefinition(observableProperty);
-        }
+    public ProfileHandler getProfileHandler() {
+        return profileHandler;
     }
 }

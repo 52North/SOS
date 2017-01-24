@@ -28,16 +28,22 @@
  */
 package org.n52.sos.ds.procedure.generator;
 
-import org.n52.janmayen.component.ComponentFactory;
+import java.util.Locale;
+
+import org.hibernate.Session;
+import org.n52.janmayen.component.Component;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 /**
- * Interface for procedure description generator factories
+ * TODO JavaDoc
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.2.0
- *
+ * @author Christian Autermann
  */
-public interface ProcedureDescriptionGeneratorFactoryFactory extends
-        ComponentFactory<ProcedureDescriptionGeneratorFactoryKey, ProcedureDescriptionGeneratorFactory> {
+public interface ProcedureDescriptionGenerator extends Component<ProcedureDescriptionGeneratorKey> {
+
+    SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, Session session)
+            throws OwsExceptionReport;
 
 }

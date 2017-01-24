@@ -30,6 +30,7 @@ package org.n52.sos.ds.procedure.generator;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -47,48 +48,47 @@ import com.google.common.collect.Maps;
  *
  */
 public class ProcedureDescriptionGeneratorFactoryRepository
-    extends AbstractComponentRepository<ProcedureDescriptionGeneratorFactoryKey, ProcedureDescriptionGeneratorFactory, ProcedureDescriptionGeneratorFactoryFactory> implements Constructable {
+    extends AbstractComponentRepository<ProcedureDescriptionGeneratorKey, ProcedureDescriptionGenerator, ProcedureDescriptionGeneratorFactory>
+    implements Constructable {
 
     @Deprecated
     private static ProcedureDescriptionGeneratorFactoryRepository instance;
 
-    private final Map<ProcedureDescriptionGeneratorFactoryKey, Producer<ProcedureDescriptionGeneratorFactory>> factories = Maps.newHashMap();
+    private final Map<ProcedureDescriptionGeneratorKey, Producer<ProcedureDescriptionGenerator>> factories = Maps.newHashMap();
 
     @Autowired(required = false)
-    private Collection<ProcedureDescriptionGeneratorFactory> components;
+    private Collection<ProcedureDescriptionGenerator> components;
 
     @Autowired(required = false)
-    private Collection<ProcedureDescriptionGeneratorFactoryFactory> componentFactories;
+    private Collection<ProcedureDescriptionGeneratorFactory> componentFactories;
 
     @Override
     public void init() {
         ProcedureDescriptionGeneratorFactoryRepository.instance = this;
-        Map<ProcedureDescriptionGeneratorFactoryKey, Producer<ProcedureDescriptionGeneratorFactory>> implementations
+        Map<ProcedureDescriptionGeneratorKey, Producer<ProcedureDescriptionGenerator>> implementations
                 = getUniqueProviders(this.components, this.componentFactories);
         this.factories.clear();
         this.factories.putAll(implementations);
     }
 
-    public ProcedureDescriptionGeneratorFactory getFactory(final String descriptionFormat) {
-        return getFactory(new ProcedureDescriptionGeneratorFactoryKey(descriptionFormat));
+    public ProcedureDescriptionGenerator getFactory(String descriptionFormat) {
+        return getFactory(new ProcedureDescriptionGeneratorKey(descriptionFormat));
     }
 
-    public ProcedureDescriptionGeneratorFactory getFactory(final ProcedureDescriptionGeneratorFactoryKey key) {
-        Producer<ProcedureDescriptionGeneratorFactory> producer = factories.get(key);
-        return producer == null ? null : producer.get();
+    public ProcedureDescriptionGenerator getFactory(ProcedureDescriptionGeneratorKey key) {
+        return Optional.ofNullable(factories.get(key)).map(Producer::get).orElse(null);
     }
 
     /**
      * Checks if a factory is available to generate the description
      *
-     * @param descriptionFormat
-     *            Default format
+     * @param descriptionFormat Default format
+     *
      * @return If a factory is available
      */
-    public boolean hasProcedureDescriptionGeneratorFactory(final String descriptionFormat) {
-        return this.factories.containsKey(new ProcedureDescriptionGeneratorFactoryKey(descriptionFormat));
+    public boolean hasProcedureDescriptionGeneratorFactory(String descriptionFormat) {
+        return this.factories.containsKey(new ProcedureDescriptionGeneratorKey(descriptionFormat));
     }
-
 
     @Deprecated
     public static ProcedureDescriptionGeneratorFactoryRepository getInstance() {

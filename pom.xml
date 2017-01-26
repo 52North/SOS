@@ -756,6 +756,11 @@
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-ifoi-v10</artifactId>
+                <version>2.2.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosgda-v10</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
@@ -1063,6 +1068,26 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>gda-hibernate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi-operation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi-hibernate</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- required for common test classes -->

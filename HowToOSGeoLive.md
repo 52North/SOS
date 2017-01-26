@@ -24,23 +24,32 @@
 
 1. **Example Data Update**
 
-  1. Deploy and configure ```52nSOS##x.y.z.war``` in any tomcat, having a postgresql server with postgis enabled db running. The database name MUST be ```52nSOS``` with owner ```user``` using password ```user``` (requirements from OSGeo-Live).
+  1. Deploy and configure ```52nSOS##x.y.z.war``` in any tomcat, having a postgresql server with postgis enabled db running. The database name MUST be ```52nSOS``` with owner ```user``` using password ```user``` (requirements from OSGeo-Live). **[i]** This might require a reset because the build version is *pre-configured* via *Admin* &rarr; *Reset*.
 
     1. Admin user MUST be ```user``` with password ```user```.
 
-    1. Activate in the [operations configuration](http://localhost:8080/52nSOS/admin/operations) *InsertSensor* and *InsertObservation*.
+    1. Activate in the [operations configuration](http://localhost:8080/52nSOS/admin/operations) (*Admin* &rarr; *Settings* &rarr; *Encodings*) *InsertSensor* and *InsertObservation*.
 
-    1. Disable in the [encoding configuration](http://localhost:8080/52nSOS/admin/encodings) each entry with ```http://dd.eionet.europa.eu/schemaset/id2011850eu-1.0```.
+    1. Disable in the [encoding configuration](http://localhost:8080/52nSOS/admin/encodings) (*Admin* &rarr; *Settings* &rarr; *Operations*) each entry with ```http://dd.eionet.europa.eu/schemaset/id2011850eu-1.0```.
 
-  1. Insert the sensor using ```insert-sensor.xml``` using *POX* binding.
+  1. Insert the sensor using ```insert-sensor.xml``` using *POX* binding (*Client* &rarr; `SOS` &rarr; `2.0.0` &rarr; `POX` &rarr; `InsertSensor` &rarr; `[POX] InsertSensor (SOS 2.0.0)`). Copy paste the request from the **updated** file. Replace height, coordinates and all other date that is not up to date.
 
   1. Update json requests to current year:
 
     *Update the search patterns, but ensure to use a month with **31** days!*
 
-    ```$ find . -name "*.json" -exec sed -i s/2016-07/yyyy-mm/g {} \;```
+    ```$ find . -name "*.json" -exec sed -i s/2017-03/yyyy-mm/g {} \;```
 
-  1. Insert all data using the ```data-request_*.json``` files with the *JSON* binding.
+  1. Update json requests to current location:
+
+    *Update the search patterns to match the latest used location!*
+
+    ```
+    $ find . -name "*.json" -exec sed -i s/51.9348,/yy.yyyy,/g {} \;
+    $ find . -name "*.json" -exec sed -i s/7.6524,/xx.xxxx,/g {} \;
+    ```
+
+  1. Insert all data using the ```data-request_*.json``` files with the *JSON* binding via *Client* &rarr; `SOS` &rarr; `2.0.0` &rarr; `JSON` &rarr; `InsertObservation` &rarr; `[JSON] InsertObservation (SOS 2.0.0)`.
 
   1. Set the i18n settings for
 
@@ -50,7 +59,7 @@
 
     via the [I18N settings](http://localhost:8080/52nSOS/admin/i18n).
 
-  1. Export the current database into file ```52nSOS.sql``` in ```webapp-osgeo-live/src/main/resources``` folder using the following settings in e.g. PGAdmin III:
+  1. Export the current database into file ```52nSOS.sql``` in ```webapp-osgeo-live/src/assembly``` folder using the following settings in e.g. PGAdmin III:
 
     * File: ```52nSOS.sql```
     * Format: ```plain```

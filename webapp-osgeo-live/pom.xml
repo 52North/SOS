@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>52n-sos</artifactId>
 		<groupId>org.n52.sensorweb.sos</groupId>
-		 <version>4.3.9</version>
+		<version>4.3.9</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>webapp-osgeo-live</artifactId>
@@ -19,13 +20,13 @@
 				<configuration>
 					<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
 					<nonFilteredFileExtensions>
-                        <!-- default value contains jpg,jpeg,gif,bmp,png -->
-                        <nonFilteredFileExtension>db</nonFilteredFileExtension>
-                    </nonFilteredFileExtensions>
+						<!-- default value contains jpg,jpeg,gif,bmp,png -->
+						<nonFilteredFileExtension>db</nonFilteredFileExtension>
+					</nonFilteredFileExtensions>
 					<webResources>
 						<resource>
-						    <directory>src/main/webapp</directory>
-						    <filtering>true</filtering>
+							<directory>src/main/webapp</directory>
+							<filtering>true</filtering>
 						</resource>
 					</webResources>
 					<overlays>
@@ -33,30 +34,30 @@
 							<groupId>${project.groupId}</groupId>
 							<artifactId>webapp-bundle</artifactId>
 						</overlay>
-	                </overlays>
+					</overlays>
 				</configuration>
 			</plugin>
 			<plugin>
-                 <artifactId>maven-assembly-plugin</artifactId>
-                 <configuration>
-                     <descriptors>
-                         <descriptor>src/assembly/src.xml</descriptor>
-                     </descriptors>
-                 </configuration>
-                 <executions>
-                     <execution>
-                         <id>make-osgeo-live-assembly</id>
-                         <phase>package</phase>
-                         <goals>
-                             <goal>single</goal>
-                         </goals>
-                         <configuration>
-                             <finalName>52n-sos-osgeo-live-${conf.osgeo.live.version}</finalName>
-                             <appendAssemblyId>false</appendAssemblyId>
-                         </configuration>
-                     </execution>
-                 </executions>
-             </plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/assembly/src.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-osgeo-live-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>52n-sos-osgeo-live-${conf.osgeo.live.version}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>

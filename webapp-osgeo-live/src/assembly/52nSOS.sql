@@ -31,9 +31,9 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.3.12
--- Dumped by pg_dump version 9.3.12
--- Started on 2016-05-24 15:55:25 CEST
+-- Dumped from database version 9.3.15
+-- Dumped by pg_dump version 9.3.15
+-- Started on 2017-01-26 16:25:13 CET
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -83,7 +83,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 186 (class 1259 OID 59992)
+-- TOC entry 186 (class 1259 OID 62357)
 -- Name: blobvalue; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -105,7 +105,7 @@ COMMENT ON TABLE blobvalue IS 'Value table for blob observation';
 
 
 --
--- TOC entry 187 (class 1259 OID 59997)
+-- TOC entry 187 (class 1259 OID 62362)
 -- Name: booleanvalue; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -129,7 +129,7 @@ COMMENT ON TABLE booleanvalue IS 'Value table for boolean observation';
 
 
 --
--- TOC entry 188 (class 1259 OID 60004)
+-- TOC entry 188 (class 1259 OID 62369)
 -- Name: categoryvalue; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -151,7 +151,7 @@ COMMENT ON TABLE categoryvalue IS 'Value table for category observation';
 
 
 --
--- TOC entry 189 (class 1259 OID 60009)
+-- TOC entry 189 (class 1259 OID 62374)
 -- Name: codespace; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -191,7 +191,7 @@ COMMENT ON COLUMN codespace.codespace IS 'The codespace value';
 
 
 --
--- TOC entry 222 (class 1259 OID 60575)
+-- TOC entry 222 (class 1259 OID 62944)
 -- Name: codespaceid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -206,7 +206,7 @@ CREATE SEQUENCE codespaceid_seq
 ALTER TABLE public.codespaceid_seq OWNER TO "user";
 
 --
--- TOC entry 190 (class 1259 OID 60014)
+-- TOC entry 190 (class 1259 OID 62379)
 -- Name: compositephenomenon; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -246,7 +246,7 @@ COMMENT ON COLUMN compositephenomenon.childobservablepropertyid IS 'Foreign Key 
 
 
 --
--- TOC entry 191 (class 1259 OID 60019)
+-- TOC entry 191 (class 1259 OID 62384)
 -- Name: countvalue; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -268,7 +268,7 @@ COMMENT ON TABLE countvalue IS 'Value table for count observation';
 
 
 --
--- TOC entry 192 (class 1259 OID 60024)
+-- TOC entry 192 (class 1259 OID 62389)
 -- Name: featureofinterest; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -389,7 +389,7 @@ COMMENT ON COLUMN featureofinterest.url IS 'Reference URL to the feature if it i
 
 
 --
--- TOC entry 223 (class 1259 OID 60577)
+-- TOC entry 223 (class 1259 OID 62946)
 -- Name: featureofinterestid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -404,7 +404,7 @@ CREATE SEQUENCE featureofinterestid_seq
 ALTER TABLE public.featureofinterestid_seq OWNER TO "user";
 
 --
--- TOC entry 193 (class 1259 OID 60032)
+-- TOC entry 193 (class 1259 OID 62397)
 -- Name: featureofinteresttype; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -444,7 +444,7 @@ COMMENT ON COLUMN featureofinteresttype.featureofinteresttype IS 'The featureOfI
 
 
 --
--- TOC entry 224 (class 1259 OID 60579)
+-- TOC entry 224 (class 1259 OID 62948)
 -- Name: featureofinteresttypeid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -459,7 +459,7 @@ CREATE SEQUENCE featureofinteresttypeid_seq
 ALTER TABLE public.featureofinteresttypeid_seq OWNER TO "user";
 
 --
--- TOC entry 194 (class 1259 OID 60037)
+-- TOC entry 194 (class 1259 OID 62402)
 -- Name: featurerelation; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -499,7 +499,7 @@ COMMENT ON COLUMN featurerelation.childfeatureid IS 'Foreign Key (FK) to the rel
 
 
 --
--- TOC entry 195 (class 1259 OID 60042)
+-- TOC entry 195 (class 1259 OID 62407)
 -- Name: geometryvalue; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -521,7 +521,7 @@ COMMENT ON TABLE geometryvalue IS 'Value table for geometry observation';
 
 
 --
--- TOC entry 196 (class 1259 OID 60050)
+-- TOC entry 196 (class 1259 OID 62415)
 -- Name: i18nfeatureofinterest; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -591,7 +591,7 @@ COMMENT ON COLUMN i18nfeatureofinterest.description IS 'Locale/language specific
 
 
 --
--- TOC entry 228 (class 1259 OID 60587)
+-- TOC entry 228 (class 1259 OID 62956)
 -- Name: i18nfeatureofinterestid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -606,7 +606,7 @@ CREATE SEQUENCE i18nfeatureofinterestid_seq
 ALTER TABLE public.i18nfeatureofinterestid_seq OWNER TO "user";
 
 --
--- TOC entry 197 (class 1259 OID 60058)
+-- TOC entry 197 (class 1259 OID 62423)
 -- Name: i18nobservableproperty; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -676,7 +676,7 @@ COMMENT ON COLUMN i18nobservableproperty.description IS 'Locale/language specifi
 
 
 --
--- TOC entry 225 (class 1259 OID 60581)
+-- TOC entry 225 (class 1259 OID 62950)
 -- Name: i18nobspropid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -691,7 +691,7 @@ CREATE SEQUENCE i18nobspropid_seq
 ALTER TABLE public.i18nobspropid_seq OWNER TO "user";
 
 --
--- TOC entry 198 (class 1259 OID 60066)
+-- TOC entry 198 (class 1259 OID 62431)
 -- Name: i18noffering; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -761,7 +761,7 @@ COMMENT ON COLUMN i18noffering.description IS 'Locale/language specific descript
 
 
 --
--- TOC entry 226 (class 1259 OID 60583)
+-- TOC entry 226 (class 1259 OID 62952)
 -- Name: i18nofferingid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -776,7 +776,7 @@ CREATE SEQUENCE i18nofferingid_seq
 ALTER TABLE public.i18nofferingid_seq OWNER TO "user";
 
 --
--- TOC entry 199 (class 1259 OID 60074)
+-- TOC entry 199 (class 1259 OID 62439)
 -- Name: i18nprocedure; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -866,7 +866,7 @@ COMMENT ON COLUMN i18nprocedure.longname IS 'Locale/language specific longname o
 
 
 --
--- TOC entry 227 (class 1259 OID 60585)
+-- TOC entry 227 (class 1259 OID 62954)
 -- Name: i18nprocedureid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -881,7 +881,7 @@ CREATE SEQUENCE i18nprocedureid_seq
 ALTER TABLE public.i18nprocedureid_seq OWNER TO "user";
 
 --
--- TOC entry 200 (class 1259 OID 60082)
+-- TOC entry 200 (class 1259 OID 62447)
 -- Name: numericvalue; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -903,7 +903,7 @@ COMMENT ON TABLE numericvalue IS 'Value table for numeric/Measurment observation
 
 
 --
--- TOC entry 201 (class 1259 OID 60087)
+-- TOC entry 201 (class 1259 OID 62452)
 -- Name: observableproperty; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -995,7 +995,7 @@ COMMENT ON COLUMN observableproperty.disabled IS 'For later use by the SOS. Indi
 
 
 --
--- TOC entry 229 (class 1259 OID 60589)
+-- TOC entry 229 (class 1259 OID 62958)
 -- Name: observablepropertyid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -1010,7 +1010,7 @@ CREATE SEQUENCE observablepropertyid_seq
 ALTER TABLE public.observablepropertyid_seq OWNER TO "user";
 
 --
--- TOC entry 202 (class 1259 OID 60097)
+-- TOC entry 202 (class 1259 OID 62462)
 -- Name: observation; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1046,7 +1046,7 @@ COMMENT ON TABLE observation IS 'Stores the observations. Mapping file: mapping/
 
 
 --
--- TOC entry 203 (class 1259 OID 60107)
+-- TOC entry 203 (class 1259 OID 62472)
 -- Name: observationconstellation; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1138,7 +1138,7 @@ COMMENT ON COLUMN observationconstellation.hiddenchild IS 'Flag to indicate that
 
 
 --
--- TOC entry 230 (class 1259 OID 60591)
+-- TOC entry 230 (class 1259 OID 62960)
 -- Name: observationconstellationid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -1153,7 +1153,7 @@ CREATE SEQUENCE observationconstellationid_seq
 ALTER TABLE public.observationconstellationid_seq OWNER TO "user";
 
 --
--- TOC entry 204 (class 1259 OID 60116)
+-- TOC entry 204 (class 1259 OID 62481)
 -- Name: observationhasoffering; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1175,7 +1175,7 @@ COMMENT ON TABLE observationhasoffering IS 'Table to store relations between obs
 
 
 --
--- TOC entry 231 (class 1259 OID 60593)
+-- TOC entry 231 (class 1259 OID 62962)
 -- Name: observationid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -1190,7 +1190,7 @@ CREATE SEQUENCE observationid_seq
 ALTER TABLE public.observationid_seq OWNER TO "user";
 
 --
--- TOC entry 205 (class 1259 OID 60121)
+-- TOC entry 205 (class 1259 OID 62486)
 -- Name: observationtype; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1230,7 +1230,7 @@ COMMENT ON COLUMN observationtype.observationtype IS 'The observationType value,
 
 
 --
--- TOC entry 232 (class 1259 OID 60595)
+-- TOC entry 232 (class 1259 OID 62964)
 -- Name: observationtypeid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -1245,7 +1245,7 @@ CREATE SEQUENCE observationtypeid_seq
 ALTER TABLE public.observationtypeid_seq OWNER TO "user";
 
 --
--- TOC entry 206 (class 1259 OID 60126)
+-- TOC entry 206 (class 1259 OID 62491)
 -- Name: offering; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1337,7 +1337,7 @@ COMMENT ON COLUMN offering.disabled IS 'For later use by the SOS. Indicator if t
 
 
 --
--- TOC entry 207 (class 1259 OID 60136)
+-- TOC entry 207 (class 1259 OID 62501)
 -- Name: offeringallowedfeaturetype; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1377,7 +1377,7 @@ COMMENT ON COLUMN offeringallowedfeaturetype.featureofinteresttypeid IS 'Foreign
 
 
 --
--- TOC entry 208 (class 1259 OID 60141)
+-- TOC entry 208 (class 1259 OID 62506)
 -- Name: offeringallowedobservationtype; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1417,7 +1417,7 @@ COMMENT ON COLUMN offeringallowedobservationtype.observationtypeid IS 'Foreign K
 
 
 --
--- TOC entry 209 (class 1259 OID 60146)
+-- TOC entry 209 (class 1259 OID 62511)
 -- Name: offeringhasrelatedfeature; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1457,7 +1457,7 @@ COMMENT ON COLUMN offeringhasrelatedfeature.relatedfeatureid IS 'Foreign Key (FK
 
 
 --
--- TOC entry 233 (class 1259 OID 60597)
+-- TOC entry 233 (class 1259 OID 62966)
 -- Name: offeringid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -1472,7 +1472,7 @@ CREATE SEQUENCE offeringid_seq
 ALTER TABLE public.offeringid_seq OWNER TO "user";
 
 --
--- TOC entry 210 (class 1259 OID 60151)
+-- TOC entry 210 (class 1259 OID 62516)
 -- Name: parameter; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1542,7 +1542,7 @@ COMMENT ON COLUMN parameter.value IS 'Value of the additional information';
 
 
 --
--- TOC entry 234 (class 1259 OID 60599)
+-- TOC entry 234 (class 1259 OID 62968)
 -- Name: parameterid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -1557,7 +1557,7 @@ CREATE SEQUENCE parameterid_seq
 ALTER TABLE public.parameterid_seq OWNER TO "user";
 
 --
--- TOC entry 235 (class 1259 OID 60601)
+-- TOC entry 235 (class 1259 OID 62970)
 -- Name: procdescformatid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -1572,7 +1572,7 @@ CREATE SEQUENCE procdescformatid_seq
 ALTER TABLE public.procdescformatid_seq OWNER TO "user";
 
 --
--- TOC entry 185 (class 1259 OID 59978)
+-- TOC entry 185 (class 1259 OID 62343)
 -- Name: procedure; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1706,7 +1706,7 @@ COMMENT ON COLUMN procedure.referenceflag IS 'Flag to indicate that this procedu
 
 
 --
--- TOC entry 211 (class 1259 OID 60159)
+-- TOC entry 211 (class 1259 OID 62524)
 -- Name: proceduredescriptionformat; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1746,7 +1746,7 @@ COMMENT ON COLUMN proceduredescriptionformat.proceduredescriptionformat IS 'The 
 
 
 --
--- TOC entry 236 (class 1259 OID 60603)
+-- TOC entry 236 (class 1259 OID 62972)
 -- Name: procedureid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -1761,7 +1761,7 @@ CREATE SEQUENCE procedureid_seq
 ALTER TABLE public.procedureid_seq OWNER TO "user";
 
 --
--- TOC entry 212 (class 1259 OID 60164)
+-- TOC entry 212 (class 1259 OID 62529)
 -- Name: relatedfeature; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1801,7 +1801,7 @@ COMMENT ON COLUMN relatedfeature.featureofinterestid IS 'Foreign Key (FK) to the
 
 
 --
--- TOC entry 213 (class 1259 OID 60169)
+-- TOC entry 213 (class 1259 OID 62534)
 -- Name: relatedfeaturehasrole; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1841,7 +1841,7 @@ COMMENT ON COLUMN relatedfeaturehasrole.relatedfeatureroleid IS 'Foreign Key (FK
 
 
 --
--- TOC entry 237 (class 1259 OID 60605)
+-- TOC entry 237 (class 1259 OID 62974)
 -- Name: relatedfeatureid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -1856,7 +1856,7 @@ CREATE SEQUENCE relatedfeatureid_seq
 ALTER TABLE public.relatedfeatureid_seq OWNER TO "user";
 
 --
--- TOC entry 214 (class 1259 OID 60174)
+-- TOC entry 214 (class 1259 OID 62539)
 -- Name: relatedfeaturerole; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -1896,7 +1896,7 @@ COMMENT ON COLUMN relatedfeaturerole.relatedfeaturerole IS 'The related feature 
 
 
 --
--- TOC entry 238 (class 1259 OID 60607)
+-- TOC entry 238 (class 1259 OID 62976)
 -- Name: relatedfeatureroleid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -1911,7 +1911,7 @@ CREATE SEQUENCE relatedfeatureroleid_seq
 ALTER TABLE public.relatedfeatureroleid_seq OWNER TO "user";
 
 --
--- TOC entry 215 (class 1259 OID 60179)
+-- TOC entry 215 (class 1259 OID 62544)
 -- Name: resulttemplate; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -2011,7 +2011,7 @@ COMMENT ON COLUMN resulttemplate.resultencoding IS 'The resultEncoding as XML st
 
 
 --
--- TOC entry 239 (class 1259 OID 60609)
+-- TOC entry 239 (class 1259 OID 62978)
 -- Name: resulttemplateid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -2026,7 +2026,7 @@ CREATE SEQUENCE resulttemplateid_seq
 ALTER TABLE public.resulttemplateid_seq OWNER TO "user";
 
 --
--- TOC entry 216 (class 1259 OID 60187)
+-- TOC entry 216 (class 1259 OID 62552)
 -- Name: sensorsystem; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -2066,7 +2066,7 @@ COMMENT ON COLUMN sensorsystem.childsensorid IS 'Foreign Key (FK) to the related
 
 
 --
--- TOC entry 217 (class 1259 OID 60192)
+-- TOC entry 217 (class 1259 OID 62557)
 -- Name: series; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -2075,6 +2075,7 @@ CREATE TABLE series (
     featureofinterestid bigint NOT NULL,
     observablepropertyid bigint NOT NULL,
     procedureid bigint NOT NULL,
+    offeringid bigint,
     deleted character(1) DEFAULT 'F'::bpchar NOT NULL,
     published character(1) DEFAULT 'T'::bpchar NOT NULL,
     firsttimestamp timestamp without time zone,
@@ -2137,6 +2138,15 @@ COMMENT ON COLUMN series.procedureid IS 'Foreign Key (FK) to the related procedu
 --
 -- TOC entry 3836 (class 0 OID 0)
 -- Dependencies: 217
+-- Name: COLUMN series.offeringid; Type: COMMENT; Schema: public; Owner: user
+--
+
+COMMENT ON COLUMN series.offeringid IS 'Foreign Key (FK) to the related procedure. Contains "offering".offeringid';
+
+
+--
+-- TOC entry 3837 (class 0 OID 0)
+-- Dependencies: 217
 -- Name: COLUMN series.deleted; Type: COMMENT; Schema: public; Owner: user
 --
 
@@ -2144,7 +2154,7 @@ COMMENT ON COLUMN series.deleted IS 'Flag to indicate that this series is delete
 
 
 --
--- TOC entry 3837 (class 0 OID 0)
+-- TOC entry 3838 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: COLUMN series.published; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2153,7 +2163,7 @@ COMMENT ON COLUMN series.published IS 'Flag to indicate that this series is publ
 
 
 --
--- TOC entry 3838 (class 0 OID 0)
+-- TOC entry 3839 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: COLUMN series.firsttimestamp; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2162,7 +2172,7 @@ COMMENT ON COLUMN series.firsttimestamp IS 'The time stamp of the first (tempora
 
 
 --
--- TOC entry 3839 (class 0 OID 0)
+-- TOC entry 3840 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: COLUMN series.lasttimestamp; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2171,7 +2181,7 @@ COMMENT ON COLUMN series.lasttimestamp IS 'The time stamp of the last (temporal)
 
 
 --
--- TOC entry 3840 (class 0 OID 0)
+-- TOC entry 3841 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: COLUMN series.firstnumericvalue; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2180,7 +2190,7 @@ COMMENT ON COLUMN series.firstnumericvalue IS 'The value of the first (temporal)
 
 
 --
--- TOC entry 3841 (class 0 OID 0)
+-- TOC entry 3842 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: COLUMN series.lastnumericvalue; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2189,7 +2199,7 @@ COMMENT ON COLUMN series.lastnumericvalue IS 'The value of the last (temporal) o
 
 
 --
--- TOC entry 3842 (class 0 OID 0)
+-- TOC entry 3843 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: COLUMN series.unitid; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2198,7 +2208,7 @@ COMMENT ON COLUMN series.unitid IS 'Foreign Key (FK) to the related unit of the 
 
 
 --
--- TOC entry 240 (class 1259 OID 60611)
+-- TOC entry 240 (class 1259 OID 62980)
 -- Name: seriesid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -2213,7 +2223,7 @@ CREATE SEQUENCE seriesid_seq
 ALTER TABLE public.seriesid_seq OWNER TO "user";
 
 --
--- TOC entry 218 (class 1259 OID 60201)
+-- TOC entry 218 (class 1259 OID 62566)
 -- Name: swedataarrayvalue; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -2226,7 +2236,7 @@ CREATE TABLE swedataarrayvalue (
 ALTER TABLE public.swedataarrayvalue OWNER TO "user";
 
 --
--- TOC entry 3843 (class 0 OID 0)
+-- TOC entry 3844 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: TABLE swedataarrayvalue; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2235,7 +2245,7 @@ COMMENT ON TABLE swedataarrayvalue IS 'Value table for SweDataArray observation'
 
 
 --
--- TOC entry 219 (class 1259 OID 60209)
+-- TOC entry 219 (class 1259 OID 62574)
 -- Name: textvalue; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -2248,7 +2258,7 @@ CREATE TABLE textvalue (
 ALTER TABLE public.textvalue OWNER TO "user";
 
 --
--- TOC entry 3844 (class 0 OID 0)
+-- TOC entry 3845 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: TABLE textvalue; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2257,7 +2267,7 @@ COMMENT ON TABLE textvalue IS 'Value table for text observation';
 
 
 --
--- TOC entry 220 (class 1259 OID 60217)
+-- TOC entry 220 (class 1259 OID 62582)
 -- Name: unit; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -2270,7 +2280,7 @@ CREATE TABLE unit (
 ALTER TABLE public.unit OWNER TO "user";
 
 --
--- TOC entry 3845 (class 0 OID 0)
+-- TOC entry 3846 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: TABLE unit; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2279,7 +2289,7 @@ COMMENT ON TABLE unit IS 'Table to store the unit of measure information, used i
 
 
 --
--- TOC entry 3846 (class 0 OID 0)
+-- TOC entry 3847 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: COLUMN unit.unitid; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2288,7 +2298,7 @@ COMMENT ON COLUMN unit.unitid IS 'Table primary key, used for relations';
 
 
 --
--- TOC entry 3847 (class 0 OID 0)
+-- TOC entry 3848 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: COLUMN unit.unit; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2297,7 +2307,7 @@ COMMENT ON COLUMN unit.unit IS 'The unit of measure of observations. See http://
 
 
 --
--- TOC entry 241 (class 1259 OID 60613)
+-- TOC entry 241 (class 1259 OID 62982)
 -- Name: unitid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -2312,7 +2322,7 @@ CREATE SEQUENCE unitid_seq
 ALTER TABLE public.unitid_seq OWNER TO "user";
 
 --
--- TOC entry 221 (class 1259 OID 60222)
+-- TOC entry 221 (class 1259 OID 62587)
 -- Name: validproceduretime; Type: TABLE; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -2329,7 +2339,7 @@ CREATE TABLE validproceduretime (
 ALTER TABLE public.validproceduretime OWNER TO "user";
 
 --
--- TOC entry 3848 (class 0 OID 0)
+-- TOC entry 3849 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: TABLE validproceduretime; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2338,7 +2348,7 @@ COMMENT ON TABLE validproceduretime IS 'Table to store procedure descriptions wh
 
 
 --
--- TOC entry 3849 (class 0 OID 0)
+-- TOC entry 3850 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: COLUMN validproceduretime.validproceduretimeid; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2347,7 +2357,7 @@ COMMENT ON COLUMN validproceduretime.validproceduretimeid IS 'Table primary key'
 
 
 --
--- TOC entry 3850 (class 0 OID 0)
+-- TOC entry 3851 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: COLUMN validproceduretime.procedureid; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2356,7 +2366,7 @@ COMMENT ON COLUMN validproceduretime.procedureid IS 'Foreign Key (FK) to the rel
 
 
 --
--- TOC entry 3851 (class 0 OID 0)
+-- TOC entry 3852 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: COLUMN validproceduretime.proceduredescriptionformatid; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2365,7 +2375,7 @@ COMMENT ON COLUMN validproceduretime.proceduredescriptionformatid IS 'Foreign Ke
 
 
 --
--- TOC entry 3852 (class 0 OID 0)
+-- TOC entry 3853 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: COLUMN validproceduretime.starttime; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2374,7 +2384,7 @@ COMMENT ON COLUMN validproceduretime.starttime IS 'Timestamp since this procedur
 
 
 --
--- TOC entry 3853 (class 0 OID 0)
+-- TOC entry 3854 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: COLUMN validproceduretime.endtime; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2383,7 +2393,7 @@ COMMENT ON COLUMN validproceduretime.endtime IS 'Timestamp since this procedure 
 
 
 --
--- TOC entry 3854 (class 0 OID 0)
+-- TOC entry 3855 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: COLUMN validproceduretime.descriptionxml; Type: COMMENT; Schema: public; Owner: user
 --
@@ -2392,7 +2402,7 @@ COMMENT ON COLUMN validproceduretime.descriptionxml IS 'Procedure description as
 
 
 --
--- TOC entry 242 (class 1259 OID 60615)
+-- TOC entry 242 (class 1259 OID 62984)
 -- Name: validproceduretimeid_seq; Type: SEQUENCE; Schema: public; Owner: user
 --
 
@@ -2407,7 +2417,7 @@ CREATE SEQUENCE validproceduretimeid_seq
 ALTER TABLE public.validproceduretimeid_seq OWNER TO "user";
 
 --
--- TOC entry 3630 (class 0 OID 59992)
+-- TOC entry 3630 (class 0 OID 62357)
 -- Dependencies: 186
 -- Data for Name: blobvalue; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2417,7 +2427,7 @@ COPY blobvalue (observationid, value) FROM stdin;
 
 
 --
--- TOC entry 3631 (class 0 OID 59997)
+-- TOC entry 3631 (class 0 OID 62362)
 -- Dependencies: 187
 -- Data for Name: booleanvalue; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2427,7 +2437,7 @@ COPY booleanvalue (observationid, value) FROM stdin;
 
 
 --
--- TOC entry 3632 (class 0 OID 60004)
+-- TOC entry 3632 (class 0 OID 62369)
 -- Dependencies: 188
 -- Data for Name: categoryvalue; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2437,7 +2447,7 @@ COPY categoryvalue (observationid, value) FROM stdin;
 
 
 --
--- TOC entry 3633 (class 0 OID 60009)
+-- TOC entry 3633 (class 0 OID 62374)
 -- Dependencies: 189
 -- Data for Name: codespace; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2448,7 +2458,7 @@ COPY codespace (codespaceid, codespace) FROM stdin;
 
 
 --
--- TOC entry 3855 (class 0 OID 0)
+-- TOC entry 3856 (class 0 OID 0)
 -- Dependencies: 222
 -- Name: codespaceid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -2457,7 +2467,7 @@ SELECT pg_catalog.setval('codespaceid_seq', 1, true);
 
 
 --
--- TOC entry 3634 (class 0 OID 60014)
+-- TOC entry 3634 (class 0 OID 62379)
 -- Dependencies: 190
 -- Data for Name: compositephenomenon; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2467,7 +2477,7 @@ COPY compositephenomenon (parentobservablepropertyid, childobservablepropertyid)
 
 
 --
--- TOC entry 3635 (class 0 OID 60019)
+-- TOC entry 3635 (class 0 OID 62384)
 -- Dependencies: 191
 -- Data for Name: countvalue; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2477,19 +2487,19 @@ COPY countvalue (observationid, value) FROM stdin;
 
 
 --
--- TOC entry 3636 (class 0 OID 60024)
+-- TOC entry 3636 (class 0 OID 62389)
 -- Dependencies: 192
 -- Data for Name: featureofinterest; Type: TABLE DATA; Schema: public; Owner: user
 --
 
 COPY featureofinterest (featureofinterestid, hibernatediscriminator, featureofinteresttypeid, identifier, codespace, name, codespacename, description, geom, descriptionxml, url) FROM stdin;
 1	T	2	http://www.52north.org/test/featureOfInterest/world	1	\N	1	\N	\N	\N	\N
-2	T	2	52NorthWS1	1	52North HWS	1	\N	0101000020E610000040A4DFBE0E9C1E408126C286A7F74940	\N	\N
+2	T	2	52NorthWS1	1	52North HWS	1	\N	0101000020E6100000BBB88D06F0E62A402332ACE28D484840	\N	\N
 \.
 
 
 --
--- TOC entry 3856 (class 0 OID 0)
+-- TOC entry 3857 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: featureofinterestid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -2498,7 +2508,7 @@ SELECT pg_catalog.setval('featureofinterestid_seq', 2, true);
 
 
 --
--- TOC entry 3637 (class 0 OID 60032)
+-- TOC entry 3637 (class 0 OID 62397)
 -- Dependencies: 193
 -- Data for Name: featureofinteresttype; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2510,7 +2520,7 @@ COPY featureofinteresttype (featureofinteresttypeid, featureofinteresttype) FROM
 
 
 --
--- TOC entry 3857 (class 0 OID 0)
+-- TOC entry 3858 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: featureofinteresttypeid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -2519,7 +2529,7 @@ SELECT pg_catalog.setval('featureofinteresttypeid_seq', 2, true);
 
 
 --
--- TOC entry 3638 (class 0 OID 60037)
+-- TOC entry 3638 (class 0 OID 62402)
 -- Dependencies: 194
 -- Data for Name: featurerelation; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2530,7 +2540,7 @@ COPY featurerelation (parentfeatureid, childfeatureid) FROM stdin;
 
 
 --
--- TOC entry 3639 (class 0 OID 60042)
+-- TOC entry 3639 (class 0 OID 62407)
 -- Dependencies: 195
 -- Data for Name: geometryvalue; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2540,29 +2550,29 @@ COPY geometryvalue (observationid, value) FROM stdin;
 
 
 --
--- TOC entry 3640 (class 0 OID 60050)
+-- TOC entry 3640 (class 0 OID 62415)
 -- Dependencies: 196
 -- Data for Name: i18nfeatureofinterest; Type: TABLE DATA; Schema: public; Owner: user
 --
 
 COPY i18nfeatureofinterest (id, objectid, locale, name, description) FROM stdin;
-1	2	ita	52North stazione metereologica	Questa è una configurazione stazione meteo WS2500 a 52North, Münster in Germania.
-2	2	eng	52North weather station	This is a WS2500 weather station setup at 52North, Münster in Germany.
-3	2	ger	52North Wetterstation	Dies ist eine WS2500-Wetterstation, aufgestellt bei 52North, Münster in Deutschland.
+4	2	ita	52Nortrh stazione meterologica	Questa è una configurazione stazione meteo WS2500 a 52North, Münster in Germania.
+5	2	eng	52North weather station	This is a WS2500 weather station setup at 52North, Münster in Germany.
+6	2	ger	52North Wetterstation	Dies ist eine WS2500 Wetterstation, aufgestellt bei 52North, Münster in Deutschland.
 \.
 
 
 --
--- TOC entry 3858 (class 0 OID 0)
+-- TOC entry 3859 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: i18nfeatureofinterestid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
 
-SELECT pg_catalog.setval('i18nfeatureofinterestid_seq', 3, true);
+SELECT pg_catalog.setval('i18nfeatureofinterestid_seq', 6, true);
 
 
 --
--- TOC entry 3641 (class 0 OID 60058)
+-- TOC entry 3641 (class 0 OID 62423)
 -- Dependencies: 197
 -- Data for Name: i18nobservableproperty; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2570,7 +2580,7 @@ SELECT pg_catalog.setval('i18nfeatureofinterestid_seq', 3, true);
 COPY i18nobservableproperty (id, objectid, locale, name, description) FROM stdin;
 1	4	ita	pressione barometrica	\N
 2	4	eng	air pressure	\N
-3	4	ger	Luftdruck	\N
+3	4	ger	luftdruck	\N
 4	6	ita	Illuminamento	\N
 5	6	eng	Illuminance	\N
 6	6	ger	Beleuchtungsstärke	\N
@@ -2578,7 +2588,7 @@ COPY i18nobservableproperty (id, objectid, locale, name, description) FROM stdin
 8	1	eng	Hourly Precipitation	\N
 9	1	ger	Stündlicher Niederschlag	\N
 10	7	ita	umidità relativa	\N
-11	7	eng	relative Humidity	\N
+11	7	eng	relative humidity	\N
 12	7	ger	relative Luftfeuchtigkeit	\N
 13	5	ita	temperatura	\N
 14	5	eng	temperature	\N
@@ -2593,7 +2603,7 @@ COPY i18nobservableproperty (id, objectid, locale, name, description) FROM stdin
 
 
 --
--- TOC entry 3859 (class 0 OID 0)
+-- TOC entry 3860 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: i18nobspropid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -2602,7 +2612,7 @@ SELECT pg_catalog.setval('i18nobspropid_seq', 21, true);
 
 
 --
--- TOC entry 3642 (class 0 OID 60066)
+-- TOC entry 3642 (class 0 OID 62431)
 -- Dependencies: 198
 -- Data for Name: i18noffering; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2612,7 +2622,7 @@ COPY i18noffering (id, objectid, locale, name, description) FROM stdin;
 
 
 --
--- TOC entry 3860 (class 0 OID 0)
+-- TOC entry 3861 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: i18nofferingid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -2621,7 +2631,7 @@ SELECT pg_catalog.setval('i18nofferingid_seq', 1, false);
 
 
 --
--- TOC entry 3643 (class 0 OID 60074)
+-- TOC entry 3643 (class 0 OID 62439)
 -- Dependencies: 199
 -- Data for Name: i18nprocedure; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -2631,7 +2641,7 @@ COPY i18nprocedure (id, objectid, locale, name, description, shortname, longname
 
 
 --
--- TOC entry 3861 (class 0 OID 0)
+-- TOC entry 3862 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: i18nprocedureid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -2640,300 +2650,300 @@ SELECT pg_catalog.setval('i18nprocedureid_seq', 1, false);
 
 
 --
--- TOC entry 3644 (class 0 OID 60082)
+-- TOC entry 3644 (class 0 OID 62447)
 -- Dependencies: 200
 -- Data for Name: numericvalue; Type: TABLE DATA; Schema: public; Owner: user
 --
 
 COPY numericvalue (observationid, value) FROM stdin;
-1	986
-2	986
-3	986
-4	987
-5	988
-6	988
-7	992
-8	993
-9	994
-10	998
-11	1001
-12	1001
-13	1003
-14	1005
-15	1005
-16	1006
-17	1006
-18	1007
-19	1006
-20	1007
-21	1007
-22	1007
-23	1010
-24	1010
-25	1011
-26	1012
-27	1012
-28	1012
-29	1012
-30	1011
-31	1010
-32	1010
-33	1008
-34	1006
-35	1004
-36	1003
-37	1002
-38	1001
-39	1000
-40	999
-41	998
-42	997
-43	996
-44	995
-45	995
-46	994
-47	994
-48	993
-49	993
-50	993
-51	992
-52	993
-53	993
-54	993
-55	994
-56	994
-57	995
-58	996
-59	996
-60	996
-61	998
-62	999
-63	1000
-64	1002
-65	1002
-66	1005
-67	1005
-68	1006
-69	1007
-70	1009
-71	1009
-72	1010
-73	1009
-74	1010
-75	1010
-76	1010
-77	1010
-78	1010
-79	1009
-80	1008
-81	1008
-82	1005
-83	1005
-84	1004
-85	1004
-86	1003
-87	1003
-88	1003
-89	1003
-90	1005
-91	1005
-92	1005
-93	1005
-94	1008
-95	1007
-96	1008
-97	1008
-98	1007
-99	1007
-100	1007
-101	1008
-102	1007
-103	1007
-104	1008
-105	1008
-106	1008
-107	1008
-108	1007
-109	1007
-110	1007
-111	1006
-112	1003
-113	1003
-114	1001
-115	1001
-116	999
-117	998
-118	997
-119	997
-120	997
-121	996
-122	996
-123	996
-124	997
-125	997
-126	997
-127	997
-128	997
-129	999
-130	999
-131	999
-132	1000
-133	1001
-134	1003
-135	1005
-136	1006
-137	1007
-138	1009
-139	1010
-140	1013
-141	1014
-142	1015
-143	1015
-144	1016
-145	1016
-146	1013
-147	1013
-148	1011
-149	1008
-150	1004
-151	1005
-152	1001
-153	1000
-154	998
-155	997
-156	997
-157	998
-158	999
-159	1002
-160	1006
-161	1007
-162	1010
-163	1010
-164	1011
-165	1013
-166	1014
-167	1014
-168	1014
-169	1014
-170	1014
-171	1014
-172	1014
-173	1013
-174	1013
-175	1013
-176	1012
-177	1012
-178	1012
-179	1011
-180	1011
-181	1011
-182	1010
-183	1009
-184	1009
-185	1007
-186	1006
-187	1006
-188	1004
-189	1005
-190	1005
-191	1005
-192	1007
-193	1009
-194	1009
-195	1010
-196	1012
-197	1012
-198	1013
-199	1013
-200	1014
-201	1014
-202	1014
-203	1015
-204	1015
-205	1016
-206	1015
-207	1015
-208	1015
-209	1016
-210	1016
-211	1016
-212	1015
-213	1015
-214	1015
-215	1014
-216	1014
-217	1014
-218	1013
-219	1013
-220	1013
-221	1013
-222	1013
-223	1013
-224	1013
-225	1014
-226	1013
-227	1013
-228	1014
-229	1014
-230	1014
-231	1015
-232	1016
-233	1016
-234	1017
-235	1019
-236	1020
-237	1019
-238	1023
-239	1023
-240	1025
-241	1026
-242	1027
-243	1028
-244	1030
-245	1030
-246	1029
-247	1029
-248	1030
-249	1031
-250	1028
-251	1028
-252	1024
-253	1020
-254	1020
-255	1018
-256	1013
-257	1005
-258	1001
-259	1000
-260	996
-261	995
-262	995
-263	995
-264	995
-265	993
-266	992
-267	990
-268	990
-269	982
-270	988
-271	981
-272	986
-273	970
-274	976
-275	970
-276	974
-277	975
-278	973
-279	975
-280	973
-281	991
-282	990
-283	977
-284	991
-285	992
-286	994
-287	993
-288	995
+1	0
+2	0
+3	0
+4	1600
+5	6740
+6	2750
+7	0
+8	0
+9	0
+10	0
+11	0
+12	0
+13	5840
+14	10700
+15	16900
+16	2670
+17	7
+18	0
+19	0
+20	0
+21	0
+22	0
+23	12700
+24	26400
+25	21300
+26	8
+27	0
+28	0
+29	0
+30	0
+31	0
+32	0
+33	7390
+34	14600
+35	1740
+36	147
+37	0
+38	0
+39	0
+40	0
+41	0
+42	1140
+43	6790
+44	11500
+45	1940
+46	0
+47	0
+48	0
+49	0
+50	0
+51	0
+52	7470
+53	16900
+54	18600
+55	6
+56	0
+57	0
+58	0
+59	0
+60	0
+61	420
+62	4660
+63	12800
+64	12800
+65	0
+66	0
+67	0
+68	0
+69	0
+70	0
+71	8120
+72	3220
+73	7810
+74	1290
+75	0
+76	0
+77	0
+78	0
+79	0
+80	8480
+81	7860
+82	1640
+83	6090
+84	0
+85	0
+86	0
+87	0
+88	0
+89	0
+90	6840
+91	7690
+92	11700
+93	55
+94	0
+95	0
+96	0
+97	0
+98	0
+99	481
+100	8860
+101	2710
+102	4780
+103	0
+104	0
+105	0
+106	0
+107	0
+108	0
+109	4250
+110	9570
+111	9680
+112	6080
+113	0
+114	0
+115	0
+116	0
+117	0
+118	0
+119	4380
+120	17300
+121	22000
+122	10500
+123	0
+124	0
+125	0
+126	0
+127	0
+128	28
+129	11900
+130	13300
+131	5670
+132	1310
+133	0
+134	0
+135	0
+136	0
+137	0
+138	343
+139	842
+140	808
+141	5270
+142	0
+143	0
+144	0
+145	0
+146	0
+147	0
+148	30300
+149	4290
+150	8050
+151	4840
+152	0
+153	0
+154	0
+155	0
+156	0
+157	1050
+158	6570
+159	3850
+160	483
+161	222
+162	0
+163	0
+164	0
+165	0
+166	408
+167	84
+168	11700
+169	8030
+170	13
+171	0
+172	0
+173	0
+174	0
+175	0
+176	0
+177	13600
+178	12900
+179	2290
+180	0
+181	0
+182	0
+183	0
+184	0
+185	0
+186	60
+187	8910
+188	25800
+189	1
+190	2
+191	0
+192	0
+193	0
+194	0
+195	0
+196	27500
+197	31200
+198	14300
+199	410
+200	0
+201	0
+202	0
+203	0
+204	134
+205	470
+206	36600
+207	24900
+208	12
+209	11300
+210	0
+211	0
+212	0
+213	0
+214	0
+215	0
+216	18400
+217	19800
+218	11900
+219	0
+220	0
+221	0
+222	0
+223	0
+224	1100
+225	7630
+226	8830
+227	1430
+228	5840
+229	5
+230	0
+231	0
+232	0
+233	0
+234	7380
+235	8710
+236	11600
+237	837
+238	0
+239	0
+240	0
+241	0
+242	0
+243	2790
+244	38300
+245	39700
+246	23700
+247	27200
+248	6
+249	0
+250	0
+251	0
+252	0
+253	14600
+254	21200
+255	8310
+256	13600
+257	0
+258	3
+259	0
+260	0
+261	0
+262	0
+263	1930
+264	15100
+265	30900
+266	0
+267	164
+268	0
+269	0
+270	0
+271	0
+272	0
+273	3
+274	6840
+275	1400
+276	6120
+277	0
+278	0
+279	0
+280	0
+281	0
+282	49900
+283	0
+284	45800
+285	3320
+286	0
+287	10500
+288	0
 289	-1.80000000000000004
 290	-1.89999999999999991
 291	-2
@@ -3222,1451 +3232,1451 @@ COPY numericvalue (observationid, value) FROM stdin;
 574	-0.200000000000000011
 575	1.30000000000000004
 576	-0.800000000000000044
-577	0
-578	0
-579	0
-580	0
-581	0
-582	0
-583	0
-584	0
-585	0
-586	0
-587	0
-588	0
-589	0
-590	0
-591	0
-592	0
-593	0
-594	0
-595	0
-596	0
-597	0
-598	0
-599	0
-600	0
-601	0
-602	0
-603	0
-604	0
-605	0
-606	0
+577	23.5
+578	22.3000000000000007
+579	16.6000000000000014
+580	20
+581	16.6000000000000014
+582	17.6000000000000014
+583	16.1000000000000014
+584	15.1999999999999993
+585	10.3000000000000007
+586	13.1999999999999993
+587	16.8000000000000007
+588	11.8000000000000007
+589	10.5999999999999996
+590	11.4000000000000004
+591	11.6999999999999993
+592	11.0999999999999996
+593	12.4000000000000004
+594	19.6000000000000014
+595	11.9000000000000004
+596	14.0999999999999996
+597	8.59999999999999964
+598	10.5999999999999996
+599	11.1999999999999993
+600	15.1999999999999993
+601	9.59999999999999964
+602	11.5
+603	2.79999999999999982
+604	8.80000000000000071
+605	5.59999999999999964
+606	6
 607	0
-608	0
-609	0
-610	0
-611	0
-612	0
-613	0
-614	0
-615	0
-616	0
-617	0
-618	0
-619	0
-620	0
-621	0
-622	0
-623	0
-624	0
-625	0
-626	0
-627	0
-628	0
-629	0
-630	0
-631	0
-632	0
-633	0
-634	0
-635	0
-636	0
-637	0
-638	0
-639	0
-640	0
-641	0
-642	0
-643	0
+608	8.19999999999999929
+609	17.1999999999999993
+610	21
+611	22.1000000000000014
+612	20.6000000000000014
+613	21.6000000000000014
+614	17.1000000000000014
+615	26.6000000000000014
+616	14.5
+617	12.9000000000000004
+618	10.0999999999999996
+619	17.1999999999999993
+620	19.6000000000000014
+621	17.1000000000000014
+622	14.3000000000000007
+623	10.0999999999999996
+624	0.900000000000000022
+625	5.20000000000000018
+626	6.5
+627	14.6999999999999993
+628	6.70000000000000018
+629	14.0999999999999996
+630	12.8000000000000007
+631	7
+632	5.20000000000000018
+633	9.59999999999999964
+634	4.59999999999999964
+635	5
+636	0.699999999999999956
+637	0.299999999999999989
+638	0.599999999999999978
+639	3.20000000000000018
+640	8.19999999999999929
+641	3.20000000000000018
+642	4.09999999999999964
+643	4.20000000000000018
 644	0
-645	0
-646	0
-647	0
-648	0
-649	0
-650	0
-651	0
-652	0
-653	0
-654	0
-655	0
-656	0
-657	0
-658	0
-659	0
-660	0
-661	0
-662	0
-663	0
-664	0
-665	0
-666	0
-667	0
-668	0
-669	0
-670	0
-671	0
-672	0
-673	0
-674	0
-675	0
-676	0
-677	0
-678	0
-679	0
-680	0
-681	0
-682	0
+645	13.0999999999999996
+646	12
+647	15.0999999999999996
+648	12.8000000000000007
+649	18.1999999999999993
+650	30.6000000000000014
+651	25.8000000000000007
+652	37.8999999999999986
+653	37.2999999999999972
+654	33.5
+655	25.6000000000000014
+656	30.6999999999999993
+657	36.2999999999999972
+658	27.8000000000000007
+659	31
+660	27.5
+661	22.5
+662	28.5
+663	31.1999999999999993
+664	17.8000000000000007
+665	23.5
+666	13
+667	21.8000000000000007
+668	16.1000000000000014
+669	18.8999999999999986
+670	15.8000000000000007
+671	16
+672	6.59999999999999964
+673	9.59999999999999964
+674	15.8000000000000007
+675	13
+676	12
+677	14.1999999999999993
+678	14.5
+679	11
+680	8.19999999999999929
+681	11
+682	5.09999999999999964
 683	0
-684	0
-685	0
-686	0
-687	0
-688	0
-689	0
-690	0
-691	0
-692	0
-693	0
-694	0
-695	0
-696	0
-697	0
-698	0
-699	0
-700	0
-701	0
-702	0
-703	0
-704	0
-705	0
-706	0
-707	0
-708	0
-709	0
-710	0
-711	0
-712	0
-713	0
-714	0
-715	0
-716	0
-717	0
-718	0.299999999999999989
-719	0
-720	0
-721	0
-722	0
-723	0
-724	0
-725	0
-726	0
-727	0
-728	0
-729	0
-730	0
-731	0
-732	0
-733	0
-734	0.299999999999999989
-735	0
-736	0
-737	0
-738	0.299999999999999989
-739	0
-740	0
-741	0
-742	0
-743	0
-744	0
-745	0
-746	0
-747	0
-748	0
-749	0
-750	0
-751	0
-752	0
-753	0
-754	0
-755	0
+684	5.40000000000000036
+685	6.79999999999999982
+686	16.6000000000000014
+687	12.0999999999999996
+688	24.6000000000000014
+689	23.6000000000000014
+690	21.5
+691	22.3000000000000007
+692	18.3999999999999986
+693	27.1999999999999993
+694	27.3000000000000007
+695	23.3000000000000007
+696	29.1000000000000014
+697	35.5
+698	21.3999999999999986
+699	21.6000000000000014
+700	13.5999999999999996
+701	13.1999999999999993
+702	6.79999999999999982
+703	12.3000000000000007
+704	7.40000000000000036
+705	8.40000000000000036
+706	11.3000000000000007
+707	9.40000000000000036
+708	10
+709	6.20000000000000018
+710	7.90000000000000036
+711	7.29999999999999982
+712	7.20000000000000018
+713	8.80000000000000071
+714	2.10000000000000009
+715	0.299999999999999989
+716	0.699999999999999956
+717	5.40000000000000036
+718	4.09999999999999964
+719	0.900000000000000022
+720	6.09999999999999964
+721	16
+722	13.8000000000000007
+723	14.5999999999999996
+724	19.1000000000000014
+725	18.1000000000000014
+726	21.8999999999999986
+727	19.1000000000000014
+728	8.5
+729	12.5
+730	5.70000000000000018
+731	6.90000000000000036
+732	6
+733	7.09999999999999964
+734	12
+735	11.0999999999999996
+736	25.3999999999999986
+737	23.1999999999999993
+738	19
+739	21.6999999999999993
+740	14.5
+741	17.3000000000000007
+742	16.3999999999999986
+743	15.3000000000000007
+744	18.5
+745	21
+746	26
+747	19
+748	19.6999999999999993
+749	23.6999999999999993
+750	20.8000000000000007
+751	12.8000000000000007
+752	8.90000000000000036
+753	14.8000000000000007
+754	7.40000000000000036
+755	21.3999999999999986
 756	0
-757	0
+757	3.60000000000000009
 758	0
 759	0
-760	0
-761	0
-762	0
-763	0
-764	0
-765	0
-766	0
-767	0
-768	0
-769	0
-770	0
-771	0
-772	0
-773	0
-774	0
-775	0
-776	0
-777	0
-778	0
-779	0
-780	0
-781	0
-782	0
-783	0
-784	0
-785	0
-786	0
-787	0
-788	0
-789	0
-790	0
-791	0
-792	0
-793	0
-794	0
-795	0
-796	0
-797	0
-798	0
-799	0
-800	0
-801	0
-802	0
-803	0
-804	0
-805	0
-806	0
-807	0
-808	0
-809	0
-810	0
-811	0
-812	0
-813	0
-814	0
-815	0
-816	0
-817	0
-818	0
-819	0
-820	0
-821	0
-822	0
-823	0
-824	0
-825	0
+760	4.70000000000000018
+761	5.70000000000000018
+762	13.1999999999999993
+763	5.79999999999999982
+764	11.8000000000000007
+765	17.1000000000000014
+766	14.5
+767	17.5
+768	12.9000000000000004
+769	11.3000000000000007
+770	15.5999999999999996
+771	12.6999999999999993
+772	15.0999999999999996
+773	15.5
+774	15.3000000000000007
+775	14.6999999999999993
+776	17.8000000000000007
+777	10.5999999999999996
+778	13
+779	9.69999999999999929
+780	13.3000000000000007
+781	19
+782	17.6000000000000014
+783	11.8000000000000007
+784	18.3999999999999986
+785	13.5999999999999996
+786	13.5999999999999996
+787	14.9000000000000004
+788	12
+789	12
+790	11.5999999999999996
+791	11.8000000000000007
+792	13.0999999999999996
+793	12.5
+794	18.8000000000000007
+795	18.8000000000000007
+796	16.1999999999999993
+797	14.1999999999999993
+798	11.5
+799	12.5
+800	8.59999999999999964
+801	7.90000000000000036
+802	10.0999999999999996
+803	7.59999999999999964
+804	5
+805	12.8000000000000007
+806	9.90000000000000036
+807	8.5
+808	9.40000000000000036
+809	9.19999999999999929
+810	13.0999999999999996
+811	12.5999999999999996
+812	13.5999999999999996
+813	13.3000000000000007
+814	12.6999999999999993
+815	12
+816	14.6999999999999993
+817	13.0999999999999996
+818	14
+819	17.3000000000000007
+820	11.5
+821	13.5999999999999996
+822	12.5
+823	10.1999999999999993
+824	8.69999999999999929
+825	6.5
 826	0
 827	0
-828	0
-829	0
-830	0
-831	0
-832	0
-833	0
-834	0
-835	0
-836	0.299999999999999989
-837	0
-838	0
-839	0
-840	0
-841	0.299999999999999989
-842	0
-843	0
-844	0
-845	0
-846	0
-847	0
-848	0
-849	0
-850	0.299999999999999989
-851	0
-852	0
-853	0
-854	0
-855	0
-856	0
-857	0
-858	0
-859	0
-860	0
-861	0
-862	0
-863	0
-864	0
-865	99
-866	99
-867	99
-868	95
-869	94
-870	94
-871	94
-872	98
-873	99
-874	98
-875	91
-876	91
-877	90
-878	89
-879	82
-880	89
-881	97
-882	99
-883	99
-884	99
-885	99
-886	99
-887	99
-888	99
-889	91
-890	99
-891	98
-892	95
-893	99
-894	99
-895	99
-896	99
-897	99
-898	94
-899	91
-900	93
-901	91
-902	93
-903	97
-904	98
-905	95
-906	98
-907	96
-908	93
-909	94
-910	97
-911	98
-912	99
-913	98
-914	99
-915	92
-916	89
-917	84
-918	80
-919	88
-920	92
-921	95
-922	96
-923	96
-924	96
-925	99
-926	98
-927	96
-928	96
-929	98
-930	98
-931	98
-932	98
-933	96
-934	94
-935	91
-936	97
-937	91
-938	94
-939	93
-940	88
-941	88
-942	92
-943	92
-944	95
-945	95
-946	97
-947	95
-948	84
-949	92
-950	86
-951	86
-952	92
-953	91
-954	97
-955	96
-956	94
-957	93
-958	95
-959	92
-960	99
-961	99
-962	99
-963	99
-964	98
-965	90
-966	92
-967	90
-968	89
-969	94
-970	98
-971	98
-972	99
-973	99
-974	89
-975	92
-976	88
-977	86
-978	90
-979	90
-980	90
-981	86
-982	86
-983	85
-984	79
-985	78
-986	86
-987	84
-988	91
-989	91
-990	91
-991	94
-992	94
-993	94
-994	91
-995	88
-996	90
-997	92
-998	93
-999	93
-1000	93
-1001	93
-1002	95
-1003	93
-1004	92
-1005	92
-1006	95
-1007	95
-1008	96
-1009	96
-1010	95
-1011	94
-1012	94
-1013	83
-1014	83
-1015	91
-1016	89
-1017	89
-1018	99
-1019	99
-1020	99
-1021	99
-1022	99
-1023	99
-1024	99
-1025	99
-1026	99
-1027	99
-1028	99
-1029	99
-1030	99
-1031	99
-1032	99
-1033	99
-1034	99
-1035	99
-1036	99
-1037	99
-1038	99
-1039	99
-1040	99
-1041	99
-1042	99
-1043	97
-1044	99
-1045	99
-1046	99
-1047	99
-1048	99
-1049	99
-1050	99
-1051	99
-1052	92
-1053	92
-1054	90
-1055	91
-1056	93
-1057	94
-1058	94
-1059	93
-1060	86
-1061	82
-1062	82
-1063	85
-1064	94
-1065	96
-1066	97
-1067	96
-1068	98
-1069	98
-1070	99
-1071	85
-1072	86
-1073	92
-1074	98
-1075	97
-1076	98
-1077	97
-1078	97
-1079	93
-1080	90
-1081	87
-1082	86
-1083	92
-1084	93
-1085	92
-1086	91
-1087	91
-1088	91
-1089	91
-1090	89
-1091	91
-1092	99
-1093	99
-1094	99
-1095	99
-1096	99
-1097	99
-1098	93
-1099	96
-1100	85
-1101	86
-1102	85
-1103	86
-1104	88
-1105	90
-1106	93
-1107	92
-1108	90
-1109	67
-1110	64
-1111	78
-1112	80
-1113	79
-1114	85
-1115	82
-1116	88
-1117	89
-1118	81
-1119	80
-1120	68
-1121	77
-1122	99
-1123	99
-1124	99
-1125	99
-1126	95
-1127	99
-1128	99
-1129	98
-1130	97
-1131	97
-1132	98
-1133	99
-1134	99
-1135	99
-1136	99
-1137	99
-1138	99
-1139	99
-1140	99
-1141	99
-1142	98
-1143	97
-1144	99
-1145	99
-1146	96
-1147	82
-1148	89
-1149	88
-1150	94
-1151	92
-1152	97
-1153	135
-1154	135
-1155	135
-1156	135
-1157	135
-1158	135
-1159	135
-1160	135
-1161	135
-1162	135
-1163	135
-1164	135
-1165	130
-1166	135
-1167	135
-1168	135
-1169	135
-1170	135
-1171	135
-1172	135
-1173	135
-1174	135
-1175	135
-1176	135
-1177	135
-1178	135
-1179	130
-1180	135
-1181	135
-1182	135
-1183	135
-1184	135
-1185	135
-1186	135
-1187	135
-1188	135
-1189	135
-1190	130
-1191	135
-1192	135
-1193	135
-1194	135
-1195	135
-1196	320
-1197	310
-1198	310
-1199	305
-1200	305
-1201	305
-1202	310
-1203	305
-1204	305
-1205	305
-1206	310
-1207	305
-1208	305
-1209	305
-1210	305
-1211	305
-1212	310
-1213	305
-1214	305
-1215	310
-1216	35
-1217	35
-1218	35
-1219	35
-1220	35
-1221	35
-1222	35
-1223	40
-1224	35
-1225	40
-1226	45
-1227	40
-1228	45
-1229	140
-1230	140
-1231	140
-1232	105
-1233	135
-1234	130
-1235	120
-1236	150
-1237	150
-1238	140
-1239	135
-1240	115
-1241	150
-1242	140
-1243	115
-1244	130
-1245	140
-1246	130
-1247	135
-1248	90
-1249	90
-1250	95
-1251	115
-1252	95
-1253	150
-1254	160
-1255	145
-1256	145
-1257	150
-1258	140
-1259	135
-1260	145
-1261	140
-1262	160
-1263	145
-1264	150
-1265	175
-1266	160
-1267	155
-1268	145
-1269	145
-1270	145
-1271	150
-1272	160
-1273	160
-1274	155
-1275	145
-1276	165
-1277	155
-1278	170
-1279	150
-1280	155
-1281	145
-1282	145
-1283	140
-1284	150
-1285	150
-1286	150
-1287	150
-1288	155
-1289	155
-1290	155
-1291	205
-1292	250
-1293	215
-1294	240
-1295	210
-1296	230
-1297	240
-1298	150
-1299	215
-1300	170
-1301	150
-1302	155
-1303	180
-1304	205
-1305	135
-1306	235
-1307	160
-1308	185
-1309	330
-1310	335
-1311	10
-1312	350
-1313	5
-1314	335
-1315	350
-1316	335
-1317	350
-1318	335
-1319	345
-1320	340
-1321	325
-1322	310
-1323	325
-1324	330
-1325	335
-1326	350
-1327	10
-1328	20
-1329	350
-1330	360
-1331	345
-1332	60
-1333	70
-1334	30
-1335	30
-1336	145
-1337	155
-1338	160
-1339	150
-1340	160
-1341	155
-1342	155
-1343	160
-1344	160
-1345	155
-1346	150
-1347	145
-1348	150
-1349	150
-1350	150
-1351	155
-1352	150
-1353	145
-1354	155
-1355	155
-1356	155
-1357	160
-1358	170
-1359	155
-1360	155
-1361	140
-1362	165
-1363	145
-1364	160
-1365	145
-1366	155
-1367	150
-1368	165
-1369	140
-1370	155
-1371	150
-1372	170
-1373	160
-1374	150
-1375	160
-1376	140
-1377	150
-1378	145
-1379	140
-1380	150
-1381	140
-1382	95
-1383	135
-1384	90
-1385	120
-1386	110
-1387	115
-1388	90
-1389	95
-1390	140
-1391	145
-1392	145
-1393	130
-1394	95
-1395	145
-1396	125
-1397	135
-1398	135
-1399	135
-1400	150
-1401	140
-1402	70
-1403	65
-1404	285
-1405	255
-1406	285
-1407	330
-1408	345
-1409	335
-1410	340
-1411	340
-1412	25
-1413	25
-1414	5
-1415	10
-1416	360
-1417	10
-1418	10
-1419	5
-1420	360
-1421	360
-1422	335
-1423	15
-1424	340
-1425	295
-1426	315
-1427	300
-1428	335
-1429	20
-1430	5
-1431	5
-1432	5
-1433	345
-1434	345
-1435	355
-1436	355
-1437	320
-1438	330
-1439	330
-1440	320
-1441	0
-1442	0
-1443	0
-1444	1600
-1445	6740
-1446	2750
-1447	0
-1448	0
-1449	0
-1450	0
-1451	0
-1452	0
-1453	5840
-1454	10700
-1455	16900
-1456	2670
-1457	7
-1458	0
-1459	0
-1460	0
-1461	0
-1462	0
-1463	12700
-1464	26400
-1465	21300
-1466	8
-1467	0
-1468	0
-1469	0
-1470	0
-1471	0
-1472	0
-1473	7390
-1474	14600
-1475	1740
-1476	147
-1477	0
-1478	0
-1479	0
-1480	0
-1481	0
-1482	1140
-1483	6790
-1484	11500
-1485	1940
-1486	0
-1487	0
-1488	0
-1489	0
-1490	0
-1491	0
-1492	7470
-1493	16900
-1494	18600
-1495	6
-1496	0
-1497	0
-1498	0
-1499	0
-1500	0
-1501	420
-1502	4660
-1503	12800
-1504	12800
-1505	0
-1506	0
-1507	0
-1508	0
-1509	0
-1510	0
-1511	8120
-1512	3220
-1513	7810
-1514	1290
-1515	0
-1516	0
-1517	0
-1518	0
-1519	0
-1520	8480
-1521	7860
-1522	1640
-1523	6090
-1524	0
-1525	0
-1526	0
-1527	0
-1528	0
-1529	0
-1530	6840
-1531	7690
-1532	11700
-1533	55
-1534	0
-1535	0
-1536	0
-1537	0
-1538	0
-1539	481
-1540	8860
-1541	2710
-1542	4780
-1543	0
-1544	0
-1545	0
-1546	0
-1547	0
-1548	0
-1549	4250
-1550	9570
-1551	9680
-1552	6080
-1553	0
-1554	0
-1555	0
-1556	0
-1557	0
-1558	0
-1559	4380
-1560	17300
-1561	22000
-1562	10500
-1563	0
-1564	0
-1565	0
-1566	0
-1567	0
-1568	28
-1569	11900
-1570	13300
-1571	5670
-1572	1310
-1573	0
-1574	0
-1575	0
-1576	0
-1577	0
-1578	343
-1579	842
-1580	808
-1581	5270
-1582	0
-1583	0
-1584	0
-1585	0
-1586	0
-1587	0
-1588	30300
-1589	4290
-1590	8050
-1591	4840
-1592	0
-1593	0
-1594	0
-1595	0
-1596	0
-1597	1050
-1598	6570
-1599	3850
-1600	483
-1601	222
-1602	0
-1603	0
-1604	0
-1605	0
-1606	408
-1607	84
-1608	11700
-1609	8030
-1610	13
-1611	0
-1612	0
-1613	0
-1614	0
-1615	0
-1616	0
-1617	13600
-1618	12900
-1619	2290
-1620	0
-1621	0
-1622	0
-1623	0
-1624	0
-1625	0
-1626	60
-1627	8910
-1628	25800
-1629	1
-1630	2
-1631	0
-1632	0
-1633	0
-1634	0
-1635	0
-1636	27500
-1637	31200
-1638	14300
-1639	410
-1640	0
-1641	0
-1642	0
-1643	0
-1644	134
-1645	470
-1646	36600
-1647	24900
-1648	12
-1649	11300
-1650	0
-1651	0
-1652	0
-1653	0
-1654	0
-1655	0
-1656	18400
-1657	19800
-1658	11900
-1659	0
-1660	0
-1661	0
-1662	0
-1663	0
-1664	1100
-1665	7630
-1666	8830
-1667	1430
-1668	5840
-1669	5
-1670	0
-1671	0
-1672	0
-1673	0
-1674	7380
-1675	8710
-1676	11600
-1677	837
-1678	0
-1679	0
-1680	0
-1681	0
-1682	0
-1683	2790
-1684	38300
-1685	39700
-1686	23700
-1687	27200
-1688	6
-1689	0
-1690	0
-1691	0
-1692	0
-1693	14600
-1694	21200
-1695	8310
-1696	13600
-1697	0
-1698	3
-1699	0
-1700	0
-1701	0
-1702	0
-1703	1930
-1704	15100
-1705	30900
-1706	0
-1707	164
-1708	0
-1709	0
-1710	0
-1711	0
-1712	0
-1713	3
-1714	6840
-1715	1400
-1716	6120
-1717	0
-1718	0
-1719	0
-1720	0
-1721	0
-1722	49900
-1723	0
-1724	45800
-1725	3320
-1726	0
-1727	10500
-1728	0
-1729	23.5
-1730	22.3000000000000007
-1731	16.6000000000000014
-1732	20
-1733	16.6000000000000014
-1734	17.6000000000000014
-1735	16.1000000000000014
-1736	15.1999999999999993
-1737	10.3000000000000007
-1738	13.1999999999999993
-1739	16.8000000000000007
-1740	11.8000000000000007
-1741	10.5999999999999996
-1742	11.4000000000000004
-1743	11.6999999999999993
-1744	11.0999999999999996
-1745	12.4000000000000004
-1746	19.6000000000000014
-1747	11.9000000000000004
-1748	14.0999999999999996
-1749	8.59999999999999964
-1750	10.5999999999999996
-1751	11.1999999999999993
-1752	15.1999999999999993
-1753	9.59999999999999964
-1754	11.5
-1755	2.79999999999999982
-1756	8.80000000000000071
-1757	5.59999999999999964
-1758	6
-1759	0
-1760	8.19999999999999929
-1761	17.1999999999999993
-1762	21
-1763	22.1000000000000014
-1764	20.6000000000000014
-1765	21.6000000000000014
-1766	17.1000000000000014
-1767	26.6000000000000014
-1768	14.5
-1769	12.9000000000000004
-1770	10.0999999999999996
-1771	17.1999999999999993
-1772	19.6000000000000014
-1773	17.1000000000000014
-1774	14.3000000000000007
-1775	10.0999999999999996
-1776	0.900000000000000022
-1777	5.20000000000000018
-1778	6.5
-1779	14.6999999999999993
-1780	6.70000000000000018
-1781	14.0999999999999996
-1782	12.8000000000000007
-1783	7
-1784	5.20000000000000018
-1785	9.59999999999999964
-1786	4.59999999999999964
-1787	5
-1788	0.699999999999999956
-1789	0.299999999999999989
-1790	0.599999999999999978
-1791	3.20000000000000018
-1792	8.19999999999999929
-1793	3.20000000000000018
-1794	4.09999999999999964
-1795	4.20000000000000018
-1796	0
-1797	13.0999999999999996
-1798	12
-1799	15.0999999999999996
-1800	12.8000000000000007
-1801	18.1999999999999993
-1802	30.6000000000000014
-1803	25.8000000000000007
-1804	37.8999999999999986
-1805	37.2999999999999972
-1806	33.5
-1807	25.6000000000000014
-1808	30.6999999999999993
-1809	36.2999999999999972
-1810	27.8000000000000007
-1811	31
-1812	27.5
-1813	22.5
-1814	28.5
-1815	31.1999999999999993
-1816	17.8000000000000007
-1817	23.5
-1818	13
-1819	21.8000000000000007
-1820	16.1000000000000014
-1821	18.8999999999999986
-1822	15.8000000000000007
-1823	16
-1824	6.59999999999999964
-1825	9.59999999999999964
-1826	15.8000000000000007
-1827	13
-1828	12
-1829	14.1999999999999993
-1830	14.5
-1831	11
-1832	8.19999999999999929
-1833	11
-1834	5.09999999999999964
-1835	0
-1836	5.40000000000000036
-1837	6.79999999999999982
-1838	16.6000000000000014
-1839	12.0999999999999996
-1840	24.6000000000000014
-1841	23.6000000000000014
-1842	21.5
-1843	22.3000000000000007
-1844	18.3999999999999986
-1845	27.1999999999999993
-1846	27.3000000000000007
-1847	23.3000000000000007
-1848	29.1000000000000014
-1849	35.5
-1850	21.3999999999999986
-1851	21.6000000000000014
-1852	13.5999999999999996
-1853	13.1999999999999993
-1854	6.79999999999999982
-1855	12.3000000000000007
-1856	7.40000000000000036
-1857	8.40000000000000036
-1858	11.3000000000000007
-1859	9.40000000000000036
-1860	10
-1861	6.20000000000000018
-1862	7.90000000000000036
-1863	7.29999999999999982
-1864	7.20000000000000018
-1865	8.80000000000000071
-1866	2.10000000000000009
-1867	0.299999999999999989
-1868	0.699999999999999956
-1869	5.40000000000000036
-1870	4.09999999999999964
-1871	0.900000000000000022
-1872	6.09999999999999964
-1873	16
-1874	13.8000000000000007
-1875	14.5999999999999996
-1876	19.1000000000000014
-1877	18.1000000000000014
-1878	21.8999999999999986
-1879	19.1000000000000014
-1880	8.5
-1881	12.5
-1882	5.70000000000000018
-1883	6.90000000000000036
-1884	6
-1885	7.09999999999999964
-1886	12
-1887	11.0999999999999996
-1888	25.3999999999999986
-1889	23.1999999999999993
-1890	19
-1891	21.6999999999999993
-1892	14.5
-1893	17.3000000000000007
-1894	16.3999999999999986
-1895	15.3000000000000007
-1896	18.5
-1897	21
-1898	26
-1899	19
-1900	19.6999999999999993
-1901	23.6999999999999993
-1902	20.8000000000000007
-1903	12.8000000000000007
-1904	8.90000000000000036
-1905	14.8000000000000007
-1906	7.40000000000000036
-1907	21.3999999999999986
-1908	0
-1909	3.60000000000000009
-1910	0
-1911	0
-1912	4.70000000000000018
-1913	5.70000000000000018
-1914	13.1999999999999993
-1915	5.79999999999999982
-1916	11.8000000000000007
-1917	17.1000000000000014
-1918	14.5
-1919	17.5
-1920	12.9000000000000004
-1921	11.3000000000000007
-1922	15.5999999999999996
-1923	12.6999999999999993
-1924	15.0999999999999996
-1925	15.5
-1926	15.3000000000000007
-1927	14.6999999999999993
-1928	17.8000000000000007
-1929	10.5999999999999996
-1930	13
-1931	9.69999999999999929
-1932	13.3000000000000007
-1933	19
-1934	17.6000000000000014
-1935	11.8000000000000007
-1936	18.3999999999999986
-1937	13.5999999999999996
-1938	13.5999999999999996
-1939	14.9000000000000004
-1940	12
-1941	12
-1942	11.5999999999999996
-1943	11.8000000000000007
-1944	13.0999999999999996
-1945	12.5
-1946	18.8000000000000007
-1947	18.8000000000000007
-1948	16.1999999999999993
-1949	14.1999999999999993
-1950	11.5
-1951	12.5
-1952	8.59999999999999964
-1953	7.90000000000000036
-1954	10.0999999999999996
-1955	7.59999999999999964
-1956	5
-1957	12.8000000000000007
-1958	9.90000000000000036
-1959	8.5
-1960	9.40000000000000036
-1961	9.19999999999999929
-1962	13.0999999999999996
-1963	12.5999999999999996
-1964	13.5999999999999996
-1965	13.3000000000000007
-1966	12.6999999999999993
-1967	12
-1968	14.6999999999999993
-1969	13.0999999999999996
-1970	14
-1971	17.3000000000000007
-1972	11.5
-1973	13.5999999999999996
-1974	12.5
-1975	10.1999999999999993
-1976	8.69999999999999929
-1977	6.5
-1978	0
-1979	0
-1980	5.59999999999999964
-1981	5.90000000000000036
-1982	9.09999999999999964
-1983	43.7000000000000028
-1984	33.2000000000000028
-1985	46.5
-1986	43.1000000000000014
-1987	46.2999999999999972
-1988	41.1000000000000014
-1989	40.5
-1990	32
-1991	26.6999999999999993
-1992	23.1000000000000014
-1993	34.7000000000000028
-1994	25.1999999999999993
-1995	32.5
-1996	23.6000000000000014
-1997	24.5
-1998	23.1999999999999993
-1999	19.1999999999999993
-2000	23
-2001	20.8000000000000007
-2002	30.5
-2003	19.3000000000000007
-2004	29.5
-2005	23.1999999999999993
-2006	28.6999999999999993
-2007	27.1999999999999993
-2008	30
-2009	19
-2010	19
-2011	33.2000000000000028
-2012	36.7999999999999972
-2013	36.3999999999999986
-2014	27.3000000000000007
-2015	26.5
-2016	21.8999999999999986
+828	5.59999999999999964
+829	5.90000000000000036
+830	9.09999999999999964
+831	43.7000000000000028
+832	33.2000000000000028
+833	46.5
+834	43.1000000000000014
+835	46.2999999999999972
+836	41.1000000000000014
+837	40.5
+838	32
+839	26.6999999999999993
+840	23.1000000000000014
+841	34.7000000000000028
+842	25.1999999999999993
+843	32.5
+844	23.6000000000000014
+845	24.5
+846	23.1999999999999993
+847	19.1999999999999993
+848	23
+849	20.8000000000000007
+850	30.5
+851	19.3000000000000007
+852	29.5
+853	23.1999999999999993
+854	28.6999999999999993
+855	27.1999999999999993
+856	30
+857	19
+858	19
+859	33.2000000000000028
+860	36.7999999999999972
+861	36.3999999999999986
+862	27.3000000000000007
+863	26.5
+864	21.8999999999999986
+865	986
+866	986
+867	986
+868	987
+869	988
+870	988
+871	992
+872	993
+873	994
+874	998
+875	1001
+876	1001
+877	1003
+878	1005
+879	1005
+880	1006
+881	1006
+882	1007
+883	1006
+884	1007
+885	1007
+886	1007
+887	1010
+888	1010
+889	1011
+890	1012
+891	1012
+892	1012
+893	1012
+894	1011
+895	1010
+896	1010
+897	1008
+898	1006
+899	1004
+900	1003
+901	1002
+902	1001
+903	1000
+904	999
+905	998
+906	997
+907	996
+908	995
+909	995
+910	994
+911	994
+912	993
+913	993
+914	993
+915	992
+916	993
+917	993
+918	993
+919	994
+920	994
+921	995
+922	996
+923	996
+924	996
+925	998
+926	999
+927	1000
+928	1002
+929	1002
+930	1005
+931	1005
+932	1006
+933	1007
+934	1009
+935	1009
+936	1010
+937	1009
+938	1010
+939	1010
+940	1010
+941	1010
+942	1010
+943	1009
+944	1008
+945	1008
+946	1005
+947	1005
+948	1004
+949	1004
+950	1003
+951	1003
+952	1003
+953	1003
+954	1005
+955	1005
+956	1005
+957	1005
+958	1008
+959	1007
+960	1008
+961	1008
+962	1007
+963	1007
+964	1007
+965	1008
+966	1007
+967	1007
+968	1008
+969	1008
+970	1008
+971	1008
+972	1007
+973	1007
+974	1007
+975	1006
+976	1003
+977	1003
+978	1001
+979	1001
+980	999
+981	998
+982	997
+983	997
+984	997
+985	996
+986	996
+987	996
+988	997
+989	997
+990	997
+991	997
+992	997
+993	999
+994	999
+995	999
+996	1000
+997	1001
+998	1003
+999	1005
+1000	1006
+1001	1007
+1002	1009
+1003	1010
+1004	1013
+1005	1014
+1006	1015
+1007	1015
+1008	1016
+1009	1016
+1010	1013
+1011	1013
+1012	1011
+1013	1008
+1014	1004
+1015	1005
+1016	1001
+1017	1000
+1018	998
+1019	997
+1020	997
+1021	998
+1022	999
+1023	1002
+1024	1006
+1025	1007
+1026	1010
+1027	1010
+1028	1011
+1029	1013
+1030	1014
+1031	1014
+1032	1014
+1033	1014
+1034	1014
+1035	1014
+1036	1014
+1037	1013
+1038	1013
+1039	1013
+1040	1012
+1041	1012
+1042	1012
+1043	1011
+1044	1011
+1045	1011
+1046	1010
+1047	1009
+1048	1009
+1049	1007
+1050	1006
+1051	1006
+1052	1004
+1053	1005
+1054	1005
+1055	1005
+1056	1007
+1057	1009
+1058	1009
+1059	1010
+1060	1012
+1061	1012
+1062	1013
+1063	1013
+1064	1014
+1065	1014
+1066	1014
+1067	1015
+1068	1015
+1069	1016
+1070	1015
+1071	1015
+1072	1015
+1073	1016
+1074	1016
+1075	1016
+1076	1015
+1077	1015
+1078	1015
+1079	1014
+1080	1014
+1081	1014
+1082	1013
+1083	1013
+1084	1013
+1085	1013
+1086	1013
+1087	1013
+1088	1013
+1089	1014
+1090	1013
+1091	1013
+1092	1014
+1093	1014
+1094	1014
+1095	1015
+1096	1016
+1097	1016
+1098	1017
+1099	1019
+1100	1020
+1101	1019
+1102	1023
+1103	1023
+1104	1025
+1105	1026
+1106	1027
+1107	1028
+1108	1030
+1109	1030
+1110	1029
+1111	1029
+1112	1030
+1113	1031
+1114	1028
+1115	1028
+1116	1024
+1117	1020
+1118	1020
+1119	1018
+1120	1013
+1121	1005
+1122	1001
+1123	1000
+1124	996
+1125	995
+1126	995
+1127	995
+1128	995
+1129	993
+1130	992
+1131	990
+1132	990
+1133	982
+1134	988
+1135	981
+1136	986
+1137	970
+1138	976
+1139	970
+1140	974
+1141	975
+1142	973
+1143	975
+1144	973
+1145	991
+1146	990
+1147	977
+1148	991
+1149	992
+1150	994
+1151	993
+1152	995
+1153	0
+1154	0
+1155	0
+1156	0
+1157	0
+1158	0
+1159	0
+1160	0
+1161	0
+1162	0
+1163	0
+1164	0
+1165	0
+1166	0
+1167	0
+1168	0
+1169	0
+1170	0
+1171	0
+1172	0
+1173	0
+1174	0
+1175	0
+1176	0
+1177	0
+1178	0
+1179	0
+1180	0
+1181	0
+1182	0
+1183	0
+1184	0
+1185	0
+1186	0
+1187	0
+1188	0
+1189	0
+1190	0
+1191	0
+1192	0
+1193	0
+1194	0
+1195	0
+1196	0
+1197	0
+1198	0
+1199	0
+1200	0
+1201	0
+1202	0
+1203	0
+1204	0
+1205	0
+1206	0
+1207	0
+1208	0
+1209	0
+1210	0
+1211	0
+1212	0
+1213	0
+1214	0
+1215	0
+1216	0
+1217	0
+1218	0
+1219	0
+1220	0
+1221	0
+1222	0
+1223	0
+1224	0
+1225	0
+1226	0
+1227	0
+1228	0
+1229	0
+1230	0
+1231	0
+1232	0
+1233	0
+1234	0
+1235	0
+1236	0
+1237	0
+1238	0
+1239	0
+1240	0
+1241	0
+1242	0
+1243	0
+1244	0
+1245	0
+1246	0
+1247	0
+1248	0
+1249	0
+1250	0
+1251	0
+1252	0
+1253	0
+1254	0
+1255	0
+1256	0
+1257	0
+1258	0
+1259	0
+1260	0
+1261	0
+1262	0
+1263	0
+1264	0
+1265	0
+1266	0
+1267	0
+1268	0
+1269	0
+1270	0
+1271	0
+1272	0
+1273	0
+1274	0
+1275	0
+1276	0
+1277	0
+1278	0
+1279	0
+1280	0
+1281	0
+1282	0
+1283	0
+1284	0
+1285	0
+1286	0
+1287	0
+1288	0
+1289	0
+1290	0
+1291	0
+1292	0
+1293	0
+1294	0.299999999999999989
+1295	0
+1296	0
+1297	0
+1298	0
+1299	0
+1300	0
+1301	0
+1302	0
+1303	0
+1304	0
+1305	0
+1306	0
+1307	0
+1308	0
+1309	0
+1310	0.299999999999999989
+1311	0
+1312	0
+1313	0
+1314	0.299999999999999989
+1315	0
+1316	0
+1317	0
+1318	0
+1319	0
+1320	0
+1321	0
+1322	0
+1323	0
+1324	0
+1325	0
+1326	0
+1327	0
+1328	0
+1329	0
+1330	0
+1331	0
+1332	0
+1333	0
+1334	0
+1335	0
+1336	0
+1337	0
+1338	0
+1339	0
+1340	0
+1341	0
+1342	0
+1343	0
+1344	0
+1345	0
+1346	0
+1347	0
+1348	0
+1349	0
+1350	0
+1351	0
+1352	0
+1353	0
+1354	0
+1355	0
+1356	0
+1357	0
+1358	0
+1359	0
+1360	0
+1361	0
+1362	0
+1363	0
+1364	0
+1365	0
+1366	0
+1367	0
+1368	0
+1369	0
+1370	0
+1371	0
+1372	0
+1373	0
+1374	0
+1375	0
+1376	0
+1377	0
+1378	0
+1379	0
+1380	0
+1381	0
+1382	0
+1383	0
+1384	0
+1385	0
+1386	0
+1387	0
+1388	0
+1389	0
+1390	0
+1391	0
+1392	0
+1393	0
+1394	0
+1395	0
+1396	0
+1397	0
+1398	0
+1399	0
+1400	0
+1401	0
+1402	0
+1403	0
+1404	0
+1405	0
+1406	0
+1407	0
+1408	0
+1409	0
+1410	0
+1411	0
+1412	0.299999999999999989
+1413	0
+1414	0
+1415	0
+1416	0
+1417	0.299999999999999989
+1418	0
+1419	0
+1420	0
+1421	0
+1422	0
+1423	0
+1424	0
+1425	0
+1426	0.299999999999999989
+1427	0
+1428	0
+1429	0
+1430	0
+1431	0
+1432	0
+1433	0
+1434	0
+1435	0
+1436	0
+1437	0
+1438	0
+1439	0
+1440	0
+1441	99
+1442	99
+1443	99
+1444	95
+1445	94
+1446	94
+1447	94
+1448	98
+1449	99
+1450	98
+1451	91
+1452	91
+1453	90
+1454	89
+1455	82
+1456	89
+1457	97
+1458	99
+1459	99
+1460	99
+1461	99
+1462	99
+1463	99
+1464	99
+1465	91
+1466	99
+1467	98
+1468	95
+1469	99
+1470	99
+1471	99
+1472	99
+1473	99
+1474	94
+1475	91
+1476	93
+1477	91
+1478	93
+1479	97
+1480	98
+1481	95
+1482	98
+1483	96
+1484	93
+1485	94
+1486	97
+1487	98
+1488	99
+1489	98
+1490	99
+1491	92
+1492	89
+1493	84
+1494	80
+1495	88
+1496	92
+1497	95
+1498	96
+1499	96
+1500	96
+1501	99
+1502	98
+1503	96
+1504	96
+1505	98
+1506	98
+1507	98
+1508	98
+1509	96
+1510	94
+1511	91
+1512	97
+1513	91
+1514	94
+1515	93
+1516	88
+1517	88
+1518	92
+1519	92
+1520	95
+1521	95
+1522	97
+1523	95
+1524	84
+1525	92
+1526	86
+1527	86
+1528	92
+1529	91
+1530	97
+1531	96
+1532	94
+1533	93
+1534	95
+1535	92
+1536	99
+1537	99
+1538	99
+1539	99
+1540	98
+1541	90
+1542	92
+1543	90
+1544	89
+1545	94
+1546	98
+1547	98
+1548	99
+1549	99
+1550	89
+1551	92
+1552	88
+1553	86
+1554	90
+1555	90
+1556	90
+1557	86
+1558	86
+1559	85
+1560	79
+1561	78
+1562	86
+1563	84
+1564	91
+1565	91
+1566	91
+1567	94
+1568	94
+1569	94
+1570	91
+1571	88
+1572	90
+1573	92
+1574	93
+1575	93
+1576	93
+1577	93
+1578	95
+1579	93
+1580	92
+1581	92
+1582	95
+1583	95
+1584	96
+1585	96
+1586	95
+1587	94
+1588	94
+1589	83
+1590	83
+1591	91
+1592	89
+1593	89
+1594	99
+1595	99
+1596	99
+1597	99
+1598	99
+1599	99
+1600	99
+1601	99
+1602	99
+1603	99
+1604	99
+1605	99
+1606	99
+1607	99
+1608	99
+1609	99
+1610	99
+1611	99
+1612	99
+1613	99
+1614	99
+1615	99
+1616	99
+1617	99
+1618	99
+1619	97
+1620	99
+1621	99
+1622	99
+1623	99
+1624	99
+1625	99
+1626	99
+1627	99
+1628	92
+1629	92
+1630	90
+1631	91
+1632	93
+1633	94
+1634	94
+1635	93
+1636	86
+1637	82
+1638	82
+1639	85
+1640	94
+1641	96
+1642	97
+1643	96
+1644	98
+1645	98
+1646	99
+1647	85
+1648	86
+1649	92
+1650	98
+1651	97
+1652	98
+1653	97
+1654	97
+1655	93
+1656	90
+1657	87
+1658	86
+1659	92
+1660	93
+1661	92
+1662	91
+1663	91
+1664	91
+1665	91
+1666	89
+1667	91
+1668	99
+1669	99
+1670	99
+1671	99
+1672	99
+1673	99
+1674	93
+1675	96
+1676	85
+1677	86
+1678	85
+1679	86
+1680	88
+1681	90
+1682	93
+1683	92
+1684	90
+1685	67
+1686	64
+1687	78
+1688	80
+1689	79
+1690	85
+1691	82
+1692	88
+1693	89
+1694	81
+1695	80
+1696	68
+1697	77
+1698	99
+1699	99
+1700	99
+1701	99
+1702	95
+1703	99
+1704	99
+1705	98
+1706	97
+1707	97
+1708	98
+1709	99
+1710	99
+1711	99
+1712	99
+1713	99
+1714	99
+1715	99
+1716	99
+1717	99
+1718	98
+1719	97
+1720	99
+1721	99
+1722	96
+1723	82
+1724	89
+1725	88
+1726	94
+1727	92
+1728	97
+1729	135
+1730	135
+1731	135
+1732	135
+1733	135
+1734	135
+1735	135
+1736	135
+1737	135
+1738	135
+1739	135
+1740	135
+1741	130
+1742	135
+1743	135
+1744	135
+1745	135
+1746	135
+1747	135
+1748	135
+1749	135
+1750	135
+1751	135
+1752	135
+1753	135
+1754	135
+1755	130
+1756	135
+1757	135
+1758	135
+1759	135
+1760	135
+1761	135
+1762	135
+1763	135
+1764	135
+1765	135
+1766	130
+1767	135
+1768	135
+1769	135
+1770	135
+1771	135
+1772	320
+1773	310
+1774	310
+1775	305
+1776	305
+1777	305
+1778	310
+1779	305
+1780	305
+1781	305
+1782	310
+1783	305
+1784	305
+1785	305
+1786	305
+1787	305
+1788	310
+1789	305
+1790	305
+1791	310
+1792	35
+1793	35
+1794	35
+1795	35
+1796	35
+1797	35
+1798	35
+1799	40
+1800	35
+1801	40
+1802	45
+1803	40
+1804	45
+1805	140
+1806	140
+1807	140
+1808	105
+1809	135
+1810	130
+1811	120
+1812	150
+1813	150
+1814	140
+1815	135
+1816	115
+1817	150
+1818	140
+1819	115
+1820	130
+1821	140
+1822	130
+1823	135
+1824	90
+1825	90
+1826	95
+1827	115
+1828	95
+1829	150
+1830	160
+1831	145
+1832	145
+1833	150
+1834	140
+1835	135
+1836	145
+1837	140
+1838	160
+1839	145
+1840	150
+1841	175
+1842	160
+1843	155
+1844	145
+1845	145
+1846	145
+1847	150
+1848	160
+1849	160
+1850	155
+1851	145
+1852	165
+1853	155
+1854	170
+1855	150
+1856	155
+1857	145
+1858	145
+1859	140
+1860	150
+1861	150
+1862	150
+1863	150
+1864	155
+1865	155
+1866	155
+1867	205
+1868	250
+1869	215
+1870	240
+1871	210
+1872	230
+1873	240
+1874	150
+1875	215
+1876	170
+1877	150
+1878	155
+1879	180
+1880	205
+1881	135
+1882	235
+1883	160
+1884	185
+1885	330
+1886	335
+1887	10
+1888	350
+1889	5
+1890	335
+1891	350
+1892	335
+1893	350
+1894	335
+1895	345
+1896	340
+1897	325
+1898	310
+1899	325
+1900	330
+1901	335
+1902	350
+1903	10
+1904	20
+1905	350
+1906	360
+1907	345
+1908	60
+1909	70
+1910	30
+1911	30
+1912	145
+1913	155
+1914	160
+1915	150
+1916	160
+1917	155
+1918	155
+1919	160
+1920	160
+1921	155
+1922	150
+1923	145
+1924	150
+1925	150
+1926	150
+1927	155
+1928	150
+1929	145
+1930	155
+1931	155
+1932	155
+1933	160
+1934	170
+1935	155
+1936	155
+1937	140
+1938	165
+1939	145
+1940	160
+1941	145
+1942	155
+1943	150
+1944	165
+1945	140
+1946	155
+1947	150
+1948	170
+1949	160
+1950	150
+1951	160
+1952	140
+1953	150
+1954	145
+1955	140
+1956	150
+1957	140
+1958	95
+1959	135
+1960	90
+1961	120
+1962	110
+1963	115
+1964	90
+1965	95
+1966	140
+1967	145
+1968	145
+1969	130
+1970	95
+1971	145
+1972	125
+1973	135
+1974	135
+1975	135
+1976	150
+1977	140
+1978	70
+1979	65
+1980	285
+1981	255
+1982	285
+1983	330
+1984	345
+1985	335
+1986	340
+1987	340
+1988	25
+1989	25
+1990	5
+1991	10
+1992	360
+1993	10
+1994	10
+1995	5
+1996	360
+1997	360
+1998	335
+1999	15
+2000	340
+2001	295
+2002	315
+2003	300
+2004	335
+2005	20
+2006	5
+2007	5
+2008	5
+2009	345
+2010	345
+2011	355
+2012	355
+2013	320
+2014	330
+2015	330
+2016	320
 \.
 
 
 --
--- TOC entry 3645 (class 0 OID 60087)
+-- TOC entry 3645 (class 0 OID 62452)
 -- Dependencies: 201
 -- Data for Name: observableproperty; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -4683,7 +4693,7 @@ COPY observableproperty (observablepropertyid, hibernatediscriminator, identifie
 
 
 --
--- TOC entry 3862 (class 0 OID 0)
+-- TOC entry 3863 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: observablepropertyid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -4692,2050 +4702,2050 @@ SELECT pg_catalog.setval('observablepropertyid_seq', 7, true);
 
 
 --
--- TOC entry 3646 (class 0 OID 60097)
+-- TOC entry 3646 (class 0 OID 62462)
 -- Dependencies: 202
 -- Data for Name: observation; Type: TABLE DATA; Schema: public; Owner: user
 --
 
 COPY observation (observationid, seriesid, phenomenontimestart, phenomenontimeend, resulttime, identifier, codespace, name, codespacename, description, deleted, validtimestart, validtimeend, unitid, samplinggeometry) FROM stdin;
-1	1	2016-06-30 23:45:00	2016-06-30 23:45:00	2016-06-30 23:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-2	1	2016-07-01 02:45:00	2016-07-01 02:45:00	2016-07-01 02:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-3	1	2016-07-01 04:46:00	2016-07-01 04:46:00	2016-07-01 04:46:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-4	1	2016-07-01 07:45:00	2016-07-01 07:45:00	2016-07-01 07:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-5	1	2016-07-01 09:45:00	2016-07-01 09:45:00	2016-07-01 09:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-6	1	2016-07-01 10:15:00	2016-07-01 10:15:00	2016-07-01 10:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-7	1	2016-07-01 17:00:00	2016-07-01 17:00:00	2016-07-01 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-8	1	2016-07-01 18:30:00	2016-07-01 18:30:00	2016-07-01 18:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-9	1	2016-07-01 18:45:00	2016-07-01 18:45:00	2016-07-01 18:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-10	1	2016-07-01 23:30:00	2016-07-01 23:30:00	2016-07-01 23:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-11	1	2016-07-02 03:30:00	2016-07-02 03:30:00	2016-07-02 03:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-12	1	2016-07-02 04:30:00	2016-07-02 04:30:00	2016-07-02 04:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-13	1	2016-07-02 06:00:00	2016-07-02 06:00:00	2016-07-02 06:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-14	1	2016-07-02 09:30:00	2016-07-02 09:30:00	2016-07-02 09:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-15	1	2016-07-02 09:45:00	2016-07-02 09:45:00	2016-07-02 09:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-16	1	2016-07-02 14:30:00	2016-07-02 14:30:00	2016-07-02 14:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-17	1	2016-07-02 16:00:00	2016-07-02 16:00:00	2016-07-02 16:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-18	1	2016-07-02 20:15:00	2016-07-02 20:15:00	2016-07-02 20:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-19	1	2016-07-02 23:15:00	2016-07-02 23:15:00	2016-07-02 23:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-20	1	2016-07-03 01:45:00	2016-07-03 01:45:00	2016-07-03 01:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-21	1	2016-07-03 02:00:00	2016-07-03 02:00:00	2016-07-03 02:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-22	1	2016-07-03 05:30:00	2016-07-03 05:30:00	2016-07-03 05:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-23	1	2016-07-03 10:15:00	2016-07-03 10:15:00	2016-07-03 10:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-24	1	2016-07-03 11:00:00	2016-07-03 11:00:00	2016-07-03 11:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-25	1	2016-07-03 13:16:00	2016-07-03 13:16:00	2016-07-03 13:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-26	1	2016-07-03 16:01:00	2016-07-03 16:01:00	2016-07-03 16:01:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-27	1	2016-07-03 19:00:00	2016-07-03 19:00:00	2016-07-03 19:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-28	1	2016-07-03 20:15:00	2016-07-03 20:15:00	2016-07-03 20:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-29	1	2016-07-03 23:16:00	2016-07-03 23:16:00	2016-07-03 23:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-30	1	2016-07-04 02:01:00	2016-07-04 02:01:00	2016-07-04 02:01:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-31	1	2016-07-04 05:01:00	2016-07-04 05:01:00	2016-07-04 05:01:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-32	1	2016-07-04 06:16:00	2016-07-04 06:16:00	2016-07-04 06:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-33	1	2016-07-04 09:16:00	2016-07-04 09:16:00	2016-07-04 09:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-34	1	2016-07-04 12:01:00	2016-07-04 12:01:00	2016-07-04 12:01:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-35	1	2016-07-04 15:00:00	2016-07-04 15:00:00	2016-07-04 15:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-36	1	2016-07-04 16:15:00	2016-07-04 16:15:00	2016-07-04 16:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-37	1	2016-07-04 19:15:00	2016-07-04 19:15:00	2016-07-04 19:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-38	1	2016-07-04 22:00:00	2016-07-04 22:00:00	2016-07-04 22:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-39	1	2016-07-05 01:01:00	2016-07-05 01:01:00	2016-07-05 01:01:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-40	1	2016-07-05 02:16:00	2016-07-05 02:16:00	2016-07-05 02:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-41	1	2016-07-05 05:16:00	2016-07-05 05:16:00	2016-07-05 05:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-42	1	2016-07-05 08:00:00	2016-07-05 08:00:00	2016-07-05 08:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-43	1	2016-07-05 11:00:00	2016-07-05 11:00:00	2016-07-05 11:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-44	1	2016-07-05 12:45:00	2016-07-05 12:45:00	2016-07-05 12:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-45	1	2016-07-05 15:15:00	2016-07-05 15:15:00	2016-07-05 15:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-46	1	2016-07-05 17:30:00	2016-07-05 17:30:00	2016-07-05 17:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-47	1	2016-07-05 20:15:00	2016-07-05 20:15:00	2016-07-05 20:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-48	1	2016-07-05 22:45:00	2016-07-05 22:45:00	2016-07-05 22:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-49	1	2016-07-06 01:15:00	2016-07-06 01:15:00	2016-07-06 01:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-50	1	2016-07-06 03:45:00	2016-07-06 03:45:00	2016-07-06 03:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-51	1	2016-07-06 06:15:00	2016-07-06 06:15:00	2016-07-06 06:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-52	1	2016-07-06 08:45:00	2016-07-06 08:45:00	2016-07-06 08:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-53	1	2016-07-06 10:45:00	2016-07-06 10:45:00	2016-07-06 10:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-54	1	2016-07-06 13:30:00	2016-07-06 13:30:00	2016-07-06 13:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-55	1	2016-07-06 17:15:00	2016-07-06 17:15:00	2016-07-06 17:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-56	1	2016-07-06 18:45:00	2016-07-06 18:45:00	2016-07-06 18:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-57	1	2016-07-06 21:45:00	2016-07-06 21:45:00	2016-07-06 21:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-58	1	2016-07-07 00:30:00	2016-07-07 00:30:00	2016-07-07 00:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-59	1	2016-07-07 01:45:00	2016-07-07 01:45:00	2016-07-07 01:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-60	1	2016-07-07 04:30:00	2016-07-07 04:30:00	2016-07-07 04:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-61	1	2016-07-07 07:15:00	2016-07-07 07:15:00	2016-07-07 07:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-62	1	2016-07-07 10:00:00	2016-07-07 10:00:00	2016-07-07 10:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-63	1	2016-07-07 12:45:00	2016-07-07 12:45:00	2016-07-07 12:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-64	1	2016-07-07 16:15:00	2016-07-07 16:15:00	2016-07-07 16:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-65	1	2016-07-07 17:30:00	2016-07-07 17:30:00	2016-07-07 17:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-66	1	2016-07-07 21:15:00	2016-07-07 21:15:00	2016-07-07 21:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-67	1	2016-07-07 22:00:00	2016-07-07 22:00:00	2016-07-07 22:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-68	1	2016-07-07 23:00:00	2016-07-07 23:00:00	2016-07-07 23:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-69	1	2016-07-08 03:15:00	2016-07-08 03:15:00	2016-07-08 03:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-70	1	2016-07-08 07:00:00	2016-07-08 07:00:00	2016-07-08 07:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-71	1	2016-07-08 08:15:00	2016-07-08 08:15:00	2016-07-08 08:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-72	1	2016-07-08 09:00:00	2016-07-08 09:00:00	2016-07-08 09:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-73	1	2016-07-08 13:45:00	2016-07-08 13:45:00	2016-07-08 13:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-74	1	2016-07-08 20:15:00	2016-07-08 20:15:00	2016-07-08 20:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-75	1	2016-07-08 16:30:00	2016-07-08 16:30:00	2016-07-08 16:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-76	1	2016-07-08 23:30:00	2016-07-08 23:30:00	2016-07-08 23:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-77	1	2016-07-08 23:45:00	2016-07-08 23:45:00	2016-07-08 23:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-78	1	2016-07-09 01:15:00	2016-07-09 01:15:00	2016-07-09 01:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-79	1	2016-07-09 03:15:00	2016-07-09 03:15:00	2016-07-09 03:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-80	1	2016-07-09 08:30:00	2016-07-09 08:30:00	2016-07-09 08:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-81	1	2016-07-09 08:00:00	2016-07-09 08:00:00	2016-07-09 08:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-82	1	2016-07-09 13:15:00	2016-07-09 13:15:00	2016-07-09 13:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-83	1	2016-07-09 15:30:00	2016-07-09 15:30:00	2016-07-09 15:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-84	1	2016-07-09 18:00:00	2016-07-09 18:00:00	2016-07-09 18:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-85	1	2016-07-09 17:15:00	2016-07-09 17:15:00	2016-07-09 17:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-86	1	2016-07-10 01:15:00	2016-07-10 01:15:00	2016-07-10 01:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-87	1	2016-07-10 01:00:00	2016-07-10 01:00:00	2016-07-10 01:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-88	1	2016-07-10 03:45:00	2016-07-10 03:45:00	2016-07-10 03:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-89	1	2016-07-10 02:15:00	2016-07-10 02:15:00	2016-07-10 02:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-90	1	2016-07-10 10:00:00	2016-07-10 10:00:00	2016-07-10 10:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-91	1	2016-07-10 12:00:00	2016-07-10 12:00:00	2016-07-10 12:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-92	1	2016-07-10 13:30:00	2016-07-10 13:30:00	2016-07-10 13:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-93	1	2016-07-10 12:30:00	2016-07-10 12:30:00	2016-07-10 12:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-94	1	2016-07-10 21:15:00	2016-07-10 21:15:00	2016-07-10 21:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-95	1	2016-07-10 17:15:00	2016-07-10 17:15:00	2016-07-10 17:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-96	1	2016-07-11 01:00:00	2016-07-11 01:00:00	2016-07-11 01:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-97	1	2016-07-11 01:15:00	2016-07-11 01:15:00	2016-07-11 01:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-98	1	2016-07-11 04:30:00	2016-07-11 04:30:00	2016-07-11 04:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-99	1	2016-07-11 04:15:00	2016-07-11 04:15:00	2016-07-11 04:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-100	1	2016-07-11 09:15:00	2016-07-11 09:15:00	2016-07-11 09:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-101	1	2016-07-11 10:45:00	2016-07-11 10:45:00	2016-07-11 10:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-102	1	2016-07-11 17:00:00	2016-07-11 17:00:00	2016-07-11 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-103	1	2016-07-11 17:30:00	2016-07-11 17:30:00	2016-07-11 17:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-104	1	2016-07-11 18:45:00	2016-07-11 18:45:00	2016-07-11 18:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-105	1	2016-07-11 19:30:00	2016-07-11 19:30:00	2016-07-11 19:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-106	1	2016-07-12 02:30:00	2016-07-12 02:30:00	2016-07-12 02:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-107	1	2016-07-12 01:30:00	2016-07-12 01:30:00	2016-07-12 01:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-108	1	2016-07-12 07:30:00	2016-07-12 07:30:00	2016-07-12 07:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-109	1	2016-07-12 08:16:00	2016-07-12 08:16:00	2016-07-12 08:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-110	1	2016-07-12 09:30:00	2016-07-12 09:30:00	2016-07-12 09:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-111	1	2016-07-12 10:30:00	2016-07-12 10:30:00	2016-07-12 10:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-112	1	2016-07-12 16:30:00	2016-07-12 16:30:00	2016-07-12 16:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-113	1	2016-07-12 15:15:00	2016-07-12 15:15:00	2016-07-12 15:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-114	1	2016-07-12 20:00:00	2016-07-12 20:00:00	2016-07-12 20:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-115	1	2016-07-12 20:30:00	2016-07-12 20:30:00	2016-07-12 20:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-116	1	2016-07-13 00:15:00	2016-07-13 00:15:00	2016-07-13 00:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-117	1	2016-07-13 03:15:00	2016-07-13 03:15:00	2016-07-13 03:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-118	1	2016-07-13 06:00:00	2016-07-13 06:00:00	2016-07-13 06:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-119	1	2016-07-13 09:15:00	2016-07-13 09:15:00	2016-07-13 09:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-120	1	2016-07-13 09:30:00	2016-07-13 09:30:00	2016-07-13 09:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-121	1	2016-07-13 12:15:00	2016-07-13 12:15:00	2016-07-13 12:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-122	1	2016-07-13 17:00:00	2016-07-13 17:00:00	2016-07-13 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-123	1	2016-07-13 18:00:00	2016-07-13 18:00:00	2016-07-13 18:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-124	1	2016-07-13 23:15:00	2016-07-13 23:15:00	2016-07-13 23:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-125	1	2016-07-13 22:00:00	2016-07-13 22:00:00	2016-07-13 22:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-126	1	2016-07-14 00:00:00	2016-07-14 00:00:00	2016-07-14 00:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-127	1	2016-07-14 02:00:00	2016-07-14 02:00:00	2016-07-14 02:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-128	1	2016-07-14 06:15:00	2016-07-14 06:15:00	2016-07-14 06:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-129	1	2016-07-14 10:30:00	2016-07-14 10:30:00	2016-07-14 10:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-130	1	2016-07-14 11:30:00	2016-07-14 11:30:00	2016-07-14 11:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-131	1	2016-07-14 12:30:00	2016-07-14 12:30:00	2016-07-14 12:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-132	1	2016-07-14 16:45:00	2016-07-14 16:45:00	2016-07-14 16:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-133	1	2016-07-14 17:30:00	2016-07-14 17:30:00	2016-07-14 17:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-134	1	2016-07-14 21:30:00	2016-07-14 21:30:00	2016-07-14 21:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-135	1	2016-07-15 01:45:00	2016-07-15 01:45:00	2016-07-15 01:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-136	1	2016-07-15 02:00:00	2016-07-15 02:00:00	2016-07-15 02:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-137	1	2016-07-15 04:00:00	2016-07-15 04:00:00	2016-07-15 04:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-138	1	2016-07-15 06:30:00	2016-07-15 06:30:00	2016-07-15 06:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-139	1	2016-07-15 08:30:00	2016-07-15 08:30:00	2016-07-15 08:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-140	1	2016-07-15 14:00:00	2016-07-15 14:00:00	2016-07-15 14:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-141	1	2016-07-15 15:30:00	2016-07-15 15:30:00	2016-07-15 15:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-142	1	2016-07-15 20:45:00	2016-07-15 20:45:00	2016-07-15 20:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-143	1	2016-07-15 21:15:00	2016-07-15 21:15:00	2016-07-15 21:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-144	1	2016-07-15 22:30:00	2016-07-15 22:30:00	2016-07-15 22:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-145	1	2016-07-15 23:15:00	2016-07-15 23:15:00	2016-07-15 23:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-146	1	2016-07-16 05:15:00	2016-07-16 05:15:00	2016-07-16 05:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-147	1	2016-07-16 05:00:00	2016-07-16 05:00:00	2016-07-16 05:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-148	1	2016-07-16 08:15:00	2016-07-16 08:15:00	2016-07-16 08:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-149	1	2016-07-16 11:30:00	2016-07-16 11:30:00	2016-07-16 11:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-150	1	2016-07-16 15:15:00	2016-07-16 15:15:00	2016-07-16 15:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-151	1	2016-07-16 14:15:00	2016-07-16 14:15:00	2016-07-16 14:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-152	1	2016-07-16 19:45:00	2016-07-16 19:45:00	2016-07-16 19:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-153	1	2016-07-16 20:45:00	2016-07-16 20:45:00	2016-07-16 20:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-154	1	2016-07-17 01:45:00	2016-07-17 01:45:00	2016-07-17 01:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-155	1	2016-07-17 03:45:00	2016-07-17 03:45:00	2016-07-17 03:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-156	1	2016-07-17 05:30:00	2016-07-17 05:30:00	2016-07-17 05:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-157	1	2016-07-17 07:30:00	2016-07-17 07:30:00	2016-07-17 07:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-158	1	2016-07-17 09:15:00	2016-07-17 09:15:00	2016-07-17 09:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-159	1	2016-07-17 13:45:00	2016-07-17 13:45:00	2016-07-17 13:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-160	1	2016-07-17 17:00:00	2016-07-17 17:00:00	2016-07-17 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-161	1	2016-07-17 17:45:00	2016-07-17 17:45:00	2016-07-17 17:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-162	1	2016-07-17 21:30:00	2016-07-17 21:30:00	2016-07-17 21:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-163	1	2016-07-17 23:30:00	2016-07-17 23:30:00	2016-07-17 23:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-164	1	2016-07-18 01:00:00	2016-07-18 01:00:00	2016-07-18 01:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-165	1	2016-07-18 05:15:00	2016-07-18 05:15:00	2016-07-18 05:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-166	1	2016-07-18 08:45:00	2016-07-18 08:45:00	2016-07-18 08:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-167	1	2016-07-18 09:30:00	2016-07-18 09:30:00	2016-07-18 09:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-168	1	2016-07-18 10:45:00	2016-07-18 10:45:00	2016-07-18 10:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-169	1	2016-07-18 12:30:00	2016-07-18 12:30:00	2016-07-18 12:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-170	1	2016-07-18 17:00:00	2016-07-18 17:00:00	2016-07-18 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-171	1	2016-07-18 17:30:00	2016-07-18 17:30:00	2016-07-18 17:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-172	1	2016-07-18 20:30:00	2016-07-18 20:30:00	2016-07-18 20:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-173	1	2016-07-18 20:45:00	2016-07-18 20:45:00	2016-07-18 20:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-174	1	2016-07-19 00:30:00	2016-07-19 00:30:00	2016-07-19 00:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-175	1	2016-07-19 02:45:00	2016-07-19 02:45:00	2016-07-19 02:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-176	1	2016-07-19 08:00:00	2016-07-19 08:00:00	2016-07-19 08:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-177	1	2016-07-19 09:45:00	2016-07-19 09:45:00	2016-07-19 09:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-178	1	2016-07-19 11:45:00	2016-07-19 11:45:00	2016-07-19 11:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-179	1	2016-07-19 16:00:00	2016-07-19 16:00:00	2016-07-19 16:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-180	1	2016-07-19 17:00:00	2016-07-19 17:00:00	2016-07-19 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-181	1	2016-07-19 18:00:00	2016-07-19 18:00:00	2016-07-19 18:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-182	1	2016-07-19 21:30:00	2016-07-19 21:30:00	2016-07-19 21:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-183	1	2016-07-20 01:00:00	2016-07-20 01:00:00	2016-07-20 01:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-184	1	2016-07-20 01:15:00	2016-07-20 01:15:00	2016-07-20 01:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-185	1	2016-07-20 06:15:00	2016-07-20 06:15:00	2016-07-20 06:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-186	1	2016-07-20 07:45:00	2016-07-20 07:45:00	2016-07-20 07:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-187	1	2016-07-20 08:30:00	2016-07-20 08:30:00	2016-07-20 08:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-188	1	2016-07-20 15:00:00	2016-07-20 15:00:00	2016-07-20 15:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-189	1	2016-07-20 17:00:00	2016-07-20 17:00:00	2016-07-20 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-190	1	2016-07-20 16:00:00	2016-07-20 16:00:00	2016-07-20 16:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-191	1	2016-07-20 19:00:00	2016-07-20 19:00:00	2016-07-20 19:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-192	1	2016-07-20 22:30:00	2016-07-20 22:30:00	2016-07-20 22:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-193	1	2016-07-21 02:00:00	2016-07-21 02:00:00	2016-07-21 02:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-194	1	2016-07-21 03:15:00	2016-07-21 03:15:00	2016-07-21 03:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-195	1	2016-07-21 04:45:00	2016-07-21 04:45:00	2016-07-21 04:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-196	1	2016-07-21 09:45:00	2016-07-21 09:45:00	2016-07-21 09:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-197	1	2016-07-21 13:30:00	2016-07-21 13:30:00	2016-07-21 13:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-198	1	2016-07-21 15:45:00	2016-07-21 15:45:00	2016-07-21 15:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-199	1	2016-07-21 16:45:00	2016-07-21 16:45:00	2016-07-21 16:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-200	1	2016-07-21 20:45:00	2016-07-21 20:45:00	2016-07-21 20:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-201	1	2016-07-21 22:45:00	2016-07-21 22:45:00	2016-07-21 22:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-202	1	2016-07-22 00:15:00	2016-07-22 00:15:00	2016-07-22 00:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-203	1	2016-07-22 04:30:00	2016-07-22 04:30:00	2016-07-22 04:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-204	1	2016-07-22 04:15:00	2016-07-22 04:15:00	2016-07-22 04:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-205	1	2016-07-22 08:15:00	2016-07-22 08:15:00	2016-07-22 08:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-206	1	2016-07-22 11:45:00	2016-07-22 11:45:00	2016-07-22 11:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-207	1	2016-07-22 12:15:00	2016-07-22 12:15:00	2016-07-22 12:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-208	1	2016-07-22 12:45:00	2016-07-22 12:45:00	2016-07-22 12:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-209	1	2016-07-22 19:15:00	2016-07-22 19:15:00	2016-07-22 19:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-210	1	2016-07-22 20:00:00	2016-07-22 20:00:00	2016-07-22 20:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-211	1	2016-07-22 23:00:00	2016-07-22 23:00:00	2016-07-22 23:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-212	1	2016-07-23 02:30:00	2016-07-23 02:30:00	2016-07-23 02:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-213	1	2016-07-23 04:15:00	2016-07-23 04:15:00	2016-07-23 04:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-214	1	2016-07-23 05:45:00	2016-07-23 05:45:00	2016-07-23 05:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-215	1	2016-07-23 08:00:00	2016-07-23 08:00:00	2016-07-23 08:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-216	1	2016-07-23 12:45:00	2016-07-23 12:45:00	2016-07-23 12:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-217	1	2016-07-23 12:30:00	2016-07-23 12:30:00	2016-07-23 12:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-218	1	2016-07-23 16:30:00	2016-07-23 16:30:00	2016-07-23 16:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-219	1	2016-07-23 17:00:00	2016-07-23 17:00:00	2016-07-23 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-220	1	2016-07-23 20:15:00	2016-07-23 20:15:00	2016-07-23 20:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-221	1	2016-07-24 00:15:00	2016-07-24 00:15:00	2016-07-24 00:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-222	1	2016-07-24 02:45:00	2016-07-24 02:45:00	2016-07-24 02:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-223	1	2016-07-24 05:30:00	2016-07-24 05:30:00	2016-07-24 05:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-224	1	2016-07-24 08:30:00	2016-07-24 08:30:00	2016-07-24 08:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-225	1	2016-07-24 10:30:00	2016-07-24 10:30:00	2016-07-24 10:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-226	1	2016-07-24 13:15:00	2016-07-24 13:15:00	2016-07-24 13:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-227	1	2016-07-24 14:15:00	2016-07-24 14:15:00	2016-07-24 14:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-228	1	2016-07-24 17:00:00	2016-07-24 17:00:00	2016-07-24 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-229	1	2016-07-24 18:45:00	2016-07-24 18:45:00	2016-07-24 18:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-230	1	2016-07-24 20:15:00	2016-07-24 20:15:00	2016-07-24 20:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-231	1	2016-07-25 00:15:00	2016-07-25 00:15:00	2016-07-25 00:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-232	1	2016-07-25 05:00:00	2016-07-25 05:00:00	2016-07-25 05:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-233	1	2016-07-25 06:45:00	2016-07-25 06:45:00	2016-07-25 06:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-234	1	2016-07-25 07:45:00	2016-07-25 07:45:00	2016-07-25 07:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-235	1	2016-07-25 12:15:00	2016-07-25 12:15:00	2016-07-25 12:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-236	1	2016-07-25 14:45:00	2016-07-25 14:45:00	2016-07-25 14:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-237	1	2016-07-25 13:45:00	2016-07-25 13:45:00	2016-07-25 13:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-238	1	2016-07-25 19:30:00	2016-07-25 19:30:00	2016-07-25 19:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-239	1	2016-07-25 18:30:00	2016-07-25 18:30:00	2016-07-25 18:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-240	1	2016-07-25 23:00:00	2016-07-25 23:00:00	2016-07-25 23:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-241	1	2016-07-26 02:30:00	2016-07-26 02:30:00	2016-07-26 02:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-242	1	2016-07-26 03:45:00	2016-07-26 03:45:00	2016-07-26 03:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-243	1	2016-07-26 07:00:00	2016-07-26 07:00:00	2016-07-26 07:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-244	1	2016-07-26 09:45:00	2016-07-26 09:45:00	2016-07-26 09:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-245	1	2016-07-26 09:00:00	2016-07-26 09:00:00	2016-07-26 09:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-246	1	2016-07-26 13:15:00	2016-07-26 13:15:00	2016-07-26 13:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-247	1	2016-07-26 14:30:00	2016-07-26 14:30:00	2016-07-26 14:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-248	1	2016-07-26 16:30:00	2016-07-26 16:30:00	2016-07-26 16:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-249	1	2016-07-26 20:45:00	2016-07-26 20:45:00	2016-07-26 20:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-250	1	2016-07-27 01:15:00	2016-07-27 01:15:00	2016-07-27 01:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-251	1	2016-07-27 02:15:00	2016-07-27 02:15:00	2016-07-27 02:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-252	1	2016-07-27 06:15:00	2016-07-27 06:15:00	2016-07-27 06:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-253	1	2016-07-27 10:00:00	2016-07-27 10:00:00	2016-07-27 10:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-254	1	2016-07-27 09:30:00	2016-07-27 09:30:00	2016-07-27 09:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-255	1	2016-07-27 11:00:00	2016-07-27 11:00:00	2016-07-27 11:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-256	1	2016-07-27 13:15:00	2016-07-27 13:15:00	2016-07-27 13:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-257	1	2016-07-27 17:30:00	2016-07-27 17:30:00	2016-07-27 17:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-258	1	2016-07-27 19:30:00	2016-07-27 19:30:00	2016-07-27 19:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-259	1	2016-07-27 20:45:00	2016-07-27 20:45:00	2016-07-27 20:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-260	1	2016-07-28 00:15:00	2016-07-28 00:15:00	2016-07-28 00:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-261	1	2016-07-28 04:00:00	2016-07-28 04:00:00	2016-07-28 04:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-262	1	2016-07-28 06:00:00	2016-07-28 06:00:00	2016-07-28 06:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-263	1	2016-07-28 07:30:00	2016-07-28 07:30:00	2016-07-28 07:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-264	1	2016-07-28 10:00:00	2016-07-28 10:00:00	2016-07-28 10:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-265	1	2016-07-28 12:30:00	2016-07-28 12:30:00	2016-07-28 12:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-266	1	2016-07-28 15:30:00	2016-07-28 15:30:00	2016-07-28 15:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-267	1	2016-07-28 20:00:00	2016-07-28 20:00:00	2016-07-28 20:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-268	1	2016-07-28 20:45:00	2016-07-28 20:45:00	2016-07-28 20:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-269	1	2016-07-29 05:15:00	2016-07-29 05:15:00	2016-07-29 05:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-270	1	2016-07-29 00:00:00	2016-07-29 00:00:00	2016-07-29 00:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-271	1	2016-07-29 06:30:00	2016-07-29 06:30:00	2016-07-29 06:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-272	1	2016-07-29 01:15:00	2016-07-29 01:15:00	2016-07-29 01:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-273	1	2016-07-29 15:15:00	2016-07-29 15:15:00	2016-07-29 15:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-274	1	2016-07-29 10:00:00	2016-07-29 10:00:00	2016-07-29 10:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-275	1	2016-07-29 16:30:00	2016-07-29 16:30:00	2016-07-29 16:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-276	1	2016-07-29 11:15:00	2016-07-29 11:15:00	2016-07-29 11:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-277	1	2016-07-30 01:15:00	2016-07-30 01:15:00	2016-07-30 01:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-278	1	2016-07-29 20:00:00	2016-07-29 20:00:00	2016-07-29 20:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-279	1	2016-07-30 02:30:00	2016-07-30 02:30:00	2016-07-30 02:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-280	1	2016-07-29 21:15:00	2016-07-29 21:15:00	2016-07-29 21:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-281	1	2016-07-31 12:45:00	2016-07-31 12:45:00	2016-07-31 12:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-282	1	2016-07-31 07:30:00	2016-07-31 07:30:00	2016-07-31 07:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-283	1	2016-07-30 05:45:00	2016-07-30 05:45:00	2016-07-30 05:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-284	1	2016-07-31 08:45:00	2016-07-31 08:45:00	2016-07-31 08:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-285	1	2016-07-31 13:30:00	2016-07-31 13:30:00	2016-07-31 13:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-286	1	2016-07-31 20:00:00	2016-07-31 20:00:00	2016-07-31 20:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-287	1	2016-07-31 15:30:00	2016-07-31 15:30:00	2016-07-31 15:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-288	1	2016-07-31 22:15:00	2016-07-31 22:15:00	2016-07-31 22:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
-289	2	2016-07-01 01:15:00	2016-07-01 01:15:00	2016-07-01 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-290	2	2016-07-01 05:30:00	2016-07-01 05:30:00	2016-07-01 05:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-291	2	2016-07-01 05:00:00	2016-07-01 05:00:00	2016-07-01 05:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-292	2	2016-07-01 10:30:00	2016-07-01 10:30:00	2016-07-01 10:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-293	2	2016-07-01 10:15:00	2016-07-01 10:15:00	2016-07-01 10:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-294	2	2016-07-01 11:45:00	2016-07-01 11:45:00	2016-07-01 11:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-295	2	2016-07-01 16:15:00	2016-07-01 16:15:00	2016-07-01 16:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-296	2	2016-07-01 21:15:00	2016-07-01 21:15:00	2016-07-01 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-297	2	2016-07-01 20:15:00	2016-07-01 20:15:00	2016-07-01 20:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-298	2	2016-07-02 01:45:00	2016-07-02 01:45:00	2016-07-02 01:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-299	2	2016-07-02 02:16:00	2016-07-02 02:16:00	2016-07-02 02:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-300	2	2016-07-02 06:00:00	2016-07-02 06:00:00	2016-07-02 06:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-301	2	2016-07-02 09:30:00	2016-07-02 09:30:00	2016-07-02 09:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-302	2	2016-07-02 11:00:00	2016-07-02 11:00:00	2016-07-02 11:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-303	2	2016-07-02 11:15:00	2016-07-02 11:15:00	2016-07-02 11:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-304	2	2016-07-02 16:00:00	2016-07-02 16:00:00	2016-07-02 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-305	2	2016-07-02 18:00:00	2016-07-02 18:00:00	2016-07-02 18:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-306	2	2016-07-02 19:30:00	2016-07-02 19:30:00	2016-07-02 19:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-307	2	2016-07-02 21:15:00	2016-07-02 21:15:00	2016-07-02 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-308	2	2016-07-03 01:15:00	2016-07-03 01:15:00	2016-07-03 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-309	2	2016-07-03 03:30:00	2016-07-03 03:30:00	2016-07-03 03:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-310	2	2016-07-03 07:00:00	2016-07-03 07:00:00	2016-07-03 07:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-311	2	2016-07-03 07:15:00	2016-07-03 07:15:00	2016-07-03 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-312	2	2016-07-03 10:15:00	2016-07-03 10:15:00	2016-07-03 10:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-313	2	2016-07-03 14:16:00	2016-07-03 14:16:00	2016-07-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-314	2	2016-07-03 17:01:00	2016-07-03 17:01:00	2016-07-03 17:01:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-315	2	2016-07-03 20:00:00	2016-07-03 20:00:00	2016-07-03 20:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-316	2	2016-07-03 21:15:00	2016-07-03 21:15:00	2016-07-03 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-317	2	2016-07-04 00:16:00	2016-07-04 00:16:00	2016-07-04 00:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-318	2	2016-07-04 03:01:00	2016-07-04 03:01:00	2016-07-04 03:01:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-319	2	2016-07-04 06:01:00	2016-07-04 06:01:00	2016-07-04 06:01:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-320	2	2016-07-04 07:16:00	2016-07-04 07:16:00	2016-07-04 07:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-321	2	2016-07-04 10:16:00	2016-07-04 10:16:00	2016-07-04 10:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-322	2	2016-07-04 13:01:00	2016-07-04 13:01:00	2016-07-04 13:01:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-323	2	2016-07-04 16:00:00	2016-07-04 16:00:00	2016-07-04 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-324	2	2016-07-04 17:15:00	2016-07-04 17:15:00	2016-07-04 17:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-325	2	2016-07-04 20:15:00	2016-07-04 20:15:00	2016-07-04 20:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-326	2	2016-07-04 23:00:00	2016-07-04 23:00:00	2016-07-04 23:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-327	2	2016-07-05 02:01:00	2016-07-05 02:01:00	2016-07-05 02:01:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-328	2	2016-07-05 03:16:00	2016-07-05 03:16:00	2016-07-05 03:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-329	2	2016-07-05 06:16:00	2016-07-05 06:16:00	2016-07-05 06:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-330	2	2016-07-05 09:00:00	2016-07-05 09:00:00	2016-07-05 09:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-331	2	2016-07-05 12:00:00	2016-07-05 12:00:00	2016-07-05 12:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-332	2	2016-07-05 13:45:00	2016-07-05 13:45:00	2016-07-05 13:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-333	2	2016-07-05 16:15:00	2016-07-05 16:15:00	2016-07-05 16:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-334	2	2016-07-05 18:30:00	2016-07-05 18:30:00	2016-07-05 18:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-335	2	2016-07-05 21:30:00	2016-07-05 21:30:00	2016-07-05 21:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-336	2	2016-07-05 23:45:00	2016-07-05 23:45:00	2016-07-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-337	2	2016-07-06 02:15:00	2016-07-06 02:15:00	2016-07-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-338	2	2016-07-06 04:45:00	2016-07-06 04:45:00	2016-07-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-339	2	2016-07-06 07:15:00	2016-07-06 07:15:00	2016-07-06 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-340	2	2016-07-06 09:45:00	2016-07-06 09:45:00	2016-07-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-341	2	2016-07-06 12:15:00	2016-07-06 12:15:00	2016-07-06 12:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-342	2	2016-07-06 14:00:00	2016-07-06 14:00:00	2016-07-06 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-343	2	2016-07-06 17:15:00	2016-07-06 17:15:00	2016-07-06 17:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-344	2	2016-07-06 19:30:00	2016-07-06 19:30:00	2016-07-06 19:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-345	2	2016-07-06 22:00:00	2016-07-06 22:00:00	2016-07-06 22:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-346	2	2016-07-07 00:45:00	2016-07-07 00:45:00	2016-07-07 00:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-347	2	2016-07-07 03:15:00	2016-07-07 03:15:00	2016-07-07 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-348	2	2016-07-07 06:00:00	2016-07-07 06:00:00	2016-07-07 06:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-349	2	2016-07-07 09:00:00	2016-07-07 09:00:00	2016-07-07 09:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-350	2	2016-07-07 10:45:00	2016-07-07 10:45:00	2016-07-07 10:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-351	2	2016-07-07 17:15:00	2016-07-07 17:15:00	2016-07-07 17:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-352	2	2016-07-07 13:45:00	2016-07-07 13:45:00	2016-07-07 13:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-353	2	2016-07-07 19:15:00	2016-07-07 19:15:00	2016-07-07 19:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-354	2	2016-07-07 21:15:00	2016-07-07 21:15:00	2016-07-07 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-355	2	2016-07-08 01:15:00	2016-07-08 01:15:00	2016-07-08 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-356	2	2016-07-08 01:00:00	2016-07-08 01:00:00	2016-07-08 01:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-357	2	2016-07-08 06:15:00	2016-07-08 06:15:00	2016-07-08 06:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-358	2	2016-07-08 04:45:00	2016-07-08 04:45:00	2016-07-08 04:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-359	2	2016-07-08 10:45:00	2016-07-08 10:45:00	2016-07-08 10:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-360	2	2016-07-08 09:00:00	2016-07-08 09:00:00	2016-07-08 09:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-361	2	2016-07-08 14:45:00	2016-07-08 14:45:00	2016-07-08 14:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-362	2	2016-07-08 17:45:00	2016-07-08 17:45:00	2016-07-08 17:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-363	2	2016-07-08 16:30:00	2016-07-08 16:30:00	2016-07-08 16:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-364	2	2016-07-08 23:00:00	2016-07-08 23:00:00	2016-07-08 23:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-365	2	2016-07-09 01:15:00	2016-07-09 01:15:00	2016-07-09 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-366	2	2016-07-09 05:15:00	2016-07-09 05:15:00	2016-07-09 05:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-367	2	2016-07-09 03:15:00	2016-07-09 03:15:00	2016-07-09 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-368	2	2016-07-09 06:45:00	2016-07-09 06:45:00	2016-07-09 06:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-369	2	2016-07-09 08:15:00	2016-07-09 08:15:00	2016-07-09 08:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-370	2	2016-07-09 14:45:00	2016-07-09 14:45:00	2016-07-09 14:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-371	2	2016-07-09 12:45:00	2016-07-09 12:45:00	2016-07-09 12:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-372	2	2016-07-09 20:45:00	2016-07-09 20:45:00	2016-07-09 20:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-373	2	2016-07-09 19:00:00	2016-07-09 19:00:00	2016-07-09 19:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-374	2	2016-07-10 00:15:00	2016-07-10 00:15:00	2016-07-10 00:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-375	2	2016-07-09 23:15:00	2016-07-09 23:15:00	2016-07-09 23:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-376	2	2016-07-10 06:30:00	2016-07-10 06:30:00	2016-07-10 06:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-377	2	2016-07-10 03:45:00	2016-07-10 03:45:00	2016-07-10 03:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-378	2	2016-07-10 11:30:00	2016-07-10 11:30:00	2016-07-10 11:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-379	2	2016-07-10 10:00:00	2016-07-10 10:00:00	2016-07-10 10:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-380	2	2016-07-10 15:00:00	2016-07-10 15:00:00	2016-07-10 15:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-381	2	2016-07-10 14:00:00	2016-07-10 14:00:00	2016-07-10 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-382	2	2016-07-10 18:30:00	2016-07-10 18:30:00	2016-07-10 18:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-383	2	2016-07-10 18:45:00	2016-07-10 18:45:00	2016-07-10 18:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-384	2	2016-07-11 00:30:00	2016-07-11 00:30:00	2016-07-11 00:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-385	2	2016-07-10 23:30:00	2016-07-10 23:30:00	2016-07-10 23:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-386	2	2016-07-11 06:00:00	2016-07-11 06:00:00	2016-07-11 06:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-387	2	2016-07-11 04:30:00	2016-07-11 04:30:00	2016-07-11 04:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-388	2	2016-07-11 11:30:00	2016-07-11 11:30:00	2016-07-11 11:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-389	2	2016-07-11 12:30:00	2016-07-11 12:30:00	2016-07-11 12:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-390	2	2016-07-11 16:30:00	2016-07-11 16:30:00	2016-07-11 16:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-391	2	2016-07-11 15:15:00	2016-07-11 15:15:00	2016-07-11 15:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-392	2	2016-07-11 19:45:00	2016-07-11 19:45:00	2016-07-11 19:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-393	2	2016-07-11 22:00:00	2016-07-11 22:00:00	2016-07-11 22:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-394	2	2016-07-12 00:45:00	2016-07-12 00:45:00	2016-07-12 00:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-395	2	2016-07-12 03:00:00	2016-07-12 03:00:00	2016-07-12 03:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-396	2	2016-07-12 04:30:00	2016-07-12 04:30:00	2016-07-12 04:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-397	2	2016-07-12 06:45:00	2016-07-12 06:45:00	2016-07-12 06:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-398	2	2016-07-12 11:00:00	2016-07-12 11:00:00	2016-07-12 11:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-399	2	2016-07-12 10:45:00	2016-07-12 10:45:00	2016-07-12 10:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-400	2	2016-07-12 18:00:00	2016-07-12 18:00:00	2016-07-12 18:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-401	2	2016-07-12 16:45:00	2016-07-12 16:45:00	2016-07-12 16:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-402	2	2016-07-12 20:15:00	2016-07-12 20:15:00	2016-07-12 20:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-403	2	2016-07-12 23:15:00	2016-07-12 23:15:00	2016-07-12 23:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-404	2	2016-07-13 01:45:00	2016-07-13 01:45:00	2016-07-13 01:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-405	2	2016-07-13 01:15:00	2016-07-13 01:15:00	2016-07-13 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-406	2	2016-07-13 09:45:00	2016-07-13 09:45:00	2016-07-13 09:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-407	2	2016-07-13 07:15:00	2016-07-13 07:15:00	2016-07-13 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-408	2	2016-07-13 10:30:00	2016-07-13 10:30:00	2016-07-13 10:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-409	2	2016-07-13 14:45:00	2016-07-13 14:45:00	2016-07-13 14:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-410	2	2016-07-13 16:00:00	2016-07-13 16:00:00	2016-07-13 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-411	2	2016-07-13 18:30:00	2016-07-13 18:30:00	2016-07-13 18:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-412	2	2016-07-13 20:45:00	2016-07-13 20:45:00	2016-07-13 20:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-413	2	2016-07-13 23:30:00	2016-07-13 23:30:00	2016-07-13 23:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-414	2	2016-07-14 02:45:00	2016-07-14 02:45:00	2016-07-14 02:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-415	2	2016-07-14 04:45:00	2016-07-14 04:45:00	2016-07-14 04:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-416	2	2016-07-14 09:00:00	2016-07-14 09:00:00	2016-07-14 09:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-417	2	2016-07-14 07:15:00	2016-07-14 07:15:00	2016-07-14 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-418	2	2016-07-14 16:00:00	2016-07-14 16:00:00	2016-07-14 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-419	2	2016-07-14 15:45:00	2016-07-14 15:45:00	2016-07-14 15:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-420	2	2016-07-14 20:00:00	2016-07-14 20:00:00	2016-07-14 20:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-421	2	2016-07-14 19:00:00	2016-07-14 19:00:00	2016-07-14 19:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-422	2	2016-07-15 01:30:00	2016-07-15 01:30:00	2016-07-15 01:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-423	2	2016-07-15 01:00:00	2016-07-15 01:00:00	2016-07-15 01:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-424	2	2016-07-15 03:30:00	2016-07-15 03:30:00	2016-07-15 03:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-425	2	2016-07-15 04:15:00	2016-07-15 04:15:00	2016-07-15 04:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-426	2	2016-07-15 10:30:00	2016-07-15 10:30:00	2016-07-15 10:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-427	2	2016-07-15 11:00:00	2016-07-15 11:00:00	2016-07-15 11:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-428	2	2016-07-15 14:00:00	2016-07-15 14:00:00	2016-07-15 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-429	2	2016-07-15 14:15:00	2016-07-15 14:15:00	2016-07-15 14:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-430	2	2016-07-15 20:00:00	2016-07-15 20:00:00	2016-07-15 20:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-431	2	2016-07-15 19:30:00	2016-07-15 19:30:00	2016-07-15 19:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-432	2	2016-07-16 01:30:00	2016-07-16 01:30:00	2016-07-16 01:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-433	2	2016-07-16 04:00:00	2016-07-16 04:00:00	2016-07-16 04:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-434	2	2016-07-16 06:45:00	2016-07-16 06:45:00	2016-07-16 06:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-435	2	2016-07-16 05:15:00	2016-07-16 05:15:00	2016-07-16 05:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-436	2	2016-07-16 08:30:00	2016-07-16 08:30:00	2016-07-16 08:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-437	2	2016-07-16 13:00:00	2016-07-16 13:00:00	2016-07-16 13:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-438	2	2016-07-16 14:45:00	2016-07-16 14:45:00	2016-07-16 14:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-439	2	2016-07-16 17:30:00	2016-07-16 17:30:00	2016-07-16 17:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-440	2	2016-07-16 21:15:00	2016-07-16 21:15:00	2016-07-16 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-441	2	2016-07-16 21:00:00	2016-07-16 21:00:00	2016-07-16 21:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-442	2	2016-07-17 01:15:00	2016-07-17 01:15:00	2016-07-17 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-443	2	2016-07-17 01:45:00	2016-07-17 01:45:00	2016-07-17 01:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-444	2	2016-07-17 08:15:00	2016-07-17 08:15:00	2016-07-17 08:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-445	2	2016-07-17 06:45:00	2016-07-17 06:45:00	2016-07-17 06:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-446	2	2016-07-17 12:00:00	2016-07-17 12:00:00	2016-07-17 12:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-447	2	2016-07-17 12:45:00	2016-07-17 12:45:00	2016-07-17 12:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-448	2	2016-07-17 14:30:00	2016-07-17 14:30:00	2016-07-17 14:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-449	2	2016-07-17 18:00:00	2016-07-17 18:00:00	2016-07-17 18:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-450	2	2016-07-17 21:45:00	2016-07-17 21:45:00	2016-07-17 21:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-451	2	2016-07-17 22:00:00	2016-07-17 22:00:00	2016-07-17 22:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-452	2	2016-07-18 03:45:00	2016-07-18 03:45:00	2016-07-18 03:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-453	2	2016-07-18 02:15:00	2016-07-18 02:15:00	2016-07-18 02:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-454	2	2016-07-18 07:15:00	2016-07-18 07:15:00	2016-07-18 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-455	2	2016-07-18 06:45:00	2016-07-18 06:45:00	2016-07-18 06:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-456	2	2016-07-18 11:30:00	2016-07-18 11:30:00	2016-07-18 11:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-457	2	2016-07-18 15:15:00	2016-07-18 15:15:00	2016-07-18 15:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-458	2	2016-07-18 17:00:00	2016-07-18 17:00:00	2016-07-18 17:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-459	2	2016-07-18 19:30:00	2016-07-18 19:30:00	2016-07-18 19:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-460	2	2016-07-18 23:00:00	2016-07-18 23:00:00	2016-07-18 23:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-461	2	2016-07-19 01:30:00	2016-07-19 01:30:00	2016-07-19 01:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-462	2	2016-07-19 05:30:00	2016-07-19 05:30:00	2016-07-19 05:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-463	2	2016-07-19 02:45:00	2016-07-19 02:45:00	2016-07-19 02:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-464	2	2016-07-19 07:15:00	2016-07-19 07:15:00	2016-07-19 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-465	2	2016-07-19 10:00:00	2016-07-19 10:00:00	2016-07-19 10:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-466	2	2016-07-19 13:15:00	2016-07-19 13:15:00	2016-07-19 13:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-467	2	2016-07-19 14:00:00	2016-07-19 14:00:00	2016-07-19 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-468	2	2016-07-19 18:30:00	2016-07-19 18:30:00	2016-07-19 18:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-469	2	2016-07-19 18:45:00	2016-07-19 18:45:00	2016-07-19 18:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-470	2	2016-07-19 23:00:00	2016-07-19 23:00:00	2016-07-19 23:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-471	2	2016-07-20 01:15:00	2016-07-20 01:15:00	2016-07-20 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-472	2	2016-07-20 05:00:00	2016-07-20 05:00:00	2016-07-20 05:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-473	2	2016-07-20 06:30:00	2016-07-20 06:30:00	2016-07-20 06:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-474	2	2016-07-20 09:15:00	2016-07-20 09:15:00	2016-07-20 09:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-475	2	2016-07-20 11:00:00	2016-07-20 11:00:00	2016-07-20 11:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-476	2	2016-07-20 16:00:00	2016-07-20 16:00:00	2016-07-20 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-477	2	2016-07-20 15:30:00	2016-07-20 15:30:00	2016-07-20 15:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-478	2	2016-07-20 18:30:00	2016-07-20 18:30:00	2016-07-20 18:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-479	2	2016-07-20 23:00:00	2016-07-20 23:00:00	2016-07-20 23:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-480	2	2016-07-21 01:15:00	2016-07-21 01:15:00	2016-07-21 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-481	2	2016-07-21 03:45:00	2016-07-21 03:45:00	2016-07-21 03:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-482	2	2016-07-21 07:30:00	2016-07-21 07:30:00	2016-07-21 07:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-483	2	2016-07-21 08:15:00	2016-07-21 08:15:00	2016-07-21 08:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-484	2	2016-07-21 09:30:00	2016-07-21 09:30:00	2016-07-21 09:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-485	2	2016-07-21 10:15:00	2016-07-21 10:15:00	2016-07-21 10:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-486	2	2016-07-21 17:00:00	2016-07-21 17:00:00	2016-07-21 17:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-487	2	2016-07-21 19:15:00	2016-07-21 19:15:00	2016-07-21 19:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-488	2	2016-07-21 21:00:00	2016-07-21 21:00:00	2016-07-21 21:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-489	2	2016-07-21 20:45:00	2016-07-21 20:45:00	2016-07-21 20:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-490	2	2016-07-22 02:45:00	2016-07-22 02:45:00	2016-07-22 02:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-491	2	2016-07-22 03:45:00	2016-07-22 03:45:00	2016-07-22 03:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-492	2	2016-07-22 04:00:00	2016-07-22 04:00:00	2016-07-22 04:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-493	2	2016-07-22 06:15:00	2016-07-22 06:15:00	2016-07-22 06:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-494	2	2016-07-22 12:15:00	2016-07-22 12:15:00	2016-07-22 12:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-495	2	2016-07-22 12:45:00	2016-07-22 12:45:00	2016-07-22 12:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-496	2	2016-07-22 15:00:00	2016-07-22 15:00:00	2016-07-22 15:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-497	2	2016-07-22 17:00:00	2016-07-22 17:00:00	2016-07-22 17:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-498	2	2016-07-22 22:45:00	2016-07-22 22:45:00	2016-07-22 22:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-499	2	2016-07-22 21:15:00	2016-07-22 21:15:00	2016-07-22 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-500	2	2016-07-23 02:45:00	2016-07-23 02:45:00	2016-07-23 02:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-501	2	2016-07-23 04:30:00	2016-07-23 04:30:00	2016-07-23 04:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-502	2	2016-07-23 08:30:00	2016-07-23 08:30:00	2016-07-23 08:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-503	2	2016-07-23 09:15:00	2016-07-23 09:15:00	2016-07-23 09:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-504	2	2016-07-23 11:30:00	2016-07-23 11:30:00	2016-07-23 11:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-505	2	2016-07-23 14:45:00	2016-07-23 14:45:00	2016-07-23 14:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-506	2	2016-07-23 15:00:00	2016-07-23 15:00:00	2016-07-23 15:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-507	2	2016-07-23 21:00:00	2016-07-23 21:00:00	2016-07-23 21:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-508	2	2016-07-24 00:15:00	2016-07-24 00:15:00	2016-07-24 00:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-509	2	2016-07-23 22:15:00	2016-07-23 22:15:00	2016-07-23 22:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-510	2	2016-07-24 04:00:00	2016-07-24 04:00:00	2016-07-24 04:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-511	2	2016-07-24 07:15:00	2016-07-24 07:15:00	2016-07-24 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-512	2	2016-07-24 07:30:00	2016-07-24 07:30:00	2016-07-24 07:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-513	2	2016-07-24 12:30:00	2016-07-24 12:30:00	2016-07-24 12:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-514	2	2016-07-24 13:00:00	2016-07-24 13:00:00	2016-07-24 13:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-515	2	2016-07-24 14:00:00	2016-07-24 14:00:00	2016-07-24 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-516	2	2016-07-24 16:30:00	2016-07-24 16:30:00	2016-07-24 16:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-517	2	2016-07-24 20:15:00	2016-07-24 20:15:00	2016-07-24 20:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-518	2	2016-07-24 22:00:00	2016-07-24 22:00:00	2016-07-24 22:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-519	2	2016-07-24 23:30:00	2016-07-24 23:30:00	2016-07-24 23:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-520	2	2016-07-25 05:15:00	2016-07-25 05:15:00	2016-07-25 05:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-521	2	2016-07-25 03:15:00	2016-07-25 03:15:00	2016-07-25 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-522	2	2016-07-25 10:15:00	2016-07-25 10:15:00	2016-07-25 10:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-523	2	2016-07-25 13:30:00	2016-07-25 13:30:00	2016-07-25 13:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-524	2	2016-07-25 16:15:00	2016-07-25 16:15:00	2016-07-25 16:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-525	2	2016-07-25 16:45:00	2016-07-25 16:45:00	2016-07-25 16:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-526	2	2016-07-25 18:15:00	2016-07-25 18:15:00	2016-07-25 18:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-527	2	2016-07-25 19:15:00	2016-07-25 19:15:00	2016-07-25 19:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-528	2	2016-07-26 00:30:00	2016-07-26 00:30:00	2016-07-26 00:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-529	2	2016-07-26 03:15:00	2016-07-26 03:15:00	2016-07-26 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-530	2	2016-07-26 02:15:00	2016-07-26 02:15:00	2016-07-26 02:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-531	2	2016-07-26 07:15:00	2016-07-26 07:15:00	2016-07-26 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-532	2	2016-07-26 10:00:00	2016-07-26 10:00:00	2016-07-26 10:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-533	2	2016-07-26 14:00:00	2016-07-26 14:00:00	2016-07-26 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-534	2	2016-07-26 15:45:00	2016-07-26 15:45:00	2016-07-26 15:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-535	2	2016-07-26 16:00:00	2016-07-26 16:00:00	2016-07-26 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-536	2	2016-07-26 21:45:00	2016-07-26 21:45:00	2016-07-26 21:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-537	2	2016-07-26 20:30:00	2016-07-26 20:30:00	2016-07-26 20:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-538	2	2016-07-26 23:45:00	2016-07-26 23:45:00	2016-07-26 23:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-539	2	2016-07-27 02:30:00	2016-07-27 02:30:00	2016-07-27 02:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-540	2	2016-07-27 07:45:00	2016-07-27 07:45:00	2016-07-27 07:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-541	2	2016-07-27 09:15:00	2016-07-27 09:15:00	2016-07-27 09:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-542	2	2016-07-27 08:15:00	2016-07-27 08:15:00	2016-07-27 08:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-543	2	2016-07-27 11:45:00	2016-07-27 11:45:00	2016-07-27 11:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-544	2	2016-07-27 15:45:00	2016-07-27 15:45:00	2016-07-27 15:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-545	2	2016-07-27 17:45:00	2016-07-27 17:45:00	2016-07-27 17:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-546	2	2016-07-27 21:00:00	2016-07-27 21:00:00	2016-07-27 21:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-547	2	2016-07-27 22:15:00	2016-07-27 22:15:00	2016-07-27 22:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-548	2	2016-07-28 01:00:00	2016-07-28 01:00:00	2016-07-28 01:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-549	2	2016-07-28 04:00:00	2016-07-28 04:00:00	2016-07-28 04:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-550	2	2016-07-28 07:30:00	2016-07-28 07:30:00	2016-07-28 07:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-551	2	2016-07-28 09:30:00	2016-07-28 09:30:00	2016-07-28 09:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-552	2	2016-07-28 10:00:00	2016-07-28 10:00:00	2016-07-28 10:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-553	2	2016-07-28 12:45:00	2016-07-28 12:45:00	2016-07-28 12:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-554	2	2016-07-28 14:30:00	2016-07-28 14:30:00	2016-07-28 14:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-555	2	2016-07-28 20:15:00	2016-07-28 20:15:00	2016-07-28 20:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-556	2	2016-07-28 21:45:00	2016-07-28 21:45:00	2016-07-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-557	2	2016-07-29 07:15:00	2016-07-29 07:15:00	2016-07-29 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-558	2	2016-07-29 02:00:00	2016-07-29 02:00:00	2016-07-29 02:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-559	2	2016-07-29 06:00:00	2016-07-29 06:00:00	2016-07-29 06:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-560	2	2016-07-29 03:15:00	2016-07-29 03:15:00	2016-07-29 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-561	2	2016-07-29 17:15:00	2016-07-29 17:15:00	2016-07-29 17:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-562	2	2016-07-29 12:00:00	2016-07-29 12:00:00	2016-07-29 12:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-563	2	2016-07-29 16:00:00	2016-07-29 16:00:00	2016-07-29 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-564	2	2016-07-29 13:15:00	2016-07-29 13:15:00	2016-07-29 13:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-565	2	2016-07-30 03:15:00	2016-07-30 03:15:00	2016-07-30 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-566	2	2016-07-29 22:00:00	2016-07-29 22:00:00	2016-07-29 22:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-567	2	2016-07-30 02:00:00	2016-07-30 02:00:00	2016-07-30 02:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-568	2	2016-07-29 23:15:00	2016-07-29 23:15:00	2016-07-29 23:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-569	2	2016-07-30 06:30:00	2016-07-30 06:30:00	2016-07-30 06:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-570	2	2016-07-31 09:30:00	2016-07-31 09:30:00	2016-07-31 09:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-571	2	2016-07-30 05:15:00	2016-07-30 05:15:00	2016-07-30 05:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-572	2	2016-07-31 10:45:00	2016-07-31 10:45:00	2016-07-31 10:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-573	2	2016-07-31 15:30:00	2016-07-31 15:30:00	2016-07-31 15:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-574	2	2016-07-31 19:30:00	2016-07-31 19:30:00	2016-07-31 19:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-575	2	2016-07-31 15:00:00	2016-07-31 15:00:00	2016-07-31 15:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-576	2	2016-07-31 21:46:00	2016-07-31 21:46:00	2016-07-31 21:46:00	\N	1	\N	1	\N	F	\N	\N	2	\N
-577	3	2016-07-01 03:15:00	2016-07-01 03:15:00	2016-07-01 03:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-578	3	2016-07-01 04:00:00	2016-07-01 04:00:00	2016-07-01 04:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-579	3	2016-07-01 09:30:00	2016-07-01 09:30:00	2016-07-01 09:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-580	3	2016-07-01 09:00:00	2016-07-01 09:00:00	2016-07-01 09:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-581	3	2016-07-01 12:30:00	2016-07-01 12:30:00	2016-07-01 12:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-582	3	2016-07-01 15:30:00	2016-07-01 15:30:00	2016-07-01 15:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-583	3	2016-07-01 17:30:00	2016-07-01 17:30:00	2016-07-01 17:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-584	3	2016-07-01 19:00:00	2016-07-01 19:00:00	2016-07-01 19:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-585	3	2016-07-01 21:30:00	2016-07-01 21:30:00	2016-07-01 21:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-586	3	2016-07-02 01:15:00	2016-07-02 01:15:00	2016-07-02 01:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-587	3	2016-07-02 04:15:00	2016-07-02 04:15:00	2016-07-02 04:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-588	3	2016-07-02 05:00:00	2016-07-02 05:00:00	2016-07-02 05:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-589	3	2016-07-02 10:30:00	2016-07-02 10:30:00	2016-07-02 10:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-590	3	2016-07-02 10:00:00	2016-07-02 10:00:00	2016-07-02 10:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-591	3	2016-07-02 14:15:00	2016-07-02 14:15:00	2016-07-02 14:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-592	3	2016-07-02 15:00:00	2016-07-02 15:00:00	2016-07-02 15:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-593	3	2016-07-02 17:45:00	2016-07-02 17:45:00	2016-07-02 17:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-594	3	2016-07-02 20:30:00	2016-07-02 20:30:00	2016-07-02 20:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-595	3	2016-07-02 23:15:00	2016-07-02 23:15:00	2016-07-02 23:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-596	3	2016-07-03 02:30:00	2016-07-03 02:30:00	2016-07-03 02:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-597	3	2016-07-03 04:00:00	2016-07-03 04:00:00	2016-07-03 04:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-598	3	2016-07-03 06:45:00	2016-07-03 06:45:00	2016-07-03 06:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-599	3	2016-07-03 07:45:00	2016-07-03 07:45:00	2016-07-03 07:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-600	3	2016-07-03 12:45:00	2016-07-03 12:45:00	2016-07-03 12:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-601	3	2016-07-03 14:16:00	2016-07-03 14:16:00	2016-07-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-602	3	2016-07-03 16:46:00	2016-07-03 16:46:00	2016-07-03 16:46:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-603	3	2016-07-03 19:45:00	2016-07-03 19:45:00	2016-07-03 19:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-604	3	2016-07-03 21:00:00	2016-07-03 21:00:00	2016-07-03 21:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-605	3	2016-07-04 00:01:00	2016-07-04 00:01:00	2016-07-04 00:01:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-606	3	2016-07-04 02:46:00	2016-07-04 02:46:00	2016-07-04 02:46:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-607	3	2016-07-04 05:46:00	2016-07-04 05:46:00	2016-07-04 05:46:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-608	3	2016-07-04 07:01:00	2016-07-04 07:01:00	2016-07-04 07:01:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-609	3	2016-07-04 10:01:00	2016-07-04 10:01:00	2016-07-04 10:01:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-610	3	2016-07-04 12:46:00	2016-07-04 12:46:00	2016-07-04 12:46:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-611	3	2016-07-04 15:45:00	2016-07-04 15:45:00	2016-07-04 15:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-612	3	2016-07-04 17:00:00	2016-07-04 17:00:00	2016-07-04 17:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-613	3	2016-07-04 20:00:00	2016-07-04 20:00:00	2016-07-04 20:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-614	3	2016-07-04 22:45:00	2016-07-04 22:45:00	2016-07-04 22:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-615	3	2016-07-05 01:46:00	2016-07-05 01:46:00	2016-07-05 01:46:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-616	3	2016-07-05 03:01:00	2016-07-05 03:01:00	2016-07-05 03:01:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-617	3	2016-07-05 06:01:00	2016-07-05 06:01:00	2016-07-05 06:01:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-618	3	2016-07-05 08:45:00	2016-07-05 08:45:00	2016-07-05 08:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-619	3	2016-07-05 11:45:00	2016-07-05 11:45:00	2016-07-05 11:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-620	3	2016-07-05 14:00:00	2016-07-05 14:00:00	2016-07-05 14:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-621	3	2016-07-05 16:15:00	2016-07-05 16:15:00	2016-07-05 16:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-622	3	2016-07-05 18:45:00	2016-07-05 18:45:00	2016-07-05 18:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-623	3	2016-07-05 21:15:00	2016-07-05 21:15:00	2016-07-05 21:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-624	3	2016-07-05 23:45:00	2016-07-05 23:45:00	2016-07-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-625	3	2016-07-06 02:15:00	2016-07-06 02:15:00	2016-07-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-626	3	2016-07-06 04:45:00	2016-07-06 04:45:00	2016-07-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-627	3	2016-07-06 07:15:00	2016-07-06 07:15:00	2016-07-06 07:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-628	3	2016-07-06 09:45:00	2016-07-06 09:45:00	2016-07-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-629	3	2016-07-06 11:30:00	2016-07-06 11:30:00	2016-07-06 11:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-630	3	2016-07-06 15:00:00	2016-07-06 15:00:00	2016-07-06 15:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-631	3	2016-07-06 18:00:00	2016-07-06 18:00:00	2016-07-06 18:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-632	3	2016-07-06 19:30:00	2016-07-06 19:30:00	2016-07-06 19:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-633	3	2016-07-06 22:00:00	2016-07-06 22:00:00	2016-07-06 22:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-634	3	2016-07-07 00:45:00	2016-07-07 00:45:00	2016-07-07 00:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-635	3	2016-07-07 03:15:00	2016-07-07 03:15:00	2016-07-07 03:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-636	3	2016-07-07 06:00:00	2016-07-07 06:00:00	2016-07-07 06:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-637	3	2016-07-07 09:00:00	2016-07-07 09:00:00	2016-07-07 09:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-638	3	2016-07-07 10:45:00	2016-07-07 10:45:00	2016-07-07 10:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-639	3	2016-07-07 15:45:00	2016-07-07 15:45:00	2016-07-07 15:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-640	3	2016-07-07 15:15:00	2016-07-07 15:15:00	2016-07-07 15:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-641	3	2016-07-07 21:45:00	2016-07-07 21:45:00	2016-07-07 21:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-642	3	2016-07-07 19:45:00	2016-07-07 19:45:00	2016-07-07 19:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-643	3	2016-07-07 23:15:00	2016-07-07 23:15:00	2016-07-07 23:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-644	3	2016-07-08 00:15:00	2016-07-08 00:15:00	2016-07-08 00:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-645	3	2016-07-08 05:45:00	2016-07-08 05:45:00	2016-07-08 05:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-646	3	2016-07-08 04:45:00	2016-07-08 04:45:00	2016-07-08 04:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-647	3	2016-07-08 09:30:00	2016-07-08 09:30:00	2016-07-08 09:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-648	3	2016-07-08 13:15:00	2016-07-08 13:15:00	2016-07-08 13:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-649	3	2016-07-08 14:00:00	2016-07-08 14:00:00	2016-07-08 14:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-650	3	2016-07-08 19:45:00	2016-07-08 19:45:00	2016-07-08 19:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-651	3	2016-07-08 20:00:00	2016-07-08 20:00:00	2016-07-08 20:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-652	3	2016-07-09 00:30:00	2016-07-09 00:30:00	2016-07-09 00:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-653	3	2016-07-08 23:45:00	2016-07-08 23:45:00	2016-07-08 23:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-654	3	2016-07-09 05:00:00	2016-07-09 05:00:00	2016-07-09 05:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-655	3	2016-07-09 03:00:00	2016-07-09 03:00:00	2016-07-09 03:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-656	3	2016-07-09 11:15:00	2016-07-09 11:15:00	2016-07-09 11:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-657	3	2016-07-09 11:30:00	2016-07-09 11:30:00	2016-07-09 11:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-658	3	2016-07-09 12:00:00	2016-07-09 12:00:00	2016-07-09 12:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-659	3	2016-07-09 15:00:00	2016-07-09 15:00:00	2016-07-09 15:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-660	3	2016-07-09 19:45:00	2016-07-09 19:45:00	2016-07-09 19:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-661	3	2016-07-09 22:00:00	2016-07-09 22:00:00	2016-07-09 22:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-662	3	2016-07-10 01:00:00	2016-07-10 01:00:00	2016-07-10 01:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-663	3	2016-07-10 00:45:00	2016-07-10 00:45:00	2016-07-10 00:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-664	3	2016-07-10 07:15:00	2016-07-10 07:15:00	2016-07-10 07:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-665	3	2016-07-10 04:30:00	2016-07-10 04:30:00	2016-07-10 04:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-666	3	2016-07-10 12:15:00	2016-07-10 12:15:00	2016-07-10 12:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-667	3	2016-07-10 08:15:00	2016-07-10 08:15:00	2016-07-10 08:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-668	3	2016-07-10 13:30:00	2016-07-10 13:30:00	2016-07-10 13:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-669	3	2016-07-10 14:45:00	2016-07-10 14:45:00	2016-07-10 14:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-670	3	2016-07-10 20:30:00	2016-07-10 20:30:00	2016-07-10 20:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-671	3	2016-07-10 22:00:00	2016-07-10 22:00:00	2016-07-10 22:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-672	3	2016-07-11 00:45:00	2016-07-11 00:45:00	2016-07-11 00:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-673	3	2016-07-11 01:15:00	2016-07-11 01:15:00	2016-07-11 01:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-674	3	2016-07-11 04:15:00	2016-07-11 04:15:00	2016-07-11 04:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-675	3	2016-07-11 08:30:00	2016-07-11 08:30:00	2016-07-11 08:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-676	3	2016-07-11 12:45:00	2016-07-11 12:45:00	2016-07-11 12:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-677	3	2016-07-11 10:00:00	2016-07-11 10:00:00	2016-07-11 10:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-678	3	2016-07-11 13:30:00	2016-07-11 13:30:00	2016-07-11 13:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-679	3	2016-07-11 15:00:00	2016-07-11 15:00:00	2016-07-11 15:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-680	3	2016-07-11 19:15:00	2016-07-11 19:15:00	2016-07-11 19:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-681	3	2016-07-11 20:30:00	2016-07-11 20:30:00	2016-07-11 20:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-682	3	2016-07-12 03:30:00	2016-07-12 03:30:00	2016-07-12 03:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-683	3	2016-07-12 02:00:00	2016-07-12 02:00:00	2016-07-12 02:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-684	3	2016-07-12 07:15:00	2016-07-12 07:15:00	2016-07-12 07:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-685	3	2016-07-12 09:45:00	2016-07-12 09:45:00	2016-07-12 09:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-686	3	2016-07-12 13:00:00	2016-07-12 13:00:00	2016-07-12 13:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-687	3	2016-07-12 11:00:00	2016-07-12 11:00:00	2016-07-12 11:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-688	3	2016-07-12 17:00:00	2016-07-12 17:00:00	2016-07-12 17:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-689	3	2016-07-12 19:15:00	2016-07-12 19:15:00	2016-07-12 19:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-690	3	2016-07-12 20:46:00	2016-07-12 20:46:00	2016-07-12 20:46:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-691	3	2016-07-13 00:45:00	2016-07-13 00:45:00	2016-07-13 00:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-692	3	2016-07-13 02:45:00	2016-07-13 02:45:00	2016-07-13 02:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-693	3	2016-07-13 04:30:00	2016-07-13 04:30:00	2016-07-13 04:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-694	3	2016-07-13 06:15:00	2016-07-13 06:15:00	2016-07-13 06:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-695	3	2016-07-13 11:00:00	2016-07-13 11:00:00	2016-07-13 11:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-696	3	2016-07-13 13:30:00	2016-07-13 13:30:00	2016-07-13 13:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-697	3	2016-07-13 14:15:00	2016-07-13 14:15:00	2016-07-13 14:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-698	3	2016-07-13 18:15:00	2016-07-13 18:15:00	2016-07-13 18:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-699	3	2016-07-13 20:30:00	2016-07-13 20:30:00	2016-07-13 20:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-700	3	2016-07-13 22:00:00	2016-07-13 22:00:00	2016-07-13 22:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-701	3	2016-07-14 00:45:00	2016-07-14 00:45:00	2016-07-14 00:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-702	3	2016-07-14 05:00:00	2016-07-14 05:00:00	2016-07-14 05:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-703	3	2016-07-14 02:45:00	2016-07-14 02:45:00	2016-07-14 02:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-704	3	2016-07-14 10:00:00	2016-07-14 10:00:00	2016-07-14 10:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-705	3	2016-07-14 09:00:00	2016-07-14 09:00:00	2016-07-14 09:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-706	3	2016-07-14 11:30:00	2016-07-14 11:30:00	2016-07-14 11:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-707	3	2016-07-14 14:15:00	2016-07-14 14:15:00	2016-07-14 14:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-708	3	2016-07-14 17:30:00	2016-07-14 17:30:00	2016-07-14 17:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-709	3	2016-07-14 19:30:00	2016-07-14 19:30:00	2016-07-14 19:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-710	3	2016-07-14 21:30:00	2016-07-14 21:30:00	2016-07-14 21:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-711	3	2016-07-14 23:15:00	2016-07-14 23:15:00	2016-07-14 23:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-712	3	2016-07-15 04:30:00	2016-07-15 04:30:00	2016-07-15 04:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-713	3	2016-07-15 06:00:00	2016-07-15 06:00:00	2016-07-15 06:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-714	3	2016-07-15 07:45:00	2016-07-15 07:45:00	2016-07-15 07:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-715	3	2016-07-15 10:30:00	2016-07-15 10:30:00	2016-07-15 10:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-716	3	2016-07-15 14:45:00	2016-07-15 14:45:00	2016-07-15 14:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-717	3	2016-07-15 16:15:00	2016-07-15 16:15:00	2016-07-15 16:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-718	3	2016-07-15 17:46:00	2016-07-15 17:46:00	2016-07-15 17:46:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-719	3	2016-07-15 21:30:00	2016-07-15 21:30:00	2016-07-15 21:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-720	3	2016-07-16 00:30:00	2016-07-16 00:30:00	2016-07-16 00:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-721	3	2016-07-16 00:45:00	2016-07-16 00:45:00	2016-07-16 00:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-722	3	2016-07-16 03:15:00	2016-07-16 03:15:00	2016-07-16 03:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-723	3	2016-07-16 07:45:00	2016-07-16 07:45:00	2016-07-16 07:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-724	3	2016-07-16 12:00:00	2016-07-16 12:00:00	2016-07-16 12:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-725	3	2016-07-16 11:30:00	2016-07-16 11:30:00	2016-07-16 11:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-726	3	2016-07-16 15:00:00	2016-07-16 15:00:00	2016-07-16 15:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-727	3	2016-07-16 18:00:00	2016-07-16 18:00:00	2016-07-16 18:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-728	3	2016-07-16 19:30:00	2016-07-16 19:30:00	2016-07-16 19:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-729	3	2016-07-16 23:15:00	2016-07-16 23:15:00	2016-07-16 23:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-730	3	2016-07-17 02:00:00	2016-07-17 02:00:00	2016-07-17 02:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-731	3	2016-07-17 03:45:00	2016-07-17 03:45:00	2016-07-17 03:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-732	3	2016-07-17 04:30:00	2016-07-17 04:30:00	2016-07-17 04:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-733	3	2016-07-17 08:45:00	2016-07-17 08:45:00	2016-07-17 08:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-734	3	2016-07-17 13:30:00	2016-07-17 13:30:00	2016-07-17 13:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-735	3	2016-07-17 12:00:00	2016-07-17 12:00:00	2016-07-17 12:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-736	3	2016-07-17 15:15:00	2016-07-17 15:15:00	2016-07-17 15:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-737	3	2016-07-17 19:30:00	2016-07-17 19:30:00	2016-07-17 19:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-738	3	2016-07-17 22:30:00	2016-07-17 22:30:00	2016-07-17 22:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-739	3	2016-07-17 23:15:00	2016-07-17 23:15:00	2016-07-17 23:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-740	3	2016-07-18 01:15:00	2016-07-18 01:15:00	2016-07-18 01:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-741	3	2016-07-18 03:15:00	2016-07-18 03:15:00	2016-07-18 03:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-742	3	2016-07-18 09:15:00	2016-07-18 09:15:00	2016-07-18 09:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-743	3	2016-07-18 10:00:00	2016-07-18 10:00:00	2016-07-18 10:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-744	3	2016-07-18 11:00:00	2016-07-18 11:00:00	2016-07-18 11:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-745	3	2016-07-18 13:00:00	2016-07-18 13:00:00	2016-07-18 13:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-746	3	2016-07-18 16:00:00	2016-07-18 16:00:00	2016-07-18 16:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-747	3	2016-07-18 17:45:00	2016-07-18 17:45:00	2016-07-18 17:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-748	3	2016-07-18 20:45:00	2016-07-18 20:45:00	2016-07-18 20:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-749	3	2016-07-19 00:30:00	2016-07-19 00:30:00	2016-07-19 00:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-750	3	2016-07-19 04:15:00	2016-07-19 04:15:00	2016-07-19 04:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-751	3	2016-07-19 05:45:00	2016-07-19 05:45:00	2016-07-19 05:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-752	3	2016-07-19 10:45:00	2016-07-19 10:45:00	2016-07-19 10:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-753	3	2016-07-19 11:15:00	2016-07-19 11:15:00	2016-07-19 11:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-754	3	2016-07-19 12:45:00	2016-07-19 12:45:00	2016-07-19 12:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-755	3	2016-07-19 13:45:00	2016-07-19 13:45:00	2016-07-19 13:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-756	3	2016-07-19 18:30:00	2016-07-19 18:30:00	2016-07-19 18:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-757	3	2016-07-19 19:30:00	2016-07-19 19:30:00	2016-07-19 19:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-758	3	2016-07-20 01:15:00	2016-07-20 01:15:00	2016-07-20 01:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-759	3	2016-07-20 01:45:00	2016-07-20 01:45:00	2016-07-20 01:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-760	3	2016-07-20 04:00:00	2016-07-20 04:00:00	2016-07-20 04:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-761	3	2016-07-20 05:30:00	2016-07-20 05:30:00	2016-07-20 05:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-762	3	2016-07-20 11:00:00	2016-07-20 11:00:00	2016-07-20 11:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-763	3	2016-07-20 10:15:00	2016-07-20 10:15:00	2016-07-20 10:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-764	3	2016-07-20 15:30:00	2016-07-20 15:30:00	2016-07-20 15:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-765	3	2016-07-20 15:15:00	2016-07-20 15:15:00	2016-07-20 15:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-766	3	2016-07-20 18:30:00	2016-07-20 18:30:00	2016-07-20 18:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-767	3	2016-07-20 19:30:00	2016-07-20 19:30:00	2016-07-20 19:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-768	3	2016-07-21 00:00:00	2016-07-21 00:00:00	2016-07-21 00:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-769	3	2016-07-21 00:15:00	2016-07-21 00:15:00	2016-07-21 00:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-770	3	2016-07-21 04:30:00	2016-07-21 04:30:00	2016-07-21 04:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-771	3	2016-07-21 08:30:00	2016-07-21 08:30:00	2016-07-21 08:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-772	3	2016-07-21 10:30:00	2016-07-21 10:30:00	2016-07-21 10:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-773	3	2016-07-21 12:45:00	2016-07-21 12:45:00	2016-07-21 12:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-774	3	2016-07-21 17:00:00	2016-07-21 17:00:00	2016-07-21 17:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-775	3	2016-07-21 15:45:00	2016-07-21 15:45:00	2016-07-21 15:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-776	3	2016-07-21 19:15:00	2016-07-21 19:15:00	2016-07-21 19:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-777	3	2016-07-21 23:15:00	2016-07-21 23:15:00	2016-07-21 23:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-778	3	2016-07-22 02:15:00	2016-07-22 02:15:00	2016-07-22 02:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-779	3	2016-07-22 02:30:00	2016-07-22 02:30:00	2016-07-22 02:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-780	3	2016-07-22 07:30:00	2016-07-22 07:30:00	2016-07-22 07:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-781	3	2016-07-22 06:15:00	2016-07-22 06:15:00	2016-07-22 06:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-782	3	2016-07-22 09:45:00	2016-07-22 09:45:00	2016-07-22 09:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-783	3	2016-07-22 11:30:00	2016-07-22 11:30:00	2016-07-22 11:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-784	3	2016-07-22 14:45:00	2016-07-22 14:45:00	2016-07-22 14:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-785	3	2016-07-22 15:30:00	2016-07-22 15:30:00	2016-07-22 15:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-786	3	2016-07-22 19:00:00	2016-07-22 19:00:00	2016-07-22 19:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-787	3	2016-07-23 00:30:00	2016-07-23 00:30:00	2016-07-23 00:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-788	3	2016-07-23 02:30:00	2016-07-23 02:30:00	2016-07-23 02:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-789	3	2016-07-23 06:00:00	2016-07-23 06:00:00	2016-07-23 06:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-790	3	2016-07-23 09:15:00	2016-07-23 09:15:00	2016-07-23 09:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-791	3	2016-07-23 07:00:00	2016-07-23 07:00:00	2016-07-23 07:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-792	3	2016-07-23 11:00:00	2016-07-23 11:00:00	2016-07-23 11:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-793	3	2016-07-23 15:45:00	2016-07-23 15:45:00	2016-07-23 15:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-794	3	2016-07-23 18:45:00	2016-07-23 18:45:00	2016-07-23 18:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-795	3	2016-07-23 18:15:00	2016-07-23 18:15:00	2016-07-23 18:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-796	3	2016-07-23 21:15:00	2016-07-23 21:15:00	2016-07-23 21:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-797	3	2016-07-24 00:30:00	2016-07-24 00:30:00	2016-07-24 00:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-798	3	2016-07-24 02:45:00	2016-07-24 02:45:00	2016-07-24 02:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-799	3	2016-07-24 03:00:00	2016-07-24 03:00:00	2016-07-24 03:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-800	3	2016-07-24 08:30:00	2016-07-24 08:30:00	2016-07-24 08:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-801	3	2016-07-24 09:45:00	2016-07-24 09:45:00	2016-07-24 09:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-802	3	2016-07-24 14:15:00	2016-07-24 14:15:00	2016-07-24 14:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-803	3	2016-07-24 14:00:00	2016-07-24 14:00:00	2016-07-24 14:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-804	3	2016-07-24 17:30:00	2016-07-24 17:30:00	2016-07-24 17:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-805	3	2016-07-24 20:15:00	2016-07-24 20:15:00	2016-07-24 20:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-806	3	2016-07-24 21:45:00	2016-07-24 21:45:00	2016-07-24 21:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-807	3	2016-07-25 00:00:00	2016-07-25 00:00:00	2016-07-25 00:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-808	3	2016-07-25 02:45:00	2016-07-25 02:45:00	2016-07-25 02:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-809	3	2016-07-25 07:15:00	2016-07-25 07:15:00	2016-07-25 07:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-810	3	2016-07-25 08:00:00	2016-07-25 08:00:00	2016-07-25 08:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-811	3	2016-07-25 09:15:00	2016-07-25 09:15:00	2016-07-25 09:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-812	3	2016-07-25 15:30:00	2016-07-25 15:30:00	2016-07-25 15:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-813	3	2016-07-25 17:45:00	2016-07-25 17:45:00	2016-07-25 17:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-814	3	2016-07-25 18:15:00	2016-07-25 18:15:00	2016-07-25 18:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-815	3	2016-07-25 23:00:00	2016-07-25 23:00:00	2016-07-25 23:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-816	3	2016-07-25 23:15:00	2016-07-25 23:15:00	2016-07-25 23:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-817	3	2016-07-26 00:30:00	2016-07-26 00:30:00	2016-07-26 00:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-818	3	2016-07-26 03:30:00	2016-07-26 03:30:00	2016-07-26 03:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-819	3	2016-07-26 06:45:00	2016-07-26 06:45:00	2016-07-26 06:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-820	3	2016-07-26 09:00:00	2016-07-26 09:00:00	2016-07-26 09:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-821	3	2016-07-26 13:15:00	2016-07-26 13:15:00	2016-07-26 13:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-822	3	2016-07-26 13:45:00	2016-07-26 13:45:00	2016-07-26 13:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-823	3	2016-07-26 16:45:00	2016-07-26 16:45:00	2016-07-26 16:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-824	3	2016-07-26 21:00:00	2016-07-26 21:00:00	2016-07-26 21:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-825	3	2016-07-26 22:00:00	2016-07-26 22:00:00	2016-07-26 22:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-826	3	2016-07-27 00:15:00	2016-07-27 00:15:00	2016-07-27 00:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-827	3	2016-07-27 02:30:00	2016-07-27 02:30:00	2016-07-27 02:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-828	3	2016-07-27 06:30:00	2016-07-27 06:30:00	2016-07-27 06:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-829	3	2016-07-27 08:45:00	2016-07-27 08:45:00	2016-07-27 08:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-830	3	2016-07-27 10:30:00	2016-07-27 10:30:00	2016-07-27 10:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-831	3	2016-07-27 14:30:00	2016-07-27 14:30:00	2016-07-27 14:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-832	3	2016-07-27 15:30:00	2016-07-27 15:30:00	2016-07-27 15:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-833	3	2016-07-27 17:30:00	2016-07-27 17:30:00	2016-07-27 17:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-834	3	2016-07-27 20:00:00	2016-07-27 20:00:00	2016-07-27 20:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-835	3	2016-07-27 22:15:00	2016-07-27 22:15:00	2016-07-27 22:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-836	3	2016-07-28 03:45:00	2016-07-28 03:45:00	2016-07-28 03:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-837	3	2016-07-28 04:00:00	2016-07-28 04:00:00	2016-07-28 04:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-838	3	2016-07-28 06:45:00	2016-07-28 06:45:00	2016-07-28 06:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-839	3	2016-07-28 10:00:00	2016-07-28 10:00:00	2016-07-28 10:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-840	3	2016-07-28 13:30:00	2016-07-28 13:30:00	2016-07-28 13:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-841	3	2016-07-28 12:00:00	2016-07-28 12:00:00	2016-07-28 12:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-842	3	2016-07-28 17:15:00	2016-07-28 17:15:00	2016-07-28 17:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-843	3	2016-07-28 17:00:00	2016-07-28 17:00:00	2016-07-28 17:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-844	3	2016-07-28 21:45:00	2016-07-28 21:45:00	2016-07-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-845	3	2016-07-29 07:00:00	2016-07-29 07:00:00	2016-07-29 07:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-846	3	2016-07-29 01:45:00	2016-07-29 01:45:00	2016-07-29 01:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-847	3	2016-07-29 08:15:00	2016-07-29 08:15:00	2016-07-29 08:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-848	3	2016-07-29 03:00:00	2016-07-29 03:00:00	2016-07-29 03:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-849	3	2016-07-29 17:00:00	2016-07-29 17:00:00	2016-07-29 17:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-850	3	2016-07-29 11:45:00	2016-07-29 11:45:00	2016-07-29 11:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-851	3	2016-07-29 18:15:00	2016-07-29 18:15:00	2016-07-29 18:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-852	3	2016-07-29 13:00:00	2016-07-29 13:00:00	2016-07-29 13:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-853	3	2016-07-30 03:00:00	2016-07-30 03:00:00	2016-07-30 03:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-854	3	2016-07-29 21:45:00	2016-07-29 21:45:00	2016-07-29 21:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-855	3	2016-07-30 04:15:00	2016-07-30 04:15:00	2016-07-30 04:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-856	3	2016-07-29 23:00:00	2016-07-29 23:00:00	2016-07-29 23:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-857	3	2016-07-31 09:30:00	2016-07-31 09:30:00	2016-07-31 09:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-858	3	2016-07-30 05:15:00	2016-07-30 05:15:00	2016-07-30 05:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-859	3	2016-07-31 13:15:00	2016-07-31 13:15:00	2016-07-31 13:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-860	3	2016-07-31 10:30:00	2016-07-31 10:30:00	2016-07-31 10:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-861	3	2016-07-31 15:15:00	2016-07-31 15:15:00	2016-07-31 15:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-862	3	2016-07-31 19:15:00	2016-07-31 19:15:00	2016-07-31 19:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-863	3	2016-07-31 14:45:00	2016-07-31 14:45:00	2016-07-31 14:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-864	3	2016-07-31 21:31:00	2016-07-31 21:31:00	2016-07-31 21:31:00	\N	1	\N	1	\N	F	\N	\N	3	\N
-865	4	2016-07-01 00:15:00	2016-07-01 00:15:00	2016-07-01 00:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-866	4	2016-07-01 04:30:00	2016-07-01 04:30:00	2016-07-01 04:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-867	4	2016-07-01 05:15:00	2016-07-01 05:15:00	2016-07-01 05:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-868	4	2016-07-01 09:30:00	2016-07-01 09:30:00	2016-07-01 09:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-869	4	2016-07-01 10:30:00	2016-07-01 10:30:00	2016-07-01 10:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-870	4	2016-07-01 12:00:00	2016-07-01 12:00:00	2016-07-01 12:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-871	4	2016-07-01 16:15:00	2016-07-01 16:15:00	2016-07-01 16:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-872	4	2016-07-01 19:15:00	2016-07-01 19:15:00	2016-07-01 19:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-873	4	2016-07-01 21:45:00	2016-07-01 21:45:00	2016-07-01 21:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-874	4	2016-07-02 00:00:00	2016-07-02 00:00:00	2016-07-02 00:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-875	4	2016-07-02 05:15:00	2016-07-02 05:15:00	2016-07-02 05:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-876	4	2016-07-02 05:00:00	2016-07-02 05:00:00	2016-07-02 05:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-877	4	2016-07-02 06:30:00	2016-07-02 06:30:00	2016-07-02 06:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-878	4	2016-07-02 10:00:00	2016-07-02 10:00:00	2016-07-02 10:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-879	4	2016-07-02 11:30:00	2016-07-02 11:30:00	2016-07-02 11:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-880	4	2016-07-02 15:00:00	2016-07-02 15:00:00	2016-07-02 15:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-881	4	2016-07-02 16:30:00	2016-07-02 16:30:00	2016-07-02 16:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-882	4	2016-07-02 21:45:00	2016-07-02 21:45:00	2016-07-02 21:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-883	4	2016-07-02 21:30:00	2016-07-02 21:30:00	2016-07-02 21:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-884	4	2016-07-03 00:15:00	2016-07-03 00:15:00	2016-07-03 00:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-885	4	2016-07-03 03:45:00	2016-07-03 03:45:00	2016-07-03 03:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-886	4	2016-07-03 07:15:00	2016-07-03 07:15:00	2016-07-03 07:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-887	4	2016-07-03 07:30:00	2016-07-03 07:30:00	2016-07-03 07:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-888	4	2016-07-03 09:15:00	2016-07-03 09:15:00	2016-07-03 09:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-889	4	2016-07-03 14:16:00	2016-07-03 14:16:00	2016-07-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-890	4	2016-07-03 17:01:00	2016-07-03 17:01:00	2016-07-03 17:01:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-891	4	2016-07-03 20:00:00	2016-07-03 20:00:00	2016-07-03 20:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-892	4	2016-07-03 20:45:00	2016-07-03 20:45:00	2016-07-03 20:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-893	4	2016-07-03 23:46:00	2016-07-03 23:46:00	2016-07-03 23:46:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-894	4	2016-07-04 03:01:00	2016-07-04 03:01:00	2016-07-04 03:01:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-895	4	2016-07-04 06:01:00	2016-07-04 06:01:00	2016-07-04 06:01:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-896	4	2016-07-04 06:46:00	2016-07-04 06:46:00	2016-07-04 06:46:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-897	4	2016-07-04 09:46:00	2016-07-04 09:46:00	2016-07-04 09:46:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-898	4	2016-07-04 13:01:00	2016-07-04 13:01:00	2016-07-04 13:01:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-899	4	2016-07-04 16:00:00	2016-07-04 16:00:00	2016-07-04 16:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-900	4	2016-07-04 16:45:00	2016-07-04 16:45:00	2016-07-04 16:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-901	4	2016-07-04 19:45:00	2016-07-04 19:45:00	2016-07-04 19:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-902	4	2016-07-04 23:00:00	2016-07-04 23:00:00	2016-07-04 23:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-903	4	2016-07-05 02:01:00	2016-07-05 02:01:00	2016-07-05 02:01:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-904	4	2016-07-05 02:46:00	2016-07-05 02:46:00	2016-07-05 02:46:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-905	4	2016-07-05 05:46:00	2016-07-05 05:46:00	2016-07-05 05:46:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-906	4	2016-07-05 09:00:00	2016-07-05 09:00:00	2016-07-05 09:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-907	4	2016-07-05 12:00:00	2016-07-05 12:00:00	2016-07-05 12:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-908	4	2016-07-05 13:45:00	2016-07-05 13:45:00	2016-07-05 13:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-909	4	2016-07-05 16:00:00	2016-07-05 16:00:00	2016-07-05 16:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-910	4	2016-07-05 18:30:00	2016-07-05 18:30:00	2016-07-05 18:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-911	4	2016-07-05 21:15:00	2016-07-05 21:15:00	2016-07-05 21:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-912	4	2016-07-05 23:45:00	2016-07-05 23:45:00	2016-07-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-913	4	2016-07-06 02:15:00	2016-07-06 02:15:00	2016-07-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-914	4	2016-07-06 04:45:00	2016-07-06 04:45:00	2016-07-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-915	4	2016-07-06 07:15:00	2016-07-06 07:15:00	2016-07-06 07:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-916	4	2016-07-06 09:45:00	2016-07-06 09:45:00	2016-07-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-917	4	2016-07-06 12:15:00	2016-07-06 12:15:00	2016-07-06 12:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-918	4	2016-07-06 14:45:00	2016-07-06 14:45:00	2016-07-06 14:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-919	4	2016-07-06 17:30:00	2016-07-06 17:30:00	2016-07-06 17:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-920	4	2016-07-06 19:14:00	2016-07-06 19:14:00	2016-07-06 19:14:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-921	4	2016-07-06 21:45:00	2016-07-06 21:45:00	2016-07-06 21:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-922	4	2016-07-07 01:15:00	2016-07-07 01:15:00	2016-07-07 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-923	4	2016-07-07 03:00:00	2016-07-07 03:00:00	2016-07-07 03:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-924	4	2016-07-07 05:45:00	2016-07-07 05:45:00	2016-07-07 05:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-925	4	2016-07-07 08:45:00	2016-07-07 08:45:00	2016-07-07 08:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-926	4	2016-07-07 09:45:00	2016-07-07 09:45:00	2016-07-07 09:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-927	4	2016-07-07 17:15:00	2016-07-07 17:15:00	2016-07-07 17:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-928	4	2016-07-07 17:00:00	2016-07-07 17:00:00	2016-07-07 17:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-929	4	2016-07-07 19:45:00	2016-07-07 19:45:00	2016-07-07 19:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-930	4	2016-07-07 20:15:00	2016-07-07 20:15:00	2016-07-07 20:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-931	4	2016-07-08 01:30:00	2016-07-08 01:30:00	2016-07-08 01:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-932	4	2016-07-08 01:15:00	2016-07-08 01:15:00	2016-07-08 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-933	4	2016-07-08 05:15:00	2016-07-08 05:15:00	2016-07-08 05:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-934	4	2016-07-08 06:15:00	2016-07-08 06:15:00	2016-07-08 06:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-935	4	2016-07-08 13:30:00	2016-07-08 13:30:00	2016-07-08 13:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-936	4	2016-07-08 09:15:00	2016-07-08 09:15:00	2016-07-08 09:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-937	4	2016-07-08 15:00:00	2016-07-08 15:00:00	2016-07-08 15:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-938	4	2016-07-08 16:45:00	2016-07-08 16:45:00	2016-07-08 16:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-939	4	2016-07-08 18:15:00	2016-07-08 18:15:00	2016-07-08 18:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-940	4	2016-07-09 01:15:00	2016-07-09 01:15:00	2016-07-09 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-941	4	2016-07-09 00:30:00	2016-07-09 00:30:00	2016-07-09 00:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-942	4	2016-07-09 04:15:00	2016-07-09 04:15:00	2016-07-09 04:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-943	4	2016-07-09 05:00:00	2016-07-09 05:00:00	2016-07-09 05:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-944	4	2016-07-09 11:15:00	2016-07-09 11:15:00	2016-07-09 11:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-945	4	2016-07-09 08:30:00	2016-07-09 08:30:00	2016-07-09 08:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-946	4	2016-07-09 15:00:00	2016-07-09 15:00:00	2016-07-09 15:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-947	4	2016-07-09 13:00:00	2016-07-09 13:00:00	2016-07-09 13:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-948	4	2016-07-09 21:00:00	2016-07-09 21:00:00	2016-07-09 21:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-949	4	2016-07-09 19:15:00	2016-07-09 19:15:00	2016-07-09 19:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-950	4	2016-07-09 23:15:00	2016-07-09 23:15:00	2016-07-09 23:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-951	4	2016-07-09 23:30:00	2016-07-09 23:30:00	2016-07-09 23:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-952	4	2016-07-10 06:45:00	2016-07-10 06:45:00	2016-07-10 06:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-953	4	2016-07-10 05:15:00	2016-07-10 05:15:00	2016-07-10 05:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-954	4	2016-07-10 11:45:00	2016-07-10 11:45:00	2016-07-10 11:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-955	4	2016-07-10 10:15:00	2016-07-10 10:15:00	2016-07-10 10:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-956	4	2016-07-10 15:15:00	2016-07-10 15:15:00	2016-07-10 15:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-957	4	2016-07-10 16:00:00	2016-07-10 16:00:00	2016-07-10 16:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-958	4	2016-07-10 21:45:00	2016-07-10 21:45:00	2016-07-10 21:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-959	4	2016-07-10 19:30:00	2016-07-10 19:30:00	2016-07-10 19:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-960	4	2016-07-11 01:30:00	2016-07-11 01:30:00	2016-07-11 01:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-961	4	2016-07-11 03:30:00	2016-07-11 03:30:00	2016-07-11 03:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-962	4	2016-07-11 05:30:00	2016-07-11 05:30:00	2016-07-11 05:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-963	4	2016-07-11 07:30:00	2016-07-11 07:30:00	2016-07-11 07:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-964	4	2016-07-11 10:45:00	2016-07-11 10:45:00	2016-07-11 10:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-965	4	2016-07-11 13:00:00	2016-07-11 13:00:00	2016-07-11 13:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-966	4	2016-07-11 16:15:00	2016-07-11 16:15:00	2016-07-11 16:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-967	4	2016-07-11 16:45:00	2016-07-11 16:45:00	2016-07-11 16:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-968	4	2016-07-11 21:00:00	2016-07-11 21:00:00	2016-07-11 21:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-969	4	2016-07-11 22:30:00	2016-07-11 22:30:00	2016-07-11 22:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-970	4	2016-07-12 01:00:00	2016-07-12 01:00:00	2016-07-12 01:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-971	4	2016-07-12 02:00:00	2016-07-12 02:00:00	2016-07-12 02:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-972	4	2016-07-12 08:00:00	2016-07-12 08:00:00	2016-07-12 08:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-973	4	2016-07-12 08:45:00	2016-07-12 08:45:00	2016-07-12 08:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-974	4	2016-07-12 12:45:00	2016-07-12 12:45:00	2016-07-12 12:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-975	4	2016-07-12 12:15:00	2016-07-12 12:15:00	2016-07-12 12:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-976	4	2016-07-12 19:00:00	2016-07-12 19:00:00	2016-07-12 19:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-977	4	2016-07-12 16:30:00	2016-07-12 16:30:00	2016-07-12 16:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-978	4	2016-07-12 20:30:00	2016-07-12 20:30:00	2016-07-12 20:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-979	4	2016-07-12 21:00:00	2016-07-12 21:00:00	2016-07-12 21:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-980	4	2016-07-13 02:00:00	2016-07-13 02:00:00	2016-07-13 02:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-981	4	2016-07-13 05:00:00	2016-07-13 05:00:00	2016-07-13 05:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-982	4	2016-07-13 09:00:00	2016-07-13 09:00:00	2016-07-13 09:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-983	4	2016-07-13 09:45:00	2016-07-13 09:45:00	2016-07-13 09:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-984	4	2016-07-13 14:15:00	2016-07-13 14:15:00	2016-07-13 14:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-985	4	2016-07-13 15:45:00	2016-07-13 15:45:00	2016-07-13 15:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-986	4	2016-07-13 19:30:00	2016-07-13 19:30:00	2016-07-13 19:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-987	4	2016-07-13 18:30:00	2016-07-13 18:30:00	2016-07-13 18:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-988	4	2016-07-14 00:30:00	2016-07-14 00:30:00	2016-07-14 00:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-989	4	2016-07-13 22:30:00	2016-07-13 22:30:00	2016-07-13 22:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-990	4	2016-07-14 01:45:00	2016-07-14 01:45:00	2016-07-14 01:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-991	4	2016-07-14 03:45:00	2016-07-14 03:45:00	2016-07-14 03:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-992	4	2016-07-14 08:30:00	2016-07-14 08:30:00	2016-07-14 08:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-993	4	2016-07-14 08:15:00	2016-07-14 08:15:00	2016-07-14 08:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-994	4	2016-07-14 12:00:00	2016-07-14 12:00:00	2016-07-14 12:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-995	4	2016-07-14 13:30:00	2016-07-14 13:30:00	2016-07-14 13:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-996	4	2016-07-14 16:30:00	2016-07-14 16:30:00	2016-07-14 16:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-997	4	2016-07-14 19:15:00	2016-07-14 19:15:00	2016-07-14 19:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-998	4	2016-07-15 00:30:00	2016-07-15 00:30:00	2016-07-15 00:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-999	4	2016-07-15 02:15:00	2016-07-15 02:15:00	2016-07-15 02:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1000	4	2016-07-15 05:15:00	2016-07-15 05:15:00	2016-07-15 05:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1001	4	2016-07-15 04:30:00	2016-07-15 04:30:00	2016-07-15 04:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1002	4	2016-07-15 09:45:00	2016-07-15 09:45:00	2016-07-15 09:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1003	4	2016-07-15 11:30:00	2016-07-15 11:30:00	2016-07-15 11:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1004	4	2016-07-15 14:15:00	2016-07-15 14:15:00	2016-07-15 14:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1005	4	2016-07-15 15:30:00	2016-07-15 15:30:00	2016-07-15 15:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1006	4	2016-07-15 19:15:00	2016-07-15 19:15:00	2016-07-15 19:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1007	4	2016-07-15 19:45:00	2016-07-15 19:45:00	2016-07-15 19:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1008	4	2016-07-16 01:00:00	2016-07-16 01:00:00	2016-07-16 01:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1009	4	2016-07-16 02:00:00	2016-07-16 02:00:00	2016-07-16 02:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1010	4	2016-07-16 03:45:00	2016-07-16 03:45:00	2016-07-16 03:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1011	4	2016-07-16 09:15:00	2016-07-16 09:15:00	2016-07-16 09:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1012	4	2016-07-16 08:30:00	2016-07-16 08:30:00	2016-07-16 08:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1013	4	2016-07-16 13:30:00	2016-07-16 13:30:00	2016-07-16 13:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1014	4	2016-07-16 13:45:00	2016-07-16 13:45:00	2016-07-16 13:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1015	4	2016-07-16 17:45:00	2016-07-16 17:45:00	2016-07-16 17:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1016	4	2016-07-16 21:30:00	2016-07-16 21:30:00	2016-07-16 21:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1017	4	2016-07-16 21:15:00	2016-07-16 21:15:00	2016-07-16 21:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1018	4	2016-07-17 01:30:00	2016-07-17 01:30:00	2016-07-17 01:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1019	4	2016-07-17 04:15:00	2016-07-17 04:15:00	2016-07-17 04:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1020	4	2016-07-17 06:00:00	2016-07-17 06:00:00	2016-07-17 06:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1021	4	2016-07-17 07:00:00	2016-07-17 07:00:00	2016-07-17 07:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1022	4	2016-07-17 12:15:00	2016-07-17 12:15:00	2016-07-17 12:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1023	4	2016-07-17 13:00:00	2016-07-17 13:00:00	2016-07-17 13:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1024	4	2016-07-17 14:45:00	2016-07-17 14:45:00	2016-07-17 14:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1025	4	2016-07-17 18:15:00	2016-07-17 18:15:00	2016-07-17 18:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1026	4	2016-07-17 20:00:00	2016-07-17 20:00:00	2016-07-17 20:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1027	4	2016-07-17 23:30:00	2016-07-17 23:30:00	2016-07-17 23:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1028	4	2016-07-18 04:00:00	2016-07-18 04:00:00	2016-07-18 04:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1029	4	2016-07-18 05:45:00	2016-07-18 05:45:00	2016-07-18 05:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1030	4	2016-07-18 09:45:00	2016-07-18 09:45:00	2016-07-18 09:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1031	4	2016-07-18 10:30:00	2016-07-18 10:30:00	2016-07-18 10:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1032	4	2016-07-18 13:30:00	2016-07-18 13:30:00	2016-07-18 13:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1033	4	2016-07-18 14:45:00	2016-07-18 14:45:00	2016-07-18 14:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1034	4	2016-07-18 15:45:00	2016-07-18 15:45:00	2016-07-18 15:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1035	4	2016-07-18 18:00:00	2016-07-18 18:00:00	2016-07-18 18:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1036	4	2016-07-18 21:00:00	2016-07-18 21:00:00	2016-07-18 21:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1037	4	2016-07-19 01:45:00	2016-07-19 01:45:00	2016-07-19 01:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1038	4	2016-07-19 04:45:00	2016-07-19 04:45:00	2016-07-19 04:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1039	4	2016-07-19 03:00:00	2016-07-19 03:00:00	2016-07-19 03:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1040	4	2016-07-19 08:30:00	2016-07-19 08:30:00	2016-07-19 08:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1041	4	2016-07-19 10:15:00	2016-07-19 10:15:00	2016-07-19 10:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1042	4	2016-07-19 14:30:00	2016-07-19 14:30:00	2016-07-19 14:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1043	4	2016-07-19 12:45:00	2016-07-19 12:45:00	2016-07-19 12:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1044	4	2016-07-19 20:15:00	2016-07-19 20:15:00	2016-07-19 20:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1045	4	2016-07-19 19:00:00	2016-07-19 19:00:00	2016-07-19 19:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1046	4	2016-07-19 23:15:00	2016-07-19 23:15:00	2016-07-19 23:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1047	4	2016-07-20 01:45:00	2016-07-20 01:45:00	2016-07-20 01:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1048	4	2016-07-20 06:00:00	2016-07-20 06:00:00	2016-07-20 06:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1049	4	2016-07-20 05:30:00	2016-07-20 05:30:00	2016-07-20 05:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1050	4	2016-07-20 07:30:00	2016-07-20 07:30:00	2016-07-20 07:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1051	4	2016-07-20 11:45:00	2016-07-20 11:45:00	2016-07-20 11:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1052	4	2016-07-20 14:00:00	2016-07-20 14:00:00	2016-07-20 14:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1053	4	2016-07-20 15:00:00	2016-07-20 15:00:00	2016-07-20 15:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1054	4	2016-07-20 21:00:00	2016-07-20 21:00:00	2016-07-20 21:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1055	4	2016-07-20 21:15:00	2016-07-20 21:15:00	2016-07-20 21:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1056	4	2016-07-21 01:30:00	2016-07-21 01:30:00	2016-07-21 01:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1057	4	2016-07-21 04:00:00	2016-07-21 04:00:00	2016-07-21 04:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1058	4	2016-07-21 03:45:00	2016-07-21 03:45:00	2016-07-21 03:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1059	4	2016-07-21 05:15:00	2016-07-21 05:15:00	2016-07-21 05:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1060	4	2016-07-21 11:45:00	2016-07-21 11:45:00	2016-07-21 11:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1061	4	2016-07-21 13:15:00	2016-07-21 13:15:00	2016-07-21 13:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1062	4	2016-07-21 14:15:00	2016-07-21 14:15:00	2016-07-21 14:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1063	4	2016-07-21 16:00:00	2016-07-21 16:00:00	2016-07-21 16:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1064	4	2016-07-21 19:15:00	2016-07-21 19:15:00	2016-07-21 19:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1065	4	2016-07-21 22:00:00	2016-07-21 22:00:00	2016-07-21 22:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1066	4	2016-07-22 01:45:00	2016-07-22 01:45:00	2016-07-22 01:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1067	4	2016-07-22 02:45:00	2016-07-22 02:45:00	2016-07-22 02:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1068	4	2016-07-22 07:15:00	2016-07-22 07:15:00	2016-07-22 07:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1069	4	2016-07-22 06:30:00	2016-07-22 06:30:00	2016-07-22 06:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1070	4	2016-07-22 10:15:00	2016-07-22 10:15:00	2016-07-22 10:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1071	4	2016-07-22 12:45:00	2016-07-22 12:45:00	2016-07-22 12:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1072	4	2016-07-22 14:15:00	2016-07-22 14:15:00	2016-07-22 14:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1073	4	2016-07-22 16:15:00	2016-07-22 16:15:00	2016-07-22 16:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1074	4	2016-07-22 23:15:00	2016-07-22 23:15:00	2016-07-22 23:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1075	4	2016-07-22 21:30:00	2016-07-22 21:30:00	2016-07-22 21:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1076	4	2016-07-23 04:15:00	2016-07-23 04:15:00	2016-07-23 04:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1077	4	2016-07-23 04:45:00	2016-07-23 04:45:00	2016-07-23 04:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1078	4	2016-07-23 05:45:00	2016-07-23 05:45:00	2016-07-23 05:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1079	4	2016-07-23 10:45:00	2016-07-23 10:45:00	2016-07-23 10:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1080	4	2016-07-23 11:45:00	2016-07-23 11:45:00	2016-07-23 11:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1081	4	2016-07-23 15:00:00	2016-07-23 15:00:00	2016-07-23 15:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1082	4	2016-07-23 15:15:00	2016-07-23 15:15:00	2016-07-23 15:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1083	4	2016-07-23 17:30:00	2016-07-23 17:30:00	2016-07-23 17:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1084	4	2016-07-23 21:30:00	2016-07-23 21:30:00	2016-07-23 21:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1085	4	2016-07-23 23:30:00	2016-07-23 23:30:00	2016-07-23 23:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1086	4	2016-07-24 03:15:00	2016-07-24 03:15:00	2016-07-24 03:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1087	4	2016-07-24 01:45:00	2016-07-24 01:45:00	2016-07-24 01:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1088	4	2016-07-24 05:45:00	2016-07-24 05:45:00	2016-07-24 05:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1089	4	2016-07-24 09:15:00	2016-07-24 09:15:00	2016-07-24 09:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1090	4	2016-07-24 13:15:00	2016-07-24 13:15:00	2016-07-24 13:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1091	4	2016-07-24 14:15:00	2016-07-24 14:15:00	2016-07-24 14:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1092	4	2016-07-24 19:45:00	2016-07-24 19:45:00	2016-07-24 19:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1093	4	2016-07-24 19:15:00	2016-07-24 19:15:00	2016-07-24 19:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1094	4	2016-07-25 01:00:00	2016-07-25 01:00:00	2016-07-25 01:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1095	4	2016-07-25 00:00:00	2016-07-25 00:00:00	2016-07-25 00:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1096	4	2016-07-25 02:30:00	2016-07-25 02:30:00	2016-07-25 02:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1097	4	2016-07-25 03:30:00	2016-07-25 03:30:00	2016-07-25 03:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1098	4	2016-07-25 10:45:00	2016-07-25 10:45:00	2016-07-25 10:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1099	4	2016-07-25 09:30:00	2016-07-25 09:30:00	2016-07-25 09:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1100	4	2016-07-25 14:45:00	2016-07-25 14:45:00	2016-07-25 14:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1101	4	2016-07-25 18:15:00	2016-07-25 18:15:00	2016-07-25 18:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1102	4	2016-07-25 19:15:00	2016-07-25 19:15:00	2016-07-25 19:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1103	4	2016-07-25 19:30:00	2016-07-25 19:30:00	2016-07-25 19:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1104	4	2016-07-25 23:30:00	2016-07-25 23:30:00	2016-07-25 23:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1105	4	2016-07-26 00:45:00	2016-07-26 00:45:00	2016-07-26 00:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1106	4	2016-07-26 05:30:00	2016-07-26 05:30:00	2016-07-26 05:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1107	4	2016-07-26 05:15:00	2016-07-26 05:15:00	2016-07-26 05:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1108	4	2016-07-26 07:45:00	2016-07-26 07:45:00	2016-07-26 07:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1109	4	2016-07-26 12:00:00	2016-07-26 12:00:00	2016-07-26 12:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1110	4	2016-07-26 15:30:00	2016-07-26 15:30:00	2016-07-26 15:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1111	4	2016-07-26 19:30:00	2016-07-26 19:30:00	2016-07-26 19:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1112	4	2016-07-26 22:00:00	2016-07-26 22:00:00	2016-07-26 22:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1113	4	2016-07-26 20:45:00	2016-07-26 20:45:00	2016-07-26 20:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1114	4	2016-07-27 02:15:00	2016-07-27 02:15:00	2016-07-27 02:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1115	4	2016-07-27 01:30:00	2016-07-27 01:30:00	2016-07-27 01:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1116	4	2016-07-27 06:45:00	2016-07-27 06:45:00	2016-07-27 06:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1117	4	2016-07-27 08:45:00	2016-07-27 08:45:00	2016-07-27 08:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1118	4	2016-07-27 13:00:00	2016-07-27 13:00:00	2016-07-27 13:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1119	4	2016-07-27 13:30:00	2016-07-27 13:30:00	2016-07-27 13:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1120	4	2016-07-27 16:01:00	2016-07-27 16:01:00	2016-07-27 16:01:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1121	4	2016-07-27 18:00:00	2016-07-27 18:00:00	2016-07-27 18:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1122	4	2016-07-27 21:15:00	2016-07-27 21:15:00	2016-07-27 21:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1123	4	2016-07-27 22:30:00	2016-07-27 22:30:00	2016-07-27 22:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1124	4	2016-07-28 02:00:00	2016-07-28 02:00:00	2016-07-28 02:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1125	4	2016-07-28 03:00:00	2016-07-28 03:00:00	2016-07-28 03:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1126	4	2016-07-28 07:45:00	2016-07-28 07:45:00	2016-07-28 07:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1127	4	2016-07-28 09:45:00	2016-07-28 09:45:00	2016-07-28 09:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1128	4	2016-07-28 11:45:00	2016-07-28 11:45:00	2016-07-28 11:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1129	4	2016-07-28 14:00:00	2016-07-28 14:00:00	2016-07-28 14:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1130	4	2016-07-28 15:30:00	2016-07-28 15:30:00	2016-07-28 15:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1131	4	2016-07-28 21:00:00	2016-07-28 21:00:00	2016-07-28 21:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1132	4	2016-07-28 21:45:00	2016-07-28 21:45:00	2016-07-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1133	4	2016-07-29 07:45:00	2016-07-29 07:45:00	2016-07-29 07:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1134	4	2016-07-29 02:30:00	2016-07-29 02:30:00	2016-07-29 02:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1135	4	2016-07-29 06:30:00	2016-07-29 06:30:00	2016-07-29 06:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1136	4	2016-07-29 01:15:00	2016-07-29 01:15:00	2016-07-29 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1137	4	2016-07-29 17:45:00	2016-07-29 17:45:00	2016-07-29 17:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1138	4	2016-07-29 12:30:00	2016-07-29 12:30:00	2016-07-29 12:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1139	4	2016-07-29 16:30:00	2016-07-29 16:30:00	2016-07-29 16:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1140	4	2016-07-29 11:15:00	2016-07-29 11:15:00	2016-07-29 11:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1141	4	2016-07-30 03:45:00	2016-07-30 03:45:00	2016-07-30 03:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1142	4	2016-07-29 22:30:00	2016-07-29 22:30:00	2016-07-29 22:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1143	4	2016-07-30 02:30:00	2016-07-30 02:30:00	2016-07-30 02:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1144	4	2016-07-29 21:15:00	2016-07-29 21:15:00	2016-07-29 21:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1145	4	2016-07-30 04:30:00	2016-07-30 04:30:00	2016-07-30 04:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1146	4	2016-07-31 10:00:00	2016-07-31 10:00:00	2016-07-31 10:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1147	4	2016-07-31 14:00:00	2016-07-31 14:00:00	2016-07-31 14:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1148	4	2016-07-31 11:15:00	2016-07-31 11:15:00	2016-07-31 11:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1149	4	2016-07-31 16:00:00	2016-07-31 16:00:00	2016-07-31 16:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1150	4	2016-07-31 20:00:00	2016-07-31 20:00:00	2016-07-31 20:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1151	4	2016-07-31 18:00:00	2016-07-31 18:00:00	2016-07-31 18:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1152	4	2016-07-31 22:16:00	2016-07-31 22:16:00	2016-07-31 22:16:00	\N	1	\N	1	\N	F	\N	\N	4	\N
-1153	5	2016-07-01 04:15:00	2016-07-01 04:15:00	2016-07-01 04:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1154	5	2016-07-01 05:00:00	2016-07-01 05:00:00	2016-07-01 05:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1155	5	2016-07-01 05:15:00	2016-07-01 05:15:00	2016-07-01 05:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1156	5	2016-07-01 10:00:00	2016-07-01 10:00:00	2016-07-01 10:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1157	5	2016-07-01 13:30:00	2016-07-01 13:30:00	2016-07-01 13:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1158	5	2016-07-01 15:15:00	2016-07-01 15:15:00	2016-07-01 15:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1159	5	2016-07-01 17:00:00	2016-07-01 17:00:00	2016-07-01 17:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1160	5	2016-07-01 19:30:00	2016-07-01 19:30:00	2016-07-01 19:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1161	5	2016-07-01 22:30:00	2016-07-01 22:30:00	2016-07-01 22:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1162	5	2016-07-02 01:00:00	2016-07-02 01:00:00	2016-07-02 01:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1163	5	2016-07-02 04:15:00	2016-07-02 04:15:00	2016-07-02 04:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1164	5	2016-07-02 06:00:00	2016-07-02 06:00:00	2016-07-02 06:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1165	5	2016-07-02 07:45:00	2016-07-02 07:45:00	2016-07-02 07:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1166	5	2016-07-02 11:00:00	2016-07-02 11:00:00	2016-07-02 11:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1167	5	2016-07-02 14:00:00	2016-07-02 14:00:00	2016-07-02 14:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1168	5	2016-07-02 16:00:00	2016-07-02 16:00:00	2016-07-02 16:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1169	5	2016-07-02 17:30:00	2016-07-02 17:30:00	2016-07-02 17:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1170	5	2016-07-02 20:15:00	2016-07-02 20:15:00	2016-07-02 20:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1171	5	2016-07-02 23:00:00	2016-07-02 23:00:00	2016-07-02 23:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1172	5	2016-07-03 01:30:00	2016-07-03 01:30:00	2016-07-03 01:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1173	5	2016-07-03 05:00:00	2016-07-03 05:00:00	2016-07-03 05:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1174	5	2016-07-03 07:30:00	2016-07-03 07:30:00	2016-07-03 07:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1175	5	2016-07-03 10:00:00	2016-07-03 10:00:00	2016-07-03 10:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1176	5	2016-07-03 11:30:00	2016-07-03 11:30:00	2016-07-03 11:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1177	5	2016-07-03 14:16:00	2016-07-03 14:16:00	2016-07-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1178	5	2016-07-03 17:16:00	2016-07-03 17:16:00	2016-07-03 17:16:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1179	5	2016-07-03 20:15:00	2016-07-03 20:15:00	2016-07-03 20:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1180	5	2016-07-03 21:00:00	2016-07-03 21:00:00	2016-07-03 21:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1181	5	2016-07-04 00:01:00	2016-07-04 00:01:00	2016-07-04 00:01:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1182	5	2016-07-04 03:16:00	2016-07-04 03:16:00	2016-07-04 03:16:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1183	5	2016-07-04 06:16:00	2016-07-04 06:16:00	2016-07-04 06:16:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1184	5	2016-07-04 07:01:00	2016-07-04 07:01:00	2016-07-04 07:01:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1185	5	2016-07-04 10:01:00	2016-07-04 10:01:00	2016-07-04 10:01:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1186	5	2016-07-04 13:16:00	2016-07-04 13:16:00	2016-07-04 13:16:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1187	5	2016-07-04 16:15:00	2016-07-04 16:15:00	2016-07-04 16:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1188	5	2016-07-04 17:00:00	2016-07-04 17:00:00	2016-07-04 17:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1189	5	2016-07-04 20:00:00	2016-07-04 20:00:00	2016-07-04 20:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1190	5	2016-07-04 23:16:00	2016-07-04 23:16:00	2016-07-04 23:16:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1191	5	2016-07-05 02:16:00	2016-07-05 02:16:00	2016-07-05 02:16:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1192	5	2016-07-05 03:01:00	2016-07-05 03:01:00	2016-07-05 03:01:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1193	5	2016-07-05 06:01:00	2016-07-05 06:01:00	2016-07-05 06:01:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1194	5	2016-07-05 09:15:00	2016-07-05 09:15:00	2016-07-05 09:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1195	5	2016-07-05 10:30:00	2016-07-05 10:30:00	2016-07-05 10:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1196	5	2016-07-05 13:15:00	2016-07-05 13:15:00	2016-07-05 13:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1197	5	2016-07-05 16:15:00	2016-07-05 16:15:00	2016-07-05 16:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1198	5	2016-07-05 18:45:00	2016-07-05 18:45:00	2016-07-05 18:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1199	5	2016-07-05 21:15:00	2016-07-05 21:15:00	2016-07-05 21:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1200	5	2016-07-05 23:45:00	2016-07-05 23:45:00	2016-07-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1201	5	2016-07-06 02:15:00	2016-07-06 02:15:00	2016-07-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1202	5	2016-07-06 04:45:00	2016-07-06 04:45:00	2016-07-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1203	5	2016-07-06 07:45:00	2016-07-06 07:45:00	2016-07-06 07:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1204	5	2016-07-06 09:45:00	2016-07-06 09:45:00	2016-07-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1205	5	2016-07-06 12:00:00	2016-07-06 12:00:00	2016-07-06 12:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1206	5	2016-07-06 14:30:00	2016-07-06 14:30:00	2016-07-06 14:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1207	5	2016-07-06 18:15:00	2016-07-06 18:15:00	2016-07-06 18:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1208	5	2016-07-06 19:45:00	2016-07-06 19:45:00	2016-07-06 19:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1209	5	2016-07-06 22:15:00	2016-07-06 22:15:00	2016-07-06 22:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1210	5	2016-07-07 01:30:00	2016-07-07 01:30:00	2016-07-07 01:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1211	5	2016-07-07 02:45:00	2016-07-07 02:45:00	2016-07-07 02:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1212	5	2016-07-07 05:30:00	2016-07-07 05:30:00	2016-07-07 05:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1213	5	2016-07-07 08:15:00	2016-07-07 08:15:00	2016-07-07 08:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1214	5	2016-07-07 11:00:00	2016-07-07 11:00:00	2016-07-07 11:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1215	5	2016-07-07 14:45:00	2016-07-07 14:45:00	2016-07-07 14:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1216	5	2016-07-07 15:15:00	2016-07-07 15:15:00	2016-07-07 15:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1217	5	2016-07-07 20:45:00	2016-07-07 20:45:00	2016-07-07 20:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1218	5	2016-07-07 20:15:00	2016-07-07 20:15:00	2016-07-07 20:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1219	5	2016-07-08 00:15:00	2016-07-08 00:15:00	2016-07-08 00:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1220	5	2016-07-08 01:00:00	2016-07-08 01:00:00	2016-07-08 01:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1221	5	2016-07-08 04:45:00	2016-07-08 04:45:00	2016-07-08 04:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1222	5	2016-07-08 04:30:00	2016-07-08 04:30:00	2016-07-08 04:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1223	5	2016-07-08 13:00:00	2016-07-08 13:00:00	2016-07-08 13:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1224	5	2016-07-08 13:30:00	2016-07-08 13:30:00	2016-07-08 13:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1225	5	2016-07-08 15:00:00	2016-07-08 15:00:00	2016-07-08 15:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1226	5	2016-07-08 20:45:00	2016-07-08 20:45:00	2016-07-08 20:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1227	5	2016-07-08 16:30:00	2016-07-08 16:30:00	2016-07-08 16:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1228	5	2016-07-08 23:00:00	2016-07-08 23:00:00	2016-07-08 23:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1229	5	2016-07-09 01:45:00	2016-07-09 01:45:00	2016-07-09 01:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1230	5	2016-07-09 04:45:00	2016-07-09 04:45:00	2016-07-09 04:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1231	5	2016-07-09 04:15:00	2016-07-09 04:15:00	2016-07-09 04:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1232	5	2016-07-09 09:45:00	2016-07-09 09:45:00	2016-07-09 09:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1233	5	2016-07-09 11:15:00	2016-07-09 11:15:00	2016-07-09 11:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1234	5	2016-07-09 13:00:00	2016-07-09 13:00:00	2016-07-09 13:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1235	5	2016-07-09 16:00:00	2016-07-09 16:00:00	2016-07-09 16:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1236	5	2016-07-09 20:45:00	2016-07-09 20:45:00	2016-07-09 20:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1237	5	2016-07-09 18:45:00	2016-07-09 18:45:00	2016-07-09 18:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1238	5	2016-07-09 22:45:00	2016-07-09 22:45:00	2016-07-09 22:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1239	5	2016-07-10 01:45:00	2016-07-10 01:45:00	2016-07-10 01:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1240	5	2016-07-10 07:00:00	2016-07-10 07:00:00	2016-07-10 07:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1241	5	2016-07-10 04:15:00	2016-07-10 04:15:00	2016-07-10 04:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1242	5	2016-07-10 12:00:00	2016-07-10 12:00:00	2016-07-10 12:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1243	5	2016-07-10 10:30:00	2016-07-10 10:30:00	2016-07-10 10:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1244	5	2016-07-10 16:45:00	2016-07-10 16:45:00	2016-07-10 16:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1245	5	2016-07-10 15:45:00	2016-07-10 15:45:00	2016-07-10 15:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1246	5	2016-07-10 20:15:00	2016-07-10 20:15:00	2016-07-10 20:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1247	5	2016-07-10 19:15:00	2016-07-10 19:15:00	2016-07-10 19:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1248	5	2016-07-11 01:45:00	2016-07-11 01:45:00	2016-07-11 01:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1249	5	2016-07-10 23:30:00	2016-07-10 23:30:00	2016-07-10 23:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1250	5	2016-07-11 05:15:00	2016-07-11 05:15:00	2016-07-11 05:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1251	5	2016-07-11 06:15:00	2016-07-11 06:15:00	2016-07-11 06:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1252	5	2016-07-11 08:30:00	2016-07-11 08:30:00	2016-07-11 08:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1253	5	2016-07-11 13:15:00	2016-07-11 13:15:00	2016-07-11 13:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1254	5	2016-07-11 14:30:00	2016-07-11 14:30:00	2016-07-11 14:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1255	5	2016-07-11 15:30:00	2016-07-11 15:30:00	2016-07-11 15:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1256	5	2016-07-11 21:00:00	2016-07-11 21:00:00	2016-07-11 21:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1257	5	2016-07-11 22:30:00	2016-07-11 22:30:00	2016-07-11 22:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1258	5	2016-07-12 03:15:00	2016-07-12 03:15:00	2016-07-12 03:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1259	5	2016-07-12 03:00:00	2016-07-12 03:00:00	2016-07-12 03:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1260	5	2016-07-12 05:00:00	2016-07-12 05:00:00	2016-07-12 05:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1261	5	2016-07-12 08:00:00	2016-07-12 08:00:00	2016-07-12 08:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1262	5	2016-07-12 12:45:00	2016-07-12 12:45:00	2016-07-12 12:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1263	5	2016-07-12 14:45:00	2016-07-12 14:45:00	2016-07-12 14:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1264	5	2016-07-12 16:45:00	2016-07-12 16:45:00	2016-07-12 16:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1265	5	2016-07-12 20:15:00	2016-07-12 20:15:00	2016-07-12 20:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1266	5	2016-07-12 21:45:00	2016-07-12 21:45:00	2016-07-12 21:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1267	5	2016-07-12 21:30:00	2016-07-12 21:30:00	2016-07-12 21:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1268	5	2016-07-13 03:45:00	2016-07-13 03:45:00	2016-07-13 03:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1269	5	2016-07-13 02:15:00	2016-07-13 02:15:00	2016-07-13 02:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1270	5	2016-07-13 07:15:00	2016-07-13 07:15:00	2016-07-13 07:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1271	5	2016-07-13 07:30:00	2016-07-13 07:30:00	2016-07-13 07:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1272	5	2016-07-13 11:45:00	2016-07-13 11:45:00	2016-07-13 11:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1273	5	2016-07-13 12:15:00	2016-07-13 12:15:00	2016-07-13 12:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1274	5	2016-07-13 16:30:00	2016-07-13 16:30:00	2016-07-13 16:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1275	5	2016-07-13 20:00:00	2016-07-13 20:00:00	2016-07-13 20:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1276	5	2016-07-13 21:00:00	2016-07-13 21:00:00	2016-07-13 21:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1277	5	2016-07-14 00:15:00	2016-07-14 00:15:00	2016-07-14 00:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1278	5	2016-07-14 04:45:00	2016-07-14 04:45:00	2016-07-14 04:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1279	5	2016-07-14 05:00:00	2016-07-14 05:00:00	2016-07-14 05:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1280	5	2016-07-14 07:00:00	2016-07-14 07:00:00	2016-07-14 07:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1281	5	2016-07-14 09:00:00	2016-07-14 09:00:00	2016-07-14 09:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1282	5	2016-07-14 13:15:00	2016-07-14 13:15:00	2016-07-14 13:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1283	5	2016-07-14 13:30:00	2016-07-14 13:30:00	2016-07-14 13:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1284	5	2016-07-14 16:30:00	2016-07-14 16:30:00	2016-07-14 16:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1285	5	2016-07-14 19:15:00	2016-07-14 19:15:00	2016-07-14 19:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1286	5	2016-07-14 21:15:00	2016-07-14 21:15:00	2016-07-14 21:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1287	5	2016-07-15 01:15:00	2016-07-15 01:15:00	2016-07-15 01:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1288	5	2016-07-15 05:15:00	2016-07-15 05:15:00	2016-07-15 05:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1289	5	2016-07-15 05:45:00	2016-07-15 05:45:00	2016-07-15 05:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1290	5	2016-07-15 08:00:00	2016-07-15 08:00:00	2016-07-15 08:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1291	5	2016-07-15 09:45:00	2016-07-15 09:45:00	2016-07-15 09:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1292	5	2016-07-15 14:30:00	2016-07-15 14:30:00	2016-07-15 14:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1293	5	2016-07-15 16:00:00	2016-07-15 16:00:00	2016-07-15 16:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1294	5	2016-07-15 20:15:00	2016-07-15 20:15:00	2016-07-15 20:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1295	5	2016-07-15 19:45:00	2016-07-15 19:45:00	2016-07-15 19:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1296	5	2016-07-15 23:15:00	2016-07-15 23:15:00	2016-07-15 23:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1297	5	2016-07-16 03:45:00	2016-07-16 03:45:00	2016-07-16 03:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1298	5	2016-07-16 07:00:00	2016-07-16 07:00:00	2016-07-16 07:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1299	5	2016-07-16 06:15:00	2016-07-16 06:15:00	2016-07-16 06:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1300	5	2016-07-16 11:30:00	2016-07-16 11:30:00	2016-07-16 11:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1301	5	2016-07-16 11:15:00	2016-07-16 11:15:00	2016-07-16 11:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1302	5	2016-07-16 14:45:00	2016-07-16 14:45:00	2016-07-16 14:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1303	5	2016-07-16 16:30:00	2016-07-16 16:30:00	2016-07-16 16:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1304	5	2016-07-16 21:30:00	2016-07-16 21:30:00	2016-07-16 21:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1305	5	2016-07-16 23:15:00	2016-07-16 23:15:00	2016-07-16 23:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1306	5	2016-07-17 03:00:00	2016-07-17 03:00:00	2016-07-17 03:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1307	5	2016-07-17 01:30:00	2016-07-17 01:30:00	2016-07-17 01:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1308	5	2016-07-17 05:30:00	2016-07-17 05:30:00	2016-07-17 05:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1309	5	2016-07-17 08:30:00	2016-07-17 08:30:00	2016-07-17 08:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1310	5	2016-07-17 11:30:00	2016-07-17 11:30:00	2016-07-17 11:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1311	5	2016-07-17 13:00:00	2016-07-17 13:00:00	2016-07-17 13:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1312	5	2016-07-17 17:45:00	2016-07-17 17:45:00	2016-07-17 17:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1313	5	2016-07-17 16:00:00	2016-07-17 16:00:00	2016-07-17 16:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1314	5	2016-07-17 22:15:00	2016-07-17 22:15:00	2016-07-17 22:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1315	5	2016-07-17 20:15:00	2016-07-17 20:15:00	2016-07-17 20:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1316	5	2016-07-18 01:00:00	2016-07-18 01:00:00	2016-07-18 01:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1317	5	2016-07-18 04:15:00	2016-07-18 04:15:00	2016-07-18 04:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1318	5	2016-07-18 07:15:00	2016-07-18 07:15:00	2016-07-18 07:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1319	5	2016-07-18 07:30:00	2016-07-18 07:30:00	2016-07-18 07:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1320	5	2016-07-18 10:30:00	2016-07-18 10:30:00	2016-07-18 10:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1321	5	2016-07-18 13:15:00	2016-07-18 13:15:00	2016-07-18 13:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1322	5	2016-07-18 17:00:00	2016-07-18 17:00:00	2016-07-18 17:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1323	5	2016-07-18 19:15:00	2016-07-18 19:15:00	2016-07-18 19:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1324	5	2016-07-18 20:30:00	2016-07-18 20:30:00	2016-07-18 20:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1325	5	2016-07-19 00:15:00	2016-07-19 00:15:00	2016-07-19 00:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1326	5	2016-07-19 04:00:00	2016-07-19 04:00:00	2016-07-19 04:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1327	5	2016-07-19 05:00:00	2016-07-19 05:00:00	2016-07-19 05:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1328	5	2016-07-19 06:30:00	2016-07-19 06:30:00	2016-07-19 06:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1329	5	2016-07-19 10:00:00	2016-07-19 10:00:00	2016-07-19 10:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1330	5	2016-07-19 14:15:00	2016-07-19 14:15:00	2016-07-19 14:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1331	5	2016-07-19 14:30:00	2016-07-19 14:30:00	2016-07-19 14:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1332	5	2016-07-19 18:15:00	2016-07-19 18:15:00	2016-07-19 18:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1333	5	2016-07-19 17:30:00	2016-07-19 17:30:00	2016-07-19 17:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1334	5	2016-07-20 01:45:00	2016-07-20 01:45:00	2016-07-20 01:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1335	5	2016-07-20 01:30:00	2016-07-20 01:30:00	2016-07-20 01:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1336	5	2016-07-20 04:30:00	2016-07-20 04:30:00	2016-07-20 04:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1337	5	2016-07-20 06:30:00	2016-07-20 06:30:00	2016-07-20 06:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1338	5	2016-07-20 10:45:00	2016-07-20 10:45:00	2016-07-20 10:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1339	5	2016-07-20 11:00:00	2016-07-20 11:00:00	2016-07-20 11:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1340	5	2016-07-20 13:45:00	2016-07-20 13:45:00	2016-07-20 13:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1341	5	2016-07-20 16:00:00	2016-07-20 16:00:00	2016-07-20 16:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1342	5	2016-07-20 16:45:00	2016-07-20 16:45:00	2016-07-20 16:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1343	5	2016-07-20 19:00:00	2016-07-20 19:00:00	2016-07-20 19:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1344	5	2016-07-20 23:45:00	2016-07-20 23:45:00	2016-07-20 23:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1345	5	2016-07-21 02:45:00	2016-07-21 02:45:00	2016-07-21 02:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1346	5	2016-07-21 04:15:00	2016-07-21 04:15:00	2016-07-21 04:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1347	5	2016-07-21 07:45:00	2016-07-21 07:45:00	2016-07-21 07:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1348	5	2016-07-21 09:15:00	2016-07-21 09:15:00	2016-07-21 09:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1349	5	2016-07-21 13:30:00	2016-07-21 13:30:00	2016-07-21 13:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1350	5	2016-07-21 14:45:00	2016-07-21 14:45:00	2016-07-21 14:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1351	5	2016-07-21 16:30:00	2016-07-21 16:30:00	2016-07-21 16:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1352	5	2016-07-21 22:00:00	2016-07-21 22:00:00	2016-07-21 22:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1353	5	2016-07-21 23:00:00	2016-07-21 23:00:00	2016-07-21 23:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1354	5	2016-07-22 02:00:00	2016-07-22 02:00:00	2016-07-22 02:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1355	5	2016-07-22 03:30:00	2016-07-22 03:30:00	2016-07-22 03:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1356	5	2016-07-22 06:30:00	2016-07-22 06:30:00	2016-07-22 06:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1357	5	2016-07-22 09:45:00	2016-07-22 09:45:00	2016-07-22 09:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1358	5	2016-07-22 12:15:00	2016-07-22 12:15:00	2016-07-22 12:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1359	5	2016-07-22 11:30:00	2016-07-22 11:30:00	2016-07-22 11:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1360	5	2016-07-22 16:30:00	2016-07-22 16:30:00	2016-07-22 16:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1361	5	2016-07-22 19:00:00	2016-07-22 19:00:00	2016-07-22 19:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1362	5	2016-07-22 20:00:00	2016-07-22 20:00:00	2016-07-22 20:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1363	5	2016-07-23 00:15:00	2016-07-23 00:15:00	2016-07-23 00:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1364	5	2016-07-23 02:15:00	2016-07-23 02:15:00	2016-07-23 02:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1365	5	2016-07-23 05:45:00	2016-07-23 05:45:00	2016-07-23 05:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1366	5	2016-07-23 07:30:00	2016-07-23 07:30:00	2016-07-23 07:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1367	5	2016-07-23 10:00:00	2016-07-23 10:00:00	2016-07-23 10:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1368	5	2016-07-23 12:00:00	2016-07-23 12:00:00	2016-07-23 12:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1369	5	2016-07-23 15:30:00	2016-07-23 15:30:00	2016-07-23 15:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1370	5	2016-07-23 19:15:00	2016-07-23 19:15:00	2016-07-23 19:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1371	5	2016-07-23 18:00:00	2016-07-23 18:00:00	2016-07-23 18:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1372	5	2016-07-23 23:45:00	2016-07-23 23:45:00	2016-07-23 23:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1373	5	2016-07-23 21:15:00	2016-07-23 21:15:00	2016-07-23 21:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1374	5	2016-07-24 03:45:00	2016-07-24 03:45:00	2016-07-24 03:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1375	5	2016-07-24 04:00:00	2016-07-24 04:00:00	2016-07-24 04:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1376	5	2016-07-24 07:15:00	2016-07-24 07:15:00	2016-07-24 07:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1377	5	2016-07-24 10:00:00	2016-07-24 10:00:00	2016-07-24 10:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1378	5	2016-07-24 14:00:00	2016-07-24 14:00:00	2016-07-24 14:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1379	5	2016-07-24 15:00:00	2016-07-24 15:00:00	2016-07-24 15:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1380	5	2016-07-24 16:00:00	2016-07-24 16:00:00	2016-07-24 16:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1381	5	2016-07-24 21:15:00	2016-07-24 21:15:00	2016-07-24 21:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1382	5	2016-07-25 00:15:00	2016-07-25 00:15:00	2016-07-25 00:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1383	5	2016-07-24 23:45:00	2016-07-24 23:45:00	2016-07-24 23:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1384	5	2016-07-25 04:30:00	2016-07-25 04:30:00	2016-07-25 04:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1385	5	2016-07-25 07:00:00	2016-07-25 07:00:00	2016-07-25 07:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1386	5	2016-07-25 07:45:00	2016-07-25 07:45:00	2016-07-25 07:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1387	5	2016-07-25 09:15:00	2016-07-25 09:15:00	2016-07-25 09:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1388	5	2016-07-25 16:00:00	2016-07-25 16:00:00	2016-07-25 16:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1389	5	2016-07-25 15:00:00	2016-07-25 15:00:00	2016-07-25 15:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1390	5	2016-07-25 18:15:00	2016-07-25 18:15:00	2016-07-25 18:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1391	5	2016-07-25 22:00:00	2016-07-25 22:00:00	2016-07-25 22:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1392	5	2016-07-25 22:45:00	2016-07-25 22:45:00	2016-07-25 22:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1393	5	2016-07-26 02:15:00	2016-07-26 02:15:00	2016-07-26 02:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1394	5	2016-07-26 04:30:00	2016-07-26 04:30:00	2016-07-26 04:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1395	5	2016-07-26 06:30:00	2016-07-26 06:30:00	2016-07-26 06:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1396	5	2016-07-26 07:30:00	2016-07-26 07:30:00	2016-07-26 07:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1397	5	2016-07-26 13:15:00	2016-07-26 13:15:00	2016-07-26 13:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1398	5	2016-07-26 17:00:00	2016-07-26 17:00:00	2016-07-26 17:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1399	5	2016-07-26 15:15:00	2016-07-26 15:15:00	2016-07-26 15:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1400	5	2016-07-26 20:45:00	2016-07-26 20:45:00	2016-07-26 20:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1401	5	2016-07-26 21:45:00	2016-07-26 21:45:00	2016-07-26 21:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1402	5	2016-07-26 23:45:00	2016-07-26 23:45:00	2016-07-26 23:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1403	5	2016-07-27 03:30:00	2016-07-27 03:30:00	2016-07-27 03:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1404	5	2016-07-27 05:15:00	2016-07-27 05:15:00	2016-07-27 05:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1405	5	2016-07-27 07:00:00	2016-07-27 07:00:00	2016-07-27 07:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1406	5	2016-07-27 10:30:00	2016-07-27 10:30:00	2016-07-27 10:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1407	5	2016-07-27 12:30:00	2016-07-27 12:30:00	2016-07-27 12:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1408	5	2016-07-27 14:15:00	2016-07-27 14:15:00	2016-07-27 14:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1409	5	2016-07-27 19:30:00	2016-07-27 19:30:00	2016-07-27 19:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1410	5	2016-07-27 20:00:00	2016-07-27 20:00:00	2016-07-27 20:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1411	5	2016-07-28 00:15:00	2016-07-28 00:15:00	2016-07-28 00:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1412	5	2016-07-28 02:30:00	2016-07-28 02:30:00	2016-07-28 02:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1413	5	2016-07-28 05:00:00	2016-07-28 05:00:00	2016-07-28 05:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1414	5	2016-07-28 06:30:00	2016-07-28 06:30:00	2016-07-28 06:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1415	5	2016-07-28 09:45:00	2016-07-28 09:45:00	2016-07-28 09:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1416	5	2016-07-28 13:15:00	2016-07-28 13:15:00	2016-07-28 13:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1417	5	2016-07-28 14:45:00	2016-07-28 14:45:00	2016-07-28 14:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1418	5	2016-07-28 18:00:00	2016-07-28 18:00:00	2016-07-28 18:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1419	5	2016-07-28 19:45:00	2016-07-28 19:45:00	2016-07-28 19:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1420	5	2016-07-28 21:45:00	2016-07-28 21:45:00	2016-07-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1421	5	2016-07-28 23:45:00	2016-07-28 23:45:00	2016-07-28 23:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1422	5	2016-07-29 03:45:00	2016-07-29 03:45:00	2016-07-29 03:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1423	5	2016-07-28 22:30:00	2016-07-28 22:30:00	2016-07-28 22:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1424	5	2016-07-29 05:00:00	2016-07-29 05:00:00	2016-07-29 05:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1425	5	2016-07-29 09:45:00	2016-07-29 09:45:00	2016-07-29 09:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1426	5	2016-07-29 13:45:00	2016-07-29 13:45:00	2016-07-29 13:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1427	5	2016-07-29 08:30:00	2016-07-29 08:30:00	2016-07-29 08:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1428	5	2016-07-29 15:00:00	2016-07-29 15:00:00	2016-07-29 15:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1429	5	2016-07-29 19:45:00	2016-07-29 19:45:00	2016-07-29 19:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1430	5	2016-07-29 23:45:00	2016-07-29 23:45:00	2016-07-29 23:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1431	5	2016-07-29 18:30:00	2016-07-29 18:30:00	2016-07-29 18:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1432	5	2016-07-30 01:00:00	2016-07-30 01:00:00	2016-07-30 01:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1433	5	2016-07-31 11:30:00	2016-07-31 11:30:00	2016-07-31 11:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1434	5	2016-07-31 11:15:00	2016-07-31 11:15:00	2016-07-31 11:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1435	5	2016-07-30 07:00:00	2016-07-30 07:00:00	2016-07-30 07:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1436	5	2016-07-31 12:30:00	2016-07-31 12:30:00	2016-07-31 12:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1437	5	2016-07-31 17:15:00	2016-07-31 17:15:00	2016-07-31 17:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1438	5	2016-07-31 23:45:00	2016-07-31 23:45:00	2016-07-31 23:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1439	5	2016-07-31 16:45:00	2016-07-31 16:45:00	2016-07-31 16:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1440	5	2016-07-31 23:30:00	2016-07-31 23:30:00	2016-07-31 23:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
-1441	6	2016-07-01 01:15:00	2016-07-01 01:15:00	2016-07-01 01:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1442	6	2016-07-01 05:15:00	2016-07-01 05:15:00	2016-07-01 05:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1443	6	2016-07-01 06:15:00	2016-07-01 06:15:00	2016-07-01 06:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1444	6	2016-07-01 10:15:00	2016-07-01 10:15:00	2016-07-01 10:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1445	6	2016-07-01 14:30:00	2016-07-01 14:30:00	2016-07-01 14:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1446	6	2016-07-01 16:00:00	2016-07-01 16:00:00	2016-07-01 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1447	6	2016-07-01 18:00:00	2016-07-01 18:00:00	2016-07-01 18:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1448	6	2016-07-01 18:45:00	2016-07-01 18:45:00	2016-07-01 18:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1449	6	2016-07-01 23:15:00	2016-07-01 23:15:00	2016-07-01 23:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1450	6	2016-07-02 01:45:00	2016-07-02 01:45:00	2016-07-02 01:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1451	6	2016-07-02 02:00:00	2016-07-02 02:00:00	2016-07-02 02:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1452	6	2016-07-02 05:30:00	2016-07-02 05:30:00	2016-07-02 05:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1453	6	2016-07-02 09:45:00	2016-07-02 09:45:00	2016-07-02 09:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1454	6	2016-07-02 10:30:00	2016-07-02 10:30:00	2016-07-02 10:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1455	6	2016-07-02 13:30:00	2016-07-02 13:30:00	2016-07-02 13:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1456	6	2016-07-02 15:30:00	2016-07-02 15:30:00	2016-07-02 15:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1457	6	2016-07-02 17:15:00	2016-07-02 17:15:00	2016-07-02 17:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1458	6	2016-07-02 21:00:00	2016-07-02 21:00:00	2016-07-02 21:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1459	6	2016-07-02 23:45:00	2016-07-02 23:45:00	2016-07-02 23:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1460	6	2016-07-03 01:45:00	2016-07-03 01:45:00	2016-07-03 01:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1461	6	2016-07-03 02:00:00	2016-07-03 02:00:00	2016-07-03 02:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1462	6	2016-07-03 06:45:00	2016-07-03 06:45:00	2016-07-03 06:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1463	6	2016-07-03 10:45:00	2016-07-03 10:45:00	2016-07-03 10:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1464	6	2016-07-03 13:30:00	2016-07-03 13:30:00	2016-07-03 13:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1465	6	2016-07-03 14:16:00	2016-07-03 14:16:00	2016-07-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1466	6	2016-07-03 17:16:00	2016-07-03 17:16:00	2016-07-03 17:16:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1467	6	2016-07-03 20:15:00	2016-07-03 20:15:00	2016-07-03 20:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1468	6	2016-07-03 21:00:00	2016-07-03 21:00:00	2016-07-03 21:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1469	6	2016-07-04 00:01:00	2016-07-04 00:01:00	2016-07-04 00:01:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1470	6	2016-07-04 03:16:00	2016-07-04 03:16:00	2016-07-04 03:16:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1471	6	2016-07-04 06:16:00	2016-07-04 06:16:00	2016-07-04 06:16:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1472	6	2016-07-04 07:01:00	2016-07-04 07:01:00	2016-07-04 07:01:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1473	6	2016-07-04 10:01:00	2016-07-04 10:01:00	2016-07-04 10:01:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1474	6	2016-07-04 13:16:00	2016-07-04 13:16:00	2016-07-04 13:16:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1475	6	2016-07-04 16:15:00	2016-07-04 16:15:00	2016-07-04 16:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1476	6	2016-07-04 17:00:00	2016-07-04 17:00:00	2016-07-04 17:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1477	6	2016-07-04 20:00:00	2016-07-04 20:00:00	2016-07-04 20:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1478	6	2016-07-04 23:16:00	2016-07-04 23:16:00	2016-07-04 23:16:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1479	6	2016-07-05 02:16:00	2016-07-05 02:16:00	2016-07-05 02:16:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1480	6	2016-07-05 03:01:00	2016-07-05 03:01:00	2016-07-05 03:01:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1481	6	2016-07-05 06:01:00	2016-07-05 06:01:00	2016-07-05 06:01:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1482	6	2016-07-05 09:15:00	2016-07-05 09:15:00	2016-07-05 09:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1483	6	2016-07-05 10:30:00	2016-07-05 10:30:00	2016-07-05 10:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1484	6	2016-07-05 13:15:00	2016-07-05 13:15:00	2016-07-05 13:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1485	6	2016-07-05 16:15:00	2016-07-05 16:15:00	2016-07-05 16:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1486	6	2016-07-05 18:45:00	2016-07-05 18:45:00	2016-07-05 18:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1487	6	2016-07-05 21:15:00	2016-07-05 21:15:00	2016-07-05 21:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1488	6	2016-07-05 23:45:00	2016-07-05 23:45:00	2016-07-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1489	6	2016-07-06 02:15:00	2016-07-06 02:15:00	2016-07-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1490	6	2016-07-06 04:45:00	2016-07-06 04:45:00	2016-07-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1491	6	2016-07-06 07:45:00	2016-07-06 07:45:00	2016-07-06 07:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1492	6	2016-07-06 09:45:00	2016-07-06 09:45:00	2016-07-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1493	6	2016-07-06 12:15:00	2016-07-06 12:15:00	2016-07-06 12:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1494	6	2016-07-06 14:45:00	2016-07-06 14:45:00	2016-07-06 14:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1495	6	2016-07-06 17:30:00	2016-07-06 17:30:00	2016-07-06 17:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1496	6	2016-07-06 19:14:00	2016-07-06 19:14:00	2016-07-06 19:14:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1497	6	2016-07-06 21:45:00	2016-07-06 21:45:00	2016-07-06 21:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1498	6	2016-07-07 01:15:00	2016-07-07 01:15:00	2016-07-07 01:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1499	6	2016-07-07 03:15:00	2016-07-07 03:15:00	2016-07-07 03:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1500	6	2016-07-07 05:15:00	2016-07-07 05:15:00	2016-07-07 05:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1501	6	2016-07-07 08:45:00	2016-07-07 08:45:00	2016-07-07 08:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1502	6	2016-07-07 09:45:00	2016-07-07 09:45:00	2016-07-07 09:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1503	6	2016-07-07 13:00:00	2016-07-07 13:00:00	2016-07-07 13:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1504	6	2016-07-07 13:30:00	2016-07-07 13:30:00	2016-07-07 13:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1505	6	2016-07-07 20:15:00	2016-07-07 20:15:00	2016-07-07 20:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1506	6	2016-07-07 18:15:00	2016-07-07 18:15:00	2016-07-07 18:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1507	6	2016-07-07 22:30:00	2016-07-07 22:30:00	2016-07-07 22:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1508	6	2016-07-08 01:45:00	2016-07-08 01:45:00	2016-07-08 01:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1509	6	2016-07-08 06:15:00	2016-07-08 06:15:00	2016-07-08 06:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1510	6	2016-07-08 05:30:00	2016-07-08 05:30:00	2016-07-08 05:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1511	6	2016-07-08 10:15:00	2016-07-08 10:15:00	2016-07-08 10:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1512	6	2016-07-08 09:30:00	2016-07-08 09:30:00	2016-07-08 09:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1513	6	2016-07-08 15:00:00	2016-07-08 15:00:00	2016-07-08 15:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1514	6	2016-07-08 16:15:00	2016-07-08 16:15:00	2016-07-08 16:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1515	6	2016-07-08 20:00:00	2016-07-08 20:00:00	2016-07-08 20:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1516	6	2016-07-09 01:00:00	2016-07-09 01:00:00	2016-07-09 01:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1517	6	2016-07-08 21:15:00	2016-07-08 21:15:00	2016-07-08 21:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1518	6	2016-07-09 05:30:00	2016-07-09 05:30:00	2016-07-09 05:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1519	6	2016-07-09 03:30:00	2016-07-09 03:30:00	2016-07-09 03:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1520	6	2016-07-09 10:30:00	2016-07-09 10:30:00	2016-07-09 10:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1521	6	2016-07-09 10:45:00	2016-07-09 10:45:00	2016-07-09 10:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1522	6	2016-07-09 16:00:00	2016-07-09 16:00:00	2016-07-09 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1523	6	2016-07-09 14:15:00	2016-07-09 14:15:00	2016-07-09 14:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1524	6	2016-07-09 19:00:00	2016-07-09 19:00:00	2016-07-09 19:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1525	6	2016-07-09 21:15:00	2016-07-09 21:15:00	2016-07-09 21:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1526	6	2016-07-10 00:15:00	2016-07-10 00:15:00	2016-07-10 00:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1527	6	2016-07-10 00:00:00	2016-07-10 00:00:00	2016-07-10 00:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1528	6	2016-07-10 06:30:00	2016-07-10 06:30:00	2016-07-10 06:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1529	6	2016-07-10 05:00:00	2016-07-10 05:00:00	2016-07-10 05:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1530	6	2016-07-10 11:30:00	2016-07-10 11:30:00	2016-07-10 11:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1531	6	2016-07-10 10:00:00	2016-07-10 10:00:00	2016-07-10 10:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1532	6	2016-07-10 13:15:00	2016-07-10 13:15:00	2016-07-10 13:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1533	6	2016-07-10 17:15:00	2016-07-10 17:15:00	2016-07-10 17:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1534	6	2016-07-10 17:45:00	2016-07-10 17:45:00	2016-07-10 17:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1535	6	2016-07-10 23:00:00	2016-07-10 23:00:00	2016-07-10 23:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1536	6	2016-07-10 22:45:00	2016-07-10 22:45:00	2016-07-10 22:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1537	6	2016-07-11 00:15:00	2016-07-11 00:15:00	2016-07-11 00:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1538	6	2016-07-11 04:15:00	2016-07-11 04:15:00	2016-07-11 04:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1539	6	2016-07-11 09:00:00	2016-07-11 09:00:00	2016-07-11 09:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1540	6	2016-07-11 13:00:00	2016-07-11 13:00:00	2016-07-11 13:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1541	6	2016-07-11 11:15:00	2016-07-11 11:15:00	2016-07-11 11:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1542	6	2016-07-11 14:30:00	2016-07-11 14:30:00	2016-07-11 14:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1543	6	2016-07-11 19:00:00	2016-07-11 19:00:00	2016-07-11 19:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1544	6	2016-07-11 21:45:00	2016-07-11 21:45:00	2016-07-11 21:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1545	6	2016-07-11 22:15:00	2016-07-11 22:15:00	2016-07-11 22:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1546	6	2016-07-12 02:45:00	2016-07-12 02:45:00	2016-07-12 02:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1547	6	2016-07-12 02:30:00	2016-07-12 02:30:00	2016-07-12 02:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1548	6	2016-07-12 04:30:00	2016-07-12 04:30:00	2016-07-12 04:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1549	6	2016-07-12 09:45:00	2016-07-12 09:45:00	2016-07-12 09:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1550	6	2016-07-12 13:30:00	2016-07-12 13:30:00	2016-07-12 13:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1551	6	2016-07-12 13:15:00	2016-07-12 13:15:00	2016-07-12 13:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1552	6	2016-07-12 15:00:00	2016-07-12 15:00:00	2016-07-12 15:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1553	6	2016-07-12 19:15:00	2016-07-12 19:15:00	2016-07-12 19:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1554	6	2016-07-12 22:30:00	2016-07-12 22:30:00	2016-07-12 22:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1555	6	2016-07-13 01:15:00	2016-07-13 01:15:00	2016-07-13 01:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1556	6	2016-07-13 03:15:00	2016-07-13 03:15:00	2016-07-13 03:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1557	6	2016-07-13 01:45:00	2016-07-13 01:45:00	2016-07-13 01:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1558	6	2016-07-13 08:00:00	2016-07-13 08:00:00	2016-07-13 08:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1559	6	2016-07-13 09:15:00	2016-07-13 09:15:00	2016-07-13 09:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1560	6	2016-07-13 11:30:00	2016-07-13 11:30:00	2016-07-13 11:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1561	6	2016-07-13 15:30:00	2016-07-13 15:30:00	2016-07-13 15:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1562	6	2016-07-13 16:00:00	2016-07-13 16:00:00	2016-07-13 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1563	6	2016-07-13 19:30:00	2016-07-13 19:30:00	2016-07-13 19:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1564	6	2016-07-14 00:30:00	2016-07-14 00:30:00	2016-07-14 00:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1565	6	2016-07-14 00:45:00	2016-07-14 00:45:00	2016-07-14 00:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1566	6	2016-07-14 04:15:00	2016-07-14 04:15:00	2016-07-14 04:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1567	6	2016-07-14 03:15:00	2016-07-14 03:15:00	2016-07-14 03:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1568	6	2016-07-14 08:15:00	2016-07-14 08:15:00	2016-07-14 08:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1569	6	2016-07-14 12:15:00	2016-07-14 12:15:00	2016-07-14 12:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1570	6	2016-07-14 12:46:00	2016-07-14 12:46:00	2016-07-14 12:46:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1571	6	2016-07-14 15:15:00	2016-07-14 15:15:00	2016-07-14 15:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1572	6	2016-07-14 16:30:00	2016-07-14 16:30:00	2016-07-14 16:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1573	6	2016-07-14 18:45:00	2016-07-14 18:45:00	2016-07-14 18:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1574	6	2016-07-14 23:45:00	2016-07-14 23:45:00	2016-07-14 23:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1575	6	2016-07-15 00:45:00	2016-07-15 00:45:00	2016-07-15 00:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1576	6	2016-07-15 06:00:00	2016-07-15 06:00:00	2016-07-15 06:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1577	6	2016-07-15 05:15:00	2016-07-15 05:15:00	2016-07-15 05:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1578	6	2016-07-15 08:45:00	2016-07-15 08:45:00	2016-07-15 08:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1579	6	2016-07-15 09:15:00	2016-07-15 09:15:00	2016-07-15 09:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1580	6	2016-07-15 16:00:00	2016-07-15 16:00:00	2016-07-15 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1581	6	2016-07-15 14:00:00	2016-07-15 14:00:00	2016-07-15 14:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1582	6	2016-07-15 19:00:00	2016-07-15 19:00:00	2016-07-15 19:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1583	6	2016-07-15 19:45:00	2016-07-15 19:45:00	2016-07-15 19:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1584	6	2016-07-16 00:30:00	2016-07-16 00:30:00	2016-07-16 00:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1585	6	2016-07-16 03:15:00	2016-07-16 03:15:00	2016-07-16 03:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1586	6	2016-07-16 06:30:00	2016-07-16 06:30:00	2016-07-16 06:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1587	6	2016-07-16 04:30:00	2016-07-16 04:30:00	2016-07-16 04:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1588	6	2016-07-16 11:15:00	2016-07-16 11:15:00	2016-07-16 11:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1589	6	2016-07-16 09:30:00	2016-07-16 09:30:00	2016-07-16 09:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1590	6	2016-07-16 15:30:00	2016-07-16 15:30:00	2016-07-16 15:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1591	6	2016-07-16 16:00:00	2016-07-16 16:00:00	2016-07-16 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1592	6	2016-07-16 20:15:00	2016-07-16 20:15:00	2016-07-16 20:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1593	6	2016-07-16 22:30:00	2016-07-16 22:30:00	2016-07-16 22:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1594	6	2016-07-17 02:30:00	2016-07-17 02:30:00	2016-07-17 02:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1595	6	2016-07-17 01:00:00	2016-07-17 01:00:00	2016-07-17 01:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1596	6	2016-07-17 05:00:00	2016-07-17 05:00:00	2016-07-17 05:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1597	6	2016-07-17 09:15:00	2016-07-17 09:15:00	2016-07-17 09:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1598	6	2016-07-17 14:00:00	2016-07-17 14:00:00	2016-07-17 14:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1599	6	2016-07-17 12:30:00	2016-07-17 12:30:00	2016-07-17 12:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1600	6	2016-07-17 16:45:00	2016-07-17 16:45:00	2016-07-17 16:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1601	6	2016-07-17 17:00:00	2016-07-17 17:00:00	2016-07-17 17:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1602	6	2016-07-17 22:45:00	2016-07-17 22:45:00	2016-07-17 22:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1603	6	2016-07-17 21:00:00	2016-07-17 21:00:00	2016-07-17 21:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1604	6	2016-07-18 01:45:00	2016-07-18 01:45:00	2016-07-18 01:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1605	6	2016-07-18 05:00:00	2016-07-18 05:00:00	2016-07-18 05:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1606	6	2016-07-18 08:30:00	2016-07-18 08:30:00	2016-07-18 08:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1607	6	2016-07-18 08:15:00	2016-07-18 08:15:00	2016-07-18 08:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1608	6	2016-07-18 11:30:00	2016-07-18 11:30:00	2016-07-18 11:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1609	6	2016-07-18 14:30:00	2016-07-18 14:30:00	2016-07-18 14:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1610	6	2016-07-18 17:30:00	2016-07-18 17:30:00	2016-07-18 17:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1611	6	2016-07-18 18:15:00	2016-07-18 18:15:00	2016-07-18 18:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1612	6	2016-07-18 23:45:00	2016-07-18 23:45:00	2016-07-18 23:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1613	6	2016-07-18 23:15:00	2016-07-18 23:15:00	2016-07-18 23:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1614	6	2016-07-19 03:30:00	2016-07-19 03:30:00	2016-07-19 03:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1615	6	2016-07-19 03:45:00	2016-07-19 03:45:00	2016-07-19 03:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1616	6	2016-07-19 07:15:00	2016-07-19 07:15:00	2016-07-19 07:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1617	6	2016-07-19 11:00:00	2016-07-19 11:00:00	2016-07-19 11:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1618	6	2016-07-19 12:00:00	2016-07-19 12:00:00	2016-07-19 12:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1619	6	2016-07-19 16:00:00	2016-07-19 16:00:00	2016-07-19 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1620	6	2016-07-19 19:30:00	2016-07-19 19:30:00	2016-07-19 19:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1621	6	2016-07-19 18:15:00	2016-07-19 18:15:00	2016-07-19 18:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1622	6	2016-07-20 02:00:00	2016-07-20 02:00:00	2016-07-20 02:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1623	6	2016-07-19 23:30:00	2016-07-19 23:30:00	2016-07-19 23:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1624	6	2016-07-20 06:30:00	2016-07-20 06:30:00	2016-07-20 06:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1625	6	2016-07-20 04:45:00	2016-07-20 04:45:00	2016-07-20 04:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1626	6	2016-07-20 08:15:00	2016-07-20 08:15:00	2016-07-20 08:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1627	6	2016-07-20 11:00:00	2016-07-20 11:00:00	2016-07-20 11:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1628	6	2016-07-20 12:30:00	2016-07-20 12:30:00	2016-07-20 12:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1629	6	2016-07-20 18:15:00	2016-07-20 18:15:00	2016-07-20 18:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1630	6	2016-07-20 18:00:00	2016-07-20 18:00:00	2016-07-20 18:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1631	6	2016-07-20 22:00:00	2016-07-20 22:00:00	2016-07-20 22:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1632	6	2016-07-20 23:15:00	2016-07-20 23:15:00	2016-07-20 23:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1633	6	2016-07-21 03:30:00	2016-07-21 03:30:00	2016-07-21 03:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1634	6	2016-07-21 05:00:00	2016-07-21 05:00:00	2016-07-21 05:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1635	6	2016-07-21 06:30:00	2016-07-21 06:30:00	2016-07-21 06:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1636	6	2016-07-21 11:00:00	2016-07-21 11:00:00	2016-07-21 11:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1637	6	2016-07-21 13:45:00	2016-07-21 13:45:00	2016-07-21 13:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1638	6	2016-07-21 15:30:00	2016-07-21 15:30:00	2016-07-21 15:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1639	6	2016-07-21 17:15:00	2016-07-21 17:15:00	2016-07-21 17:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1640	6	2016-07-21 18:30:00	2016-07-21 18:30:00	2016-07-21 18:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1641	6	2016-07-21 22:30:00	2016-07-21 22:30:00	2016-07-21 22:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1642	6	2016-07-22 02:45:00	2016-07-22 02:45:00	2016-07-22 02:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1643	6	2016-07-22 03:00:00	2016-07-22 03:00:00	2016-07-22 03:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1644	6	2016-07-22 08:15:00	2016-07-22 08:15:00	2016-07-22 08:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1645	6	2016-07-22 08:30:00	2016-07-22 08:30:00	2016-07-22 08:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1646	6	2016-07-22 11:45:00	2016-07-22 11:45:00	2016-07-22 11:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1647	6	2016-07-22 14:45:00	2016-07-22 14:45:00	2016-07-22 14:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1648	6	2016-07-22 17:45:00	2016-07-22 17:45:00	2016-07-22 17:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1649	6	2016-07-22 16:00:00	2016-07-22 16:00:00	2016-07-22 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1650	6	2016-07-22 23:15:00	2016-07-22 23:15:00	2016-07-22 23:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1651	6	2016-07-22 23:45:00	2016-07-22 23:45:00	2016-07-22 23:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1652	6	2016-07-23 03:00:00	2016-07-23 03:00:00	2016-07-23 03:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1653	6	2016-07-23 05:15:00	2016-07-23 05:15:00	2016-07-23 05:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1654	6	2016-07-23 07:30:00	2016-07-23 07:30:00	2016-07-23 07:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1655	6	2016-07-23 06:30:00	2016-07-23 06:30:00	2016-07-23 06:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1656	6	2016-07-23 11:30:00	2016-07-23 11:30:00	2016-07-23 11:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1657	6	2016-07-23 15:00:00	2016-07-23 15:00:00	2016-07-23 15:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1658	6	2016-07-23 15:45:00	2016-07-23 15:45:00	2016-07-23 15:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1659	6	2016-07-23 18:45:00	2016-07-23 18:45:00	2016-07-23 18:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1660	6	2016-07-23 23:00:00	2016-07-23 23:00:00	2016-07-23 23:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1661	6	2016-07-24 01:30:00	2016-07-24 01:30:00	2016-07-24 01:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1662	6	2016-07-24 04:31:00	2016-07-24 04:31:00	2016-07-24 04:31:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1663	6	2016-07-24 06:45:00	2016-07-24 06:45:00	2016-07-24 06:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1664	6	2016-07-24 09:00:00	2016-07-24 09:00:00	2016-07-24 09:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1665	6	2016-07-24 12:15:00	2016-07-24 12:15:00	2016-07-24 12:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1666	6	2016-07-24 14:15:00	2016-07-24 14:15:00	2016-07-24 14:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1667	6	2016-07-24 16:30:00	2016-07-24 16:30:00	2016-07-24 16:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1668	6	2016-07-24 15:30:00	2016-07-24 15:30:00	2016-07-24 15:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1669	6	2016-07-24 18:00:00	2016-07-24 18:00:00	2016-07-24 18:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1670	6	2016-07-24 21:00:00	2016-07-24 21:00:00	2016-07-24 21:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1671	6	2016-07-25 00:45:00	2016-07-25 00:45:00	2016-07-25 00:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1672	6	2016-07-25 02:00:00	2016-07-25 02:00:00	2016-07-25 02:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1673	6	2016-07-25 04:15:00	2016-07-25 04:15:00	2016-07-25 04:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1674	6	2016-07-25 10:00:00	2016-07-25 10:00:00	2016-07-25 10:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1675	6	2016-07-25 10:15:00	2016-07-25 10:15:00	2016-07-25 10:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1676	6	2016-07-25 15:00:00	2016-07-25 15:00:00	2016-07-25 15:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1677	6	2016-07-25 17:00:00	2016-07-25 17:00:00	2016-07-25 17:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1678	6	2016-07-25 19:30:00	2016-07-25 19:30:00	2016-07-25 19:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1679	6	2016-07-25 20:15:00	2016-07-25 20:15:00	2016-07-25 20:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1680	6	2016-07-26 00:45:00	2016-07-26 00:45:00	2016-07-26 00:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1681	6	2016-07-26 01:30:00	2016-07-26 01:30:00	2016-07-26 01:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1682	6	2016-07-26 04:00:00	2016-07-26 04:00:00	2016-07-26 04:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1683	6	2016-07-26 08:45:00	2016-07-26 08:45:00	2016-07-26 08:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1684	6	2016-07-26 11:45:00	2016-07-26 11:45:00	2016-07-26 11:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1685	6	2016-07-26 12:15:00	2016-07-26 12:15:00	2016-07-26 12:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1686	6	2016-07-26 15:30:00	2016-07-26 15:30:00	2016-07-26 15:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1687	6	2016-07-26 15:15:00	2016-07-26 15:15:00	2016-07-26 15:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1688	6	2016-07-26 18:00:00	2016-07-26 18:00:00	2016-07-26 18:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1689	6	2016-07-26 23:00:00	2016-07-26 23:00:00	2016-07-26 23:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1690	6	2016-07-26 23:30:00	2016-07-26 23:30:00	2016-07-26 23:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1691	6	2016-07-27 04:15:00	2016-07-27 04:15:00	2016-07-27 04:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1692	6	2016-07-27 04:45:00	2016-07-27 04:45:00	2016-07-27 04:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1693	6	2016-07-27 10:45:00	2016-07-27 10:45:00	2016-07-27 10:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1694	6	2016-07-27 11:15:00	2016-07-27 11:15:00	2016-07-27 11:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1695	6	2016-07-27 15:30:00	2016-07-27 15:30:00	2016-07-27 15:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1696	6	2016-07-27 14:45:00	2016-07-27 14:45:00	2016-07-27 14:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1697	6	2016-07-27 19:30:00	2016-07-27 19:30:00	2016-07-27 19:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1698	6	2016-07-27 18:15:00	2016-07-27 18:15:00	2016-07-27 18:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1699	6	2016-07-28 00:00:00	2016-07-28 00:00:00	2016-07-28 00:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1700	6	2016-07-28 02:00:00	2016-07-28 02:00:00	2016-07-28 02:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1701	6	2016-07-28 04:30:00	2016-07-28 04:30:00	2016-07-28 04:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1702	6	2016-07-28 06:45:00	2016-07-28 06:45:00	2016-07-28 06:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1703	6	2016-07-28 08:45:00	2016-07-28 08:45:00	2016-07-28 08:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1704	6	2016-07-28 13:30:00	2016-07-28 13:30:00	2016-07-28 13:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1705	6	2016-07-28 13:15:00	2016-07-28 13:15:00	2016-07-28 13:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1706	6	2016-07-28 18:15:00	2016-07-28 18:15:00	2016-07-28 18:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1707	6	2016-07-28 17:30:00	2016-07-28 17:30:00	2016-07-28 17:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1708	6	2016-07-28 21:45:00	2016-07-28 21:45:00	2016-07-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1709	6	2016-07-29 08:00:00	2016-07-29 08:00:00	2016-07-29 08:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1710	6	2016-07-29 02:45:00	2016-07-29 02:45:00	2016-07-29 02:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1711	6	2016-07-29 06:45:00	2016-07-29 06:45:00	2016-07-29 06:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1712	6	2016-07-29 01:30:00	2016-07-29 01:30:00	2016-07-29 01:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1713	6	2016-07-29 18:00:00	2016-07-29 18:00:00	2016-07-29 18:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1714	6	2016-07-29 12:45:00	2016-07-29 12:45:00	2016-07-29 12:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1715	6	2016-07-29 16:45:00	2016-07-29 16:45:00	2016-07-29 16:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1716	6	2016-07-29 11:30:00	2016-07-29 11:30:00	2016-07-29 11:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1717	6	2016-07-30 04:00:00	2016-07-30 04:00:00	2016-07-30 04:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1718	6	2016-07-29 22:45:00	2016-07-29 22:45:00	2016-07-29 22:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1719	6	2016-07-30 02:45:00	2016-07-30 02:45:00	2016-07-30 02:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1720	6	2016-07-29 21:30:00	2016-07-29 21:30:00	2016-07-29 21:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1721	6	2016-07-30 07:15:00	2016-07-30 07:15:00	2016-07-30 07:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1722	6	2016-07-31 12:45:00	2016-07-31 12:45:00	2016-07-31 12:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1723	6	2016-07-30 06:00:00	2016-07-30 06:00:00	2016-07-30 06:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1724	6	2016-07-31 11:30:00	2016-07-31 11:30:00	2016-07-31 11:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1725	6	2016-07-31 16:15:00	2016-07-31 16:15:00	2016-07-31 16:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1726	6	2016-07-31 20:15:00	2016-07-31 20:15:00	2016-07-31 20:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1727	6	2016-07-31 15:45:00	2016-07-31 15:45:00	2016-07-31 15:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1728	6	2016-07-31 22:31:00	2016-07-31 22:31:00	2016-07-31 22:31:00	\N	1	\N	1	\N	F	\N	\N	6	\N
-1729	7	2016-07-01 00:30:00	2016-07-01 00:30:00	2016-07-01 00:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1730	7	2016-07-01 04:45:00	2016-07-01 04:45:00	2016-07-01 04:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1731	7	2016-07-01 05:30:00	2016-07-01 05:30:00	2016-07-01 05:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1732	7	2016-07-01 09:45:00	2016-07-01 09:45:00	2016-07-01 09:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1733	7	2016-07-01 10:45:00	2016-07-01 10:45:00	2016-07-01 10:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1734	7	2016-07-01 15:00:00	2016-07-01 15:00:00	2016-07-01 15:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1735	7	2016-07-01 19:00:00	2016-07-01 19:00:00	2016-07-01 19:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1736	7	2016-07-01 20:30:00	2016-07-01 20:30:00	2016-07-01 20:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1737	7	2016-07-01 20:45:00	2016-07-01 20:45:00	2016-07-01 20:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1738	7	2016-07-02 01:00:00	2016-07-02 01:00:00	2016-07-02 01:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1739	7	2016-07-02 05:30:00	2016-07-02 05:30:00	2016-07-02 05:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1740	7	2016-07-02 05:15:00	2016-07-02 05:15:00	2016-07-02 05:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1741	7	2016-07-02 06:45:00	2016-07-02 06:45:00	2016-07-02 06:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1742	7	2016-07-02 10:15:00	2016-07-02 10:15:00	2016-07-02 10:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1743	7	2016-07-02 11:46:00	2016-07-02 11:46:00	2016-07-02 11:46:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1744	7	2016-07-02 15:15:00	2016-07-02 15:15:00	2016-07-02 15:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1745	7	2016-07-02 16:45:00	2016-07-02 16:45:00	2016-07-02 16:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1746	7	2016-07-02 20:00:00	2016-07-02 20:00:00	2016-07-02 20:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1747	7	2016-07-03 01:15:00	2016-07-03 01:15:00	2016-07-03 01:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1748	7	2016-07-02 23:15:00	2016-07-02 23:15:00	2016-07-02 23:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1749	7	2016-07-03 04:00:00	2016-07-03 04:00:00	2016-07-03 04:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1750	7	2016-07-03 06:00:00	2016-07-03 06:00:00	2016-07-03 06:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1751	7	2016-07-03 08:30:00	2016-07-03 08:30:00	2016-07-03 08:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1752	7	2016-07-03 11:30:00	2016-07-03 11:30:00	2016-07-03 11:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1753	7	2016-07-03 14:16:00	2016-07-03 14:16:00	2016-07-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1754	7	2016-07-03 17:01:00	2016-07-03 17:01:00	2016-07-03 17:01:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1755	7	2016-07-03 20:00:00	2016-07-03 20:00:00	2016-07-03 20:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1756	7	2016-07-03 21:15:00	2016-07-03 21:15:00	2016-07-03 21:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1757	7	2016-07-04 00:16:00	2016-07-04 00:16:00	2016-07-04 00:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1758	7	2016-07-04 03:01:00	2016-07-04 03:01:00	2016-07-04 03:01:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1759	7	2016-07-04 06:01:00	2016-07-04 06:01:00	2016-07-04 06:01:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1760	7	2016-07-04 07:16:00	2016-07-04 07:16:00	2016-07-04 07:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1761	7	2016-07-04 10:16:00	2016-07-04 10:16:00	2016-07-04 10:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1762	7	2016-07-04 13:01:00	2016-07-04 13:01:00	2016-07-04 13:01:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1763	7	2016-07-04 16:00:00	2016-07-04 16:00:00	2016-07-04 16:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1764	7	2016-07-04 17:15:00	2016-07-04 17:15:00	2016-07-04 17:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1765	7	2016-07-04 20:15:00	2016-07-04 20:15:00	2016-07-04 20:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1766	7	2016-07-04 23:00:00	2016-07-04 23:00:00	2016-07-04 23:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1767	7	2016-07-05 02:01:00	2016-07-05 02:01:00	2016-07-05 02:01:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1768	7	2016-07-05 03:16:00	2016-07-05 03:16:00	2016-07-05 03:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1769	7	2016-07-05 06:16:00	2016-07-05 06:16:00	2016-07-05 06:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1770	7	2016-07-05 09:00:00	2016-07-05 09:00:00	2016-07-05 09:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1771	7	2016-07-05 12:00:00	2016-07-05 12:00:00	2016-07-05 12:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1772	7	2016-07-05 13:45:00	2016-07-05 13:45:00	2016-07-05 13:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1773	7	2016-07-05 16:15:00	2016-07-05 16:15:00	2016-07-05 16:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1774	7	2016-07-05 18:30:00	2016-07-05 18:30:00	2016-07-05 18:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1775	7	2016-07-05 21:30:00	2016-07-05 21:30:00	2016-07-05 21:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1776	7	2016-07-05 23:45:00	2016-07-05 23:45:00	2016-07-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1777	7	2016-07-06 02:15:00	2016-07-06 02:15:00	2016-07-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1778	7	2016-07-06 04:45:00	2016-07-06 04:45:00	2016-07-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1779	7	2016-07-06 07:15:00	2016-07-06 07:15:00	2016-07-06 07:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1780	7	2016-07-06 09:45:00	2016-07-06 09:45:00	2016-07-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1781	7	2016-07-06 11:15:00	2016-07-06 11:15:00	2016-07-06 11:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1782	7	2016-07-06 14:45:00	2016-07-06 14:45:00	2016-07-06 14:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1783	7	2016-07-06 17:30:00	2016-07-06 17:30:00	2016-07-06 17:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1784	7	2016-07-06 19:14:00	2016-07-06 19:14:00	2016-07-06 19:14:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1785	7	2016-07-06 21:45:00	2016-07-06 21:45:00	2016-07-06 21:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1786	7	2016-07-07 01:15:00	2016-07-07 01:15:00	2016-07-07 01:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1787	7	2016-07-07 03:15:00	2016-07-07 03:15:00	2016-07-07 03:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1788	7	2016-07-07 05:15:00	2016-07-07 05:15:00	2016-07-07 05:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1789	7	2016-07-07 08:45:00	2016-07-07 08:45:00	2016-07-07 08:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1790	7	2016-07-07 09:45:00	2016-07-07 09:45:00	2016-07-07 09:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1791	7	2016-07-07 15:15:00	2016-07-07 15:15:00	2016-07-07 15:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1792	7	2016-07-07 13:45:00	2016-07-07 13:45:00	2016-07-07 13:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1793	7	2016-07-07 21:30:00	2016-07-07 21:30:00	2016-07-07 21:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1794	7	2016-07-07 19:45:00	2016-07-07 19:45:00	2016-07-07 19:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1795	7	2016-07-08 00:00:00	2016-07-08 00:00:00	2016-07-08 00:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1796	7	2016-07-08 01:30:00	2016-07-08 01:30:00	2016-07-08 01:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1797	7	2016-07-08 05:30:00	2016-07-08 05:30:00	2016-07-08 05:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1798	7	2016-07-08 04:00:00	2016-07-08 04:00:00	2016-07-08 04:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1799	7	2016-07-08 10:15:00	2016-07-08 10:15:00	2016-07-08 10:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1800	7	2016-07-08 08:45:00	2016-07-08 08:45:00	2016-07-08 08:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1801	7	2016-07-08 13:30:00	2016-07-08 13:30:00	2016-07-08 13:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1802	7	2016-07-08 18:15:00	2016-07-08 18:15:00	2016-07-08 18:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1803	7	2016-07-08 19:15:00	2016-07-08 19:15:00	2016-07-08 19:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1804	7	2016-07-09 01:45:00	2016-07-09 01:45:00	2016-07-09 01:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1805	7	2016-07-09 00:45:00	2016-07-09 00:45:00	2016-07-09 00:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1806	7	2016-07-09 02:00:00	2016-07-09 02:00:00	2016-07-09 02:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1807	7	2016-07-09 05:15:00	2016-07-09 05:15:00	2016-07-09 05:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1808	7	2016-07-09 10:15:00	2016-07-09 10:15:00	2016-07-09 10:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1809	7	2016-07-09 09:45:00	2016-07-09 09:45:00	2016-07-09 09:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1810	7	2016-07-09 14:00:00	2016-07-09 14:00:00	2016-07-09 14:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1811	7	2016-07-09 16:15:00	2016-07-09 16:15:00	2016-07-09 16:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1812	7	2016-07-09 18:45:00	2016-07-09 18:45:00	2016-07-09 18:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1813	7	2016-07-09 17:45:00	2016-07-09 17:45:00	2016-07-09 17:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1814	7	2016-07-10 02:00:00	2016-07-10 02:00:00	2016-07-10 02:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1815	7	2016-07-09 22:45:00	2016-07-09 22:45:00	2016-07-09 22:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1816	7	2016-07-10 05:45:00	2016-07-10 05:45:00	2016-07-10 05:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1817	7	2016-07-10 04:15:00	2016-07-10 04:15:00	2016-07-10 04:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1818	7	2016-07-10 10:45:00	2016-07-10 10:45:00	2016-07-10 10:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1819	7	2016-07-10 09:15:00	2016-07-10 09:15:00	2016-07-10 09:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1820	7	2016-07-10 17:01:00	2016-07-10 17:01:00	2016-07-10 17:01:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1821	7	2016-07-10 16:15:00	2016-07-10 16:15:00	2016-07-10 16:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1822	7	2016-07-10 19:00:00	2016-07-10 19:00:00	2016-07-10 19:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1823	7	2016-07-10 20:30:00	2016-07-10 20:30:00	2016-07-10 20:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1824	7	2016-07-11 01:15:00	2016-07-11 01:15:00	2016-07-11 01:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1825	7	2016-07-11 03:45:00	2016-07-11 03:45:00	2016-07-11 03:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1826	7	2016-07-11 07:00:00	2016-07-11 07:00:00	2016-07-11 07:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1827	7	2016-07-11 06:45:00	2016-07-11 06:45:00	2016-07-11 06:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1828	7	2016-07-11 11:00:00	2016-07-11 11:00:00	2016-07-11 11:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1829	7	2016-07-11 12:15:00	2016-07-11 12:15:00	2016-07-11 12:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1830	7	2016-07-11 18:00:00	2016-07-11 18:00:00	2016-07-11 18:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1831	7	2016-07-11 14:30:00	2016-07-11 14:30:00	2016-07-11 14:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1832	7	2016-07-11 19:45:00	2016-07-11 19:45:00	2016-07-11 19:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1833	7	2016-07-11 19:30:00	2016-07-11 19:30:00	2016-07-11 19:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1834	7	2016-07-12 03:15:00	2016-07-12 03:15:00	2016-07-12 03:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1835	7	2016-07-12 02:15:00	2016-07-12 02:15:00	2016-07-12 02:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1836	7	2016-07-12 08:15:00	2016-07-12 08:15:00	2016-07-12 08:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1837	7	2016-07-12 08:30:00	2016-07-12 08:30:00	2016-07-12 08:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1838	7	2016-07-12 13:00:00	2016-07-12 13:00:00	2016-07-12 13:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1839	7	2016-07-12 11:15:00	2016-07-12 11:15:00	2016-07-12 11:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1840	7	2016-07-12 18:30:00	2016-07-12 18:30:00	2016-07-12 18:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1841	7	2016-07-12 18:45:00	2016-07-12 18:45:00	2016-07-12 18:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1842	7	2016-07-12 19:30:00	2016-07-12 19:30:00	2016-07-12 19:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1843	7	2016-07-12 21:15:00	2016-07-12 21:15:00	2016-07-12 21:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1844	7	2016-07-13 02:15:00	2016-07-13 02:15:00	2016-07-13 02:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1845	7	2016-07-13 05:15:00	2016-07-13 05:15:00	2016-07-13 05:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1846	7	2016-07-13 06:45:00	2016-07-13 06:45:00	2016-07-13 06:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1847	7	2016-07-13 07:15:00	2016-07-13 07:15:00	2016-07-13 07:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1848	7	2016-07-13 15:00:00	2016-07-13 15:00:00	2016-07-13 15:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1849	7	2016-07-13 14:00:00	2016-07-13 14:00:00	2016-07-13 14:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1850	7	2016-07-13 17:00:00	2016-07-13 17:00:00	2016-07-13 17:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1851	7	2016-07-13 20:00:00	2016-07-13 20:00:00	2016-07-13 20:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1852	7	2016-07-13 23:30:00	2016-07-13 23:30:00	2016-07-13 23:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1853	7	2016-07-14 00:15:00	2016-07-14 00:15:00	2016-07-14 00:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1854	7	2016-07-14 05:00:00	2016-07-14 05:00:00	2016-07-14 05:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1855	7	2016-07-14 04:00:00	2016-07-14 04:00:00	2016-07-14 04:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1856	7	2016-07-14 11:00:00	2016-07-14 11:00:00	2016-07-14 11:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1857	7	2016-07-14 07:45:00	2016-07-14 07:45:00	2016-07-14 07:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1858	7	2016-07-14 12:15:00	2016-07-14 12:15:00	2016-07-14 12:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1859	7	2016-07-14 15:45:00	2016-07-14 15:45:00	2016-07-14 15:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1860	7	2016-07-14 19:45:00	2016-07-14 19:45:00	2016-07-14 19:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1861	7	2016-07-14 21:15:00	2016-07-14 21:15:00	2016-07-14 21:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1862	7	2016-07-15 00:45:00	2016-07-15 00:45:00	2016-07-15 00:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1863	7	2016-07-15 02:30:00	2016-07-15 02:30:00	2016-07-15 02:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1864	7	2016-07-15 03:00:00	2016-07-15 03:00:00	2016-07-15 03:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1865	7	2016-07-15 03:15:00	2016-07-15 03:15:00	2016-07-15 03:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1866	7	2016-07-15 10:00:00	2016-07-15 10:00:00	2016-07-15 10:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1867	7	2016-07-15 12:45:00	2016-07-15 12:45:00	2016-07-15 12:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1868	7	2016-07-15 12:15:00	2016-07-15 12:15:00	2016-07-15 12:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1869	7	2016-07-15 16:15:00	2016-07-15 16:15:00	2016-07-15 16:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1870	7	2016-07-15 19:00:00	2016-07-15 19:00:00	2016-07-15 19:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1871	7	2016-07-15 21:45:00	2016-07-15 21:45:00	2016-07-15 21:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1872	7	2016-07-16 01:15:00	2016-07-16 01:15:00	2016-07-16 01:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1873	7	2016-07-16 03:00:00	2016-07-16 03:00:00	2016-07-16 03:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1874	7	2016-07-16 07:15:00	2016-07-16 07:15:00	2016-07-16 07:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1875	7	2016-07-16 08:15:00	2016-07-16 08:15:00	2016-07-16 08:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1876	7	2016-07-16 10:15:00	2016-07-16 10:15:00	2016-07-16 10:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1877	7	2016-07-16 12:15:00	2016-07-16 12:15:00	2016-07-16 12:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1878	7	2016-07-16 16:00:00	2016-07-16 16:00:00	2016-07-16 16:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1879	7	2016-07-16 15:00:00	2016-07-16 15:00:00	2016-07-16 15:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1880	7	2016-07-16 22:00:00	2016-07-16 22:00:00	2016-07-16 22:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1881	7	2016-07-16 19:15:00	2016-07-16 19:15:00	2016-07-16 19:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1882	7	2016-07-17 03:45:00	2016-07-17 03:45:00	2016-07-17 03:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1883	7	2016-07-17 02:15:00	2016-07-17 02:15:00	2016-07-17 02:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1884	7	2016-07-17 06:15:00	2016-07-17 06:15:00	2016-07-17 06:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1885	7	2016-07-17 06:00:00	2016-07-17 06:00:00	2016-07-17 06:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1886	7	2016-07-17 12:15:00	2016-07-17 12:15:00	2016-07-17 12:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1887	7	2016-07-17 12:00:00	2016-07-17 12:00:00	2016-07-17 12:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1888	7	2016-07-17 15:00:00	2016-07-17 15:00:00	2016-07-17 15:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1889	7	2016-07-17 19:45:00	2016-07-17 19:45:00	2016-07-17 19:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1890	7	2016-07-17 23:30:00	2016-07-17 23:30:00	2016-07-17 23:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1891	7	2016-07-18 00:45:00	2016-07-18 00:45:00	2016-07-18 00:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1892	7	2016-07-18 03:00:00	2016-07-18 03:00:00	2016-07-18 03:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1893	7	2016-07-18 05:30:00	2016-07-18 05:30:00	2016-07-18 05:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1894	7	2016-07-18 05:45:00	2016-07-18 05:45:00	2016-07-18 05:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1895	7	2016-07-18 09:15:00	2016-07-18 09:15:00	2016-07-18 09:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1896	7	2016-07-18 10:30:00	2016-07-18 10:30:00	2016-07-18 10:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1897	7	2016-07-18 11:15:00	2016-07-18 11:15:00	2016-07-18 11:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1898	7	2016-07-18 16:30:00	2016-07-18 16:30:00	2016-07-18 16:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1899	7	2016-07-18 18:15:00	2016-07-18 18:15:00	2016-07-18 18:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1900	7	2016-07-18 21:15:00	2016-07-18 21:15:00	2016-07-18 21:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1901	7	2016-07-19 00:00:00	2016-07-19 00:00:00	2016-07-19 00:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1902	7	2016-07-19 02:30:00	2016-07-19 02:30:00	2016-07-19 02:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1903	7	2016-07-19 04:30:00	2016-07-19 04:30:00	2016-07-19 04:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1904	7	2016-07-19 08:45:00	2016-07-19 08:45:00	2016-07-19 08:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1905	7	2016-07-19 07:30:00	2016-07-19 07:30:00	2016-07-19 07:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1906	7	2016-07-19 13:45:00	2016-07-19 13:45:00	2016-07-19 13:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1907	7	2016-07-19 13:00:00	2016-07-19 13:00:00	2016-07-19 13:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1908	7	2016-07-19 19:30:00	2016-07-19 19:30:00	2016-07-19 19:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1909	7	2016-07-19 19:00:00	2016-07-19 19:00:00	2016-07-19 19:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1910	7	2016-07-19 22:15:00	2016-07-19 22:15:00	2016-07-19 22:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1911	7	2016-07-20 01:00:00	2016-07-20 01:00:00	2016-07-20 01:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1912	7	2016-07-20 05:30:00	2016-07-20 05:30:00	2016-07-20 05:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1913	7	2016-07-20 07:00:00	2016-07-20 07:00:00	2016-07-20 07:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1914	7	2016-07-20 10:15:00	2016-07-20 10:15:00	2016-07-20 10:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1915	7	2016-07-20 09:45:00	2016-07-20 09:45:00	2016-07-20 09:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1916	7	2016-07-20 12:15:00	2016-07-20 12:15:00	2016-07-20 12:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1917	7	2016-07-20 14:45:00	2016-07-20 14:45:00	2016-07-20 14:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1918	7	2016-07-20 16:45:00	2016-07-20 16:45:00	2016-07-20 16:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1919	7	2016-07-20 21:00:00	2016-07-20 21:00:00	2016-07-20 21:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1920	7	2016-07-21 00:30:00	2016-07-21 00:30:00	2016-07-21 00:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1921	7	2016-07-21 04:30:00	2016-07-21 04:30:00	2016-07-21 04:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1922	7	2016-07-21 04:00:00	2016-07-21 04:00:00	2016-07-21 04:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1923	7	2016-07-21 05:30:00	2016-07-21 05:30:00	2016-07-21 05:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1924	7	2016-07-21 11:15:00	2016-07-21 11:15:00	2016-07-21 11:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1925	7	2016-07-21 13:30:00	2016-07-21 13:30:00	2016-07-21 13:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1926	7	2016-07-21 16:00:00	2016-07-21 16:00:00	2016-07-21 16:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1927	7	2016-07-21 17:15:00	2016-07-21 17:15:00	2016-07-21 17:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1928	7	2016-07-21 19:45:00	2016-07-21 19:45:00	2016-07-21 19:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1929	7	2016-07-21 23:30:00	2016-07-21 23:30:00	2016-07-21 23:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1930	7	2016-07-22 00:45:00	2016-07-22 00:45:00	2016-07-22 00:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1931	7	2016-07-22 01:45:00	2016-07-22 01:45:00	2016-07-22 01:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1932	7	2016-07-22 06:15:00	2016-07-22 06:15:00	2016-07-22 06:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1933	7	2016-07-22 08:15:00	2016-07-22 08:15:00	2016-07-22 08:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1934	7	2016-07-22 09:30:00	2016-07-22 09:30:00	2016-07-22 09:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1935	7	2016-07-22 11:45:00	2016-07-22 11:45:00	2016-07-22 11:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1936	7	2016-07-22 14:30:00	2016-07-22 14:30:00	2016-07-22 14:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1937	7	2016-07-22 17:30:00	2016-07-22 17:30:00	2016-07-22 17:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1938	7	2016-07-22 22:00:00	2016-07-22 22:00:00	2016-07-22 22:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1939	7	2016-07-22 21:00:00	2016-07-22 21:00:00	2016-07-22 21:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1940	7	2016-07-23 01:30:00	2016-07-23 01:30:00	2016-07-23 01:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1941	7	2016-07-23 03:00:00	2016-07-23 03:00:00	2016-07-23 03:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1942	7	2016-07-23 07:45:00	2016-07-23 07:45:00	2016-07-23 07:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1943	7	2016-07-23 08:45:00	2016-07-23 08:45:00	2016-07-23 08:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1944	7	2016-07-23 10:45:00	2016-07-23 10:45:00	2016-07-23 10:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1945	7	2016-07-23 14:00:00	2016-07-23 14:00:00	2016-07-23 14:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1946	7	2016-07-23 18:30:00	2016-07-23 18:30:00	2016-07-23 18:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1947	7	2016-07-23 17:45:00	2016-07-23 17:45:00	2016-07-23 17:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1948	7	2016-07-23 21:00:00	2016-07-23 21:00:00	2016-07-23 21:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1949	7	2016-07-23 22:45:00	2016-07-23 22:45:00	2016-07-23 22:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1950	7	2016-07-24 03:30:00	2016-07-24 03:30:00	2016-07-24 03:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1951	7	2016-07-24 02:00:00	2016-07-24 02:00:00	2016-07-24 02:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1952	7	2016-07-24 10:15:00	2016-07-24 10:15:00	2016-07-24 10:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1953	7	2016-07-24 08:15:00	2016-07-24 08:15:00	2016-07-24 08:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1954	7	2016-07-24 13:30:00	2016-07-24 13:30:00	2016-07-24 13:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1955	7	2016-07-24 16:45:00	2016-07-24 16:45:00	2016-07-24 16:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1956	7	2016-07-24 17:00:00	2016-07-24 17:00:00	2016-07-24 17:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1957	7	2016-07-24 20:45:00	2016-07-24 20:45:00	2016-07-24 20:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1958	7	2016-07-24 22:30:00	2016-07-24 22:30:00	2016-07-24 22:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1959	7	2016-07-24 23:00:00	2016-07-24 23:00:00	2016-07-24 23:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1960	7	2016-07-25 01:30:00	2016-07-25 01:30:00	2016-07-25 01:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1961	7	2016-07-25 06:30:00	2016-07-25 06:30:00	2016-07-25 06:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1962	7	2016-07-25 10:45:00	2016-07-25 10:45:00	2016-07-25 10:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1963	7	2016-07-25 09:30:00	2016-07-25 09:30:00	2016-07-25 09:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1964	7	2016-07-25 11:45:00	2016-07-25 11:45:00	2016-07-25 11:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1965	7	2016-07-25 15:00:00	2016-07-25 15:00:00	2016-07-25 15:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1966	7	2016-07-25 20:15:00	2016-07-25 20:15:00	2016-07-25 20:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1967	7	2016-07-25 20:00:00	2016-07-25 20:00:00	2016-07-25 20:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1968	7	2016-07-26 00:15:00	2016-07-26 00:15:00	2016-07-26 00:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1969	7	2016-07-26 01:00:00	2016-07-26 01:00:00	2016-07-26 01:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1970	7	2016-07-26 05:00:00	2016-07-26 05:00:00	2016-07-26 05:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1971	7	2016-07-26 07:45:00	2016-07-26 07:45:00	2016-07-26 07:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1972	7	2016-07-26 09:15:00	2016-07-26 09:15:00	2016-07-26 09:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1973	7	2016-07-26 11:30:00	2016-07-26 11:30:00	2016-07-26 11:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1974	7	2016-07-26 16:15:00	2016-07-26 16:15:00	2016-07-26 16:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1975	7	2016-07-26 18:00:00	2016-07-26 18:00:00	2016-07-26 18:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1976	7	2016-07-26 22:15:00	2016-07-26 22:15:00	2016-07-26 22:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1977	7	2016-07-26 21:00:00	2016-07-26 21:00:00	2016-07-26 21:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1978	7	2016-07-27 02:00:00	2016-07-27 02:00:00	2016-07-27 02:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1979	7	2016-07-27 03:00:00	2016-07-27 03:00:00	2016-07-27 03:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1980	7	2016-07-27 07:00:00	2016-07-27 07:00:00	2016-07-27 07:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1981	7	2016-07-27 08:00:00	2016-07-27 08:00:00	2016-07-27 08:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1982	7	2016-07-27 09:30:00	2016-07-27 09:30:00	2016-07-27 09:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1983	7	2016-07-27 15:30:00	2016-07-27 15:30:00	2016-07-27 15:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1984	7	2016-07-27 16:15:00	2016-07-27 16:15:00	2016-07-27 16:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1985	7	2016-07-27 18:15:00	2016-07-27 18:15:00	2016-07-27 18:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1986	7	2016-07-27 23:00:00	2016-07-27 23:00:00	2016-07-27 23:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1987	7	2016-07-27 22:45:00	2016-07-27 22:45:00	2016-07-27 22:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1988	7	2016-07-28 02:15:00	2016-07-28 02:15:00	2016-07-28 02:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1989	7	2016-07-28 03:15:00	2016-07-28 03:15:00	2016-07-28 03:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1990	7	2016-07-28 06:45:00	2016-07-28 06:45:00	2016-07-28 06:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1991	7	2016-07-28 07:00:00	2016-07-28 07:00:00	2016-07-28 07:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1992	7	2016-07-28 12:30:00	2016-07-28 12:30:00	2016-07-28 12:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1993	7	2016-07-28 13:15:00	2016-07-28 13:15:00	2016-07-28 13:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1994	7	2016-07-28 16:00:00	2016-07-28 16:00:00	2016-07-28 16:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1995	7	2016-07-28 20:45:00	2016-07-28 20:45:00	2016-07-28 20:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1996	7	2016-07-28 21:45:00	2016-07-28 21:45:00	2016-07-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1997	7	2016-07-28 23:00:00	2016-07-28 23:00:00	2016-07-28 23:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1998	7	2016-07-29 05:30:00	2016-07-29 05:30:00	2016-07-29 05:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-1999	7	2016-07-29 00:15:00	2016-07-29 00:15:00	2016-07-29 00:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2000	7	2016-07-29 04:15:00	2016-07-29 04:15:00	2016-07-29 04:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2001	7	2016-07-29 09:00:00	2016-07-29 09:00:00	2016-07-29 09:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2002	7	2016-07-29 15:30:00	2016-07-29 15:30:00	2016-07-29 15:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2003	7	2016-07-29 10:15:00	2016-07-29 10:15:00	2016-07-29 10:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2004	7	2016-07-29 14:15:00	2016-07-29 14:15:00	2016-07-29 14:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2005	7	2016-07-29 19:00:00	2016-07-29 19:00:00	2016-07-29 19:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2006	7	2016-07-30 01:30:00	2016-07-30 01:30:00	2016-07-30 01:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2007	7	2016-07-29 20:15:00	2016-07-29 20:15:00	2016-07-29 20:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2008	7	2016-07-30 00:15:00	2016-07-30 00:15:00	2016-07-30 00:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2009	7	2016-07-30 05:00:00	2016-07-30 05:00:00	2016-07-30 05:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2010	7	2016-07-30 04:45:00	2016-07-30 04:45:00	2016-07-30 04:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2011	7	2016-07-31 10:15:00	2016-07-31 10:15:00	2016-07-31 10:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2012	7	2016-07-31 11:45:00	2016-07-31 11:45:00	2016-07-31 11:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2013	7	2016-07-31 16:30:00	2016-07-31 16:30:00	2016-07-31 16:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2014	7	2016-07-31 23:00:00	2016-07-31 23:00:00	2016-07-31 23:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2015	7	2016-07-31 18:30:00	2016-07-31 18:30:00	2016-07-31 18:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
-2016	7	2016-07-31 22:46:00	2016-07-31 22:46:00	2016-07-31 22:46:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1	1	2017-03-01 01:15:00	2017-03-01 01:15:00	2017-03-01 01:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+2	1	2017-03-01 05:15:00	2017-03-01 05:15:00	2017-03-01 05:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+3	1	2017-03-01 06:15:00	2017-03-01 06:15:00	2017-03-01 06:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+4	1	2017-03-01 10:15:00	2017-03-01 10:15:00	2017-03-01 10:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+5	1	2017-03-01 14:30:00	2017-03-01 14:30:00	2017-03-01 14:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+6	1	2017-03-01 16:00:00	2017-03-01 16:00:00	2017-03-01 16:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+7	1	2017-03-01 18:00:00	2017-03-01 18:00:00	2017-03-01 18:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+8	1	2017-03-01 18:45:00	2017-03-01 18:45:00	2017-03-01 18:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+9	1	2017-03-01 23:15:00	2017-03-01 23:15:00	2017-03-01 23:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+10	1	2017-03-02 01:45:00	2017-03-02 01:45:00	2017-03-02 01:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+11	1	2017-03-02 02:00:00	2017-03-02 02:00:00	2017-03-02 02:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+12	1	2017-03-02 05:30:00	2017-03-02 05:30:00	2017-03-02 05:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+13	1	2017-03-02 09:45:00	2017-03-02 09:45:00	2017-03-02 09:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+14	1	2017-03-02 10:30:00	2017-03-02 10:30:00	2017-03-02 10:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+15	1	2017-03-02 13:30:00	2017-03-02 13:30:00	2017-03-02 13:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+16	1	2017-03-02 15:30:00	2017-03-02 15:30:00	2017-03-02 15:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+17	1	2017-03-02 17:15:00	2017-03-02 17:15:00	2017-03-02 17:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+18	1	2017-03-02 21:00:00	2017-03-02 21:00:00	2017-03-02 21:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+19	1	2017-03-02 23:45:00	2017-03-02 23:45:00	2017-03-02 23:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+20	1	2017-03-03 01:45:00	2017-03-03 01:45:00	2017-03-03 01:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+21	1	2017-03-03 02:00:00	2017-03-03 02:00:00	2017-03-03 02:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+22	1	2017-03-03 06:45:00	2017-03-03 06:45:00	2017-03-03 06:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+23	1	2017-03-03 10:45:00	2017-03-03 10:45:00	2017-03-03 10:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+24	1	2017-03-03 13:30:00	2017-03-03 13:30:00	2017-03-03 13:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+25	1	2017-03-03 14:16:00	2017-03-03 14:16:00	2017-03-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+26	1	2017-03-03 17:16:00	2017-03-03 17:16:00	2017-03-03 17:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+27	1	2017-03-03 20:15:00	2017-03-03 20:15:00	2017-03-03 20:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+28	1	2017-03-03 21:00:00	2017-03-03 21:00:00	2017-03-03 21:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+29	1	2017-03-04 00:01:00	2017-03-04 00:01:00	2017-03-04 00:01:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+30	1	2017-03-04 03:16:00	2017-03-04 03:16:00	2017-03-04 03:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+31	1	2017-03-04 06:16:00	2017-03-04 06:16:00	2017-03-04 06:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+32	1	2017-03-04 07:01:00	2017-03-04 07:01:00	2017-03-04 07:01:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+33	1	2017-03-04 10:01:00	2017-03-04 10:01:00	2017-03-04 10:01:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+34	1	2017-03-04 13:16:00	2017-03-04 13:16:00	2017-03-04 13:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+35	1	2017-03-04 16:15:00	2017-03-04 16:15:00	2017-03-04 16:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+36	1	2017-03-04 17:00:00	2017-03-04 17:00:00	2017-03-04 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+37	1	2017-03-04 20:00:00	2017-03-04 20:00:00	2017-03-04 20:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+38	1	2017-03-04 23:16:00	2017-03-04 23:16:00	2017-03-04 23:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+39	1	2017-03-05 02:16:00	2017-03-05 02:16:00	2017-03-05 02:16:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+40	1	2017-03-05 03:01:00	2017-03-05 03:01:00	2017-03-05 03:01:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+41	1	2017-03-05 06:01:00	2017-03-05 06:01:00	2017-03-05 06:01:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+42	1	2017-03-05 09:15:00	2017-03-05 09:15:00	2017-03-05 09:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+43	1	2017-03-05 10:30:00	2017-03-05 10:30:00	2017-03-05 10:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+44	1	2017-03-05 13:15:00	2017-03-05 13:15:00	2017-03-05 13:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+45	1	2017-03-05 16:15:00	2017-03-05 16:15:00	2017-03-05 16:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+46	1	2017-03-05 18:45:00	2017-03-05 18:45:00	2017-03-05 18:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+47	1	2017-03-05 21:15:00	2017-03-05 21:15:00	2017-03-05 21:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+48	1	2017-03-05 23:45:00	2017-03-05 23:45:00	2017-03-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+49	1	2017-03-06 02:15:00	2017-03-06 02:15:00	2017-03-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+50	1	2017-03-06 04:45:00	2017-03-06 04:45:00	2017-03-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+51	1	2017-03-06 07:45:00	2017-03-06 07:45:00	2017-03-06 07:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+52	1	2017-03-06 09:45:00	2017-03-06 09:45:00	2017-03-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+53	1	2017-03-06 12:15:00	2017-03-06 12:15:00	2017-03-06 12:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+54	1	2017-03-06 14:45:00	2017-03-06 14:45:00	2017-03-06 14:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+55	1	2017-03-06 17:30:00	2017-03-06 17:30:00	2017-03-06 17:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+56	1	2017-03-06 19:14:00	2017-03-06 19:14:00	2017-03-06 19:14:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+57	1	2017-03-06 21:45:00	2017-03-06 21:45:00	2017-03-06 21:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+58	1	2017-03-07 01:15:00	2017-03-07 01:15:00	2017-03-07 01:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+59	1	2017-03-07 03:15:00	2017-03-07 03:15:00	2017-03-07 03:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+60	1	2017-03-07 05:15:00	2017-03-07 05:15:00	2017-03-07 05:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+61	1	2017-03-07 08:45:00	2017-03-07 08:45:00	2017-03-07 08:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+62	1	2017-03-07 09:45:00	2017-03-07 09:45:00	2017-03-07 09:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+63	1	2017-03-07 13:00:00	2017-03-07 13:00:00	2017-03-07 13:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+64	1	2017-03-07 13:30:00	2017-03-07 13:30:00	2017-03-07 13:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+65	1	2017-03-07 20:15:00	2017-03-07 20:15:00	2017-03-07 20:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+66	1	2017-03-07 18:15:00	2017-03-07 18:15:00	2017-03-07 18:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+67	1	2017-03-07 22:30:00	2017-03-07 22:30:00	2017-03-07 22:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+68	1	2017-03-08 01:45:00	2017-03-08 01:45:00	2017-03-08 01:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+69	1	2017-03-08 06:15:00	2017-03-08 06:15:00	2017-03-08 06:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+70	1	2017-03-08 05:30:00	2017-03-08 05:30:00	2017-03-08 05:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+71	1	2017-03-08 10:15:00	2017-03-08 10:15:00	2017-03-08 10:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+72	1	2017-03-08 09:30:00	2017-03-08 09:30:00	2017-03-08 09:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+73	1	2017-03-08 15:00:00	2017-03-08 15:00:00	2017-03-08 15:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+74	1	2017-03-08 16:15:00	2017-03-08 16:15:00	2017-03-08 16:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+75	1	2017-03-08 20:00:00	2017-03-08 20:00:00	2017-03-08 20:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+76	1	2017-03-09 01:00:00	2017-03-09 01:00:00	2017-03-09 01:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+77	1	2017-03-08 21:15:00	2017-03-08 21:15:00	2017-03-08 21:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+78	1	2017-03-09 05:30:00	2017-03-09 05:30:00	2017-03-09 05:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+79	1	2017-03-09 03:30:00	2017-03-09 03:30:00	2017-03-09 03:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+80	1	2017-03-09 10:30:00	2017-03-09 10:30:00	2017-03-09 10:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+81	1	2017-03-09 10:45:00	2017-03-09 10:45:00	2017-03-09 10:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+82	1	2017-03-09 16:00:00	2017-03-09 16:00:00	2017-03-09 16:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+83	1	2017-03-09 14:15:00	2017-03-09 14:15:00	2017-03-09 14:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+84	1	2017-03-09 19:00:00	2017-03-09 19:00:00	2017-03-09 19:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+85	1	2017-03-09 21:15:00	2017-03-09 21:15:00	2017-03-09 21:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+86	1	2017-03-10 00:15:00	2017-03-10 00:15:00	2017-03-10 00:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+87	1	2017-03-10 00:00:00	2017-03-10 00:00:00	2017-03-10 00:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+88	1	2017-03-10 06:30:00	2017-03-10 06:30:00	2017-03-10 06:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+89	1	2017-03-10 05:00:00	2017-03-10 05:00:00	2017-03-10 05:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+90	1	2017-03-10 11:30:00	2017-03-10 11:30:00	2017-03-10 11:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+91	1	2017-03-10 10:00:00	2017-03-10 10:00:00	2017-03-10 10:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+92	1	2017-03-10 13:15:00	2017-03-10 13:15:00	2017-03-10 13:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+93	1	2017-03-10 17:15:00	2017-03-10 17:15:00	2017-03-10 17:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+94	1	2017-03-10 17:45:00	2017-03-10 17:45:00	2017-03-10 17:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+95	1	2017-03-10 23:00:00	2017-03-10 23:00:00	2017-03-10 23:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+96	1	2017-03-10 22:45:00	2017-03-10 22:45:00	2017-03-10 22:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+97	1	2017-03-11 00:15:00	2017-03-11 00:15:00	2017-03-11 00:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+98	1	2017-03-11 04:15:00	2017-03-11 04:15:00	2017-03-11 04:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+99	1	2017-03-11 09:00:00	2017-03-11 09:00:00	2017-03-11 09:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+100	1	2017-03-11 13:00:00	2017-03-11 13:00:00	2017-03-11 13:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+101	1	2017-03-11 11:15:00	2017-03-11 11:15:00	2017-03-11 11:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+102	1	2017-03-11 14:30:00	2017-03-11 14:30:00	2017-03-11 14:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+103	1	2017-03-11 19:00:00	2017-03-11 19:00:00	2017-03-11 19:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+104	1	2017-03-11 21:45:00	2017-03-11 21:45:00	2017-03-11 21:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+105	1	2017-03-11 22:15:00	2017-03-11 22:15:00	2017-03-11 22:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+106	1	2017-03-12 02:45:00	2017-03-12 02:45:00	2017-03-12 02:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+107	1	2017-03-12 02:30:00	2017-03-12 02:30:00	2017-03-12 02:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+108	1	2017-03-12 04:30:00	2017-03-12 04:30:00	2017-03-12 04:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+109	1	2017-03-12 09:45:00	2017-03-12 09:45:00	2017-03-12 09:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+110	1	2017-03-12 13:30:00	2017-03-12 13:30:00	2017-03-12 13:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+111	1	2017-03-12 13:15:00	2017-03-12 13:15:00	2017-03-12 13:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+112	1	2017-03-12 15:00:00	2017-03-12 15:00:00	2017-03-12 15:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+113	1	2017-03-12 19:15:00	2017-03-12 19:15:00	2017-03-12 19:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+114	1	2017-03-12 22:30:00	2017-03-12 22:30:00	2017-03-12 22:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+115	1	2017-03-13 01:15:00	2017-03-13 01:15:00	2017-03-13 01:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+116	1	2017-03-13 03:15:00	2017-03-13 03:15:00	2017-03-13 03:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+117	1	2017-03-13 01:45:00	2017-03-13 01:45:00	2017-03-13 01:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+118	1	2017-03-13 08:00:00	2017-03-13 08:00:00	2017-03-13 08:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+119	1	2017-03-13 09:15:00	2017-03-13 09:15:00	2017-03-13 09:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+120	1	2017-03-13 11:30:00	2017-03-13 11:30:00	2017-03-13 11:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+121	1	2017-03-13 15:30:00	2017-03-13 15:30:00	2017-03-13 15:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+122	1	2017-03-13 16:00:00	2017-03-13 16:00:00	2017-03-13 16:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+123	1	2017-03-13 19:30:00	2017-03-13 19:30:00	2017-03-13 19:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+124	1	2017-03-14 00:30:00	2017-03-14 00:30:00	2017-03-14 00:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+125	1	2017-03-14 00:45:00	2017-03-14 00:45:00	2017-03-14 00:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+126	1	2017-03-14 04:15:00	2017-03-14 04:15:00	2017-03-14 04:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+127	1	2017-03-14 03:15:00	2017-03-14 03:15:00	2017-03-14 03:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+128	1	2017-03-14 08:15:00	2017-03-14 08:15:00	2017-03-14 08:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+129	1	2017-03-14 12:15:00	2017-03-14 12:15:00	2017-03-14 12:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+130	1	2017-03-14 12:46:00	2017-03-14 12:46:00	2017-03-14 12:46:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+131	1	2017-03-14 15:15:00	2017-03-14 15:15:00	2017-03-14 15:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+132	1	2017-03-14 16:30:00	2017-03-14 16:30:00	2017-03-14 16:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+133	1	2017-03-14 18:45:00	2017-03-14 18:45:00	2017-03-14 18:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+134	1	2017-03-14 23:45:00	2017-03-14 23:45:00	2017-03-14 23:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+135	1	2017-03-15 00:45:00	2017-03-15 00:45:00	2017-03-15 00:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+136	1	2017-03-15 06:00:00	2017-03-15 06:00:00	2017-03-15 06:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+137	1	2017-03-15 05:15:00	2017-03-15 05:15:00	2017-03-15 05:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+138	1	2017-03-15 08:45:00	2017-03-15 08:45:00	2017-03-15 08:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+139	1	2017-03-15 09:15:00	2017-03-15 09:15:00	2017-03-15 09:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+140	1	2017-03-15 16:00:00	2017-03-15 16:00:00	2017-03-15 16:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+141	1	2017-03-15 14:00:00	2017-03-15 14:00:00	2017-03-15 14:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+142	1	2017-03-15 19:00:00	2017-03-15 19:00:00	2017-03-15 19:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+143	1	2017-03-15 19:45:00	2017-03-15 19:45:00	2017-03-15 19:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+144	1	2017-03-16 00:30:00	2017-03-16 00:30:00	2017-03-16 00:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+145	1	2017-03-16 03:15:00	2017-03-16 03:15:00	2017-03-16 03:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+146	1	2017-03-16 06:30:00	2017-03-16 06:30:00	2017-03-16 06:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+147	1	2017-03-16 04:30:00	2017-03-16 04:30:00	2017-03-16 04:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+148	1	2017-03-16 11:15:00	2017-03-16 11:15:00	2017-03-16 11:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+149	1	2017-03-16 09:30:00	2017-03-16 09:30:00	2017-03-16 09:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+150	1	2017-03-16 15:30:00	2017-03-16 15:30:00	2017-03-16 15:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+151	1	2017-03-16 16:00:00	2017-03-16 16:00:00	2017-03-16 16:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+152	1	2017-03-16 20:15:00	2017-03-16 20:15:00	2017-03-16 20:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+153	1	2017-03-16 22:30:00	2017-03-16 22:30:00	2017-03-16 22:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+154	1	2017-03-17 02:30:00	2017-03-17 02:30:00	2017-03-17 02:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+155	1	2017-03-17 01:00:00	2017-03-17 01:00:00	2017-03-17 01:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+156	1	2017-03-17 05:00:00	2017-03-17 05:00:00	2017-03-17 05:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+157	1	2017-03-17 09:15:00	2017-03-17 09:15:00	2017-03-17 09:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+158	1	2017-03-17 14:00:00	2017-03-17 14:00:00	2017-03-17 14:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+159	1	2017-03-17 12:30:00	2017-03-17 12:30:00	2017-03-17 12:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+160	1	2017-03-17 16:45:00	2017-03-17 16:45:00	2017-03-17 16:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+161	1	2017-03-17 17:00:00	2017-03-17 17:00:00	2017-03-17 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+162	1	2017-03-17 22:45:00	2017-03-17 22:45:00	2017-03-17 22:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+163	1	2017-03-17 21:00:00	2017-03-17 21:00:00	2017-03-17 21:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+164	1	2017-03-18 01:45:00	2017-03-18 01:45:00	2017-03-18 01:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+165	1	2017-03-18 05:00:00	2017-03-18 05:00:00	2017-03-18 05:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+166	1	2017-03-18 08:30:00	2017-03-18 08:30:00	2017-03-18 08:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+167	1	2017-03-18 08:15:00	2017-03-18 08:15:00	2017-03-18 08:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+168	1	2017-03-18 11:30:00	2017-03-18 11:30:00	2017-03-18 11:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+169	1	2017-03-18 14:30:00	2017-03-18 14:30:00	2017-03-18 14:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+170	1	2017-03-18 17:30:00	2017-03-18 17:30:00	2017-03-18 17:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+171	1	2017-03-18 18:15:00	2017-03-18 18:15:00	2017-03-18 18:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+172	1	2017-03-18 23:45:00	2017-03-18 23:45:00	2017-03-18 23:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+173	1	2017-03-18 23:15:00	2017-03-18 23:15:00	2017-03-18 23:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+174	1	2017-03-19 03:30:00	2017-03-19 03:30:00	2017-03-19 03:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+175	1	2017-03-19 03:45:00	2017-03-19 03:45:00	2017-03-19 03:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+176	1	2017-03-19 07:15:00	2017-03-19 07:15:00	2017-03-19 07:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+177	1	2017-03-19 11:00:00	2017-03-19 11:00:00	2017-03-19 11:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+178	1	2017-03-19 12:00:00	2017-03-19 12:00:00	2017-03-19 12:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+179	1	2017-03-19 16:00:00	2017-03-19 16:00:00	2017-03-19 16:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+180	1	2017-03-19 19:30:00	2017-03-19 19:30:00	2017-03-19 19:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+181	1	2017-03-19 18:15:00	2017-03-19 18:15:00	2017-03-19 18:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+182	1	2017-03-20 02:00:00	2017-03-20 02:00:00	2017-03-20 02:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+183	1	2017-03-19 23:30:00	2017-03-19 23:30:00	2017-03-19 23:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+184	1	2017-03-20 06:30:00	2017-03-20 06:30:00	2017-03-20 06:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+185	1	2017-03-20 04:45:00	2017-03-20 04:45:00	2017-03-20 04:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+186	1	2017-03-20 08:15:00	2017-03-20 08:15:00	2017-03-20 08:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+187	1	2017-03-20 11:00:00	2017-03-20 11:00:00	2017-03-20 11:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+188	1	2017-03-20 12:30:00	2017-03-20 12:30:00	2017-03-20 12:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+189	1	2017-03-20 18:15:00	2017-03-20 18:15:00	2017-03-20 18:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+190	1	2017-03-20 18:00:00	2017-03-20 18:00:00	2017-03-20 18:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+191	1	2017-03-20 22:00:00	2017-03-20 22:00:00	2017-03-20 22:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+192	1	2017-03-20 23:15:00	2017-03-20 23:15:00	2017-03-20 23:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+193	1	2017-03-21 03:30:00	2017-03-21 03:30:00	2017-03-21 03:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+194	1	2017-03-21 05:00:00	2017-03-21 05:00:00	2017-03-21 05:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+195	1	2017-03-21 06:30:00	2017-03-21 06:30:00	2017-03-21 06:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+196	1	2017-03-21 11:00:00	2017-03-21 11:00:00	2017-03-21 11:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+197	1	2017-03-21 13:45:00	2017-03-21 13:45:00	2017-03-21 13:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+198	1	2017-03-21 15:30:00	2017-03-21 15:30:00	2017-03-21 15:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+199	1	2017-03-21 17:15:00	2017-03-21 17:15:00	2017-03-21 17:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+200	1	2017-03-21 18:30:00	2017-03-21 18:30:00	2017-03-21 18:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+201	1	2017-03-21 22:30:00	2017-03-21 22:30:00	2017-03-21 22:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+202	1	2017-03-22 02:45:00	2017-03-22 02:45:00	2017-03-22 02:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+203	1	2017-03-22 03:00:00	2017-03-22 03:00:00	2017-03-22 03:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+204	1	2017-03-22 08:15:00	2017-03-22 08:15:00	2017-03-22 08:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+205	1	2017-03-22 08:30:00	2017-03-22 08:30:00	2017-03-22 08:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+206	1	2017-03-22 11:45:00	2017-03-22 11:45:00	2017-03-22 11:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+207	1	2017-03-22 14:45:00	2017-03-22 14:45:00	2017-03-22 14:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+208	1	2017-03-22 17:45:00	2017-03-22 17:45:00	2017-03-22 17:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+209	1	2017-03-22 16:00:00	2017-03-22 16:00:00	2017-03-22 16:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+210	1	2017-03-22 23:15:00	2017-03-22 23:15:00	2017-03-22 23:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+211	1	2017-03-22 23:45:00	2017-03-22 23:45:00	2017-03-22 23:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+212	1	2017-03-23 03:00:00	2017-03-23 03:00:00	2017-03-23 03:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+213	1	2017-03-23 05:15:00	2017-03-23 05:15:00	2017-03-23 05:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+214	1	2017-03-23 07:30:00	2017-03-23 07:30:00	2017-03-23 07:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+215	1	2017-03-23 06:30:00	2017-03-23 06:30:00	2017-03-23 06:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+216	1	2017-03-23 11:30:00	2017-03-23 11:30:00	2017-03-23 11:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+217	1	2017-03-23 15:00:00	2017-03-23 15:00:00	2017-03-23 15:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+218	1	2017-03-23 15:45:00	2017-03-23 15:45:00	2017-03-23 15:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+219	1	2017-03-23 18:45:00	2017-03-23 18:45:00	2017-03-23 18:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+220	1	2017-03-23 23:00:00	2017-03-23 23:00:00	2017-03-23 23:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+221	1	2017-03-24 01:30:00	2017-03-24 01:30:00	2017-03-24 01:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+222	1	2017-03-24 04:31:00	2017-03-24 04:31:00	2017-03-24 04:31:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+223	1	2017-03-24 06:45:00	2017-03-24 06:45:00	2017-03-24 06:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+224	1	2017-03-24 09:00:00	2017-03-24 09:00:00	2017-03-24 09:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+225	1	2017-03-24 12:15:00	2017-03-24 12:15:00	2017-03-24 12:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+226	1	2017-03-24 14:15:00	2017-03-24 14:15:00	2017-03-24 14:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+227	1	2017-03-24 16:30:00	2017-03-24 16:30:00	2017-03-24 16:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+228	1	2017-03-24 15:30:00	2017-03-24 15:30:00	2017-03-24 15:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+229	1	2017-03-24 18:00:00	2017-03-24 18:00:00	2017-03-24 18:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+230	1	2017-03-24 21:00:00	2017-03-24 21:00:00	2017-03-24 21:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+231	1	2017-03-25 00:45:00	2017-03-25 00:45:00	2017-03-25 00:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+232	1	2017-03-25 02:00:00	2017-03-25 02:00:00	2017-03-25 02:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+233	1	2017-03-25 04:15:00	2017-03-25 04:15:00	2017-03-25 04:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+234	1	2017-03-25 10:00:00	2017-03-25 10:00:00	2017-03-25 10:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+235	1	2017-03-25 10:15:00	2017-03-25 10:15:00	2017-03-25 10:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+236	1	2017-03-25 15:00:00	2017-03-25 15:00:00	2017-03-25 15:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+237	1	2017-03-25 17:00:00	2017-03-25 17:00:00	2017-03-25 17:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+238	1	2017-03-25 19:30:00	2017-03-25 19:30:00	2017-03-25 19:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+239	1	2017-03-25 20:15:00	2017-03-25 20:15:00	2017-03-25 20:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+240	1	2017-03-26 00:45:00	2017-03-26 00:45:00	2017-03-26 00:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+241	1	2017-03-26 01:30:00	2017-03-26 01:30:00	2017-03-26 01:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+242	1	2017-03-26 04:00:00	2017-03-26 04:00:00	2017-03-26 04:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+243	1	2017-03-26 08:45:00	2017-03-26 08:45:00	2017-03-26 08:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+244	1	2017-03-26 11:45:00	2017-03-26 11:45:00	2017-03-26 11:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+245	1	2017-03-26 12:15:00	2017-03-26 12:15:00	2017-03-26 12:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+246	1	2017-03-26 15:30:00	2017-03-26 15:30:00	2017-03-26 15:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+247	1	2017-03-26 15:15:00	2017-03-26 15:15:00	2017-03-26 15:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+248	1	2017-03-26 18:00:00	2017-03-26 18:00:00	2017-03-26 18:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+249	1	2017-03-26 23:00:00	2017-03-26 23:00:00	2017-03-26 23:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+250	1	2017-03-26 23:30:00	2017-03-26 23:30:00	2017-03-26 23:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+251	1	2017-03-27 04:15:00	2017-03-27 04:15:00	2017-03-27 04:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+252	1	2017-03-27 04:45:00	2017-03-27 04:45:00	2017-03-27 04:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+253	1	2017-03-27 10:45:00	2017-03-27 10:45:00	2017-03-27 10:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+254	1	2017-03-27 11:15:00	2017-03-27 11:15:00	2017-03-27 11:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+255	1	2017-03-27 15:30:00	2017-03-27 15:30:00	2017-03-27 15:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+256	1	2017-03-27 14:45:00	2017-03-27 14:45:00	2017-03-27 14:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+257	1	2017-03-27 19:30:00	2017-03-27 19:30:00	2017-03-27 19:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+258	1	2017-03-27 18:15:00	2017-03-27 18:15:00	2017-03-27 18:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+259	1	2017-03-28 00:00:00	2017-03-28 00:00:00	2017-03-28 00:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+260	1	2017-03-28 02:00:00	2017-03-28 02:00:00	2017-03-28 02:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+261	1	2017-03-28 04:30:00	2017-03-28 04:30:00	2017-03-28 04:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+262	1	2017-03-28 06:45:00	2017-03-28 06:45:00	2017-03-28 06:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+263	1	2017-03-28 08:45:00	2017-03-28 08:45:00	2017-03-28 08:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+264	1	2017-03-28 13:30:00	2017-03-28 13:30:00	2017-03-28 13:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+265	1	2017-03-28 13:15:00	2017-03-28 13:15:00	2017-03-28 13:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+266	1	2017-03-28 18:15:00	2017-03-28 18:15:00	2017-03-28 18:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+267	1	2017-03-28 17:30:00	2017-03-28 17:30:00	2017-03-28 17:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+268	1	2017-03-28 21:45:00	2017-03-28 21:45:00	2017-03-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+269	1	2017-03-29 08:00:00	2017-03-29 08:00:00	2017-03-29 08:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+270	1	2017-03-29 02:45:00	2017-03-29 02:45:00	2017-03-29 02:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+271	1	2017-03-29 06:45:00	2017-03-29 06:45:00	2017-03-29 06:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+272	1	2017-03-29 01:30:00	2017-03-29 01:30:00	2017-03-29 01:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+273	1	2017-03-29 18:00:00	2017-03-29 18:00:00	2017-03-29 18:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+274	1	2017-03-29 12:45:00	2017-03-29 12:45:00	2017-03-29 12:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+275	1	2017-03-29 16:45:00	2017-03-29 16:45:00	2017-03-29 16:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+276	1	2017-03-29 11:30:00	2017-03-29 11:30:00	2017-03-29 11:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+277	1	2017-03-30 04:00:00	2017-03-30 04:00:00	2017-03-30 04:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+278	1	2017-03-29 22:45:00	2017-03-29 22:45:00	2017-03-29 22:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+279	1	2017-03-30 02:45:00	2017-03-30 02:45:00	2017-03-30 02:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+280	1	2017-03-29 21:30:00	2017-03-29 21:30:00	2017-03-29 21:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+281	1	2017-03-30 07:15:00	2017-03-30 07:15:00	2017-03-30 07:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+282	1	2017-03-31 12:45:00	2017-03-31 12:45:00	2017-03-31 12:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+283	1	2017-03-30 06:00:00	2017-03-30 06:00:00	2017-03-30 06:00:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+284	1	2017-03-31 11:30:00	2017-03-31 11:30:00	2017-03-31 11:30:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+285	1	2017-03-31 16:15:00	2017-03-31 16:15:00	2017-03-31 16:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+286	1	2017-03-31 20:15:00	2017-03-31 20:15:00	2017-03-31 20:15:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+287	1	2017-03-31 15:45:00	2017-03-31 15:45:00	2017-03-31 15:45:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+288	1	2017-03-31 22:31:00	2017-03-31 22:31:00	2017-03-31 22:31:00	\N	1	\N	1	\N	F	\N	\N	1	\N
+289	2	2017-03-01 01:15:00	2017-03-01 01:15:00	2017-03-01 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+290	2	2017-03-01 05:30:00	2017-03-01 05:30:00	2017-03-01 05:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+291	2	2017-03-01 05:00:00	2017-03-01 05:00:00	2017-03-01 05:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+292	2	2017-03-01 10:30:00	2017-03-01 10:30:00	2017-03-01 10:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+293	2	2017-03-01 10:15:00	2017-03-01 10:15:00	2017-03-01 10:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+294	2	2017-03-01 11:45:00	2017-03-01 11:45:00	2017-03-01 11:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+295	2	2017-03-01 16:15:00	2017-03-01 16:15:00	2017-03-01 16:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+296	2	2017-03-01 21:15:00	2017-03-01 21:15:00	2017-03-01 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+297	2	2017-03-01 20:15:00	2017-03-01 20:15:00	2017-03-01 20:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+298	2	2017-03-02 01:45:00	2017-03-02 01:45:00	2017-03-02 01:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+299	2	2017-03-02 02:16:00	2017-03-02 02:16:00	2017-03-02 02:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+300	2	2017-03-02 06:00:00	2017-03-02 06:00:00	2017-03-02 06:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+301	2	2017-03-02 09:30:00	2017-03-02 09:30:00	2017-03-02 09:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+302	2	2017-03-02 11:00:00	2017-03-02 11:00:00	2017-03-02 11:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+303	2	2017-03-02 11:15:00	2017-03-02 11:15:00	2017-03-02 11:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+304	2	2017-03-02 16:00:00	2017-03-02 16:00:00	2017-03-02 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+305	2	2017-03-02 18:00:00	2017-03-02 18:00:00	2017-03-02 18:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+306	2	2017-03-02 19:30:00	2017-03-02 19:30:00	2017-03-02 19:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+307	2	2017-03-02 21:15:00	2017-03-02 21:15:00	2017-03-02 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+308	2	2017-03-03 01:15:00	2017-03-03 01:15:00	2017-03-03 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+309	2	2017-03-03 03:30:00	2017-03-03 03:30:00	2017-03-03 03:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+310	2	2017-03-03 07:00:00	2017-03-03 07:00:00	2017-03-03 07:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+311	2	2017-03-03 07:15:00	2017-03-03 07:15:00	2017-03-03 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+312	2	2017-03-03 10:15:00	2017-03-03 10:15:00	2017-03-03 10:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+313	2	2017-03-03 14:16:00	2017-03-03 14:16:00	2017-03-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+314	2	2017-03-03 17:01:00	2017-03-03 17:01:00	2017-03-03 17:01:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+315	2	2017-03-03 20:00:00	2017-03-03 20:00:00	2017-03-03 20:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+316	2	2017-03-03 21:15:00	2017-03-03 21:15:00	2017-03-03 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+317	2	2017-03-04 00:16:00	2017-03-04 00:16:00	2017-03-04 00:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+318	2	2017-03-04 03:01:00	2017-03-04 03:01:00	2017-03-04 03:01:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+319	2	2017-03-04 06:01:00	2017-03-04 06:01:00	2017-03-04 06:01:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+320	2	2017-03-04 07:16:00	2017-03-04 07:16:00	2017-03-04 07:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+321	2	2017-03-04 10:16:00	2017-03-04 10:16:00	2017-03-04 10:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+322	2	2017-03-04 13:01:00	2017-03-04 13:01:00	2017-03-04 13:01:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+323	2	2017-03-04 16:00:00	2017-03-04 16:00:00	2017-03-04 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+324	2	2017-03-04 17:15:00	2017-03-04 17:15:00	2017-03-04 17:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+325	2	2017-03-04 20:15:00	2017-03-04 20:15:00	2017-03-04 20:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+326	2	2017-03-04 23:00:00	2017-03-04 23:00:00	2017-03-04 23:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+327	2	2017-03-05 02:01:00	2017-03-05 02:01:00	2017-03-05 02:01:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+328	2	2017-03-05 03:16:00	2017-03-05 03:16:00	2017-03-05 03:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+329	2	2017-03-05 06:16:00	2017-03-05 06:16:00	2017-03-05 06:16:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+330	2	2017-03-05 09:00:00	2017-03-05 09:00:00	2017-03-05 09:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+331	2	2017-03-05 12:00:00	2017-03-05 12:00:00	2017-03-05 12:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+332	2	2017-03-05 13:45:00	2017-03-05 13:45:00	2017-03-05 13:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+333	2	2017-03-05 16:15:00	2017-03-05 16:15:00	2017-03-05 16:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+334	2	2017-03-05 18:30:00	2017-03-05 18:30:00	2017-03-05 18:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+335	2	2017-03-05 21:30:00	2017-03-05 21:30:00	2017-03-05 21:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+336	2	2017-03-05 23:45:00	2017-03-05 23:45:00	2017-03-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+337	2	2017-03-06 02:15:00	2017-03-06 02:15:00	2017-03-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+338	2	2017-03-06 04:45:00	2017-03-06 04:45:00	2017-03-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+339	2	2017-03-06 07:15:00	2017-03-06 07:15:00	2017-03-06 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+340	2	2017-03-06 09:45:00	2017-03-06 09:45:00	2017-03-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+341	2	2017-03-06 12:15:00	2017-03-06 12:15:00	2017-03-06 12:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+342	2	2017-03-06 14:00:00	2017-03-06 14:00:00	2017-03-06 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+343	2	2017-03-06 17:15:00	2017-03-06 17:15:00	2017-03-06 17:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+344	2	2017-03-06 19:30:00	2017-03-06 19:30:00	2017-03-06 19:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+345	2	2017-03-06 22:00:00	2017-03-06 22:00:00	2017-03-06 22:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+346	2	2017-03-07 00:45:00	2017-03-07 00:45:00	2017-03-07 00:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+347	2	2017-03-07 03:15:00	2017-03-07 03:15:00	2017-03-07 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+348	2	2017-03-07 06:00:00	2017-03-07 06:00:00	2017-03-07 06:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+349	2	2017-03-07 09:00:00	2017-03-07 09:00:00	2017-03-07 09:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+350	2	2017-03-07 10:45:00	2017-03-07 10:45:00	2017-03-07 10:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+351	2	2017-03-07 17:15:00	2017-03-07 17:15:00	2017-03-07 17:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+352	2	2017-03-07 13:45:00	2017-03-07 13:45:00	2017-03-07 13:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+353	2	2017-03-07 19:15:00	2017-03-07 19:15:00	2017-03-07 19:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+354	2	2017-03-07 21:15:00	2017-03-07 21:15:00	2017-03-07 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+355	2	2017-03-08 01:15:00	2017-03-08 01:15:00	2017-03-08 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+356	2	2017-03-08 01:00:00	2017-03-08 01:00:00	2017-03-08 01:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+357	2	2017-03-08 06:15:00	2017-03-08 06:15:00	2017-03-08 06:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+358	2	2017-03-08 04:45:00	2017-03-08 04:45:00	2017-03-08 04:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+359	2	2017-03-08 10:45:00	2017-03-08 10:45:00	2017-03-08 10:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+360	2	2017-03-08 09:00:00	2017-03-08 09:00:00	2017-03-08 09:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+361	2	2017-03-08 14:45:00	2017-03-08 14:45:00	2017-03-08 14:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+362	2	2017-03-08 17:45:00	2017-03-08 17:45:00	2017-03-08 17:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+363	2	2017-03-08 16:30:00	2017-03-08 16:30:00	2017-03-08 16:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+364	2	2017-03-08 23:00:00	2017-03-08 23:00:00	2017-03-08 23:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+365	2	2017-03-09 01:15:00	2017-03-09 01:15:00	2017-03-09 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+366	2	2017-03-09 05:15:00	2017-03-09 05:15:00	2017-03-09 05:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+367	2	2017-03-09 03:15:00	2017-03-09 03:15:00	2017-03-09 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+368	2	2017-03-09 06:45:00	2017-03-09 06:45:00	2017-03-09 06:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+369	2	2017-03-09 08:15:00	2017-03-09 08:15:00	2017-03-09 08:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+370	2	2017-03-09 14:45:00	2017-03-09 14:45:00	2017-03-09 14:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+371	2	2017-03-09 12:45:00	2017-03-09 12:45:00	2017-03-09 12:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+372	2	2017-03-09 20:45:00	2017-03-09 20:45:00	2017-03-09 20:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+373	2	2017-03-09 19:00:00	2017-03-09 19:00:00	2017-03-09 19:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+374	2	2017-03-10 00:15:00	2017-03-10 00:15:00	2017-03-10 00:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+375	2	2017-03-09 23:15:00	2017-03-09 23:15:00	2017-03-09 23:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+376	2	2017-03-10 06:30:00	2017-03-10 06:30:00	2017-03-10 06:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+377	2	2017-03-10 03:45:00	2017-03-10 03:45:00	2017-03-10 03:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+378	2	2017-03-10 11:30:00	2017-03-10 11:30:00	2017-03-10 11:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+379	2	2017-03-10 10:00:00	2017-03-10 10:00:00	2017-03-10 10:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+380	2	2017-03-10 15:00:00	2017-03-10 15:00:00	2017-03-10 15:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+381	2	2017-03-10 14:00:00	2017-03-10 14:00:00	2017-03-10 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+382	2	2017-03-10 18:30:00	2017-03-10 18:30:00	2017-03-10 18:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+383	2	2017-03-10 18:45:00	2017-03-10 18:45:00	2017-03-10 18:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+384	2	2017-03-11 00:30:00	2017-03-11 00:30:00	2017-03-11 00:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+385	2	2017-03-10 23:30:00	2017-03-10 23:30:00	2017-03-10 23:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+386	2	2017-03-11 06:00:00	2017-03-11 06:00:00	2017-03-11 06:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+387	2	2017-03-11 04:30:00	2017-03-11 04:30:00	2017-03-11 04:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+388	2	2017-03-11 11:30:00	2017-03-11 11:30:00	2017-03-11 11:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+389	2	2017-03-11 12:30:00	2017-03-11 12:30:00	2017-03-11 12:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+390	2	2017-03-11 16:30:00	2017-03-11 16:30:00	2017-03-11 16:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+391	2	2017-03-11 15:15:00	2017-03-11 15:15:00	2017-03-11 15:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+392	2	2017-03-11 19:45:00	2017-03-11 19:45:00	2017-03-11 19:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+393	2	2017-03-11 22:00:00	2017-03-11 22:00:00	2017-03-11 22:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+394	2	2017-03-12 00:45:00	2017-03-12 00:45:00	2017-03-12 00:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+395	2	2017-03-12 03:00:00	2017-03-12 03:00:00	2017-03-12 03:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+396	2	2017-03-12 04:30:00	2017-03-12 04:30:00	2017-03-12 04:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+397	2	2017-03-12 06:45:00	2017-03-12 06:45:00	2017-03-12 06:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+398	2	2017-03-12 11:00:00	2017-03-12 11:00:00	2017-03-12 11:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+399	2	2017-03-12 10:45:00	2017-03-12 10:45:00	2017-03-12 10:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+400	2	2017-03-12 18:00:00	2017-03-12 18:00:00	2017-03-12 18:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+401	2	2017-03-12 16:45:00	2017-03-12 16:45:00	2017-03-12 16:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+402	2	2017-03-12 20:15:00	2017-03-12 20:15:00	2017-03-12 20:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+403	2	2017-03-12 23:15:00	2017-03-12 23:15:00	2017-03-12 23:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+404	2	2017-03-13 01:45:00	2017-03-13 01:45:00	2017-03-13 01:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+405	2	2017-03-13 01:15:00	2017-03-13 01:15:00	2017-03-13 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+406	2	2017-03-13 09:45:00	2017-03-13 09:45:00	2017-03-13 09:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+407	2	2017-03-13 07:15:00	2017-03-13 07:15:00	2017-03-13 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+408	2	2017-03-13 10:30:00	2017-03-13 10:30:00	2017-03-13 10:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+409	2	2017-03-13 14:45:00	2017-03-13 14:45:00	2017-03-13 14:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+410	2	2017-03-13 16:00:00	2017-03-13 16:00:00	2017-03-13 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+411	2	2017-03-13 18:30:00	2017-03-13 18:30:00	2017-03-13 18:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+412	2	2017-03-13 20:45:00	2017-03-13 20:45:00	2017-03-13 20:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+413	2	2017-03-13 23:30:00	2017-03-13 23:30:00	2017-03-13 23:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+414	2	2017-03-14 02:45:00	2017-03-14 02:45:00	2017-03-14 02:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+415	2	2017-03-14 04:45:00	2017-03-14 04:45:00	2017-03-14 04:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+416	2	2017-03-14 09:00:00	2017-03-14 09:00:00	2017-03-14 09:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+417	2	2017-03-14 07:15:00	2017-03-14 07:15:00	2017-03-14 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+418	2	2017-03-14 16:00:00	2017-03-14 16:00:00	2017-03-14 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+419	2	2017-03-14 15:45:00	2017-03-14 15:45:00	2017-03-14 15:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+420	2	2017-03-14 20:00:00	2017-03-14 20:00:00	2017-03-14 20:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+421	2	2017-03-14 19:00:00	2017-03-14 19:00:00	2017-03-14 19:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+422	2	2017-03-15 01:30:00	2017-03-15 01:30:00	2017-03-15 01:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+423	2	2017-03-15 01:00:00	2017-03-15 01:00:00	2017-03-15 01:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+424	2	2017-03-15 03:30:00	2017-03-15 03:30:00	2017-03-15 03:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+425	2	2017-03-15 04:15:00	2017-03-15 04:15:00	2017-03-15 04:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+426	2	2017-03-15 10:30:00	2017-03-15 10:30:00	2017-03-15 10:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+427	2	2017-03-15 11:00:00	2017-03-15 11:00:00	2017-03-15 11:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+428	2	2017-03-15 14:00:00	2017-03-15 14:00:00	2017-03-15 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+429	2	2017-03-15 14:15:00	2017-03-15 14:15:00	2017-03-15 14:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+430	2	2017-03-15 20:00:00	2017-03-15 20:00:00	2017-03-15 20:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+431	2	2017-03-15 19:30:00	2017-03-15 19:30:00	2017-03-15 19:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+432	2	2017-03-16 01:30:00	2017-03-16 01:30:00	2017-03-16 01:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+433	2	2017-03-16 04:00:00	2017-03-16 04:00:00	2017-03-16 04:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+434	2	2017-03-16 06:45:00	2017-03-16 06:45:00	2017-03-16 06:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+435	2	2017-03-16 05:15:00	2017-03-16 05:15:00	2017-03-16 05:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+436	2	2017-03-16 08:30:00	2017-03-16 08:30:00	2017-03-16 08:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+437	2	2017-03-16 13:00:00	2017-03-16 13:00:00	2017-03-16 13:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+438	2	2017-03-16 14:45:00	2017-03-16 14:45:00	2017-03-16 14:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+439	2	2017-03-16 17:30:00	2017-03-16 17:30:00	2017-03-16 17:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+440	2	2017-03-16 21:15:00	2017-03-16 21:15:00	2017-03-16 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+441	2	2017-03-16 21:00:00	2017-03-16 21:00:00	2017-03-16 21:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+442	2	2017-03-17 01:15:00	2017-03-17 01:15:00	2017-03-17 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+443	2	2017-03-17 01:45:00	2017-03-17 01:45:00	2017-03-17 01:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+444	2	2017-03-17 08:15:00	2017-03-17 08:15:00	2017-03-17 08:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+445	2	2017-03-17 06:45:00	2017-03-17 06:45:00	2017-03-17 06:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+446	2	2017-03-17 12:00:00	2017-03-17 12:00:00	2017-03-17 12:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+447	2	2017-03-17 12:45:00	2017-03-17 12:45:00	2017-03-17 12:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+448	2	2017-03-17 14:30:00	2017-03-17 14:30:00	2017-03-17 14:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+449	2	2017-03-17 18:00:00	2017-03-17 18:00:00	2017-03-17 18:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+450	2	2017-03-17 21:45:00	2017-03-17 21:45:00	2017-03-17 21:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+451	2	2017-03-17 22:00:00	2017-03-17 22:00:00	2017-03-17 22:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+452	2	2017-03-18 03:45:00	2017-03-18 03:45:00	2017-03-18 03:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+453	2	2017-03-18 02:15:00	2017-03-18 02:15:00	2017-03-18 02:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+454	2	2017-03-18 07:15:00	2017-03-18 07:15:00	2017-03-18 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+455	2	2017-03-18 06:45:00	2017-03-18 06:45:00	2017-03-18 06:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+456	2	2017-03-18 11:30:00	2017-03-18 11:30:00	2017-03-18 11:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+457	2	2017-03-18 15:15:00	2017-03-18 15:15:00	2017-03-18 15:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+458	2	2017-03-18 17:00:00	2017-03-18 17:00:00	2017-03-18 17:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+459	2	2017-03-18 19:30:00	2017-03-18 19:30:00	2017-03-18 19:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+460	2	2017-03-18 23:00:00	2017-03-18 23:00:00	2017-03-18 23:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+461	2	2017-03-19 01:30:00	2017-03-19 01:30:00	2017-03-19 01:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+462	2	2017-03-19 05:30:00	2017-03-19 05:30:00	2017-03-19 05:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+463	2	2017-03-19 02:45:00	2017-03-19 02:45:00	2017-03-19 02:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+464	2	2017-03-19 07:15:00	2017-03-19 07:15:00	2017-03-19 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+465	2	2017-03-19 10:00:00	2017-03-19 10:00:00	2017-03-19 10:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+466	2	2017-03-19 13:15:00	2017-03-19 13:15:00	2017-03-19 13:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+467	2	2017-03-19 14:00:00	2017-03-19 14:00:00	2017-03-19 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+468	2	2017-03-19 18:30:00	2017-03-19 18:30:00	2017-03-19 18:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+469	2	2017-03-19 18:45:00	2017-03-19 18:45:00	2017-03-19 18:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+470	2	2017-03-19 23:00:00	2017-03-19 23:00:00	2017-03-19 23:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+471	2	2017-03-20 01:15:00	2017-03-20 01:15:00	2017-03-20 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+472	2	2017-03-20 05:00:00	2017-03-20 05:00:00	2017-03-20 05:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+473	2	2017-03-20 06:30:00	2017-03-20 06:30:00	2017-03-20 06:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+474	2	2017-03-20 09:15:00	2017-03-20 09:15:00	2017-03-20 09:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+475	2	2017-03-20 11:00:00	2017-03-20 11:00:00	2017-03-20 11:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+476	2	2017-03-20 16:00:00	2017-03-20 16:00:00	2017-03-20 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+477	2	2017-03-20 15:30:00	2017-03-20 15:30:00	2017-03-20 15:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+478	2	2017-03-20 18:30:00	2017-03-20 18:30:00	2017-03-20 18:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+479	2	2017-03-20 23:00:00	2017-03-20 23:00:00	2017-03-20 23:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+480	2	2017-03-21 01:15:00	2017-03-21 01:15:00	2017-03-21 01:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+481	2	2017-03-21 03:45:00	2017-03-21 03:45:00	2017-03-21 03:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+482	2	2017-03-21 07:30:00	2017-03-21 07:30:00	2017-03-21 07:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+483	2	2017-03-21 08:15:00	2017-03-21 08:15:00	2017-03-21 08:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+484	2	2017-03-21 09:30:00	2017-03-21 09:30:00	2017-03-21 09:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+485	2	2017-03-21 10:15:00	2017-03-21 10:15:00	2017-03-21 10:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+486	2	2017-03-21 17:00:00	2017-03-21 17:00:00	2017-03-21 17:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+487	2	2017-03-21 19:15:00	2017-03-21 19:15:00	2017-03-21 19:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+488	2	2017-03-21 21:00:00	2017-03-21 21:00:00	2017-03-21 21:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+489	2	2017-03-21 20:45:00	2017-03-21 20:45:00	2017-03-21 20:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+490	2	2017-03-22 02:45:00	2017-03-22 02:45:00	2017-03-22 02:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+491	2	2017-03-22 03:45:00	2017-03-22 03:45:00	2017-03-22 03:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+492	2	2017-03-22 04:00:00	2017-03-22 04:00:00	2017-03-22 04:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+493	2	2017-03-22 06:15:00	2017-03-22 06:15:00	2017-03-22 06:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+494	2	2017-03-22 12:15:00	2017-03-22 12:15:00	2017-03-22 12:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+495	2	2017-03-22 12:45:00	2017-03-22 12:45:00	2017-03-22 12:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+496	2	2017-03-22 15:00:00	2017-03-22 15:00:00	2017-03-22 15:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+497	2	2017-03-22 17:00:00	2017-03-22 17:00:00	2017-03-22 17:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+498	2	2017-03-22 22:45:00	2017-03-22 22:45:00	2017-03-22 22:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+499	2	2017-03-22 21:15:00	2017-03-22 21:15:00	2017-03-22 21:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+500	2	2017-03-23 02:45:00	2017-03-23 02:45:00	2017-03-23 02:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+501	2	2017-03-23 04:30:00	2017-03-23 04:30:00	2017-03-23 04:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+502	2	2017-03-23 08:30:00	2017-03-23 08:30:00	2017-03-23 08:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+503	2	2017-03-23 09:15:00	2017-03-23 09:15:00	2017-03-23 09:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+504	2	2017-03-23 11:30:00	2017-03-23 11:30:00	2017-03-23 11:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+505	2	2017-03-23 14:45:00	2017-03-23 14:45:00	2017-03-23 14:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+506	2	2017-03-23 15:00:00	2017-03-23 15:00:00	2017-03-23 15:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+507	2	2017-03-23 21:00:00	2017-03-23 21:00:00	2017-03-23 21:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+508	2	2017-03-24 00:15:00	2017-03-24 00:15:00	2017-03-24 00:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+509	2	2017-03-23 22:15:00	2017-03-23 22:15:00	2017-03-23 22:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+510	2	2017-03-24 04:00:00	2017-03-24 04:00:00	2017-03-24 04:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+511	2	2017-03-24 07:15:00	2017-03-24 07:15:00	2017-03-24 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+512	2	2017-03-24 07:30:00	2017-03-24 07:30:00	2017-03-24 07:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+513	2	2017-03-24 12:30:00	2017-03-24 12:30:00	2017-03-24 12:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+514	2	2017-03-24 13:00:00	2017-03-24 13:00:00	2017-03-24 13:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+515	2	2017-03-24 14:00:00	2017-03-24 14:00:00	2017-03-24 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+516	2	2017-03-24 16:30:00	2017-03-24 16:30:00	2017-03-24 16:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+517	2	2017-03-24 20:15:00	2017-03-24 20:15:00	2017-03-24 20:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+518	2	2017-03-24 22:00:00	2017-03-24 22:00:00	2017-03-24 22:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+519	2	2017-03-24 23:30:00	2017-03-24 23:30:00	2017-03-24 23:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+520	2	2017-03-25 05:15:00	2017-03-25 05:15:00	2017-03-25 05:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+521	2	2017-03-25 03:15:00	2017-03-25 03:15:00	2017-03-25 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+522	2	2017-03-25 10:15:00	2017-03-25 10:15:00	2017-03-25 10:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+523	2	2017-03-25 13:30:00	2017-03-25 13:30:00	2017-03-25 13:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+524	2	2017-03-25 16:15:00	2017-03-25 16:15:00	2017-03-25 16:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+525	2	2017-03-25 16:45:00	2017-03-25 16:45:00	2017-03-25 16:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+526	2	2017-03-25 18:15:00	2017-03-25 18:15:00	2017-03-25 18:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+527	2	2017-03-25 19:15:00	2017-03-25 19:15:00	2017-03-25 19:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+528	2	2017-03-26 00:30:00	2017-03-26 00:30:00	2017-03-26 00:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+529	2	2017-03-26 03:15:00	2017-03-26 03:15:00	2017-03-26 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+530	2	2017-03-26 02:15:00	2017-03-26 02:15:00	2017-03-26 02:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+531	2	2017-03-26 07:15:00	2017-03-26 07:15:00	2017-03-26 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+532	2	2017-03-26 10:00:00	2017-03-26 10:00:00	2017-03-26 10:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+533	2	2017-03-26 14:00:00	2017-03-26 14:00:00	2017-03-26 14:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+534	2	2017-03-26 15:45:00	2017-03-26 15:45:00	2017-03-26 15:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+535	2	2017-03-26 16:00:00	2017-03-26 16:00:00	2017-03-26 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+536	2	2017-03-26 21:45:00	2017-03-26 21:45:00	2017-03-26 21:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+537	2	2017-03-26 20:30:00	2017-03-26 20:30:00	2017-03-26 20:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+538	2	2017-03-26 23:45:00	2017-03-26 23:45:00	2017-03-26 23:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+539	2	2017-03-27 02:30:00	2017-03-27 02:30:00	2017-03-27 02:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+540	2	2017-03-27 07:45:00	2017-03-27 07:45:00	2017-03-27 07:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+541	2	2017-03-27 09:15:00	2017-03-27 09:15:00	2017-03-27 09:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+542	2	2017-03-27 08:15:00	2017-03-27 08:15:00	2017-03-27 08:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+543	2	2017-03-27 11:45:00	2017-03-27 11:45:00	2017-03-27 11:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+544	2	2017-03-27 15:45:00	2017-03-27 15:45:00	2017-03-27 15:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+545	2	2017-03-27 17:45:00	2017-03-27 17:45:00	2017-03-27 17:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+546	2	2017-03-27 21:00:00	2017-03-27 21:00:00	2017-03-27 21:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+547	2	2017-03-27 22:15:00	2017-03-27 22:15:00	2017-03-27 22:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+548	2	2017-03-28 01:00:00	2017-03-28 01:00:00	2017-03-28 01:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+549	2	2017-03-28 04:00:00	2017-03-28 04:00:00	2017-03-28 04:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+550	2	2017-03-28 07:30:00	2017-03-28 07:30:00	2017-03-28 07:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+551	2	2017-03-28 09:30:00	2017-03-28 09:30:00	2017-03-28 09:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+552	2	2017-03-28 10:00:00	2017-03-28 10:00:00	2017-03-28 10:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+553	2	2017-03-28 12:45:00	2017-03-28 12:45:00	2017-03-28 12:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+554	2	2017-03-28 14:30:00	2017-03-28 14:30:00	2017-03-28 14:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+555	2	2017-03-28 20:15:00	2017-03-28 20:15:00	2017-03-28 20:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+556	2	2017-03-28 21:45:00	2017-03-28 21:45:00	2017-03-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+557	2	2017-03-29 07:15:00	2017-03-29 07:15:00	2017-03-29 07:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+558	2	2017-03-29 02:00:00	2017-03-29 02:00:00	2017-03-29 02:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+559	2	2017-03-29 06:00:00	2017-03-29 06:00:00	2017-03-29 06:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+560	2	2017-03-29 03:15:00	2017-03-29 03:15:00	2017-03-29 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+561	2	2017-03-29 17:15:00	2017-03-29 17:15:00	2017-03-29 17:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+562	2	2017-03-29 12:00:00	2017-03-29 12:00:00	2017-03-29 12:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+563	2	2017-03-29 16:00:00	2017-03-29 16:00:00	2017-03-29 16:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+564	2	2017-03-29 13:15:00	2017-03-29 13:15:00	2017-03-29 13:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+565	2	2017-03-30 03:15:00	2017-03-30 03:15:00	2017-03-30 03:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+566	2	2017-03-29 22:00:00	2017-03-29 22:00:00	2017-03-29 22:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+567	2	2017-03-30 02:00:00	2017-03-30 02:00:00	2017-03-30 02:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+568	2	2017-03-29 23:15:00	2017-03-29 23:15:00	2017-03-29 23:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+569	2	2017-03-30 06:30:00	2017-03-30 06:30:00	2017-03-30 06:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+570	2	2017-03-31 09:30:00	2017-03-31 09:30:00	2017-03-31 09:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+571	2	2017-03-30 05:15:00	2017-03-30 05:15:00	2017-03-30 05:15:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+572	2	2017-03-31 10:45:00	2017-03-31 10:45:00	2017-03-31 10:45:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+573	2	2017-03-31 15:30:00	2017-03-31 15:30:00	2017-03-31 15:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+574	2	2017-03-31 19:30:00	2017-03-31 19:30:00	2017-03-31 19:30:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+575	2	2017-03-31 15:00:00	2017-03-31 15:00:00	2017-03-31 15:00:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+576	2	2017-03-31 21:46:00	2017-03-31 21:46:00	2017-03-31 21:46:00	\N	1	\N	1	\N	F	\N	\N	2	\N
+577	3	2017-03-01 00:30:00	2017-03-01 00:30:00	2017-03-01 00:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+578	3	2017-03-01 04:45:00	2017-03-01 04:45:00	2017-03-01 04:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+579	3	2017-03-01 05:30:00	2017-03-01 05:30:00	2017-03-01 05:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+580	3	2017-03-01 09:45:00	2017-03-01 09:45:00	2017-03-01 09:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+581	3	2017-03-01 10:45:00	2017-03-01 10:45:00	2017-03-01 10:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+582	3	2017-03-01 15:00:00	2017-03-01 15:00:00	2017-03-01 15:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+583	3	2017-03-01 19:00:00	2017-03-01 19:00:00	2017-03-01 19:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+584	3	2017-03-01 20:30:00	2017-03-01 20:30:00	2017-03-01 20:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+585	3	2017-03-01 20:45:00	2017-03-01 20:45:00	2017-03-01 20:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+586	3	2017-03-02 01:00:00	2017-03-02 01:00:00	2017-03-02 01:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+587	3	2017-03-02 05:30:00	2017-03-02 05:30:00	2017-03-02 05:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+588	3	2017-03-02 05:15:00	2017-03-02 05:15:00	2017-03-02 05:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+589	3	2017-03-02 06:45:00	2017-03-02 06:45:00	2017-03-02 06:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+590	3	2017-03-02 10:15:00	2017-03-02 10:15:00	2017-03-02 10:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+591	3	2017-03-02 11:46:00	2017-03-02 11:46:00	2017-03-02 11:46:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+592	3	2017-03-02 15:15:00	2017-03-02 15:15:00	2017-03-02 15:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+593	3	2017-03-02 16:45:00	2017-03-02 16:45:00	2017-03-02 16:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+594	3	2017-03-02 20:00:00	2017-03-02 20:00:00	2017-03-02 20:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+595	3	2017-03-03 01:15:00	2017-03-03 01:15:00	2017-03-03 01:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+596	3	2017-03-02 23:15:00	2017-03-02 23:15:00	2017-03-02 23:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+597	3	2017-03-03 04:00:00	2017-03-03 04:00:00	2017-03-03 04:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+598	3	2017-03-03 06:00:00	2017-03-03 06:00:00	2017-03-03 06:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+599	3	2017-03-03 08:30:00	2017-03-03 08:30:00	2017-03-03 08:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+600	3	2017-03-03 11:30:00	2017-03-03 11:30:00	2017-03-03 11:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+601	3	2017-03-03 14:16:00	2017-03-03 14:16:00	2017-03-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+602	3	2017-03-03 17:01:00	2017-03-03 17:01:00	2017-03-03 17:01:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+603	3	2017-03-03 20:00:00	2017-03-03 20:00:00	2017-03-03 20:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+604	3	2017-03-03 21:15:00	2017-03-03 21:15:00	2017-03-03 21:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+605	3	2017-03-04 00:16:00	2017-03-04 00:16:00	2017-03-04 00:16:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+606	3	2017-03-04 03:01:00	2017-03-04 03:01:00	2017-03-04 03:01:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+607	3	2017-03-04 06:01:00	2017-03-04 06:01:00	2017-03-04 06:01:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+608	3	2017-03-04 07:16:00	2017-03-04 07:16:00	2017-03-04 07:16:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+609	3	2017-03-04 10:16:00	2017-03-04 10:16:00	2017-03-04 10:16:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+610	3	2017-03-04 13:01:00	2017-03-04 13:01:00	2017-03-04 13:01:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+611	3	2017-03-04 16:00:00	2017-03-04 16:00:00	2017-03-04 16:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+612	3	2017-03-04 17:15:00	2017-03-04 17:15:00	2017-03-04 17:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+613	3	2017-03-04 20:15:00	2017-03-04 20:15:00	2017-03-04 20:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+614	3	2017-03-04 23:00:00	2017-03-04 23:00:00	2017-03-04 23:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+615	3	2017-03-05 02:01:00	2017-03-05 02:01:00	2017-03-05 02:01:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+616	3	2017-03-05 03:16:00	2017-03-05 03:16:00	2017-03-05 03:16:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+617	3	2017-03-05 06:16:00	2017-03-05 06:16:00	2017-03-05 06:16:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+618	3	2017-03-05 09:00:00	2017-03-05 09:00:00	2017-03-05 09:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+619	3	2017-03-05 12:00:00	2017-03-05 12:00:00	2017-03-05 12:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+620	3	2017-03-05 13:45:00	2017-03-05 13:45:00	2017-03-05 13:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+621	3	2017-03-05 16:15:00	2017-03-05 16:15:00	2017-03-05 16:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+622	3	2017-03-05 18:30:00	2017-03-05 18:30:00	2017-03-05 18:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+623	3	2017-03-05 21:30:00	2017-03-05 21:30:00	2017-03-05 21:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+624	3	2017-03-05 23:45:00	2017-03-05 23:45:00	2017-03-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+625	3	2017-03-06 02:15:00	2017-03-06 02:15:00	2017-03-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+626	3	2017-03-06 04:45:00	2017-03-06 04:45:00	2017-03-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+627	3	2017-03-06 07:15:00	2017-03-06 07:15:00	2017-03-06 07:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+628	3	2017-03-06 09:45:00	2017-03-06 09:45:00	2017-03-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+629	3	2017-03-06 11:15:00	2017-03-06 11:15:00	2017-03-06 11:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+630	3	2017-03-06 14:45:00	2017-03-06 14:45:00	2017-03-06 14:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+631	3	2017-03-06 17:30:00	2017-03-06 17:30:00	2017-03-06 17:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+632	3	2017-03-06 19:14:00	2017-03-06 19:14:00	2017-03-06 19:14:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+633	3	2017-03-06 21:45:00	2017-03-06 21:45:00	2017-03-06 21:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+634	3	2017-03-07 01:15:00	2017-03-07 01:15:00	2017-03-07 01:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+635	3	2017-03-07 03:15:00	2017-03-07 03:15:00	2017-03-07 03:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+636	3	2017-03-07 05:15:00	2017-03-07 05:15:00	2017-03-07 05:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+637	3	2017-03-07 08:45:00	2017-03-07 08:45:00	2017-03-07 08:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+638	3	2017-03-07 09:45:00	2017-03-07 09:45:00	2017-03-07 09:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+639	3	2017-03-07 15:15:00	2017-03-07 15:15:00	2017-03-07 15:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+640	3	2017-03-07 13:45:00	2017-03-07 13:45:00	2017-03-07 13:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+641	3	2017-03-07 21:30:00	2017-03-07 21:30:00	2017-03-07 21:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+642	3	2017-03-07 19:45:00	2017-03-07 19:45:00	2017-03-07 19:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+643	3	2017-03-08 00:00:00	2017-03-08 00:00:00	2017-03-08 00:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+644	3	2017-03-08 01:30:00	2017-03-08 01:30:00	2017-03-08 01:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+645	3	2017-03-08 05:30:00	2017-03-08 05:30:00	2017-03-08 05:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+646	3	2017-03-08 04:00:00	2017-03-08 04:00:00	2017-03-08 04:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+647	3	2017-03-08 10:15:00	2017-03-08 10:15:00	2017-03-08 10:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+648	3	2017-03-08 08:45:00	2017-03-08 08:45:00	2017-03-08 08:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+649	3	2017-03-08 13:30:00	2017-03-08 13:30:00	2017-03-08 13:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+650	3	2017-03-08 18:15:00	2017-03-08 18:15:00	2017-03-08 18:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+651	3	2017-03-08 19:15:00	2017-03-08 19:15:00	2017-03-08 19:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+652	3	2017-03-09 01:45:00	2017-03-09 01:45:00	2017-03-09 01:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+653	3	2017-03-09 00:45:00	2017-03-09 00:45:00	2017-03-09 00:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+654	3	2017-03-09 02:00:00	2017-03-09 02:00:00	2017-03-09 02:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+655	3	2017-03-09 05:15:00	2017-03-09 05:15:00	2017-03-09 05:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+656	3	2017-03-09 10:15:00	2017-03-09 10:15:00	2017-03-09 10:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+657	3	2017-03-09 09:45:00	2017-03-09 09:45:00	2017-03-09 09:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+658	3	2017-03-09 14:00:00	2017-03-09 14:00:00	2017-03-09 14:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+659	3	2017-03-09 16:15:00	2017-03-09 16:15:00	2017-03-09 16:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+660	3	2017-03-09 18:45:00	2017-03-09 18:45:00	2017-03-09 18:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+661	3	2017-03-09 17:45:00	2017-03-09 17:45:00	2017-03-09 17:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+662	3	2017-03-10 02:00:00	2017-03-10 02:00:00	2017-03-10 02:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+663	3	2017-03-09 22:45:00	2017-03-09 22:45:00	2017-03-09 22:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+664	3	2017-03-10 05:45:00	2017-03-10 05:45:00	2017-03-10 05:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+665	3	2017-03-10 04:15:00	2017-03-10 04:15:00	2017-03-10 04:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+666	3	2017-03-10 10:45:00	2017-03-10 10:45:00	2017-03-10 10:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+667	3	2017-03-10 09:15:00	2017-03-10 09:15:00	2017-03-10 09:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+668	3	2017-03-10 17:01:00	2017-03-10 17:01:00	2017-03-10 17:01:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+669	3	2017-03-10 16:15:00	2017-03-10 16:15:00	2017-03-10 16:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+670	3	2017-03-10 19:00:00	2017-03-10 19:00:00	2017-03-10 19:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+671	3	2017-03-10 20:30:00	2017-03-10 20:30:00	2017-03-10 20:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+672	3	2017-03-11 01:15:00	2017-03-11 01:15:00	2017-03-11 01:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+673	3	2017-03-11 03:45:00	2017-03-11 03:45:00	2017-03-11 03:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+674	3	2017-03-11 07:00:00	2017-03-11 07:00:00	2017-03-11 07:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+675	3	2017-03-11 06:45:00	2017-03-11 06:45:00	2017-03-11 06:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+676	3	2017-03-11 11:00:00	2017-03-11 11:00:00	2017-03-11 11:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+677	3	2017-03-11 12:15:00	2017-03-11 12:15:00	2017-03-11 12:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+678	3	2017-03-11 18:00:00	2017-03-11 18:00:00	2017-03-11 18:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+679	3	2017-03-11 14:30:00	2017-03-11 14:30:00	2017-03-11 14:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+680	3	2017-03-11 19:45:00	2017-03-11 19:45:00	2017-03-11 19:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+681	3	2017-03-11 19:30:00	2017-03-11 19:30:00	2017-03-11 19:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+682	3	2017-03-12 03:15:00	2017-03-12 03:15:00	2017-03-12 03:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+683	3	2017-03-12 02:15:00	2017-03-12 02:15:00	2017-03-12 02:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+684	3	2017-03-12 08:15:00	2017-03-12 08:15:00	2017-03-12 08:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+685	3	2017-03-12 08:30:00	2017-03-12 08:30:00	2017-03-12 08:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+686	3	2017-03-12 13:00:00	2017-03-12 13:00:00	2017-03-12 13:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+687	3	2017-03-12 11:15:00	2017-03-12 11:15:00	2017-03-12 11:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+688	3	2017-03-12 18:30:00	2017-03-12 18:30:00	2017-03-12 18:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+689	3	2017-03-12 18:45:00	2017-03-12 18:45:00	2017-03-12 18:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+690	3	2017-03-12 19:30:00	2017-03-12 19:30:00	2017-03-12 19:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+691	3	2017-03-12 21:15:00	2017-03-12 21:15:00	2017-03-12 21:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+692	3	2017-03-13 02:15:00	2017-03-13 02:15:00	2017-03-13 02:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+693	3	2017-03-13 05:15:00	2017-03-13 05:15:00	2017-03-13 05:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+694	3	2017-03-13 06:45:00	2017-03-13 06:45:00	2017-03-13 06:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+695	3	2017-03-13 07:15:00	2017-03-13 07:15:00	2017-03-13 07:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+696	3	2017-03-13 15:00:00	2017-03-13 15:00:00	2017-03-13 15:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+697	3	2017-03-13 14:00:00	2017-03-13 14:00:00	2017-03-13 14:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+698	3	2017-03-13 17:00:00	2017-03-13 17:00:00	2017-03-13 17:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+699	3	2017-03-13 20:00:00	2017-03-13 20:00:00	2017-03-13 20:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+700	3	2017-03-13 23:30:00	2017-03-13 23:30:00	2017-03-13 23:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+701	3	2017-03-14 00:15:00	2017-03-14 00:15:00	2017-03-14 00:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+702	3	2017-03-14 05:00:00	2017-03-14 05:00:00	2017-03-14 05:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+703	3	2017-03-14 04:00:00	2017-03-14 04:00:00	2017-03-14 04:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+704	3	2017-03-14 11:00:00	2017-03-14 11:00:00	2017-03-14 11:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+705	3	2017-03-14 07:45:00	2017-03-14 07:45:00	2017-03-14 07:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+706	3	2017-03-14 12:15:00	2017-03-14 12:15:00	2017-03-14 12:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+707	3	2017-03-14 15:45:00	2017-03-14 15:45:00	2017-03-14 15:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+708	3	2017-03-14 19:45:00	2017-03-14 19:45:00	2017-03-14 19:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+709	3	2017-03-14 21:15:00	2017-03-14 21:15:00	2017-03-14 21:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+710	3	2017-03-15 00:45:00	2017-03-15 00:45:00	2017-03-15 00:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+711	3	2017-03-15 02:30:00	2017-03-15 02:30:00	2017-03-15 02:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+712	3	2017-03-15 03:00:00	2017-03-15 03:00:00	2017-03-15 03:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+713	3	2017-03-15 03:15:00	2017-03-15 03:15:00	2017-03-15 03:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+714	3	2017-03-15 10:00:00	2017-03-15 10:00:00	2017-03-15 10:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+715	3	2017-03-15 12:45:00	2017-03-15 12:45:00	2017-03-15 12:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+716	3	2017-03-15 12:15:00	2017-03-15 12:15:00	2017-03-15 12:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+717	3	2017-03-15 16:15:00	2017-03-15 16:15:00	2017-03-15 16:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+718	3	2017-03-15 19:00:00	2017-03-15 19:00:00	2017-03-15 19:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+719	3	2017-03-15 21:45:00	2017-03-15 21:45:00	2017-03-15 21:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+720	3	2017-03-16 01:15:00	2017-03-16 01:15:00	2017-03-16 01:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+721	3	2017-03-16 03:00:00	2017-03-16 03:00:00	2017-03-16 03:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+722	3	2017-03-16 07:15:00	2017-03-16 07:15:00	2017-03-16 07:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+723	3	2017-03-16 08:15:00	2017-03-16 08:15:00	2017-03-16 08:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+724	3	2017-03-16 10:15:00	2017-03-16 10:15:00	2017-03-16 10:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+725	3	2017-03-16 12:15:00	2017-03-16 12:15:00	2017-03-16 12:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+726	3	2017-03-16 16:00:00	2017-03-16 16:00:00	2017-03-16 16:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+727	3	2017-03-16 15:00:00	2017-03-16 15:00:00	2017-03-16 15:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+728	3	2017-03-16 22:00:00	2017-03-16 22:00:00	2017-03-16 22:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+729	3	2017-03-16 19:15:00	2017-03-16 19:15:00	2017-03-16 19:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+730	3	2017-03-17 03:45:00	2017-03-17 03:45:00	2017-03-17 03:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+731	3	2017-03-17 02:15:00	2017-03-17 02:15:00	2017-03-17 02:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+732	3	2017-03-17 06:15:00	2017-03-17 06:15:00	2017-03-17 06:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+733	3	2017-03-17 06:00:00	2017-03-17 06:00:00	2017-03-17 06:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+734	3	2017-03-17 12:15:00	2017-03-17 12:15:00	2017-03-17 12:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+735	3	2017-03-17 12:00:00	2017-03-17 12:00:00	2017-03-17 12:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+736	3	2017-03-17 15:00:00	2017-03-17 15:00:00	2017-03-17 15:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+737	3	2017-03-17 19:45:00	2017-03-17 19:45:00	2017-03-17 19:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+738	3	2017-03-17 23:30:00	2017-03-17 23:30:00	2017-03-17 23:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+739	3	2017-03-18 00:45:00	2017-03-18 00:45:00	2017-03-18 00:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+740	3	2017-03-18 03:00:00	2017-03-18 03:00:00	2017-03-18 03:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+741	3	2017-03-18 05:30:00	2017-03-18 05:30:00	2017-03-18 05:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+742	3	2017-03-18 05:45:00	2017-03-18 05:45:00	2017-03-18 05:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+743	3	2017-03-18 09:15:00	2017-03-18 09:15:00	2017-03-18 09:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+744	3	2017-03-18 10:30:00	2017-03-18 10:30:00	2017-03-18 10:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+745	3	2017-03-18 11:15:00	2017-03-18 11:15:00	2017-03-18 11:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+746	3	2017-03-18 16:30:00	2017-03-18 16:30:00	2017-03-18 16:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+747	3	2017-03-18 18:15:00	2017-03-18 18:15:00	2017-03-18 18:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+748	3	2017-03-18 21:15:00	2017-03-18 21:15:00	2017-03-18 21:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+749	3	2017-03-19 00:00:00	2017-03-19 00:00:00	2017-03-19 00:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+750	3	2017-03-19 02:30:00	2017-03-19 02:30:00	2017-03-19 02:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+751	3	2017-03-19 04:30:00	2017-03-19 04:30:00	2017-03-19 04:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+752	3	2017-03-19 08:45:00	2017-03-19 08:45:00	2017-03-19 08:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+753	3	2017-03-19 07:30:00	2017-03-19 07:30:00	2017-03-19 07:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+754	3	2017-03-19 13:45:00	2017-03-19 13:45:00	2017-03-19 13:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+755	3	2017-03-19 13:00:00	2017-03-19 13:00:00	2017-03-19 13:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+756	3	2017-03-19 19:30:00	2017-03-19 19:30:00	2017-03-19 19:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+757	3	2017-03-19 19:00:00	2017-03-19 19:00:00	2017-03-19 19:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+758	3	2017-03-19 22:15:00	2017-03-19 22:15:00	2017-03-19 22:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+759	3	2017-03-20 01:00:00	2017-03-20 01:00:00	2017-03-20 01:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+760	3	2017-03-20 05:30:00	2017-03-20 05:30:00	2017-03-20 05:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+761	3	2017-03-20 07:00:00	2017-03-20 07:00:00	2017-03-20 07:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+762	3	2017-03-20 10:15:00	2017-03-20 10:15:00	2017-03-20 10:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+763	3	2017-03-20 09:45:00	2017-03-20 09:45:00	2017-03-20 09:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+764	3	2017-03-20 12:15:00	2017-03-20 12:15:00	2017-03-20 12:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+765	3	2017-03-20 14:45:00	2017-03-20 14:45:00	2017-03-20 14:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+766	3	2017-03-20 16:45:00	2017-03-20 16:45:00	2017-03-20 16:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+767	3	2017-03-20 21:00:00	2017-03-20 21:00:00	2017-03-20 21:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+768	3	2017-03-21 00:30:00	2017-03-21 00:30:00	2017-03-21 00:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+769	3	2017-03-21 04:30:00	2017-03-21 04:30:00	2017-03-21 04:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+770	3	2017-03-21 04:00:00	2017-03-21 04:00:00	2017-03-21 04:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+771	3	2017-03-21 05:30:00	2017-03-21 05:30:00	2017-03-21 05:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+772	3	2017-03-21 11:15:00	2017-03-21 11:15:00	2017-03-21 11:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+773	3	2017-03-21 13:30:00	2017-03-21 13:30:00	2017-03-21 13:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+774	3	2017-03-21 16:00:00	2017-03-21 16:00:00	2017-03-21 16:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+775	3	2017-03-21 17:15:00	2017-03-21 17:15:00	2017-03-21 17:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+776	3	2017-03-21 19:45:00	2017-03-21 19:45:00	2017-03-21 19:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+777	3	2017-03-21 23:30:00	2017-03-21 23:30:00	2017-03-21 23:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+778	3	2017-03-22 00:45:00	2017-03-22 00:45:00	2017-03-22 00:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+779	3	2017-03-22 01:45:00	2017-03-22 01:45:00	2017-03-22 01:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+780	3	2017-03-22 06:15:00	2017-03-22 06:15:00	2017-03-22 06:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+781	3	2017-03-22 08:15:00	2017-03-22 08:15:00	2017-03-22 08:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+782	3	2017-03-22 09:30:00	2017-03-22 09:30:00	2017-03-22 09:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+783	3	2017-03-22 11:45:00	2017-03-22 11:45:00	2017-03-22 11:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+784	3	2017-03-22 14:30:00	2017-03-22 14:30:00	2017-03-22 14:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+785	3	2017-03-22 17:30:00	2017-03-22 17:30:00	2017-03-22 17:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+786	3	2017-03-22 22:00:00	2017-03-22 22:00:00	2017-03-22 22:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+787	3	2017-03-22 21:00:00	2017-03-22 21:00:00	2017-03-22 21:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+788	3	2017-03-23 01:30:00	2017-03-23 01:30:00	2017-03-23 01:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+789	3	2017-03-23 03:00:00	2017-03-23 03:00:00	2017-03-23 03:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+790	3	2017-03-23 07:45:00	2017-03-23 07:45:00	2017-03-23 07:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+791	3	2017-03-23 08:45:00	2017-03-23 08:45:00	2017-03-23 08:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+792	3	2017-03-23 10:45:00	2017-03-23 10:45:00	2017-03-23 10:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+793	3	2017-03-23 14:00:00	2017-03-23 14:00:00	2017-03-23 14:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+794	3	2017-03-23 18:30:00	2017-03-23 18:30:00	2017-03-23 18:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+795	3	2017-03-23 17:45:00	2017-03-23 17:45:00	2017-03-23 17:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+796	3	2017-03-23 21:00:00	2017-03-23 21:00:00	2017-03-23 21:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+797	3	2017-03-23 22:45:00	2017-03-23 22:45:00	2017-03-23 22:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+798	3	2017-03-24 03:30:00	2017-03-24 03:30:00	2017-03-24 03:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+799	3	2017-03-24 02:00:00	2017-03-24 02:00:00	2017-03-24 02:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+800	3	2017-03-24 10:15:00	2017-03-24 10:15:00	2017-03-24 10:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+801	3	2017-03-24 08:15:00	2017-03-24 08:15:00	2017-03-24 08:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+802	3	2017-03-24 13:30:00	2017-03-24 13:30:00	2017-03-24 13:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+803	3	2017-03-24 16:45:00	2017-03-24 16:45:00	2017-03-24 16:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+804	3	2017-03-24 17:00:00	2017-03-24 17:00:00	2017-03-24 17:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+805	3	2017-03-24 20:45:00	2017-03-24 20:45:00	2017-03-24 20:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+806	3	2017-03-24 22:30:00	2017-03-24 22:30:00	2017-03-24 22:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+807	3	2017-03-24 23:00:00	2017-03-24 23:00:00	2017-03-24 23:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+808	3	2017-03-25 01:30:00	2017-03-25 01:30:00	2017-03-25 01:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+809	3	2017-03-25 06:30:00	2017-03-25 06:30:00	2017-03-25 06:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+810	3	2017-03-25 10:45:00	2017-03-25 10:45:00	2017-03-25 10:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+811	3	2017-03-25 09:30:00	2017-03-25 09:30:00	2017-03-25 09:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+812	3	2017-03-25 11:45:00	2017-03-25 11:45:00	2017-03-25 11:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+813	3	2017-03-25 15:00:00	2017-03-25 15:00:00	2017-03-25 15:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+814	3	2017-03-25 20:15:00	2017-03-25 20:15:00	2017-03-25 20:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+815	3	2017-03-25 20:00:00	2017-03-25 20:00:00	2017-03-25 20:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+816	3	2017-03-26 00:15:00	2017-03-26 00:15:00	2017-03-26 00:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+817	3	2017-03-26 01:00:00	2017-03-26 01:00:00	2017-03-26 01:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+818	3	2017-03-26 05:00:00	2017-03-26 05:00:00	2017-03-26 05:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+819	3	2017-03-26 07:45:00	2017-03-26 07:45:00	2017-03-26 07:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+820	3	2017-03-26 09:15:00	2017-03-26 09:15:00	2017-03-26 09:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+821	3	2017-03-26 11:30:00	2017-03-26 11:30:00	2017-03-26 11:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+822	3	2017-03-26 16:15:00	2017-03-26 16:15:00	2017-03-26 16:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+823	3	2017-03-26 18:00:00	2017-03-26 18:00:00	2017-03-26 18:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+824	3	2017-03-26 22:15:00	2017-03-26 22:15:00	2017-03-26 22:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+825	3	2017-03-26 21:00:00	2017-03-26 21:00:00	2017-03-26 21:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+826	3	2017-03-27 02:00:00	2017-03-27 02:00:00	2017-03-27 02:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+827	3	2017-03-27 03:00:00	2017-03-27 03:00:00	2017-03-27 03:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+828	3	2017-03-27 07:00:00	2017-03-27 07:00:00	2017-03-27 07:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+829	3	2017-03-27 08:00:00	2017-03-27 08:00:00	2017-03-27 08:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+830	3	2017-03-27 09:30:00	2017-03-27 09:30:00	2017-03-27 09:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+831	3	2017-03-27 15:30:00	2017-03-27 15:30:00	2017-03-27 15:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+832	3	2017-03-27 16:15:00	2017-03-27 16:15:00	2017-03-27 16:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+833	3	2017-03-27 18:15:00	2017-03-27 18:15:00	2017-03-27 18:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+834	3	2017-03-27 23:00:00	2017-03-27 23:00:00	2017-03-27 23:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+835	3	2017-03-27 22:45:00	2017-03-27 22:45:00	2017-03-27 22:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+836	3	2017-03-28 02:15:00	2017-03-28 02:15:00	2017-03-28 02:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+837	3	2017-03-28 03:15:00	2017-03-28 03:15:00	2017-03-28 03:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+838	3	2017-03-28 06:45:00	2017-03-28 06:45:00	2017-03-28 06:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+839	3	2017-03-28 07:00:00	2017-03-28 07:00:00	2017-03-28 07:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+840	3	2017-03-28 12:30:00	2017-03-28 12:30:00	2017-03-28 12:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+841	3	2017-03-28 13:15:00	2017-03-28 13:15:00	2017-03-28 13:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+842	3	2017-03-28 16:00:00	2017-03-28 16:00:00	2017-03-28 16:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+843	3	2017-03-28 20:45:00	2017-03-28 20:45:00	2017-03-28 20:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+844	3	2017-03-28 21:45:00	2017-03-28 21:45:00	2017-03-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+845	3	2017-03-28 23:00:00	2017-03-28 23:00:00	2017-03-28 23:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+846	3	2017-03-29 05:30:00	2017-03-29 05:30:00	2017-03-29 05:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+847	3	2017-03-29 00:15:00	2017-03-29 00:15:00	2017-03-29 00:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+848	3	2017-03-29 04:15:00	2017-03-29 04:15:00	2017-03-29 04:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+849	3	2017-03-29 09:00:00	2017-03-29 09:00:00	2017-03-29 09:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+850	3	2017-03-29 15:30:00	2017-03-29 15:30:00	2017-03-29 15:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+851	3	2017-03-29 10:15:00	2017-03-29 10:15:00	2017-03-29 10:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+852	3	2017-03-29 14:15:00	2017-03-29 14:15:00	2017-03-29 14:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+853	3	2017-03-29 19:00:00	2017-03-29 19:00:00	2017-03-29 19:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+854	3	2017-03-30 01:30:00	2017-03-30 01:30:00	2017-03-30 01:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+855	3	2017-03-29 20:15:00	2017-03-29 20:15:00	2017-03-29 20:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+856	3	2017-03-30 00:15:00	2017-03-30 00:15:00	2017-03-30 00:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+857	3	2017-03-30 05:00:00	2017-03-30 05:00:00	2017-03-30 05:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+858	3	2017-03-30 04:45:00	2017-03-30 04:45:00	2017-03-30 04:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+859	3	2017-03-31 10:15:00	2017-03-31 10:15:00	2017-03-31 10:15:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+860	3	2017-03-31 11:45:00	2017-03-31 11:45:00	2017-03-31 11:45:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+861	3	2017-03-31 16:30:00	2017-03-31 16:30:00	2017-03-31 16:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+862	3	2017-03-31 23:00:00	2017-03-31 23:00:00	2017-03-31 23:00:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+863	3	2017-03-31 18:30:00	2017-03-31 18:30:00	2017-03-31 18:30:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+864	3	2017-03-31 22:46:00	2017-03-31 22:46:00	2017-03-31 22:46:00	\N	1	\N	1	\N	F	\N	\N	3	\N
+865	4	2017-02-28 23:45:00	2017-02-28 23:45:00	2017-02-28 23:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+866	4	2017-03-01 02:45:00	2017-03-01 02:45:00	2017-03-01 02:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+867	4	2017-03-01 04:46:00	2017-03-01 04:46:00	2017-03-01 04:46:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+868	4	2017-03-01 07:45:00	2017-03-01 07:45:00	2017-03-01 07:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+869	4	2017-03-01 09:45:00	2017-03-01 09:45:00	2017-03-01 09:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+870	4	2017-03-01 10:15:00	2017-03-01 10:15:00	2017-03-01 10:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+871	4	2017-03-01 17:00:00	2017-03-01 17:00:00	2017-03-01 17:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+872	4	2017-03-01 18:30:00	2017-03-01 18:30:00	2017-03-01 18:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+873	4	2017-03-01 18:45:00	2017-03-01 18:45:00	2017-03-01 18:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+874	4	2017-03-01 23:30:00	2017-03-01 23:30:00	2017-03-01 23:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+875	4	2017-03-02 03:30:00	2017-03-02 03:30:00	2017-03-02 03:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+876	4	2017-03-02 04:30:00	2017-03-02 04:30:00	2017-03-02 04:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+877	4	2017-03-02 06:00:00	2017-03-02 06:00:00	2017-03-02 06:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+878	4	2017-03-02 09:30:00	2017-03-02 09:30:00	2017-03-02 09:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+879	4	2017-03-02 09:45:00	2017-03-02 09:45:00	2017-03-02 09:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+880	4	2017-03-02 14:30:00	2017-03-02 14:30:00	2017-03-02 14:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+881	4	2017-03-02 16:00:00	2017-03-02 16:00:00	2017-03-02 16:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+882	4	2017-03-02 20:15:00	2017-03-02 20:15:00	2017-03-02 20:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+883	4	2017-03-02 23:15:00	2017-03-02 23:15:00	2017-03-02 23:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+884	4	2017-03-03 01:45:00	2017-03-03 01:45:00	2017-03-03 01:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+885	4	2017-03-03 02:00:00	2017-03-03 02:00:00	2017-03-03 02:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+886	4	2017-03-03 05:30:00	2017-03-03 05:30:00	2017-03-03 05:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+887	4	2017-03-03 10:15:00	2017-03-03 10:15:00	2017-03-03 10:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+888	4	2017-03-03 11:00:00	2017-03-03 11:00:00	2017-03-03 11:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+889	4	2017-03-03 13:16:00	2017-03-03 13:16:00	2017-03-03 13:16:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+890	4	2017-03-03 16:01:00	2017-03-03 16:01:00	2017-03-03 16:01:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+891	4	2017-03-03 19:00:00	2017-03-03 19:00:00	2017-03-03 19:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+892	4	2017-03-03 20:15:00	2017-03-03 20:15:00	2017-03-03 20:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+893	4	2017-03-03 23:16:00	2017-03-03 23:16:00	2017-03-03 23:16:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+894	4	2017-03-04 02:01:00	2017-03-04 02:01:00	2017-03-04 02:01:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+895	4	2017-03-04 05:01:00	2017-03-04 05:01:00	2017-03-04 05:01:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+896	4	2017-03-04 06:16:00	2017-03-04 06:16:00	2017-03-04 06:16:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+897	4	2017-03-04 09:16:00	2017-03-04 09:16:00	2017-03-04 09:16:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+898	4	2017-03-04 12:01:00	2017-03-04 12:01:00	2017-03-04 12:01:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+899	4	2017-03-04 15:00:00	2017-03-04 15:00:00	2017-03-04 15:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+900	4	2017-03-04 16:15:00	2017-03-04 16:15:00	2017-03-04 16:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+901	4	2017-03-04 19:15:00	2017-03-04 19:15:00	2017-03-04 19:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+902	4	2017-03-04 22:00:00	2017-03-04 22:00:00	2017-03-04 22:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+903	4	2017-03-05 01:01:00	2017-03-05 01:01:00	2017-03-05 01:01:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+904	4	2017-03-05 02:16:00	2017-03-05 02:16:00	2017-03-05 02:16:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+905	4	2017-03-05 05:16:00	2017-03-05 05:16:00	2017-03-05 05:16:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+906	4	2017-03-05 08:00:00	2017-03-05 08:00:00	2017-03-05 08:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+907	4	2017-03-05 11:00:00	2017-03-05 11:00:00	2017-03-05 11:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+908	4	2017-03-05 12:45:00	2017-03-05 12:45:00	2017-03-05 12:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+909	4	2017-03-05 15:15:00	2017-03-05 15:15:00	2017-03-05 15:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+910	4	2017-03-05 17:30:00	2017-03-05 17:30:00	2017-03-05 17:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+911	4	2017-03-05 20:15:00	2017-03-05 20:15:00	2017-03-05 20:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+912	4	2017-03-05 22:45:00	2017-03-05 22:45:00	2017-03-05 22:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+913	4	2017-03-06 01:15:00	2017-03-06 01:15:00	2017-03-06 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+914	4	2017-03-06 03:45:00	2017-03-06 03:45:00	2017-03-06 03:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+915	4	2017-03-06 06:15:00	2017-03-06 06:15:00	2017-03-06 06:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+916	4	2017-03-06 08:45:00	2017-03-06 08:45:00	2017-03-06 08:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+917	4	2017-03-06 10:45:00	2017-03-06 10:45:00	2017-03-06 10:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+918	4	2017-03-06 13:30:00	2017-03-06 13:30:00	2017-03-06 13:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+919	4	2017-03-06 17:15:00	2017-03-06 17:15:00	2017-03-06 17:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+920	4	2017-03-06 18:45:00	2017-03-06 18:45:00	2017-03-06 18:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+921	4	2017-03-06 21:45:00	2017-03-06 21:45:00	2017-03-06 21:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+922	4	2017-03-07 00:30:00	2017-03-07 00:30:00	2017-03-07 00:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+923	4	2017-03-07 01:45:00	2017-03-07 01:45:00	2017-03-07 01:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+924	4	2017-03-07 04:30:00	2017-03-07 04:30:00	2017-03-07 04:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+925	4	2017-03-07 07:15:00	2017-03-07 07:15:00	2017-03-07 07:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+926	4	2017-03-07 10:00:00	2017-03-07 10:00:00	2017-03-07 10:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+927	4	2017-03-07 12:45:00	2017-03-07 12:45:00	2017-03-07 12:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+928	4	2017-03-07 16:15:00	2017-03-07 16:15:00	2017-03-07 16:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+929	4	2017-03-07 17:30:00	2017-03-07 17:30:00	2017-03-07 17:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+930	4	2017-03-07 21:15:00	2017-03-07 21:15:00	2017-03-07 21:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+931	4	2017-03-07 22:00:00	2017-03-07 22:00:00	2017-03-07 22:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+932	4	2017-03-07 23:00:00	2017-03-07 23:00:00	2017-03-07 23:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+933	4	2017-03-08 03:15:00	2017-03-08 03:15:00	2017-03-08 03:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+934	4	2017-03-08 07:00:00	2017-03-08 07:00:00	2017-03-08 07:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+935	4	2017-03-08 08:15:00	2017-03-08 08:15:00	2017-03-08 08:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+936	4	2017-03-08 09:00:00	2017-03-08 09:00:00	2017-03-08 09:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+937	4	2017-03-08 13:45:00	2017-03-08 13:45:00	2017-03-08 13:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+938	4	2017-03-08 20:15:00	2017-03-08 20:15:00	2017-03-08 20:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+939	4	2017-03-08 16:30:00	2017-03-08 16:30:00	2017-03-08 16:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+940	4	2017-03-08 23:30:00	2017-03-08 23:30:00	2017-03-08 23:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+941	4	2017-03-08 23:45:00	2017-03-08 23:45:00	2017-03-08 23:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+942	4	2017-03-09 01:15:00	2017-03-09 01:15:00	2017-03-09 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+943	4	2017-03-09 03:15:00	2017-03-09 03:15:00	2017-03-09 03:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+944	4	2017-03-09 08:30:00	2017-03-09 08:30:00	2017-03-09 08:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+945	4	2017-03-09 08:00:00	2017-03-09 08:00:00	2017-03-09 08:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+946	4	2017-03-09 13:15:00	2017-03-09 13:15:00	2017-03-09 13:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+947	4	2017-03-09 15:30:00	2017-03-09 15:30:00	2017-03-09 15:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+948	4	2017-03-09 18:00:00	2017-03-09 18:00:00	2017-03-09 18:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+949	4	2017-03-09 17:15:00	2017-03-09 17:15:00	2017-03-09 17:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+950	4	2017-03-10 01:15:00	2017-03-10 01:15:00	2017-03-10 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+951	4	2017-03-10 01:00:00	2017-03-10 01:00:00	2017-03-10 01:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+952	4	2017-03-10 03:45:00	2017-03-10 03:45:00	2017-03-10 03:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+953	4	2017-03-10 02:15:00	2017-03-10 02:15:00	2017-03-10 02:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+954	4	2017-03-10 10:00:00	2017-03-10 10:00:00	2017-03-10 10:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+955	4	2017-03-10 12:00:00	2017-03-10 12:00:00	2017-03-10 12:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+956	4	2017-03-10 13:30:00	2017-03-10 13:30:00	2017-03-10 13:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+957	4	2017-03-10 12:30:00	2017-03-10 12:30:00	2017-03-10 12:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+958	4	2017-03-10 21:15:00	2017-03-10 21:15:00	2017-03-10 21:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+959	4	2017-03-10 17:15:00	2017-03-10 17:15:00	2017-03-10 17:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+960	4	2017-03-11 01:00:00	2017-03-11 01:00:00	2017-03-11 01:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+961	4	2017-03-11 01:15:00	2017-03-11 01:15:00	2017-03-11 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+962	4	2017-03-11 04:30:00	2017-03-11 04:30:00	2017-03-11 04:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+963	4	2017-03-11 04:15:00	2017-03-11 04:15:00	2017-03-11 04:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+964	4	2017-03-11 09:15:00	2017-03-11 09:15:00	2017-03-11 09:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+965	4	2017-03-11 10:45:00	2017-03-11 10:45:00	2017-03-11 10:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+966	4	2017-03-11 17:00:00	2017-03-11 17:00:00	2017-03-11 17:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+967	4	2017-03-11 17:30:00	2017-03-11 17:30:00	2017-03-11 17:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+968	4	2017-03-11 18:45:00	2017-03-11 18:45:00	2017-03-11 18:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+969	4	2017-03-11 19:30:00	2017-03-11 19:30:00	2017-03-11 19:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+970	4	2017-03-12 02:30:00	2017-03-12 02:30:00	2017-03-12 02:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+971	4	2017-03-12 01:30:00	2017-03-12 01:30:00	2017-03-12 01:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+972	4	2017-03-12 07:30:00	2017-03-12 07:30:00	2017-03-12 07:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+973	4	2017-03-12 08:16:00	2017-03-12 08:16:00	2017-03-12 08:16:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+974	4	2017-03-12 09:30:00	2017-03-12 09:30:00	2017-03-12 09:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+975	4	2017-03-12 10:30:00	2017-03-12 10:30:00	2017-03-12 10:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+976	4	2017-03-12 16:30:00	2017-03-12 16:30:00	2017-03-12 16:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+977	4	2017-03-12 15:15:00	2017-03-12 15:15:00	2017-03-12 15:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+978	4	2017-03-12 20:00:00	2017-03-12 20:00:00	2017-03-12 20:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+979	4	2017-03-12 20:30:00	2017-03-12 20:30:00	2017-03-12 20:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+980	4	2017-03-13 00:15:00	2017-03-13 00:15:00	2017-03-13 00:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+981	4	2017-03-13 03:15:00	2017-03-13 03:15:00	2017-03-13 03:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+982	4	2017-03-13 06:00:00	2017-03-13 06:00:00	2017-03-13 06:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+983	4	2017-03-13 09:15:00	2017-03-13 09:15:00	2017-03-13 09:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+984	4	2017-03-13 09:30:00	2017-03-13 09:30:00	2017-03-13 09:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+985	4	2017-03-13 12:15:00	2017-03-13 12:15:00	2017-03-13 12:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+986	4	2017-03-13 17:00:00	2017-03-13 17:00:00	2017-03-13 17:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+987	4	2017-03-13 18:00:00	2017-03-13 18:00:00	2017-03-13 18:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+988	4	2017-03-13 23:15:00	2017-03-13 23:15:00	2017-03-13 23:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+989	4	2017-03-13 22:00:00	2017-03-13 22:00:00	2017-03-13 22:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+990	4	2017-03-14 00:00:00	2017-03-14 00:00:00	2017-03-14 00:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+991	4	2017-03-14 02:00:00	2017-03-14 02:00:00	2017-03-14 02:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+992	4	2017-03-14 06:15:00	2017-03-14 06:15:00	2017-03-14 06:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+993	4	2017-03-14 10:30:00	2017-03-14 10:30:00	2017-03-14 10:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+994	4	2017-03-14 11:30:00	2017-03-14 11:30:00	2017-03-14 11:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+995	4	2017-03-14 12:30:00	2017-03-14 12:30:00	2017-03-14 12:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+996	4	2017-03-14 16:45:00	2017-03-14 16:45:00	2017-03-14 16:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+997	4	2017-03-14 17:30:00	2017-03-14 17:30:00	2017-03-14 17:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+998	4	2017-03-14 21:30:00	2017-03-14 21:30:00	2017-03-14 21:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+999	4	2017-03-15 01:45:00	2017-03-15 01:45:00	2017-03-15 01:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1000	4	2017-03-15 02:00:00	2017-03-15 02:00:00	2017-03-15 02:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1001	4	2017-03-15 04:00:00	2017-03-15 04:00:00	2017-03-15 04:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1002	4	2017-03-15 06:30:00	2017-03-15 06:30:00	2017-03-15 06:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1003	4	2017-03-15 08:30:00	2017-03-15 08:30:00	2017-03-15 08:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1004	4	2017-03-15 14:00:00	2017-03-15 14:00:00	2017-03-15 14:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1005	4	2017-03-15 15:30:00	2017-03-15 15:30:00	2017-03-15 15:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1006	4	2017-03-15 20:45:00	2017-03-15 20:45:00	2017-03-15 20:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1007	4	2017-03-15 21:15:00	2017-03-15 21:15:00	2017-03-15 21:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1008	4	2017-03-15 22:30:00	2017-03-15 22:30:00	2017-03-15 22:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1009	4	2017-03-15 23:15:00	2017-03-15 23:15:00	2017-03-15 23:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1010	4	2017-03-16 05:15:00	2017-03-16 05:15:00	2017-03-16 05:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1011	4	2017-03-16 05:00:00	2017-03-16 05:00:00	2017-03-16 05:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1012	4	2017-03-16 08:15:00	2017-03-16 08:15:00	2017-03-16 08:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1013	4	2017-03-16 11:30:00	2017-03-16 11:30:00	2017-03-16 11:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1014	4	2017-03-16 15:15:00	2017-03-16 15:15:00	2017-03-16 15:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1015	4	2017-03-16 14:15:00	2017-03-16 14:15:00	2017-03-16 14:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1016	4	2017-03-16 19:45:00	2017-03-16 19:45:00	2017-03-16 19:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1017	4	2017-03-16 20:45:00	2017-03-16 20:45:00	2017-03-16 20:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1018	4	2017-03-17 01:45:00	2017-03-17 01:45:00	2017-03-17 01:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1019	4	2017-03-17 03:45:00	2017-03-17 03:45:00	2017-03-17 03:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1020	4	2017-03-17 05:30:00	2017-03-17 05:30:00	2017-03-17 05:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1021	4	2017-03-17 07:30:00	2017-03-17 07:30:00	2017-03-17 07:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1022	4	2017-03-17 09:15:00	2017-03-17 09:15:00	2017-03-17 09:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1023	4	2017-03-17 13:45:00	2017-03-17 13:45:00	2017-03-17 13:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1024	4	2017-03-17 17:00:00	2017-03-17 17:00:00	2017-03-17 17:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1025	4	2017-03-17 17:45:00	2017-03-17 17:45:00	2017-03-17 17:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1026	4	2017-03-17 21:30:00	2017-03-17 21:30:00	2017-03-17 21:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1027	4	2017-03-17 23:30:00	2017-03-17 23:30:00	2017-03-17 23:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1028	4	2017-03-18 01:00:00	2017-03-18 01:00:00	2017-03-18 01:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1029	4	2017-03-18 05:15:00	2017-03-18 05:15:00	2017-03-18 05:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1030	4	2017-03-18 08:45:00	2017-03-18 08:45:00	2017-03-18 08:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1031	4	2017-03-18 09:30:00	2017-03-18 09:30:00	2017-03-18 09:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1032	4	2017-03-18 10:45:00	2017-03-18 10:45:00	2017-03-18 10:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1033	4	2017-03-18 12:30:00	2017-03-18 12:30:00	2017-03-18 12:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1034	4	2017-03-18 17:00:00	2017-03-18 17:00:00	2017-03-18 17:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1035	4	2017-03-18 17:30:00	2017-03-18 17:30:00	2017-03-18 17:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1036	4	2017-03-18 20:30:00	2017-03-18 20:30:00	2017-03-18 20:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1037	4	2017-03-18 20:45:00	2017-03-18 20:45:00	2017-03-18 20:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1038	4	2017-03-19 00:30:00	2017-03-19 00:30:00	2017-03-19 00:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1039	4	2017-03-19 02:45:00	2017-03-19 02:45:00	2017-03-19 02:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1040	4	2017-03-19 08:00:00	2017-03-19 08:00:00	2017-03-19 08:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1041	4	2017-03-19 09:45:00	2017-03-19 09:45:00	2017-03-19 09:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1042	4	2017-03-19 11:45:00	2017-03-19 11:45:00	2017-03-19 11:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1043	4	2017-03-19 16:00:00	2017-03-19 16:00:00	2017-03-19 16:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1044	4	2017-03-19 17:00:00	2017-03-19 17:00:00	2017-03-19 17:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1045	4	2017-03-19 18:00:00	2017-03-19 18:00:00	2017-03-19 18:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1046	4	2017-03-19 21:30:00	2017-03-19 21:30:00	2017-03-19 21:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1047	4	2017-03-20 01:00:00	2017-03-20 01:00:00	2017-03-20 01:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1048	4	2017-03-20 01:15:00	2017-03-20 01:15:00	2017-03-20 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1049	4	2017-03-20 06:15:00	2017-03-20 06:15:00	2017-03-20 06:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1050	4	2017-03-20 07:45:00	2017-03-20 07:45:00	2017-03-20 07:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1051	4	2017-03-20 08:30:00	2017-03-20 08:30:00	2017-03-20 08:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1052	4	2017-03-20 15:00:00	2017-03-20 15:00:00	2017-03-20 15:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1053	4	2017-03-20 17:00:00	2017-03-20 17:00:00	2017-03-20 17:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1054	4	2017-03-20 16:00:00	2017-03-20 16:00:00	2017-03-20 16:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1055	4	2017-03-20 19:00:00	2017-03-20 19:00:00	2017-03-20 19:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1056	4	2017-03-20 22:30:00	2017-03-20 22:30:00	2017-03-20 22:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1057	4	2017-03-21 02:00:00	2017-03-21 02:00:00	2017-03-21 02:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1058	4	2017-03-21 03:15:00	2017-03-21 03:15:00	2017-03-21 03:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1059	4	2017-03-21 04:45:00	2017-03-21 04:45:00	2017-03-21 04:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1060	4	2017-03-21 09:45:00	2017-03-21 09:45:00	2017-03-21 09:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1061	4	2017-03-21 13:30:00	2017-03-21 13:30:00	2017-03-21 13:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1062	4	2017-03-21 15:45:00	2017-03-21 15:45:00	2017-03-21 15:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1063	4	2017-03-21 16:45:00	2017-03-21 16:45:00	2017-03-21 16:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1064	4	2017-03-21 20:45:00	2017-03-21 20:45:00	2017-03-21 20:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1065	4	2017-03-21 22:45:00	2017-03-21 22:45:00	2017-03-21 22:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1066	4	2017-03-22 00:15:00	2017-03-22 00:15:00	2017-03-22 00:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1067	4	2017-03-22 04:30:00	2017-03-22 04:30:00	2017-03-22 04:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1068	4	2017-03-22 04:15:00	2017-03-22 04:15:00	2017-03-22 04:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1069	4	2017-03-22 08:15:00	2017-03-22 08:15:00	2017-03-22 08:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1070	4	2017-03-22 11:45:00	2017-03-22 11:45:00	2017-03-22 11:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1071	4	2017-03-22 12:15:00	2017-03-22 12:15:00	2017-03-22 12:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1072	4	2017-03-22 12:45:00	2017-03-22 12:45:00	2017-03-22 12:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1073	4	2017-03-22 19:15:00	2017-03-22 19:15:00	2017-03-22 19:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1074	4	2017-03-22 20:00:00	2017-03-22 20:00:00	2017-03-22 20:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1075	4	2017-03-22 23:00:00	2017-03-22 23:00:00	2017-03-22 23:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1076	4	2017-03-23 02:30:00	2017-03-23 02:30:00	2017-03-23 02:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1077	4	2017-03-23 04:15:00	2017-03-23 04:15:00	2017-03-23 04:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1078	4	2017-03-23 05:45:00	2017-03-23 05:45:00	2017-03-23 05:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1079	4	2017-03-23 08:00:00	2017-03-23 08:00:00	2017-03-23 08:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1080	4	2017-03-23 12:45:00	2017-03-23 12:45:00	2017-03-23 12:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1081	4	2017-03-23 12:30:00	2017-03-23 12:30:00	2017-03-23 12:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1082	4	2017-03-23 16:30:00	2017-03-23 16:30:00	2017-03-23 16:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1083	4	2017-03-23 17:00:00	2017-03-23 17:00:00	2017-03-23 17:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1084	4	2017-03-23 20:15:00	2017-03-23 20:15:00	2017-03-23 20:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1085	4	2017-03-24 00:15:00	2017-03-24 00:15:00	2017-03-24 00:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1086	4	2017-03-24 02:45:00	2017-03-24 02:45:00	2017-03-24 02:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1087	4	2017-03-24 05:30:00	2017-03-24 05:30:00	2017-03-24 05:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1088	4	2017-03-24 08:30:00	2017-03-24 08:30:00	2017-03-24 08:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1089	4	2017-03-24 10:30:00	2017-03-24 10:30:00	2017-03-24 10:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1090	4	2017-03-24 13:15:00	2017-03-24 13:15:00	2017-03-24 13:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1091	4	2017-03-24 14:15:00	2017-03-24 14:15:00	2017-03-24 14:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1092	4	2017-03-24 17:00:00	2017-03-24 17:00:00	2017-03-24 17:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1093	4	2017-03-24 18:45:00	2017-03-24 18:45:00	2017-03-24 18:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1094	4	2017-03-24 20:15:00	2017-03-24 20:15:00	2017-03-24 20:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1095	4	2017-03-25 00:15:00	2017-03-25 00:15:00	2017-03-25 00:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1096	4	2017-03-25 05:00:00	2017-03-25 05:00:00	2017-03-25 05:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1097	4	2017-03-25 06:45:00	2017-03-25 06:45:00	2017-03-25 06:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1098	4	2017-03-25 07:45:00	2017-03-25 07:45:00	2017-03-25 07:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1099	4	2017-03-25 12:15:00	2017-03-25 12:15:00	2017-03-25 12:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1100	4	2017-03-25 14:45:00	2017-03-25 14:45:00	2017-03-25 14:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1101	4	2017-03-25 13:45:00	2017-03-25 13:45:00	2017-03-25 13:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1102	4	2017-03-25 19:30:00	2017-03-25 19:30:00	2017-03-25 19:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1103	4	2017-03-25 18:30:00	2017-03-25 18:30:00	2017-03-25 18:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1104	4	2017-03-25 23:00:00	2017-03-25 23:00:00	2017-03-25 23:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1105	4	2017-03-26 02:30:00	2017-03-26 02:30:00	2017-03-26 02:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1106	4	2017-03-26 03:45:00	2017-03-26 03:45:00	2017-03-26 03:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1107	4	2017-03-26 07:00:00	2017-03-26 07:00:00	2017-03-26 07:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1108	4	2017-03-26 09:45:00	2017-03-26 09:45:00	2017-03-26 09:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1109	4	2017-03-26 09:00:00	2017-03-26 09:00:00	2017-03-26 09:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1110	4	2017-03-26 13:15:00	2017-03-26 13:15:00	2017-03-26 13:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1111	4	2017-03-26 14:30:00	2017-03-26 14:30:00	2017-03-26 14:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1112	4	2017-03-26 16:30:00	2017-03-26 16:30:00	2017-03-26 16:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1113	4	2017-03-26 20:45:00	2017-03-26 20:45:00	2017-03-26 20:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1114	4	2017-03-27 01:15:00	2017-03-27 01:15:00	2017-03-27 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1115	4	2017-03-27 02:15:00	2017-03-27 02:15:00	2017-03-27 02:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1116	4	2017-03-27 06:15:00	2017-03-27 06:15:00	2017-03-27 06:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1117	4	2017-03-27 10:00:00	2017-03-27 10:00:00	2017-03-27 10:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1118	4	2017-03-27 09:30:00	2017-03-27 09:30:00	2017-03-27 09:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1119	4	2017-03-27 11:00:00	2017-03-27 11:00:00	2017-03-27 11:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1120	4	2017-03-27 13:15:00	2017-03-27 13:15:00	2017-03-27 13:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1121	4	2017-03-27 17:30:00	2017-03-27 17:30:00	2017-03-27 17:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1122	4	2017-03-27 19:30:00	2017-03-27 19:30:00	2017-03-27 19:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1123	4	2017-03-27 20:45:00	2017-03-27 20:45:00	2017-03-27 20:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1124	4	2017-03-28 00:15:00	2017-03-28 00:15:00	2017-03-28 00:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1125	4	2017-03-28 04:00:00	2017-03-28 04:00:00	2017-03-28 04:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1126	4	2017-03-28 06:00:00	2017-03-28 06:00:00	2017-03-28 06:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1127	4	2017-03-28 07:30:00	2017-03-28 07:30:00	2017-03-28 07:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1128	4	2017-03-28 10:00:00	2017-03-28 10:00:00	2017-03-28 10:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1129	4	2017-03-28 12:30:00	2017-03-28 12:30:00	2017-03-28 12:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1130	4	2017-03-28 15:30:00	2017-03-28 15:30:00	2017-03-28 15:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1131	4	2017-03-28 20:00:00	2017-03-28 20:00:00	2017-03-28 20:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1132	4	2017-03-28 20:45:00	2017-03-28 20:45:00	2017-03-28 20:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1133	4	2017-03-29 05:15:00	2017-03-29 05:15:00	2017-03-29 05:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1134	4	2017-03-29 00:00:00	2017-03-29 00:00:00	2017-03-29 00:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1135	4	2017-03-29 06:30:00	2017-03-29 06:30:00	2017-03-29 06:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1136	4	2017-03-29 01:15:00	2017-03-29 01:15:00	2017-03-29 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1137	4	2017-03-29 15:15:00	2017-03-29 15:15:00	2017-03-29 15:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1138	4	2017-03-29 10:00:00	2017-03-29 10:00:00	2017-03-29 10:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1139	4	2017-03-29 16:30:00	2017-03-29 16:30:00	2017-03-29 16:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1140	4	2017-03-29 11:15:00	2017-03-29 11:15:00	2017-03-29 11:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1141	4	2017-03-30 01:15:00	2017-03-30 01:15:00	2017-03-30 01:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1142	4	2017-03-29 20:00:00	2017-03-29 20:00:00	2017-03-29 20:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1143	4	2017-03-30 02:30:00	2017-03-30 02:30:00	2017-03-30 02:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1144	4	2017-03-29 21:15:00	2017-03-29 21:15:00	2017-03-29 21:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1145	4	2017-03-31 12:45:00	2017-03-31 12:45:00	2017-03-31 12:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1146	4	2017-03-31 07:30:00	2017-03-31 07:30:00	2017-03-31 07:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1147	4	2017-03-30 05:45:00	2017-03-30 05:45:00	2017-03-30 05:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1148	4	2017-03-31 08:45:00	2017-03-31 08:45:00	2017-03-31 08:45:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1149	4	2017-03-31 13:30:00	2017-03-31 13:30:00	2017-03-31 13:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1150	4	2017-03-31 20:00:00	2017-03-31 20:00:00	2017-03-31 20:00:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1151	4	2017-03-31 15:30:00	2017-03-31 15:30:00	2017-03-31 15:30:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1152	4	2017-03-31 22:15:00	2017-03-31 22:15:00	2017-03-31 22:15:00	\N	1	\N	1	\N	F	\N	\N	4	\N
+1153	5	2017-03-01 03:15:00	2017-03-01 03:15:00	2017-03-01 03:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1154	5	2017-03-01 04:00:00	2017-03-01 04:00:00	2017-03-01 04:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1155	5	2017-03-01 09:30:00	2017-03-01 09:30:00	2017-03-01 09:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1156	5	2017-03-01 09:00:00	2017-03-01 09:00:00	2017-03-01 09:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1157	5	2017-03-01 12:30:00	2017-03-01 12:30:00	2017-03-01 12:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1158	5	2017-03-01 15:30:00	2017-03-01 15:30:00	2017-03-01 15:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1159	5	2017-03-01 17:30:00	2017-03-01 17:30:00	2017-03-01 17:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1160	5	2017-03-01 19:00:00	2017-03-01 19:00:00	2017-03-01 19:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1161	5	2017-03-01 21:30:00	2017-03-01 21:30:00	2017-03-01 21:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1162	5	2017-03-02 01:15:00	2017-03-02 01:15:00	2017-03-02 01:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1163	5	2017-03-02 04:15:00	2017-03-02 04:15:00	2017-03-02 04:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1164	5	2017-03-02 05:00:00	2017-03-02 05:00:00	2017-03-02 05:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1165	5	2017-03-02 10:30:00	2017-03-02 10:30:00	2017-03-02 10:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1166	5	2017-03-02 10:00:00	2017-03-02 10:00:00	2017-03-02 10:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1167	5	2017-03-02 14:15:00	2017-03-02 14:15:00	2017-03-02 14:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1168	5	2017-03-02 15:00:00	2017-03-02 15:00:00	2017-03-02 15:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1169	5	2017-03-02 17:45:00	2017-03-02 17:45:00	2017-03-02 17:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1170	5	2017-03-02 20:30:00	2017-03-02 20:30:00	2017-03-02 20:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1171	5	2017-03-02 23:15:00	2017-03-02 23:15:00	2017-03-02 23:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1172	5	2017-03-03 02:30:00	2017-03-03 02:30:00	2017-03-03 02:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1173	5	2017-03-03 04:00:00	2017-03-03 04:00:00	2017-03-03 04:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1174	5	2017-03-03 06:45:00	2017-03-03 06:45:00	2017-03-03 06:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1175	5	2017-03-03 07:45:00	2017-03-03 07:45:00	2017-03-03 07:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1176	5	2017-03-03 12:45:00	2017-03-03 12:45:00	2017-03-03 12:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1177	5	2017-03-03 14:16:00	2017-03-03 14:16:00	2017-03-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1178	5	2017-03-03 16:46:00	2017-03-03 16:46:00	2017-03-03 16:46:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1179	5	2017-03-03 19:45:00	2017-03-03 19:45:00	2017-03-03 19:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1180	5	2017-03-03 21:00:00	2017-03-03 21:00:00	2017-03-03 21:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1181	5	2017-03-04 00:01:00	2017-03-04 00:01:00	2017-03-04 00:01:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1182	5	2017-03-04 02:46:00	2017-03-04 02:46:00	2017-03-04 02:46:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1183	5	2017-03-04 05:46:00	2017-03-04 05:46:00	2017-03-04 05:46:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1184	5	2017-03-04 07:01:00	2017-03-04 07:01:00	2017-03-04 07:01:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1185	5	2017-03-04 10:01:00	2017-03-04 10:01:00	2017-03-04 10:01:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1186	5	2017-03-04 12:46:00	2017-03-04 12:46:00	2017-03-04 12:46:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1187	5	2017-03-04 15:45:00	2017-03-04 15:45:00	2017-03-04 15:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1188	5	2017-03-04 17:00:00	2017-03-04 17:00:00	2017-03-04 17:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1189	5	2017-03-04 20:00:00	2017-03-04 20:00:00	2017-03-04 20:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1190	5	2017-03-04 22:45:00	2017-03-04 22:45:00	2017-03-04 22:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1191	5	2017-03-05 01:46:00	2017-03-05 01:46:00	2017-03-05 01:46:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1192	5	2017-03-05 03:01:00	2017-03-05 03:01:00	2017-03-05 03:01:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1193	5	2017-03-05 06:01:00	2017-03-05 06:01:00	2017-03-05 06:01:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1194	5	2017-03-05 08:45:00	2017-03-05 08:45:00	2017-03-05 08:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1195	5	2017-03-05 11:45:00	2017-03-05 11:45:00	2017-03-05 11:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1196	5	2017-03-05 14:00:00	2017-03-05 14:00:00	2017-03-05 14:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1197	5	2017-03-05 16:15:00	2017-03-05 16:15:00	2017-03-05 16:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1198	5	2017-03-05 18:45:00	2017-03-05 18:45:00	2017-03-05 18:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1199	5	2017-03-05 21:15:00	2017-03-05 21:15:00	2017-03-05 21:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1200	5	2017-03-05 23:45:00	2017-03-05 23:45:00	2017-03-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1201	5	2017-03-06 02:15:00	2017-03-06 02:15:00	2017-03-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1202	5	2017-03-06 04:45:00	2017-03-06 04:45:00	2017-03-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1203	5	2017-03-06 07:15:00	2017-03-06 07:15:00	2017-03-06 07:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1204	5	2017-03-06 09:45:00	2017-03-06 09:45:00	2017-03-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1205	5	2017-03-06 11:30:00	2017-03-06 11:30:00	2017-03-06 11:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1206	5	2017-03-06 15:00:00	2017-03-06 15:00:00	2017-03-06 15:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1207	5	2017-03-06 18:00:00	2017-03-06 18:00:00	2017-03-06 18:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1208	5	2017-03-06 19:30:00	2017-03-06 19:30:00	2017-03-06 19:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1209	5	2017-03-06 22:00:00	2017-03-06 22:00:00	2017-03-06 22:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1210	5	2017-03-07 00:45:00	2017-03-07 00:45:00	2017-03-07 00:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1211	5	2017-03-07 03:15:00	2017-03-07 03:15:00	2017-03-07 03:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1212	5	2017-03-07 06:00:00	2017-03-07 06:00:00	2017-03-07 06:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1213	5	2017-03-07 09:00:00	2017-03-07 09:00:00	2017-03-07 09:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1214	5	2017-03-07 10:45:00	2017-03-07 10:45:00	2017-03-07 10:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1215	5	2017-03-07 15:45:00	2017-03-07 15:45:00	2017-03-07 15:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1216	5	2017-03-07 15:15:00	2017-03-07 15:15:00	2017-03-07 15:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1217	5	2017-03-07 21:45:00	2017-03-07 21:45:00	2017-03-07 21:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1218	5	2017-03-07 19:45:00	2017-03-07 19:45:00	2017-03-07 19:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1219	5	2017-03-07 23:15:00	2017-03-07 23:15:00	2017-03-07 23:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1220	5	2017-03-08 00:15:00	2017-03-08 00:15:00	2017-03-08 00:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1221	5	2017-03-08 05:45:00	2017-03-08 05:45:00	2017-03-08 05:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1222	5	2017-03-08 04:45:00	2017-03-08 04:45:00	2017-03-08 04:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1223	5	2017-03-08 09:30:00	2017-03-08 09:30:00	2017-03-08 09:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1224	5	2017-03-08 13:15:00	2017-03-08 13:15:00	2017-03-08 13:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1225	5	2017-03-08 14:00:00	2017-03-08 14:00:00	2017-03-08 14:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1226	5	2017-03-08 19:45:00	2017-03-08 19:45:00	2017-03-08 19:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1227	5	2017-03-08 20:00:00	2017-03-08 20:00:00	2017-03-08 20:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1228	5	2017-03-09 00:30:00	2017-03-09 00:30:00	2017-03-09 00:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1229	5	2017-03-08 23:45:00	2017-03-08 23:45:00	2017-03-08 23:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1230	5	2017-03-09 05:00:00	2017-03-09 05:00:00	2017-03-09 05:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1231	5	2017-03-09 03:00:00	2017-03-09 03:00:00	2017-03-09 03:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1232	5	2017-03-09 11:15:00	2017-03-09 11:15:00	2017-03-09 11:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1233	5	2017-03-09 11:30:00	2017-03-09 11:30:00	2017-03-09 11:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1234	5	2017-03-09 12:00:00	2017-03-09 12:00:00	2017-03-09 12:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1235	5	2017-03-09 15:00:00	2017-03-09 15:00:00	2017-03-09 15:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1236	5	2017-03-09 19:45:00	2017-03-09 19:45:00	2017-03-09 19:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1237	5	2017-03-09 22:00:00	2017-03-09 22:00:00	2017-03-09 22:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1238	5	2017-03-10 01:00:00	2017-03-10 01:00:00	2017-03-10 01:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1239	5	2017-03-10 00:45:00	2017-03-10 00:45:00	2017-03-10 00:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1240	5	2017-03-10 07:15:00	2017-03-10 07:15:00	2017-03-10 07:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1241	5	2017-03-10 04:30:00	2017-03-10 04:30:00	2017-03-10 04:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1242	5	2017-03-10 12:15:00	2017-03-10 12:15:00	2017-03-10 12:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1243	5	2017-03-10 08:15:00	2017-03-10 08:15:00	2017-03-10 08:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1244	5	2017-03-10 13:30:00	2017-03-10 13:30:00	2017-03-10 13:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1245	5	2017-03-10 14:45:00	2017-03-10 14:45:00	2017-03-10 14:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1246	5	2017-03-10 20:30:00	2017-03-10 20:30:00	2017-03-10 20:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1247	5	2017-03-10 22:00:00	2017-03-10 22:00:00	2017-03-10 22:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1248	5	2017-03-11 00:45:00	2017-03-11 00:45:00	2017-03-11 00:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1249	5	2017-03-11 01:15:00	2017-03-11 01:15:00	2017-03-11 01:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1250	5	2017-03-11 04:15:00	2017-03-11 04:15:00	2017-03-11 04:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1251	5	2017-03-11 08:30:00	2017-03-11 08:30:00	2017-03-11 08:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1252	5	2017-03-11 12:45:00	2017-03-11 12:45:00	2017-03-11 12:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1253	5	2017-03-11 10:00:00	2017-03-11 10:00:00	2017-03-11 10:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1254	5	2017-03-11 13:30:00	2017-03-11 13:30:00	2017-03-11 13:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1255	5	2017-03-11 15:00:00	2017-03-11 15:00:00	2017-03-11 15:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1256	5	2017-03-11 19:15:00	2017-03-11 19:15:00	2017-03-11 19:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1257	5	2017-03-11 20:30:00	2017-03-11 20:30:00	2017-03-11 20:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1258	5	2017-03-12 03:30:00	2017-03-12 03:30:00	2017-03-12 03:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1259	5	2017-03-12 02:00:00	2017-03-12 02:00:00	2017-03-12 02:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1260	5	2017-03-12 07:15:00	2017-03-12 07:15:00	2017-03-12 07:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1261	5	2017-03-12 09:45:00	2017-03-12 09:45:00	2017-03-12 09:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1262	5	2017-03-12 13:00:00	2017-03-12 13:00:00	2017-03-12 13:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1263	5	2017-03-12 11:00:00	2017-03-12 11:00:00	2017-03-12 11:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1264	5	2017-03-12 17:00:00	2017-03-12 17:00:00	2017-03-12 17:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1265	5	2017-03-12 19:15:00	2017-03-12 19:15:00	2017-03-12 19:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1266	5	2017-03-12 20:46:00	2017-03-12 20:46:00	2017-03-12 20:46:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1267	5	2017-03-13 00:45:00	2017-03-13 00:45:00	2017-03-13 00:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1268	5	2017-03-13 02:45:00	2017-03-13 02:45:00	2017-03-13 02:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1269	5	2017-03-13 04:30:00	2017-03-13 04:30:00	2017-03-13 04:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1270	5	2017-03-13 06:15:00	2017-03-13 06:15:00	2017-03-13 06:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1271	5	2017-03-13 11:00:00	2017-03-13 11:00:00	2017-03-13 11:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1272	5	2017-03-13 13:30:00	2017-03-13 13:30:00	2017-03-13 13:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1273	5	2017-03-13 14:15:00	2017-03-13 14:15:00	2017-03-13 14:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1274	5	2017-03-13 18:15:00	2017-03-13 18:15:00	2017-03-13 18:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1275	5	2017-03-13 20:30:00	2017-03-13 20:30:00	2017-03-13 20:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1276	5	2017-03-13 22:00:00	2017-03-13 22:00:00	2017-03-13 22:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1277	5	2017-03-14 00:45:00	2017-03-14 00:45:00	2017-03-14 00:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1278	5	2017-03-14 05:00:00	2017-03-14 05:00:00	2017-03-14 05:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1279	5	2017-03-14 02:45:00	2017-03-14 02:45:00	2017-03-14 02:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1280	5	2017-03-14 10:00:00	2017-03-14 10:00:00	2017-03-14 10:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1281	5	2017-03-14 09:00:00	2017-03-14 09:00:00	2017-03-14 09:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1282	5	2017-03-14 11:30:00	2017-03-14 11:30:00	2017-03-14 11:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1283	5	2017-03-14 14:15:00	2017-03-14 14:15:00	2017-03-14 14:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1284	5	2017-03-14 17:30:00	2017-03-14 17:30:00	2017-03-14 17:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1285	5	2017-03-14 19:30:00	2017-03-14 19:30:00	2017-03-14 19:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1286	5	2017-03-14 21:30:00	2017-03-14 21:30:00	2017-03-14 21:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1287	5	2017-03-14 23:15:00	2017-03-14 23:15:00	2017-03-14 23:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1288	5	2017-03-15 04:30:00	2017-03-15 04:30:00	2017-03-15 04:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1289	5	2017-03-15 06:00:00	2017-03-15 06:00:00	2017-03-15 06:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1290	5	2017-03-15 07:45:00	2017-03-15 07:45:00	2017-03-15 07:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1291	5	2017-03-15 10:30:00	2017-03-15 10:30:00	2017-03-15 10:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1292	5	2017-03-15 14:45:00	2017-03-15 14:45:00	2017-03-15 14:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1293	5	2017-03-15 16:15:00	2017-03-15 16:15:00	2017-03-15 16:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1294	5	2017-03-15 17:46:00	2017-03-15 17:46:00	2017-03-15 17:46:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1295	5	2017-03-15 21:30:00	2017-03-15 21:30:00	2017-03-15 21:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1296	5	2017-03-16 00:30:00	2017-03-16 00:30:00	2017-03-16 00:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1297	5	2017-03-16 00:45:00	2017-03-16 00:45:00	2017-03-16 00:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1298	5	2017-03-16 03:15:00	2017-03-16 03:15:00	2017-03-16 03:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1299	5	2017-03-16 07:45:00	2017-03-16 07:45:00	2017-03-16 07:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1300	5	2017-03-16 12:00:00	2017-03-16 12:00:00	2017-03-16 12:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1301	5	2017-03-16 11:30:00	2017-03-16 11:30:00	2017-03-16 11:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1302	5	2017-03-16 15:00:00	2017-03-16 15:00:00	2017-03-16 15:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1303	5	2017-03-16 18:00:00	2017-03-16 18:00:00	2017-03-16 18:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1304	5	2017-03-16 19:30:00	2017-03-16 19:30:00	2017-03-16 19:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1305	5	2017-03-16 23:15:00	2017-03-16 23:15:00	2017-03-16 23:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1306	5	2017-03-17 02:00:00	2017-03-17 02:00:00	2017-03-17 02:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1307	5	2017-03-17 03:45:00	2017-03-17 03:45:00	2017-03-17 03:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1308	5	2017-03-17 04:30:00	2017-03-17 04:30:00	2017-03-17 04:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1309	5	2017-03-17 08:45:00	2017-03-17 08:45:00	2017-03-17 08:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1310	5	2017-03-17 13:30:00	2017-03-17 13:30:00	2017-03-17 13:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1311	5	2017-03-17 12:00:00	2017-03-17 12:00:00	2017-03-17 12:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1312	5	2017-03-17 15:15:00	2017-03-17 15:15:00	2017-03-17 15:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1313	5	2017-03-17 19:30:00	2017-03-17 19:30:00	2017-03-17 19:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1314	5	2017-03-17 22:30:00	2017-03-17 22:30:00	2017-03-17 22:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1315	5	2017-03-17 23:15:00	2017-03-17 23:15:00	2017-03-17 23:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1316	5	2017-03-18 01:15:00	2017-03-18 01:15:00	2017-03-18 01:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1317	5	2017-03-18 03:15:00	2017-03-18 03:15:00	2017-03-18 03:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1318	5	2017-03-18 09:15:00	2017-03-18 09:15:00	2017-03-18 09:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1319	5	2017-03-18 10:00:00	2017-03-18 10:00:00	2017-03-18 10:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1320	5	2017-03-18 11:00:00	2017-03-18 11:00:00	2017-03-18 11:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1321	5	2017-03-18 13:00:00	2017-03-18 13:00:00	2017-03-18 13:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1322	5	2017-03-18 16:00:00	2017-03-18 16:00:00	2017-03-18 16:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1323	5	2017-03-18 17:45:00	2017-03-18 17:45:00	2017-03-18 17:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1324	5	2017-03-18 20:45:00	2017-03-18 20:45:00	2017-03-18 20:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1325	5	2017-03-19 00:30:00	2017-03-19 00:30:00	2017-03-19 00:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1326	5	2017-03-19 04:15:00	2017-03-19 04:15:00	2017-03-19 04:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1327	5	2017-03-19 05:45:00	2017-03-19 05:45:00	2017-03-19 05:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1328	5	2017-03-19 10:45:00	2017-03-19 10:45:00	2017-03-19 10:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1329	5	2017-03-19 11:15:00	2017-03-19 11:15:00	2017-03-19 11:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1330	5	2017-03-19 12:45:00	2017-03-19 12:45:00	2017-03-19 12:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1331	5	2017-03-19 13:45:00	2017-03-19 13:45:00	2017-03-19 13:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1332	5	2017-03-19 18:30:00	2017-03-19 18:30:00	2017-03-19 18:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1333	5	2017-03-19 19:30:00	2017-03-19 19:30:00	2017-03-19 19:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1334	5	2017-03-20 01:15:00	2017-03-20 01:15:00	2017-03-20 01:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1335	5	2017-03-20 01:45:00	2017-03-20 01:45:00	2017-03-20 01:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1336	5	2017-03-20 04:00:00	2017-03-20 04:00:00	2017-03-20 04:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1337	5	2017-03-20 05:30:00	2017-03-20 05:30:00	2017-03-20 05:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1338	5	2017-03-20 11:00:00	2017-03-20 11:00:00	2017-03-20 11:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1339	5	2017-03-20 10:15:00	2017-03-20 10:15:00	2017-03-20 10:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1340	5	2017-03-20 15:30:00	2017-03-20 15:30:00	2017-03-20 15:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1341	5	2017-03-20 15:15:00	2017-03-20 15:15:00	2017-03-20 15:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1342	5	2017-03-20 18:30:00	2017-03-20 18:30:00	2017-03-20 18:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1343	5	2017-03-20 19:30:00	2017-03-20 19:30:00	2017-03-20 19:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1344	5	2017-03-21 00:00:00	2017-03-21 00:00:00	2017-03-21 00:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1345	5	2017-03-21 00:15:00	2017-03-21 00:15:00	2017-03-21 00:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1346	5	2017-03-21 04:30:00	2017-03-21 04:30:00	2017-03-21 04:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1347	5	2017-03-21 08:30:00	2017-03-21 08:30:00	2017-03-21 08:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1348	5	2017-03-21 10:30:00	2017-03-21 10:30:00	2017-03-21 10:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1349	5	2017-03-21 12:45:00	2017-03-21 12:45:00	2017-03-21 12:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1350	5	2017-03-21 17:00:00	2017-03-21 17:00:00	2017-03-21 17:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1351	5	2017-03-21 15:45:00	2017-03-21 15:45:00	2017-03-21 15:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1352	5	2017-03-21 19:15:00	2017-03-21 19:15:00	2017-03-21 19:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1353	5	2017-03-21 23:15:00	2017-03-21 23:15:00	2017-03-21 23:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1354	5	2017-03-22 02:15:00	2017-03-22 02:15:00	2017-03-22 02:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1355	5	2017-03-22 02:30:00	2017-03-22 02:30:00	2017-03-22 02:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1356	5	2017-03-22 07:30:00	2017-03-22 07:30:00	2017-03-22 07:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1357	5	2017-03-22 06:15:00	2017-03-22 06:15:00	2017-03-22 06:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1358	5	2017-03-22 09:45:00	2017-03-22 09:45:00	2017-03-22 09:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1359	5	2017-03-22 11:30:00	2017-03-22 11:30:00	2017-03-22 11:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1360	5	2017-03-22 14:45:00	2017-03-22 14:45:00	2017-03-22 14:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1361	5	2017-03-22 15:30:00	2017-03-22 15:30:00	2017-03-22 15:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1362	5	2017-03-22 19:00:00	2017-03-22 19:00:00	2017-03-22 19:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1363	5	2017-03-23 00:30:00	2017-03-23 00:30:00	2017-03-23 00:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1364	5	2017-03-23 02:30:00	2017-03-23 02:30:00	2017-03-23 02:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1365	5	2017-03-23 06:00:00	2017-03-23 06:00:00	2017-03-23 06:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1366	5	2017-03-23 09:15:00	2017-03-23 09:15:00	2017-03-23 09:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1367	5	2017-03-23 07:00:00	2017-03-23 07:00:00	2017-03-23 07:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1368	5	2017-03-23 11:00:00	2017-03-23 11:00:00	2017-03-23 11:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1369	5	2017-03-23 15:45:00	2017-03-23 15:45:00	2017-03-23 15:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1370	5	2017-03-23 18:45:00	2017-03-23 18:45:00	2017-03-23 18:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1371	5	2017-03-23 18:15:00	2017-03-23 18:15:00	2017-03-23 18:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1372	5	2017-03-23 21:15:00	2017-03-23 21:15:00	2017-03-23 21:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1373	5	2017-03-24 00:30:00	2017-03-24 00:30:00	2017-03-24 00:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1374	5	2017-03-24 02:45:00	2017-03-24 02:45:00	2017-03-24 02:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1375	5	2017-03-24 03:00:00	2017-03-24 03:00:00	2017-03-24 03:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1376	5	2017-03-24 08:30:00	2017-03-24 08:30:00	2017-03-24 08:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1377	5	2017-03-24 09:45:00	2017-03-24 09:45:00	2017-03-24 09:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1378	5	2017-03-24 14:15:00	2017-03-24 14:15:00	2017-03-24 14:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1379	5	2017-03-24 14:00:00	2017-03-24 14:00:00	2017-03-24 14:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1380	5	2017-03-24 17:30:00	2017-03-24 17:30:00	2017-03-24 17:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1381	5	2017-03-24 20:15:00	2017-03-24 20:15:00	2017-03-24 20:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1382	5	2017-03-24 21:45:00	2017-03-24 21:45:00	2017-03-24 21:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1383	5	2017-03-25 00:00:00	2017-03-25 00:00:00	2017-03-25 00:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1384	5	2017-03-25 02:45:00	2017-03-25 02:45:00	2017-03-25 02:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1385	5	2017-03-25 07:15:00	2017-03-25 07:15:00	2017-03-25 07:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1386	5	2017-03-25 08:00:00	2017-03-25 08:00:00	2017-03-25 08:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1387	5	2017-03-25 09:15:00	2017-03-25 09:15:00	2017-03-25 09:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1388	5	2017-03-25 15:30:00	2017-03-25 15:30:00	2017-03-25 15:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1389	5	2017-03-25 17:45:00	2017-03-25 17:45:00	2017-03-25 17:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1390	5	2017-03-25 18:15:00	2017-03-25 18:15:00	2017-03-25 18:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1391	5	2017-03-25 23:00:00	2017-03-25 23:00:00	2017-03-25 23:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1392	5	2017-03-25 23:15:00	2017-03-25 23:15:00	2017-03-25 23:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1393	5	2017-03-26 00:30:00	2017-03-26 00:30:00	2017-03-26 00:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1394	5	2017-03-26 03:30:00	2017-03-26 03:30:00	2017-03-26 03:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1395	5	2017-03-26 06:45:00	2017-03-26 06:45:00	2017-03-26 06:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1396	5	2017-03-26 09:00:00	2017-03-26 09:00:00	2017-03-26 09:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1397	5	2017-03-26 13:15:00	2017-03-26 13:15:00	2017-03-26 13:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1398	5	2017-03-26 13:45:00	2017-03-26 13:45:00	2017-03-26 13:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1399	5	2017-03-26 16:45:00	2017-03-26 16:45:00	2017-03-26 16:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1400	5	2017-03-26 21:00:00	2017-03-26 21:00:00	2017-03-26 21:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1401	5	2017-03-26 22:00:00	2017-03-26 22:00:00	2017-03-26 22:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1402	5	2017-03-27 00:15:00	2017-03-27 00:15:00	2017-03-27 00:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1403	5	2017-03-27 02:30:00	2017-03-27 02:30:00	2017-03-27 02:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1404	5	2017-03-27 06:30:00	2017-03-27 06:30:00	2017-03-27 06:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1405	5	2017-03-27 08:45:00	2017-03-27 08:45:00	2017-03-27 08:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1406	5	2017-03-27 10:30:00	2017-03-27 10:30:00	2017-03-27 10:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1407	5	2017-03-27 14:30:00	2017-03-27 14:30:00	2017-03-27 14:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1408	5	2017-03-27 15:30:00	2017-03-27 15:30:00	2017-03-27 15:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1409	5	2017-03-27 17:30:00	2017-03-27 17:30:00	2017-03-27 17:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1410	5	2017-03-27 20:00:00	2017-03-27 20:00:00	2017-03-27 20:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1411	5	2017-03-27 22:15:00	2017-03-27 22:15:00	2017-03-27 22:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1412	5	2017-03-28 03:45:00	2017-03-28 03:45:00	2017-03-28 03:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1413	5	2017-03-28 04:00:00	2017-03-28 04:00:00	2017-03-28 04:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1414	5	2017-03-28 06:45:00	2017-03-28 06:45:00	2017-03-28 06:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1415	5	2017-03-28 10:00:00	2017-03-28 10:00:00	2017-03-28 10:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1416	5	2017-03-28 13:30:00	2017-03-28 13:30:00	2017-03-28 13:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1417	5	2017-03-28 12:00:00	2017-03-28 12:00:00	2017-03-28 12:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1418	5	2017-03-28 17:15:00	2017-03-28 17:15:00	2017-03-28 17:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1419	5	2017-03-28 17:00:00	2017-03-28 17:00:00	2017-03-28 17:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1420	5	2017-03-28 21:45:00	2017-03-28 21:45:00	2017-03-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1421	5	2017-03-29 07:00:00	2017-03-29 07:00:00	2017-03-29 07:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1422	5	2017-03-29 01:45:00	2017-03-29 01:45:00	2017-03-29 01:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1423	5	2017-03-29 08:15:00	2017-03-29 08:15:00	2017-03-29 08:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1424	5	2017-03-29 03:00:00	2017-03-29 03:00:00	2017-03-29 03:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1425	5	2017-03-29 17:00:00	2017-03-29 17:00:00	2017-03-29 17:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1426	5	2017-03-29 11:45:00	2017-03-29 11:45:00	2017-03-29 11:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1427	5	2017-03-29 18:15:00	2017-03-29 18:15:00	2017-03-29 18:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1428	5	2017-03-29 13:00:00	2017-03-29 13:00:00	2017-03-29 13:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1429	5	2017-03-30 03:00:00	2017-03-30 03:00:00	2017-03-30 03:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1430	5	2017-03-29 21:45:00	2017-03-29 21:45:00	2017-03-29 21:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1431	5	2017-03-30 04:15:00	2017-03-30 04:15:00	2017-03-30 04:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1432	5	2017-03-29 23:00:00	2017-03-29 23:00:00	2017-03-29 23:00:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1433	5	2017-03-31 09:30:00	2017-03-31 09:30:00	2017-03-31 09:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1434	5	2017-03-30 05:15:00	2017-03-30 05:15:00	2017-03-30 05:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1435	5	2017-03-31 13:15:00	2017-03-31 13:15:00	2017-03-31 13:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1436	5	2017-03-31 10:30:00	2017-03-31 10:30:00	2017-03-31 10:30:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1437	5	2017-03-31 15:15:00	2017-03-31 15:15:00	2017-03-31 15:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1438	5	2017-03-31 19:15:00	2017-03-31 19:15:00	2017-03-31 19:15:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1439	5	2017-03-31 14:45:00	2017-03-31 14:45:00	2017-03-31 14:45:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1440	5	2017-03-31 21:31:00	2017-03-31 21:31:00	2017-03-31 21:31:00	\N	1	\N	1	\N	F	\N	\N	5	\N
+1441	6	2017-03-01 00:15:00	2017-03-01 00:15:00	2017-03-01 00:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1442	6	2017-03-01 04:30:00	2017-03-01 04:30:00	2017-03-01 04:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1443	6	2017-03-01 05:15:00	2017-03-01 05:15:00	2017-03-01 05:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1444	6	2017-03-01 09:30:00	2017-03-01 09:30:00	2017-03-01 09:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1445	6	2017-03-01 10:30:00	2017-03-01 10:30:00	2017-03-01 10:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1446	6	2017-03-01 12:00:00	2017-03-01 12:00:00	2017-03-01 12:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1447	6	2017-03-01 16:15:00	2017-03-01 16:15:00	2017-03-01 16:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1448	6	2017-03-01 19:15:00	2017-03-01 19:15:00	2017-03-01 19:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1449	6	2017-03-01 21:45:00	2017-03-01 21:45:00	2017-03-01 21:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1450	6	2017-03-02 00:00:00	2017-03-02 00:00:00	2017-03-02 00:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1451	6	2017-03-02 05:15:00	2017-03-02 05:15:00	2017-03-02 05:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1452	6	2017-03-02 05:00:00	2017-03-02 05:00:00	2017-03-02 05:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1453	6	2017-03-02 06:30:00	2017-03-02 06:30:00	2017-03-02 06:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1454	6	2017-03-02 10:00:00	2017-03-02 10:00:00	2017-03-02 10:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1455	6	2017-03-02 11:30:00	2017-03-02 11:30:00	2017-03-02 11:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1456	6	2017-03-02 15:00:00	2017-03-02 15:00:00	2017-03-02 15:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1457	6	2017-03-02 16:30:00	2017-03-02 16:30:00	2017-03-02 16:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1458	6	2017-03-02 21:45:00	2017-03-02 21:45:00	2017-03-02 21:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1459	6	2017-03-02 21:30:00	2017-03-02 21:30:00	2017-03-02 21:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1460	6	2017-03-03 00:15:00	2017-03-03 00:15:00	2017-03-03 00:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1461	6	2017-03-03 03:45:00	2017-03-03 03:45:00	2017-03-03 03:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1462	6	2017-03-03 07:15:00	2017-03-03 07:15:00	2017-03-03 07:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1463	6	2017-03-03 07:30:00	2017-03-03 07:30:00	2017-03-03 07:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1464	6	2017-03-03 09:15:00	2017-03-03 09:15:00	2017-03-03 09:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1465	6	2017-03-03 14:16:00	2017-03-03 14:16:00	2017-03-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1466	6	2017-03-03 17:01:00	2017-03-03 17:01:00	2017-03-03 17:01:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1467	6	2017-03-03 20:00:00	2017-03-03 20:00:00	2017-03-03 20:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1468	6	2017-03-03 20:45:00	2017-03-03 20:45:00	2017-03-03 20:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1469	6	2017-03-03 23:46:00	2017-03-03 23:46:00	2017-03-03 23:46:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1470	6	2017-03-04 03:01:00	2017-03-04 03:01:00	2017-03-04 03:01:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1471	6	2017-03-04 06:01:00	2017-03-04 06:01:00	2017-03-04 06:01:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1472	6	2017-03-04 06:46:00	2017-03-04 06:46:00	2017-03-04 06:46:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1473	6	2017-03-04 09:46:00	2017-03-04 09:46:00	2017-03-04 09:46:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1474	6	2017-03-04 13:01:00	2017-03-04 13:01:00	2017-03-04 13:01:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1475	6	2017-03-04 16:00:00	2017-03-04 16:00:00	2017-03-04 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1476	6	2017-03-04 16:45:00	2017-03-04 16:45:00	2017-03-04 16:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1477	6	2017-03-04 19:45:00	2017-03-04 19:45:00	2017-03-04 19:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1478	6	2017-03-04 23:00:00	2017-03-04 23:00:00	2017-03-04 23:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1479	6	2017-03-05 02:01:00	2017-03-05 02:01:00	2017-03-05 02:01:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1480	6	2017-03-05 02:46:00	2017-03-05 02:46:00	2017-03-05 02:46:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1481	6	2017-03-05 05:46:00	2017-03-05 05:46:00	2017-03-05 05:46:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1482	6	2017-03-05 09:00:00	2017-03-05 09:00:00	2017-03-05 09:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1483	6	2017-03-05 12:00:00	2017-03-05 12:00:00	2017-03-05 12:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1484	6	2017-03-05 13:45:00	2017-03-05 13:45:00	2017-03-05 13:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1485	6	2017-03-05 16:00:00	2017-03-05 16:00:00	2017-03-05 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1486	6	2017-03-05 18:30:00	2017-03-05 18:30:00	2017-03-05 18:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1487	6	2017-03-05 21:15:00	2017-03-05 21:15:00	2017-03-05 21:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1488	6	2017-03-05 23:45:00	2017-03-05 23:45:00	2017-03-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1489	6	2017-03-06 02:15:00	2017-03-06 02:15:00	2017-03-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1490	6	2017-03-06 04:45:00	2017-03-06 04:45:00	2017-03-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1491	6	2017-03-06 07:15:00	2017-03-06 07:15:00	2017-03-06 07:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1492	6	2017-03-06 09:45:00	2017-03-06 09:45:00	2017-03-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1493	6	2017-03-06 12:15:00	2017-03-06 12:15:00	2017-03-06 12:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1494	6	2017-03-06 14:45:00	2017-03-06 14:45:00	2017-03-06 14:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1495	6	2017-03-06 17:30:00	2017-03-06 17:30:00	2017-03-06 17:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1496	6	2017-03-06 19:14:00	2017-03-06 19:14:00	2017-03-06 19:14:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1497	6	2017-03-06 21:45:00	2017-03-06 21:45:00	2017-03-06 21:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1498	6	2017-03-07 01:15:00	2017-03-07 01:15:00	2017-03-07 01:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1499	6	2017-03-07 03:00:00	2017-03-07 03:00:00	2017-03-07 03:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1500	6	2017-03-07 05:45:00	2017-03-07 05:45:00	2017-03-07 05:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1501	6	2017-03-07 08:45:00	2017-03-07 08:45:00	2017-03-07 08:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1502	6	2017-03-07 09:45:00	2017-03-07 09:45:00	2017-03-07 09:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1503	6	2017-03-07 17:15:00	2017-03-07 17:15:00	2017-03-07 17:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1504	6	2017-03-07 17:00:00	2017-03-07 17:00:00	2017-03-07 17:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1505	6	2017-03-07 19:45:00	2017-03-07 19:45:00	2017-03-07 19:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1506	6	2017-03-07 20:15:00	2017-03-07 20:15:00	2017-03-07 20:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1507	6	2017-03-08 01:30:00	2017-03-08 01:30:00	2017-03-08 01:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1508	6	2017-03-08 01:15:00	2017-03-08 01:15:00	2017-03-08 01:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1509	6	2017-03-08 05:15:00	2017-03-08 05:15:00	2017-03-08 05:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1510	6	2017-03-08 06:15:00	2017-03-08 06:15:00	2017-03-08 06:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1511	6	2017-03-08 13:30:00	2017-03-08 13:30:00	2017-03-08 13:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1512	6	2017-03-08 09:15:00	2017-03-08 09:15:00	2017-03-08 09:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1513	6	2017-03-08 15:00:00	2017-03-08 15:00:00	2017-03-08 15:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1514	6	2017-03-08 16:45:00	2017-03-08 16:45:00	2017-03-08 16:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1515	6	2017-03-08 18:15:00	2017-03-08 18:15:00	2017-03-08 18:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1516	6	2017-03-09 01:15:00	2017-03-09 01:15:00	2017-03-09 01:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1517	6	2017-03-09 00:30:00	2017-03-09 00:30:00	2017-03-09 00:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1518	6	2017-03-09 04:15:00	2017-03-09 04:15:00	2017-03-09 04:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1519	6	2017-03-09 05:00:00	2017-03-09 05:00:00	2017-03-09 05:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1520	6	2017-03-09 11:15:00	2017-03-09 11:15:00	2017-03-09 11:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1521	6	2017-03-09 08:30:00	2017-03-09 08:30:00	2017-03-09 08:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1522	6	2017-03-09 15:00:00	2017-03-09 15:00:00	2017-03-09 15:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1523	6	2017-03-09 13:00:00	2017-03-09 13:00:00	2017-03-09 13:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1524	6	2017-03-09 21:00:00	2017-03-09 21:00:00	2017-03-09 21:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1525	6	2017-03-09 19:15:00	2017-03-09 19:15:00	2017-03-09 19:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1526	6	2017-03-09 23:15:00	2017-03-09 23:15:00	2017-03-09 23:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1527	6	2017-03-09 23:30:00	2017-03-09 23:30:00	2017-03-09 23:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1528	6	2017-03-10 06:45:00	2017-03-10 06:45:00	2017-03-10 06:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1529	6	2017-03-10 05:15:00	2017-03-10 05:15:00	2017-03-10 05:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1530	6	2017-03-10 11:45:00	2017-03-10 11:45:00	2017-03-10 11:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1531	6	2017-03-10 10:15:00	2017-03-10 10:15:00	2017-03-10 10:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1532	6	2017-03-10 15:15:00	2017-03-10 15:15:00	2017-03-10 15:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1533	6	2017-03-10 16:00:00	2017-03-10 16:00:00	2017-03-10 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1534	6	2017-03-10 21:45:00	2017-03-10 21:45:00	2017-03-10 21:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1535	6	2017-03-10 19:30:00	2017-03-10 19:30:00	2017-03-10 19:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1536	6	2017-03-11 01:30:00	2017-03-11 01:30:00	2017-03-11 01:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1537	6	2017-03-11 03:30:00	2017-03-11 03:30:00	2017-03-11 03:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1538	6	2017-03-11 05:30:00	2017-03-11 05:30:00	2017-03-11 05:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1539	6	2017-03-11 07:30:00	2017-03-11 07:30:00	2017-03-11 07:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1540	6	2017-03-11 10:45:00	2017-03-11 10:45:00	2017-03-11 10:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1541	6	2017-03-11 13:00:00	2017-03-11 13:00:00	2017-03-11 13:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1542	6	2017-03-11 16:15:00	2017-03-11 16:15:00	2017-03-11 16:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1543	6	2017-03-11 16:45:00	2017-03-11 16:45:00	2017-03-11 16:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1544	6	2017-03-11 21:00:00	2017-03-11 21:00:00	2017-03-11 21:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1545	6	2017-03-11 22:30:00	2017-03-11 22:30:00	2017-03-11 22:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1546	6	2017-03-12 01:00:00	2017-03-12 01:00:00	2017-03-12 01:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1547	6	2017-03-12 02:00:00	2017-03-12 02:00:00	2017-03-12 02:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1548	6	2017-03-12 08:00:00	2017-03-12 08:00:00	2017-03-12 08:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1549	6	2017-03-12 08:45:00	2017-03-12 08:45:00	2017-03-12 08:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1550	6	2017-03-12 12:45:00	2017-03-12 12:45:00	2017-03-12 12:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1551	6	2017-03-12 12:15:00	2017-03-12 12:15:00	2017-03-12 12:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1552	6	2017-03-12 19:00:00	2017-03-12 19:00:00	2017-03-12 19:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1553	6	2017-03-12 16:30:00	2017-03-12 16:30:00	2017-03-12 16:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1554	6	2017-03-12 20:30:00	2017-03-12 20:30:00	2017-03-12 20:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1555	6	2017-03-12 21:00:00	2017-03-12 21:00:00	2017-03-12 21:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1556	6	2017-03-13 02:00:00	2017-03-13 02:00:00	2017-03-13 02:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1557	6	2017-03-13 05:00:00	2017-03-13 05:00:00	2017-03-13 05:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1558	6	2017-03-13 09:00:00	2017-03-13 09:00:00	2017-03-13 09:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1559	6	2017-03-13 09:45:00	2017-03-13 09:45:00	2017-03-13 09:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1560	6	2017-03-13 14:15:00	2017-03-13 14:15:00	2017-03-13 14:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1561	6	2017-03-13 15:45:00	2017-03-13 15:45:00	2017-03-13 15:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1562	6	2017-03-13 19:30:00	2017-03-13 19:30:00	2017-03-13 19:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1563	6	2017-03-13 18:30:00	2017-03-13 18:30:00	2017-03-13 18:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1564	6	2017-03-14 00:30:00	2017-03-14 00:30:00	2017-03-14 00:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1565	6	2017-03-13 22:30:00	2017-03-13 22:30:00	2017-03-13 22:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1566	6	2017-03-14 01:45:00	2017-03-14 01:45:00	2017-03-14 01:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1567	6	2017-03-14 03:45:00	2017-03-14 03:45:00	2017-03-14 03:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1568	6	2017-03-14 08:30:00	2017-03-14 08:30:00	2017-03-14 08:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1569	6	2017-03-14 08:15:00	2017-03-14 08:15:00	2017-03-14 08:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1570	6	2017-03-14 12:00:00	2017-03-14 12:00:00	2017-03-14 12:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1571	6	2017-03-14 13:30:00	2017-03-14 13:30:00	2017-03-14 13:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1572	6	2017-03-14 16:30:00	2017-03-14 16:30:00	2017-03-14 16:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1573	6	2017-03-14 19:15:00	2017-03-14 19:15:00	2017-03-14 19:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1574	6	2017-03-15 00:30:00	2017-03-15 00:30:00	2017-03-15 00:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1575	6	2017-03-15 02:15:00	2017-03-15 02:15:00	2017-03-15 02:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1576	6	2017-03-15 05:15:00	2017-03-15 05:15:00	2017-03-15 05:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1577	6	2017-03-15 04:30:00	2017-03-15 04:30:00	2017-03-15 04:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1578	6	2017-03-15 09:45:00	2017-03-15 09:45:00	2017-03-15 09:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1579	6	2017-03-15 11:30:00	2017-03-15 11:30:00	2017-03-15 11:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1580	6	2017-03-15 14:15:00	2017-03-15 14:15:00	2017-03-15 14:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1581	6	2017-03-15 15:30:00	2017-03-15 15:30:00	2017-03-15 15:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1582	6	2017-03-15 19:15:00	2017-03-15 19:15:00	2017-03-15 19:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1583	6	2017-03-15 19:45:00	2017-03-15 19:45:00	2017-03-15 19:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1584	6	2017-03-16 01:00:00	2017-03-16 01:00:00	2017-03-16 01:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1585	6	2017-03-16 02:00:00	2017-03-16 02:00:00	2017-03-16 02:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1586	6	2017-03-16 03:45:00	2017-03-16 03:45:00	2017-03-16 03:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1587	6	2017-03-16 09:15:00	2017-03-16 09:15:00	2017-03-16 09:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1588	6	2017-03-16 08:30:00	2017-03-16 08:30:00	2017-03-16 08:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1589	6	2017-03-16 13:30:00	2017-03-16 13:30:00	2017-03-16 13:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1590	6	2017-03-16 13:45:00	2017-03-16 13:45:00	2017-03-16 13:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1591	6	2017-03-16 17:45:00	2017-03-16 17:45:00	2017-03-16 17:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1592	6	2017-03-16 21:30:00	2017-03-16 21:30:00	2017-03-16 21:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1593	6	2017-03-16 21:15:00	2017-03-16 21:15:00	2017-03-16 21:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1594	6	2017-03-17 01:30:00	2017-03-17 01:30:00	2017-03-17 01:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1595	6	2017-03-17 04:15:00	2017-03-17 04:15:00	2017-03-17 04:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1596	6	2017-03-17 06:00:00	2017-03-17 06:00:00	2017-03-17 06:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1597	6	2017-03-17 07:00:00	2017-03-17 07:00:00	2017-03-17 07:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1598	6	2017-03-17 12:15:00	2017-03-17 12:15:00	2017-03-17 12:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1599	6	2017-03-17 13:00:00	2017-03-17 13:00:00	2017-03-17 13:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1600	6	2017-03-17 14:45:00	2017-03-17 14:45:00	2017-03-17 14:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1601	6	2017-03-17 18:15:00	2017-03-17 18:15:00	2017-03-17 18:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1602	6	2017-03-17 20:00:00	2017-03-17 20:00:00	2017-03-17 20:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1603	6	2017-03-17 23:30:00	2017-03-17 23:30:00	2017-03-17 23:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1604	6	2017-03-18 04:00:00	2017-03-18 04:00:00	2017-03-18 04:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1605	6	2017-03-18 05:45:00	2017-03-18 05:45:00	2017-03-18 05:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1606	6	2017-03-18 09:45:00	2017-03-18 09:45:00	2017-03-18 09:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1607	6	2017-03-18 10:30:00	2017-03-18 10:30:00	2017-03-18 10:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1608	6	2017-03-18 13:30:00	2017-03-18 13:30:00	2017-03-18 13:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1609	6	2017-03-18 14:45:00	2017-03-18 14:45:00	2017-03-18 14:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1610	6	2017-03-18 15:45:00	2017-03-18 15:45:00	2017-03-18 15:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1611	6	2017-03-18 18:00:00	2017-03-18 18:00:00	2017-03-18 18:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1612	6	2017-03-18 21:00:00	2017-03-18 21:00:00	2017-03-18 21:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1613	6	2017-03-19 01:45:00	2017-03-19 01:45:00	2017-03-19 01:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1614	6	2017-03-19 04:45:00	2017-03-19 04:45:00	2017-03-19 04:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1615	6	2017-03-19 03:00:00	2017-03-19 03:00:00	2017-03-19 03:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1616	6	2017-03-19 08:30:00	2017-03-19 08:30:00	2017-03-19 08:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1617	6	2017-03-19 10:15:00	2017-03-19 10:15:00	2017-03-19 10:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1618	6	2017-03-19 14:30:00	2017-03-19 14:30:00	2017-03-19 14:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1619	6	2017-03-19 12:45:00	2017-03-19 12:45:00	2017-03-19 12:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1620	6	2017-03-19 20:15:00	2017-03-19 20:15:00	2017-03-19 20:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1621	6	2017-03-19 19:00:00	2017-03-19 19:00:00	2017-03-19 19:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1622	6	2017-03-19 23:15:00	2017-03-19 23:15:00	2017-03-19 23:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1623	6	2017-03-20 01:45:00	2017-03-20 01:45:00	2017-03-20 01:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1624	6	2017-03-20 06:00:00	2017-03-20 06:00:00	2017-03-20 06:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1625	6	2017-03-20 05:30:00	2017-03-20 05:30:00	2017-03-20 05:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1626	6	2017-03-20 07:30:00	2017-03-20 07:30:00	2017-03-20 07:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1627	6	2017-03-20 11:45:00	2017-03-20 11:45:00	2017-03-20 11:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1628	6	2017-03-20 14:00:00	2017-03-20 14:00:00	2017-03-20 14:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1629	6	2017-03-20 15:00:00	2017-03-20 15:00:00	2017-03-20 15:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1630	6	2017-03-20 21:00:00	2017-03-20 21:00:00	2017-03-20 21:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1631	6	2017-03-20 21:15:00	2017-03-20 21:15:00	2017-03-20 21:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1632	6	2017-03-21 01:30:00	2017-03-21 01:30:00	2017-03-21 01:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1633	6	2017-03-21 04:00:00	2017-03-21 04:00:00	2017-03-21 04:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1634	6	2017-03-21 03:45:00	2017-03-21 03:45:00	2017-03-21 03:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1635	6	2017-03-21 05:15:00	2017-03-21 05:15:00	2017-03-21 05:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1636	6	2017-03-21 11:45:00	2017-03-21 11:45:00	2017-03-21 11:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1637	6	2017-03-21 13:15:00	2017-03-21 13:15:00	2017-03-21 13:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1638	6	2017-03-21 14:15:00	2017-03-21 14:15:00	2017-03-21 14:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1639	6	2017-03-21 16:00:00	2017-03-21 16:00:00	2017-03-21 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1640	6	2017-03-21 19:15:00	2017-03-21 19:15:00	2017-03-21 19:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1641	6	2017-03-21 22:00:00	2017-03-21 22:00:00	2017-03-21 22:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1642	6	2017-03-22 01:45:00	2017-03-22 01:45:00	2017-03-22 01:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1643	6	2017-03-22 02:45:00	2017-03-22 02:45:00	2017-03-22 02:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1644	6	2017-03-22 07:15:00	2017-03-22 07:15:00	2017-03-22 07:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1645	6	2017-03-22 06:30:00	2017-03-22 06:30:00	2017-03-22 06:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1646	6	2017-03-22 10:15:00	2017-03-22 10:15:00	2017-03-22 10:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1647	6	2017-03-22 12:45:00	2017-03-22 12:45:00	2017-03-22 12:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1648	6	2017-03-22 14:15:00	2017-03-22 14:15:00	2017-03-22 14:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1649	6	2017-03-22 16:15:00	2017-03-22 16:15:00	2017-03-22 16:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1650	6	2017-03-22 23:15:00	2017-03-22 23:15:00	2017-03-22 23:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1651	6	2017-03-22 21:30:00	2017-03-22 21:30:00	2017-03-22 21:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1652	6	2017-03-23 04:15:00	2017-03-23 04:15:00	2017-03-23 04:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1653	6	2017-03-23 04:45:00	2017-03-23 04:45:00	2017-03-23 04:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1654	6	2017-03-23 05:45:00	2017-03-23 05:45:00	2017-03-23 05:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1655	6	2017-03-23 10:45:00	2017-03-23 10:45:00	2017-03-23 10:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1656	6	2017-03-23 11:45:00	2017-03-23 11:45:00	2017-03-23 11:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1657	6	2017-03-23 15:00:00	2017-03-23 15:00:00	2017-03-23 15:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1658	6	2017-03-23 15:15:00	2017-03-23 15:15:00	2017-03-23 15:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1659	6	2017-03-23 17:30:00	2017-03-23 17:30:00	2017-03-23 17:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1660	6	2017-03-23 21:30:00	2017-03-23 21:30:00	2017-03-23 21:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1661	6	2017-03-23 23:30:00	2017-03-23 23:30:00	2017-03-23 23:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1662	6	2017-03-24 03:15:00	2017-03-24 03:15:00	2017-03-24 03:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1663	6	2017-03-24 01:45:00	2017-03-24 01:45:00	2017-03-24 01:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1664	6	2017-03-24 05:45:00	2017-03-24 05:45:00	2017-03-24 05:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1665	6	2017-03-24 09:15:00	2017-03-24 09:15:00	2017-03-24 09:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1666	6	2017-03-24 13:15:00	2017-03-24 13:15:00	2017-03-24 13:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1667	6	2017-03-24 14:15:00	2017-03-24 14:15:00	2017-03-24 14:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1668	6	2017-03-24 19:45:00	2017-03-24 19:45:00	2017-03-24 19:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1669	6	2017-03-24 19:15:00	2017-03-24 19:15:00	2017-03-24 19:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1670	6	2017-03-25 01:00:00	2017-03-25 01:00:00	2017-03-25 01:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1671	6	2017-03-25 00:00:00	2017-03-25 00:00:00	2017-03-25 00:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1672	6	2017-03-25 02:30:00	2017-03-25 02:30:00	2017-03-25 02:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1673	6	2017-03-25 03:30:00	2017-03-25 03:30:00	2017-03-25 03:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1674	6	2017-03-25 10:45:00	2017-03-25 10:45:00	2017-03-25 10:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1675	6	2017-03-25 09:30:00	2017-03-25 09:30:00	2017-03-25 09:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1676	6	2017-03-25 14:45:00	2017-03-25 14:45:00	2017-03-25 14:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1677	6	2017-03-25 18:15:00	2017-03-25 18:15:00	2017-03-25 18:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1678	6	2017-03-25 19:15:00	2017-03-25 19:15:00	2017-03-25 19:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1679	6	2017-03-25 19:30:00	2017-03-25 19:30:00	2017-03-25 19:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1680	6	2017-03-25 23:30:00	2017-03-25 23:30:00	2017-03-25 23:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1681	6	2017-03-26 00:45:00	2017-03-26 00:45:00	2017-03-26 00:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1682	6	2017-03-26 05:30:00	2017-03-26 05:30:00	2017-03-26 05:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1683	6	2017-03-26 05:15:00	2017-03-26 05:15:00	2017-03-26 05:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1684	6	2017-03-26 07:45:00	2017-03-26 07:45:00	2017-03-26 07:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1685	6	2017-03-26 12:00:00	2017-03-26 12:00:00	2017-03-26 12:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1686	6	2017-03-26 15:30:00	2017-03-26 15:30:00	2017-03-26 15:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1687	6	2017-03-26 19:30:00	2017-03-26 19:30:00	2017-03-26 19:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1688	6	2017-03-26 22:00:00	2017-03-26 22:00:00	2017-03-26 22:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1689	6	2017-03-26 20:45:00	2017-03-26 20:45:00	2017-03-26 20:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1690	6	2017-03-27 02:15:00	2017-03-27 02:15:00	2017-03-27 02:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1691	6	2017-03-27 01:30:00	2017-03-27 01:30:00	2017-03-27 01:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1692	6	2017-03-27 06:45:00	2017-03-27 06:45:00	2017-03-27 06:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1693	6	2017-03-27 08:45:00	2017-03-27 08:45:00	2017-03-27 08:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1694	6	2017-03-27 13:00:00	2017-03-27 13:00:00	2017-03-27 13:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1695	6	2017-03-27 13:30:00	2017-03-27 13:30:00	2017-03-27 13:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1696	6	2017-03-27 16:01:00	2017-03-27 16:01:00	2017-03-27 16:01:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1697	6	2017-03-27 18:00:00	2017-03-27 18:00:00	2017-03-27 18:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1698	6	2017-03-27 21:15:00	2017-03-27 21:15:00	2017-03-27 21:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1699	6	2017-03-27 22:30:00	2017-03-27 22:30:00	2017-03-27 22:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1700	6	2017-03-28 02:00:00	2017-03-28 02:00:00	2017-03-28 02:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1701	6	2017-03-28 03:00:00	2017-03-28 03:00:00	2017-03-28 03:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1702	6	2017-03-28 07:45:00	2017-03-28 07:45:00	2017-03-28 07:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1703	6	2017-03-28 09:45:00	2017-03-28 09:45:00	2017-03-28 09:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1704	6	2017-03-28 11:45:00	2017-03-28 11:45:00	2017-03-28 11:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1705	6	2017-03-28 14:00:00	2017-03-28 14:00:00	2017-03-28 14:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1706	6	2017-03-28 15:30:00	2017-03-28 15:30:00	2017-03-28 15:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1707	6	2017-03-28 21:00:00	2017-03-28 21:00:00	2017-03-28 21:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1708	6	2017-03-28 21:45:00	2017-03-28 21:45:00	2017-03-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1709	6	2017-03-29 07:45:00	2017-03-29 07:45:00	2017-03-29 07:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1710	6	2017-03-29 02:30:00	2017-03-29 02:30:00	2017-03-29 02:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1711	6	2017-03-29 06:30:00	2017-03-29 06:30:00	2017-03-29 06:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1712	6	2017-03-29 01:15:00	2017-03-29 01:15:00	2017-03-29 01:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1713	6	2017-03-29 17:45:00	2017-03-29 17:45:00	2017-03-29 17:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1714	6	2017-03-29 12:30:00	2017-03-29 12:30:00	2017-03-29 12:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1715	6	2017-03-29 16:30:00	2017-03-29 16:30:00	2017-03-29 16:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1716	6	2017-03-29 11:15:00	2017-03-29 11:15:00	2017-03-29 11:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1717	6	2017-03-30 03:45:00	2017-03-30 03:45:00	2017-03-30 03:45:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1718	6	2017-03-29 22:30:00	2017-03-29 22:30:00	2017-03-29 22:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1719	6	2017-03-30 02:30:00	2017-03-30 02:30:00	2017-03-30 02:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1720	6	2017-03-29 21:15:00	2017-03-29 21:15:00	2017-03-29 21:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1721	6	2017-03-30 04:30:00	2017-03-30 04:30:00	2017-03-30 04:30:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1722	6	2017-03-31 10:00:00	2017-03-31 10:00:00	2017-03-31 10:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1723	6	2017-03-31 14:00:00	2017-03-31 14:00:00	2017-03-31 14:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1724	6	2017-03-31 11:15:00	2017-03-31 11:15:00	2017-03-31 11:15:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1725	6	2017-03-31 16:00:00	2017-03-31 16:00:00	2017-03-31 16:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1726	6	2017-03-31 20:00:00	2017-03-31 20:00:00	2017-03-31 20:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1727	6	2017-03-31 18:00:00	2017-03-31 18:00:00	2017-03-31 18:00:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1728	6	2017-03-31 22:16:00	2017-03-31 22:16:00	2017-03-31 22:16:00	\N	1	\N	1	\N	F	\N	\N	6	\N
+1729	7	2017-03-01 04:15:00	2017-03-01 04:15:00	2017-03-01 04:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1730	7	2017-03-01 05:00:00	2017-03-01 05:00:00	2017-03-01 05:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1731	7	2017-03-01 05:15:00	2017-03-01 05:15:00	2017-03-01 05:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1732	7	2017-03-01 10:00:00	2017-03-01 10:00:00	2017-03-01 10:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1733	7	2017-03-01 13:30:00	2017-03-01 13:30:00	2017-03-01 13:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1734	7	2017-03-01 15:15:00	2017-03-01 15:15:00	2017-03-01 15:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1735	7	2017-03-01 17:00:00	2017-03-01 17:00:00	2017-03-01 17:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1736	7	2017-03-01 19:30:00	2017-03-01 19:30:00	2017-03-01 19:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1737	7	2017-03-01 22:30:00	2017-03-01 22:30:00	2017-03-01 22:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1738	7	2017-03-02 01:00:00	2017-03-02 01:00:00	2017-03-02 01:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1739	7	2017-03-02 04:15:00	2017-03-02 04:15:00	2017-03-02 04:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1740	7	2017-03-02 06:00:00	2017-03-02 06:00:00	2017-03-02 06:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1741	7	2017-03-02 07:45:00	2017-03-02 07:45:00	2017-03-02 07:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1742	7	2017-03-02 11:00:00	2017-03-02 11:00:00	2017-03-02 11:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1743	7	2017-03-02 14:00:00	2017-03-02 14:00:00	2017-03-02 14:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1744	7	2017-03-02 16:00:00	2017-03-02 16:00:00	2017-03-02 16:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1745	7	2017-03-02 17:30:00	2017-03-02 17:30:00	2017-03-02 17:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1746	7	2017-03-02 20:15:00	2017-03-02 20:15:00	2017-03-02 20:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1747	7	2017-03-02 23:00:00	2017-03-02 23:00:00	2017-03-02 23:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1748	7	2017-03-03 01:30:00	2017-03-03 01:30:00	2017-03-03 01:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1749	7	2017-03-03 05:00:00	2017-03-03 05:00:00	2017-03-03 05:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1750	7	2017-03-03 07:30:00	2017-03-03 07:30:00	2017-03-03 07:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1751	7	2017-03-03 10:00:00	2017-03-03 10:00:00	2017-03-03 10:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1752	7	2017-03-03 11:30:00	2017-03-03 11:30:00	2017-03-03 11:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1753	7	2017-03-03 14:16:00	2017-03-03 14:16:00	2017-03-03 14:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1754	7	2017-03-03 17:16:00	2017-03-03 17:16:00	2017-03-03 17:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1755	7	2017-03-03 20:15:00	2017-03-03 20:15:00	2017-03-03 20:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1756	7	2017-03-03 21:00:00	2017-03-03 21:00:00	2017-03-03 21:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1757	7	2017-03-04 00:01:00	2017-03-04 00:01:00	2017-03-04 00:01:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1758	7	2017-03-04 03:16:00	2017-03-04 03:16:00	2017-03-04 03:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1759	7	2017-03-04 06:16:00	2017-03-04 06:16:00	2017-03-04 06:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1760	7	2017-03-04 07:01:00	2017-03-04 07:01:00	2017-03-04 07:01:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1761	7	2017-03-04 10:01:00	2017-03-04 10:01:00	2017-03-04 10:01:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1762	7	2017-03-04 13:16:00	2017-03-04 13:16:00	2017-03-04 13:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1763	7	2017-03-04 16:15:00	2017-03-04 16:15:00	2017-03-04 16:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1764	7	2017-03-04 17:00:00	2017-03-04 17:00:00	2017-03-04 17:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1765	7	2017-03-04 20:00:00	2017-03-04 20:00:00	2017-03-04 20:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1766	7	2017-03-04 23:16:00	2017-03-04 23:16:00	2017-03-04 23:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1767	7	2017-03-05 02:16:00	2017-03-05 02:16:00	2017-03-05 02:16:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1768	7	2017-03-05 03:01:00	2017-03-05 03:01:00	2017-03-05 03:01:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1769	7	2017-03-05 06:01:00	2017-03-05 06:01:00	2017-03-05 06:01:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1770	7	2017-03-05 09:15:00	2017-03-05 09:15:00	2017-03-05 09:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1771	7	2017-03-05 10:30:00	2017-03-05 10:30:00	2017-03-05 10:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1772	7	2017-03-05 13:15:00	2017-03-05 13:15:00	2017-03-05 13:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1773	7	2017-03-05 16:15:00	2017-03-05 16:15:00	2017-03-05 16:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1774	7	2017-03-05 18:45:00	2017-03-05 18:45:00	2017-03-05 18:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1775	7	2017-03-05 21:15:00	2017-03-05 21:15:00	2017-03-05 21:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1776	7	2017-03-05 23:45:00	2017-03-05 23:45:00	2017-03-05 23:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1777	7	2017-03-06 02:15:00	2017-03-06 02:15:00	2017-03-06 02:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1778	7	2017-03-06 04:45:00	2017-03-06 04:45:00	2017-03-06 04:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1779	7	2017-03-06 07:45:00	2017-03-06 07:45:00	2017-03-06 07:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1780	7	2017-03-06 09:45:00	2017-03-06 09:45:00	2017-03-06 09:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1781	7	2017-03-06 12:00:00	2017-03-06 12:00:00	2017-03-06 12:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1782	7	2017-03-06 14:30:00	2017-03-06 14:30:00	2017-03-06 14:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1783	7	2017-03-06 18:15:00	2017-03-06 18:15:00	2017-03-06 18:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1784	7	2017-03-06 19:45:00	2017-03-06 19:45:00	2017-03-06 19:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1785	7	2017-03-06 22:15:00	2017-03-06 22:15:00	2017-03-06 22:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1786	7	2017-03-07 01:30:00	2017-03-07 01:30:00	2017-03-07 01:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1787	7	2017-03-07 02:45:00	2017-03-07 02:45:00	2017-03-07 02:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1788	7	2017-03-07 05:30:00	2017-03-07 05:30:00	2017-03-07 05:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1789	7	2017-03-07 08:15:00	2017-03-07 08:15:00	2017-03-07 08:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1790	7	2017-03-07 11:00:00	2017-03-07 11:00:00	2017-03-07 11:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1791	7	2017-03-07 14:45:00	2017-03-07 14:45:00	2017-03-07 14:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1792	7	2017-03-07 15:15:00	2017-03-07 15:15:00	2017-03-07 15:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1793	7	2017-03-07 20:45:00	2017-03-07 20:45:00	2017-03-07 20:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1794	7	2017-03-07 20:15:00	2017-03-07 20:15:00	2017-03-07 20:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1795	7	2017-03-08 00:15:00	2017-03-08 00:15:00	2017-03-08 00:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1796	7	2017-03-08 01:00:00	2017-03-08 01:00:00	2017-03-08 01:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1797	7	2017-03-08 04:45:00	2017-03-08 04:45:00	2017-03-08 04:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1798	7	2017-03-08 04:30:00	2017-03-08 04:30:00	2017-03-08 04:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1799	7	2017-03-08 13:00:00	2017-03-08 13:00:00	2017-03-08 13:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1800	7	2017-03-08 13:30:00	2017-03-08 13:30:00	2017-03-08 13:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1801	7	2017-03-08 15:00:00	2017-03-08 15:00:00	2017-03-08 15:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1802	7	2017-03-08 20:45:00	2017-03-08 20:45:00	2017-03-08 20:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1803	7	2017-03-08 16:30:00	2017-03-08 16:30:00	2017-03-08 16:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1804	7	2017-03-08 23:00:00	2017-03-08 23:00:00	2017-03-08 23:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1805	7	2017-03-09 01:45:00	2017-03-09 01:45:00	2017-03-09 01:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1806	7	2017-03-09 04:45:00	2017-03-09 04:45:00	2017-03-09 04:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1807	7	2017-03-09 04:15:00	2017-03-09 04:15:00	2017-03-09 04:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1808	7	2017-03-09 09:45:00	2017-03-09 09:45:00	2017-03-09 09:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1809	7	2017-03-09 11:15:00	2017-03-09 11:15:00	2017-03-09 11:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1810	7	2017-03-09 13:00:00	2017-03-09 13:00:00	2017-03-09 13:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1811	7	2017-03-09 16:00:00	2017-03-09 16:00:00	2017-03-09 16:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1812	7	2017-03-09 20:45:00	2017-03-09 20:45:00	2017-03-09 20:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1813	7	2017-03-09 18:45:00	2017-03-09 18:45:00	2017-03-09 18:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1814	7	2017-03-09 22:45:00	2017-03-09 22:45:00	2017-03-09 22:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1815	7	2017-03-10 01:45:00	2017-03-10 01:45:00	2017-03-10 01:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1816	7	2017-03-10 07:00:00	2017-03-10 07:00:00	2017-03-10 07:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1817	7	2017-03-10 04:15:00	2017-03-10 04:15:00	2017-03-10 04:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1818	7	2017-03-10 12:00:00	2017-03-10 12:00:00	2017-03-10 12:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1819	7	2017-03-10 10:30:00	2017-03-10 10:30:00	2017-03-10 10:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1820	7	2017-03-10 16:45:00	2017-03-10 16:45:00	2017-03-10 16:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1821	7	2017-03-10 15:45:00	2017-03-10 15:45:00	2017-03-10 15:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1822	7	2017-03-10 20:15:00	2017-03-10 20:15:00	2017-03-10 20:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1823	7	2017-03-10 19:15:00	2017-03-10 19:15:00	2017-03-10 19:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1824	7	2017-03-11 01:45:00	2017-03-11 01:45:00	2017-03-11 01:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1825	7	2017-03-10 23:30:00	2017-03-10 23:30:00	2017-03-10 23:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1826	7	2017-03-11 05:15:00	2017-03-11 05:15:00	2017-03-11 05:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1827	7	2017-03-11 06:15:00	2017-03-11 06:15:00	2017-03-11 06:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1828	7	2017-03-11 08:30:00	2017-03-11 08:30:00	2017-03-11 08:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1829	7	2017-03-11 13:15:00	2017-03-11 13:15:00	2017-03-11 13:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1830	7	2017-03-11 14:30:00	2017-03-11 14:30:00	2017-03-11 14:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1831	7	2017-03-11 15:30:00	2017-03-11 15:30:00	2017-03-11 15:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1832	7	2017-03-11 21:00:00	2017-03-11 21:00:00	2017-03-11 21:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1833	7	2017-03-11 22:30:00	2017-03-11 22:30:00	2017-03-11 22:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1834	7	2017-03-12 03:15:00	2017-03-12 03:15:00	2017-03-12 03:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1835	7	2017-03-12 03:00:00	2017-03-12 03:00:00	2017-03-12 03:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1836	7	2017-03-12 05:00:00	2017-03-12 05:00:00	2017-03-12 05:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1837	7	2017-03-12 08:00:00	2017-03-12 08:00:00	2017-03-12 08:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1838	7	2017-03-12 12:45:00	2017-03-12 12:45:00	2017-03-12 12:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1839	7	2017-03-12 14:45:00	2017-03-12 14:45:00	2017-03-12 14:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1840	7	2017-03-12 16:45:00	2017-03-12 16:45:00	2017-03-12 16:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1841	7	2017-03-12 20:15:00	2017-03-12 20:15:00	2017-03-12 20:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1842	7	2017-03-12 21:45:00	2017-03-12 21:45:00	2017-03-12 21:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1843	7	2017-03-12 21:30:00	2017-03-12 21:30:00	2017-03-12 21:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1844	7	2017-03-13 03:45:00	2017-03-13 03:45:00	2017-03-13 03:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1845	7	2017-03-13 02:15:00	2017-03-13 02:15:00	2017-03-13 02:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1846	7	2017-03-13 07:15:00	2017-03-13 07:15:00	2017-03-13 07:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1847	7	2017-03-13 07:30:00	2017-03-13 07:30:00	2017-03-13 07:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1848	7	2017-03-13 11:45:00	2017-03-13 11:45:00	2017-03-13 11:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1849	7	2017-03-13 12:15:00	2017-03-13 12:15:00	2017-03-13 12:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1850	7	2017-03-13 16:30:00	2017-03-13 16:30:00	2017-03-13 16:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1851	7	2017-03-13 20:00:00	2017-03-13 20:00:00	2017-03-13 20:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1852	7	2017-03-13 21:00:00	2017-03-13 21:00:00	2017-03-13 21:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1853	7	2017-03-14 00:15:00	2017-03-14 00:15:00	2017-03-14 00:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1854	7	2017-03-14 04:45:00	2017-03-14 04:45:00	2017-03-14 04:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1855	7	2017-03-14 05:00:00	2017-03-14 05:00:00	2017-03-14 05:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1856	7	2017-03-14 07:00:00	2017-03-14 07:00:00	2017-03-14 07:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1857	7	2017-03-14 09:00:00	2017-03-14 09:00:00	2017-03-14 09:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1858	7	2017-03-14 13:15:00	2017-03-14 13:15:00	2017-03-14 13:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1859	7	2017-03-14 13:30:00	2017-03-14 13:30:00	2017-03-14 13:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1860	7	2017-03-14 16:30:00	2017-03-14 16:30:00	2017-03-14 16:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1861	7	2017-03-14 19:15:00	2017-03-14 19:15:00	2017-03-14 19:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1862	7	2017-03-14 21:15:00	2017-03-14 21:15:00	2017-03-14 21:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1863	7	2017-03-15 01:15:00	2017-03-15 01:15:00	2017-03-15 01:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1864	7	2017-03-15 05:15:00	2017-03-15 05:15:00	2017-03-15 05:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1865	7	2017-03-15 05:45:00	2017-03-15 05:45:00	2017-03-15 05:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1866	7	2017-03-15 08:00:00	2017-03-15 08:00:00	2017-03-15 08:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1867	7	2017-03-15 09:45:00	2017-03-15 09:45:00	2017-03-15 09:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1868	7	2017-03-15 14:30:00	2017-03-15 14:30:00	2017-03-15 14:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1869	7	2017-03-15 16:00:00	2017-03-15 16:00:00	2017-03-15 16:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1870	7	2017-03-15 20:15:00	2017-03-15 20:15:00	2017-03-15 20:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1871	7	2017-03-15 19:45:00	2017-03-15 19:45:00	2017-03-15 19:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1872	7	2017-03-15 23:15:00	2017-03-15 23:15:00	2017-03-15 23:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1873	7	2017-03-16 03:45:00	2017-03-16 03:45:00	2017-03-16 03:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1874	7	2017-03-16 07:00:00	2017-03-16 07:00:00	2017-03-16 07:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1875	7	2017-03-16 06:15:00	2017-03-16 06:15:00	2017-03-16 06:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1876	7	2017-03-16 11:30:00	2017-03-16 11:30:00	2017-03-16 11:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1877	7	2017-03-16 11:15:00	2017-03-16 11:15:00	2017-03-16 11:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1878	7	2017-03-16 14:45:00	2017-03-16 14:45:00	2017-03-16 14:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1879	7	2017-03-16 16:30:00	2017-03-16 16:30:00	2017-03-16 16:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1880	7	2017-03-16 21:30:00	2017-03-16 21:30:00	2017-03-16 21:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1881	7	2017-03-16 23:15:00	2017-03-16 23:15:00	2017-03-16 23:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1882	7	2017-03-17 03:00:00	2017-03-17 03:00:00	2017-03-17 03:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1883	7	2017-03-17 01:30:00	2017-03-17 01:30:00	2017-03-17 01:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1884	7	2017-03-17 05:30:00	2017-03-17 05:30:00	2017-03-17 05:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1885	7	2017-03-17 08:30:00	2017-03-17 08:30:00	2017-03-17 08:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1886	7	2017-03-17 11:30:00	2017-03-17 11:30:00	2017-03-17 11:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1887	7	2017-03-17 13:00:00	2017-03-17 13:00:00	2017-03-17 13:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1888	7	2017-03-17 17:45:00	2017-03-17 17:45:00	2017-03-17 17:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1889	7	2017-03-17 16:00:00	2017-03-17 16:00:00	2017-03-17 16:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1890	7	2017-03-17 22:15:00	2017-03-17 22:15:00	2017-03-17 22:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1891	7	2017-03-17 20:15:00	2017-03-17 20:15:00	2017-03-17 20:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1892	7	2017-03-18 01:00:00	2017-03-18 01:00:00	2017-03-18 01:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1893	7	2017-03-18 04:15:00	2017-03-18 04:15:00	2017-03-18 04:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1894	7	2017-03-18 07:15:00	2017-03-18 07:15:00	2017-03-18 07:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1895	7	2017-03-18 07:30:00	2017-03-18 07:30:00	2017-03-18 07:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1896	7	2017-03-18 10:30:00	2017-03-18 10:30:00	2017-03-18 10:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1897	7	2017-03-18 13:15:00	2017-03-18 13:15:00	2017-03-18 13:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1898	7	2017-03-18 17:00:00	2017-03-18 17:00:00	2017-03-18 17:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1899	7	2017-03-18 19:15:00	2017-03-18 19:15:00	2017-03-18 19:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1900	7	2017-03-18 20:30:00	2017-03-18 20:30:00	2017-03-18 20:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1901	7	2017-03-19 00:15:00	2017-03-19 00:15:00	2017-03-19 00:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1902	7	2017-03-19 04:00:00	2017-03-19 04:00:00	2017-03-19 04:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1903	7	2017-03-19 05:00:00	2017-03-19 05:00:00	2017-03-19 05:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1904	7	2017-03-19 06:30:00	2017-03-19 06:30:00	2017-03-19 06:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1905	7	2017-03-19 10:00:00	2017-03-19 10:00:00	2017-03-19 10:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1906	7	2017-03-19 14:15:00	2017-03-19 14:15:00	2017-03-19 14:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1907	7	2017-03-19 14:30:00	2017-03-19 14:30:00	2017-03-19 14:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1908	7	2017-03-19 18:15:00	2017-03-19 18:15:00	2017-03-19 18:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1909	7	2017-03-19 17:30:00	2017-03-19 17:30:00	2017-03-19 17:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1910	7	2017-03-20 01:45:00	2017-03-20 01:45:00	2017-03-20 01:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1911	7	2017-03-20 01:30:00	2017-03-20 01:30:00	2017-03-20 01:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1912	7	2017-03-20 04:30:00	2017-03-20 04:30:00	2017-03-20 04:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1913	7	2017-03-20 06:30:00	2017-03-20 06:30:00	2017-03-20 06:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1914	7	2017-03-20 10:45:00	2017-03-20 10:45:00	2017-03-20 10:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1915	7	2017-03-20 11:00:00	2017-03-20 11:00:00	2017-03-20 11:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1916	7	2017-03-20 13:45:00	2017-03-20 13:45:00	2017-03-20 13:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1917	7	2017-03-20 16:00:00	2017-03-20 16:00:00	2017-03-20 16:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1918	7	2017-03-20 16:45:00	2017-03-20 16:45:00	2017-03-20 16:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1919	7	2017-03-20 19:00:00	2017-03-20 19:00:00	2017-03-20 19:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1920	7	2017-03-20 23:45:00	2017-03-20 23:45:00	2017-03-20 23:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1921	7	2017-03-21 02:45:00	2017-03-21 02:45:00	2017-03-21 02:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1922	7	2017-03-21 04:15:00	2017-03-21 04:15:00	2017-03-21 04:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1923	7	2017-03-21 07:45:00	2017-03-21 07:45:00	2017-03-21 07:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1924	7	2017-03-21 09:15:00	2017-03-21 09:15:00	2017-03-21 09:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1925	7	2017-03-21 13:30:00	2017-03-21 13:30:00	2017-03-21 13:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1926	7	2017-03-21 14:45:00	2017-03-21 14:45:00	2017-03-21 14:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1927	7	2017-03-21 16:30:00	2017-03-21 16:30:00	2017-03-21 16:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1928	7	2017-03-21 22:00:00	2017-03-21 22:00:00	2017-03-21 22:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1929	7	2017-03-21 23:00:00	2017-03-21 23:00:00	2017-03-21 23:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1930	7	2017-03-22 02:00:00	2017-03-22 02:00:00	2017-03-22 02:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1931	7	2017-03-22 03:30:00	2017-03-22 03:30:00	2017-03-22 03:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1932	7	2017-03-22 06:30:00	2017-03-22 06:30:00	2017-03-22 06:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1933	7	2017-03-22 09:45:00	2017-03-22 09:45:00	2017-03-22 09:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1934	7	2017-03-22 12:15:00	2017-03-22 12:15:00	2017-03-22 12:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1935	7	2017-03-22 11:30:00	2017-03-22 11:30:00	2017-03-22 11:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1936	7	2017-03-22 16:30:00	2017-03-22 16:30:00	2017-03-22 16:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1937	7	2017-03-22 19:00:00	2017-03-22 19:00:00	2017-03-22 19:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1938	7	2017-03-22 20:00:00	2017-03-22 20:00:00	2017-03-22 20:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1939	7	2017-03-23 00:15:00	2017-03-23 00:15:00	2017-03-23 00:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1940	7	2017-03-23 02:15:00	2017-03-23 02:15:00	2017-03-23 02:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1941	7	2017-03-23 05:45:00	2017-03-23 05:45:00	2017-03-23 05:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1942	7	2017-03-23 07:30:00	2017-03-23 07:30:00	2017-03-23 07:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1943	7	2017-03-23 10:00:00	2017-03-23 10:00:00	2017-03-23 10:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1944	7	2017-03-23 12:00:00	2017-03-23 12:00:00	2017-03-23 12:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1945	7	2017-03-23 15:30:00	2017-03-23 15:30:00	2017-03-23 15:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1946	7	2017-03-23 19:15:00	2017-03-23 19:15:00	2017-03-23 19:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1947	7	2017-03-23 18:00:00	2017-03-23 18:00:00	2017-03-23 18:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1948	7	2017-03-23 23:45:00	2017-03-23 23:45:00	2017-03-23 23:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1949	7	2017-03-23 21:15:00	2017-03-23 21:15:00	2017-03-23 21:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1950	7	2017-03-24 03:45:00	2017-03-24 03:45:00	2017-03-24 03:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1951	7	2017-03-24 04:00:00	2017-03-24 04:00:00	2017-03-24 04:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1952	7	2017-03-24 07:15:00	2017-03-24 07:15:00	2017-03-24 07:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1953	7	2017-03-24 10:00:00	2017-03-24 10:00:00	2017-03-24 10:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1954	7	2017-03-24 14:00:00	2017-03-24 14:00:00	2017-03-24 14:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1955	7	2017-03-24 15:00:00	2017-03-24 15:00:00	2017-03-24 15:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1956	7	2017-03-24 16:00:00	2017-03-24 16:00:00	2017-03-24 16:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1957	7	2017-03-24 21:15:00	2017-03-24 21:15:00	2017-03-24 21:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1958	7	2017-03-25 00:15:00	2017-03-25 00:15:00	2017-03-25 00:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1959	7	2017-03-24 23:45:00	2017-03-24 23:45:00	2017-03-24 23:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1960	7	2017-03-25 04:30:00	2017-03-25 04:30:00	2017-03-25 04:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1961	7	2017-03-25 07:00:00	2017-03-25 07:00:00	2017-03-25 07:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1962	7	2017-03-25 07:45:00	2017-03-25 07:45:00	2017-03-25 07:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1963	7	2017-03-25 09:15:00	2017-03-25 09:15:00	2017-03-25 09:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1964	7	2017-03-25 16:00:00	2017-03-25 16:00:00	2017-03-25 16:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1965	7	2017-03-25 15:00:00	2017-03-25 15:00:00	2017-03-25 15:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1966	7	2017-03-25 18:15:00	2017-03-25 18:15:00	2017-03-25 18:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1967	7	2017-03-25 22:00:00	2017-03-25 22:00:00	2017-03-25 22:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1968	7	2017-03-25 22:45:00	2017-03-25 22:45:00	2017-03-25 22:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1969	7	2017-03-26 02:15:00	2017-03-26 02:15:00	2017-03-26 02:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1970	7	2017-03-26 04:30:00	2017-03-26 04:30:00	2017-03-26 04:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1971	7	2017-03-26 06:30:00	2017-03-26 06:30:00	2017-03-26 06:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1972	7	2017-03-26 07:30:00	2017-03-26 07:30:00	2017-03-26 07:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1973	7	2017-03-26 13:15:00	2017-03-26 13:15:00	2017-03-26 13:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1974	7	2017-03-26 17:00:00	2017-03-26 17:00:00	2017-03-26 17:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1975	7	2017-03-26 15:15:00	2017-03-26 15:15:00	2017-03-26 15:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1976	7	2017-03-26 20:45:00	2017-03-26 20:45:00	2017-03-26 20:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1977	7	2017-03-26 21:45:00	2017-03-26 21:45:00	2017-03-26 21:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1978	7	2017-03-26 23:45:00	2017-03-26 23:45:00	2017-03-26 23:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1979	7	2017-03-27 03:30:00	2017-03-27 03:30:00	2017-03-27 03:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1980	7	2017-03-27 05:15:00	2017-03-27 05:15:00	2017-03-27 05:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1981	7	2017-03-27 07:00:00	2017-03-27 07:00:00	2017-03-27 07:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1982	7	2017-03-27 10:30:00	2017-03-27 10:30:00	2017-03-27 10:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1983	7	2017-03-27 12:30:00	2017-03-27 12:30:00	2017-03-27 12:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1984	7	2017-03-27 14:15:00	2017-03-27 14:15:00	2017-03-27 14:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1985	7	2017-03-27 19:30:00	2017-03-27 19:30:00	2017-03-27 19:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1986	7	2017-03-27 20:00:00	2017-03-27 20:00:00	2017-03-27 20:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1987	7	2017-03-28 00:15:00	2017-03-28 00:15:00	2017-03-28 00:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1988	7	2017-03-28 02:30:00	2017-03-28 02:30:00	2017-03-28 02:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1989	7	2017-03-28 05:00:00	2017-03-28 05:00:00	2017-03-28 05:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1990	7	2017-03-28 06:30:00	2017-03-28 06:30:00	2017-03-28 06:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1991	7	2017-03-28 09:45:00	2017-03-28 09:45:00	2017-03-28 09:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1992	7	2017-03-28 13:15:00	2017-03-28 13:15:00	2017-03-28 13:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1993	7	2017-03-28 14:45:00	2017-03-28 14:45:00	2017-03-28 14:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1994	7	2017-03-28 18:00:00	2017-03-28 18:00:00	2017-03-28 18:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1995	7	2017-03-28 19:45:00	2017-03-28 19:45:00	2017-03-28 19:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1996	7	2017-03-28 21:45:00	2017-03-28 21:45:00	2017-03-28 21:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1997	7	2017-03-28 23:45:00	2017-03-28 23:45:00	2017-03-28 23:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1998	7	2017-03-29 03:45:00	2017-03-29 03:45:00	2017-03-29 03:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+1999	7	2017-03-28 22:30:00	2017-03-28 22:30:00	2017-03-28 22:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2000	7	2017-03-29 05:00:00	2017-03-29 05:00:00	2017-03-29 05:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2001	7	2017-03-29 09:45:00	2017-03-29 09:45:00	2017-03-29 09:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2002	7	2017-03-29 13:45:00	2017-03-29 13:45:00	2017-03-29 13:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2003	7	2017-03-29 08:30:00	2017-03-29 08:30:00	2017-03-29 08:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2004	7	2017-03-29 15:00:00	2017-03-29 15:00:00	2017-03-29 15:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2005	7	2017-03-29 19:45:00	2017-03-29 19:45:00	2017-03-29 19:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2006	7	2017-03-29 23:45:00	2017-03-29 23:45:00	2017-03-29 23:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2007	7	2017-03-29 18:30:00	2017-03-29 18:30:00	2017-03-29 18:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2008	7	2017-03-30 01:00:00	2017-03-30 01:00:00	2017-03-30 01:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2009	7	2017-03-31 11:30:00	2017-03-31 11:30:00	2017-03-31 11:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2010	7	2017-03-31 11:15:00	2017-03-31 11:15:00	2017-03-31 11:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2011	7	2017-03-30 07:00:00	2017-03-30 07:00:00	2017-03-30 07:00:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2012	7	2017-03-31 12:30:00	2017-03-31 12:30:00	2017-03-31 12:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2013	7	2017-03-31 17:15:00	2017-03-31 17:15:00	2017-03-31 17:15:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2014	7	2017-03-31 23:45:00	2017-03-31 23:45:00	2017-03-31 23:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2015	7	2017-03-31 16:45:00	2017-03-31 16:45:00	2017-03-31 16:45:00	\N	1	\N	1	\N	F	\N	\N	7	\N
+2016	7	2017-03-31 23:30:00	2017-03-31 23:30:00	2017-03-31 23:30:00	\N	1	\N	1	\N	F	\N	\N	7	\N
 \.
 
 
 --
--- TOC entry 3647 (class 0 OID 60107)
+-- TOC entry 3647 (class 0 OID 62472)
 -- Dependencies: 203
 -- Data for Name: observationconstellation; Type: TABLE DATA; Schema: public; Owner: user
 --
 
 COPY observationconstellation (observationconstellationid, observablepropertyid, procedureid, observationtypeid, offeringid, deleted, hiddenchild) FROM stdin;
-4	4	1	4	1	F	F
+6	6	1	4	1	F	F
 5	5	1	4	1	F	F
+3	3	1	4	1	F	F
+4	4	1	4	1	F	F
 1	1	1	4	1	F	F
 7	7	1	4	1	F	F
 2	2	1	4	1	F	F
-6	6	1	4	1	F	F
-3	3	1	4	1	F	F
 \.
 
 
 --
--- TOC entry 3863 (class 0 OID 0)
+-- TOC entry 3864 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: observationconstellationid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -6744,7 +6754,7 @@ SELECT pg_catalog.setval('observationconstellationid_seq', 7, true);
 
 
 --
--- TOC entry 3648 (class 0 OID 60116)
+-- TOC entry 3648 (class 0 OID 62481)
 -- Dependencies: 204
 -- Data for Name: observationhasoffering; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8770,7 +8780,7 @@ COPY observationhasoffering (observationid, offeringid) FROM stdin;
 
 
 --
--- TOC entry 3864 (class 0 OID 0)
+-- TOC entry 3865 (class 0 OID 0)
 -- Dependencies: 231
 -- Name: observationid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -8779,7 +8789,7 @@ SELECT pg_catalog.setval('observationid_seq', 2016, true);
 
 
 --
--- TOC entry 3649 (class 0 OID 60121)
+-- TOC entry 3649 (class 0 OID 62486)
 -- Dependencies: 205
 -- Data for Name: observationtype; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8796,7 +8806,7 @@ COPY observationtype (observationtypeid, observationtype) FROM stdin;
 
 
 --
--- TOC entry 3865 (class 0 OID 0)
+-- TOC entry 3866 (class 0 OID 0)
 -- Dependencies: 232
 -- Name: observationtypeid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -8805,7 +8815,7 @@ SELECT pg_catalog.setval('observationtypeid_seq', 7, true);
 
 
 --
--- TOC entry 3650 (class 0 OID 60126)
+-- TOC entry 3650 (class 0 OID 62491)
 -- Dependencies: 206
 -- Data for Name: offering; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8816,7 +8826,7 @@ COPY offering (offeringid, hibernatediscriminator, identifier, codespace, name, 
 
 
 --
--- TOC entry 3651 (class 0 OID 60136)
+-- TOC entry 3651 (class 0 OID 62501)
 -- Dependencies: 207
 -- Data for Name: offeringallowedfeaturetype; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8827,24 +8837,24 @@ COPY offeringallowedfeaturetype (offeringid, featureofinteresttypeid) FROM stdin
 
 
 --
--- TOC entry 3652 (class 0 OID 60141)
+-- TOC entry 3652 (class 0 OID 62506)
 -- Dependencies: 208
 -- Data for Name: offeringallowedobservationtype; Type: TABLE DATA; Schema: public; Owner: user
 --
 
 COPY offeringallowedobservationtype (offeringid, observationtypeid) FROM stdin;
-1	7
-1	2
 1	5
-1	1
+1	2
+1	7
 1	3
-1	6
 1	4
+1	6
+1	1
 \.
 
 
 --
--- TOC entry 3653 (class 0 OID 60146)
+-- TOC entry 3653 (class 0 OID 62511)
 -- Dependencies: 209
 -- Data for Name: offeringhasrelatedfeature; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8854,7 +8864,7 @@ COPY offeringhasrelatedfeature (offeringid, relatedfeatureid) FROM stdin;
 
 
 --
--- TOC entry 3866 (class 0 OID 0)
+-- TOC entry 3867 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: offeringid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -8863,7 +8873,7 @@ SELECT pg_catalog.setval('offeringid_seq', 1, true);
 
 
 --
--- TOC entry 3654 (class 0 OID 60151)
+-- TOC entry 3654 (class 0 OID 62516)
 -- Dependencies: 210
 -- Data for Name: parameter; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8873,7 +8883,7 @@ COPY parameter (parameterid, observationid, definition, title, value) FROM stdin
 
 
 --
--- TOC entry 3867 (class 0 OID 0)
+-- TOC entry 3868 (class 0 OID 0)
 -- Dependencies: 234
 -- Name: parameterid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -8882,7 +8892,7 @@ SELECT pg_catalog.setval('parameterid_seq', 1, false);
 
 
 --
--- TOC entry 3868 (class 0 OID 0)
+-- TOC entry 3869 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: procdescformatid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -8891,7 +8901,7 @@ SELECT pg_catalog.setval('procdescformatid_seq', 1, true);
 
 
 --
--- TOC entry 3629 (class 0 OID 59978)
+-- TOC entry 3629 (class 0 OID 62343)
 -- Dependencies: 185
 -- Data for Name: procedure; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8902,7 +8912,7 @@ COPY procedure (procedureid, hibernatediscriminator, proceduredescriptionformati
 
 
 --
--- TOC entry 3655 (class 0 OID 60159)
+-- TOC entry 3655 (class 0 OID 62524)
 -- Dependencies: 211
 -- Data for Name: proceduredescriptionformat; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8913,7 +8923,7 @@ COPY proceduredescriptionformat (proceduredescriptionformatid, proceduredescript
 
 
 --
--- TOC entry 3869 (class 0 OID 0)
+-- TOC entry 3870 (class 0 OID 0)
 -- Dependencies: 236
 -- Name: procedureid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -8922,7 +8932,7 @@ SELECT pg_catalog.setval('procedureid_seq', 1, true);
 
 
 --
--- TOC entry 3656 (class 0 OID 60164)
+-- TOC entry 3656 (class 0 OID 62529)
 -- Dependencies: 212
 -- Data for Name: relatedfeature; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8932,7 +8942,7 @@ COPY relatedfeature (relatedfeatureid, featureofinterestid) FROM stdin;
 
 
 --
--- TOC entry 3657 (class 0 OID 60169)
+-- TOC entry 3657 (class 0 OID 62534)
 -- Dependencies: 213
 -- Data for Name: relatedfeaturehasrole; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8942,7 +8952,7 @@ COPY relatedfeaturehasrole (relatedfeatureid, relatedfeatureroleid) FROM stdin;
 
 
 --
--- TOC entry 3870 (class 0 OID 0)
+-- TOC entry 3871 (class 0 OID 0)
 -- Dependencies: 237
 -- Name: relatedfeatureid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -8951,7 +8961,7 @@ SELECT pg_catalog.setval('relatedfeatureid_seq', 1, false);
 
 
 --
--- TOC entry 3658 (class 0 OID 60174)
+-- TOC entry 3658 (class 0 OID 62539)
 -- Dependencies: 214
 -- Data for Name: relatedfeaturerole; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8961,7 +8971,7 @@ COPY relatedfeaturerole (relatedfeatureroleid, relatedfeaturerole) FROM stdin;
 
 
 --
--- TOC entry 3871 (class 0 OID 0)
+-- TOC entry 3872 (class 0 OID 0)
 -- Dependencies: 238
 -- Name: relatedfeatureroleid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -8970,7 +8980,7 @@ SELECT pg_catalog.setval('relatedfeatureroleid_seq', 1, false);
 
 
 --
--- TOC entry 3659 (class 0 OID 60179)
+-- TOC entry 3659 (class 0 OID 62544)
 -- Dependencies: 215
 -- Data for Name: resulttemplate; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8980,7 +8990,7 @@ COPY resulttemplate (resulttemplateid, offeringid, observablepropertyid, procedu
 
 
 --
--- TOC entry 3872 (class 0 OID 0)
+-- TOC entry 3873 (class 0 OID 0)
 -- Dependencies: 239
 -- Name: resulttemplateid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -8989,7 +8999,7 @@ SELECT pg_catalog.setval('resulttemplateid_seq', 1, false);
 
 
 --
--- TOC entry 3660 (class 0 OID 60187)
+-- TOC entry 3660 (class 0 OID 62552)
 -- Dependencies: 216
 -- Data for Name: sensorsystem; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -8999,24 +9009,24 @@ COPY sensorsystem (parentsensorid, childsensorid) FROM stdin;
 
 
 --
--- TOC entry 3661 (class 0 OID 60192)
+-- TOC entry 3661 (class 0 OID 62557)
 -- Dependencies: 217
 -- Data for Name: series; Type: TABLE DATA; Schema: public; Owner: user
 --
 
-COPY series (seriesid, featureofinterestid, observablepropertyid, procedureid, deleted, published, firsttimestamp, lasttimestamp, firstnumericvalue, lastnumericvalue, unitid) FROM stdin;
-2	2	5	1	F	T	2016-07-01 01:15:00	2016-07-31 21:46:00	-1.80000000000000004	-0.800000000000000044	2
-6	2	6	1	F	T	2016-07-01 01:15:00	2016-07-31 22:31:00	0	0	6
-1	2	4	1	F	T	2016-06-30 23:45:00	2016-07-31 22:15:00	986	995	1
-7	2	3	1	F	T	2016-07-01 00:30:00	2016-07-31 23:00:00	23.5	27.3000000000000007	7
-3	2	1	1	F	T	2016-07-01 03:15:00	2016-07-31 21:31:00	0	0	3
-4	2	7	1	F	T	2016-07-01 00:15:00	2016-07-31 22:16:00	99	97	4
-5	2	2	1	F	T	2016-07-01 04:15:00	2016-07-31 23:45:00	135	330	5
+COPY series (seriesid, featureofinterestid, observablepropertyid, procedureid, offeringid, deleted, published, firsttimestamp, lasttimestamp, firstnumericvalue, lastnumericvalue, unitid) FROM stdin;
+2	2	5	1	1	F	T	2017-03-01 01:15:00	2017-03-31 21:46:00	-1.80000000000000004	-0.800000000000000044	2
+1	2	6	1	1	F	T	2017-03-01 01:15:00	2017-03-31 22:31:00	0	0	1
+5	2	1	1	1	F	T	2017-03-01 03:15:00	2017-03-31 21:31:00	0	0	5
+3	2	3	1	1	F	T	2017-03-01 00:30:00	2017-03-31 23:00:00	23.5	27.3000000000000007	3
+6	2	7	1	1	F	T	2017-03-01 00:15:00	2017-03-31 22:16:00	99	97	6
+7	2	2	1	1	F	T	2017-03-01 04:15:00	2017-03-31 23:45:00	135	330	7
+4	2	4	1	1	F	T	2017-02-28 23:45:00	2017-03-31 22:15:00	986	995	4
 \.
 
 
 --
--- TOC entry 3873 (class 0 OID 0)
+-- TOC entry 3874 (class 0 OID 0)
 -- Dependencies: 240
 -- Name: seriesid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -9035,7 +9045,7 @@ COPY spatial_ref_sys  FROM stdin;
 
 
 --
--- TOC entry 3662 (class 0 OID 60201)
+-- TOC entry 3662 (class 0 OID 62566)
 -- Dependencies: 218
 -- Data for Name: swedataarrayvalue; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -9045,7 +9055,7 @@ COPY swedataarrayvalue (observationid, value) FROM stdin;
 
 
 --
--- TOC entry 3663 (class 0 OID 60209)
+-- TOC entry 3663 (class 0 OID 62574)
 -- Dependencies: 219
 -- Data for Name: textvalue; Type: TABLE DATA; Schema: public; Owner: user
 --
@@ -9055,24 +9065,24 @@ COPY textvalue (observationid, value) FROM stdin;
 
 
 --
--- TOC entry 3664 (class 0 OID 60217)
+-- TOC entry 3664 (class 0 OID 62582)
 -- Dependencies: 220
 -- Data for Name: unit; Type: TABLE DATA; Schema: public; Owner: user
 --
 
 COPY unit (unitid, unit) FROM stdin;
-1	hPa
+1	lx
 2	Cel
-3	mm
-4	%
-5	deg
-6	lx
-7	m/s
+3	m/s
+4	hPa
+5	mm
+6	%
+7	deg
 \.
 
 
 --
--- TOC entry 3874 (class 0 OID 0)
+-- TOC entry 3875 (class 0 OID 0)
 -- Dependencies: 241
 -- Name: unitid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -9081,18 +9091,18 @@ SELECT pg_catalog.setval('unitid_seq', 7, true);
 
 
 --
--- TOC entry 3665 (class 0 OID 60222)
+-- TOC entry 3665 (class 0 OID 62587)
 -- Dependencies: 221
 -- Data for Name: validproceduretime; Type: TABLE DATA; Schema: public; Owner: user
 --
 
 COPY validproceduretime (validproceduretimeid, procedureid, proceduredescriptionformatid, starttime, endtime, descriptionxml) FROM stdin;
-1	1	1	2016-08-03 12:59:14.595	\N	<sml:SensorML xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:sos="http://www.opengis.net/sos/1.0" version="1.0.1">\n  <sml:member>\n    <sml:System xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengeospatial.net/ows" xmlns:ogc="http://www.opengis.net/ogc" xmlns:om="http://www.opengis.net/om/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n      <sml:identification>\n        <sml:IdentifierList>\n          <sml:identifier name="uniqueID">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">\n              <sml:value>52NorthWS1</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="longName">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">\n              <sml:value>This is a WS2500 weather station setup at 52North, Münster in Germany.</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="shortName">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">\n              <sml:value>52North HWS 1</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="productName">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">\n              <sml:value>ELV Radio Weather Station WS 2500</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="modelNumber">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:modelNumber">\n              <sml:value>53759</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="manufacturer">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:manufacturer">\n              <sml:value>ELV Elektronik AG</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="operator">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:operator">\n              <sml:value>52North, Münster, Germany.</sml:value>\n            </sml:Term>\n          </sml:identifier>\n        </sml:IdentifierList>\n      </sml:identification>\n      <sml:classification>\n        <sml:ClassifierList>\n          <sml:classifier name="intendedApplication">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:application">\n              <sml:value>weather</sml:value>\n            </sml:Term>\n          </sml:classifier>\n          <sml:classifier name="sensorType">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n              <sml:value>thermometer</sml:value>\n            </sml:Term>\n          </sml:classifier>\n          <sml:classifier name="sensorType">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n              <sml:value>rain gauge</sml:value>\n            </sml:Term>\n          </sml:classifier>\n          <sml:classifier name="sensorType">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n              <sml:value>barometer</sml:value>\n            </sml:Term>\n          </sml:classifier>\n          <sml:classifier name="sensorType">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n              <sml:value>anemometer</sml:value>\n            </sml:Term>\n          </sml:classifier>\n          <sml:classifier name="sensorType">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n              <sml:value>Luminance Sensor</sml:value>\n            </sml:Term>\n          </sml:classifier>\n        </sml:ClassifierList>\n      </sml:classification>\n      <sml:capabilities>\n        <swe:SimpleDataRecord definition="urn:ogc:def:property:status">\n          <!--station is collecting data-->\n          <swe:field name="status">\n            <swe:Boolean>\n              <swe:value>false</swe:value>\n            </swe:Boolean>\n          </swe:field>\n          <swe:field name="mobile">\n            <swe:Boolean>\n              <swe:value>false</swe:value>\n            </swe:Boolean>\n          </swe:field>\n          <swe:field name="measuringInterval">\n            <swe:Quantity definition="urn:ogc:def:property:OGC:1.0:measuringInterval">\n              <gml:description>The measuring interval of the weather station.</gml:description>\n              <swe:uom code="min" xlink:href="urn:x-ogc:def:uom:OGC:min"/>\n              <swe:value>3</swe:value>\n            </swe:Quantity>\n          </swe:field>\n          <swe:field name="transmissionFrequency">\n            <swe:Quantity definition="urn:ogc:def:property:OGC:1.0:transmissionFrequency">\n              <gml:description>The transmission frequency of the weather station.</gml:description>\n              <swe:uom code="MHz" xlink:href="urn:x-ogc:def:uom:OGC:MHz"/>\n              <swe:value>433.92</swe:value>\n            </swe:Quantity>\n          </swe:field>\n          <swe:field name="powerSupply">\n            <swe:Text definition="urn:ogc:def:property:OGC:1.0:powerSupply">\n              <gml:description>The power supply of the weather station.</gml:description>\n              <swe:value>4 Baby cells 1.5V = 7,5 V / 500 mA</swe:value>\n            </swe:Text>\n          </swe:field>\n        </swe:SimpleDataRecord>\n      </sml:capabilities>\n      <sml:contact>\n        <sml:ResponsibleParty gml:id="contact">\n          <sml:individualName>Jürrens, Eike Hinderk</sml:individualName>\n          <sml:organizationName>52North, Münster, Germany.</sml:organizationName>\n          <sml:contactInfo>\n            <sml:phone>\n              <sml:voice>+49 251 39 63 71 33</sml:voice>\n              <sml:facsimile>+49 251 39 63 71 11</sml:facsimile>\n            </sml:phone>\n            <sml:address>\n              <sml:deliveryPoint>Martin-Luther-King-Weg 24</sml:deliveryPoint>\n              <sml:city>Münster</sml:city>\n              <sml:administrativeArea>North Rhine-Westfalia</sml:administrativeArea>\n              <sml:postalCode>49151</sml:postalCode>\n              <sml:country>Germany</sml:country>\n              <sml:electronicMailAddress>e.h.juerrens@52north.org</sml:electronicMailAddress>\n            </sml:address>\n          </sml:contactInfo>\n        </sml:ResponsibleParty>\n      </sml:contact>\n      <sml:documentation xlink:role="urn:ogc:def:object:OGC:1.0:image">\n        <sml:Document>\n          <gml:description>photo of the weather station</gml:description>\n          <sml:format>image/jpg</sml:format>\n          <sml:onlineResource xlink:href="http://ifgi.uni-muenster.de/~e_juer01/WS2500.jpg"/>\n        </sml:Document>\n      </sml:documentation>\n      <sml:history>\n        <sml:EventList>\n          <sml:member name="deployDate">\n            <sml:Event>\n              <sml:date>2007-06-01</sml:date>\n              <gml:description>Event of deploying the weather station.</gml:description>\n              <sml:contact xlink:href="#contact"/>\n            </sml:Event>\n          </sml:member>\n        </sml:EventList>\n      </sml:history>\n      <sml:position name="stationPosition">\n        <swe:Position fixed="false" referenceFrame="urn:ogc:def:crs:EPSG::4326">\n          <swe:location>\n            <swe:Vector gml:id="STATION_LOCATION">\n              <swe:coordinate name="northing">\n                <swe:Quantity axisID="y">\n                  <swe:uom code="deg" xlink:href="urn:x-ogc:def:uom:OGC:deg"/>\n                  <swe:value>51.9348</swe:value>\n                </swe:Quantity>\n              </swe:coordinate>\n              <swe:coordinate name="easting">\n                <swe:Quantity axisID="x">\n                  <swe:uom code="deg" xlink:href="urn:x-ogc:def:uom:OGC:deg"/>\n                  <swe:value>7.6524</swe:value>\n                </swe:Quantity>\n              </swe:coordinate>\n              <swe:coordinate name="altitude">\n                <swe:Quantity axisID="z">\n                  <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                  <swe:value>200</swe:value>\n                </swe:Quantity>\n              </swe:coordinate>\n            </swe:Vector>\n          </swe:location>\n        </swe:Position>\n      </sml:position>\n      <sml:inputs>\n        <sml:InputList>\n          <sml:input name="precipitation">\n            <swe:ObservableProperty definition="Precipitation"/>\n          </sml:input>\n          <sml:input name="atmosphericTemperature">\n            <swe:ObservableProperty definition="AirTemperature"/>\n          </sml:input>\n          <sml:input name="atmosphericPressure">\n            <swe:ObservableProperty definition="AtmosphericPressure"/>\n          </sml:input>\n          <sml:input name="wind">\n            <swe:ObservableProperty definition="Wind"/>\n          </sml:input>\n          <sml:input name="luminance">\n            <swe:ObservableProperty definition="Luminance"/>\n          </sml:input>\n          <sml:input name="humidity">\n            <swe:ObservableProperty definition="RelativeHumidity"/>\n          </sml:input>\n        </sml:InputList>\n      </sml:inputs>\n      <sml:outputs>\n        <sml:OutputList>\n          <sml:output name="precipitation">\n            <swe:Quantity definition="Precipitation1Hour">\n              <swe:uom code="mm" xlink:href="urn:x-ogc:def:uom:OGC:mm"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="windDirection">\n            <swe:Quantity definition="WindDirection">\n              <swe:uom code="deg" xlink:href="urn:x-ogc:def:uom:OGC:deg"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="windSpeed">\n            <swe:Quantity definition="WindSpeed">\n              <swe:uom code="m/s" xlink:href="urn:x-ogc:def:uom:OGC:m_s"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="barometricPressure">\n            <swe:Quantity definition="BarometricPressure">\n              <swe:uom code="hPa" xlink:href="urn:x-ogc:def:uom:OGC:hPa"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="temperature">\n            <swe:Quantity definition="Temperature">\n              <swe:uom code="Cel" xlink:href="urn:x-ogc:def:uom:OGC:degC"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="luminance">\n            <swe:Quantity definition="Luminance">\n              <swe:uom code="lx" xlink:href="urn:x-ogc:def:uom:OGC:lx"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="relativeHumidity">\n            <swe:Quantity definition="RelativeHumidity">\n              <swe:uom code="%" xlink:href="urn:x-ogc:def:uom:OGC:percent"/>\n            </swe:Quantity>\n          </sml:output>\n        </sml:OutputList>\n      </sml:outputs>\n    </sml:System>\n  </sml:member>\n</sml:SensorML>
+1	1	1	2017-01-26 14:54:11.593	\N	<sml:SensorML xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:sos="http://www.opengis.net/sos/1.0" version="1.0.1">\n  <sml:member>\n    <sml:System xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengeospatial.net/ows" xmlns:ogc="http://www.opengis.net/ogc" xmlns:om="http://www.opengis.net/om/1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n      <sml:identification>\n        <sml:IdentifierList>\n          <sml:identifier name="uniqueID">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">\n              <sml:value>52NorthWS1</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="longName">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">\n              <sml:value>This is a WS2500 weather station setup at 52North, Münster in Germany. Moved to different locations for each OSGeo-Live release.</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="shortName">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">\n              <sml:value>52North HWS 1</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="productName">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">\n              <sml:value>ELV Radio Weather Station WS 2500</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="modelNumber">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:modelNumber">\n              <sml:value>53759</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="manufacturer">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:manufacturer">\n              <sml:value>ELV Elektronik AG</sml:value>\n            </sml:Term>\n          </sml:identifier>\n          <sml:identifier name="operator">\n            <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:operator">\n              <sml:value>52North, Münster, Germany.</sml:value>\n            </sml:Term>\n          </sml:identifier>\n        </sml:IdentifierList>\n      </sml:identification>\n      <sml:classification>\n        <sml:ClassifierList>\n          <sml:classifier name="intendedApplication">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:application">\n              <sml:value>weather</sml:value>\n            </sml:Term>\n          </sml:classifier>\n          <sml:classifier name="sensorType">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n              <sml:value>thermometer</sml:value>\n            </sml:Term>\n          </sml:classifier>\n          <sml:classifier name="sensorType">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n              <sml:value>rain gauge</sml:value>\n            </sml:Term>\n          </sml:classifier>\n          <sml:classifier name="sensorType">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n              <sml:value>barometer</sml:value>\n            </sml:Term>\n          </sml:classifier>\n          <sml:classifier name="sensorType">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n              <sml:value>anemometer</sml:value>\n            </sml:Term>\n          </sml:classifier>\n          <sml:classifier name="sensorType">\n            <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n              <sml:value>Luminance Sensor</sml:value>\n            </sml:Term>\n          </sml:classifier>\n        </sml:ClassifierList>\n      </sml:classification>\n      <sml:capabilities>\n        <swe:SimpleDataRecord definition="urn:ogc:def:property:status">\n          <!--station is collecting data-->\n          <swe:field name="status">\n            <swe:Boolean>\n              <swe:value>false</swe:value>\n            </swe:Boolean>\n          </swe:field>\n          <swe:field name="mobile">\n            <swe:Boolean>\n              <swe:value>false</swe:value>\n            </swe:Boolean>\n          </swe:field>\n          <swe:field name="measuringInterval">\n            <swe:Quantity definition="urn:ogc:def:property:OGC:1.0:measuringInterval">\n              <gml:description>The measuring interval of the weather station.</gml:description>\n              <swe:uom code="min" xlink:href="urn:x-ogc:def:uom:OGC:min"/>\n              <swe:value>3</swe:value>\n            </swe:Quantity>\n          </swe:field>\n          <swe:field name="transmissionFrequency">\n            <swe:Quantity definition="urn:ogc:def:property:OGC:1.0:transmissionFrequency">\n              <gml:description>The transmission frequency of the weather station.</gml:description>\n              <swe:uom code="MHz" xlink:href="urn:x-ogc:def:uom:OGC:MHz"/>\n              <swe:value>433.92</swe:value>\n            </swe:Quantity>\n          </swe:field>\n          <swe:field name="powerSupply">\n            <swe:Text definition="urn:ogc:def:property:OGC:1.0:powerSupply">\n              <gml:description>The power supply of the weather station.</gml:description>\n              <swe:value>4 Baby cells 1.5V = 7,5 V / 500 mA</swe:value>\n            </swe:Text>\n          </swe:field>\n        </swe:SimpleDataRecord>\n      </sml:capabilities>\n      <sml:contact>\n        <sml:ResponsibleParty gml:id="contact">\n          <sml:individualName>Jürrens, Eike Hinderk</sml:individualName>\n          <sml:organizationName>52North, Münster, Germany.</sml:organizationName>\n          <sml:contactInfo>\n            <sml:phone>\n              <sml:voice>+49 251 39 63 71 33</sml:voice>\n              <sml:facsimile>+49 251 39 63 71 11</sml:facsimile>\n            </sml:phone>\n            <sml:address>\n              <sml:deliveryPoint>Martin-Luther-King-Weg 24</sml:deliveryPoint>\n              <sml:city>Münster</sml:city>\n              <sml:administrativeArea>North Rhine-Westfalia</sml:administrativeArea>\n              <sml:postalCode>49151</sml:postalCode>\n              <sml:country>Germany</sml:country>\n              <sml:electronicMailAddress>e.h.juerrens@52north.org</sml:electronicMailAddress>\n            </sml:address>\n          </sml:contactInfo>\n        </sml:ResponsibleParty>\n      </sml:contact>\n      <sml:documentation xlink:role="urn:ogc:def:object:OGC:1.0:image">\n        <sml:Document>\n          <gml:description>photo of the weather station</gml:description>\n          <sml:format>image/jpg</sml:format>\n          <sml:onlineResource xlink:href="http://ifgi.uni-muenster.de/~e_juer01/WS2500.jpg"/>\n        </sml:Document>\n      </sml:documentation>\n      <sml:history>\n        <sml:EventList>\n          <sml:member name="deployDate">\n            <sml:Event>\n              <sml:date>2007-06-01</sml:date>\n              <gml:description>Event of deploying the weather station.</gml:description>\n              <sml:contact xlink:href="#contact"/>\n            </sml:Event>\n          </sml:member>\n        </sml:EventList>\n      </sml:history>\n      <sml:spatialReferenceFrame>\n        <gml:EngineeringCRS gml:id="STATION_FRAME">\n          <gml:srsName>Spatial Reference System of station</gml:srsName>\n          <gml:usesCS xlink:href="urn:ogc:def:cs:OGC:1.0:Grid2dSquareCS"/>\n          <gml:usesEngineeringDatum>\n            <gml:EngineeringDatum gml:id="STATION_DATUM">\n              <gml:datumName>Spatial Datum of station</gml:datumName>\n              <gml:anchorPoint>Origin is the base of the station.\n                                    Z is vertical.\n                                    X and Y are orthogonal to Z.\n                                    X is orthogonal to Y.\n                                    Y is parallel to the North-Axis and points to North.\n                                    X is orthogonal to the North-Axis and points to East.</gml:anchorPoint>\n            </gml:EngineeringDatum>\n          </gml:usesEngineeringDatum>\n        </gml:EngineeringCRS>\n      </sml:spatialReferenceFrame>\n      <sml:position name="stationPosition">\n        <swe:Position fixed="false" referenceFrame="urn:ogc:def:crs:EPSG:4326">\n          <swe:location>\n            <swe:Vector gml:id="STATION_LOCATION">\n              <swe:coordinate name="latitude">\n                <swe:Quantity axisID="y">\n                  <swe:uom code="deg" xlink:href="urn:x-ogc:def:uom:OGC:deg"/>\n                  <swe:value>48.56683</swe:value>\n                </swe:Quantity>\n              </swe:coordinate>\n              <swe:coordinate name="longitude">\n                <swe:Quantity axisID="x">\n                  <swe:uom code="deg" xlink:href="urn:x-ogc:def:uom:OGC:deg"/>\n                  <swe:value>13.45105</swe:value>\n                </swe:Quantity>\n              </swe:coordinate>\n              <swe:coordinate name="altitude">\n                <swe:Quantity axisID="z">\n                  <!--200-->\n                  <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                  <swe:value>320</swe:value>\n                </swe:Quantity>\n              </swe:coordinate>\n            </swe:Vector>\n          </swe:location>\n        </swe:Position>\n      </sml:position>\n      <sml:inputs>\n        <sml:InputList>\n          <sml:input name="precipitation">\n            <swe:ObservableProperty definition="Precipitation"/>\n          </sml:input>\n          <sml:input name="atmosphericTemperature">\n            <swe:ObservableProperty definition="AirTemperature"/>\n          </sml:input>\n          <sml:input name="atmosphericPressure">\n            <swe:ObservableProperty definition="AtmosphericPressure"/>\n          </sml:input>\n          <sml:input name="wind">\n            <swe:ObservableProperty definition="Wind"/>\n          </sml:input>\n          <sml:input name="luminance">\n            <swe:ObservableProperty definition="Luminance"/>\n          </sml:input>\n          <sml:input name="humidity">\n            <swe:ObservableProperty definition="RelativeHumidity"/>\n          </sml:input>\n        </sml:InputList>\n      </sml:inputs>\n      <sml:outputs>\n        <sml:OutputList>\n          <sml:output name="precipitation">\n            <swe:Quantity definition="Precipitation1Hour">\n              <swe:uom code="mm" xlink:href="urn:x-ogc:def:uom:OGC:mm"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="windDirection">\n            <swe:Quantity definition="WindDirection">\n              <swe:uom code="deg" xlink:href="urn:x-ogc:def:uom:OGC:deg"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="windSpeed">\n            <swe:Quantity definition="WindSpeed">\n              <swe:uom code="m/s" xlink:href="urn:x-ogc:def:uom:OGC:m_s"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="barometricPressure">\n            <swe:Quantity definition="BarometricPressure">\n              <swe:uom code="hPa" xlink:href="urn:x-ogc:def:uom:OGC:hPa"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="temperature">\n            <swe:Quantity definition="Temperature">\n              <swe:uom code="Cel" xlink:href="urn:x-ogc:def:uom:OGC:degC"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="luminance">\n            <swe:Quantity definition="Luminance">\n              <swe:uom code="lx" xlink:href="urn:x-ogc:def:uom:OGC:lx"/>\n            </swe:Quantity>\n          </sml:output>\n          <sml:output name="relativeHumidity">\n            <swe:Quantity definition="RelativeHumidity">\n              <swe:uom code="%" xlink:href="urn:x-ogc:def:uom:OGC:percent"/>\n            </swe:Quantity>\n          </sml:output>\n        </sml:OutputList>\n      </sml:outputs>\n      <sml:components>\n        <sml:ComponentList>\n          <sml:component name="rain-gauge">\n            <sml:Component>\n              <sml:identification>\n                <sml:IdentifierList>\n                  <sml:identifier>\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">\n                      <sml:value>urn:ogc:object:feature:Sensor:OSIRIS-HWS:rain-gauge-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier>\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">\n                      <sml:value>OSIRIS Rain-Gauge at weather station 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier>\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">\n                      <sml:value>OSIRIS Rain-Gauge 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="productName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">\n                      <sml:value>S2000R-1 precipitation sensor</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                </sml:IdentifierList>\n              </sml:identification>\n              <sml:classification>\n                <sml:ClassifierList>\n                  <sml:classifier name="sensorType">\n                    <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n                      <sml:value>Precipitation</sml:value>\n                    </sml:Term>\n                  </sml:classifier>\n                </sml:ClassifierList>\n              </sml:classification>\n              <sml:capabilities>\n                <swe:SimpleDataRecord definition="urn:ogc:def:property:status">\n                  <swe:field name="status">\n                    <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">\n                      <gml:description>The operating status of the sensor.</gml:description>\n                      <swe:value>active</swe:value>\n                    </swe:Text>\n                  </swe:field>\n                </swe:SimpleDataRecord>\n              </sml:capabilities>\n              <sml:position name="rainGaugePosition">\n                <swe:Position>\n                  <swe:location>\n                    <swe:Vector>\n                      <swe:coordinate name="easting">\n                        <swe:Quantity axisID="x">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="northing">\n                        <swe:Quantity axisID="y">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="altitude">\n                        <swe:Quantity axisID="z">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                    </swe:Vector>\n                  </swe:location>\n                </swe:Position>\n              </sml:position>\n              <sml:inputs>\n                <sml:InputList>\n                  <sml:input name="precipitation">\n                    <swe:ObservableProperty definition="Precipitation"/>\n                  </sml:input>\n                </sml:InputList>\n              </sml:inputs>\n              <sml:outputs>\n                <sml:OutputList>\n                  <sml:output name="precipitation">\n                    <swe:Quantity definition="Precipitation1Hour">\n                      <swe:uom code="mm" xlink:href="urn:x-ogc:def:uom:OGC:mm"/>\n                    </swe:Quantity>\n                  </sml:output>\n                </sml:OutputList>\n              </sml:outputs>\n            </sml:Component>\n          </sml:component>\n          <sml:component name="radiometer">\n            <sml:Component>\n              <sml:identification>\n                <sml:IdentifierList>\n                  <sml:identifier>\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">\n                      <sml:value>urn:ogc:object:feature:Sensor:OSIRIS-HWS:radiometer-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="longName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">\n                      <sml:value>OSIRIS Radiometer at weather station 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="shortName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">\n                      <sml:value>OSIRIS Radiometer 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="productName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">\n                      <sml:value>S2500H luminance sensor</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                </sml:IdentifierList>\n              </sml:identification>\n              <sml:classification>\n                <sml:ClassifierList>\n                  <sml:classifier name="sensorType">\n                    <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n                      <sml:value>radiometer</sml:value>\n                    </sml:Term>\n                  </sml:classifier>\n                </sml:ClassifierList>\n              </sml:classification>\n              <sml:capabilities>\n                <swe:SimpleDataRecord definition="urn:ogc:def:property:status">\n                  <swe:field name="status">\n                    <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">\n                      <gml:description>The operating status of the sensor.</gml:description>\n                      <swe:value>active</swe:value>\n                    </swe:Text>\n                  </swe:field>\n                </swe:SimpleDataRecord>\n              </sml:capabilities>\n              <sml:position name="radiometerPosition">\n                <swe:Position referenceFrame="#STATION_FRAME">\n                  <swe:location>\n                    <swe:Vector>\n                      <swe:coordinate name="easting">\n                        <swe:Quantity axisID="x">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="northing">\n                        <swe:Quantity axisID="y">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="altitude">\n                        <swe:Quantity axisID="z">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                    </swe:Vector>\n                  </swe:location>\n                </swe:Position>\n              </sml:position>\n              <sml:inputs>\n                <sml:InputList>\n                  <sml:input name="luminance">\n                    <swe:ObservableProperty definition="Luminance"/>\n                  </sml:input>\n                </sml:InputList>\n              </sml:inputs>\n              <sml:outputs>\n                <sml:OutputList>\n                  <sml:output name="luminance">\n                    <swe:Quantity definition="Luminance">\n                      <swe:uom code="lx" xlink:href="urn:x-ogc:def:uom:OGC:lx"/>\n                    </swe:Quantity>\n                  </sml:output>\n                </sml:OutputList>\n              </sml:outputs>\n            </sml:Component>\n          </sml:component>\n          <sml:component name="hygrometer">\n            <sml:Component>\n              <sml:identification>\n                <sml:IdentifierList>\n                  <sml:identifier>\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">\n                      <sml:value>urn:ogc:object:feature:Sensor:OSIRIS-HWS:hygrometer-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="longName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">\n                      <sml:value>OSIRIS Hygrometer at weather station 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="shortName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">\n                      <sml:value>OSIRIS Hygrometer 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="productName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">\n                      <sml:value>S2500H humidity sensor</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                </sml:IdentifierList>\n              </sml:identification>\n              <sml:classification>\n                <sml:ClassifierList>\n                  <sml:classifier name="sensorType">\n                    <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n                      <sml:value>hygrometer</sml:value>\n                    </sml:Term>\n                  </sml:classifier>\n                </sml:ClassifierList>\n              </sml:classification>\n              <sml:capabilities>\n                <swe:SimpleDataRecord definition="urn:ogc:def:property:status">\n                  <swe:field name="status">\n                    <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">\n                      <gml:description>The operating status of the sensor.</gml:description>\n                      <swe:value>active</swe:value>\n                    </swe:Text>\n                  </swe:field>\n                </swe:SimpleDataRecord>\n              </sml:capabilities>\n              <sml:position name="hygrometerPosition">\n                <swe:Position referenceFrame="#STATION_FRAME">\n                  <swe:location>\n                    <swe:Vector>\n                      <swe:coordinate name="easting">\n                        <swe:Quantity axisID="x">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="northing">\n                        <swe:Quantity axisID="y">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="altitude">\n                        <swe:Quantity axisID="z">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                    </swe:Vector>\n                  </swe:location>\n                </swe:Position>\n              </sml:position>\n              <sml:inputs>\n                <sml:InputList>\n                  <sml:input name="humidity">\n                    <swe:ObservableProperty definition="Humidity"/>\n                  </sml:input>\n                </sml:InputList>\n              </sml:inputs>\n              <sml:outputs>\n                <sml:OutputList>\n                  <sml:output name="relativeHumidity">\n                    <swe:Quantity definition="RelativeHumidity">\n                      <swe:uom code="%" xlink:href="urn:x-ogc:def:uom:OGC:percent"/>\n                    </swe:Quantity>\n                  </sml:output>\n                </sml:OutputList>\n              </sml:outputs>\n            </sml:Component>\n          </sml:component>\n          <sml:component name="aenometer">\n            <sml:Component>\n              <sml:identification>\n                <sml:IdentifierList>\n                  <sml:identifier>\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">\n                      <sml:value>urn:ogc:object:feature:Sensor:OSIRIS-HWS:aenometer-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier>\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">\n                      <sml:value>OSIRIS Aenometer at weather station 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier>\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">\n                      <sml:value>OSIRIS Aenometer 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="productName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">\n                      <sml:value>S2000W windsensor</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                </sml:IdentifierList>\n              </sml:identification>\n              <sml:classification>\n                <sml:ClassifierList>\n                  <!--FIXME kann es 2 classifier fÃƒÂ¼r eine Component geben?-->\n                  <sml:classifier name="sensorType">\n                    <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n                      <sml:value>windSpeed</sml:value>\n                    </sml:Term>\n                  </sml:classifier>\n                  <sml:classifier name="sensorType">\n                    <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n                      <sml:value>windDirection</sml:value>\n                    </sml:Term>\n                  </sml:classifier>\n                </sml:ClassifierList>\n              </sml:classification>\n              <sml:capabilities>\n                <swe:SimpleDataRecord definition="urn:ogc:def:property:status">\n                  <swe:field name="status">\n                    <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">\n                      <gml:description>The operating status of the sensor.</gml:description>\n                      <swe:value>active</swe:value>\n                    </swe:Text>\n                  </swe:field>\n                </swe:SimpleDataRecord>\n              </sml:capabilities>\n              <sml:position name="aenometerPosition">\n                <swe:Position>\n                  <swe:location>\n                    <swe:Vector>\n                      <swe:coordinate name="easting">\n                        <swe:Quantity axisID="x">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="northing">\n                        <swe:Quantity axisID="y">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="altitude">\n                        <swe:Quantity axisID="z">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                    </swe:Vector>\n                  </swe:location>\n                </swe:Position>\n              </sml:position>\n              <sml:inputs>\n                <sml:InputList>\n                  <sml:input name="wind">\n                    <swe:ObservableProperty definition="Wind"/>\n                  </sml:input>\n                </sml:InputList>\n              </sml:inputs>\n              <sml:outputs>\n                <sml:OutputList>\n                  <sml:output name="windSpeed">\n                    <swe:Quantity definition="WindSpeed">\n                      <gml:metaDataProperty>\n                        <sos:offering>\n                          <sos:id>WIND_SPEED</sos:id>\n                          <sos:name>The speed of the measured wind.</sos:name>\n                        </sos:offering>\n                      </gml:metaDataProperty>\n                      <swe:uom code="m/s" xlink:href="urn:x-ogc:def:uom:OGC:m_s"/>\n                    </swe:Quantity>\n                  </sml:output>\n                  <sml:output name="windDirection">\n                    <swe:Quantity definition="WindDirection">\n                      <swe:uom code="deg" xlink:href="urn:x-ogc:def:uom:OGC:deg"/>\n                    </swe:Quantity>\n                  </sml:output>\n                </sml:OutputList>\n              </sml:outputs>\n            </sml:Component>\n          </sml:component>\n          <sml:component name="barmometer">\n            <sml:Component>\n              <sml:identification>\n                <sml:IdentifierList>\n                  <sml:identifier>\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">\n                      <sml:value>urn:ogc:object:feature:Sensor:OSIRIS-HWS:barometer-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="longName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">\n                      <sml:value>OSIRIS Barometer at weather station 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="shortName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">\n                      <sml:value>OSIRIS Barometer 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="productName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">\n                      <sml:value>S2000B pressure sensor</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                </sml:IdentifierList>\n              </sml:identification>\n              <sml:classification>\n                <sml:ClassifierList>\n                  <sml:classifier name="sensorType">\n                    <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n                      <sml:value>barometer</sml:value>\n                    </sml:Term>\n                  </sml:classifier>\n                </sml:ClassifierList>\n              </sml:classification>\n              <sml:capabilities>\n                <swe:SimpleDataRecord definition="urn:ogc:def:property:status">\n                  <swe:field name="status">\n                    <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">\n                      <gml:description>The operating status of the sensor.</gml:description>\n                      <swe:value>active</swe:value>\n                    </swe:Text>\n                  </swe:field>\n                </swe:SimpleDataRecord>\n              </sml:capabilities>\n              <sml:position name="thermometerPosition">\n                <swe:Position referenceFrame="#STATION_FRAME">\n                  <swe:location>\n                    <swe:Vector>\n                      <swe:coordinate name="easting">\n                        <swe:Quantity axisID="x">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="northing">\n                        <swe:Quantity axisID="y">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="altitude">\n                        <swe:Quantity axisID="z">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                    </swe:Vector>\n                  </swe:location>\n                </swe:Position>\n              </sml:position>\n              <sml:inputs>\n                <sml:InputList>\n                  <sml:input name="atmosphericPressure">\n                    <swe:ObservableProperty definition="AtmospericPressure"/>\n                  </sml:input>\n                </sml:InputList>\n              </sml:inputs>\n              <sml:outputs>\n                <sml:OutputList>\n                  <sml:output name="barometricPressure">\n                    <swe:Quantity definition="BarometricPressure">\n                      <swe:uom code="hPa" xlink:href="urn:x-ogc:def:uom:OGC:hPa"/>\n                    </swe:Quantity>\n                  </sml:output>\n                </sml:OutputList>\n              </sml:outputs>\n            </sml:Component>\n          </sml:component>\n          <sml:component name="thermometer">\n            <sml:Component>\n              <sml:identification>\n                <sml:IdentifierList>\n                  <sml:identifier>\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">\n                      <sml:value>urn:ogc:object:feature:Sensor:OSIRIS-HWS:thermometer-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="longName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">\n                      <sml:value>OSIRIS Thermometer at weather station 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="shortName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">\n                      <sml:value>OSIRIS Thermometer 52N HWS 1</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                  <sml:identifier name="productName">\n                    <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">\n                      <sml:value>S2001IA temperature sensor</sml:value>\n                    </sml:Term>\n                  </sml:identifier>\n                </sml:IdentifierList>\n              </sml:identification>\n              <sml:classification>\n                <sml:ClassifierList>\n                  <sml:classifier name="sensorType">\n                    <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">\n                      <sml:value>thermometer</sml:value>\n                    </sml:Term>\n                  </sml:classifier>\n                </sml:ClassifierList>\n              </sml:classification>\n              <sml:capabilities>\n                <swe:SimpleDataRecord definition="urn:ogc:def:property:status">\n                  <swe:field name="status">\n                    <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">\n                      <gml:description>The operating status of the sensor.</gml:description>\n                      <swe:value>active</swe:value>\n                    </swe:Text>\n                  </swe:field>\n                </swe:SimpleDataRecord>\n              </sml:capabilities>\n              <sml:position name="thermometerPosition">\n                <swe:Position referenceFrame="#STATION_FRAME">\n                  <swe:location>\n                    <swe:Vector>\n                      <swe:coordinate name="easting">\n                        <swe:Quantity axisID="x">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="northing">\n                        <swe:Quantity axisID="y">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                      <swe:coordinate name="altitude">\n                        <swe:Quantity axisID="z">\n                          <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>\n                          <swe:value>0</swe:value>\n                        </swe:Quantity>\n                      </swe:coordinate>\n                    </swe:Vector>\n                  </swe:location>\n                </swe:Position>\n              </sml:position>\n              <sml:inputs>\n                <sml:InputList>\n                  <sml:input name="atmosphericTemperature">\n                    <swe:ObservableProperty definition="AirTemperature"/>\n                  </sml:input>\n                </sml:InputList>\n              </sml:inputs>\n              <sml:outputs>\n                <sml:OutputList>\n                  <sml:output name="temperature">\n                    <swe:Quantity definition="Temperature">\n                      <swe:uom code="Cel" xlink:href="urn:x-ogc:def:uom:OGC:degC"/>\n                    </swe:Quantity>\n                  </sml:output>\n                </sml:OutputList>\n              </sml:outputs>\n            </sml:Component>\n          </sml:component>\n        </sml:ComponentList>\n      </sml:components>\n    </sml:System>\n  </sml:member>\n</sml:SensorML>
 \.
 
 
 --
--- TOC entry 3875 (class 0 OID 0)
+-- TOC entry 3876 (class 0 OID 0)
 -- Dependencies: 242
 -- Name: validproceduretimeid_seq; Type: SEQUENCE SET; Schema: public; Owner: user
 --
@@ -9101,7 +9111,7 @@ SELECT pg_catalog.setval('validproceduretimeid_seq', 1, true);
 
 
 --
--- TOC entry 3329 (class 2606 OID 59996)
+-- TOC entry 3329 (class 2606 OID 62361)
 -- Name: blobvalue_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9110,7 +9120,7 @@ ALTER TABLE ONLY blobvalue
 
 
 --
--- TOC entry 3331 (class 2606 OID 60003)
+-- TOC entry 3331 (class 2606 OID 62368)
 -- Name: booleanvalue_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9119,7 +9129,7 @@ ALTER TABLE ONLY booleanvalue
 
 
 --
--- TOC entry 3333 (class 2606 OID 60008)
+-- TOC entry 3333 (class 2606 OID 62373)
 -- Name: categoryvalue_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9128,7 +9138,7 @@ ALTER TABLE ONLY categoryvalue
 
 
 --
--- TOC entry 3335 (class 2606 OID 60013)
+-- TOC entry 3335 (class 2606 OID 62378)
 -- Name: codespace_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9137,7 +9147,7 @@ ALTER TABLE ONLY codespace
 
 
 --
--- TOC entry 3337 (class 2606 OID 60233)
+-- TOC entry 3337 (class 2606 OID 62598)
 -- Name: codespaceuk; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9146,7 +9156,7 @@ ALTER TABLE ONLY codespace
 
 
 --
--- TOC entry 3339 (class 2606 OID 60018)
+-- TOC entry 3339 (class 2606 OID 62383)
 -- Name: compositephenomenon_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9155,7 +9165,7 @@ ALTER TABLE ONLY compositephenomenon
 
 
 --
--- TOC entry 3341 (class 2606 OID 60023)
+-- TOC entry 3341 (class 2606 OID 62388)
 -- Name: countvalue_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9164,7 +9174,7 @@ ALTER TABLE ONLY countvalue
 
 
 --
--- TOC entry 3343 (class 2606 OID 60031)
+-- TOC entry 3343 (class 2606 OID 62396)
 -- Name: featureofinterest_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9173,7 +9183,7 @@ ALTER TABLE ONLY featureofinterest
 
 
 --
--- TOC entry 3349 (class 2606 OID 60036)
+-- TOC entry 3349 (class 2606 OID 62401)
 -- Name: featureofinteresttype_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9182,7 +9192,7 @@ ALTER TABLE ONLY featureofinteresttype
 
 
 --
--- TOC entry 3353 (class 2606 OID 60041)
+-- TOC entry 3353 (class 2606 OID 62406)
 -- Name: featurerelation_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9191,7 +9201,7 @@ ALTER TABLE ONLY featurerelation
 
 
 --
--- TOC entry 3351 (class 2606 OID 60239)
+-- TOC entry 3351 (class 2606 OID 62604)
 -- Name: featuretypeuk; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9200,7 +9210,7 @@ ALTER TABLE ONLY featureofinteresttype
 
 
 --
--- TOC entry 3345 (class 2606 OID 60237)
+-- TOC entry 3345 (class 2606 OID 62602)
 -- Name: featureurl; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9209,7 +9219,7 @@ ALTER TABLE ONLY featureofinterest
 
 
 --
--- TOC entry 3347 (class 2606 OID 60235)
+-- TOC entry 3347 (class 2606 OID 62600)
 -- Name: foiidentifieruk; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9218,7 +9228,7 @@ ALTER TABLE ONLY featureofinterest
 
 
 --
--- TOC entry 3355 (class 2606 OID 60049)
+-- TOC entry 3355 (class 2606 OID 62414)
 -- Name: geometryvalue_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9227,7 +9237,7 @@ ALTER TABLE ONLY geometryvalue
 
 
 --
--- TOC entry 3357 (class 2606 OID 60241)
+-- TOC entry 3357 (class 2606 OID 62606)
 -- Name: i18nfeatureidentity; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9236,7 +9246,7 @@ ALTER TABLE ONLY i18nfeatureofinterest
 
 
 --
--- TOC entry 3360 (class 2606 OID 60057)
+-- TOC entry 3360 (class 2606 OID 62422)
 -- Name: i18nfeatureofinterest_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9245,7 +9255,7 @@ ALTER TABLE ONLY i18nfeatureofinterest
 
 
 --
--- TOC entry 3362 (class 2606 OID 60065)
+-- TOC entry 3362 (class 2606 OID 62430)
 -- Name: i18nobservableproperty_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9254,7 +9264,7 @@ ALTER TABLE ONLY i18nobservableproperty
 
 
 --
--- TOC entry 3364 (class 2606 OID 60244)
+-- TOC entry 3364 (class 2606 OID 62609)
 -- Name: i18nobspropidentity; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9263,7 +9273,7 @@ ALTER TABLE ONLY i18nobservableproperty
 
 
 --
--- TOC entry 3367 (class 2606 OID 60073)
+-- TOC entry 3367 (class 2606 OID 62438)
 -- Name: i18noffering_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9272,7 +9282,7 @@ ALTER TABLE ONLY i18noffering
 
 
 --
--- TOC entry 3369 (class 2606 OID 60247)
+-- TOC entry 3369 (class 2606 OID 62612)
 -- Name: i18nofferingidentity; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9281,7 +9291,7 @@ ALTER TABLE ONLY i18noffering
 
 
 --
--- TOC entry 3372 (class 2606 OID 60081)
+-- TOC entry 3372 (class 2606 OID 62446)
 -- Name: i18nprocedure_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9290,7 +9300,7 @@ ALTER TABLE ONLY i18nprocedure
 
 
 --
--- TOC entry 3374 (class 2606 OID 60250)
+-- TOC entry 3374 (class 2606 OID 62615)
 -- Name: i18nprocedureidentity; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9299,7 +9309,7 @@ ALTER TABLE ONLY i18nprocedure
 
 
 --
--- TOC entry 3377 (class 2606 OID 60086)
+-- TOC entry 3377 (class 2606 OID 62451)
 -- Name: numericvalue_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9308,7 +9318,7 @@ ALTER TABLE ONLY numericvalue
 
 
 --
--- TOC entry 3379 (class 2606 OID 60096)
+-- TOC entry 3379 (class 2606 OID 62461)
 -- Name: observableproperty_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9317,7 +9327,7 @@ ALTER TABLE ONLY observableproperty
 
 
 --
--- TOC entry 3383 (class 2606 OID 60106)
+-- TOC entry 3383 (class 2606 OID 62471)
 -- Name: observation_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9326,7 +9336,7 @@ ALTER TABLE ONLY observation
 
 
 --
--- TOC entry 3396 (class 2606 OID 60115)
+-- TOC entry 3394 (class 2606 OID 62480)
 -- Name: observationconstellation_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9335,7 +9345,7 @@ ALTER TABLE ONLY observationconstellation
 
 
 --
--- TOC entry 3400 (class 2606 OID 60120)
+-- TOC entry 3398 (class 2606 OID 62485)
 -- Name: observationhasoffering_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9344,7 +9354,7 @@ ALTER TABLE ONLY observationhasoffering
 
 
 --
--- TOC entry 3385 (class 2606 OID 60255)
+-- TOC entry 3385 (class 2606 OID 62620)
 -- Name: observationidentity; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9353,7 +9363,7 @@ ALTER TABLE ONLY observation
 
 
 --
--- TOC entry 3404 (class 2606 OID 60125)
+-- TOC entry 3402 (class 2606 OID 62490)
 -- Name: observationtype_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9362,7 +9372,7 @@ ALTER TABLE ONLY observationtype
 
 
 --
--- TOC entry 3406 (class 2606 OID 60270)
+-- TOC entry 3404 (class 2606 OID 62633)
 -- Name: observationtypeuk; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9371,16 +9381,7 @@ ALTER TABLE ONLY observationtype
 
 
 --
--- TOC entry 3387 (class 2606 OID 60257)
--- Name: obsidentifieruk; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
---
-
-ALTER TABLE ONLY observation
-    ADD CONSTRAINT obsidentifieruk UNIQUE (identifier);
-
-
---
--- TOC entry 3398 (class 2606 OID 60263)
+-- TOC entry 3396 (class 2606 OID 62626)
 -- Name: obsnconstellationidentity; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9389,7 +9390,7 @@ ALTER TABLE ONLY observationconstellation
 
 
 --
--- TOC entry 3381 (class 2606 OID 60253)
+-- TOC entry 3381 (class 2606 OID 62618)
 -- Name: obspropidentifieruk; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9398,7 +9399,7 @@ ALTER TABLE ONLY observableproperty
 
 
 --
--- TOC entry 3408 (class 2606 OID 60135)
+-- TOC entry 3406 (class 2606 OID 62500)
 -- Name: offering_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9407,7 +9408,7 @@ ALTER TABLE ONLY offering
 
 
 --
--- TOC entry 3412 (class 2606 OID 60140)
+-- TOC entry 3410 (class 2606 OID 62505)
 -- Name: offeringallowedfeaturetype_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9416,7 +9417,7 @@ ALTER TABLE ONLY offeringallowedfeaturetype
 
 
 --
--- TOC entry 3414 (class 2606 OID 60145)
+-- TOC entry 3412 (class 2606 OID 62510)
 -- Name: offeringallowedobservationtype_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9425,7 +9426,7 @@ ALTER TABLE ONLY offeringallowedobservationtype
 
 
 --
--- TOC entry 3416 (class 2606 OID 60150)
+-- TOC entry 3414 (class 2606 OID 62515)
 -- Name: offeringhasrelatedfeature_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9434,7 +9435,7 @@ ALTER TABLE ONLY offeringhasrelatedfeature
 
 
 --
--- TOC entry 3410 (class 2606 OID 60272)
+-- TOC entry 3408 (class 2606 OID 62635)
 -- Name: offidentifieruk; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9443,7 +9444,7 @@ ALTER TABLE ONLY offering
 
 
 --
--- TOC entry 3418 (class 2606 OID 60158)
+-- TOC entry 3416 (class 2606 OID 62523)
 -- Name: parameter_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9452,7 +9453,7 @@ ALTER TABLE ONLY parameter
 
 
 --
--- TOC entry 3420 (class 2606 OID 60274)
+-- TOC entry 3418 (class 2606 OID 62637)
 -- Name: procdescformatuk; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9461,7 +9462,7 @@ ALTER TABLE ONLY proceduredescriptionformat
 
 
 --
--- TOC entry 3325 (class 2606 OID 59991)
+-- TOC entry 3325 (class 2606 OID 62356)
 -- Name: procedure_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9470,7 +9471,7 @@ ALTER TABLE ONLY procedure
 
 
 --
--- TOC entry 3422 (class 2606 OID 60163)
+-- TOC entry 3420 (class 2606 OID 62528)
 -- Name: proceduredescriptionformat_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9479,7 +9480,7 @@ ALTER TABLE ONLY proceduredescriptionformat
 
 
 --
--- TOC entry 3327 (class 2606 OID 60231)
+-- TOC entry 3327 (class 2606 OID 62596)
 -- Name: procidentifieruk; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9488,7 +9489,7 @@ ALTER TABLE ONLY procedure
 
 
 --
--- TOC entry 3424 (class 2606 OID 60168)
+-- TOC entry 3422 (class 2606 OID 62533)
 -- Name: relatedfeature_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9497,7 +9498,7 @@ ALTER TABLE ONLY relatedfeature
 
 
 --
--- TOC entry 3426 (class 2606 OID 60173)
+-- TOC entry 3424 (class 2606 OID 62538)
 -- Name: relatedfeaturehasrole_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9506,7 +9507,7 @@ ALTER TABLE ONLY relatedfeaturehasrole
 
 
 --
--- TOC entry 3428 (class 2606 OID 60178)
+-- TOC entry 3426 (class 2606 OID 62543)
 -- Name: relatedfeaturerole_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9515,7 +9516,7 @@ ALTER TABLE ONLY relatedfeaturerole
 
 
 --
--- TOC entry 3430 (class 2606 OID 60276)
+-- TOC entry 3428 (class 2606 OID 62639)
 -- Name: relfeatroleuk; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9524,7 +9525,7 @@ ALTER TABLE ONLY relatedfeaturerole
 
 
 --
--- TOC entry 3434 (class 2606 OID 60186)
+-- TOC entry 3432 (class 2606 OID 62551)
 -- Name: resulttemplate_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9533,7 +9534,7 @@ ALTER TABLE ONLY resulttemplate
 
 
 --
--- TOC entry 3438 (class 2606 OID 60191)
+-- TOC entry 3436 (class 2606 OID 62556)
 -- Name: sensorsystem_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9542,7 +9543,7 @@ ALTER TABLE ONLY sensorsystem
 
 
 --
--- TOC entry 3440 (class 2606 OID 60200)
+-- TOC entry 3438 (class 2606 OID 62565)
 -- Name: series_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9551,16 +9552,16 @@ ALTER TABLE ONLY series
 
 
 --
--- TOC entry 3443 (class 2606 OID 60282)
+-- TOC entry 3441 (class 2606 OID 62645)
 -- Name: seriesidentity; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
 ALTER TABLE ONLY series
-    ADD CONSTRAINT seriesidentity UNIQUE (featureofinterestid, observablepropertyid, procedureid);
+    ADD CONSTRAINT seriesidentity UNIQUE (featureofinterestid, observablepropertyid, procedureid, offeringid);
 
 
 --
--- TOC entry 3447 (class 2606 OID 60208)
+-- TOC entry 3446 (class 2606 OID 62573)
 -- Name: swedataarrayvalue_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9569,7 +9570,7 @@ ALTER TABLE ONLY swedataarrayvalue
 
 
 --
--- TOC entry 3449 (class 2606 OID 60216)
+-- TOC entry 3448 (class 2606 OID 62581)
 -- Name: textvalue_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9578,7 +9579,7 @@ ALTER TABLE ONLY textvalue
 
 
 --
--- TOC entry 3451 (class 2606 OID 60221)
+-- TOC entry 3450 (class 2606 OID 62586)
 -- Name: unit_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9587,7 +9588,7 @@ ALTER TABLE ONLY unit
 
 
 --
--- TOC entry 3453 (class 2606 OID 60287)
+-- TOC entry 3452 (class 2606 OID 62651)
 -- Name: unituk; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9596,7 +9597,7 @@ ALTER TABLE ONLY unit
 
 
 --
--- TOC entry 3455 (class 2606 OID 60229)
+-- TOC entry 3454 (class 2606 OID 62594)
 -- Name: validproceduretime_pkey; Type: CONSTRAINT; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9605,7 +9606,7 @@ ALTER TABLE ONLY validproceduretime
 
 
 --
--- TOC entry 3358 (class 1259 OID 60242)
+-- TOC entry 3358 (class 1259 OID 62607)
 -- Name: i18nfeatureidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9613,7 +9614,7 @@ CREATE INDEX i18nfeatureidx ON i18nfeatureofinterest USING btree (objectid);
 
 
 --
--- TOC entry 3365 (class 1259 OID 60245)
+-- TOC entry 3365 (class 1259 OID 62610)
 -- Name: i18nobspropidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9621,7 +9622,7 @@ CREATE INDEX i18nobspropidx ON i18nobservableproperty USING btree (objectid);
 
 
 --
--- TOC entry 3370 (class 1259 OID 60248)
+-- TOC entry 3370 (class 1259 OID 62613)
 -- Name: i18nofferingidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9629,7 +9630,7 @@ CREATE INDEX i18nofferingidx ON i18noffering USING btree (objectid);
 
 
 --
--- TOC entry 3375 (class 1259 OID 60251)
+-- TOC entry 3375 (class 1259 OID 62616)
 -- Name: i18nprocedureidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9637,7 +9638,7 @@ CREATE INDEX i18nprocedureidx ON i18nprocedure USING btree (objectid);
 
 
 --
--- TOC entry 3392 (class 1259 OID 60264)
+-- TOC entry 3390 (class 1259 OID 62627)
 -- Name: obsconstobspropidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9645,7 +9646,7 @@ CREATE INDEX obsconstobspropidx ON observationconstellation USING btree (observa
 
 
 --
--- TOC entry 3393 (class 1259 OID 60266)
+-- TOC entry 3391 (class 1259 OID 62629)
 -- Name: obsconstofferingidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9653,7 +9654,7 @@ CREATE INDEX obsconstofferingidx ON observationconstellation USING btree (offeri
 
 
 --
--- TOC entry 3394 (class 1259 OID 60265)
+-- TOC entry 3392 (class 1259 OID 62628)
 -- Name: obsconstprocedureidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9661,7 +9662,7 @@ CREATE INDEX obsconstprocedureidx ON observationconstellation USING btree (proce
 
 
 --
--- TOC entry 3401 (class 1259 OID 60267)
+-- TOC entry 3399 (class 1259 OID 62630)
 -- Name: obshasoffobservationidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9669,7 +9670,7 @@ CREATE INDEX obshasoffobservationidx ON observationhasoffering USING btree (obse
 
 
 --
--- TOC entry 3402 (class 1259 OID 60268)
+-- TOC entry 3400 (class 1259 OID 62631)
 -- Name: obshasoffofferingidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9677,7 +9678,7 @@ CREATE INDEX obshasoffofferingidx ON observationhasoffering USING btree (offerin
 
 
 --
--- TOC entry 3388 (class 1259 OID 60260)
+-- TOC entry 3386 (class 1259 OID 62623)
 -- Name: obsphentimeendidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9685,7 +9686,7 @@ CREATE INDEX obsphentimeendidx ON observation USING btree (phenomenontimeend);
 
 
 --
--- TOC entry 3389 (class 1259 OID 60259)
+-- TOC entry 3387 (class 1259 OID 62622)
 -- Name: obsphentimestartidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9693,7 +9694,7 @@ CREATE INDEX obsphentimestartidx ON observation USING btree (phenomenontimestart
 
 
 --
--- TOC entry 3390 (class 1259 OID 60261)
+-- TOC entry 3388 (class 1259 OID 62624)
 -- Name: obsresulttimeidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9701,7 +9702,7 @@ CREATE INDEX obsresulttimeidx ON observation USING btree (resulttime);
 
 
 --
--- TOC entry 3391 (class 1259 OID 60258)
+-- TOC entry 3389 (class 1259 OID 62621)
 -- Name: obsseriesidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9709,7 +9710,7 @@ CREATE INDEX obsseriesidx ON observation USING btree (seriesid);
 
 
 --
--- TOC entry 3431 (class 1259 OID 60278)
+-- TOC entry 3429 (class 1259 OID 62641)
 -- Name: resulttempeobspropidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9717,7 +9718,7 @@ CREATE INDEX resulttempeobspropidx ON resulttemplate USING btree (observableprop
 
 
 --
--- TOC entry 3432 (class 1259 OID 60280)
+-- TOC entry 3430 (class 1259 OID 62643)
 -- Name: resulttempidentifieridx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9725,7 +9726,7 @@ CREATE INDEX resulttempidentifieridx ON resulttemplate USING btree (identifier);
 
 
 --
--- TOC entry 3435 (class 1259 OID 60277)
+-- TOC entry 3433 (class 1259 OID 62640)
 -- Name: resulttempofferingidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9733,7 +9734,7 @@ CREATE INDEX resulttempofferingidx ON resulttemplate USING btree (offeringid);
 
 
 --
--- TOC entry 3436 (class 1259 OID 60279)
+-- TOC entry 3434 (class 1259 OID 62642)
 -- Name: resulttempprocedureidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9741,7 +9742,7 @@ CREATE INDEX resulttempprocedureidx ON resulttemplate USING btree (procedureid);
 
 
 --
--- TOC entry 3441 (class 1259 OID 60283)
+-- TOC entry 3439 (class 1259 OID 62646)
 -- Name: seriesfeatureidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9749,7 +9750,7 @@ CREATE INDEX seriesfeatureidx ON series USING btree (featureofinterestid);
 
 
 --
--- TOC entry 3444 (class 1259 OID 60284)
+-- TOC entry 3442 (class 1259 OID 62647)
 -- Name: seriesobspropidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9757,7 +9758,15 @@ CREATE INDEX seriesobspropidx ON series USING btree (observablepropertyid);
 
 
 --
--- TOC entry 3445 (class 1259 OID 60285)
+-- TOC entry 3443 (class 1259 OID 62649)
+-- Name: seriesofferingidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
+--
+
+CREATE INDEX seriesofferingidx ON series USING btree (offeringid);
+
+
+--
+-- TOC entry 3444 (class 1259 OID 62648)
 -- Name: seriesprocedureidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9765,7 +9774,7 @@ CREATE INDEX seriesprocedureidx ON series USING btree (procedureid);
 
 
 --
--- TOC entry 3456 (class 1259 OID 60289)
+-- TOC entry 3455 (class 1259 OID 62653)
 -- Name: validproceduretimeendtimeidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9773,7 +9782,7 @@ CREATE INDEX validproceduretimeendtimeidx ON validproceduretime USING btree (end
 
 
 --
--- TOC entry 3457 (class 1259 OID 60288)
+-- TOC entry 3456 (class 1259 OID 62652)
 -- Name: validproceduretimestarttimeidx; Type: INDEX; Schema: public; Owner: user; Tablespace: 
 --
 
@@ -9781,7 +9790,7 @@ CREATE INDEX validproceduretimestarttimeidx ON validproceduretime USING btree (s
 
 
 --
--- TOC entry 3468 (class 2606 OID 60340)
+-- TOC entry 3467 (class 2606 OID 62704)
 -- Name: featurecodespaceidentifierfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9790,7 +9799,7 @@ ALTER TABLE ONLY featureofinterest
 
 
 --
--- TOC entry 3469 (class 2606 OID 60345)
+-- TOC entry 3468 (class 2606 OID 62709)
 -- Name: featurecodespacenamefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9799,7 +9808,7 @@ ALTER TABLE ONLY featureofinterest
 
 
 --
--- TOC entry 3467 (class 2606 OID 60335)
+-- TOC entry 3466 (class 2606 OID 62699)
 -- Name: featurefeaturetypefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9808,7 +9817,7 @@ ALTER TABLE ONLY featureofinterest
 
 
 --
--- TOC entry 3470 (class 2606 OID 60350)
+-- TOC entry 3469 (class 2606 OID 62714)
 -- Name: featureofinterestchildfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9817,7 +9826,7 @@ ALTER TABLE ONLY featurerelation
 
 
 --
--- TOC entry 3471 (class 2606 OID 60355)
+-- TOC entry 3470 (class 2606 OID 62719)
 -- Name: featureofinterestparentfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9826,7 +9835,7 @@ ALTER TABLE ONLY featurerelation
 
 
 --
--- TOC entry 3493 (class 2606 OID 60465)
+-- TOC entry 3492 (class 2606 OID 62829)
 -- Name: fk_6vvrdxvd406n48gkm706ow1pt; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9835,7 +9844,7 @@ ALTER TABLE ONLY offeringallowedfeaturetype
 
 
 --
--- TOC entry 3500 (class 2606 OID 60500)
+-- TOC entry 3499 (class 2606 OID 62864)
 -- Name: fk_6ynwkk91xe8p1uibmjt98sog3; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9844,7 +9853,7 @@ ALTER TABLE ONLY relatedfeaturehasrole
 
 
 --
--- TOC entry 3489 (class 2606 OID 60445)
+-- TOC entry 3488 (class 2606 OID 62809)
 -- Name: fk_9ex7hawh3dbplkllmw5w3kvej; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9853,7 +9862,7 @@ ALTER TABLE ONLY observationhasoffering
 
 
 --
--- TOC entry 3495 (class 2606 OID 60475)
+-- TOC entry 3494 (class 2606 OID 62839)
 -- Name: fk_lkljeohulvu7cr26pduyp5bd0; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9862,7 +9871,7 @@ ALTER TABLE ONLY offeringallowedobservationtype
 
 
 --
--- TOC entry 3473 (class 2606 OID 60365)
+-- TOC entry 3472 (class 2606 OID 62729)
 -- Name: i18nfeaturefeaturefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9871,7 +9880,7 @@ ALTER TABLE ONLY i18nfeatureofinterest
 
 
 --
--- TOC entry 3474 (class 2606 OID 60370)
+-- TOC entry 3473 (class 2606 OID 62734)
 -- Name: i18nobspropobspropfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9880,7 +9889,7 @@ ALTER TABLE ONLY i18nobservableproperty
 
 
 --
--- TOC entry 3475 (class 2606 OID 60375)
+-- TOC entry 3474 (class 2606 OID 62739)
 -- Name: i18nofferingofferingfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9889,7 +9898,7 @@ ALTER TABLE ONLY i18noffering
 
 
 --
--- TOC entry 3476 (class 2606 OID 60380)
+-- TOC entry 3475 (class 2606 OID 62744)
 -- Name: i18nprocedureprocedurefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9898,7 +9907,7 @@ ALTER TABLE ONLY i18nprocedure
 
 
 --
--- TOC entry 3481 (class 2606 OID 60405)
+-- TOC entry 3480 (class 2606 OID 62769)
 -- Name: obscodespaceidentifierfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9907,7 +9916,7 @@ ALTER TABLE ONLY observation
 
 
 --
--- TOC entry 3482 (class 2606 OID 60410)
+-- TOC entry 3481 (class 2606 OID 62774)
 -- Name: obscodespacenamefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9916,7 +9925,7 @@ ALTER TABLE ONLY observation
 
 
 --
--- TOC entry 3486 (class 2606 OID 60430)
+-- TOC entry 3485 (class 2606 OID 62794)
 -- Name: obsconstobservationiypefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9925,7 +9934,7 @@ ALTER TABLE ONLY observationconstellation
 
 
 --
--- TOC entry 3484 (class 2606 OID 60420)
+-- TOC entry 3483 (class 2606 OID 62784)
 -- Name: obsconstobspropfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9934,7 +9943,7 @@ ALTER TABLE ONLY observationconstellation
 
 
 --
--- TOC entry 3487 (class 2606 OID 60435)
+-- TOC entry 3486 (class 2606 OID 62799)
 -- Name: obsconstofferingfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9943,7 +9952,7 @@ ALTER TABLE ONLY observationconstellation
 
 
 --
--- TOC entry 3464 (class 2606 OID 60320)
+-- TOC entry 3463 (class 2606 OID 62684)
 -- Name: observablepropertychildfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9952,7 +9961,7 @@ ALTER TABLE ONLY compositephenomenon
 
 
 --
--- TOC entry 3465 (class 2606 OID 60325)
+-- TOC entry 3464 (class 2606 OID 62689)
 -- Name: observablepropertyparentfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9961,7 +9970,7 @@ ALTER TABLE ONLY compositephenomenon
 
 
 --
--- TOC entry 3461 (class 2606 OID 60305)
+-- TOC entry 3460 (class 2606 OID 62669)
 -- Name: observationblobvaluefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9970,7 +9979,7 @@ ALTER TABLE ONLY blobvalue
 
 
 --
--- TOC entry 3462 (class 2606 OID 60310)
+-- TOC entry 3461 (class 2606 OID 62674)
 -- Name: observationbooleanvaluefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9979,7 +9988,7 @@ ALTER TABLE ONLY booleanvalue
 
 
 --
--- TOC entry 3463 (class 2606 OID 60315)
+-- TOC entry 3462 (class 2606 OID 62679)
 -- Name: observationcategoryvaluefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9988,7 +9997,7 @@ ALTER TABLE ONLY categoryvalue
 
 
 --
--- TOC entry 3466 (class 2606 OID 60330)
+-- TOC entry 3465 (class 2606 OID 62694)
 -- Name: observationcountvaluefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -9997,7 +10006,7 @@ ALTER TABLE ONLY countvalue
 
 
 --
--- TOC entry 3472 (class 2606 OID 60360)
+-- TOC entry 3471 (class 2606 OID 62724)
 -- Name: observationgeometryvaluefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10006,7 +10015,7 @@ ALTER TABLE ONLY geometryvalue
 
 
 --
--- TOC entry 3477 (class 2606 OID 60385)
+-- TOC entry 3476 (class 2606 OID 62749)
 -- Name: observationnumericvaluefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10015,7 +10024,7 @@ ALTER TABLE ONLY numericvalue
 
 
 --
--- TOC entry 3488 (class 2606 OID 60440)
+-- TOC entry 3487 (class 2606 OID 62804)
 -- Name: observationofferingfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10024,7 +10033,7 @@ ALTER TABLE ONLY observationhasoffering
 
 
 --
--- TOC entry 3480 (class 2606 OID 60400)
+-- TOC entry 3479 (class 2606 OID 62764)
 -- Name: observationseriesfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10033,7 +10042,7 @@ ALTER TABLE ONLY observation
 
 
 --
--- TOC entry 3511 (class 2606 OID 60555)
+-- TOC entry 3511 (class 2606 OID 62924)
 -- Name: observationswedataarrayvaluefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10042,7 +10051,7 @@ ALTER TABLE ONLY swedataarrayvalue
 
 
 --
--- TOC entry 3512 (class 2606 OID 60560)
+-- TOC entry 3512 (class 2606 OID 62929)
 -- Name: observationtextvaluefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10051,7 +10060,7 @@ ALTER TABLE ONLY textvalue
 
 
 --
--- TOC entry 3483 (class 2606 OID 60415)
+-- TOC entry 3482 (class 2606 OID 62779)
 -- Name: observationunitfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10060,7 +10069,7 @@ ALTER TABLE ONLY observation
 
 
 --
--- TOC entry 3485 (class 2606 OID 60425)
+-- TOC entry 3484 (class 2606 OID 62789)
 -- Name: obsnconstprocedurefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10069,7 +10078,7 @@ ALTER TABLE ONLY observationconstellation
 
 
 --
--- TOC entry 3478 (class 2606 OID 60390)
+-- TOC entry 3477 (class 2606 OID 62754)
 -- Name: obspropcodespaceidentifierfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10078,7 +10087,7 @@ ALTER TABLE ONLY observableproperty
 
 
 --
--- TOC entry 3479 (class 2606 OID 60395)
+-- TOC entry 3478 (class 2606 OID 62759)
 -- Name: obspropcodespacenamefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10087,7 +10096,7 @@ ALTER TABLE ONLY observableproperty
 
 
 --
--- TOC entry 3490 (class 2606 OID 60450)
+-- TOC entry 3489 (class 2606 OID 62814)
 -- Name: offcodespaceidentifierfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10096,7 +10105,7 @@ ALTER TABLE ONLY offering
 
 
 --
--- TOC entry 3491 (class 2606 OID 60455)
+-- TOC entry 3490 (class 2606 OID 62819)
 -- Name: offcodespacenamefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10105,7 +10114,7 @@ ALTER TABLE ONLY offering
 
 
 --
--- TOC entry 3492 (class 2606 OID 60460)
+-- TOC entry 3491 (class 2606 OID 62824)
 -- Name: offeringfeaturetypefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10114,7 +10123,7 @@ ALTER TABLE ONLY offeringallowedfeaturetype
 
 
 --
--- TOC entry 3494 (class 2606 OID 60470)
+-- TOC entry 3493 (class 2606 OID 62834)
 -- Name: offeringobservationtypefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10123,7 +10132,7 @@ ALTER TABLE ONLY offeringallowedobservationtype
 
 
 --
--- TOC entry 3496 (class 2606 OID 60480)
+-- TOC entry 3495 (class 2606 OID 62844)
 -- Name: offeringrelatedfeaturefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10132,7 +10141,7 @@ ALTER TABLE ONLY offeringhasrelatedfeature
 
 
 --
--- TOC entry 3459 (class 2606 OID 60295)
+-- TOC entry 3458 (class 2606 OID 62659)
 -- Name: proccodespaceidentifierfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10141,7 +10150,7 @@ ALTER TABLE ONLY procedure
 
 
 --
--- TOC entry 3460 (class 2606 OID 60300)
+-- TOC entry 3459 (class 2606 OID 62664)
 -- Name: proccodespacenamefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10150,7 +10159,7 @@ ALTER TABLE ONLY procedure
 
 
 --
--- TOC entry 3505 (class 2606 OID 60525)
+-- TOC entry 3504 (class 2606 OID 62889)
 -- Name: procedurechildfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10159,7 +10168,7 @@ ALTER TABLE ONLY sensorsystem
 
 
 --
--- TOC entry 3506 (class 2606 OID 60530)
+-- TOC entry 3505 (class 2606 OID 62894)
 -- Name: procedureparenffk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10168,7 +10177,7 @@ ALTER TABLE ONLY sensorsystem
 
 
 --
--- TOC entry 3458 (class 2606 OID 60290)
+-- TOC entry 3457 (class 2606 OID 62654)
 -- Name: procprocdescformatfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10177,7 +10186,7 @@ ALTER TABLE ONLY procedure
 
 
 --
--- TOC entry 3499 (class 2606 OID 60495)
+-- TOC entry 3498 (class 2606 OID 62859)
 -- Name: relatedfeatrelatedfeatrolefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10186,7 +10195,7 @@ ALTER TABLE ONLY relatedfeaturehasrole
 
 
 --
--- TOC entry 3498 (class 2606 OID 60490)
+-- TOC entry 3497 (class 2606 OID 62854)
 -- Name: relatedfeaturefeaturefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10195,7 +10204,7 @@ ALTER TABLE ONLY relatedfeature
 
 
 --
--- TOC entry 3497 (class 2606 OID 60485)
+-- TOC entry 3496 (class 2606 OID 62849)
 -- Name: relatedfeatureofferingfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10204,7 +10213,7 @@ ALTER TABLE ONLY offeringhasrelatedfeature
 
 
 --
--- TOC entry 3504 (class 2606 OID 60520)
+-- TOC entry 3503 (class 2606 OID 62884)
 -- Name: resulttemplatefeatureidx; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10213,7 +10222,7 @@ ALTER TABLE ONLY resulttemplate
 
 
 --
--- TOC entry 3502 (class 2606 OID 60510)
+-- TOC entry 3501 (class 2606 OID 62874)
 -- Name: resulttemplateobspropfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10222,7 +10231,7 @@ ALTER TABLE ONLY resulttemplate
 
 
 --
--- TOC entry 3501 (class 2606 OID 60505)
+-- TOC entry 3500 (class 2606 OID 62869)
 -- Name: resulttemplateofferingidx; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10231,7 +10240,7 @@ ALTER TABLE ONLY resulttemplate
 
 
 --
--- TOC entry 3503 (class 2606 OID 60515)
+-- TOC entry 3502 (class 2606 OID 62879)
 -- Name: resulttemplateprocedurefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10240,7 +10249,7 @@ ALTER TABLE ONLY resulttemplate
 
 
 --
--- TOC entry 3507 (class 2606 OID 60535)
+-- TOC entry 3506 (class 2606 OID 62899)
 -- Name: seriesfeaturefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10249,7 +10258,7 @@ ALTER TABLE ONLY series
 
 
 --
--- TOC entry 3508 (class 2606 OID 60540)
+-- TOC entry 3507 (class 2606 OID 62904)
 -- Name: seriesobpropfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10258,7 +10267,16 @@ ALTER TABLE ONLY series
 
 
 --
--- TOC entry 3509 (class 2606 OID 60545)
+-- TOC entry 3509 (class 2606 OID 62914)
+-- Name: seriesofferingfk; Type: FK CONSTRAINT; Schema: public; Owner: user
+--
+
+ALTER TABLE ONLY series
+    ADD CONSTRAINT seriesofferingfk FOREIGN KEY (offeringid) REFERENCES offering(offeringid);
+
+
+--
+-- TOC entry 3508 (class 2606 OID 62909)
 -- Name: seriesprocedurefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10267,7 +10285,7 @@ ALTER TABLE ONLY series
 
 
 --
--- TOC entry 3510 (class 2606 OID 60550)
+-- TOC entry 3510 (class 2606 OID 62919)
 -- Name: seriesunitfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10276,7 +10294,7 @@ ALTER TABLE ONLY series
 
 
 --
--- TOC entry 3513 (class 2606 OID 60565)
+-- TOC entry 3513 (class 2606 OID 62934)
 -- Name: validproceduretimeprocedurefk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10285,7 +10303,7 @@ ALTER TABLE ONLY validproceduretime
 
 
 --
--- TOC entry 3514 (class 2606 OID 60570)
+-- TOC entry 3514 (class 2606 OID 62939)
 -- Name: validprocprocdescformatfk; Type: FK CONSTRAINT; Schema: public; Owner: user
 --
 
@@ -10305,7 +10323,7 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2016-05-24 15:55:25 CEST
+-- Completed on 2017-01-26 16:25:13 CET
 
 --
 -- PostgreSQL database dump complete

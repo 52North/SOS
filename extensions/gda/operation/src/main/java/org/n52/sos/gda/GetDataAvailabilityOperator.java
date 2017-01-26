@@ -97,12 +97,18 @@ public class GetDataAvailabilityOperator
         }
         try {
             checkProcedureIDs(sosRequest.getProcedures(), GetDataAvailabilityParams.procedure.name());
+            if (sosRequest.isSetProcedures()) {
+                sosRequest.setProcedure(addChildProcedures(sosRequest.getProcedures()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
             checkFeatureOfInterestIdentifiers(sosRequest.getFeaturesOfInterest(),
                     GetDataAvailabilityParams.featureOfInterest.name());
+            if (sosRequest.isSetFeaturesOfInterest()) {
+                sosRequest.setFeatureOfInterest(addChildFeatures(sosRequest.getFeaturesOfInterest()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

@@ -49,6 +49,9 @@ import net.opengis.sensorML.x101.ClassificationDocument.Classification.Classifie
 import net.opengis.sensorML.x101.ComponentsDocument.Components;
 import net.opengis.sensorML.x101.ComponentsDocument.Components.ComponentList;
 import net.opengis.sensorML.x101.ComponentsDocument.Components.ComponentList.Component;
+import net.opengis.sensorML.x101.ConnectionDocument.Connection;
+import net.opengis.sensorML.x101.ConnectionsDocument.Connections;
+import net.opengis.sensorML.x101.ConnectionsDocument.Connections.ConnectionList;
 import net.opengis.sensorML.x101.ContactDocument.Contact;
 import net.opengis.sensorML.x101.ContactInfoDocument.ContactInfo;
 import net.opengis.sensorML.x101.ContactInfoDocument.ContactInfo.Address;
@@ -63,6 +66,7 @@ import net.opengis.sensorML.x101.IdentificationDocument.Identification.Identifie
 import net.opengis.sensorML.x101.InputsDocument.Inputs;
 import net.opengis.sensorML.x101.InputsDocument.Inputs.InputList;
 import net.opengis.sensorML.x101.IoComponentPropertyType;
+import net.opengis.sensorML.x101.LinkDocument.Link;
 import net.opengis.sensorML.x101.MethodPropertyType;
 import net.opengis.sensorML.x101.OutputsDocument.Outputs;
 import net.opengis.sensorML.x101.OutputsDocument.Outputs.OutputList;
@@ -118,11 +122,13 @@ import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
+import org.n52.sos.ogc.sensorML.elements.SmlConnection;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentation;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentationList;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentationListMember;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
+import org.n52.sos.ogc.sensorML.elements.SmlLink;
 import org.n52.sos.ogc.sensorML.elements.SmlLocation;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 import org.n52.sos.ogc.sos.Sos1Constants;
@@ -241,8 +247,10 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         } else {
             throw new UnsupportedEncoderInputException(this, response);
         }
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        if (LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                    XmlHelper.validateDocument(encodedObject));
+        }
         return encodedObject;
 
     }
@@ -544,13 +552,12 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             abstractProcess.setCharacteristicsArray(createCharacteristics(sosAbstractProcess.getCharacteristics()));
         }
         // set documentation
-        if (sosAbstractProcess.isSetDocumentation()) {
+        if (sosAbstractProcess.isSetDocumentation() && CollectionHelper.isNullOrEmpty(abstractProcess.getDocumentationArray())) {
             abstractProcess.setDocumentationArray(createDocumentationArray(sosAbstractProcess.getDocumentation()));
         }
         // set contacts if contacts aren't already present in the abstract
         // process
-        if (sosAbstractProcess.isSetContact()
-                && (abstractProcess.getContactArray() == null || abstractProcess.getContactArray().length == 0)) {
+        if (sosAbstractProcess.isSetContact() && CollectionHelper.isNullOrEmpty(abstractProcess.getContactArray())) {
             ContactList contactList = createContactList(sosAbstractProcess.getContact());
             if (contactList != null && contactList.getMemberArray().length > 0) {
                 abstractProcess.addNewContact().setContactList(contactList);
@@ -695,15 +702,15 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     private void addSystemValues(final SystemType xbSystem, final System system) throws OwsExceptionReport {
         // set inputs
-        if (system.isSetInputs()) {
+        if (system.isSetInputs() && !xbSystem.isSetInputs()) {
             xbSystem.setInputs(createInputs(system.getInputs()));
         }
         // set position
-        if (system.isSetPosition()) {
+        if (system.isSetPosition() && !xbSystem.isSetPosition()) {
             xbSystem.setPosition(createPosition(system.getPosition()));
         }
         // set location
-        if (system.isSetLocation()) {
+        if (system.isSetLocation() && !xbSystem.isSetSmlLocation()) {
             xbSystem.setSmlLocation(createLocation(system.getLocation()));
         }
         // set components
@@ -730,36 +737,31 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             // system.addFeatureOfInterest(getFeaturesFromChild(smlComponents));
         }
         // set outputs
-        if (system.isSetOutputs()) {
+        if (system.isSetOutputs() && !xbSystem.isSetOutputs()) {
             extendOutputs(system);
             xbSystem.setOutputs(createOutputs(system.getOutputs()));
         }
-    }
-
-    private void extendOutputs(AbstractProcess abstractProcess) {
-        if (abstractProcess.isSetPhenomenon()) {
-            for (SmlIo<?> output : abstractProcess.getOutputs()) {
-                if (abstractProcess.hasPhenomenonFor(output.getIoValue().getDefinition())) {
-                    output.getIoValue().setName(
-                            abstractProcess.getPhenomenonFor(output.getIoValue().getDefinition()).getName());
-                }
-            }
+        // set connections
+        if (system.isSetConnections() && !xbSystem.isSetConnections()){
+            xbSystem.setConnections(createConnections(system.getConnections()));
         }
     }
 
     private void addProcessModelValues(final ProcessModelType processModel, final ProcessModel sosProcessModel)
             throws OwsExceptionReport {
         // set inputs
-        if (sosProcessModel.isSetInputs()) {
+        if (sosProcessModel.isSetInputs() && !processModel.isSetInputs()) {
             processModel.setInputs(createInputs(sosProcessModel.getInputs()));
         }
         // set outputs
-        if (sosProcessModel.isSetOutputs()) {
+        if (sosProcessModel.isSetOutputs() && !processModel.isSetOutputs()) {
             extendOutputs(sosProcessModel);
             processModel.setOutputs(createOutputs(sosProcessModel.getOutputs()));
         }
         // set method
-        processModel.setMethod(createMethod(sosProcessModel.getMethod()));
+        if (processModel.getMethod() != null) {
+            processModel.setMethod(createMethod(sosProcessModel.getMethod()));
+        }
     }
 
     private MethodPropertyType createMethod(final ProcessMethod method) throws CodedException {
@@ -981,7 +983,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         xbSwePosition.setReferenceFrame(position.getReferenceFrame());
         final VectorType xbVector = xbSwePosition.addNewLocation().addNewVector();
         for (final SweCoordinate<?> coordinate : position.getPosition()) {
-            if (coordinate.getValue().getValue() != null
+            if (coordinate != null && coordinate.getValue() != null
                     && (!coordinate.getValue().isSetValue() || !coordinate.getValue().getValue().equals(Double.NaN))) {
                 // FIXME: SWE Common NS
                 xbVector.addNewCoordinate().set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_101, coordinate));
@@ -1124,6 +1126,17 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             }
         }
         return components;
+    }
+
+    private Connections createConnections(SmlConnection connections) {
+        Connections c = Connections.Factory.newInstance();
+        ConnectionList cl = c.addNewConnectionList();
+        for (SmlLink link : connections.getConnections()) {
+            Link l = cl.addNewConnection().addNewLink();
+            l.addNewDestination().setRef(link.getDestination());
+            l.addNewSource().setRef(link.getSource());
+        }
+        return c;
     }
 
     /**

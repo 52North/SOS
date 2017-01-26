@@ -96,5 +96,4 @@ public class GetObservationResponse extends AbstractObservationResponse implemen
         }
         setObservationCollection(observations);
     }
-    
 }

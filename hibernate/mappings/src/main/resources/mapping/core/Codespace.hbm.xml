@@ -4,18 +4,18 @@
 <!-- Generated 10.07.2012 15:18:27 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.Codespace" table="codespace">
-    	<comment>Table to store the gml:identifier and gml:name codespace information. Mapping file: mapping/core/Codespace.hbm.xml</comment>
+        <comment>Table to store the gml:identifier and gml:name codespace information. Mapping file: mapping/core/Codespace.hbm.xml</comment>
         <id name="codespaceId" type="long">
             <column name="codespaceId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">codespaceId_seq</param>
+                <param name="sequence">codespaceId_seq</param>
             </generator>
         </id>
         <property name="codespace" type="string">
             <column name="codespace" not-null="true" unique-key="codespaceUK">
-            	<comment>The codespace value</comment>
+                <comment>The codespace value</comment>
             </column>
         </property>
     </class>

@@ -62,10 +62,24 @@ public class SeriesDAO extends AbstractSeriesDAO {
         return getSeriesCriteria(procedures, observedProperties, features, session).list();
     }
 
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
+            Collection<String> features, Collection<String> offerings, Session session) {
+        return getSeriesCriteria(procedures, observedProperties, features, offerings, session).list();
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(String observedProperty, Collection<String> features, Session session) {
         return getSeriesCriteria(observedProperty, features, session).list();
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Series> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
+        return getSeriesCriteria(procedure, observedProperty, offering, features, session).list();
     }
 
     @Override
@@ -79,7 +93,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    protected Class <?>getSeriesClass() {
+    public Class <?>getSeriesClass() {
         return Series.class;
     }
 

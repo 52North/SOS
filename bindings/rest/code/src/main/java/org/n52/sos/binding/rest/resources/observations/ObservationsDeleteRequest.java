@@ -29,6 +29,7 @@
 package org.n52.sos.binding.rest.resources.observations;
 
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
+import org.n52.sos.request.AbstractServiceRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -45,6 +46,16 @@ public class ObservationsDeleteRequest implements IObservationsRequest{
     public DeleteObservationRequest getDeleteObservationRequest()
     {
         return deleteObservationRequest;
+    }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getDeleteObservationRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getDeleteObservationRequest();
     }
 
 }

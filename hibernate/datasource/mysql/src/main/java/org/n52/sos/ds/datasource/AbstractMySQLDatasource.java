@@ -183,6 +183,7 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
                     = (String) settings.get(HibernateConstants.CONNECTION_PASSWORD);
             String user
                     = (String) settings.get(HibernateConstants.CONNECTION_USERNAME);
+            precheckDriver(jdbc, user, pass);
             return DriverManager.getConnection(jdbc, user, pass);
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);
@@ -194,4 +195,20 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
                                          Map<String, Object> arg2) {
     }
 
+    @Override
+    protected String[] checkCreateSchema(String[] script) {
+        String[] checkCreateSchema = super.checkCreateSchema(script);
+        for (int i = 0; i < checkCreateSchema.length; i++) {
+            checkCreateSchema[i] = checkForNullableTimestamp(checkCreateSchema[i]);
+        }
+        return checkCreateSchema;
+    }
+
+    private String checkForNullableTimestamp(String string) {
+        if (string.contains("timestamp default NULL")){
+            return string.replaceAll("timestamp default NULL", "timestamp NULL default NULL");
+        }
+        return string;
+    }
+    
 }

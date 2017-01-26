@@ -99,6 +99,7 @@ import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.ogc.swes.SwesConstants;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.SchemaLocation;
@@ -186,8 +187,10 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         } else {
             throw new UnsupportedEncoderInputException(this, sosSweType);
         }
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        if (LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                    XmlHelper.validateDocument(encodedObject));
+        }
         return encodedObject;
     }
 
@@ -507,7 +510,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
     private TimeType createTime(final SweTime sosTime) {
         final TimeType xbTime = TimeType.Factory.newInstance();
         if (sosTime.isSetValue()) {
-            xbTime.setValue(sosTime.getValue());
+            xbTime.setValue(DateTimeHelper.formatDateTime2IsoString(sosTime.getValue()));
         }
         if (sosTime.isSetUom()) {
             xbTime.setUom(createUnitReference(sosTime.getUom()));
@@ -544,7 +547,9 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         }
         if (sweVector.isSetCoordinates()) {
             for (SweCoordinate<?> coordinate : sweVector.getCoordinates()) {
-                xbVector.addNewCoordinate().set(createCoordinate(coordinate));
+                if (coordinate != null && coordinate.getValue() != null) {
+                    xbVector.addNewCoordinate().set(createCoordinate(coordinate));
+                }
             }
         }
         return xbVector;

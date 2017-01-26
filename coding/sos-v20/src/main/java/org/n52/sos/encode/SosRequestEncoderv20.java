@@ -102,8 +102,10 @@ public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequ
     public XmlObject encode(final AbstractServiceRequest request, final Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         XmlObject encodedObject = encodeRequests(request);
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        if (LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                    XmlHelper.validateDocument(encodedObject));
+        }
         return encodedObject;
     }
 

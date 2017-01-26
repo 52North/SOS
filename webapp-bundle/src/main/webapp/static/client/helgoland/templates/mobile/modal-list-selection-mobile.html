@@ -1,0 +1,56 @@
+<div class="modal-content" ng-controller="SwcProviderListCtrl">
+
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="close()">&times;</button>
+        <div class="modal-title" translate="trajectories.header"></div>
+    </div>
+
+    <div class="modal-body provider-list" ng-if="!providerselected">
+
+        <span>Provider Auswählen</span>
+
+        <div class="provider-item" ng-repeat="provider in providerList" ng-click="selectProvider(provider)" ng-if="provider.quantities.platforms > 0">
+            <div>{{provider.label}}</div>
+            <div class="small">{{provider.type}},
+                {{provider.version}}</div>
+            <div class="small">{{provider.url}}</div>
+            <div class="small">
+                <span ng-if="provider.quantities.stations">
+                    <span translate="providerList.stations"></span>:
+                    <span>{{provider.quantities.stations}}</span>
+                </span>
+                <span ng-if="provider.quantities.platforms">
+                    <span translate="providerList.platforms"></span>:
+                    <span>{{provider.quantities.platforms}}</span>
+                </span>
+                <span ng-if="provider.quantities.series">
+                    <span translate="providerList.timeseries"></span>:
+                    <span>{{provider.quantities.series}}</span>
+                </span>
+                <span ng-if="provider.quantities.timeseries">
+                    <span translate="providerList.timeseries"></span>:
+                    <span>{{provider.quantities.timeseries}}</span>
+                </span>
+                <span translate="providerList.phenomena"></span>:
+                <span>{{provider.quantities.phenomena}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-body" ng-if="providerselected">
+        <uib-tabset class="selectionListContent">
+            <uib-tab>
+                <uib-tab-heading>
+                    <span translate="trajectories.headers.platform"></span>
+                </uib-tab-heading>
+                <swc-list-selection-mobile parameters="platformParams" provider="providerselected"></swc-list-selection>
+            </uib-tab>
+            <uib-tab>
+                <uib-tab-heading>
+                    <span translate="trajectories.headers.phenomenon"></span>
+                </uib-tab-heading>
+                <swc-list-selection-mobile parameters="phenomenonParams" provider="providerselected"></swc-list-selection>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+</div>

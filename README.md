@@ -1,5 +1,5 @@
 # 52°North SOS [![OpenHUB](https://www.openhub.net/p/SensorObservationService/widgets/project_thin_badge.gif)](https://www.openhub.net/p/SensorObservationService)
-README file for the 52°North Sensor Observation Service (SOS) version 4.3.6
+README file for the 52°North Sensor Observation Service (SOS) version 4.3.x
 
 This is the repository of the [52°North Sensor Observation Service (SOS)][1].
 

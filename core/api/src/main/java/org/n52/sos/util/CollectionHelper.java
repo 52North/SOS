@@ -217,7 +217,7 @@ public final class CollectionHelper {
         s1.retainAll(list2);
         return new ArrayList<T>(s1);
     }
-    
+
     public static <T> Set<T> conjunctCollectionsToSet(final Collection<T> list1, final Collection<T> list2) {
         final HashSet<T> s1 = new HashSet<T>(list1);
         s1.retainAll(list2);
@@ -397,7 +397,7 @@ public final class CollectionHelper {
         }
         return true;
     }
-    
+
     /**
      * Check if array is not null and not empty
      * 
@@ -437,37 +437,46 @@ public final class CollectionHelper {
     }
 
     /**
-     * Add a value to a map collection, initializing the key's collection if needed
+     * Add a value to a map collection, initializing the key's collection if
+     * needed
      * 
-     * @param key Key whose value collection should be added to
-     * @param valueToAdd Vale to add to the key's collection
-     * @param map Map holding collections
+     * @param key
+     *            Key whose value collection should be added to
+     * @param valueToAdd
+     *            Vale to add to the key's collection
+     * @param map
+     *            Map holding collections
      */
-    public static <K, V> void addToCollectionMap(K key, V valueToAdd, Map<K,Collection<V>> map) {
+    public static <K, V> void addToCollectionMap(K key, V valueToAdd, Map<K, Collection<V>> map) {
         if (key == null || valueToAdd == null || map == null) {
             return;
         }
         Collection<V> collection = map.get(key);
         if (collection == null) {
             collection = Lists.newArrayList();
-            map.put(key, collection);            
+            map.put(key, collection);
         }
         collection.add(valueToAdd);
     }
-    
-    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue( Map<K, V> map) {
-    	List<Map.Entry<K, V>> list = new LinkedList<>( map.entrySet() );
-    	Collections.sort( list, new Comparator<Map.Entry<K, V>>() {
-    		@Override
-    		public int compare( Map.Entry<K, V> o1, Map.Entry<K, V> o2 ) {
-    			return (o1.getValue()).compareTo( o2.getValue() );
-    		}
-    	});
-    	Map<K, V> result = new LinkedHashMap<>();
-    	for (Map.Entry<K, V> entry : list) {
-    		result.put( entry.getKey(), entry.getValue() );
-    	}
-    	return result;
+
+    // The method below was written by StackOverflow user Carter Page
+    // (http://stackoverflow.com/users/309596/carter-page) and is licensed
+    // under CC BY-SA 3.0 ( http://creativecommons.org/licenses/by-sa/3.0/ ).
+    // https://stackoverflow.com/a/2581754
+    // The original code has been modified.
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
+        List<Entry<K, V>> list = new LinkedList<>(map.entrySet());
+        Collections.sort(list, new Comparator<Entry<K, V>>() {
+            @Override
+            public int compare(Entry<K, V> o1, Entry<K, V> o2) {
+                return (o1.getValue()).compareTo(o2.getValue());
+            }
+        });
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
     }
 
 }

@@ -32,6 +32,7 @@ import java.sql.Timestamp;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
@@ -45,6 +46,8 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GeometryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract DAO class for querying {@link AbstractValue}
@@ -54,6 +57,8 @@ import org.n52.sos.util.GeometryHandler;
  *
  */
 public abstract class AbstractValueDAO extends TimeCreator {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractValueDAO.class);
 
     /**
      * Check if a Spatial Filtering Profile filter is requested and add to
@@ -72,11 +77,23 @@ public abstract class AbstractValueDAO extends TimeCreator {
     protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request,
             Session session) throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
-            c.add(SpatialRestrictions.filter(
-                    AbstractObservation.SAMPLING_GEOMETRY,
-                    request.getSpatialFilter().getOperator(),
-                    GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
-                            request.getSpatialFilter().getGeometry())));
+            if (GeometryHandler.getInstance().isSpatialDatasource()) {
+                c.add(SpatialRestrictions.filter(
+                        AbstractObservation.SAMPLING_GEOMETRY,
+                        request.getSpatialFilter().getOperator(),
+                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                                request.getSpatialFilter().getGeometry())));
+            } else {
+                // TODO add filter with lat/lon
+                LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
+            }
+        }
+    }
+    
+    protected void addTemporalFilterCriterion(Criteria c, Criterion temporalFilterCriterion, String logArgs) {
+        if (temporalFilterCriterion != null) {
+            logArgs += ", filterCriterion";
+            c.add(temporalFilterCriterion);
         }
     }
 
@@ -93,19 +110,21 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Indeterminate time restriction to add
      * @return Modified criteria
      */
-    protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime) {
-        // get extrema indeterminate time
-        c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
-        Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
-
-        // reset criteria
-        // see http://stackoverflow.com/a/1472958/193435
-        c.setProjection(null);
-        c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-        // get observations with exactly the extrema time
-        c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
-
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime, String logArgs) {
+        if (sosIndeterminateTime != null) {
+            // get extrema indeterminate time
+            c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
+            Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
+    
+            // reset criteria
+            // see http://stackoverflow.com/a/1472958/193435
+            c.setProjection(null);
+            c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    
+            // get observations with exactly the extrema time
+            c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
+            logArgs += ", sosIndeterminateTime";
+        }
         // not really necessary to return the Criteria object, but useful if we
         // want to chain
         return c;

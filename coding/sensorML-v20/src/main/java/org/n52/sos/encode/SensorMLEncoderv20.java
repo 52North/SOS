@@ -55,6 +55,9 @@ import net.opengis.sensorml.x20.ClassifierListType.Classifier;
 import net.opengis.sensorml.x20.ComponentListPropertyType;
 import net.opengis.sensorml.x20.ComponentListType;
 import net.opengis.sensorml.x20.ComponentListType.Component;
+import net.opengis.sensorml.x20.ConnectionListPropertyType;
+import net.opengis.sensorml.x20.ConnectionListType;
+import net.opengis.sensorml.x20.ConnectionListType.Connection;
 import net.opengis.sensorml.x20.ContactListType;
 import net.opengis.sensorml.x20.DescribedObjectType;
 import net.opengis.sensorml.x20.DescribedObjectType.Capabilities;
@@ -67,6 +70,7 @@ import net.opengis.sensorml.x20.IdentifierListType;
 import net.opengis.sensorml.x20.IdentifierListType.Identifier;
 import net.opengis.sensorml.x20.InputListType;
 import net.opengis.sensorml.x20.InputListType.Input;
+import net.opengis.sensorml.x20.LinkType;
 import net.opengis.sensorml.x20.ObservablePropertyType;
 import net.opengis.sensorml.x20.OutputListType;
 import net.opengis.sensorml.x20.OutputListType.Output;
@@ -113,11 +117,13 @@ import org.n52.sos.ogc.sensorML.elements.SmlCharacteristic;
 import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
+import org.n52.sos.ogc.sensorML.elements.SmlConnection;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentation;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentationList;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentationListMember;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
+import org.n52.sos.ogc.sensorML.elements.SmlLink;
 import org.n52.sos.ogc.sensorML.elements.SmlLocation;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 import org.n52.sos.ogc.sensorML.v20.AbstractPhysicalProcess;
@@ -150,6 +156,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -250,8 +257,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         } catch (final XmlException xmle) {
             throw new NoApplicableCodeException().causedBy(xmle);
         }
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        if (LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                    XmlHelper.validateDocument(encodedObject));
+        }
         return encodedObject;
     }
 
@@ -425,7 +434,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         addAbstractProcessValues(spt, abstractProcess);
         addDescribedObjectValues(spt, abstractProcess);
         // set method
-        if (abstractProcess.isSetMethod()) {
+        if (abstractProcess.isSetMethod() && !spt.isSetMethod()) {
             spt.addNewMethod().setProcessMethod(createProcessMethod(abstractProcess));
         }
     }
@@ -459,6 +468,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         }
         // set connections
+        if (abstractProcess.isSetConnections() && !apt.isSetConnections()){
+            apt.setConnections(createConnections(abstractProcess.getConnections()));
+        }
     }
 
     private XmlObject encodeAbstractPhysicalProcess(AbstractPhysicalProcess abstractPhysicalProcess,
@@ -496,7 +508,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         addDescribedObjectValues(pct, abstractPhysicalProcess);
         addAbstractPhysicalProcessValues(pct, abstractPhysicalProcess);
         // set method
-        if (abstractPhysicalProcess.isSetMethod()) {
+        if (abstractPhysicalProcess.isSetMethod() && !pct.isSetMethod()) {
             pct.addNewMethod().setProcessMethod(createProcessMethod(abstractPhysicalProcess));
         }
     }
@@ -531,6 +543,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         }
         // set connections
+        if (abstractPhysicalProcess.isSetConnections() && !pst.isSetConnections()){
+            pst.setConnections(createConnections(abstractPhysicalProcess.getConnections()));
+        }
     }
 
     private void addDescribedObjectValues(DescribedObjectType dot, DescribedObject describedObject)
@@ -613,10 +628,8 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
         // set identification
         if (describedObject.isSetIdentifications()) {
-            if (!CollectionHelper.isNullOrEmpty(dot.getIdentificationArray())) {
-                // TODO check for merging identifications if exists
-            }
             dot.setIdentificationArray(createIdentification(describedObject.getIdentifications()));
+            // TODO check for merging identifications if exists
         }
         // set classification
         if (describedObject.isSetClassifications()) {
@@ -643,33 +656,36 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         // set legalConstraints
         // set characteristics
         if (describedObject.isSetCharacteristics()) {
-            dot.setCharacteristicsArray(createCharacteristics(describedObject.getCharacteristics()));
+            if (CollectionHelper.isNullOrEmpty(dot.getCharacteristicsArray())) {
+                dot.setCharacteristicsArray(createCharacteristics(describedObject.getCharacteristics()));
+            }
         }
         // set contacts if contacts aren't already present in the abstract
         // process
         // if (describedObject.isSetContact() &&
         // CollectionHelper.isNotNullOrEmpty(dot.getContactsArray())) {
         if (describedObject.isSetContact()) {
-            ContactListType cl = ContactListType.Factory.newInstance();
-            for (SmlContact contact : describedObject.getContact()) {
-                if (contact instanceof SmlResponsibleParty) {
-                    XmlObject encodeObjectToXml =
-                            CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact);
-                    if (encodeObjectToXml != null) {
-                        cl.addNewContact().addNewCIResponsibleParty().set(encodeObjectToXml);
+            if (CollectionHelper.isNullOrEmpty(dot.getContactsArray())){
+                ContactListType cl = ContactListType.Factory.newInstance();
+                for (SmlContact contact : describedObject.getContact()) {
+                    if (contact instanceof SmlResponsibleParty) {
+                        XmlObject encodeObjectToXml =
+                                CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact);
+                        if (encodeObjectToXml != null) {
+                            cl.addNewContact().addNewCIResponsibleParty().set(encodeObjectToXml);
+                        }
                     }
                 }
-            }
-            if (CollectionHelper.isNotNullOrEmpty(cl.getContactArray())) {
-                dot.addNewContacts().setContactList(cl);
             }
         }
         // set documentation
         if (describedObject.isSetDocumentation()) {
-            dot.setDocumentationArray(createDocumentationArray(describedObject.getDocumentation()));
+            if (CollectionHelper.isNullOrEmpty(dot.getDocumentationArray())) {
+                dot.setDocumentationArray(createDocumentationArray(describedObject.getDocumentation()));
+            }
         }
         // set history
-
+        
     }
 
     private void addAbstractProcessValues(final AbstractProcessType apt, final AbstractProcessV20 sosAbstractProcess)
@@ -685,11 +701,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             addFeatures(apt.getFeaturesOfInterest().getFeatureList(), sosAbstractProcess.getSmlFeatureOfInterest());
         }
         // set inputs
-        if (sosAbstractProcess.isSetInputs()) {
+        if (sosAbstractProcess.isSetInputs() && !apt.isSetInputs()) {
             apt.setInputs(createInputs(sosAbstractProcess.getInputs()));
         }
         // set outputs
-        if (sosAbstractProcess.isSetOutputs()) {
+        if (sosAbstractProcess.isSetOutputs() && !apt.isSetOutputs()) {
             extendOutputs(sosAbstractProcess);
             apt.setOutputs(createOutputs(sosAbstractProcess.getOutputs()));
         }
@@ -744,185 +760,6 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
     }
 
-    // private ContactList createContactList(final List<SmlContact> contacts) {
-    // final ContactList xbContacts = ContactList.Factory.newInstance();
-    // for (final SmlContact smlContact : contacts) {
-    // if (smlContact instanceof SmlPerson) {
-    // ContactList.Member member = xbContacts.addNewMember();
-    // member.addNewPerson().set(createPerson((SmlPerson) smlContact));
-    // if (!Strings.isNullOrEmpty(smlContact.getRole())) {
-    // member.setRole(smlContact.getRole());
-    // }
-    // } else if (smlContact instanceof SmlResponsibleParty) {
-    // ContactList.Member member = xbContacts.addNewMember();
-    // member.addNewResponsibleParty().set(createResponsibleParty((SmlResponsibleParty)
-    // smlContact));
-    // if (!Strings.isNullOrEmpty(smlContact.getRole())) {
-    // member.setRole(smlContact.getRole());
-    // }
-    // } else if (smlContact instanceof SmlContactList) {
-    // SmlContactList contactList = (SmlContactList) smlContact;
-    // ContactList innerContactList =
-    // createContactList(contactList.getMembers());
-    // int innerContactLength = innerContactList.getMemberArray().length;
-    // for (int i = 0; i < innerContactLength; i++) {
-    // xbContacts.addNewMember().set(innerContactList.getMemberArray(i));
-    // }
-    // }
-    // }
-    // return xbContacts;
-    // }
-    //
-    // private XmlObject createResponsibleParty(final SmlResponsibleParty
-    // smlRespParty) {
-    // final ResponsibleParty xbRespParty =
-    // ResponsibleParty.Factory.newInstance();
-    // if (smlRespParty.isSetIndividualName()) {
-    // xbRespParty.setIndividualName(smlRespParty.getIndividualName());
-    // }
-    // if (smlRespParty.isSetOrganizationName()) {
-    // xbRespParty.setOrganizationName(smlRespParty.getOrganizationName());
-    // }
-    // if (smlRespParty.isSetPositionName()) {
-    // xbRespParty.setPositionName(smlRespParty.getPositionName());
-    // }
-    // if (smlRespParty.isSetContactInfo()) {
-    // xbRespParty.setContactInfo(createContactInfo(smlRespParty));
-    // }
-    // return xbRespParty;
-    // }
-
-    // private ContactInfo createContactInfo(final SmlResponsibleParty
-    // smlRespParty) {
-    // final ContactInfo xbContactInfo = ContactInfo.Factory.newInstance();
-    // if (smlRespParty.isSetHoursOfService()) {
-    // xbContactInfo.setHoursOfService(smlRespParty.getHoursOfService());
-    // }
-    // if (smlRespParty.isSetContactInstructions()) {
-    // xbContactInfo.setContactInstructions(smlRespParty.getContactInstructions());
-    // }
-    // if (smlRespParty.isSetOnlineResources()) {
-    // for (final String onlineResouce : smlRespParty.getOnlineResources()) {
-    // xbContactInfo.addNewOnlineResource().setHref(onlineResouce);
-    // }
-    // }
-    // if (smlRespParty.isSetPhone()) {
-    // final Phone xbPhone = xbContactInfo.addNewPhone();
-    // if (smlRespParty.isSetPhoneFax()) {
-    // for (final String fax : smlRespParty.getPhoneFax()) {
-    // xbPhone.addFacsimile(fax);
-    // }
-    // }
-    // if (smlRespParty.isSetPhoneVoice()) {
-    // for (final String voice : smlRespParty.getPhoneVoice()) {
-    // xbPhone.addVoice(voice);
-    // }
-    // }
-    // }
-    // if (smlRespParty.isSetAddress()) {
-    // final Address xbAddress = xbContactInfo.addNewAddress();
-    // if (smlRespParty.isSetDeliveryPoint()) {
-    // for (final String deliveryPoint : smlRespParty.getDeliveryPoint()) {
-    // xbAddress.addDeliveryPoint(deliveryPoint);
-    // }
-    // }
-    // if (smlRespParty.isSetCity()) {
-    // xbAddress.setCity(smlRespParty.getCity());
-    // }
-    // if (smlRespParty.isSetAdministrativeArea()) {
-    // xbAddress.setAdministrativeArea(smlRespParty.getAdministrativeArea());
-    // }
-    // if (smlRespParty.isSetPostalCode()) {
-    // xbAddress.setPostalCode(smlRespParty.getPostalCode());
-    // }
-    // if (smlRespParty.isSetCountry()) {
-    // xbAddress.setCountry(smlRespParty.getCountry());
-    // }
-    // if (smlRespParty.isSetEmail()) {
-    // xbAddress.setElectronicMailAddress(smlRespParty.getEmail());
-    // }
-    // }
-    // return xbContactInfo;
-    // }
-    //
-    // private Person createPerson(final SmlPerson smlPerson) {
-    // final Person xbPerson = Person.Factory.newInstance();
-    // if (smlPerson.isSetAffiliation()) {
-    // xbPerson.setAffiliation(smlPerson.getAffiliation());
-    // }
-    // if (smlPerson.isSetEmail()) {
-    // xbPerson.setEmail(smlPerson.getEmail());
-    // }
-    // if (smlPerson.isSetName()) {
-    // xbPerson.setName(smlPerson.getName());
-    // }
-    // if (smlPerson.isSetPhoneNumber()) {
-    // xbPerson.setPhoneNumber(smlPerson.getPhoneNumber());
-    // }
-    // if (smlPerson.isSetSurname()) {
-    // xbPerson.setSurname(smlPerson.getSurname());
-    // }
-    // if (smlPerson.isSetUserID()) {
-    // xbPerson.setUserID(smlPerson.getUserID());
-    // }
-    // return xbPerson;
-    // }
-    //
-
-    // private ContactList createContactList(final List<SmlContact> contacts) {
-    // final ContactList xbContacts = ContactList.Factory.newInstance();
-    // for (final SmlContact smlContact : contacts) {
-    // if (smlContact instanceof SmlPerson) {
-    // ContactList.Member member = xbContacts.addNewMember();
-    // member.addNewPerson().set(createPerson((SmlPerson) smlContact));
-    // if (!Strings.isNullOrEmpty(smlContact.getRole())) {
-    // member.setRole(smlContact.getRole());
-    // }
-    // } else if (smlContact instanceof SmlResponsibleParty) {
-    // ContactList.Member member = xbContacts.addNewMember();
-    // member.addNewResponsibleParty().set(createResponsibleParty((SmlResponsibleParty)
-    // smlContact));
-    // if (!Strings.isNullOrEmpty(smlContact.getRole())) {
-    // member.setRole(smlContact.getRole());
-    // }
-    // } else if (smlContact instanceof SmlContactList) {
-    // SmlContactList contactList = (SmlContactList) smlContact;
-    // ContactList innerContactList =
-    // createContactList(contactList.getMembers());
-    // int innerContactLength = innerContactList.getMemberArray().length;
-    // for (int i = 0; i < innerContactLength; i++) {
-    // xbContacts.addNewMember().set(innerContactList.getMemberArray(i));
-    // }
-    // }
-    // }
-    // return xbContacts;
-    // }
-    //
-    // private XmlObject createResponsibleParty(final SmlResponsibleParty
-    // smlRespParty) {
-    // final ResponsibleParty xbRespParty =
-    // ResponsibleParty.Factory.newInstance();
-    // if (smlRespParty.isSetIndividualName()) {
-    // xbRespParty.setIndividualName(smlRespParty.getIndividualName());
-    // }
-    // if (smlRespParty.isSetOrganizationName()) {
-    // xbRespParty.setOrganizationName(smlRespParty.getOrganizationName());
-    // }
-    // if (smlRespParty.isSetPositionName()) {
-    // xbRespParty.setPositionName(smlRespParty.getPositionName());
-    // }
-    // if (smlRespParty.isSetContactInfo()) {
-    // xbRespParty.setContactInfo(createContactInfo(smlRespParty));
-    // }
-    // return xbRespParty;
-    // }
-    // private boolean isContactListSetAndContainingElements(final Contact
-    // contact) {
-    // return contact.getContactList() != null &&
-    // contact.getContactList().getMemberArray() != null
-    // && contact.getContactList().getMemberArray().length > 0;
-    // }
-
     private void removeCapability(final DescribedObjectType dot, final Capabilities c) {
         // get current index of element with this name
         for (int i = 0; i < dot.getCapabilitiesArray().length; i++) {
@@ -966,48 +803,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         return xbCapabilities;
     }
 
-    private void extendOutputs(AbstractProcess abstractProcess) {
-        if (abstractProcess.isSetPhenomenon()) {
-            for (SmlIo<?> output : abstractProcess.getOutputs()) {
-                if (abstractProcess.hasPhenomenonFor(output.getIoValue().getDefinition())) {
-                    output.getIoValue().setName(
-                            abstractProcess.getPhenomenonFor(output.getIoValue().getDefinition()).getName());
-                }
-            }
-        }
-    }
-
     private ProcessMethodType createProcessMethod(HasProcessMethod processMethod) {
         // TODO how to?
         ProcessMethod method = processMethod.getMethod();
         ProcessMethodType pmt = ProcessMethodType.Factory.newInstance(getOptions());
-        // if (false) {
-        // pmt.setDescription("");
-        // pmt.setIdentifier("");
-        // pmt.setLabel("");
-        // }
-
-        // if (method.isSetHref()) {
-        // xbMethod.setHref(method.getHref());
-        // if (method.isSetTitle()) {
-        // xbMethod.setTitle(method.getTitle());
-        // }
-        // if (method.isSetRole()) {
-        // xbMethod.setRole(method.getRole());
-        // }
-        // } else if (method.isSetRulesDefinition()) {
-        // final ProcessMethodType xbProcessMethod =
-        // xbMethod.addNewProcessMethod();
-        // final RulesDefinition xbRulesDefinition =
-        // xbProcessMethod.addNewRules().addNewRulesDefinition();
-        // if (method.getRulesDefinition().isSetDescription()) {
-        // xbRulesDefinition.addNewDescription().setStringValue(method.getRulesDefinition().getDescription());
-        // }
-        // } else {
-        // throw new NoApplicableCodeException().at("method").withMessage(
-        // "The ProcessMethod should contain a href string or a RulesDefinition!");
-        // }
-        // return pmt;
         return null;
     }
 
@@ -1076,6 +875,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         for (final SmlCharacteristics sosSMLCharacteristics : smlCharacteristics) {
             if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
                 Characteristics xbCharacteristics = Characteristics.Factory.newInstance(getOptions());
+                if (sosSMLCharacteristics.isSetName()) {
+                    xbCharacteristics.setName(sosSMLCharacteristics.getName());
+                } else {
+                    xbCharacteristics.setName("characteristics_" + smlCharacteristics.lastIndexOf(sosSMLCharacteristics));
+                }
                 CharacteristicListType characteristicList = xbCharacteristics.addNewCharacteristicList();
                 if (sosSMLCharacteristics.isSetCharacteristics()) {
                     for (SmlCharacteristic characteristic : sosSMLCharacteristics.getCharacteristic()) {
@@ -1311,7 +1115,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         for (final SmlComponent sosSMLComponent : sosComponents) {
             final Component component = clt.addNewComponent();
             if (sosSMLComponent.getName() != null) {
-                component.setName(sosSMLComponent.getName());
+                component.setName(NcNameResolver.fixNcName(sosSMLComponent.getName()));
             }
             if (sosSMLComponent.getTitle() != null) {
                 component.setTitle(sosSMLComponent.getTitle());
@@ -1323,39 +1127,36 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                 Map<HelperValues, String> additionalValues = Maps.newHashMap();
                 additionalValues.put(HelperValues.TYPE, null);
                 XmlObject xmlObject = encode(sosSMLComponent.getProcess(), additionalValues);
-                // if
-                // (sosSMLComponent.getProcess().getSensorDescriptionXmlString()
-                // != null
-                // &&
-                // !sosSMLComponent.getProcess().getSensorDescriptionXmlString().isEmpty())
-                // {
-                // try {
-                // xmlObject =
-                // XmlObject.Factory.parse(sosSMLComponent.getProcess().getSensorDescriptionXmlString());
-                //
-                // } catch (final XmlException xmle) {
-                // throw new
-                // NoApplicableCodeException().causedBy(xmle).withMessage(
-                // "Error while encoding SensorML child procedure description "
-                // +
-                // "from stored SensorML encoded sensor description with XMLBeans");
-                // }
-                // } else {
-                // xmlObject = encode(sosSMLComponent.getProcess());
-                // }
                 if (xmlObject != null) {
-                    // AbstractProcessType xbProcess = null;
-                    // if (xmlObject instanceof AbstractProcessType) {
-                    // xbProcess = (AbstractProcessType) xmlObject;
-                    // } else {
-                    // throw new NoApplicableCodeException()
-                    // .withMessage("The sensor type is not supported by this SOS");
-                    // }
                     // TODO add feature/parentProcs/childProcs to component - is
                     // this already done?
                     XmlObject substituteElement =
                             XmlHelper.substituteElement(component.addNewAbstractProcess(), xmlObject);
                     substituteElement.set(xmlObject);
+                }
+            }
+        }
+        return clpt;
+    }
+
+    private ConnectionListPropertyType createConnections(SmlConnection connections) {
+        ConnectionListPropertyType clpt = ConnectionListPropertyType.Factory.newInstance(getOptions());
+        if (!Strings.isNullOrEmpty(connections.getHref())) {
+            clpt.setHref(connections.getHref());
+            if (!Strings.isNullOrEmpty(connections.getTitle())) {
+                clpt.setTitle(connections.getTitle());
+            }
+            if (!Strings.isNullOrEmpty(connections.getRole())) {
+                clpt.setRole(connections.getRole());
+            }
+        } else {
+            ConnectionListType clt = clpt.addNewConnectionList();
+            for (SmlLink link : connections.getConnections()) {
+                LinkType lt = clt.addNewConnection().addNewLink();
+                lt.addNewDestination().setRef(link.getDestination());
+                lt.addNewSource().setRef(link.getSource());
+                if (!Strings.isNullOrEmpty(link.getId())) {
+                    lt.setId(link.getId());
                 }
             }
         }

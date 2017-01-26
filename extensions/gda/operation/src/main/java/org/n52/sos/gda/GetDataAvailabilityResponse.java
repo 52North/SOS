@@ -228,6 +228,15 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
             return CollectionHelper.isNotEmpty(getResultTimes());
         }
         
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof DataAvailability) {
+                return getProcedure().getHref().equals(((DataAvailability) o).getProcedure().getHref())
+                        && getFeatureOfInterest().getHref().equals(((DataAvailability) o).getFeatureOfInterest().getHref())
+                        && getObservedProperty().getHref().equals(((DataAvailability) o).getObservedProperty().getHref());
+            }
+            return false;
+        }
     }
 
     public void setNamespace(String namespace) {

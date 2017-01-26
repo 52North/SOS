@@ -58,7 +58,6 @@ import com.google.common.collect.Sets;
  */
 public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDataAvailabilityResponse> {
 
-    @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(GetDataAvailabilityXmlEncoder.class);
 
     public GetDataAvailabilityXmlEncoder() {
@@ -80,8 +79,10 @@ public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDa
             } else {
                 new GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
                 XmlObject encodedObject = XmlObject.Factory.parse(out.toString("UTF8"));
-                LOG.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                        XmlHelper.validateDocument(encodedObject));
+                if (LOG.isDebugEnabled()) {
+	                LOG.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+	                        XmlHelper.validateDocument(encodedObject));
+                }
                 return encodedObject;
             }
             return XmlObject.Factory.parse(out.toString("UTF8"));

@@ -11,7 +11,7 @@
 	<name>52°North SOS - Webapp with Sensor Web REST API</name>
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
-		<timeseries.api.version>1.7.2</timeseries.api.version>
+		<timeseries.api.version>1.9.0</timeseries.api.version>
 	</properties>
 	<build>
 		<finalName>${conf.sos.name}##${project.version}</finalName>
@@ -46,21 +46,21 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-					<nonFilteredFileExtensions>
+                    <nonFilteredFileExtensions>
                         <!-- default value contains jpg,jpeg,gif,bmp,png -->
                         <nonFilteredFileExtension>db</nonFilteredFileExtension>
                     </nonFilteredFileExtensions>
-					<webResources>
-						<resource>
-						    <directory>src/main/webapp</directory>
-						    <filtering>true</filtering>
-						</resource>
-						<resource>
-						    <directory>src/main/resources</directory>
-						    <filtering>true</filtering>
-						    <targetPath>WEB-INF/classes</targetPath>
-						</resource>
-					</webResources>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>true</filtering>
+                        </resource>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <filtering>true</filtering>
+                            <targetPath>WEB-INF/classes</targetPath>
+                         </resource>
+                    </webResources>
 					<overlays>
 						<overlay>
 							<groupId>${project.groupId}</groupId>

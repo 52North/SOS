@@ -29,6 +29,9 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.joda.time.DateTime;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
 
 /**
  * Holder for observation time extrema. Contains phenomenon, result and valid
@@ -89,6 +92,33 @@ public class ObservationTimeExtrema {
     public void setMaxValidTime(DateTime maxValidTime) {
         this.maxValidTime = maxValidTime;
     }
+    
+    public Time getPhenomenonTime() {
+        if (isSetPhenomenonTime()) {
+            if (getMinPhenTime().equals(getMaxPhenTime())) {
+                return new TimeInstant(getMaxPhenTime());
+            }
+            return new TimePeriod(getMinPhenTime(), getMaxPhenTime());
+            }
+        return null;
+    }
+    
+    public Time getResultTime() {
+        if (isSetResultTime()) {
+            return new TimeInstant(getMaxResultTime());
+        }
+        return null;
+    }
+    
+    public Time getValidTime() {
+        if (isSetValidTime()) {
+            if (getMinValidTime().equals(getMaxValidTime())) {
+                return new TimeInstant(getMaxValidTime());
+            }
+            return new TimePeriod(getMinValidTime(), getMaxValidTime());
+            }
+        return null;
+    }
 
     public boolean isSetPhenomenonTime() {
         return getMinPhenTime() != null && getMaxPhenTime() != null;
@@ -100,6 +130,10 @@ public class ObservationTimeExtrema {
 
     public boolean isSetValidTime() {
         return getMinValidTime() != null && getMaxValidTime() != null;
+    }
+    
+    public boolean isEmpty() {
+        return !isSetPhenomenonTime() && !isSetResultTime() && !isSetValidTime();
     }
 
 }

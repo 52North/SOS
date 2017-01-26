@@ -32,7 +32,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -41,7 +43,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
+import org.joda.time.DateTime;
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -72,6 +74,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
         try {
             String jdbc = toURL(settings);
             Class.forName(H2_DRIVER_CLASS);
+            precheckDriver(jdbc, DEFAULT_USERNAME, DEFAULT_PASSWORD);
             return DriverManager.getConnection(jdbc, DEFAULT_USERNAME, DEFAULT_PASSWORD);
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);
@@ -119,7 +122,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
         String path = (String) settings.get(h2Database.getKey());
         File f = new File(path + ".h2.db");
         if (f.exists()) {
-            return false;
+            return checkTableSize(settings);
         } else {
             File parent = f.getParentFile();
             if (parent != null && !parent.exists()) {
@@ -139,7 +142,25 @@ public class H2FileDatasource extends AbstractH2Datasource {
             }
         }
     }
-
+    
+    private boolean checkTableSize(Map<String, Object> settings) {
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = openConnection(settings);
+            stmt = conn.createStatement();
+            stmt.execute("show tables");
+            ResultSet resultSet = stmt.getResultSet();
+            resultSet.last();
+            return resultSet.getRow() <= 1;
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(conn);
+            close(stmt);
+        }
+    }
+    
     @Override
     protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
     }

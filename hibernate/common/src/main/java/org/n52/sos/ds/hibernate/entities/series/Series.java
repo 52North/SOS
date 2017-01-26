@@ -30,10 +30,13 @@ package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 /**
@@ -42,39 +45,35 @@ import org.n52.sos.ds.hibernate.entities.Unit;
  * @since 4.0.0
  * 
  */
-public class Series implements Serializable, HasProcedure, HasObservableProperty, HasFeatureOfInterest, HasDeletedFlag, HasPublishedFlag, HasUnit {
+public class Series 
+        implements Serializable,
+                    HasProcedure,
+                    HasObservableProperty,
+                    HasFeatureOfInterest,
+                    HasDeletedFlag, 
+                    HasPublishedFlag,
+                    HasUnit,
+                    HasOffering {
 
     private static final long serialVersionUID = 7838379468605356753L;
     
     public static String ID = "seriesId";
-    
     public static String FIRST_TIME_STAMP = "firstTimeStamp";
-    
     public static String LAST_TIME_STAMP = "lastTimeStamp";
-
     private long seriesId;
-
     private FeatureOfInterest featureOfInterest;
-
     private ObservableProperty observableProperty;
-
     private Procedure procedure;
+    private Offering offering;
 
     private Boolean deleted = false;
-    
     private Boolean published = true;
-
-    // the following values are used by the timeseries api
+    // the following values are used by the rest api
     private Date firstTimeStamp;
-    
     private Date lastTimeStamp;
-    
     private Double firstNumericValue;
-    
     private Double lastNumericValue;
-    
     private Unit unit;
-    
     /**
      * Get series id
      * 
@@ -240,4 +239,25 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
     public boolean isSetFirstLastTime() {
         return isSetFirstTimeStamp() && isSetLastTimeStamp();
     }
+
+    @Override
+    public Offering getOffering() {
+        return offering;
+    }
+
+    @Override
+    public void setOffering(final Offering offering) {
+        this.offering = offering;
+    }
+    
+    @Override
+    public boolean isSetOffering() {
+        return getOffering() != null;
+    }
+
+    public boolean hasSameObservationIdentifier(Series s) {
+        return getFeatureOfInterest().equals(s.getFeatureOfInterest()) && getProcedure().equals(s.getProcedure())
+                && getObservableProperty().equals(s.getObservableProperty());
+    }
+
 }

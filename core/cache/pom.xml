@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>core</artifactId>
-        <version>4.3.6</version>
+        <version>4.3.9</version>
     </parent>
     <artifactId>cache</artifactId>
     <name>52°North SOS - Cache</name>
@@ -20,13 +20,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
-        <!--  internal for testing -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
-            <classifier>tests</classifier>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

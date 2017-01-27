@@ -291,10 +291,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-mysql</artifactId>
         </dependency>
-        <dependency>
-		    <groupId>${project.groupId}</groupId>
-		    <artifactId>hibernate-datasource-h2</artifactId>
-		</dependency>
+            <dependency>
+    		    <groupId>${project.groupId}</groupId>
+    		    <artifactId>hibernate-datasource-h2</artifactId>
+    		</dependency>
 
         <!-- BINDINGS -->
 
@@ -542,26 +542,26 @@
             <artifactId>seriestype</artifactId>
         </dependency>
         <!-- netCDF -->
-		<dependency>
-	        <groupId>com.axiomalaska</groupId>
-	        <artifactId>cf4j</artifactId>
-      	</dependency>
-		<dependency>
-			<groupId>edu.ucar</groupId>
-			<artifactId>netcdf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
+        <dependency>
+            <groupId>com.axiomalaska</groupId>
+            <artifactId>cf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>netcdf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>api-netcdf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>coding-netcdf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>coding-oceansites</artifactId>
-		</dependency>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-oceansites</artifactId>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>

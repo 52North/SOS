@@ -1283,7 +1283,7 @@
                 <version>4.3.22</version>
                 <exclusions>
                   <exclusion>
-                    <groupId>com.mchange</groupId>
+                    <groupId>c3p0</groupId>
                     <artifactId>c3p0</artifactId>
                   </exclusion>
                 </exclusions>
@@ -1444,6 +1444,7 @@
                         <latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>
                     </properties>
                 </configuration>
+                <!-- 
                 <executions>
                     <execution>
                         <id>check-license</id>
@@ -1453,6 +1454,7 @@
                         </goals>
                     </execution>
                 </executions>
+                 -->
             </plugin>
             <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true 
                 -DallowSnapshots=true -Psqlserver,oracle -->

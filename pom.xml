@@ -1444,7 +1444,6 @@
                         <latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>
                     </properties>
                 </configuration>
-                <!-- 
                 <executions>
                     <execution>
                         <id>check-license</id>
@@ -1454,7 +1453,6 @@
                         </goals>
                     </execution>
                 </executions>
-                 -->
             </plugin>
             <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true 
                 -DallowSnapshots=true -Psqlserver,oracle -->

@@ -217,7 +217,7 @@ This project includes:
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Main module under GNU Lesser General Public License (LGPL) version 2.1
-  mchange-commons-java under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
+  mchange-commons-java library under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Metadata under GNU Lesser General Public License (LGPL) version 2.1
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0

@@ -70,6 +70,10 @@ public class ServiceSettings implements SettingDefinitionProvider {
     public static final String CACHE_FILE_FOLDER = "service.cacheFileFolder";
     
     public static final String CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS = "service.createFeatureGeometryFromSamplingGeometries";
+    
+    public static final String ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE = "service.allowTemplateWithoutProcedureAndFeature";
+
+    public static final String INCLUDE_RESULT_TIME_FOR_MERGING = "service.includeResultTimeForMerging";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
 
@@ -177,6 +181,27 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setDescription(
                             "Whether the SOS should expand the featureOfInterest geometry with the samplingGeometry from the inserted observation. Note: The geometries are added to the end of the LineString! Also if the new observation is between existing observations!");
      
+     public static final BooleanSettingDefinition ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE_DEFINITION =
+             new BooleanSettingDefinition()
+                     .setGroup(GROUP)
+                     .setOrder(22)
+                     .setKey(ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE)
+                     .setDefaultValue(false)
+                     .setTitle("Should this SOS allow the insertion of procedure and featureOfInterest via InsertResult values?")
+                     .setDescription(
+                            "Whether the SOS should allow to reference the procedure and featureOfInterest in the values of the InsertResult operation instead in the observationTemplate!");
+      
+     public static final BooleanSettingDefinition INCLUDE_RESULT_TIME_FOR_MERGING_DEFINITION =
+             new BooleanSettingDefinition()
+                     .setGroup(GROUP)
+                     .setOrder(22)
+                     .setKey(INCLUDE_RESULT_TIME_FOR_MERGING)
+                     .setDefaultValue(false)
+                     .setTitle("Should this SOS include the resultTime for merging?")
+                     .setDescription(
+                            "Whether the SOS should include the resultTime as inidcator when merging observations!");
+      
+    
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,
             SENSOR_DIRECTORY_DEFINITION,
@@ -187,7 +212,9 @@ public class ServiceSettings implements SettingDefinitionProvider {
             UPDATE_FEATURE_GEOMETRY_DEFINITION,
             LIST_ONLY_PARENT_OFFERINGS_DEFINITON,
             CACHE_FILE_FOLDER_DEFILINION,
-            CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS_DEFINITION);
+            CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS_DEFINITION,
+            ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE_DEFINITION,
+            INCLUDE_RESULT_TIME_FOR_MERGING_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

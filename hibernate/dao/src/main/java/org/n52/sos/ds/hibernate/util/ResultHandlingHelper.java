@@ -63,6 +63,7 @@ import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
@@ -453,6 +454,30 @@ public class ResultHandlingHelper {
         }
         return true;
     }
+    
+    public boolean checkForFeatureOfInterest(SweField swefield, String featureOfInterest) throws CodedException {
+        if (isText(swefield) && !checkDefinition(swefield, featureOfInterest)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+            .withMessage(
+                    "The featureOfInterest is not defined in the observationTemplate and the swe:DataRecord does not contain a featureOfInterest definition with '%s'!",
+                    featureOfInterest);
+        }
+        return true;
+    }
+    
+    public boolean checkForProcedure(SweField swefield, String procedure) throws CodedException {
+        if (isText(swefield) && !checkDefinition(swefield, procedure)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+            .withMessage(
+                    "The procedure is not defined in the observationTemplate and the swe:DataRecord does not contain a procedure definition with '%s'!",
+                    procedure);
+        }
+        return true;
+    }
+
+    public boolean isText(SweField swefield) {
+        return swefield != null && swefield.getElement() != null && swefield.getElement() instanceof SweText;
+    }
 
     public boolean checkVectorForSamplingGeometry(SweField swefield) throws CodedException {
         if (isVector(swefield) && !checkDefinition(swefield, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)) {
@@ -463,8 +488,6 @@ public class ResultHandlingHelper {
         }
         return true;
     }
-    
-    
     
     public boolean checkDefinition(SweField sweField, String definition) {
         if (sweField != null && sweField.getElement().isSetDefinition()) {

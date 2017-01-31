@@ -36,6 +36,7 @@ import java.util.Set;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.Constants;
+import org.n52.sos.w3c.Nillable;
 
 import com.google.common.base.Objects;
 
@@ -46,7 +47,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     private static final long serialVersionUID = 8758412729768944974L;
 
     /** Identifier of the procedure by which the observation is made */
-    private SosProcedureDescription procedure;
+    private Nillable<SosProcedureDescription> procedure = Nillable.<SosProcedureDescription>nil();
 
     /**
      * Identifier of the observableProperty to which the observation accords to
@@ -57,7 +58,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     private Set<String> offerings;
 
     /** Identifier of the featureOfInterest to which this observation belongs */
-    private AbstractFeature featureOfInterest;
+    private Nillable<AbstractFeature> featureOfInterest = Nillable.<AbstractFeature>nil();
 
     /** type of the observation */
     private String observationType;
@@ -84,9 +85,9 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     public OmObservationConstellation(SosProcedureDescription procedure, AbstractPhenomenon observableProperty,
             AbstractFeature featureOfInterest) {
         super();
-        this.procedure = procedure;
+        this.procedure = Nillable.of(procedure);
         this.observableProperty = observableProperty;
-        this.featureOfInterest = featureOfInterest;
+        this.featureOfInterest = Nillable.of(featureOfInterest);
     }
     
     /**
@@ -103,11 +104,8 @@ public class OmObservationConstellation implements Serializable, Cloneable {
      */
     public OmObservationConstellation(SosProcedureDescription procedure, AbstractPhenomenon observableProperty,
             AbstractFeature featureOfInterest, Set<String> offerings) {
-        super();
-        this.procedure = procedure;
-        this.observableProperty = observableProperty;
-        this.offerings = offerings;
-        this.featureOfInterest = featureOfInterest;
+       this(procedure, observableProperty, featureOfInterest);
+       this.offerings = offerings;
     }
 
     /**
@@ -126,11 +124,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
      */
     public OmObservationConstellation(SosProcedureDescription procedure, AbstractPhenomenon observableProperty,
             Set<String> offerings, AbstractFeature featureOfInterest, String observationType) {
-        super();
-        this.procedure = procedure;
-        this.observableProperty = observableProperty;
-        this.offerings = offerings;
-        this.featureOfInterest = featureOfInterest;
+        this(procedure, observableProperty, featureOfInterest, offerings);
         this.observationType = observationType;
     }
 
@@ -140,11 +134,26 @@ public class OmObservationConstellation implements Serializable, Cloneable {
      * @return the procedure
      */
     public SosProcedureDescription getProcedure() {
+        if (procedure.isPresent()){
+            return procedure.get();
+        }
+        return null;
+    }
+    
+    /**
+     * Get the procedure
+     *
+     * @return the procedure
+     */
+    public Nillable<SosProcedureDescription> getNillableProcedure() {
         return procedure;
     }
     
     public String getProcedureIdentifier() {
-        return getProcedure().getIdentifier();
+        if (getProcedure() != null) {
+            return getProcedure().getIdentifier();
+        }
+        return null;
     }
 
     /**
@@ -155,6 +164,21 @@ public class OmObservationConstellation implements Serializable, Cloneable {
      * @return this
      */
     public OmObservationConstellation setProcedure(SosProcedureDescription procedure) {
+        if (featureOfInterest == null) {
+            return setProcedure(Nillable.<SosProcedureDescription>nil());
+        }
+        return setProcedure(Nillable.of(procedure));
+    }
+    
+    
+    /**
+     * Set the procedure
+     *
+     * @param procedure
+     *            the procedure to set
+     * @return this
+     */
+    public OmObservationConstellation setProcedure(Nillable<SosProcedureDescription> procedure) {
         this.procedure = procedure;
         return this;
     }
@@ -227,8 +251,20 @@ public class OmObservationConstellation implements Serializable, Cloneable {
      * @return the featureOfInterest
      */
     public AbstractFeature getFeatureOfInterest() {
-        return featureOfInterest;
+        if (featureOfInterest.isPresent()) {
+            return featureOfInterest.get();
+        }
+        return null;
     }
+    
+   /**
+    * Get featureOfInterest
+    *
+    * @return the featureOfInterest
+    */
+   public Nillable<AbstractFeature> getNillableFeatureOfInterest() {
+       return featureOfInterest;
+   }
 
     /**
      * Set featureOfInterest
@@ -238,12 +274,29 @@ public class OmObservationConstellation implements Serializable, Cloneable {
      * @return this
      */
     public OmObservationConstellation setFeatureOfInterest(AbstractFeature featureOfInterest) {
+        if (featureOfInterest == null) {
+            return setFeatureOfInterest(Nillable.<AbstractFeature>nil());
+        }
+        return setFeatureOfInterest(Nillable.of(featureOfInterest));
+    }
+    
+    /**
+     * Set featureOfInterest
+     *
+     * @param featureOfInterest
+     *            the featureOfInterest to set
+     * @return this
+     */
+    public OmObservationConstellation setFeatureOfInterest(Nillable<AbstractFeature> featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
         return this;
     }
     
     public String getFeatureOfInterestIdentifier() {
-        return getFeatureOfInterest().getIdentifier();
+        if (getFeatureOfInterest() != null) {
+            return getFeatureOfInterest().getIdentifier();
+        }
+        return null;
     }
 
     /**
@@ -316,6 +369,14 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     public boolean isSetOfferings() {
         return offerings != null && !offerings.isEmpty();
     }
+    
+    public boolean isSetProcedure() {
+        return getNillableProcedure() != null && getNillableProcedure().isPresent();
+    }
+    
+    public boolean isSetFeatureOfInterest() {
+        return getNillableFeatureOfInterest() != null && getNillableFeatureOfInterest().isPresent();
+    }
 
     @Override
     public OmObservationConstellation clone() throws CloneNotSupportedException {
@@ -329,18 +390,18 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     }
 
     public boolean isEmpty() {
-        return !isSetOfferings() && !isSetProcedure() && !isSetObservableProperty() && isSetFeatureOfInterest();
+        return !isSetOfferings() && !hasProcedure() && !hasObservableProperty() && hasFeatureOfInterest();
     }
 
-    private boolean isSetFeatureOfInterest() {
+    private boolean hasFeatureOfInterest() {
         return getFeatureOfInterest() != null && getFeatureOfInterest().isSetIdentifier();
     }
 
-    private boolean isSetObservableProperty() {
+    private boolean hasObservableProperty() {
         return getObservableProperty() != null && getObservableProperty().isSetIdentifier();
     }
 
-    private boolean isSetProcedure() {
+    private boolean hasProcedure() {
         return getProcedure() != null && getProcedure().isSetIdentifier();
     }
 

@@ -58,6 +58,7 @@ import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.sos.w3c.Nillable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,8 +181,13 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
 
     private Object parseFeaturePropertyType(FeaturePropertyType featurePropertyType) throws OwsExceptionReport {
         SamplingFeature feature = null;
-        // if xlink:href is set
-        if (featurePropertyType.getHref() != null) {
+        if (featurePropertyType.isNil() || featurePropertyType.isSetNilReason()) {
+            if (featurePropertyType.isSetNilReason()) {
+                return Nillable.nil(featurePropertyType.getNilReason().toString());
+            }
+            return Nillable.nil();
+        } else if (featurePropertyType.getHref() != null) {
+            // if xlink:href is set
             if (featurePropertyType.getHref().startsWith(Constants.NUMBER_SIGN_STRING)) {
                 feature =
                         new SamplingFeature(null, featurePropertyType.getHref().replace(Constants.NUMBER_SIGN_STRING,
@@ -193,9 +199,8 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
                 }
             }
             feature.setGmlId(featurePropertyType.getHref());
-        }
-        // if feature is encoded
-        else {
+        } else {
+            // if feature is encoded
             XmlObject abstractFeature = null;
             if (featurePropertyType.getAbstractFeature() != null) {
                 abstractFeature = featurePropertyType.getAbstractFeature();

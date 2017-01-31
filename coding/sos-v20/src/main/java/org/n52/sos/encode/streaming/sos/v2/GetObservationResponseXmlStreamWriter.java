@@ -178,7 +178,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                 StreamingValue<?> streamingValue = (StreamingValue<?>) o.getValue();
                 if (streamingValue.hasNextValue()) {
                     if (response.isSetMergeObservation()) {
-                        if (encoder.supportsResultStreamingForMergedValues()) {
+                        if (encoder.supportsResultStreamingForMergedValues() && !response.getObservationMergeIndicator().isSetResultTime()) {
                             writeObservationData(o, encoder, encodingValues);
                             writeNewLine();
                         } else {

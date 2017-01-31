@@ -35,6 +35,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
@@ -58,6 +60,7 @@ import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.GetObservationByIdResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceSettings;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 import org.n52.svalbard.inspire.omso.MultiPointObservation;
@@ -80,12 +83,20 @@ import com.google.common.collect.Sets;
  * @since 4.4.0
  *
  */
+@Configurable
 public class InspireObservationResponseConverter
         implements RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InspireObservationResponseConverter.class);
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    
+    private boolean includeResultTimeForMerging = false; 
+    
+    @Setting(ServiceSettings.INCLUDE_RESULT_TIME_FOR_MERGING)
+    public void setIncludeResultTimeForMerging(boolean includeResultTimeForMerging) {
+        this.includeResultTimeForMerging = includeResultTimeForMerging;
+    }
 
     /**
      * Get the keys
@@ -271,7 +282,7 @@ public class InspireObservationResponseConverter
      */
     private Collection<? extends OmObservation> mergePointTimeSeriesObservation(List<OmObservation> observations) {
         return new ObservationMerger().mergeObservations(observations,
-                ObservationMergeIndicator.defaultObservationMergerIndicator());
+                ObservationMergeIndicator.defaultObservationMergerIndicator().setResultTime(includeResultTimeForMerging));
     }
 
     /**

@@ -157,6 +157,20 @@ public class ResultHandlingHelper {
                         case OmConstants.PARAM_NAME_SAMPLING_GEOMETRY:
                             builder.append(getSamplingGeometry(observation, tokenSeparator, sosResultStructure.getResultStructure()));
                             break;
+                        case OM_PROCEDURE:
+                            if (observation.getProcedure() != null && observation.getProcedure().isSetIdentifier()) {
+                                builder.append(observation.getProcedure().getIdentifier());
+                            } else {
+                                builder.append("");
+                            }
+                            break;
+                        case OM_FEATURE_OF_INTEREST:
+                            if (observation.getFeatureOfInterest() != null && observation.getFeatureOfInterest().isSetIdentifier()) {
+                                builder.append(observation.getFeatureOfInterest().getIdentifier());
+                            } else {
+                                builder.append("");
+                            }
+                            break;
                         default:
                             builder.append(getValueAsStringForObservedProperty(observation, definition));
                             break;

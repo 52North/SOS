@@ -36,6 +36,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -43,6 +44,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -185,8 +187,11 @@ public class ResultTemplateDAO {
         rtc.createCriteria(ObservationConstellation.OBSERVABLE_PROPERTY).add(
                 Restrictions.eq(ObservableProperty.IDENTIFIER, observedProperty));
         if (featureOfInterest != null && !featureOfInterest.isEmpty()) {
-            rtc.createCriteria(ResultTemplate.FEATURE_OF_INTEREST).add(
-                    Restrictions.in(FeatureOfInterest.IDENTIFIER, featureOfInterest));
+            rtc.createAlias(ResultTemplate.FEATURE_OF_INTEREST, "foi", JoinType.LEFT_OUTER_JOIN);
+            rtc.add(Restrictions.or(Restrictions.isNull(ResultTemplate.FEATURE_OF_INTEREST),
+                    Restrictions.in("foi." + FeatureOfInterest.IDENTIFIER, featureOfInterest)));
+//            rtc.createCriteria(ResultTemplate.FEATURE_OF_INTEREST).add(
+//                    Restrictions.in(FeatureOfInterest.IDENTIFIER, featureOfInterest));
         }
         LOGGER.debug("QUERY getResultTemplateObject(offering, observedProperty, featureOfInterest): {}",
                 HibernateHelper.getSqlString(rtc));

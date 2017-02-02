@@ -28,14 +28,17 @@
  */
 package org.n52.sos.ogc.om;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.n52.sos.util.CollectionHelper;
 
+import com.google.common.collect.Lists;
+
 public class ObservationMerger {
     
-    public List<OmObservation> mergeObservations(List<OmObservation> observations, ObservationMergeIndicator observationMergeIndicator) {
+    public List<OmObservation> mergeObservations(Collection<OmObservation> observations, ObservationMergeIndicator observationMergeIndicator) {
         if (CollectionHelper.isNotEmpty(observations)) {
             final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
             int obsIdCounter = 1;
@@ -61,10 +64,10 @@ public class ObservationMerger {
             }
             return mergedObservations;
         }
-        return observations;
+        return Lists.newArrayList(observations);
     }
     
-    public List<OmObservation> mergeObservations(List<OmObservation> observations) {
+    public List<OmObservation> mergeObservations(Collection<OmObservation> observations) {
         return mergeObservations(observations, new ObservationMergeIndicator());
     }
     
@@ -111,7 +114,7 @@ public class ObservationMerger {
             merge = merge && checkForPhenomenonTime(observation, observationToAdd);
         }
         if (observationMergeIndicator.isSetResultTime()) {
-            merge = merge && checkForPhenomenonTime(observation, observationToAdd);
+            merge = merge && checkForResultTime(observation, observationToAdd);
         }
         if (observationMergeIndicator.isSamplingGeometry()) {
             merge = merge && checkForSamplingGeometry(observation, observationToAdd);

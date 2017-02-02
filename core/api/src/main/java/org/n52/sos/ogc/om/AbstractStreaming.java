@@ -73,7 +73,10 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
     public abstract OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport;
     
     public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
-        List<OmObservation> observations = getObservation();
+        return mergeObservation(getObservation());
+    }
+    
+    public Collection<OmObservation> mergeObservation(Collection<OmObservation> observations) throws OwsExceptionReport {
         // TODO merge all observations with the same observationContellation
         // FIXME Failed to set the observation type to sweArrayObservation for
         // the merged Observations
@@ -220,7 +223,7 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
         this.observationMerger = merger;
     }
      
-    private ObservationMerger getObservationMerger() {
+    protected ObservationMerger getObservationMerger() {
         if (this.observationMerger == null) {
             setObservationMerger(new ObservationMerger());
         }
@@ -231,7 +234,7 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
         this.observationMergeIndicator = indicator;
     }
 
-    private ObservationMergeIndicator getObservationMergeIndicator() {
+    protected ObservationMergeIndicator getObservationMergeIndicator() {
         if (this.observationMergeIndicator == null) {
             setObservationMergeIndicator(new ObservationMergeIndicator());
         }

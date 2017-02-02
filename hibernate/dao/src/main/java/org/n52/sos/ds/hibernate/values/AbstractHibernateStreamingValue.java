@@ -106,15 +106,16 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
             if (nextEntity != null) {
                 boolean mergableObservationValue = checkForMergability(nextEntity);
                 OmObservation observation = null;
-                if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
-                    observation = observations.get(nextEntity.getDiscriminator());
+                String key = getKey(nextEntity);
+                if (observations.containsKey(key) && mergableObservationValue) {
+                    observation = observations.get(key);
                 } else {
                     observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
                     addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
                     if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
                         observations.put(Long.toString(nextEntity.getObservationId()), observation);
                     } else {
-                        observations.put(nextEntity.getDiscriminator(), observation);
+                        observations.put(key, observation);
                     }
                 }
                 nextEntity.mergeValueToObservation(observation, getResponseFormat());
@@ -122,6 +123,15 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
             }
         }
         return observations.values();
+    }
+
+    private String getKey(AbstractValuedLegacyObservation<?> nextEntity) {
+        if (nextEntity.getDiscriminator() != null) {
+            return nextEntity.getDiscriminator();
+        } else if (getObservationMergeIndicator() != null && getObservationMergeIndicator().isSetResultTime()) {
+            return nextEntity.getResultTime().toString();
+        }
+        return null;
     }
 
     private boolean checkForMergability(AbstractValuedLegacyObservation<?> nextEntity) {

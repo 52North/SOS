@@ -32,6 +32,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractInsertResultTemplateDAO;
 import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.ResultTemplateInsertion;
@@ -50,6 +52,7 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceSettings;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
@@ -57,17 +60,23 @@ import org.n52.sos.wsdl.WSDLOperation;
  * @since 4.0.0
  *
  */
+@Configurable
 public class SosInsertResultTemplateOperatorV20
         extends
         AbstractV2TransactionalRequestOperator<AbstractInsertResultTemplateDAO, InsertResultTemplateRequest, InsertResultTemplateResponse> {
 
     private static final String OPERATION_NAME = Sos2Constants.Operations.InsertResultTemplate.name();
-
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_RESULT_INSERTION);
-
+    private boolean allowTemplateWithoutProcedureAndFeature = false;
+    
     public SosInsertResultTemplateOperatorV20() {
         super(OPERATION_NAME, InsertResultTemplateRequest.class);
+    }
+    
+    @Setting(ServiceSettings.ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE)
+    public void setAllowTemplateWithoutProcedureAndFeature(boolean allowTemplateWithoutProcedureAndFeature) {
+        this.allowTemplateWithoutProcedureAndFeature = allowTemplateWithoutProcedureAndFeature;
     }
 
     @Override
@@ -110,8 +119,27 @@ public class SosInsertResultTemplateOperatorV20
         }
         // check procedure
         try {
-            checkTransactionalProcedureID(request.getObservationTemplate().getProcedure().getIdentifier(),
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
+            if (allowTemplateWithoutProcedureAndFeature
+                    && request.getObservationTemplate().getNillableProcedure().isNil()) {
+                if (!request.getObservationTemplate().getNillableProcedure().hasReason()) {
+                    throw new MissingParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".procedure.nilReason");
+                } else if (!request.getObservationTemplate().getNillableProcedure().getNilReason().get()
+                        .equals("template")) {
+                    throw new InvalidParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".procedure.nilReason",
+                            request.getObservationTemplate().getNillableProcedure().getNilReason().get());
+                }
+            } else {
+                if (request.getObservationTemplate().getProcedureIdentifier() == null
+                        || request.getObservationTemplate().getProcedureIdentifier() == null
+                        || request.getObservationTemplate().getProcedureIdentifier().isEmpty()) {
+                    exceptions.add(new MissingParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate));
+                }
+                checkTransactionalProcedureID(request.getObservationTemplate().getProcedureIdentifier(),
+                        Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -124,15 +152,29 @@ public class SosInsertResultTemplateOperatorV20
         }
         // check for observed character of featureOfInterest
         try {
-            checkReservedCharacter(request.getObservationTemplate().getFeatureOfInterest().getIdentifier(),
-                    Sos2Constants.InsertResultTemplateParams.featureOfInterest);
+            if (allowTemplateWithoutProcedureAndFeature
+                    && request.getObservationTemplate().getNillableFeatureOfInterest().isNil()) {
+                if (!request.getObservationTemplate().getNillableFeatureOfInterest().hasReason()) {
+                    throw new MissingParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".featureOfInterest.nilReason");
+                } else if (!request.getObservationTemplate().getNillableFeatureOfInterest().getNilReason().get()
+                        .equals("template")) {
+                    throw new InvalidParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".featureOfInterest.nilReason",
+                            request.getObservationTemplate().getNillableFeatureOfInterest().getNilReason().get());
+                }
+            } else {
+                if (request.getObservationTemplate().getFeatureOfInterest() == null
+                        || request.getObservationTemplate().getFeatureOfInterestIdentifier() == null
+                        || request.getObservationTemplate().getFeatureOfInterestIdentifier().isEmpty()) {
+                    exceptions.add(new MissingParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate));
+                }
+                checkReservedCharacter(request.getObservationTemplate().getFeatureOfInterest().getIdentifier(),
+                        Sos2Constants.InsertResultTemplateParams.featureOfInterest);
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
-        }
-        String identifier = request.getObservationTemplate().getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
-        if (identifier.isEmpty()) {
-            exceptions.add(new MissingParameterValueException(
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate));
         }
 
         // check identifier

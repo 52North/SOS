@@ -42,6 +42,9 @@ This project includes:
   52°North SOS - Extension GetDataAvailability under GPLv2
   52°North SOS - Extension GetDataAvailability - Hibernate DAO under GPLv2
   52°North SOS - Extension GetDataAvailability - SOS 2.0 Operation under GPLv2
+  52°North SOS - Extension InsertFeatureOfInterest under GPLv2
+  52°North SOS - Extension InsertFeatureOfInterest - Hibernate DAO under GPLv2
+  52°North SOS - Extension InsertFeatureOfInterest - SOS 2.0 Operation under GPLv2
   52°North SOS - Extension Modules under GPLv2
   52°North SOS - Extension register Binding under GPLv2
   52°North SOS - Extension REST Binding under GPLv2
@@ -105,6 +108,7 @@ This project includes:
   52°North SOS - Webapp with Sensor Web REST API under GPLv2
   52°North Svalbard - CV for GML 3.2.1 XML Request Coding under GPLv2
   52°North Svalbard - Extension GetDataAvailability - SOS 2.0 coding under GPLv2
+  52°North Svalbard - Extension InsertFeatureOfInterest coding under GPLv2
   52°North Svalbard - GML XML Request Coding under GPLv2
   52°North Svalbard - GWML 2.2 XML Coding under GPLv2
   52°North Svalbard - INSPIRE XML OMPR Coding under GPLv2
@@ -217,7 +221,7 @@ This project includes:
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Main module under GNU Lesser General Public License (LGPL) version 2.1
-  mchange-commons-java under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
+  mchange-commons-java library under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Metadata under GNU Lesser General Public License (LGPL) version 2.1
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
@@ -233,6 +237,7 @@ This project includes:
   OGC GML schema (spec. v3.2.1) under The Apache Software License, Version 2.0
   OGC GML schema (spec. v3.3) under The Apache Software License, Version 2.0
   OGC GWML 2.0 schema (spec. v2.2) under The Apache Software License, Version 2.0
+  OGC InsertFeatureOfInterest schema 1.0 under The Apache Software License, Version 2.0
   OGC O&M schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC O&M schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0

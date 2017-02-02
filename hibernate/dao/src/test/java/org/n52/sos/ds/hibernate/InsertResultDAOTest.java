@@ -54,7 +54,9 @@ public class InsertResultDAOTest extends HibernateTestCase {
         final SweDataRecord record = createRecordWithSimpleObservation();
         final Map<Integer, String> observedProperties = new HashMap<Integer, String>(record.getFields().size() - 1);
         final Map<Integer, String> units = new HashMap<Integer, String>(record.getFields().size() - 1);
-        insertResultDAO.getIndexForObservedPropertyAndUnit(record, 0, observedProperties, units, Sets.newHashSet(0));
+        final Map<Integer, String> featureOfInterest = new HashMap<Integer, String>(record.getFields().size() - 1);
+        final Map<Integer, String> procedure = new HashMap<Integer, String>(record.getFields().size() - 1);
+        insertResultDAO.getIndexFor(record, 0, observedProperties, units, featureOfInterest, procedure, Sets.newHashSet(0));
         assertThat(observedProperties.size(), is(1));
         assertThat(observedProperties.get(1).equals(OBS_PROP_1), is(true));
     }
@@ -64,7 +66,9 @@ public class InsertResultDAOTest extends HibernateTestCase {
         final SweDataRecord record = createRecordWithComplexObservation();
         final Map<Integer, String> observedProperties = new HashMap<Integer, String>(record.getFields().size() - 1);
         final Map<Integer, String> units = new HashMap<Integer, String>(record.getFields().size() - 1);
-        insertResultDAO.getIndexForObservedPropertyAndUnit(record, 0, observedProperties, units, Sets.newHashSet(0));
+        final Map<Integer, String> featureOfInterest = new HashMap<Integer, String>(record.getFields().size() - 1);
+        final Map<Integer, String> procedure = new HashMap<Integer, String>(record.getFields().size() - 1);
+        insertResultDAO.getIndexFor(record, 0, observedProperties, units, featureOfInterest, procedure, Sets.newHashSet(0));
         assertThat(observedProperties.size(), is(3));
         assertThat(observedProperties.get(1).equals(OBS_PROP_1), is(true));
         assertThat(observedProperties.get(2).equals(OBS_PROP_2), is(true));

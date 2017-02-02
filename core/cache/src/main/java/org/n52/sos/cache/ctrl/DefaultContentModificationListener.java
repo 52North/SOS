@@ -87,7 +87,7 @@ public class DefaultContentModificationListener implements SosEventListener {
             handle(new SensorDeletionUpdate(e.getRequest()));
         } else if (event instanceof ResultInsertion) {
             ResultInsertion e = (ResultInsertion) event;
-            handle(new ResultInsertionUpdate(e.getRequest().getTemplateIdentifier(), e.getResponse().getObservation()));
+            handle(new ResultInsertionUpdate(e.getRequest().getTemplateIdentifier(), e.getResponse().getObservations()));
         } else if (event instanceof FeatureInsertion) {
             FeatureInsertion e = (FeatureInsertion) event;
             handle(new FeatureInsertionUpdate(e.getRequest()));

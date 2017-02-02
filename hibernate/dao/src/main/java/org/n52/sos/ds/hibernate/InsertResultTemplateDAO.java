@@ -32,12 +32,15 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractInsertResultTemplateDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.CodedException;
@@ -59,22 +62,30 @@ import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
+import org.n52.sos.service.ServiceSettings;
 
 /**
  * Implementation of the abstract class AbstractInsertResultTemplateDAO
  * @since 4.0.0
  * 
  */
+@Configurable
 public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO implements CapabilitiesExtensionProvider {
 
     private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
     private ResultHandlingHelper helper = new  ResultHandlingHelper();
-
+    private boolean allowTemplateWithoutProcedureAndFeature = false;
+    
     /**
      * constructor
      */
     public InsertResultTemplateDAO() {
         super(SosConstants.SOS);
+    }
+    
+    @Setting(ServiceSettings.ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE)
+    public void setAllowTemplateWithoutProcedureAndFeature(boolean allowTemplateWithoutProcedureAndFeature) {
+        this.allowTemplateWithoutProcedureAndFeature = allowTemplateWithoutProcedureAndFeature;
     }
     
     @Override
@@ -100,16 +111,23 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                 obsConst =
                         new ObservationConstellationDAO().checkObservationConstellation(sosObsConst, offeringID,
                                 session, Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
-                if (obsConst != null) {
-                    FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
-                    AbstractFeatureOfInterest feature =
-                            featureOfInterestDAO.checkOrInsertFeatureOfInterest(sosObsConst.getFeatureOfInterest(),
-                                    session);
-                    featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(feature,
-                            obsConst.getOffering(), session);
+                if (obsConst != null) { 
                     // check if result structure elements are supported
-                    checkResultStructure(request.getResultStructure(), obsConst.getObservableProperty().getIdentifier());
-                    new ResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, feature, session);
+                    checkResultStructure(request.getResultStructure(), obsConst.getObservableProperty().getIdentifier(), sosObsConst);
+                    AbstractFeatureOfInterest feature = null;
+                    Procedure procedure = null;
+                    if (sosObsConst.isSetFeatureOfInterest()) {
+                        FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
+                        feature =
+                                featureOfInterestDAO.checkOrInsertFeatureOfInterest(sosObsConst.getFeatureOfInterest(),
+                                        session);
+                        featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(feature,
+                                obsConst.getOffering(), session);
+                    }
+                    if (sosObsConst.isSetProcedure()) {
+                        procedure = obsConst.getProcedure();
+                    }
+                    checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
                 } else {
                     // TODO make better exception.
                     throw new InvalidObservationTypeException(request.getObservationTemplate().getObservationType());
@@ -132,6 +150,11 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
             sessionHolder.returnSession(session);
         }
         return response;
+    }
+
+    private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, ObservationConstellation obsConst,
+            Procedure procedure, AbstractFeatureOfInterest feature, Session session) throws OwsExceptionReport {
+        new ResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
     }
 
     @Override
@@ -160,9 +183,8 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
     public String getRelatedOperation() {
         return getOperationName();
     }
-    
 
-    private void checkResultStructure(SosResultStructure resultStructure, String observedProperty)
+    private void checkResultStructure(SosResultStructure resultStructure, String observedProperty, OmObservationConstellation sosObsConst)
             throws OwsExceptionReport {
         // TODO modify or remove if complex field elements are supported
         final SweDataRecord record = setRecordFrom(resultStructure.getResultStructure());
@@ -176,6 +198,14 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                         swefield.getElement().getClass().getName());
             }
             helper.checkDataRecordForObservedProperty(swefield, observedProperty);
+//            if (allowTemplateWithoutProcedureAndFeature){
+//                if (sosObsConst.getNillableFeatureOfInterest().isNil() && helper.checkDefinition(swefield, "om:featureOfInterest")) {
+//                    helper.checkForFeatureOfInterest(swefield, "om:featureOfInterest");
+//                }
+//                if (sosObsConst.getNillableProcedure().isNil() && helper.checkDefinition(swefield, "om:procedure")) {
+//                    helper.checkForProcedure(swefield, "om:procedure");
+//                }
+//            }
             helper.checkVectorForSamplingGeometry(swefield);
         }
         if (helper.hasPhenomenonTime(record) == -1) {
@@ -186,13 +216,25 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage("Missing swe:field content with element definition %s", observedProperty);
         }
+        if (allowTemplateWithoutProcedureAndFeature){
+            if (sosObsConst.getNillableFeatureOfInterest().isNil() && helper.checkFields(record.getFields(), "om:featureOfInterest") == -1) {
+                throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage("Missing swe:field content with element definition '%s' because the featureOfInterest is not defined in the observationTemplate!", "om:featureOfInterest");
+            }
+            if (sosObsConst.getNillableProcedure().isNil() && helper.checkFields(record.getFields(), "om:procedure") == -1) {
+                throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage("Missing swe:field content with element definition '%s' because the procdure is not defined in the observationTemplate!", "om:procedure");
+            }
+        }
         if (record.getFields().size() > getAllowedSize(record)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage(
                             "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition '%s', "
                             + " optional swe:Time with element definition '%s' and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
-                            + "with element definition '%s' or swe:Vector with element defintion '%s'",
-                            OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
+                            + "with element definition '%s' or swe:Vector with element defintion '%s' or swe:Text with element definitions "
+                            + "'%s' and '%s'!",
+                            OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY,
+                            "om:featureOfInterest", "om:procedure");
         }
     }
 
@@ -201,12 +243,20 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
         if (helper.hasResultTime(record) > -1) {
             allowedSize++;
         }
-        boolean hasSamplingGeometry = false;
+        int additionalValues = 0;
         for (final SweField swefield : record.getFields()) {
             if (helper.isVector(swefield) && helper.checkVectorForSamplingGeometry(swefield)) {
-                hasSamplingGeometry = true;
+                additionalValues++;
+            }
+            if (allowTemplateWithoutProcedureAndFeature) {
+                if (helper.isText(swefield) && helper.checkDefinition(swefield, "om:featureOfInterest")) {
+                    additionalValues++;
+                }
+                if (helper.isText(swefield) && helper.checkDefinition(swefield, "om:procedure")) {
+                    additionalValues++;
+                }
             }
         }
-        return hasSamplingGeometry ? (allowedSize + 1) : allowedSize;
+        return allowedSize + additionalValues;
     }
 }

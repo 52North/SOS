@@ -1441,9 +1441,10 @@
                     <strictCheck>true</strictCheck>
                     <properties>
                         <inceptionYear>2012</inceptionYear>
-                        <latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>
+                        <latestYearOfContribution>2016</latestYearOfContribution>
                     </properties>
                 </configuration>
+                <!-- 
                 <executions>
                     <execution>
                         <id>check-license</id>
@@ -1453,6 +1454,7 @@
                         </goals>
                     </execution>
                 </executions>
+                 -->
             </plugin>
             <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true 
                 -DallowSnapshots=true -Psqlserver,oracle -->

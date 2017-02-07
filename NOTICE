@@ -143,7 +143,6 @@ This project includes:
   Batik XML utility library under The Apache Software License, Version 2.0
   Berkeley DB Java Edition under Sleepycat License
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
-  c3p0:JDBC DataSources/Resource Pools under GNU LESSER GENERAL PUBLIC LICENSE
   cf4j under GNU Lesser General Public License
   ClassLoader leak prevention under Apache 2
   Codec under The Apache Software License, Version 1.1
@@ -266,6 +265,7 @@ This project includes:
   Referencing services under GNU Lesser General Public License (LGPL) version 2.1
   Reflections under WTFPL
   SaxonB under Mozilla Public License Version 1.0
+  Series REST API - DAO Mappings module under GNU General Public License, Version 2.0
   Series REST API - DAO module under GNU General Public License, Version 2.0
   Series REST API - IO module under GNU General Public License, Version 2.0
   Series REST API - REST module under GNU General Public License, Version 2.0

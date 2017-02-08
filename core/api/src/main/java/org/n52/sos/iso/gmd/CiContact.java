@@ -35,27 +35,20 @@ import org.n52.sos.iso.gco.AbtractGmd;
 import org.n52.sos.util.CollectionHelper;
 
 public class CiContact extends AbtractGmd {
-
+    /* 0..* */
     private List<String> phoneVoice;
-
+    /* 0..* */
     private List<String> phoneFax;
-
+    /* 0..* */
     private List<String> deliveryPoints;
-
     private String city;
-
     private String administrativeArea;
-
     private String postalCode;
-
     private String country;
-
+    /* 0..* */
     private String email;
-
     private String onlineResource;
-
     private String hoursOfService;
-
     private String contactInstructions;
     
     public boolean isSetPhoneVoice() {

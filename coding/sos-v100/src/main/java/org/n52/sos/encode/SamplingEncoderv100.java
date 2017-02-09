@@ -206,6 +206,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
         if (sampFeat.isSetIdentifier()
                 && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifierCodeWithAuthority().getValue(),
                         Sos1Constants.SERVICEVERSION)) {
+            sampFeat.getIdentifierCodeWithAuthority().setCodeSpace("uniquID");
             xbSamplingFeature.addNewName().set(
                     CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, sampFeat.getIdentifierCodeWithAuthority()));
         }

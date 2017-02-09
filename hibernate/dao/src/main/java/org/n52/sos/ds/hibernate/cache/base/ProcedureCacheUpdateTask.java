@@ -36,8 +36,8 @@ import org.n52.sos.convert.ConverterRepository;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -76,9 +76,8 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
             if (procedureDAO.isProcedureTimeExtremaNamedQuerySupported(getSession())) {
                 pte = procedureDAO.getProcedureTimeExtremaFromNamedQuery(getSession(), procedureId);
             } else {
-                AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
-                if (isSetTimeExtremaEmpty(pte) && seriesDAO != null) {
-                    pte = seriesDAO.getProcedureTimeExtrema(getSession(), procedureId);
+                if (isSetTimeExtremaEmpty(pte) && DaoFactory.getInstance().isSeriesDAO()) {
+                    pte = DaoFactory.getInstance().getSeriesDAO().getProcedureTimeExtrema(getSession(), procedureId);
                 }
                 if (isSetTimeExtremaEmpty(pte)) {
                     pte = new ProcedureDAO().getProcedureTimeExtrema(getSession(), procedureId);

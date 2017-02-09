@@ -32,9 +32,21 @@ RELEASE NOTES
   
   
 
-      Release 52n-sensorweb-sos-4.3.8
+   Release 52n-sensorweb-sos-4.3.10
+=====================================
+
+  --- New features ---
+  
+    
+  --- Changes ---
+
+  
+  --- Fixed issues ---
+
+    * Issue #503: Capabilities cache update fails for old database concept
+ 
    Release 52n-sensorweb-sos-4.3.9
-===================================== 
+=====================================
 
   --- New features ---
   

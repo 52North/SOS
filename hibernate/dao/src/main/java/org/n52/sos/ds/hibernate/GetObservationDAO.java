@@ -559,6 +559,8 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                 if (!serieses.contains(seriesObservation.getSeries()) && !duplicated.contains(seriesObservation)
                         && isDuplicatedSeries(seriesObservation.getSeries(), serieses)) {
                     duplicated.add(seriesObservation.getSeries());
+                } else {
+                    serieses.add(seriesObservation.getSeries());
                 }
             }
 

@@ -13,8 +13,8 @@
     <many-to-one class="PhenomenonEntity" column="observablepropertyid" insert="false" name="phenomenon" update="false"/>
     <many-to-one class="FeatureEntity" column="featureofinterestid" insert="false" name="feature" update="false"/>
     <many-to-one class="PlatformEntity" column="procedureid" insert="false" name="platform" update="false"/>
-    <property column="deleted" insert="false" name="deleted" type="org.hibernate.type.TrueFalseType" update="false"/>
     <property column="published" insert="false" name="published" type="org.hibernate.type.TrueFalseType" update="false"/>
+    <property column="deleted" insert="false" name="deleted" type="org.hibernate.type.TrueFalseType" update="false"/>
     <property column="seriesType" insert="false" name="datasetType" type="string" update="false"/>
 
     <property column="identifier" insert="false" name="domainId" type="string" update="false"/>

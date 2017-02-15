@@ -32,7 +32,11 @@
          </dependency>
          <dependency>
             <groupId>org.n52.faroe</groupId>
-            <artifactId>faroe</artifactId>
+            <artifactId>faroe-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>

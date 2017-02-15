@@ -89,7 +89,11 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                 offeringDAO = new ProxyOfferingDao(getSession());
             }
             if (offeringsToUpdate == null) {
-                offeringsToUpdate = offeringDAO.getInstancesFor(offeringsIdToUpdate);
+                if (offeringsIdToUpdate == null || (offeringsIdToUpdate != null && !offeringsIdToUpdate.isEmpty())) {
+                    offeringDAO.getAllInstances(new DbQuery(IoParameters.createDefaults()));
+                } else {
+                    offeringsToUpdate = offeringDAO.getInstancesFor(offeringsIdToUpdate);
+                }
             }
         } catch (Exception e) {
             getErrors().add(new GenericThrowableWrapperException(e)

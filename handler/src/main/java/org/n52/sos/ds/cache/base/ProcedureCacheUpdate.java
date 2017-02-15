@@ -36,6 +36,7 @@ import java.util.Map;
 
 import org.n52.io.request.IoParameters;
 import org.n52.proxy.db.dao.ProxyDatasetDao;
+import org.n52.proxy.db.dao.ProxyProcedureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
@@ -126,6 +127,8 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         LOGGER.debug("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
 //        getProcedureDescriptionFormat();
+        try {
+            procedures = new ProxyProcedureDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
 
 //        try {
 //        Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
@@ -145,10 +148,10 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
 //                    getCache().addParentProcedures(identifier, getParents(procedure));
 //                }
 //            }
-//        } catch (DataAccessException dae) {
-//            getErrors().add(new NoApplicableCodeException().causedBy(dae)
-//                    .withMessage("Error while updating procedure cache!"));
-//        }
+        } catch (DataAccessException dae) {
+            getErrors().add(new NoApplicableCodeException().causedBy(dae)
+                    .withMessage("Error while updating procedure cache!"));
+        }
 //        //time ranges
 //        //TODO querying procedure time extrema in a single query is definitely faster for a properly
 //        //     indexed Postgres db, but may not be true for all platforms. move back to multithreaded execution

@@ -73,11 +73,14 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String,Collection<DatasetEntity>> getOfferingDatasets() throws OwsExceptionReport {
-        if (procedureDatasetMap == null) {
+    private Map<String,Collection<DatasetEntity>> getProcedureDatasets() throws OwsExceptionReport {
+        if (procedureDatasetMap.isEmpty()) {
             try {
-                procedureDatasetMap.putAll(DatasourceCacheUpdateHelper.mapByProcedure(
-                    new ProxyDatasetDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()))));
+                Map<String, Collection<DatasetEntity>> map = DatasourceCacheUpdateHelper.mapByProcedure(
+                        new ProxyDatasetDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults())));
+                if (map != null) {
+                    procedureDatasetMap.putAll(map);
+                }
             } catch (DataAccessException dae) {
                 throw new NoApplicableCodeException().causedBy(dae).withMessage("Error while querying datasets for offerings");
             }
@@ -129,7 +132,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
 //        getProcedureDescriptionFormat();
         try {
             procedures = new ProxyProcedureDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
-
+            getProcedureDatasets();
 //        try {
 //        Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
 //            List<ProcedureEntity> procedures = procedureDAO.getAllInstances(new DbQuery(IoParameters.createDefaults()));
@@ -148,7 +151,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
 //                    getCache().addParentProcedures(identifier, getParents(procedure));
 //                }
 //            }
-        } catch (DataAccessException dae) {
+        } catch (DataAccessException | OwsExceptionReport dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while updating procedure cache!"));
         }

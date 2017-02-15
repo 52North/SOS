@@ -29,6 +29,7 @@
 package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -59,7 +60,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureCacheUpdateTask.class);
     private ProcedureEntity procedure;
-    private Collection<DatasetEntity> datasets;
+    private Collection<DatasetEntity> datasets = new HashSet<>();
 
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded
@@ -70,7 +71,10 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
      */
     ProcedureCacheUpdateTask(ProcedureEntity procedure, Collection<DatasetEntity> datasets) {
         this.procedure = procedure;
-        this.datasets = datasets;
+        this.datasets.clear();
+        if (datasets != null) {
+            this.datasets.addAll(datasets);
+        }
     }
 
     protected void getProcedureInformationFromDbAndAddItToCacheMaps() throws OwsExceptionReport {
@@ -89,9 +93,6 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
             if (procedure.hasParents()) {
                 getCache().addParentProcedures(identifier, getParents(procedure));
             }
-
-
-
             List<OfferingEntity> offerings = offeringDAO.getAllInstances(createDatasetDbQuery(procedure));
 
             TimePeriod phenomenonTime = new TimePeriod();

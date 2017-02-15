@@ -33,6 +33,7 @@ import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractOperationDAO;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
+import org.n52.sos.service.ServiceSettings;
 
 /**
  * DAO to get the DataAvailabilities out of the database.
@@ -45,11 +46,8 @@ import org.n52.sos.ogc.ows.OwsOperation;
 public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDAO {
     
     public static final String INCLUDE_RESULT_TIMES = "IncludeResultTimes";
-    
     public static final String SHOW_COUNT = "ShowCount";
-    
     private boolean forceValueCount = false;
-    
     private boolean forceGDAv20Response = false;
 
     public AbstractGetDataAvailabilityDAO(String service) {

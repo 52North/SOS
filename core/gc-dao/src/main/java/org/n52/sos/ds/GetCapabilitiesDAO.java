@@ -47,7 +47,6 @@ import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.decode.Decoder;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.exception.CodedException;
@@ -197,8 +196,6 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     private static final int ALL = 0x20 | SERVICE_IDENTIFICATION | SERVICE_PROVIDER | OPERATIONS_METADATA
             | FILTER_CAPABILITIES | CONTENTS;
-
-    private boolean listOnlyParentOfferings = false;
 
     public GetCapabilitiesDAO() {
         super(SosConstants.SOS);
@@ -743,15 +740,6 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         return sosOfferings;
     }
     
-    @Setting(ServiceSettings.LIST_ONLY_PARENT_OFFERINGS)
-    public void setListOnlyParentOfferings(boolean listOnlyParentOfferings) {
-        this.listOnlyParentOfferings = listOnlyParentOfferings;
-    }
-
-    private boolean checkListOnlyParentOfferings() {
-        return listOnlyParentOfferings;
-    }
-
     private void addSosOfferingToObservationOffering(String offering, SosObservationOffering sosObservationOffering,
             GetCapabilitiesRequest request) {
         SosOffering sosOffering = new SosOffering(offering, false);

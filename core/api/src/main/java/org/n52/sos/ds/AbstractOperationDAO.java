@@ -30,7 +30,6 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -43,6 +42,8 @@ import org.n52.sos.binding.Binding;
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.coding.OperationKey;
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.Constraint;
 import org.n52.sos.ogc.ows.DCP;
@@ -52,6 +53,7 @@ import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.service.ServiceSettings;
 import org.n52.sos.util.MultiMaps;
 import org.n52.sos.util.SetMultiMap;
 import org.n52.sos.util.SosHelper;
@@ -63,12 +65,13 @@ import org.n52.sos.util.http.MediaType;
  * @since 4.0.0
  *
  */
+@Configurable
 public abstract class AbstractOperationDAO implements OperationDAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractOperationDAO.class);
-
     private final OperationDAOKeyType operationDAOIdentifier;
-
+    private boolean listOnlyParentOfferings = false;
+    
     public AbstractOperationDAO(String service, String operationName) {
         operationDAOIdentifier = new OperationDAOKeyType(service, operationName);
     }
@@ -110,6 +113,15 @@ public abstract class AbstractOperationDAO implements OperationDAO {
     @Override
     public Set<String> getConformanceClasses() {
         return Collections.emptySet();
+    }
+    
+    @Setting(ServiceSettings.LIST_ONLY_PARENT_OFFERINGS)
+    public void setListOnlyParentOfferings(boolean listOnlyParentOfferings) {
+        this.listOnlyParentOfferings = listOnlyParentOfferings;
+    }
+
+    protected boolean checkListOnlyParentOfferings() {
+        return listOnlyParentOfferings;
     }
 
     protected ContentCache getCache() {
@@ -222,9 +234,13 @@ public abstract class AbstractOperationDAO implements OperationDAO {
     }
 
     protected void addOfferingParameter(OwsOperation opsMeta) {
-        addOfferingParameter(opsMeta, getCache().getOfferings());
+        if (checkListOnlyParentOfferings()){
+            addOfferingParameter(opsMeta, getCache().getParentOfferings(getCache().getOfferings(), false, false));
+        } else {
+            addOfferingParameter(opsMeta, getCache().getOfferings());
+        }
     }
-
+    
     protected void addOfferingParameter(OwsOperation opsMeta, Collection<String> offerings) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.offering, offerings);

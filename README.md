@@ -5,7 +5,7 @@
 
 ## Description
 
-**Standardized, web-based upload and download of sensor data and sensor metadata**
+**Standardized, Web-based Upload and Download of Sensor Data and Sensor Metadata**
 
 *The 52°North Sensor Observation Service (SOS) provides an interoperable web-based interface for inserting and querying sensor data and sensor descriptions. It aggregates observations from live in-situ sensors as well as historical data sets (time series data).*
 
@@ -40,17 +40,13 @@ The 52°North SOS enables the user to:
 
 ## Changelog
 
- See the 52°North SOS [RELEASE-NOTES](https://github.com/52North/SOS/blob/website-markdowns/RELEASE-NOTES)
+ The latest changes, additions, bugfixes, etc. can be found in the [RELEASE-NOTES](https://github.com/52North/SOS/blob/website-markdowns/RELEASE-NOTES)
 
 ## Quick Start
 
- See the [installation guide](https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Installation)
+ Get started - the [installation guide](https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Installation) helps you install and configure the 52°North SOS.
 
-## Sample Data
-    
- The SOS provides sample data via the Test Client.
-
-## UserGuide/Tutorial
+## User Guide
 
  See the SOS [tutorial](http://www.ogcnetwork.net/SOS_2_0/tutorial)
 

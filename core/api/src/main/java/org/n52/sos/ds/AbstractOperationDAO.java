@@ -183,6 +183,10 @@ public abstract class AbstractOperationDAO implements OperationDAO {
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, String version) {
         addFeatureOfInterestParameter(opsMeta, SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
     }
+    
+    protected void addPublishedFeatureOfInterestParameter(OwsOperation opsMeta, String version) {
+        addFeatureOfInterestParameter(opsMeta, SosHelper.getFeatureIDs(getCache().getPublishedFeatureOfInterest(), version));
+    }
 
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, Collection<String> featuresOfInterest) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {

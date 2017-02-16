@@ -461,6 +461,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     
 //    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
     
+    private Set<String> publishedFeatureOfInterest = newSynchronizedSet();
+    
     /**
      * @return the relating offering -> max phenomenon time
      */
@@ -813,6 +815,10 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     	return offeringIdentifierHumanReadableName.inverse();
     }
 
+    protected Set<String> getPublishedFeatureOfInterestSet() {
+        return publishedFeatureOfInterest;
+    }
+
     /**
      * @param defaultEpsgCode
      *            the new default EPSG code
@@ -825,8 +831,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     public int getDefaultEPSGCode() {
         return this.defaultEpsgCode;
     }
-
-
+    
     @Override
     public int hashCode() {
         return Objects.hashCode(updateTime,defaultEpsgCode, maxPhenomenonTimeForOfferings, minPhenomenonTimeForOfferings,
@@ -843,7 +848,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
                 globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats,
                 featureOfInterestIdentifierHumanReadableName, observablePropertyIdentifierHumanReadableName,
-				procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName);
+				procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName, publishedFeatureOfInterest);
     }
 
     @Override
@@ -911,7 +916,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.getFeatureOfInterestIdentifierForHumanReadableName(), other.getFeatureOfInterestIdentifierForHumanReadableName())
                     && Objects.equal(this.getObservablePropertyIdentifierForHumanReadableName(), other.getObservablePropertyIdentifierForHumanReadableName())
                     && Objects.equal(this.getProcedureIdentifierForHumanReadableName(), other.getProcedureIdentifierForHumanReadableName())
-                    && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName());
+                    && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName())
+            && Objects.equal(this.getPublishedFeatureOfInterest(), other.getPublishedFeatureOfInterest());
         }
         return false;
     }

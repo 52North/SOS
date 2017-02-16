@@ -59,7 +59,7 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
             throws OwsExceptionReport {
         addProcedureParameter(operation);
         addObservablePropertyParameter(operation);
-        addFeatureOfInterestParameter(operation, version);
+        addPublishedFeatureOfInterestParameter(operation, version);
     }
 
     /**

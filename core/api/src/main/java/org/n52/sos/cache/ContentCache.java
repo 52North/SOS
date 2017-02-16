@@ -890,8 +890,9 @@ public interface ContentCache extends Serializable {
     
     String getProcedureHumanReadableNameForIdentifier(String identifier);
     
-	String getOfferingIdentifierForHumanReadableName(String humanReadableName);
+    String getOfferingIdentifierForHumanReadableName(String humanReadableName);
     
     String getOfferingHumanReadableNameForIdentifier(String identifier);
 
+    Set<String> getPublishedFeatureOfInterest();
 }

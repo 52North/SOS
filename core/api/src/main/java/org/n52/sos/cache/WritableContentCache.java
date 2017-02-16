@@ -1614,6 +1614,17 @@ public interface WritableContentCache extends ContentCache {
     
     void clearProcedureIdentifierHumanReadableNameMaps();
 
-	void clearOfferingIdentifierHumanReadableNameMaps();
+    void clearOfferingIdentifierHumanReadableNameMaps();
     
+    void addPublishedFeatureOfInterest(String featureOfInterest);
+    
+    void addPublishedFeaturesOfInterest(Collection<String> featuresOfInterest);
+    
+    void setPublishedFeaturesOfInterest(Collection<String> featuresOfInterest);
+    
+    void clearPublishedFeaturesOfInterest();
+    
+    void removePublishedFeatureOfInterest(String featureOfInterest);
+    
+    void removePublishedFeaturesOfInterest(Collection<String> featuresOfInterest);
 }

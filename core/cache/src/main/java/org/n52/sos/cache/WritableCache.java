@@ -1641,4 +1641,47 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         setUpdateTime(time);
     }
 
+    @Override
+    public void addPublishedFeatureOfInterest(String featureOfInterest) {
+        notNullOrEmpty(PUBLISHED_FEATURE_OF_INTEREST, featureOfInterest);
+        LOG.trace("Adding published FeatureOfInterest {}", featureOfInterest);
+        getPublishedFeatureOfInterestSet().add(featureOfInterest);
+    }
+
+    @Override
+    public void addPublishedFeaturesOfInterest(Collection<String> featuresOfInterest) {
+        noNullValues(PUBLISHED_FEATURES_OF_INTEREST, featuresOfInterest);
+        for (final String featureOfInterest : featuresOfInterest) {
+            addPublishedFeatureOfInterest(featureOfInterest);
+        }
+    }
+    
+    @Override
+    public void setPublishedFeaturesOfInterest(final Collection<String> featuresOfInterest) {
+        LOG.trace("Setting published FeaturesOfInterest");
+        clearPublishedFeaturesOfInterest();
+        addPublishedFeaturesOfInterest(featuresOfInterest);
+    }
+
+    @Override
+    public void clearPublishedFeaturesOfInterest() {
+        LOG.trace("Clearing published features of interest");
+        getPublishedFeatureOfInterestSet().clear();
+    }
+
+    @Override
+    public void removePublishedFeatureOfInterest(final String featureOfInterest) {
+        notNullOrEmpty(PUBLISHED_FEATURE_OF_INTEREST, featureOfInterest);
+        LOG.trace("Removing published FeatureOfInterest {}", featureOfInterest);
+        getPublishedFeatureOfInterest().remove(featureOfInterest);
+    }
+
+    @Override
+    public void removePublishedFeaturesOfInterest(final Collection<String> featuresOfInterest) {
+        noNullValues(PUBLISHED_FEATURES_OF_INTEREST, featuresOfInterest);
+        for (final String featureOfInterest : featuresOfInterest) {
+            removePublishedFeatureOfInterest(featureOfInterest);
+        }
+    }
+
 }

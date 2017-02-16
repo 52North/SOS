@@ -53,6 +53,10 @@ public interface CacheConstants {
     String FEATURE_OF_INTEREST = "featureOfInterest";
 
     String FEATURES_OF_INTEREST = "featuresOfInterest";
+    
+    String PUBLISHED_FEATURE_OF_INTEREST = "published featureOfInterest";
+    
+    String PUBLISHED_FEATURES_OF_INTEREST = "published featuresOfInterest";
 
     String OBSERVATION_IDENTIFIER = "observationIdentifier";
 

@@ -67,7 +67,7 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
     protected void setOperationsMetadata(final OwsOperation opsMeta, final String service, final String version)
             throws OwsExceptionReport {
 
-        final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
+        final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getPublishedFeatureOfInterest(), version);
         addOfferingParameter(opsMeta);
         addProcedureParameter(opsMeta);
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat, CodingRepository

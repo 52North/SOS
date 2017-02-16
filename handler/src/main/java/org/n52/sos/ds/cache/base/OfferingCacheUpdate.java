@@ -90,9 +90,9 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             }
             if (offeringsToUpdate == null) {
                 if (offeringsIdToUpdate == null || (offeringsIdToUpdate != null && !offeringsIdToUpdate.isEmpty())) {
-                    offeringDAO.getAllInstances(new DbQuery(IoParameters.createDefaults()));
+                    return offeringDAO.getAllInstances(new DbQuery(IoParameters.createDefaults()));
                 } else {
-                    offeringsToUpdate = offeringDAO.getInstancesFor(offeringsIdToUpdate);
+                    return offeringDAO.getInstancesFor(offeringsIdToUpdate);
                 }
             }
         } catch (Exception e) {
@@ -119,7 +119,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     public void execute() {
         LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
-        //perform single threaded updates here
+        this.offeringsToUpdate = getOfferingsToUpdate();
 //        for (OfferingEntity offering : getOfferingsToUpdate()) {
 //            String identifier = offering.getDomainId();
 //            if (shouldOfferingBeProcessed(offering)) {

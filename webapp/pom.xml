@@ -118,7 +118,11 @@
         </pluginManagement>
     </build>
     <dependencies>
-
+        <dependency>
+	    <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- LOGGING -->
 
         <dependency>

@@ -90,12 +90,12 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
                         .getAllOfferingIdentifiersFromDatasets(datasets));
                 getCache().setObservablePropertiesForProcedure(identifier, DatasourceCacheUpdateHelper
                         .getAllObservablePropertyIdentifiersFromDatasets(datasets));
-    
+
                 if (procedure.hasParents()) {
                     getCache().addParentProcedures(identifier, getParents(procedure));
                 }
                 List<OfferingEntity> offerings = offeringDAO.getAllInstances(createDatasetDbQuery(procedure));
-    
+
                 TimePeriod phenomenonTime = new TimePeriod();
                 for (OfferingEntity offering : offerings) {
                     phenomenonTime.extendToContain(

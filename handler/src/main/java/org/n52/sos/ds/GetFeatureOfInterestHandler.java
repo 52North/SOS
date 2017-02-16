@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -61,7 +62,6 @@ import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.ds.dao.GetFeatureOfInterestDao;
 import org.n52.sos.util.GeometryHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Envelope;
@@ -82,9 +82,11 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         this.sessionStore = sessionStore;
     }
 
-    @Autowired(required=false)
-    public void setGetFeatureOfInterestDao(GetFeatureOfInterestDao getFeatureOfInterestDao) {
-        this.dao = getFeatureOfInterestDao;
+    @Inject
+    public void setGetFeatureOfInterestDao(Optional<GetFeatureOfInterestDao> getFeatureOfInterestDao) {
+        if (getFeatureOfInterestDao.isPresent()) {
+            this.dao = getFeatureOfInterestDao.get();
+        }
     }
 
     public GetFeatureOfInterestHandler() {

@@ -29,6 +29,7 @@
 package org.n52.sos.ds;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -44,7 +45,6 @@ import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.sos.ds.dao.GetObservationByIdDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
 
@@ -65,9 +65,11 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
         this.sessionStore = sessionStore;
     }
 
-    @Autowired(required=false)
-    public void setGetObservationByIdDao(GetObservationByIdDao getObservationByIdDao) {
-        this.dao = getObservationByIdDao;
+    @Inject
+    public void setGetObservationByIdDao(Optional<GetObservationByIdDao> getObservationByIdDao) {
+        if (getObservationByIdDao.isPresent()) {
+            this.dao = getObservationByIdDao.get();
+        }
     }
 
     @Override

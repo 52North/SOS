@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 
 import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -59,7 +60,6 @@ import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.ds.dao.DescribeSensorDao;
 import org.n52.sos.ds.procedure.ProcedureConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class DescribeSensorHandler extends AbstractDescribeSensorHandler implements Constructable {
 
@@ -83,9 +83,11 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
         return operationParameters;
     }
 
-    @Autowired(required=false)
-    public void setDescribeSensorDao(DescribeSensorDao describeSensorDao) {
-        this.dao = describeSensorDao;
+    @Inject
+    public void setDescribeSensorDao(Optional<DescribeSensorDao> describeSensorDao) {
+        if (describeSensorDao.isPresent()) {
+            this.dao = describeSensorDao.get();
+        }
     }
 
     @Inject

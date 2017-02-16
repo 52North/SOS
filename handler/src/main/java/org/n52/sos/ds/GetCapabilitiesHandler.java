@@ -179,7 +179,8 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
     private ResponseFormatRepository responseFormatRepository;
     @Inject
     private GeometryHandler geometryHandler;
-    private OwsOperationMetadataExtensionProviderRepository OwsOperationMetadataExtensionProviderRepository;
+    @Inject
+    private OwsOperationMetadataExtensionProviderRepository owsOperationMetadataExtensionProviderRepository;
     @Inject
     private SosObservationOfferingExtensionRepository offeringExtensionRepository;
     @Inject
@@ -377,7 +378,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         * service and check if this provider provides OwsExtendedCapabilities
         * for the request
          */
-        OwsOperationMetadataExtensionProvider provider = OwsOperationMetadataExtensionProviderRepository.getExtendedCapabilitiesProvider(service, version);
+        OwsOperationMetadataExtensionProvider provider = owsOperationMetadataExtensionProviderRepository.getExtendedCapabilitiesProvider(service, version);
         if (provider != null && provider.hasExtendedCapabilitiesFor(request)) {
             owsExtendedCapabilities = provider.getOwsExtendedCapabilities(request);
         }

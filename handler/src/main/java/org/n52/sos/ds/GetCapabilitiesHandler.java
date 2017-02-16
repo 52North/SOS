@@ -269,9 +269,9 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         if (isV2(sectionSpecificContentObject.getGetCapabilitiesResponse())) {
             if (sectionSpecificContentObject.getRequestedSections() == ALL) {
                 sectionSpecificContentObject.getSosCapabilities().setExtensions(getAndMergeExtensions(service, verion));
-            } else if (!sectionSpecificContentObject.getRequestedExtensionSesctions().isEmpty()) {
+            } else if (!sectionSpecificContentObject.getRequestedExtensionSections().isEmpty()) {
                 sectionSpecificContentObject.getSosCapabilities().setExtensions(
-                        getExtensions(sectionSpecificContentObject.getRequestedExtensionSesctions(), service, verion));
+                        getExtensions(sectionSpecificContentObject.getRequestedExtensionSections(), service, verion));
             }
         }
     }
@@ -318,7 +318,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
     private OwsServiceIdentification getServiceIdentification(GetCapabilitiesRequest request, String service,
                                                               String version) throws OwsExceptionReport {
-        Locale locale = LocaleHelper.decode(request.getRequestedLanguage());
+        Locale locale = getRequestedLocale(request);
         LocalizedProducer<OwsServiceIdentification> serviceIdentificationFactory
                 = this.serviceMetadataRepository.getServiceIdentificationFactory(service);
         OwsServiceIdentification serviceIdentification = serviceIdentificationFactory.get(locale);
@@ -645,9 +645,9 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         SosOffering sosOffering = new SosOffering(offering.getDomainId(), false);
         sosObservationOffering.setOffering(sosOffering);
         // add offering name
-        I18NHelper.addOfferingNames(getCache(), sosOffering, LocaleHelper.decode(request.getRequestedLanguage()), Locale.ROOT, false);
+        I18NHelper.addOfferingNames(getCache(), sosOffering, getRequestedLocale(request), Locale.ROOT, false);
         // add offering description
-        I18NHelper.addOfferingDescription(sosOffering, LocaleHelper.decode(request.getRequestedLanguage()), Locale.ROOT, getCache());
+        I18NHelper.addOfferingDescription(sosOffering, getRequestedLocale(request), Locale.ROOT, getCache());
     }
 
     /**
@@ -1192,7 +1192,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
             return this;
         }
 
-        public Set<String> getRequestedExtensionSesctions() {
+        public Set<String> getRequestedExtensionSections() {
             return requestedExtensionSections;
         }
 

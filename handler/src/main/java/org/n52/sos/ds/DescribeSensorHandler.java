@@ -41,7 +41,6 @@ import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
-import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.proxy.db.dao.ProxyProcedureDao;
 import org.n52.series.db.DataAccessException;
@@ -146,7 +145,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
         return procedureConverter.createSosProcedureDescription(procedure,
                 request.getProcedureDescriptionFormat(),
                 request.getVersion(),
-                LocaleHelper.decode(request.getRequestedLanguage()),
+                getRequestedLocale(request),
                 i18NDAORepository,
                 session);
     }

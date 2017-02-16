@@ -121,11 +121,12 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             for (final DatasetEntity<?> entity : new ProxyDatasetDao<>(session).getAllInstances(createDbQuery(request))) {
                 if (gdaV20) {
                     processDataAvailabilityV2(entity, context, session);
-                    return context.getDataAvailabilityList();
                 } else {
                     processDataAvailability(entity, context, session);
-                    return checkForDuplictation(context.getDataAvailabilityList());
                 }
+            }
+            if (!gdaV20) {
+                return checkForDuplictation(context.getDataAvailabilityList());
             }
             return context.getDataAvailabilityList();
         } catch (DataAccessException e) {

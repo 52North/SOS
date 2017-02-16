@@ -79,29 +79,31 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
 
     protected void getProcedureInformationFromDbAndAddItToCacheMaps() throws OwsExceptionReport {
         try {
-            ProxyOfferingDao offeringDAO = new ProxyOfferingDao(getSession());
-            String identifier = procedure.getDomainId();
-            getCache().addProcedure(identifier);
-            if (procedure.isSetName()) {
-                getCache().addProcedureIdentifierHumanReadableName(identifier, procedure.getName());
+            if (datasets != null) {
+                ProxyOfferingDao offeringDAO = new ProxyOfferingDao(getSession());
+                String identifier = procedure.getDomainId();
+                getCache().addProcedure(identifier);
+                if (procedure.isSetName()) {
+                    getCache().addProcedureIdentifierHumanReadableName(identifier, procedure.getName());
+                }
+                getCache().setOfferingsForProcedure(identifier, DatasourceCacheUpdateHelper
+                        .getAllOfferingIdentifiersFromDatasets(datasets));
+                getCache().setObservablePropertiesForProcedure(identifier, DatasourceCacheUpdateHelper
+                        .getAllObservablePropertyIdentifiersFromDatasets(datasets));
+    
+                if (procedure.hasParents()) {
+                    getCache().addParentProcedures(identifier, getParents(procedure));
+                }
+                List<OfferingEntity> offerings = offeringDAO.getAllInstances(createDatasetDbQuery(procedure));
+    
+                TimePeriod phenomenonTime = new TimePeriod();
+                for (OfferingEntity offering : offerings) {
+                    phenomenonTime.extendToContain(
+                            new TimePeriod(offering.getPhenomenonTimeStart(), offering.getPhenomenonTimeEnd()));
+                }
+                getCache().setMinPhenomenonTimeForProcedure(identifier, phenomenonTime.getStart());
+                getCache().setMaxPhenomenonTimeForProcedure(identifier, phenomenonTime.getEnd());
             }
-            getCache().setOfferingsForProcedure(identifier, DatasourceCacheUpdateHelper
-                    .getAllOfferingIdentifiersFromDatasets(datasets));
-            getCache().setObservablePropertiesForProcedure(identifier, DatasourceCacheUpdateHelper
-                    .getAllObservablePropertyIdentifiersFromDatasets(datasets));
-
-            if (procedure.hasParents()) {
-                getCache().addParentProcedures(identifier, getParents(procedure));
-            }
-            List<OfferingEntity> offerings = offeringDAO.getAllInstances(createDatasetDbQuery(procedure));
-
-            TimePeriod phenomenonTime = new TimePeriod();
-            for (OfferingEntity offering : offerings) {
-                phenomenonTime.extendToContain(
-                        new TimePeriod(offering.getPhenomenonTimeStart(), offering.getPhenomenonTimeEnd()));
-            }
-            getCache().setMinPhenomenonTimeForProcedure(identifier, phenomenonTime.getStart());
-            getCache().setMaxPhenomenonTimeForProcedure(identifier, phenomenonTime.getEnd());
         } catch (DataAccessException dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while updating procedure time cache!"));

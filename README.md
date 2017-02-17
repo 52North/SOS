@@ -5,7 +5,7 @@
 
 ## Description
 
-**Standardized, Web-based Upload and Download of Sensor Data and Sensor Metadata**
+**Standardized, web-based upload and download of sensor data and sensor metadata**
 
 *The 52°North Sensor Observation Service (SOS) provides an interoperable web-based interface for inserting and querying sensor data and sensor descriptions. It aggregates observations from live in-situ sensors as well as historical data sets (time series data).*
 
@@ -21,7 +21,7 @@ The 52°North SOS enables the user to:
  - insert and retrieve sensor descriptions (encoded according to the OGC SensorML standard - SML 1.0.1, SML 2.0)
  - publish measurement data (near real-time, as well as archived data) 
 
-## Features
+### Features
 
   - [INSPIRE Download Service](http://inspire.ec.europa.eu/id/document/tg/download-sos)
   - [Guidelines for the use of Observations & Measurements and Sensor Web Enablement-related standards in INSPIRE (D2.9)](http://inspire.ec.europa.eu/id/document/tg/d2.9-o%26m-swe)

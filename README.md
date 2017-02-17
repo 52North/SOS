@@ -23,9 +23,11 @@ The 52°North SOS enables the user to:
  - insert and retrieve sensor descriptions (encoded according to the OGC SensorML standard - SML 1.0.1, SML 2.0)
  - publish measurement data (near real-time, as well as archived data) 
 
+An extension accomodates additional INSPIRE Directive requirements. Client applications, e.g. [Helgoland](http://www-neu.52north.org/software/software-projects/helgoland/) enable analysis and visualization of the measruement data provided vas the SOS server.
+ 
 ### Features
 
-  - [INSPIRE Download Service](http://inspire.ec.europa.eu/id/document/tg/download-sos)
+  - [INSPIRE Download Service](http://inspire.ec.europa.eu/id/document/tg/download-sos) for measurement data
   - [Guidelines for the use of Observations & Measurements and Sensor Web Enablement-related standards in INSPIRE (D2.9)](http://inspire.ec.europa.eu/id/document/tg/d2.9-o%26m-swe)
   - [OGC Hydro Profile] (http://docs.opengeospatial.org/bp/14-004r1/14-004r1.html), including GetDataAvailability operation
   - [SensorML 1.0.1 and 2.0](http://www.opengeospatial.org/standards/sensorml)
@@ -50,7 +52,7 @@ The 52°North SOS enables the user to:
 
 ## User Guide
 
- See the SOS [tutorial](http://www.ogcnetwork.net/SOS_2_0/tutorial)
+ An OGC SOS [tutorial](http://www.ogcnetwork.net/SOS_2_0/tutorial) is available.
 
 ## Demo
 

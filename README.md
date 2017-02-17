@@ -12,7 +12,7 @@
 ## Description
 
 The 52°North SOS is a reference implementation of the
-[OGC Sensor Observation Service specification (version 2.0)](https://portal.opengeospatial.org/files/?artifact_id=47599). 
+[OGC Sensor Observation Service specification (version 2.0)](https://portal.opengeospatial.org/files/?artifact_id=47599), an interoperable interface for publishing and querying sensor data and metadata. 
 It was implemented during the [OGC Web Services Testbed,  Phase 9 (OWS-9)](http://www.ogcnetwork.net/ows-9) 
 and tested to be compliant to this specification within the [OGC CITE testing](http://cite.opengeospatial.org/test_engine) in December of 2012.
 
@@ -23,7 +23,7 @@ The 52°North SOS enables the user to:
  - insert and retrieve sensor descriptions (encoded according to the OGC SensorML standard - SML 1.0.1, SML 2.0)
  - publish measurement data (near real-time, as well as archived data) 
 
-An extension accomodates additional INSPIRE Directive requirements. Client applications, e.g. [Helgoland](http://www-neu.52north.org/software/software-projects/helgoland/) enable analysis and visualization of the measurement data provided via the SOS server.
+An extension accomodates additional INSPIRE Directive requirements, thus ensuring interoperable exchange of any kind of observation data across political, administrative and organizational boundaries. Client applications, such as [Helgoland](http://www-neu.52north.org/software/software-projects/helgoland/) enable analysis and visualization of the measurement data provided via the SOS server.
  
 ### Features
 

@@ -57,8 +57,8 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
     @Override
     protected void setOperationsMetadata(OwsOperation operation, String service, String version)
             throws OwsExceptionReport {
-        addProcedureParameter(operation);
-        addObservablePropertyParameter(operation);
+        addPublishedProcedureParameter(operation);
+        addPublishedObservablePropertyParameter(operation);
         addPublishedFeatureOfInterestParameter(operation, version);
     }
 

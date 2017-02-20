@@ -180,6 +180,10 @@ public abstract class AbstractOperationDAO implements OperationDAO {
         }
     }
 
+    protected void addPublishedProcedureParameter(OwsOperation opsMeta) {
+        addProcedureParameter(opsMeta, getCache().getPublishedProcedures());
+    }
+
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, String version) {
         addFeatureOfInterestParameter(opsMeta, SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
     }
@@ -187,7 +191,7 @@ public abstract class AbstractOperationDAO implements OperationDAO {
     protected void addPublishedFeatureOfInterestParameter(OwsOperation opsMeta, String version) {
         addFeatureOfInterestParameter(opsMeta, SosHelper.getFeatureIDs(getCache().getPublishedFeatureOfInterest(), version));
     }
-
+    
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, Collection<String> featuresOfInterest) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.featureOfInterest, featuresOfInterest);
@@ -198,6 +202,10 @@ public abstract class AbstractOperationDAO implements OperationDAO {
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta) {
         addObservablePropertyParameter(opsMeta, getCache().getObservableProperties());
+    }
+
+    protected void addPublishedObservablePropertyParameter(OwsOperation opsMeta) {
+        addObservablePropertyParameter(opsMeta, getCache().getPublishedObservableProperties());
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta, Collection<String> observedProperties) {

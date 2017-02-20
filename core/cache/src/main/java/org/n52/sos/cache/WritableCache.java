@@ -1641,6 +1641,8 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         setUpdateTime(time);
     }
 
+    /* published definitions */
+    
     @Override
     public void addPublishedFeatureOfInterest(String featureOfInterest) {
         notNullOrEmpty(PUBLISHED_FEATURE_OF_INTEREST, featureOfInterest);
@@ -1673,7 +1675,7 @@ public class WritableCache extends ReadableCache implements WritableContentCache
     public void removePublishedFeatureOfInterest(final String featureOfInterest) {
         notNullOrEmpty(PUBLISHED_FEATURE_OF_INTEREST, featureOfInterest);
         LOG.trace("Removing published FeatureOfInterest {}", featureOfInterest);
-        getPublishedFeatureOfInterest().remove(featureOfInterest);
+        getPublishedFeatureOfInterestSet().remove(featureOfInterest);
     }
 
     @Override
@@ -1684,4 +1686,132 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         }
     }
 
+   @Override
+   public void addPublishedProcedure(String procedure) {
+       notNullOrEmpty(PUBLISHED_PROCEDURE, procedure);
+       LOG.trace("Adding published procedure {}", procedure);
+       getPublishedProcedureSet().add(procedure);
+   }
+
+   @Override
+   public void addPublishedProcedures(Collection<String> procedures) {
+       noNullValues(PUBLISHED_PROCEDURES, procedures);
+       for (final String procedure : procedures) {
+           addPublishedProcedure(procedure);
+       }
+   }
+   
+   @Override
+   public void setPublishedProcedures(final Collection<String> procedures) {
+       LOG.trace("Setting published procedure");
+       clearPublishedProcedure();
+       addPublishedProcedures(procedures);
+   }
+
+   @Override
+   public void clearPublishedProcedure() {
+       LOG.trace("Clearing published procedure");
+       getPublishedProcedureSet().clear();
+   }
+
+   @Override
+   public void removePublishedProcedure(final String procedure) {
+       notNullOrEmpty(PUBLISHED_PROCEDURE, procedure);
+       LOG.trace("Removing published procedure {}", procedure);
+       getPublishedProcedureSet().remove(procedure);
+   }
+
+   @Override
+   public void removePublishedProcedures(final Collection<String> procedures) {
+       noNullValues(PUBLISHED_PROCEDURES, procedures);
+       for (final String procedure : procedures) {
+           removePublishedProcedure(procedure);
+       }
+   }
+
+   @Override
+   public void addPublishedOffering(String offering) {
+       notNullOrEmpty(PUBLISHED_OFFERING, offering);
+       LOG.trace("Adding published offering {}", offering);
+       getPublishedOfferingSet().add(offering);
+   }
+
+   @Override
+   public void addPublishedOfferings(Collection<String> offerings) {
+       noNullValues(PUBLISHED_OFFERINGS, offerings);
+       for (final String offering : offerings) {
+           addPublishedOffering(offering);
+       }
+   }
+   
+   @Override
+   public void setPublishedOfferings(final Collection<String> offerings) {
+       LOG.trace("Setting published offering");
+       clearPublishedOffering();
+       addPublishedOfferings(offerings);
+   }
+
+   @Override
+   public void clearPublishedOffering() {
+       LOG.trace("Clearing published offering");
+       getPublishedOfferingSet().clear();
+   }
+
+   @Override
+   public void removePublishedOffering(final String offering) {
+       notNullOrEmpty(PUBLISHED_OFFERING, offering);
+       LOG.trace("Removing published offering {}", offering);
+       getPublishedOfferingSet().remove(offering);
+   }
+
+   @Override
+   public void removePublishedOfferings(final Collection<String> offerings) {
+       noNullValues(PUBLISHED_OFFERINGS, offerings);
+       for (final String offering : offerings) {
+           removePublishedOffering(offering);
+       }
+   }
+
+   @Override
+   public void addPublishedObservableProperty(String observableProperty) {
+       notNullOrEmpty(PUBLISHED_OBSERVABLE_PROPERTY, observableProperty);
+       LOG.trace("Adding published observableProperty {}", observableProperty);
+       getPublishedObservablePropertySet().add(observableProperty);
+   }
+
+   @Override
+   public void addPublishedObservableProperties(Collection<String> observableProperties) {
+       noNullValues(PUBLISHED_OBSERVABLE_PROPERTIES, observableProperties);
+       for (final String observableProperty : observableProperties) {
+           addPublishedObservableProperty(observableProperty);
+       }
+   }
+   
+   @Override
+   public void setPublishedObservableProperties(final Collection<String> observableProperties) {
+       LOG.trace("Setting published observableProperties");
+       clearPublishedFeaturesOfInterest();
+       addPublishedObservableProperties(observableProperties);
+   }
+
+   @Override
+   public void clearPublishedObservableProperty() {
+       LOG.trace("Clearing published observableProperties");
+       getPublishedObservablePropertySet().clear();
+   }
+
+   @Override
+   public void removePublishedObservableProperty(final String observableProperty) {
+       notNullOrEmpty(PUBLISHED_OBSERVABLE_PROPERTY, observableProperty);
+       LOG.trace("Removing published observableProperty {}", observableProperty);
+       getPublishedObservablePropertySet().remove(observableProperty);
+   }
+
+   @Override
+   public void removePublishedObservableProperties(final Collection<String> observableProperties) {
+       noNullValues(PUBLISHED_OBSERVABLE_PROPERTIES, observableProperties);
+       for (final String observableProperty : observableProperties) {
+           removePublishedObservableProperty(observableProperty);
+       }
+   }
 }

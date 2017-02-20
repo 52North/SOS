@@ -37,10 +37,18 @@ public interface CacheConstants {
     String OFFERING = "offering";
 
     String OFFERINGS = "offerings";
+    
+    String PUBLISHED_OFFERING = "published offering";
+    
+    String PUBLISHED_OFFERINGS = "published offerings";
 
     String PROCEDURE = "procedure";
 
     String PROCEDURES = "procedures";
+    
+    String PUBLISHED_PROCEDURE = "published procedure";
+    
+    String PUBLISHED_PROCEDURES = "published procedures";
 
     String EPSG_CODE = "epsgCode";
 
@@ -61,12 +69,16 @@ public interface CacheConstants {
     String OBSERVATION_IDENTIFIER = "observationIdentifier";
 
     String OBSERVATION_IDENTIFIERS = "observationIdentifiers";
-
+    
     String RESULT_TEMPLATE = "resultTemplate";
 
     String RESULT_TEMPLATES = "resultTemplates";
 
     String OBSERVABLE_PROPERTY = "observableProperty";
+    
+    String PUBLISHED_OBSERVABLE_PROPERTY = "published observableProperty";
+    
+    String PUBLISHED_OBSERVABLE_PROPERTIES = "published observableProperties";
 
     String RELATED_FEATURE = "relatedFeature";
 

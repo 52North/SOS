@@ -603,4 +603,24 @@ public class ReadableCache extends AbstractContentCache {
     	}
     	return identifier;
     }
+
+    @Override
+    public Set<String> getPublishedFeatureOfInterest() {
+        return copyOf(getPublishedFeatureOfInterestSet());
+    }
+    
+    @Override
+    public Set<String> getPublishedProcedures() {
+        return copyOf(getPublishedProcedureSet());
+    }
+    
+    @Override
+    public Set<String> getPublishedOfferings() {
+        return copyOf(getPublishedOfferingSet());
+    }
+    
+    @Override
+    public Set<String> getPublishedObservableProperties() {
+        return copyOf(getPublishedObservablePropertySet());
+    }
 }

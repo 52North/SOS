@@ -124,6 +124,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
         
         cache.removeRolesForRelatedFeatureNotIn(cache.getRelatedFeatures());
         cache.setFeaturesOfInterest(cache.getFeaturesOfInterestWithOffering());
+        cache.setPublishedFeaturesOfInterest(cache.getFeaturesOfInterestWithOffering());
 
         // observable property relations
         for (String observableProperty : cache.getObservablePropertiesForProcedure(procedure)) {

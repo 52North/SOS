@@ -82,6 +82,15 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                 }
             }
             
+            for (FeatureOfInterest featureOfInterest : featureOfInterestDAO.getPublishedFeatureOfInterest(getSession())) {
+                String identifier = featureOfInterest.getIdentifier();
+                getCache().addPublishedFeatureOfInterest(identifier);
+                Collection<String> parentFois = foisWithParents.get(identifier);
+                if (!CollectionHelper.isEmpty(parentFois)) {
+                    getCache().addPublishedFeaturesOfInterest(parentFois);
+                }
+            }
+            
             FeatureQueryHandlerQueryObject queryHandler =
                     new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(getCache().getFeaturesOfInterest())
                             .setConnection(getSession());

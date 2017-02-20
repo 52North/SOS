@@ -461,6 +461,11 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     
 //    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
     
+    private Set<String> publishedFeatureOfInterest = newSynchronizedSet();
+    private Set<String> publishedProcedure= newSynchronizedSet();
+    private Set<String> publishedOffering = newSynchronizedSet();
+    private Set<String> publishedObservableProperty = newSynchronizedSet();
+    
     /**
      * @return the relating offering -> max phenomenon time
      */
@@ -813,6 +818,22 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     	return offeringIdentifierHumanReadableName.inverse();
     }
 
+    protected Set<String> getPublishedFeatureOfInterestSet() {
+        return publishedFeatureOfInterest;
+    }
+    
+    protected Set<String> getPublishedProcedureSet() {
+        return publishedProcedure;
+    }
+    
+    protected Set<String> getPublishedOfferingSet() {
+        return publishedOffering;
+    }
+    
+    protected Set<String> getPublishedObservablePropertySet() {
+        return publishedObservableProperty;
+    }
+
     /**
      * @param defaultEpsgCode
      *            the new default EPSG code
@@ -825,8 +846,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     public int getDefaultEPSGCode() {
         return this.defaultEpsgCode;
     }
-
-
+    
     @Override
     public int hashCode() {
         return Objects.hashCode(updateTime,defaultEpsgCode, maxPhenomenonTimeForOfferings, minPhenomenonTimeForOfferings,
@@ -843,7 +863,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
                 globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats,
                 featureOfInterestIdentifierHumanReadableName, observablePropertyIdentifierHumanReadableName,
-				procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName);
+		procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName, publishedFeatureOfInterest,
+		publishedObservableProperty, publishedOffering, publishedProcedure);
     }
 
     @Override
@@ -911,7 +932,11 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.getFeatureOfInterestIdentifierForHumanReadableName(), other.getFeatureOfInterestIdentifierForHumanReadableName())
                     && Objects.equal(this.getObservablePropertyIdentifierForHumanReadableName(), other.getObservablePropertyIdentifierForHumanReadableName())
                     && Objects.equal(this.getProcedureIdentifierForHumanReadableName(), other.getProcedureIdentifierForHumanReadableName())
-                    && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName());
+                    && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName())
+                    && Objects.equal(this.getPublishedFeatureOfInterest(), other.getPublishedFeatureOfInterest())
+                    && Objects.equal(this.getPublishedObservableProperties(), other.getPublishedObservableProperties())
+                    && Objects.equal(this.getPublishedOfferings(), other.getPublishedOfferings())
+                    && Objects.equal(this.getPublishedProcedures(), other.getPublishedProcedures());
         }
         return false;
     }

@@ -122,7 +122,11 @@ public class GetResultDAO extends AbstractGetResultDAO {
                 final SosResultStructure sosResultStructure =
                         new SosResultStructure(resultTemplates.get(0).getResultStructure());
                 final List<Observation<?>> observations;
-                String procedure = resultTemplates.get(0).getProcedure().getIdentifier();
+                ResultTemplate resultTemplate = resultTemplates.get(0);
+                String procedure = null;
+                if (resultTemplate.isSetProcedure()) {
+                    procedure = resultTemplates.get(0).getProcedure().getIdentifier();
+                }
                 if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
                     observations = querySeriesObservation(request, featureIdentifier, procedure, session);
                 } else {

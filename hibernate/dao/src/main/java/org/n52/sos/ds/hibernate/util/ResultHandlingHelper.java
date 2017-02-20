@@ -85,6 +85,8 @@ public class ResultHandlingHelper {
 
     private final String RESULT_TIME = OmConstants.RESULT_TIME;
     private final String PHENOMENON_TIME = OmConstants.PHENOMENON_TIME;
+    public final String OM_PROCEDURE = "om:procedure";
+    public final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
     private final SweHelper helper = new SweHelper();
     
     public ResultHandlingHelper() {
@@ -154,6 +156,20 @@ public class ResultHandlingHelper {
                             break;
                         case OmConstants.PARAM_NAME_SAMPLING_GEOMETRY:
                             builder.append(getSamplingGeometry(observation, tokenSeparator, sosResultStructure.getResultStructure()));
+                            break;
+                        case OM_PROCEDURE:
+                            if (observation.getProcedure() != null && observation.getProcedure().isSetIdentifier()) {
+                                builder.append(observation.getProcedure().getIdentifier());
+                            } else {
+                                builder.append("");
+                            }
+                            break;
+                        case OM_FEATURE_OF_INTEREST:
+                            if (observation.getFeatureOfInterest() != null && observation.getFeatureOfInterest().isSetIdentifier()) {
+                                builder.append(observation.getFeatureOfInterest().getIdentifier());
+                            } else {
+                                builder.append("");
+                            }
                             break;
                         default:
                             builder.append(getValueAsStringForObservedProperty(observation, definition));
@@ -455,22 +471,22 @@ public class ResultHandlingHelper {
         return true;
     }
     
-    public boolean checkForFeatureOfInterest(SweField swefield, String featureOfInterest) throws CodedException {
-        if (isText(swefield) && !checkDefinition(swefield, featureOfInterest)) {
+    public boolean checkForFeatureOfInterest(SweField swefield) throws CodedException {
+        if (isText(swefield) && !checkDefinition(swefield, OM_FEATURE_OF_INTEREST)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
             .withMessage(
                     "The featureOfInterest is not defined in the observationTemplate and the swe:DataRecord does not contain a featureOfInterest definition with '%s'!",
-                    featureOfInterest);
+                    OM_FEATURE_OF_INTEREST);
         }
         return true;
     }
     
-    public boolean checkForProcedure(SweField swefield, String procedure) throws CodedException {
-        if (isText(swefield) && !checkDefinition(swefield, procedure)) {
+    public boolean checkForProcedure(SweField swefield) throws CodedException {
+        if (isText(swefield) && !checkDefinition(swefield, OM_PROCEDURE)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
             .withMessage(
                     "The procedure is not defined in the observationTemplate and the swe:DataRecord does not contain a procedure definition with '%s'!",
-                    procedure);
+                    OM_PROCEDURE);
         }
         return true;
     }

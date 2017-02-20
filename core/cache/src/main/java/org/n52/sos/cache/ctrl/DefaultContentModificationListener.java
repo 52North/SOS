@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.sos.cache.ContentCacheUpdate;
+import org.n52.sos.cache.ctrl.action.FeatureInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
@@ -42,6 +43,7 @@ import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
 import org.n52.sos.event.SosEvent;
 import org.n52.sos.event.SosEventListener;
+import org.n52.sos.event.events.FeatureInsertion;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
@@ -62,7 +64,7 @@ public class DefaultContentModificationListener implements SosEventListener {
     @SuppressWarnings("unchecked")
     private static final Set<Class<? extends SosEvent>> TYPES = Sets.<Class<? extends SosEvent>> newHashSet(
             SensorInsertion.class, ObservationInsertion.class, ResultTemplateInsertion.class, SensorDeletion.class,
-            ResultInsertion.class);
+            ResultInsertion.class, FeatureInsertion.class);
 
     @Override
     public Set<Class<? extends SosEvent>> getTypes() {
@@ -86,6 +88,9 @@ public class DefaultContentModificationListener implements SosEventListener {
         } else if (event instanceof ResultInsertion) {
             ResultInsertion e = (ResultInsertion) event;
             handle(new ResultInsertionUpdate(e.getRequest().getTemplateIdentifier(), e.getResponse().getObservations()));
+        } else if (event instanceof FeatureInsertion) {
+            FeatureInsertion e = (FeatureInsertion) event;
+            handle(new FeatureInsertionUpdate(e.getRequest()));
         } else {
             LOGGER.debug("Can not handle modification event: {}", event);
         }

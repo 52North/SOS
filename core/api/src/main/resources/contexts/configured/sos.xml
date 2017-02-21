@@ -24,6 +24,12 @@
     <bean id="responseFormatRepositoryInitializer"
           class="org.n52.sos.coding.encode.ResponseFormatRepositoryInitializer"/>
 
+  <bean id="procedureDescriptionFormatRepository"
+          class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository" />
+
+   <bean id="procedureDescriptionFormatRepositoryInitializer"
+          class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepositoryInitializer"/>
+
     <bean id="geometryHandler"
           class="org.n52.sos.util.GeometryHandler" />
 
@@ -41,9 +47,6 @@
 
     <bean id="driverCleanupListener"
           class="org.n52.sos.service.DriverCleanupListener" />
-
-    <bean id="procedureDescriptionFormatRepository"
-          class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository" />
 
     <bean id="batchRequestOperator"
           class="org.n52.sos.request.operator.BatchRequestOperator"/>

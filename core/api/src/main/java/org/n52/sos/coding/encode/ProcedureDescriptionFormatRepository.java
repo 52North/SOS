@@ -32,7 +32,6 @@ package org.n52.sos.coding.encode;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -42,7 +41,6 @@ import org.n52.iceland.util.activation.ActivationListener;
 import org.n52.iceland.util.activation.ActivationListeners;
 import org.n52.iceland.util.activation.ActivationManager;
 import org.n52.iceland.util.activation.ActivationSource;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
@@ -56,8 +54,7 @@ import com.google.common.collect.Sets;
  *
  * @author Christian Autermann
  */
-public class ProcedureDescriptionFormatRepository
-        implements Constructable,
+public class ProcedureDescriptionFormatRepository implements
                    ActivationManager<ProcedureDescriptionFormatKey>,
                    ActivationSource<ProcedureDescriptionFormatKey> {
 
@@ -71,15 +68,14 @@ public class ProcedureDescriptionFormatRepository
 
     private final Map<String, Map<String, Set<String>>> transactionalProcedureDescriptionFormats = Maps.newHashMap();
 
-    @Override
-    public void init() {
+
+    void init(ServiceOperatorRepository serviceOperatorRepository,
+            EncoderRepository encoderRepository) {
         ProcedureDescriptionFormatRepository.instance = this;
-
-        Objects.requireNonNull(this.encoderRepository);
-        Objects.requireNonNull(this.serviceOperatorRepository);
-
-        generateProcedureDescriptionFormatMaps();
-    }
+      this.encoderRepository = encoderRepository;
+      this.serviceOperatorRepository = serviceOperatorRepository;
+      generateProcedureDescriptionFormatMaps();
+  }
 
     private void generateProcedureDescriptionFormatMaps() {
         this.procedureDescriptionFormats.clear();

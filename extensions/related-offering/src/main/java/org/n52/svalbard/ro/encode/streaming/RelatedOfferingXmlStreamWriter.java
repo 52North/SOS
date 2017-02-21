@@ -92,7 +92,9 @@ public class RelatedOfferingXmlStreamWriter extends XmlStreamWriter<RelatedOffer
         addXlinkHrefAttr(RelatedOfferingConstants.RELATED_OFFERINGS);
         addXlinkTitleAttr(RelatedOfferingConstants.RELATED_OFFERINGS);
         for (OfferingContext offeringContext : getRelatedOfferings().getValue()) {
+            start(RelatedOfferingConstants.QN_RO_RELATED_OFFERING);
             writeOfferingContext(offeringContext);
+            end(RelatedOfferingConstants.QN_RO_RELATED_OFFERING);
         }
         end(RelatedOfferingConstants.QN_RO_RELATED_OFFERINGS);
         

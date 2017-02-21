@@ -89,6 +89,8 @@ public class RelatedOfferingXmlStreamWriter extends XmlStreamWriter<RelatedOffer
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(RelatedOfferingConstants.NS_RO_PREFIX, RelatedOfferingConstants.NS_RO);
         namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
+        addXlinkHrefAttr(RelatedOfferingConstants.RELATED_OFFERINGS);
+        addXlinkTitleAttr(RelatedOfferingConstants.RELATED_OFFERINGS);
         for (OfferingContext offeringContext : getRelatedOfferings().getValue()) {
             writeOfferingContext(offeringContext);
         }

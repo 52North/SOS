@@ -90,7 +90,9 @@ public class RelatedOfferingXmlStreamWriter extends XmlStreamWriter<RelatedOffer
         namespace(RelatedOfferingConstants.NS_RO_PREFIX, RelatedOfferingConstants.NS_RO);
         namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
         for (OfferingContext offeringContext : getRelatedOfferings().getValue()) {
+            start(RelatedOfferingConstants.QN_RO_RELATED_OFFERING);
             writeOfferingContext(offeringContext);
+            end(RelatedOfferingConstants.QN_RO_RELATED_OFFERING);
         }
         end(RelatedOfferingConstants.QN_RO_RELATED_OFFERINGS);
         

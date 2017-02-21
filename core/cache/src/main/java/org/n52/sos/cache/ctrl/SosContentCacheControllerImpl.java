@@ -139,12 +139,16 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
     @Override
     public void update(ContentCacheUpdate update) throws OwsExceptionReport {
         if (update != null) {
-            if (update.isCompleteUpdate()) {
-                executeComplete(new CompleteUpdate(update));
-            } else {
-                executePartial(new PartialUpdate(update));
+            try {
+                if (update.isCompleteUpdate()) {
+                    executeComplete(new CompleteUpdate(update));
+                } else {
+                    executePartial(new PartialUpdate(update));
+                }
+                cache.setLastUpdateTime(DateTime.now());
+            } finally {
+                current = null;
             }
-            cache.setLastUpdateTime(DateTime.now());
         } else {
             throw new IllegalArgumentException("update may not be null");
         }

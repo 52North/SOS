@@ -914,7 +914,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
     protected void setUpResponseFormatForOffering(SosObservationOffering sosOffering) {
         // initialize as new HashSet so that collection is modifiable
         final Collection<String> responseFormats = new HashSet<>(
-                getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, Sos2Constants.VERSION));
+                getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         sosOffering.setResponseFormats(responseFormats);
         // TODO set as property
     }
@@ -922,7 +922,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
     protected void setUpProcedureDescriptionFormatForOffering(SosObservationOffering sosOffering) {
         // TODO: set procDescFormat <-- what is required here?
         sosOffering.setProcedureDescriptionFormat(procedureDescriptionFormatRepository
-                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.VERSION));
+                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
     }
 
 
@@ -1947,7 +1947,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //    protected void setUpResponseFormatForOffering(SosObservationOffering sosOffering) {
 //        // initialize as new HashSet so that collection is modifiable
 //        final Collection<String> responseFormats =
-//                new HashSet<>(getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, Sos2Constants.VERSION));
+//                new HashSet<>(getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
 //        sosOffering.setResponseFormats(responseFormats);
 //        // TODO set as property
 //    }
@@ -1955,7 +1955,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //    protected void setUpProcedureDescriptionFormatForOffering(SosObservationOffering sosOffering) {
 //        // TODO: set procDescFormat <-- what is required here?
 //        sosOffering.setProcedureDescriptionFormat(procedureDescriptionFormatRepository
-//                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.VERSION));
+//                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
 //    }
 //
 //    private Collection<ProcedureEntity> getProceduresForOffering(final OfferingEntity offering, Session session)

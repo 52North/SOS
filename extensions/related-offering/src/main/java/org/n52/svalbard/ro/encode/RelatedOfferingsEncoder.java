@@ -46,9 +46,9 @@ import org.n52.sos.ogc.sos.RelatedOfferingConstants;
 import org.n52.sos.ogc.sos.RelatedOfferings;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
-import org.n52.svalbard.ro.encode.streaming.RelatedOfferingXmStreamWriter;
+import org.n52.svalbard.ro.encode.streaming.RelatedOfferingXmlStreamWriter;
 
-public class RelatedObfferingsEncoder extends AbstractXmlEncoder<RelatedOfferings> {
+public class RelatedOfferingsEncoder extends AbstractXmlEncoder<RelatedOfferings> {
     
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(RelatedOfferingConstants.NS_RO,
             RelatedOfferings.class);
@@ -68,7 +68,7 @@ public class RelatedObfferingsEncoder extends AbstractXmlEncoder<RelatedOffering
             throws OwsExceptionReport, UnsupportedEncoderInputException {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            new RelatedOfferingXmStreamWriter(objectToEncode).write(out);
+            new RelatedOfferingXmlStreamWriter(objectToEncode).write(out);
             return XmlObject.Factory.parse(out.toString("UTF8"));
         } catch (XMLStreamException | XmlException | UnsupportedEncodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex).withMessage("Error encoding %s", objectToEncode.getClass().getSimpleName());

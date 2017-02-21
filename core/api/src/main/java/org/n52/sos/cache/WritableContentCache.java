@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -1196,6 +1196,7 @@ public interface WritableContentCache
     void clearProcedureIdentifierHumanReadableNameMaps();
 
     void clearOfferingIdentifierHumanReadableNameMaps();
+
     void addTypeInstanceProcedure(TypeInstance typeInstance, String identifier);
 
     void removeTypeInstanceProcedure(String identifier);
@@ -1218,4 +1219,51 @@ public interface WritableContentCache
 
     void clearTypeOfProcedure();
     
+    void addPublishedFeatureOfInterest(String featureOfInterest);
+    
+    void addPublishedFeaturesOfInterest(Collection<String> featuresOfInterest);
+    
+    void setPublishedFeaturesOfInterest(Collection<String> featuresOfInterest);
+    
+    void clearPublishedFeaturesOfInterest();
+    
+    void removePublishedFeatureOfInterest(String featureOfInterest);
+    
+    void removePublishedFeaturesOfInterest(Collection<String> featuresOfInterest);
+
+    void addPublishedProcedure(String procedure);
+
+    void addPublishedProcedures(Collection<String> procedure);
+
+    void setPublishedProcedures(Collection<String> procedures);
+
+    void clearPublishedProcedure();
+
+    void removePublishedProcedure(String procedure);
+
+    void removePublishedProcedures(Collection<String> procedures);
+
+    void addPublishedOffering(String offering);
+
+    void addPublishedOfferings(Collection<String> offerings);
+
+    void setPublishedOfferings(Collection<String> offerings);
+
+    void clearPublishedOffering();
+
+    void removePublishedOffering(String offering);
+
+    void removePublishedOfferings(Collection<String> offerings);
+
+    void addPublishedObservableProperty(String observableProperty);
+
+    void addPublishedObservableProperties(Collection<String> observableProperties);
+
+    void setPublishedObservableProperties(Collection<String> observableProperties);
+
+    void clearPublishedObservableProperty();
+
+    void removePublishedObservableProperty(String observableProperty);
+
+    void removePublishedObservableProperties(Collection<String> observableProperties);
 }

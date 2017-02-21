@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -1063,6 +1063,23 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             return procedureFormatMap;
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public List<Procedure> getPublishedProcedure(Session session) throws CodedException {
+        if (HibernateHelper.isEntitySupported(Series.class)) {
+            Criteria c = session.createCriteria(Procedure.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            c.add(Subqueries.propertyIn(Procedure.ID, getDetachedCriteriaSeries(session)));
+            return c.list();
+        } 
+        return getProcedureObjects(session);
+     }
+     
+     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
+         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
+         detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
+         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.PROCEDURE)));
+         return detachedCriteria;
+     }
 
     /**
      * Procedure time extrema {@link ResultTransformer}

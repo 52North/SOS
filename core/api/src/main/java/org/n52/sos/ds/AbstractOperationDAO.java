@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -197,10 +197,18 @@ public abstract class AbstractOperationDAO implements OperationDAO {
         }
     }
 
+    protected void addPublishedProcedureParameter(OwsOperation opsMeta) {
+        addProcedureParameter(opsMeta, getCache().getPublishedProcedures());
+    }
+
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, String version) {
         addFeatureOfInterestParameter(opsMeta, SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
     }
-
+    
+    protected void addPublishedFeatureOfInterestParameter(OwsOperation opsMeta, String version) {
+        addFeatureOfInterestParameter(opsMeta, SosHelper.getFeatureIDs(getCache().getPublishedFeatureOfInterest(), version));
+    }
+    
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, Collection<String> featuresOfInterest) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.featureOfInterest, featuresOfInterest);
@@ -223,6 +231,10 @@ public abstract class AbstractOperationDAO implements OperationDAO {
             }
         }
         return observableProperties;
+    }
+
+    protected void addPublishedObservablePropertyParameter(OwsOperation opsMeta) {
+        addObservablePropertyParameter(opsMeta, getCache().getPublishedObservableProperties());
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta, Collection<String> observedProperties) {

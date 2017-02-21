@@ -43,15 +43,15 @@ import org.n52.sos.ogc.sos.RelatedOfferingConstants;
 import org.n52.sos.ogc.sos.RelatedOfferings;
 import org.n52.sos.w3c.W3CConstants;
 
-public class RelatedOfferingXmStreamWriter extends XmlStreamWriter<RelatedOfferings> {
+public class RelatedOfferingXmlStreamWriter extends XmlStreamWriter<RelatedOfferings> {
     
     private RelatedOfferings relatedOfferings;
     
-    public RelatedOfferingXmStreamWriter(RelatedOfferings relatedOfferings) {
+    public RelatedOfferingXmlStreamWriter(RelatedOfferings relatedOfferings) {
         setRelatedOfferings(relatedOfferings);
     }
 
-    public RelatedOfferingXmStreamWriter() {
+    public RelatedOfferingXmlStreamWriter() {
     }
 
     @Override
@@ -90,13 +90,13 @@ public class RelatedOfferingXmStreamWriter extends XmlStreamWriter<RelatedOfferi
         namespace(RelatedOfferingConstants.NS_RO_PREFIX, RelatedOfferingConstants.NS_RO);
         namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
         for (OfferingContext offeringContext : getRelatedOfferings().getValue()) {
-            writeOfferinContext(offeringContext);
+            writeOfferingContext(offeringContext);
         }
         end(RelatedOfferingConstants.QN_RO_RELATED_OFFERINGS);
         
     }
 
-    private void writeOfferinContext(OfferingContext offeringContext) throws XMLStreamException {
+    private void writeOfferingContext(OfferingContext offeringContext) throws XMLStreamException {
         start(RelatedOfferingConstants.QN_RO_OFFERING_CONTEXT);
         writeRole(offeringContext.getRole());
         writeRelatedOffering(offeringContext.getRelatedOffering());

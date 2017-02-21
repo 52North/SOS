@@ -38,9 +38,9 @@ import org.junit.Test;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.RelatedOfferings;
 
-public class RelatedOfferingXmStreamWriterTest {
+public class RelatedOfferingXmlStreamWriterTest {
     
-    private RelatedOfferingXmStreamWriter writer = new RelatedOfferingXmStreamWriter();
+    private RelatedOfferingXmlStreamWriter writer = new RelatedOfferingXmlStreamWriter();
     
     @Test
     public void should_encode_relatedOfferings() throws XMLStreamException, OwsExceptionReport, XmlException {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -513,10 +513,13 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 //    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
     
     private Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
-    
     private Map<ComponentAggregation, Set<String>> componentAggregationProcedures = newSynchronizedMap();
-    
     private Map<String, Set<String>> typeOfProceduresMap = newSynchronizedMap();
+    private Set<String> publishedFeatureOfInterest = newSynchronizedSet();
+    private Set<String> publishedProcedure= newSynchronizedSet();
+    private Set<String> publishedOffering = newSynchronizedSet();
+    private Set<String> publishedObservableProperty = newSynchronizedSet();
+    
     
     protected static Logger getLogger() {
         return null;
@@ -901,6 +904,22 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
         return typeOfProceduresMap;
     }
 
+    protected Set<String> getPublishedFeatureOfInterestSet() {
+        return publishedFeatureOfInterest;
+    }
+    
+    protected Set<String> getPublishedProcedureSet() {
+        return publishedProcedure;
+    }
+    
+    protected Set<String> getPublishedOfferingSet() {
+        return publishedOffering;
+    }
+    
+    protected Set<String> getPublishedObservablePropertySet() {
+        return publishedObservableProperty;
+    }
+
     /**
      * @param defaultEpsgCode
      *            the new default EPSG code
@@ -913,8 +932,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     public int getDefaultEPSGCode() {
         return this.defaultEpsgCode;
     }
-
-
+    
     @Override
     public int hashCode() {
         return Objects.hashCode(updateTime,defaultEpsgCode, maxPhenomenonTimeForOfferings, minPhenomenonTimeForOfferings,
@@ -931,8 +949,9 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
                 globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats,
                 featureOfInterestIdentifierHumanReadableName, observablePropertyIdentifierHumanReadableName,
-		procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName,
-		typeInstanceProcedures, componentAggregationProcedures, typeOfProceduresMap);
+                procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName,
+                typeInstanceProcedures, componentAggregationProcedures, typeOfProceduresMap,
+                publishedFeatureOfInterest, publishedObservableProperty, publishedOffering, publishedProcedure);
     }
 
     @Override
@@ -1005,7 +1024,11 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName())
                     && Objects.equal(this.typeInstanceProcedures, other.getTypeIntanceProcedureMap())
                     && Objects.equal(this.componentAggregationProcedures, other.getComponentAggregationProcedureMap())
-                    && Objects.equal(this.typeOfProceduresMap, other.getTypeOfProcedureMap());
+                    && Objects.equal(this.typeOfProceduresMap, other.getTypeOfProcedureMap())
+                    && Objects.equal(this.getPublishedFeatureOfInterest(), other.getPublishedFeatureOfInterest())
+                    && Objects.equal(this.getPublishedObservableProperties(), other.getPublishedObservableProperties())
+                    && Objects.equal(this.getPublishedOfferings(), other.getPublishedOfferings())
+                    && Objects.equal(this.getPublishedProcedures(), other.getPublishedProcedures());
         }
         return false;
     }

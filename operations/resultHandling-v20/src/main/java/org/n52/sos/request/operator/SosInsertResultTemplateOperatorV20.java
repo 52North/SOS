@@ -135,7 +135,7 @@ public class SosInsertResultTemplateOperatorV20
                         || request.getObservationTemplate().getProcedureIdentifier() == null
                         || request.getObservationTemplate().getProcedureIdentifier().isEmpty()) {
                     exceptions.add(new MissingParameterValueException(
-                            Sos2Constants.InsertResultTemplateParams.proposedTemplate));
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate + ".procedure"));
                 }
                 checkTransactionalProcedureID(request.getObservationTemplate().getProcedureIdentifier(),
                         Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
@@ -145,8 +145,8 @@ public class SosInsertResultTemplateOperatorV20
         }
         // check observedProperty
         try {
-            checkObservedProperty(request.getObservationTemplate().getObservableProperty().getIdentifier(),
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate, true);
+            checkObservedProperty(request.getObservationTemplate().getObservablePropertyIdentifier(),
+                    Sos2Constants.InsertResultTemplateParams.proposedTemplate + ".observableProperty", true);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -168,9 +168,9 @@ public class SosInsertResultTemplateOperatorV20
                         || request.getObservationTemplate().getFeatureOfInterestIdentifier() == null
                         || request.getObservationTemplate().getFeatureOfInterestIdentifier().isEmpty()) {
                     exceptions.add(new MissingParameterValueException(
-                            Sos2Constants.InsertResultTemplateParams.proposedTemplate));
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate + ".featureOfInterest"));
                 }
-                checkReservedCharacter(request.getObservationTemplate().getFeatureOfInterest().getIdentifier(),
+                checkReservedCharacter(request.getObservationTemplate().getFeatureOfInterestIdentifier(),
                         Sos2Constants.InsertResultTemplateParams.featureOfInterest);
             }
         } catch (OwsExceptionReport owse) {

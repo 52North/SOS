@@ -48,6 +48,8 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.ro.encode.streaming.RelatedOfferingXmlStreamWriter;
 
+import net.opengis.sosro.x10.RelatedOfferingsPropertyType;
+
 public class RelatedOfferingsEncoder extends AbstractXmlEncoder<RelatedOfferings> {
     
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(RelatedOfferingConstants.NS_RO,
@@ -69,7 +71,7 @@ public class RelatedOfferingsEncoder extends AbstractXmlEncoder<RelatedOfferings
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             new RelatedOfferingXmlStreamWriter(objectToEncode).write(out);
-            return XmlObject.Factory.parse(out.toString("UTF8"));
+            return RelatedOfferingsPropertyType.Factory.parse(out.toString("UTF8"));
         } catch (XMLStreamException | XmlException | UnsupportedEncodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex).withMessage("Error encoding %s", objectToEncode.getClass().getSimpleName());
         }

@@ -236,7 +236,7 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
 
     private DbQuery createDbQuery(ProcedureEntity procedure) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.addParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
+        rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
         return new DbQuery(IoParameters.createFromQuery(rsps));
     }
 

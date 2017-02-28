@@ -190,13 +190,13 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     private DbQuery createDbQuery(GetFeatureOfInterestRequest req) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         if (req.isSetFeatureOfInterestIdentifiers()) {
-            rsps.addParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(req.getFeatureIdentifiers()));
+            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(req.getFeatureIdentifiers()));
         }
         if (req.isSetProcedures()) {
-            rsps.addParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(req.getProcedures()));
+            rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(req.getProcedures()));
         }
         if (req.isSetObservableProperties()) {
-            rsps.addParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(req.getObservedProperties()));
+            rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(req.getObservedProperties()));
         }
         if (req.isSetSpatialFilters()) {
               Envelope envelope = null;
@@ -211,7 +211,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
 //                rsps.addParameter(IoParameters.BBOX, IoParameters.getJsonNodeFrom(bbox));
               }
         }
-        rsps.addParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
+        rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));
     }
 

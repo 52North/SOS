@@ -155,9 +155,9 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
     private DbQuery createDbQuery(DescribeSensorRequest req) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         if (req.isSetProcedure()) {
-            rsps.addParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(req.getProcedure()));
+            rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(req.getProcedure()));
         }
-        rsps.addParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
+        rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));
     }
 }

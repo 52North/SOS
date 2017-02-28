@@ -93,7 +93,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
 
     private DbQuery createProcedureDbQuery(FeatureEntity featureEntity) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.addParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(featureEntity.getPkid()));
+        rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(featureEntity.getPkid()));
         return new DbQuery(IoParameters.createFromQuery(rsps));
     }
 

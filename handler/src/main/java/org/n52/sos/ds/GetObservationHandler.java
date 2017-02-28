@@ -98,12 +98,12 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
     private DbQuery createDbQuery(GetObservationRequest request) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         if (request.isSetFeatureOfInterest()) {
-            rsps.addParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(request.getFeatureIdentifiers()));
+            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(request.getFeatureIdentifiers()));
         }
         if (request.isSetSpatialFilter() && !request.hasSpatialFilteringProfileSpatialFilter()) {
             // TODO
         }
-        rsps.addParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
+        rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));
     }
 

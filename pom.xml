@@ -88,12 +88,13 @@
         <sqljdbc4.version>4.0</sqljdbc4.version>
 
         <!-- 52N dependency versions -->
-       <iceland.version>2-SNAPSHOT</iceland.version>
+        <iceland.version>2-SNAPSHOT</iceland.version>
         <shetland.version>1-SNAPSHOT</shetland.version>
         <svalbard.version>1-SNAPSHOT</svalbard.version>
         <janmayen.version>1.0.0</janmayen.version>
         <faroe.version>1.1.0</faroe.version>
         <dataset.api.version>2.0.0-SNAPSHOT</dataset.api.version>
+        <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version>
         <n52.common.xml.version>2.2.0</n52.common.xml.version>
         <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
@@ -185,13 +186,13 @@
             </dependency>
             <dependency>
                 <groupId>org.n52.series-api</groupId>
-                <artifactId>proxy</artifactId>
-                <version>${dataset.api.version}</version>
+                <artifactId>proxy-dao</artifactId>
+                <version>${dataset.proxy.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.series-api</groupId>
                 <artifactId>proxy-mappings</artifactId>
-                <version>${dataset.api.version}</version>
+                <version>${dataset.proxy.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.series-api</groupId>

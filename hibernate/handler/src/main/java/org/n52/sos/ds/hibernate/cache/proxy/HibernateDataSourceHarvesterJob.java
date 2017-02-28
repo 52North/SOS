@@ -38,6 +38,7 @@ import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.io.task.ScheduledJob;
 import org.n52.janmayen.event.EventBus;
+import org.n52.proxy.db.beans.ProxyServiceEntity;
 import org.n52.proxy.db.beans.RelatedFeatureEntity;
 import org.n52.proxy.db.da.InsertRepository;
 import org.n52.series.db.beans.DatasetEntity;
@@ -121,7 +122,7 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
         try {
             LOGGER.info(context.getJobDetail().getKey() + " execution starts.");
             session = getConnectionProvider().getSession();
-            ServiceEntity service = insertRepository.insertService(EntityBuilder.createService("localDB", "description of localDB", "localhost", "2.0.0"));
+            ProxyServiceEntity service = insertRepository.insertService(EntityBuilder.createService("localDB", "description of localDB", "localhost", "2.0.0"));
             insertRepository.cleanUp(service);
             insertRepository.prepareInserting(service);
             harvestOfferings(service, session);

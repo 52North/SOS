@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.n52.proxy.db.beans.ProxyServiceEntity;
 import org.n52.proxy.db.beans.RelatedFeatureEntity;
 import org.n52.proxy.db.beans.RelatedFeatureRoleEntity;
 import org.n52.series.db.beans.CategoryEntity;
@@ -62,8 +63,8 @@ import com.google.common.base.Strings;
 
 public class EntityBuilder {
 
-    public static ServiceEntity createService(String name, String description, String url, String version) {
-        ServiceEntity service = new ServiceEntity();
+    public static ProxyServiceEntity createService(String name, String description, String url, String version) {
+        ProxyServiceEntity service = new ProxyServiceEntity();
         service.setName(name);
         service.setDescription(description);
         service.setVersion(version);

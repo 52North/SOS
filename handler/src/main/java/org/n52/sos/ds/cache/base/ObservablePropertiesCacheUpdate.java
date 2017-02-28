@@ -94,7 +94,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
 
     private DbQuery createDatasetDbQuery(PhenomenonEntity observableProperty) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.addParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(observableProperty.getPkid()));
+        rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(observableProperty.getPkid()));
         return new DbQuery(IoParameters.createFromQuery(rsps));
     }
 }

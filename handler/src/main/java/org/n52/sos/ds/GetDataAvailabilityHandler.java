@@ -140,18 +140,18 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     private DbQuery createDbQuery(GetDataAvailabilityRequest req) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         if (req.isSetFeaturesOfInterest()) {
-            rsps.addParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(req.getFeaturesOfInterest()));
+            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(req.getFeaturesOfInterest()));
         }
         if (req.isSetProcedures()) {
-            rsps.addParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(req.getProcedures()));
+            rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(req.getProcedures()));
         }
         if (req.isSetObservedProperties()) {
-            rsps.addParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(req.getObservedProperties()));
+            rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(req.getObservedProperties()));
         }
         if (req.isSetOfferings()) {
-            rsps.addParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(req.getOfferings()));
+            rsps.setParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(req.getOfferings()));
         }
-        rsps.addParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
+        rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));
     }
 

@@ -247,14 +247,14 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
 
     private DbQuery createDbQuery(ProcedureEntity procedure, PhenomenonEntity observableProperty) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.addParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
-        rsps.addParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(observableProperty.getPkid()));
+        rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
+        rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(observableProperty.getPkid()));
         return new DbQuery(IoParameters.createFromQuery(rsps));
     }
 
     private DbQuery createDbQuery(ProcedureEntity procedure) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.addParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
+        rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
         return new DbQuery(IoParameters.createFromQuery(rsps));
     }
 

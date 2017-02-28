@@ -859,8 +859,8 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
     protected void setUpPhenomenaForOffering(OfferingEntity offering, ProcedureEntity procedure,
             SosObservationOffering sosOffering, Session session) throws DataAccessException {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.addParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(offering.getPkid()));
-        rsps.addParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
+        rsps.setParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(offering.getPkid()));
+        rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
         List<PhenomenonEntity> observableProperties =
                 new PhenomenonDao(session).getAllInstances(new DbQuery(IoParameters.createFromQuery(rsps)));
 
@@ -1026,7 +1026,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
     private Collection<ProcedureEntity> getProceduresForOffering(final OfferingEntity offering, Session session)
             throws OwsExceptionReport, DataAccessException {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.addParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(offering.getPkid()));
+        rsps.setParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(offering.getPkid()));
         List<ProcedureEntity> procedures =
                 new ProcedureDao(session).getAllInstances(new DbQuery(IoParameters.createFromQuery(rsps)));
         // if (procedures.isEmpty()) {

@@ -133,7 +133,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         writeFunktionInterpretation(fw);
         writeIndex(fw);
         writeMessGroesse(fw, o);
-        writeMessEinheit(fw, o);
+        writeMessEinheit(fw, o.getObservationConstellation().getObservableProperty());
         writeMessStellennummer(fw, o);
         writeMessStellenname(fw, o);
         /*
@@ -303,8 +303,16 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         writeToFile(fw, String.format("$sb Mess-Groesse: %s", observablePropertyIdentifier));
     }
 
-    private void writeMessEinheit(FileWriter fw, OmObservation o) throws IOException {
-//      $sb Mess-Einheit: m3/s
+    private void writeMessEinheit(FileWriter fw, AbstractPhenomenon observableProperty) throws IOException {
+        // $sb Mess-Einheit: m3/s
+        // Unit (optional)
+        String unit = "";
+        if (observableProperty instanceof OmObservableProperty) {
+            unit = ((OmObservableProperty)observableProperty).getUnit();
+            unit = ensureIdentifierLength(unit,
+                    UVFConstants.MAX_IDENTIFIER_LENGTH);
+        }
+        writeToFile(fw, String.format("$sb Mess-Einheit: %s", unit));
     }
 
     private void writeMessStellennummer(FileWriter fw, OmObservation o) throws IOException {

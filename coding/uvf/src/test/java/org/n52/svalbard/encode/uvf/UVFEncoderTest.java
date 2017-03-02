@@ -150,7 +150,7 @@ public class UVFEncoderTest {
     }
 
     @Test
-    public void shouldEncodeMeasurementIdentifiert() throws UnsupportedEncoderInputException, OwsExceptionReport {
+    public void shouldEncodeMeasurementIdentifier() throws UnsupportedEncoderInputException, OwsExceptionReport {
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[2];
         final String expected = "$sb Mess-Groesse: " + obsPropIdentifier
                 .substring(obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH, obsPropIdentifier.length());
@@ -158,27 +158,35 @@ public class UVFEncoderTest {
         Assert.assertThat(actual, Is.is(expected));
         Assert.assertThat(actual.length(), Is.is(33));
     }
+    
+    @Test
+    public void shouldEncodeUnitOfMeasurement() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[3];
+        final String expected = "$sb Mess-Einheit: " + unit;
+
+        Assert.assertThat(actual, Is.is(expected));
+    }
 
     @Test
     public void shouldEncodeMeasurementLocationIdentifier()
             throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[3];
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[4];
         final String expected = "$sb Mess-Stellennummer: " + foiIdentifier
                 .substring(foiIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH, foiIdentifier.length());
 
         Assert.assertThat(actual, Is.is(expected));
         Assert.assertThat(actual.length(), Is.is(39));
     }
-
+    
     @Test
     public void shouldEncodeTimeseriesTypeIdentifierTimebased()
             throws UnsupportedEncoderInputException, OwsExceptionReport {
-        Assert.assertThat(new String(encoder.encode(responseToEncode).getBytes()).split("\n")[4], Is.is("*Z"));
+        Assert.assertThat(new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5], Is.is("*Z"));
     }
 
     @Test
     public void shouldEncodeTimeseriesIdentifierAndCenturies() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5];
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[6];
         final String expected = obsPropIdentifier.substring(
             obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
             obsPropIdentifier.length()) +
@@ -196,7 +204,7 @@ public class UVFEncoderTest {
         Time phenomenonTime = new TimePeriod(start, end);
         globalValues.addPhenomenonTime(phenomenonTime);
         responseToEncode.setGlobalValues(globalValues);
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5];
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[6];
         final String expected = obsPropIdentifier.substring(
             obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
             obsPropIdentifier.length()) +

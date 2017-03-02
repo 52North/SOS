@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
 import org.n52.schetland.uvf.UVFConstants;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.ObservationEncoder;
@@ -44,7 +43,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
@@ -121,21 +119,35 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         File uvfFile = new File(tempDir, filename);
         FileWriter fw = new FileWriter(uvfFile);
         OmObservation o = observationCollection.iterator().next();
+        /*
+         * HEADER: Metadata
+         */
         writeFunktionInterpretation(fw);
         writeIndex(fw);
         writeMessGroesse(fw, o);
         writeMessEinheit(fw, o);
         writeMessStellennummer(fw, o);
         writeMessStellenname(fw, o);
-        
-//      
-        writeToFile(fw, "*Z");
-//        2.Zeile ABFLUSS m3/s 1900 1900
+        /*
+         * HEADER: Lines 1 - 4
+         */
+        writeLine1(fw);
+        writeLine2(fw);
         writeLine3(fw, o.getObservationConstellation().getFeatureOfInterest());
         writeLine4(fw, o.getPhenomenonTime());
-//        5.Zeile 7008030730 -777
+        // 5.Zeile 7008030730 -777
         
         return uvfFile;
+    }
+
+    private void writeLine1(FileWriter fw) throws IOException {
+        writeToFile(fw, "*Z");
+    }
+
+    private void writeLine2(FileWriter fw) {
+        // TODO Auto-generated method stub
+        // TODO IMPLEMENT HERE
+        // 2.Zeile ABFLUSS m3/s 1900 1900
     }
 
     private void writeLine3(FileWriter fw, AbstractFeature f) throws IOException {

@@ -152,8 +152,10 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
 
     private void writeLine3(FileWriter fw, AbstractFeature f) throws IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append(f.getIdentifier());
-        fillWithSpaces(sb, 15);
+        int beginIndex = f.getIdentifier().length() - UVFConstants.MAX_IDENTIFIER_LENGTH;
+        int endIndex = f.getIdentifier().length();
+        sb.append(f.getIdentifier().substring(beginIndex, endIndex));
+        fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
         if (f instanceof SamplingFeature) {
             SamplingFeature sf = (SamplingFeature)f;
             sb.append(sf.getGeometry().getCoordinate().x);
@@ -208,7 +210,12 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     }
 
     private void writeMessGroesse(FileWriter fw, OmObservation o) throws IOException {
-        writeToFile(fw, String.format("$sb Mess-Groesse: %s", o.getObservationConstellation().getObservablePropertyIdentifier()));
+        String observablePropertyIdentifier = o.getObservationConstellation().getObservablePropertyIdentifier();
+        observablePropertyIdentifier = observablePropertyIdentifier.substring(
+                observablePropertyIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
+                observablePropertyIdentifier.length());
+        
+        writeToFile(fw, String.format("$sb Mess-Groesse: %s", observablePropertyIdentifier));
     }
 
     private void writeMessEinheit(FileWriter fw, OmObservation o) throws IOException {
@@ -216,7 +223,11 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     }
 
     private void writeMessStellennummer(FileWriter fw, OmObservation o) throws IOException {
-        writeToFile(fw, String.format("$sb Mess-Stellennummer: %s", o.getObservationConstellation().getFeatureOfInterestIdentifier()));
+        String featureOfInterestIdentifier = o.getObservationConstellation().getFeatureOfInterestIdentifier();
+        featureOfInterestIdentifier = featureOfInterestIdentifier.substring(
+                featureOfInterestIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
+                featureOfInterestIdentifier.length());
+        writeToFile(fw, String.format("$sb Mess-Stellennummer: %s", featureOfInterestIdentifier));
     }
 
     private void writeMessStellenname(FileWriter fw, OmObservation o) throws IOException {

@@ -6,6 +6,11 @@ public interface UVFConstants {
 
     MediaType CONTENT_TYPE_UVF = new MediaType("application", "uvf");
     String TIME_FORMAT = "yyMMddhhmm";
+    
+    /**
+     * The identifiers length is limited to 15 characters following UVF spec for lines 2, 3
+     */
+    int MAX_IDENTIFIER_LENGTH = 15;
 
 }
  

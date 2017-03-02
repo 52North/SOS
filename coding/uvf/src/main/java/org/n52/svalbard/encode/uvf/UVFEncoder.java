@@ -20,6 +20,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -324,7 +325,11 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
 
     private void writeMessStellenname(FileWriter fw, OmObservation o) throws IOException {
         if (o.getObservationConstellation().getFeatureOfInterest().isSetName()) {
-            writeToFile(fw, String.format("$sb Mess-Stellenname: %s", o.getObservationConstellation().getFeatureOfInterest().getFirstName()));
+            final CodeType firstName = o.getObservationConstellation().getFeatureOfInterest().getFirstName();
+            String name = (firstName.isSetCodeSpace()?firstName.getCodeSpace():"") +
+                    (firstName.isSetValue()?firstName.getValue():"");
+            writeToFile(fw, String.format("$sb Mess-Stellenname: %s",
+                    name));
         }
     }
 

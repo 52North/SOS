@@ -38,6 +38,7 @@ import org.junit.rules.ExpectedException;
 import org.n52.schetland.uvf.UVFConstants;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -210,6 +211,17 @@ public class UVFEncoderTest {
             obsPropIdentifier.length()) +
             " " + unit + "     " + 
             "1970 1970";
+    
+        Assert.assertThat(actual, Is.is(expected));
+    }
+    
+    @Test
+    public void shouldEncodeMeasurementLocationName() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        final String foiName = "test-foi-name";
+        CodeType name = new CodeType(foiName);
+        responseToEncode.getObservationCollection().get(0).getObservationConstellation().getFeatureOfInterest().setName(CollectionHelper.list(name));
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5];
+        final String expected = "$sb Mess-Stellenname: " + foiName;
     
         Assert.assertThat(actual, Is.is(expected));
     }

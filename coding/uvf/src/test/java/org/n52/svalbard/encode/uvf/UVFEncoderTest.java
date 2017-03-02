@@ -104,7 +104,7 @@ public class UVFEncoderTest {
         final String uomId = "test-uom";
         final double testValue = 52.0;
         Value<?> measuredValue = new QuantityValue(testValue, uomId);
-        final long testDateUnixTime = 52l;
+        final long testDateUnixTime = 43200l;
         Time phenomenonTime = new TimeInstant(new Date(testDateUnixTime));
         ObservationValue<?> value = new SingleObservationValue<>(phenomenonTime, measuredValue);
         omObservation.setValue(value);
@@ -234,6 +234,14 @@ public class UVFEncoderTest {
             OwsExceptionReport {
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[7];
         final String expected = "-foi-identifier51.93503827.6521225 0.000     ";
+        
+        Assert.assertThat(actual, Is.is(expected));
+    }
+    
+    @Test
+    public void shouldEncodeTemporalBoundingBox() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[8];
+        final String expected = "70010112007001011200Zeit    ";
         
         Assert.assertThat(actual, Is.is(expected));
     }

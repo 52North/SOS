@@ -141,34 +141,34 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
          * HEADER: Lines 1 - 4
          */
         writeLine1(fw);
-        String centuries = "";
+        TimePeriod temporalBBox = null;
         if (globalValues != null) {
-            centuries = getCenturiesFromGlobalValues();
+            temporalBBox = getTemporalBBoxFromGlobalValues();
         }
-        if (centuries.isEmpty()){
-            centuries = getCenturiesFromObservations(observationCollection);
+        if (temporalBBox == null){
+            temporalBBox = getTemporalBBoxFromObservations(observationCollection);
         }
-        writeLine2(fw, o.getObservationConstellation().getObservableProperty(), centuries);
+        writeLine2(fw, o.getObservationConstellation().getObservableProperty(), temporalBBox);
         writeLine3(fw, o.getObservationConstellation().getFeatureOfInterest());
-        writeLine4(fw, o.getPhenomenonTime());
+        writeLine4(fw, temporalBBox);
         // 5.Zeile 7008030730 -777
         
         return uvfFile;
     }
 
-    private String getCenturiesFromGlobalValues() {
+    private TimePeriod getTemporalBBoxFromGlobalValues() {
         if (globalValues.isSetPhenomenonTime()) {
             Time time = globalValues.getPhenomenonTime();
             if (time instanceof TimeInstant) {
-                return ((TimeInstant) time).getValue().getYear() + " " + ((TimeInstant) time).getValue().getYear();
+                return new TimePeriod(time, time);
             } else {
-                return ((TimePeriod) time).getStart().getYear() + " " + ((TimePeriod) time).getEnd().getYear();
+                return (TimePeriod) time;
             }
         }
-        return "";
+        return null;
     }
 
-    private String getCenturiesFromObservations(List<OmObservation> observationCollection) throws CodedException {
+    private TimePeriod getTemporalBBoxFromObservations(List<OmObservation> observationCollection) throws CodedException {
         DateTime start = null;
         DateTime end = null;
         for (OmObservation observation : observationCollection) {
@@ -193,7 +193,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             }
         }
         if (start != null && end != null) {
-            return start.getYear() + " " + end.getYear();
+            return new TimePeriod(start, end);
         } else {
             final String message = "Could not extract centuries from observation collection";
             LOGGER.error(message);
@@ -205,7 +205,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         writeToFile(fw, "*Z");
     }
 
-    private void writeLine2(FileWriter fw, AbstractPhenomenon observableProperty, String centuries) throws IOException {
+    private void writeLine2(FileWriter fw, AbstractPhenomenon observableProperty, TimePeriod centuries) throws IOException {
         // 2.Zeile ABFLUSS m3/s 1900 1900
         StringBuilder sb = new StringBuilder(39);
         // Identifier
@@ -224,7 +224,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         }
         fillWithSpaces(sb, 30);
         // Centuries
-        sb.append(centuries);
+        sb.append(centuries.getStart().getYear() + " " + centuries.getEnd().getYear());
         writeToFile(fw, sb.toString());
     }
 
@@ -286,15 +286,10 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         }
     }
 
-    private void writeLine4(FileWriter fw, Time time) throws IOException, DateTimeFormatException {
+    private void writeLine4(FileWriter fw, TimePeriod temporalBBox) throws IOException, DateTimeFormatException {
         StringBuilder sb = new StringBuilder(28);
-        if (time instanceof TimeInstant) {
-            String timeString = DateTimeHelper.formatDateTime2FormattedString(((TimeInstant) time).getValue(), UVFConstants.TIME_FORMAT);
-            sb.append(timeString).append(timeString);
-        } else if (time instanceof TimePeriod) {
-            sb.append(DateTimeHelper.formatDateTime2FormattedString(((TimePeriod) time).getStart(), UVFConstants.TIME_FORMAT));
-            sb.append(DateTimeHelper.formatDateTime2FormattedString(((TimePeriod) time).getEnd(), UVFConstants.TIME_FORMAT));
-        }
+        sb.append(DateTimeHelper.formatDateTime2FormattedString(temporalBBox.getStart(), UVFConstants.TIME_FORMAT));
+        sb.append(DateTimeHelper.formatDateTime2FormattedString(temporalBBox.getEnd(), UVFConstants.TIME_FORMAT));
         fillWithSpaces(sb, 20);
         sb.append("Zeit");
         fillWithSpaces(sb, 28);

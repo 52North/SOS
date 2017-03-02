@@ -208,7 +208,6 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     private void writeLine2(FileWriter fw, AbstractPhenomenon observableProperty, String centuries) throws IOException {
         // 2.Zeile ABFLUSS m3/s 1900 1900
         StringBuilder sb = new StringBuilder(39);
-        // TODO CONTINUE HERE
         // Identifier
         String observablePropertyIdentifier = observableProperty.getIdentifier();
         observablePropertyIdentifier = ensureIdentifierLength(observablePropertyIdentifier,
@@ -219,7 +218,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         if (observableProperty instanceof OmObservableProperty) {
             String unit = ((OmObservableProperty)observableProperty).getUnit();
             unit = ensureIdentifierLength(unit,
-                    UVFConstants.MAX_IDENTIFIER_LENGTH - 1);
+                    UVFConstants.MAX_IDENTIFIER_LENGTH);
             sb.append(" ");
             sb.append(unit);
         }
@@ -237,12 +236,18 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
         if (f instanceof SamplingFeature) {
             SamplingFeature sf = (SamplingFeature)f;
-            sb.append(sf.getGeometry().getCoordinate().x);
+            String xString = Double.toString(sf.getGeometry().getCoordinate().x);
+            xString = ensureValueLength(xString, 10);
+            sb.append(xString);
             fillWithSpaces(sb, 25);
-            sb.append(sf.getGeometry().getCoordinate().y);
+            String yString = Double.toString(sf.getGeometry().getCoordinate().y);
+            yString = ensureValueLength(yString, 10);
+            sb.append(yString);
             fillWithSpaces(sb, 35);
-            if (!(sf.getGeometry().getCoordinate().z + "").equals("NaN")) {
-                sb.append(sf.getGeometry().getCoordinate().z);
+            if (!Double.isNaN(sf.getGeometry().getCoordinate().z)) {
+                String zString = Double.toString(sf.getGeometry().getCoordinate().z);
+                zString = ensureValueLength(zString, 10);
+                sb.append(zString);
             } else {
                 sb.append("0.000");
             }
@@ -257,6 +262,13 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         }
         writeToFile(fw, sb.toString());
 //      3.Zeile 88888 0 0 0.000        
+    }
+
+    private String ensureValueLength(String valueString, int maxLength) {
+        if (valueString.length() > maxLength) {
+            valueString = valueString.substring(0, maxLength);
+        }
+        return valueString;
     }
 
     private String ensureIdentifierLength(String identifier, int maxLength) {
@@ -326,8 +338,8 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     private void writeMessStellenname(FileWriter fw, OmObservation o) throws IOException {
         if (o.getObservationConstellation().getFeatureOfInterest().isSetName()) {
             final CodeType firstName = o.getObservationConstellation().getFeatureOfInterest().getFirstName();
-            String name = (firstName.isSetCodeSpace()?firstName.getCodeSpace():"") +
-                    (firstName.isSetValue()?firstName.getValue():"");
+            String name = ensureIdentifierLength((firstName.isSetCodeSpace()?firstName.getCodeSpace():"") +
+                    (firstName.isSetValue()?firstName.getValue():""), UVFConstants.MAX_IDENTIFIER_LENGTH);
             writeToFile(fw, String.format("$sb Mess-Stellenname: %s",
                     name));
         }

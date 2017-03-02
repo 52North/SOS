@@ -186,7 +186,8 @@ public class UVFEncoderTest {
     }
 
     @Test
-    public void shouldEncodeTimeseriesIdentifierAndCenturies() throws UnsupportedEncoderInputException, OwsExceptionReport {
+    public void shouldEncodeTimeseriesIdentifierAndCenturies() throws UnsupportedEncoderInputException,
+            OwsExceptionReport {
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[6];
         final String expected = obsPropIdentifier.substring(
             obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
@@ -198,7 +199,8 @@ public class UVFEncoderTest {
     }
     
     @Test
-    public void shouldEncodeTimeseriesIdentifierAndCenturiesFromStreamingValues() throws UnsupportedEncoderInputException, OwsExceptionReport {
+    public void shouldEncodeTimeseriesIdentifierAndCenturiesFromStreamingValues() throws
+            UnsupportedEncoderInputException, OwsExceptionReport {
         GlobalGetObservationValues globalValues = responseToEncode.new GlobalGetObservationValues();
         DateTime end = new DateTime(0);
         DateTime start = new DateTime(0);
@@ -219,10 +221,20 @@ public class UVFEncoderTest {
     public void shouldEncodeMeasurementLocationName() throws UnsupportedEncoderInputException, OwsExceptionReport {
         final String foiName = "test-foi-name";
         CodeType name = new CodeType(foiName);
-        responseToEncode.getObservationCollection().get(0).getObservationConstellation().getFeatureOfInterest().setName(CollectionHelper.list(name));
+        responseToEncode.getObservationCollection().get(0).getObservationConstellation().getFeatureOfInterest().
+            setName(CollectionHelper.list(name));
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5];
         final String expected = "$sb Mess-Stellenname: " + foiName;
     
+        Assert.assertThat(actual, Is.is(expected));
+    }
+    
+    @Test
+    public void shouldEncodeMeasurementLocationIdAndCoordinates() throws UnsupportedEncoderInputException,
+            OwsExceptionReport {
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[7];
+        final String expected = "-foi-identifier51.93503827.6521225 0.000     ";
+        
         Assert.assertThat(actual, Is.is(expected));
     }
 }

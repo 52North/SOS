@@ -51,7 +51,7 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
     @Override
     public void enrich() throws OwsExceptionReport {
         Set<String> parentProcedures = getParentProcedures();
-        if (parentProcedures != null) {
+        if (CollectionHelper.isNotEmpty(parentProcedures)) {
             getDescription().setParentProcedure(new ReferenceType(parentProcedures.iterator().next()));
         }
         Set<AbstractSensorML> childProcedures = getChildProcedures();

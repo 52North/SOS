@@ -33,6 +33,7 @@ import java.util.Locale;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.sos.util.GeometryHandler;
 
 /**
  * TODO JavaDoc
@@ -41,8 +42,8 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
  */
 public class ProcedureDescriptionEnrichments extends AbstractProcedureDescriptionEnrichments<ProcedureEntity> {
 
-    public ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider) {
-        super(locale, serviceProvider);
+    public ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, GeometryHandler geometryHandler) {
+        super(locale, serviceProvider, geometryHandler);
     }
 
     public AbstractRelatedProceduresEnrichment<ProcedureEntity> createRelatedProceduresEnrichment() {

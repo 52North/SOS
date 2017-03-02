@@ -34,7 +34,6 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;

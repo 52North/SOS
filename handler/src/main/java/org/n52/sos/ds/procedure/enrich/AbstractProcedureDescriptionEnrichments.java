@@ -38,6 +38,7 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.procedure.AbstractProcedureConverter;
+import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -57,10 +58,12 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
     private String typeOfIdentifier;
     private String typeOfFormat;
     private I18NDAORepository i18ndaoRepository;
+    private GeometryHandler geometryHandler;
 
-   public AbstractProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider) {
+   public AbstractProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, GeometryHandler geometryHandler) {
     this.serviceProvider = serviceProvider;
     this.language = locale;
+    this.geometryHandler = geometryHandler;
    }
 
     public abstract AbstractRelatedProceduresEnrichment<T> createRelatedProceduresEnrichment();
@@ -195,7 +198,7 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
     }
 
     public FeatureOfInterestEnrichment createFeatureOfInterestEnrichment() {
-        return setValues(new FeatureOfInterestEnrichment());
+        return setValues(new FeatureOfInterestEnrichment()).setGeometryHandler(geometryHandler);
     }
 
     public ValidTimeEnrichment createValidTimeEnrichment() {

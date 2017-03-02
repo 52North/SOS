@@ -105,11 +105,15 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
         this.i18NDAORepository = i18NDAORepository;
     }
 
+    @Inject
+    public void setProcedureConverter(ProcedureConverter procedureConverter) {
+        this.procedureConverter = procedureConverter;
+    }
+
     @Override
     public void init() {
         LocalizedProducer<OwsServiceProvider> serviceProvider
                 = this.serviceMetadataRepository.getServiceProviderFactory(SosConstants.SOS);
-        this.procedureConverter = new ProcedureConverter(serviceProvider);
     }
 
     @Override

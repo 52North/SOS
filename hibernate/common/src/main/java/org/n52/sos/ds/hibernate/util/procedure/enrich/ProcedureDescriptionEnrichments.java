@@ -36,6 +36,7 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.procedure.enrich.AbstractProcedureDescriptionEnrichments;
 import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
+import org.n52.sos.util.GeometryHandler;
 
 /**
  * TODO JavaDoc
@@ -46,8 +47,8 @@ public class ProcedureDescriptionEnrichments extends AbstractProcedureDescriptio
 
     private final DaoFactory daoFactory;
 
-    public ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, DaoFactory daoFactory) {
-        super(locale, serviceProvider);
+    public ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, DaoFactory daoFactory, GeometryHandler geometryHandler) {
+        super(locale, serviceProvider, geometryHandler);
         this.daoFactory = daoFactory;
     }
 

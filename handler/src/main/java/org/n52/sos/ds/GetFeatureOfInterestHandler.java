@@ -41,8 +41,10 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.n52.io.geojson.old.GeojsonPoint;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
+import org.n52.io.response.BBox;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
@@ -199,20 +201,32 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(req.getObservedProperties()));
         }
         if (req.isSetSpatialFilters()) {
-              Envelope envelope = null;
+            Envelope envelope = null;
             for (SpatialFilter spatialFilter : req.getSpatialFilters()) {
                 if (SpatialOperator.BBOX.equals(spatialFilter.getOperator())) {
                     envelope.expandToInclude(spatialFilter.getGeometry().getEnvelopeInternal());
                 }
             }
-              if (envelope != null) {
-//                  BBox bbox = new BBox();
-//                spatialFilter.getGeometry();
-//                rsps.addParameter(IoParameters.BBOX, IoParameters.getJsonNodeFrom(bbox));
-              }
+            if (envelope != null) {
+                BBox bbox = new BBox();
+                GeojsonPoint ll = new GeojsonPoint();
+                ll.setCoordinates(toArray(envelope.getMinX(), envelope.getMinY()));
+                bbox.setLl(ll);
+                GeojsonPoint ur = new GeojsonPoint();
+                ur.setCoordinates(toArray(envelope.getMaxX(), envelope.getMaxY()));
+                bbox.setUr(ur);
+                rsps.setParameter(IoParameters.BBOX, IoParameters.getJsonNodeFrom(bbox));
+            }
         }
         rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));
+    }
+
+    private Double[] toArray(double x, double y) {
+       Double[] array = new Double[2];
+       array[0] = x;
+       array[1] = y;
+       return array;
     }
 
     protected GeometryHandler getGeometryHandler() {

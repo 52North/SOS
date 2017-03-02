@@ -16,4 +16,14 @@
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactorySml20"/>
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryWml20"/>
 
+    <bean id="gdcs" class="org.n52.sos.ds.procedure.create.GeneratedDescriptionCreationStrategy"/>
+
+    <bean class="org.n52.sos.ds.procedure.ProcedureConverter">
+        <property name="creationStrategies">
+        <list value-type="org.n52.sos.ds.procedure.create.DescriptionCreationStrategy">
+            <ref bean="gdcs"/>
+        </list>
+    </property>
+    </bean>
+
 </beans>

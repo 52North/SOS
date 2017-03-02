@@ -29,15 +29,20 @@
 package org.n52.sos.ds.procedure;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+
+import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
@@ -49,12 +54,11 @@ import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.procedure.create.DescriptionCreationStrategy;
-import org.n52.sos.ds.procedure.create.GeneratedDescriptionCreationStrategy;
 import org.n52.sos.ds.procedure.enrich.ProcedureDescriptionEnrichments;
 import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository;
+import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike
@@ -68,12 +72,33 @@ import com.google.common.collect.Lists;
  *        TODO - apply description enrichment to all types of procedures
  *        (creates, file, or database) - use setting switches for code flow
  */
-public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEntity> {
+public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEntity> implements Constructable {
 
-    private final LocalizedProducer<OwsServiceProvider> serviceProvider;
+    private LocalizedProducer<OwsServiceProvider> serviceProvider;
+    private List<DescriptionCreationStrategy> creationStrategies = new ArrayList<>();
+    private OwsServiceMetadataRepository serviceMetadataRepository;
+    private GeometryHandler geometryHandler;
 
-    public ProcedureConverter(LocalizedProducer<OwsServiceProvider> serviceProvider) {
-        this.serviceProvider = serviceProvider;
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
+
+    @Inject
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
+        this.serviceMetadataRepository = repo;
+    }
+
+    @Inject
+    public void setCreationStrategies(List<DescriptionCreationStrategy> creationStrategies) {
+        if (creationStrategies != null) {
+            this.creationStrategies.addAll(creationStrategies);
+        }
+    }
+
+    @Override
+    public void init() {
+        serviceProvider = this.serviceMetadataRepository.getServiceProviderFactory(SosConstants.SOS);
     }
 
     @Override
@@ -94,7 +119,7 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
         if (desc != null) {
             addHumanReadableName(desc, procedure);
             enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null, i18n,
-                    i18nDaoRepository, session);
+                    i18nDaoRepository, geometryHandler, session);
             if (!requestedDescriptionFormat.equals(desc.getDescriptionFormat())) {
                 desc = convert(desc.getDescriptionFormat(), requestedDescriptionFormat, desc);
                 desc.setDescriptionFormat(requestedDescriptionFormat);
@@ -127,8 +152,8 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
         return Optional.absent();
     }
 
-    protected ArrayList<DescriptionCreationStrategy> getCreationStrategies() {
-        return Lists.newArrayList(new GeneratedDescriptionCreationStrategy());
+    protected List<DescriptionCreationStrategy> getCreationStrategies() {
+        return creationStrategies;
     }
 
     /**
@@ -183,11 +208,12 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
      *             if the enrichment fails
      */
     private void enrich(SosProcedureDescription<?> desc, ProcedureEntity procedure, String version, String format,
-            TimePeriod validTime, Locale language, I18NDAORepository i18ndaoRepository, Session session)
+            TimePeriod validTime, Locale language, I18NDAORepository i18ndaoRepository, GeometryHandler geometryHandler, Session session)
             throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
-                new ProcedureDescriptionEnrichments(language, serviceProvider);
+                new ProcedureDescriptionEnrichments(language, serviceProvider, geometryHandler);
             enrichments.setIdentifier(procedure.getDomainId())
+                        .setProcedure(procedure)
                         .setVersion(version)
                         .setDescription(desc)
                         .setProcedureDescriptionFormat(format)

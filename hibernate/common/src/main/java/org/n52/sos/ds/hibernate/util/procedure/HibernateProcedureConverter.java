@@ -63,6 +63,7 @@ import org.n52.sos.ds.hibernate.util.procedure.create.XmlStringDescriptionCreati
 import org.n52.sos.ds.hibernate.util.procedure.enrich.ProcedureDescriptionEnrichments;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.ds.procedure.AbstractProcedureConverter;
+import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -284,7 +285,7 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
             TimePeriod validTime, Locale language, I18NDAORepository i18ndaoRepository, Session session)
             throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
-                new ProcedureDescriptionEnrichments(language, serviceProvider, daoFactory);
+                new ProcedureDescriptionEnrichments(language, serviceProvider, daoFactory, null);
                 enrichments.setIdentifier(procedure.getIdentifier())
                         .setVersion(version)
                         .setDescription(desc)

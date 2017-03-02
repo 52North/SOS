@@ -151,10 +151,10 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     }
 
     private void writeLine3(FileWriter fw, AbstractFeature f) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int beginIndex = f.getIdentifier().length() - UVFConstants.MAX_IDENTIFIER_LENGTH;
-        int endIndex = f.getIdentifier().length();
-        sb.append(f.getIdentifier().substring(beginIndex, endIndex));
+        StringBuilder sb = new StringBuilder(45);
+        String foiIdentifier = f.getIdentifier();
+        foiIdentifier = ensureIdentifierLength(foiIdentifier, UVFConstants.MAX_IDENTIFIER_LENGTH);
+        sb.append(foiIdentifier);
         fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
         if (f instanceof SamplingFeature) {
             SamplingFeature sf = (SamplingFeature)f;
@@ -180,6 +180,15 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
 //      3.Zeile 88888 0 0 0.000        
     }
 
+    private String ensureIdentifierLength(String identifier, int maxLength) {
+        if (identifier.length() > maxLength) {
+            int endIndex = identifier.length();
+            int beginIndex = endIndex - maxLength;
+            identifier = identifier.substring(beginIndex, endIndex);
+        }
+        return identifier;
+    }
+
     private void fillWithSpaces(StringBuilder sb, int i) {
         while (sb.length() < i) {
             sb.append(" ");
@@ -187,7 +196,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     }
 
     private void writeLine4(FileWriter fw, Time time) throws IOException, DateTimeFormatException {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(28);
         if (time instanceof TimeInstant) {
             String timeString = DateTimeHelper.formatDateTime2FormattedString(((TimeInstant) time).getValue(), UVFConstants.TIME_FORMAT);
             sb.append(timeString).append(timeString);
@@ -211,10 +220,8 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
 
     private void writeMessGroesse(FileWriter fw, OmObservation o) throws IOException {
         String observablePropertyIdentifier = o.getObservationConstellation().getObservablePropertyIdentifier();
-        observablePropertyIdentifier = observablePropertyIdentifier.substring(
-                observablePropertyIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
-                observablePropertyIdentifier.length());
-        
+        observablePropertyIdentifier = ensureIdentifierLength(observablePropertyIdentifier,
+                UVFConstants.MAX_IDENTIFIER_LENGTH);
         writeToFile(fw, String.format("$sb Mess-Groesse: %s", observablePropertyIdentifier));
     }
 
@@ -224,9 +231,8 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
 
     private void writeMessStellennummer(FileWriter fw, OmObservation o) throws IOException {
         String featureOfInterestIdentifier = o.getObservationConstellation().getFeatureOfInterestIdentifier();
-        featureOfInterestIdentifier = featureOfInterestIdentifier.substring(
-                featureOfInterestIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
-                featureOfInterestIdentifier.length());
+        featureOfInterestIdentifier = ensureIdentifierLength(featureOfInterestIdentifier,
+                UVFConstants.MAX_IDENTIFIER_LENGTH);
         writeToFile(fw, String.format("$sb Mess-Stellennummer: %s", featureOfInterestIdentifier));
     }
 
@@ -315,7 +321,6 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
 
     @Override
     public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
-        // TODO Auto-generated method stub
         return null;
     }
     

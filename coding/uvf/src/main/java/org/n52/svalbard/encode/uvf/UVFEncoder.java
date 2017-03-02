@@ -162,11 +162,11 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             fillWithSpaces(sb, 25);
             sb.append(sf.getGeometry().getCoordinate().y);
             fillWithSpaces(sb, 35);
-//            if (sf.getGeometry().getCoordinate().z) {
-            sb.append(sf.getGeometry().getCoordinate().z);                
-//            } else {
-//                sb.append("0.000");
-//            }
+            if (!(sf.getGeometry().getCoordinate().z + "").equals("NaN")) {
+                sb.append(sf.getGeometry().getCoordinate().z);
+            } else {
+                sb.append("0.000");
+            }
             fillWithSpaces(sb, 45);
         } else {
             sb.append("0");

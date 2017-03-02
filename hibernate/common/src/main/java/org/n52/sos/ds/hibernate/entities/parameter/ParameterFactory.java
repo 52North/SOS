@@ -32,12 +32,17 @@ import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
 import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.MultiPointCoverage;
 import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.ProfileValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TLVTValue;
 import org.n52.shetland.ogc.om.values.TVPValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
@@ -163,6 +168,31 @@ public class ParameterFactory implements ValueVisitor<ValuedParameter<?>, OwsExc
 
     @Override
     public ValuedParameter<?> visit(UnknownValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(TLVTValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(ProfileValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 

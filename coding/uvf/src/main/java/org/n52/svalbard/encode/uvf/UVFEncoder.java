@@ -23,7 +23,9 @@ import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -32,6 +34,7 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.response.AbstractObservationResponse;
+import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValues;
 import org.n52.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.DateTimeHelper;
@@ -70,6 +73,8 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     private final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
             SupportedTypeKey.ObservationType, Collections.singleton(OmConstants.OBS_TYPE_MEASUREMENT));
     
+    private GlobalGetObservationValues globalValues = null;
+    
     public UVFEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
                 Joiner.on(", ").join(ENCODER_KEYS));
@@ -91,6 +96,9 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             throws OwsExceptionReport, UnsupportedEncoderInputException {
         if (objectToEncode instanceof AbstractObservationResponse) {
             AbstractObservationResponse aor = (AbstractObservationResponse) objectToEncode;
+            if (aor.hasGlobalValues()) {
+                globalValues = aor.getGlobalValues();
+            }
             return encodeGetObsResponse(aor.getObservationCollection());
         }
         throw new UnsupportedEncoderInputException(this, objectToEncode);
@@ -114,7 +122,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
 
     }
 
-    private File encodeToUvf(List<OmObservation> observationCollection, File tempDir) throws IOException, DateTimeFormatException {
+    private File encodeToUvf(List<OmObservation> observationCollection, File tempDir) throws IOException, CodedException {
         String filename = getFilename(observationCollection);
         File uvfFile = new File(tempDir, filename);
         FileWriter fw = new FileWriter(uvfFile);
@@ -132,7 +140,14 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
          * HEADER: Lines 1 - 4
          */
         writeLine1(fw);
-        writeLine2(fw);
+        String centuries = "";
+        if (globalValues != null) {
+            centuries = getCenturiesFromGlobalValues();
+        }
+        if (centuries.isEmpty()){
+            centuries = getCenturiesFromObservations(observationCollection);
+        }
+        writeLine2(fw, o.getObservationConstellation().getObservableProperty(), centuries);
         writeLine3(fw, o.getObservationConstellation().getFeatureOfInterest());
         writeLine4(fw, o.getPhenomenonTime());
         // 5.Zeile 7008030730 -777
@@ -140,14 +155,77 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         return uvfFile;
     }
 
+    private String getCenturiesFromGlobalValues() {
+        if (globalValues.isSetPhenomenonTime()) {
+            Time time = globalValues.getPhenomenonTime();
+            if (time instanceof TimeInstant) {
+                return ((TimeInstant) time).getValue().getYear() + " " + ((TimeInstant) time).getValue().getYear();
+            } else {
+                return ((TimePeriod) time).getStart().getYear() + " " + ((TimePeriod) time).getEnd().getYear();
+            }
+        }
+        return "";
+    }
+
+    private String getCenturiesFromObservations(List<OmObservation> observationCollection) throws CodedException {
+        DateTime start = null;
+        DateTime end = null;
+        for (OmObservation observation : observationCollection) {
+            Time phenomenonTime = observation.getPhenomenonTime();
+            if (phenomenonTime instanceof TimeInstant) {
+                final DateTime time = ((TimeInstant) phenomenonTime).getTimePosition().getTime();
+                if (start == null || time.isBefore(start)) {
+                    start = time;
+                }
+                if (end == null || time.isAfter(end)) {
+                    end = time;
+                }
+            } else {
+                final DateTime periodStart = ((TimePeriod) phenomenonTime).getStart();
+                if (start == null || periodStart.isBefore(start)) {
+                    start = periodStart;
+                }
+                final DateTime periodEnd = ((TimePeriod) phenomenonTime).getEnd();
+                if (end == null || periodEnd.isAfter(end)) {
+                    end = periodEnd;
+                }
+            }
+        }
+        if (start != null && end != null) {
+            return start.getYear() + " " + end.getYear();
+        } else {
+            final String message = "Could not extract centuries from observation collection";
+            LOGGER.error(message);
+            throw new NoApplicableCodeException().withMessage(message);
+        }
+    }
+
     private void writeLine1(FileWriter fw) throws IOException {
         writeToFile(fw, "*Z");
     }
 
-    private void writeLine2(FileWriter fw) {
-        // TODO Auto-generated method stub
-        // TODO IMPLEMENT HERE
+    private void writeLine2(FileWriter fw, AbstractPhenomenon observableProperty, String centuries) throws IOException {
         // 2.Zeile ABFLUSS m3/s 1900 1900
+        StringBuilder sb = new StringBuilder(39);
+        // TODO CONTINUE HERE
+        // Identifier
+        String observablePropertyIdentifier = observableProperty.getIdentifier();
+        observablePropertyIdentifier = ensureIdentifierLength(observablePropertyIdentifier,
+                UVFConstants.MAX_IDENTIFIER_LENGTH);
+        sb.append(observablePropertyIdentifier);
+        fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
+        // Unit (optional)
+        if (observableProperty instanceof OmObservableProperty) {
+            String unit = ((OmObservableProperty)observableProperty).getUnit();
+            unit = ensureIdentifierLength(unit,
+                    UVFConstants.MAX_IDENTIFIER_LENGTH - 1);
+            sb.append(" ");
+            sb.append(unit);
+        }
+        fillWithSpaces(sb, 30);
+        // Centuries
+        sb.append(centuries);
+        writeToFile(fw, sb.toString());
     }
 
     private void writeLine3(FileWriter fw, AbstractFeature f) throws IOException {

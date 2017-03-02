@@ -29,6 +29,7 @@ import java.util.List;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNot;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -40,6 +41,7 @@ import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -50,6 +52,7 @@ import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValues;
 import org.n52.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CollectionHelper;
@@ -66,9 +69,9 @@ public class UVFEncoderTest {
 
     private UVFEncoder encoder;
     private GetObservationResponse responseToEncode;
-    private String obsPropIdentifier = "test-obs-prop-obsPropIdentifier";
+    private String obsPropIdentifier = "test-obs-prop-identifier";
     private String foiIdentifier = "test-foi-identifier";
-    private String unit = "test-obs-prop-unit";
+    private String unit = "test-unit";
 
     @Before
     public void initObjects() throws OwsExceptionReport {
@@ -171,5 +174,35 @@ public class UVFEncoderTest {
     public void shouldEncodeTimeseriesTypeIdentifierTimebased()
             throws UnsupportedEncoderInputException, OwsExceptionReport {
         Assert.assertThat(new String(encoder.encode(responseToEncode).getBytes()).split("\n")[4], Is.is("*Z"));
+    }
+
+    @Test
+    public void shouldEncodeTimeseriesIdentifierAndCenturies() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5];
+        final String expected = obsPropIdentifier.substring(
+            obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
+            obsPropIdentifier.length()) +
+            " " + unit + "     " + 
+            "1970 1970";
+    
+        Assert.assertThat(actual, Is.is(expected));
+    }
+    
+    @Test
+    public void shouldEncodeTimeseriesIdentifierAndCenturiesFromStreamingValues() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        GlobalGetObservationValues globalValues = responseToEncode.new GlobalGetObservationValues();
+        DateTime end = new DateTime(0);
+        DateTime start = new DateTime(0);
+        Time phenomenonTime = new TimePeriod(start, end);
+        globalValues.addPhenomenonTime(phenomenonTime);
+        responseToEncode.setGlobalValues(globalValues);
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5];
+        final String expected = obsPropIdentifier.substring(
+            obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
+            obsPropIdentifier.length()) +
+            " " + unit + "     " + 
+            "1970 1970";
+    
+        Assert.assertThat(actual, Is.is(expected));
     }
 }

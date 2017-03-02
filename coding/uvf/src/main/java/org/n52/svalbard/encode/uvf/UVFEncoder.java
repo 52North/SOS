@@ -151,10 +151,143 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         writeLine2(fw, o.getObservationConstellation().getObservableProperty(), temporalBBox);
         writeLine3(fw, o.getObservationConstellation().getFeatureOfInterest());
         writeLine4(fw, temporalBBox);
-        // 5.Zeile 7008030730 -777
-        
+        for (OmObservation omObservation : observationCollection) {
+            // TODO implement no data handling 5.Zeile 7008030730 -777
+            // TODO implement normal data handling
+            writeObservationValue(fw, omObservation);
+        }
         return uvfFile;
     }
+
+    private void writeFunktionInterpretation(FileWriter fw) throws IOException {
+        writeToFile(fw, "$ib Funktion-Interpretation: Linie");
+    }
+
+    private void writeIndex(FileWriter fw) throws IOException {
+        writeToFile(fw, "$sb Index-Einheit: *** Zeit ***");
+    }
+
+    private void writeMessGroesse(FileWriter fw, OmObservation o) throws IOException {
+        String observablePropertyIdentifier = o.getObservationConstellation().getObservablePropertyIdentifier();
+        observablePropertyIdentifier = ensureIdentifierLength(observablePropertyIdentifier,
+                UVFConstants.MAX_IDENTIFIER_LENGTH);
+        writeToFile(fw, String.format("$sb Mess-Groesse: %s", observablePropertyIdentifier));
+    }
+
+    private void writeMessEinheit(FileWriter fw, AbstractPhenomenon observableProperty) throws IOException {
+        // $sb Mess-Einheit: m3/s
+        // Unit (optional)
+        String unit = "";
+        if (observableProperty instanceof OmObservableProperty) {
+            unit = ((OmObservableProperty)observableProperty).getUnit();
+            unit = ensureIdentifierLength(unit,
+                    UVFConstants.MAX_IDENTIFIER_LENGTH);
+        }
+        writeToFile(fw, String.format("$sb Mess-Einheit: %s", unit));
+    }
+
+    private void writeMessStellennummer(FileWriter fw, OmObservation o) throws IOException {
+        String featureOfInterestIdentifier = o.getObservationConstellation().getFeatureOfInterestIdentifier();
+        featureOfInterestIdentifier = ensureIdentifierLength(featureOfInterestIdentifier,
+                UVFConstants.MAX_IDENTIFIER_LENGTH);
+        writeToFile(fw, String.format("$sb Mess-Stellennummer: %s", featureOfInterestIdentifier));
+    }
+
+    private void writeMessStellenname(FileWriter fw, OmObservation o) throws IOException {
+        if (o.getObservationConstellation().getFeatureOfInterest().isSetName()) {
+            final CodeType firstName = o.getObservationConstellation().getFeatureOfInterest().getFirstName();
+            String name = ensureIdentifierLength((firstName.isSetCodeSpace()?firstName.getCodeSpace():"") +
+                    (firstName.isSetValue()?firstName.getValue():""), UVFConstants.MAX_IDENTIFIER_LENGTH);
+            writeToFile(fw, String.format("$sb Mess-Stellenname: %s",
+                    name));
+        }
+    }
+
+    private void writeLine1(FileWriter fw) throws IOException {
+        writeToFile(fw, "*Z");
+    }
+
+    private void writeLine2(FileWriter fw, AbstractPhenomenon observableProperty, TimePeriod centuries) throws IOException {
+        // 2.Zeile ABFLUSS m3/s 1900 1900
+        StringBuilder sb = new StringBuilder(39);
+        // Identifier
+        String observablePropertyIdentifier = observableProperty.getIdentifier();
+        observablePropertyIdentifier = ensureIdentifierLength(observablePropertyIdentifier,
+                UVFConstants.MAX_IDENTIFIER_LENGTH);
+        sb.append(observablePropertyIdentifier);
+        fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
+        // Unit (optional)
+        if (observableProperty instanceof OmObservableProperty) {
+            String unit = ((OmObservableProperty)observableProperty).getUnit();
+            unit = ensureIdentifierLength(unit,
+                    UVFConstants.MAX_IDENTIFIER_LENGTH);
+            sb.append(" ");
+            sb.append(unit);
+        }
+        fillWithSpaces(sb, 30);
+        // Centuries
+        sb.append(centuries.getStart().getYear() + " " + centuries.getEnd().getYear());
+        writeToFile(fw, sb.toString());
+    }
+
+    private void writeLine3(FileWriter fw, AbstractFeature f) throws IOException {
+            StringBuilder sb = new StringBuilder(45);
+            String foiIdentifier = f.getIdentifier();
+            foiIdentifier = ensureIdentifierLength(foiIdentifier, UVFConstants.MAX_IDENTIFIER_LENGTH);
+            sb.append(foiIdentifier);
+            fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
+            if (f instanceof SamplingFeature) {
+                SamplingFeature sf = (SamplingFeature)f;
+                String xString = Double.toString(sf.getGeometry().getCoordinate().x);
+                xString = ensureValueLength(xString, 10);
+                sb.append(xString);
+                fillWithSpaces(sb, 25);
+                String yString = Double.toString(sf.getGeometry().getCoordinate().y);
+                yString = ensureValueLength(yString, 10);
+                sb.append(yString);
+                fillWithSpaces(sb, 35);
+                if (!Double.isNaN(sf.getGeometry().getCoordinate().z)) {
+                    String zString = Double.toString(sf.getGeometry().getCoordinate().z);
+                    zString = ensureValueLength(zString, 10);
+                    sb.append(zString);
+                } else {
+                    sb.append("0.000");
+                }
+                fillWithSpaces(sb, 45);
+            } else {
+                sb.append("0");
+                fillWithSpaces(sb, 25);
+                sb.append("0");
+                fillWithSpaces(sb, 35);
+                sb.append("0.000");
+                fillWithSpaces(sb, 45);
+            }
+            writeToFile(fw, sb.toString());
+            // 3.Zeile 88888 0 0 0.000
+        }
+
+    private void writeLine4(FileWriter fw, TimePeriod temporalBBox) throws IOException, DateTimeFormatException {
+        StringBuilder sb = new StringBuilder(28);
+        sb.append(DateTimeHelper.formatDateTime2FormattedString(temporalBBox.getStart(), UVFConstants.TIME_FORMAT));
+        sb.append(DateTimeHelper.formatDateTime2FormattedString(temporalBBox.getEnd(), UVFConstants.TIME_FORMAT));
+        fillWithSpaces(sb, 20);
+        sb.append("Zeit");
+        fillWithSpaces(sb, 28);
+        writeToFile(fw, sb.toString());
+    }
+
+    private void writeObservationValue(FileWriter fw, OmObservation omObservation) {
+        // TODO implement
+        // yymmddhhmmvvvvvvvvvv
+        // ^ date with ten chars
+        //           ^ observed/measured value with 10 chars
+    }
+
+    /* ***********************************************************************
+     *
+     *      Helper methods
+     *
+     * ***********************************************************************/
 
     private TimePeriod getTemporalBBoxFromGlobalValues() {
         if (globalValues.isSetPhenomenonTime()) {
@@ -201,69 +334,6 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         }
     }
 
-    private void writeLine1(FileWriter fw) throws IOException {
-        writeToFile(fw, "*Z");
-    }
-
-    private void writeLine2(FileWriter fw, AbstractPhenomenon observableProperty, TimePeriod centuries) throws IOException {
-        // 2.Zeile ABFLUSS m3/s 1900 1900
-        StringBuilder sb = new StringBuilder(39);
-        // Identifier
-        String observablePropertyIdentifier = observableProperty.getIdentifier();
-        observablePropertyIdentifier = ensureIdentifierLength(observablePropertyIdentifier,
-                UVFConstants.MAX_IDENTIFIER_LENGTH);
-        sb.append(observablePropertyIdentifier);
-        fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
-        // Unit (optional)
-        if (observableProperty instanceof OmObservableProperty) {
-            String unit = ((OmObservableProperty)observableProperty).getUnit();
-            unit = ensureIdentifierLength(unit,
-                    UVFConstants.MAX_IDENTIFIER_LENGTH);
-            sb.append(" ");
-            sb.append(unit);
-        }
-        fillWithSpaces(sb, 30);
-        // Centuries
-        sb.append(centuries.getStart().getYear() + " " + centuries.getEnd().getYear());
-        writeToFile(fw, sb.toString());
-    }
-
-    private void writeLine3(FileWriter fw, AbstractFeature f) throws IOException {
-        StringBuilder sb = new StringBuilder(45);
-        String foiIdentifier = f.getIdentifier();
-        foiIdentifier = ensureIdentifierLength(foiIdentifier, UVFConstants.MAX_IDENTIFIER_LENGTH);
-        sb.append(foiIdentifier);
-        fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
-        if (f instanceof SamplingFeature) {
-            SamplingFeature sf = (SamplingFeature)f;
-            String xString = Double.toString(sf.getGeometry().getCoordinate().x);
-            xString = ensureValueLength(xString, 10);
-            sb.append(xString);
-            fillWithSpaces(sb, 25);
-            String yString = Double.toString(sf.getGeometry().getCoordinate().y);
-            yString = ensureValueLength(yString, 10);
-            sb.append(yString);
-            fillWithSpaces(sb, 35);
-            if (!Double.isNaN(sf.getGeometry().getCoordinate().z)) {
-                String zString = Double.toString(sf.getGeometry().getCoordinate().z);
-                zString = ensureValueLength(zString, 10);
-                sb.append(zString);
-            } else {
-                sb.append("0.000");
-            }
-            fillWithSpaces(sb, 45);
-        } else {
-            sb.append("0");
-            fillWithSpaces(sb, 25);
-            sb.append("0");
-            fillWithSpaces(sb, 35);
-            sb.append("0.000");
-            fillWithSpaces(sb, 45);
-        }
-        writeToFile(fw, sb.toString());
-//      3.Zeile 88888 0 0 0.000        
-    }
-
     private String ensureValueLength(String valueString, int maxLength) {
         if (valueString.length() > maxLength) {
             valueString = valueString.substring(0, maxLength);
@@ -285,61 +355,6 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             sb.append(" ");
         }
     }
-
-    private void writeLine4(FileWriter fw, TimePeriod temporalBBox) throws IOException, DateTimeFormatException {
-        StringBuilder sb = new StringBuilder(28);
-        sb.append(DateTimeHelper.formatDateTime2FormattedString(temporalBBox.getStart(), UVFConstants.TIME_FORMAT));
-        sb.append(DateTimeHelper.formatDateTime2FormattedString(temporalBBox.getEnd(), UVFConstants.TIME_FORMAT));
-        fillWithSpaces(sb, 20);
-        sb.append("Zeit");
-        fillWithSpaces(sb, 28);
-        writeToFile(fw, sb.toString());
-    }
-
-    private void writeFunktionInterpretation(FileWriter fw) throws IOException {
-        writeToFile(fw, "$ib Funktion-Interpretation: Linie");
-    }
-
-    private void writeIndex(FileWriter fw) throws IOException {
-        writeToFile(fw, "$sb Index-Einheit: *** Zeit ***");        
-    }
-
-    private void writeMessGroesse(FileWriter fw, OmObservation o) throws IOException {
-        String observablePropertyIdentifier = o.getObservationConstellation().getObservablePropertyIdentifier();
-        observablePropertyIdentifier = ensureIdentifierLength(observablePropertyIdentifier,
-                UVFConstants.MAX_IDENTIFIER_LENGTH);
-        writeToFile(fw, String.format("$sb Mess-Groesse: %s", observablePropertyIdentifier));
-    }
-
-    private void writeMessEinheit(FileWriter fw, AbstractPhenomenon observableProperty) throws IOException {
-        // $sb Mess-Einheit: m3/s
-        // Unit (optional)
-        String unit = "";
-        if (observableProperty instanceof OmObservableProperty) {
-            unit = ((OmObservableProperty)observableProperty).getUnit();
-            unit = ensureIdentifierLength(unit,
-                    UVFConstants.MAX_IDENTIFIER_LENGTH);
-        }
-        writeToFile(fw, String.format("$sb Mess-Einheit: %s", unit));
-    }
-
-    private void writeMessStellennummer(FileWriter fw, OmObservation o) throws IOException {
-        String featureOfInterestIdentifier = o.getObservationConstellation().getFeatureOfInterestIdentifier();
-        featureOfInterestIdentifier = ensureIdentifierLength(featureOfInterestIdentifier,
-                UVFConstants.MAX_IDENTIFIER_LENGTH);
-        writeToFile(fw, String.format("$sb Mess-Stellennummer: %s", featureOfInterestIdentifier));
-    }
-
-    private void writeMessStellenname(FileWriter fw, OmObservation o) throws IOException {
-        if (o.getObservationConstellation().getFeatureOfInterest().isSetName()) {
-            final CodeType firstName = o.getObservationConstellation().getFeatureOfInterest().getFirstName();
-            String name = ensureIdentifierLength((firstName.isSetCodeSpace()?firstName.getCodeSpace():"") +
-                    (firstName.isSetValue()?firstName.getValue():""), UVFConstants.MAX_IDENTIFIER_LENGTH);
-            writeToFile(fw, String.format("$sb Mess-Stellenname: %s",
-                    name));
-        }
-    }
-
 
     private void writeToFile(FileWriter fw, String string) throws IOException {
         fw.write(string + "\n");

@@ -207,7 +207,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
         case "measurement":
             final SweQuantity quantity = new SweQuantity();
             if (dataset.getUnit() != null) {
-                quantity.setUom(dataset.getUnit().getDomainId());
+                quantity.setUom(dataset.getUnit().getName());
             }
             simpleType =  quantity;
             break;

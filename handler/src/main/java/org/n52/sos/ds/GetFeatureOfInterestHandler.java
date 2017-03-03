@@ -204,8 +204,11 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             Envelope envelope = null;
             for (SpatialFilter spatialFilter : req.getSpatialFilters()) {
                 if (SpatialOperator.BBOX.equals(spatialFilter.getOperator())) {
-                    envelope = new Envelope();
-                    envelope.expandToInclude(spatialFilter.getGeometry().getEnvelopeInternal());
+                    if (envelope == null) {
+                        envelope = spatialFilter.getGeometry().getEnvelopeInternal();
+                    } else {
+                        envelope.expandToInclude(spatialFilter.getGeometry().getEnvelopeInternal());
+                    }
                 }
             }
             if (envelope != null) {

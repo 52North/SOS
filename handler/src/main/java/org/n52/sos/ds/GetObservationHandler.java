@@ -43,7 +43,6 @@ import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.dao.DbQuery;
-import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -108,8 +107,7 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
         }
         if (request.isSetSpatialFilter() && !request.hasSpatialFilteringProfileSpatialFilter()) {
             if (SpatialOperator.BBOX.equals(request.getSpatialFilter().getOperator())) {
-                Envelope envelope = new Envelope();
-                envelope.expandToInclude(request.getSpatialFilter().getGeometry().getEnvelopeInternal());
+                Envelope envelope = request.getSpatialFilter().getGeometry().getEnvelopeInternal();
                 if (envelope != null) {
                     BBox bbox = new BBox();
                     GeojsonPoint ll = new GeojsonPoint();

@@ -73,7 +73,7 @@ public class DatasourceCacheUpdateHelper {
             Collection<DatasetEntity> datasets, ProcedureFlag procedureFlag) {
         Set<String> procedures = new HashSet<String>(datasets.size());
         for (DatasetEntity dataset : datasets) {
-            if (dataset.getProcedure() != null) {       
+            if (dataset.getProcedure() != null) {
                 boolean addProcedure = false;
                 if (procedureFlag == null) {
                     //add all procedures

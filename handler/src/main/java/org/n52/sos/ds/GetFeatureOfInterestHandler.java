@@ -198,7 +198,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(listToString(req.getProcedures())));
         }
         if (req.isSetObservableProperties()) {
-            rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(listToString(req.getObservedProperties()));
+            rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(listToString(req.getObservedProperties())));
         }
         if (req.isSetSpatialFilters()) {
             Envelope envelope = null;

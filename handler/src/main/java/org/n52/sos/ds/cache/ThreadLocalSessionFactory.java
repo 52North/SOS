@@ -112,6 +112,8 @@ public class ThreadLocalSessionFactory {
         try {
             this.createdSessions
                 .forEach(this.sessionStore::returnSession);
+        } catch (Exception e) {
+            LOGGER.error("Error while returning connection after cache update!", e);
         } finally {
             this.lock.unlock();
         }

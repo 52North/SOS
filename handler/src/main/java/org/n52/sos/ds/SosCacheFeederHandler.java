@@ -172,7 +172,12 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
             LOGGER.error("Error while updating ContentCache!", e);
             errors.add(new NoApplicableCodeException().causedBy(e).withMessage("Error while updating ContentCache!"));
         } finally {
-            this.sessionStore.returnSession(session);
+            try {
+                this.sessionStore.returnSession(session);
+            } catch (Exception e2) {
+                // TODO check why this is necessary
+                LOGGER.error("Error while returning connection after cache update!", e2);
+            }
         }
 
         logCacheLoadTime(cacheUpdateStartTime);

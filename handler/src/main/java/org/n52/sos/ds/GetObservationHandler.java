@@ -107,8 +107,8 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
             rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(request.getFeatureIdentifiers()));
         }
         if (request.isSetSpatialFilter() && !request.hasSpatialFilteringProfileSpatialFilter()) {
-            Envelope envelope = null;
             if (SpatialOperator.BBOX.equals(request.getSpatialFilter().getOperator())) {
+                Envelope envelope = new Envelope();
                 envelope.expandToInclude(request.getSpatialFilter().getGeometry().getEnvelopeInternal());
                 if (envelope != null) {
                     BBox bbox = new BBox();

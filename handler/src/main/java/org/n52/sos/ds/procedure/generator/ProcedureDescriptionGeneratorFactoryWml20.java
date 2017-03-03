@@ -69,7 +69,7 @@ public class ProcedureDescriptionGeneratorFactoryWml20 implements ProcedureDescr
 
     @Override
     public Set<ProcedureDescriptionGeneratorKey> getKeys() {
-        return Collections.unmodifiableSet(ProcedureDescriptionGeneratorSml20.GENERATOR_KEY_TYPES);
+        return Collections.unmodifiableSet(ProcedureDescriptionGeneratorWml20.GENERATOR_KEY_TYPES);
     }
 
     @Override

@@ -50,6 +50,7 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.ProxyQueryHelper;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
@@ -62,7 +63,7 @@ import com.google.common.collect.Sets;
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment {
+public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment implements ProxyQueryHelper {
 
     private GeometryHandler geometryHandler;
 
@@ -118,7 +119,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
     private DbQuery createDbQuery(Collection<String> featureOfInterestIDs) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         if (featureOfInterestIDs != null && !featureOfInterestIDs.isEmpty()) {
-            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(featureOfInterestIDs));
+            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(listToString(featureOfInterestIDs)));
         }
         rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));

@@ -68,7 +68,7 @@ import org.n52.sos.util.GeometryHandler;
 import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Envelope;
 
-public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHandler {
+public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHandler implements ProxyQueryHelper {
 
     private HibernateSessionStore sessionStore;
     private GetFeatureOfInterestDao dao;
@@ -192,13 +192,13 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     private DbQuery createDbQuery(GetFeatureOfInterestRequest req) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         if (req.isSetFeatureOfInterestIdentifiers()) {
-            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(req.getFeatureIdentifiers()));
+            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(listToString(req.getFeatureIdentifiers())));
         }
         if (req.isSetProcedures()) {
-            rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(req.getProcedures()));
+            rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(listToString(req.getProcedures())));
         }
         if (req.isSetObservableProperties()) {
-            rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(req.getObservedProperties()));
+            rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(listToString(req.getObservedProperties()));
         }
         if (req.isSetSpatialFilters()) {
             Envelope envelope = null;

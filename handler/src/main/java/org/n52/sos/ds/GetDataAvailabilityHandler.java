@@ -72,7 +72,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandler {
+public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandler implements ProxyQueryHelper {
 
     private HibernateSessionStore sessionStore;
     private CodingRepository codingRepository;
@@ -140,16 +140,16 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     private DbQuery createDbQuery(GetDataAvailabilityRequest req) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         if (req.isSetFeaturesOfInterest()) {
-            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(req.getFeaturesOfInterest()));
+            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(listToString(req.getFeaturesOfInterest())));
         }
         if (req.isSetProcedures()) {
-            rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(req.getProcedures()));
+            rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(listToString(req.getProcedures())));
         }
         if (req.isSetObservedProperties()) {
-            rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(req.getObservedProperties()));
+            rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(listToString(req.getObservedProperties())));
         }
         if (req.isSetOfferings()) {
-            rsps.setParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(req.getOfferings()));
+            rsps.setParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(listToString(req.getOfferings())));
         }
         rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));

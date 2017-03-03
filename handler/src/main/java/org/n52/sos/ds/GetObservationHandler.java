@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-public class GetObservationHandler extends AbstractGetObservationHandler {
+public class GetObservationHandler extends AbstractGetObservationHandler implements ProxyQueryHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationHandler.class);
 
@@ -103,7 +103,7 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
     private DbQuery createDbQuery(GetObservationRequest request) {
         RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
         if (request.isSetFeatureOfInterest()) {
-            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(request.getFeatureIdentifiers()));
+            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(listToString(request.getFeatureIdentifiers())));
         }
         if (request.isSetSpatialFilter() && !request.hasSpatialFilteringProfileSpatialFilter()) {
             if (SpatialOperator.BBOX.equals(request.getSpatialFilter().getOperator())) {

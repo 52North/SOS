@@ -84,7 +84,13 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
 
             @Override
             protected void post(AbstractThreadableDatasourceCacheUpdate action) {
-                action.getSession().clear();
+                if (action.getSession() != null) {
+                    try {
+                        action.getSession().clear();
+                    } catch (Exception e) {
+                        LOGGER.error("Error while returning connection after cache update!", e);
+                    }
+                }
             }
         };
         //execute multiple threads

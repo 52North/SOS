@@ -60,7 +60,13 @@ public abstract class CompositeCacheUpdate extends AbstractDatasourceCacheUpdate
 
             @Override
             protected void post(AbstractDatasourceCacheUpdate action) {
-                getSession().clear();
+                if (getSession() !=  null) {
+                    try {
+                        getSession().clear();
+                    } catch (Exception e) {
+                        LOGGER.error("Error while returning connection after cache update!", e);
+                    }
+                }
             }
         };
     }

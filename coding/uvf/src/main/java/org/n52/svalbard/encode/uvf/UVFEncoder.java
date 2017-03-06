@@ -234,40 +234,40 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     }
 
     private void writeLine3(FileWriter fw, AbstractFeature f) throws IOException {
-            StringBuilder sb = new StringBuilder(45);
-            String foiIdentifier = f.getIdentifier();
-            foiIdentifier = ensureIdentifierLength(foiIdentifier, UVFConstants.MAX_IDENTIFIER_LENGTH);
-            sb.append(foiIdentifier);
-            fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
-            if (f instanceof SamplingFeature) {
-                SamplingFeature sf = (SamplingFeature)f;
-                String xString = Double.toString(sf.getGeometry().getCoordinate().x);
-                xString = ensureValueLength(xString, 10);
-                sb.append(xString);
-                fillWithSpaces(sb, 25);
-                String yString = Double.toString(sf.getGeometry().getCoordinate().y);
-                yString = ensureValueLength(yString, 10);
-                sb.append(yString);
-                fillWithSpaces(sb, 35);
-                if (!Double.isNaN(sf.getGeometry().getCoordinate().z)) {
-                    String zString = Double.toString(sf.getGeometry().getCoordinate().z);
-                    zString = ensureValueLength(zString, 10);
-                    sb.append(zString);
-                } else {
-                    sb.append("0.000");
-                }
-                fillWithSpaces(sb, 45);
+        // 3.Zeile 88888 0 0 0.000
+        StringBuilder sb = new StringBuilder(45);
+        String foiIdentifier = f.getIdentifier();
+        foiIdentifier = ensureIdentifierLength(foiIdentifier, UVFConstants.MAX_IDENTIFIER_LENGTH);
+        sb.append(foiIdentifier);
+        fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
+        if (f instanceof SamplingFeature) {
+            SamplingFeature sf = (SamplingFeature)f;
+            String xString = Double.toString(sf.getGeometry().getCoordinate().x);
+            xString = ensureValueLength(xString, 10);
+            sb.append(xString);
+            fillWithSpaces(sb, 25);
+            String yString = Double.toString(sf.getGeometry().getCoordinate().y);
+            yString = ensureValueLength(yString, 10);
+            sb.append(yString);
+            fillWithSpaces(sb, 35);
+            if (!Double.isNaN(sf.getGeometry().getCoordinate().z)) {
+                String zString = Double.toString(sf.getGeometry().getCoordinate().z);
+                zString = ensureValueLength(zString, 10);
+                sb.append(zString);
             } else {
-                sb.append("0");
-                fillWithSpaces(sb, 25);
-                sb.append("0");
-                fillWithSpaces(sb, 35);
                 sb.append("0.000");
-                fillWithSpaces(sb, 45);
             }
-            writeToFile(fw, sb.toString());
-            // 3.Zeile 88888 0 0 0.000
+            fillWithSpaces(sb, 45);
+        } else {
+            sb.append("0");
+            fillWithSpaces(sb, 25);
+            sb.append("0");
+            fillWithSpaces(sb, 35);
+            sb.append("0.000");
+            fillWithSpaces(sb, 45);
         }
+        writeToFile(fw, sb.toString());
+    }
 
     private void writeLine4(FileWriter fw, TimePeriod temporalBBox) throws IOException, DateTimeFormatException {
         StringBuilder sb = new StringBuilder(28);

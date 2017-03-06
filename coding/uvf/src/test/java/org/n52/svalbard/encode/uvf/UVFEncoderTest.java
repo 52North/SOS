@@ -47,6 +47,7 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.ObservationValue;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
@@ -60,11 +61,19 @@ import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValues;
 import org.n52.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.JTSHelper;
+import org.n52.sos.util.builder.SweDataArrayBuilder;
+import org.n52.sos.util.builder.SweDataArrayValueBuilder;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -204,7 +213,7 @@ public class UVFEncoderTest {
             obsPropIdentifier.length()) +
             " " + unit + "     " + 
             "1970 1970";
-    
+
         Assert.assertThat(actual, Is.is(expected));
     }
     
@@ -223,7 +232,7 @@ public class UVFEncoderTest {
             obsPropIdentifier.length()) +
             " " + unit + "     " + 
             "1970 1970";
-    
+
         Assert.assertThat(actual, Is.is(expected));
     }
     
@@ -235,7 +244,7 @@ public class UVFEncoderTest {
             setName(CollectionHelper.list(name));
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5];
         final String expected = "$sb Mess-Stellenname: " + foiName;
-    
+
         Assert.assertThat(actual, Is.is(expected));
     }
     
@@ -252,7 +261,7 @@ public class UVFEncoderTest {
     public void shouldEncodeTemporalBoundingBox() throws UnsupportedEncoderInputException, OwsExceptionReport {
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[8];
         final String expected = "70010112007001011200Zeit    ";
-        
+
         Assert.assertThat(actual, Is.is(expected));
     }
     
@@ -272,7 +281,7 @@ public class UVFEncoderTest {
             setValue(52.1234567890);
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
         final String expected = "700101120052.1234567";
-        
+
         Assert.assertThat(actual, Is.is(expected));
     }
     
@@ -293,23 +302,20 @@ public class UVFEncoderTest {
         ObservationValue<MultiValue<List<TimeValuePair>>> mv = new MultiObservationValues<>();
         MultiValue<List<TimeValuePair>> value = new TVPValue();
         value.setUnit(unit);
-        TimeValuePair tvp1 = new TimeValuePair(new TimeInstant(new Date(UTC_TIMESTAMP_0)), new QuantityValue(52.1234567890));
-        TimeValuePair tvp2 = new TimeValuePair(new TimeInstant(new Date(UTC_TIMESTAMP_1)), new QuantityValue(52.1234567890));
+        TimeValuePair tvp1 = new TimeValuePair(new TimeInstant(new Date(UTC_TIMESTAMP_0)),
+                new QuantityValue(52.1234567890));
+        TimeValuePair tvp2 = new TimeValuePair(new TimeInstant(new Date(UTC_TIMESTAMP_1)),
+                new QuantityValue(52.1234567890));
         List<TimeValuePair> valueList = CollectionHelper.list(tvp1, tvp2);
         value.setValue(valueList);
         mv.setValue(value);
         responseToEncode.getObservationCollection().get(0).setValue(mv);
-        
-        final String[] encodeLines = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
-        
-        final String actual9 = encodeLines[9];
-        final String expected9 = "691231120052.1234567";
-        
-        final String actual10 = encodeLines[10];
-        final String expected10 = "700101120052.1234567";
 
-        Assert.assertThat(actual9, Is.is(expected9));
-        Assert.assertThat(actual10, Is.is(expected10));
+        final String[] encodedLines = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+
+        Assert.assertThat(encodedLines[8], Is.is("69123112007001011200Zeit    "));
+        Assert.assertThat(encodedLines[9], Is.is("691231120052.1234567"));
+        Assert.assertThat(encodedLines[10], Is.is("700101120052.1234567"));
     }
 
     @Test
@@ -325,7 +331,67 @@ public class UVFEncoderTest {
         responseToEncode.getObservationCollection().get(0).setValue(mv);
         
         exp.expect(NoApplicableCodeException.class);
-        exp.expectMessage("Encoding of Observations with values of type 'org.n52.sos.ogc.om.values.TLVTValue' not supported.");
+        exp.expectMessage("Encoding of Observations with values of type "
+                + "'org.n52.sos.ogc.om.values.TLVTValue' not supported.");
+
+        encoder.encode(responseToEncode);
+    }
+
+    @Test
+    public void shouldEncodeMultiObservationValueSweDataArrayValue() throws UnsupportedEncoderInputException,
+            OwsExceptionReport {
+        SweDataRecord elementType = new SweDataRecord();
+        SweField valueField = new SweField(obsPropIdentifier, new SweQuantity());
+        final SweTime sweTime = new SweTime();
+        sweTime.setDefinition(OmConstants.PHENOMENON_TIME);
+        SweField timestampField = new SweField("phenomenonTime", sweTime);
+        List<SweField> fields = CollectionHelper.list(timestampField, valueField);
+        elementType.setFields(fields );
+        SweDataArray dataArray = SweDataArrayBuilder.aSweDataArray()
+                .setElementType(elementType)
+                .setEncoding("text", "@", ";", ".")
+                .addBlock("1969-12-31T12:00:00+00:00", "52.1234567890")
+                .addBlock("1970-01-01T12:00:00+00:00", "42.1234567890")
+                .build();
+        
+        ObservationValue<MultiValue<SweDataArray>> value = SweDataArrayValueBuilder.aSweDataArrayValue()
+                .setSweDataArray(dataArray)
+                .build();
+        responseToEncode.getObservationCollection().get(0).setValue(value);
+
+        final String[] encodedLines = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+
+        Assert.assertThat(encodedLines[8], Is.is("69123112007001011200Zeit    "));
+        Assert.assertThat(encodedLines[9], Is.is("691231120052.1234567"));
+        Assert.assertThat(encodedLines[10], Is.is("700101120042.1234567"));
+    }
+
+    @Test
+    public void shouldThrowExceptionOnWrongInputSweDataArrayWithBooleans() throws UnsupportedEncoderInputException,
+            OwsExceptionReport {
+        SweDataRecord elementType = new SweDataRecord();
+        SweField valueField = new SweField(obsPropIdentifier, new SweBoolean());
+        final SweTime sweTime = new SweTime();
+        sweTime.setDefinition(OmConstants.PHENOMENON_TIME);
+        SweField timestampField = new SweField("phenomenonTime", sweTime);
+        List<SweField> fields = CollectionHelper.list(timestampField, valueField);
+        elementType.setFields(fields );
+        SweDataArray dataArray = SweDataArrayBuilder.aSweDataArray()
+                .setElementType(elementType)
+                .setEncoding("text", "@", ";", ".")
+                .addBlock("1969-12-31T12:00:00+00:00", "52.1234567890")
+                .addBlock("1970-01-01T12:00:00+00:00", "42.1234567890")
+                .build();
+        
+        ObservationValue<MultiValue<SweDataArray>> value = SweDataArrayValueBuilder.aSweDataArrayValue()
+                .setSweDataArray(dataArray)
+                .build();
+
+        responseToEncode.getObservationCollection().get(0).setValue(value);
+
+        exp.expect(NoApplicableCodeException.class);
+        exp.expectMessage("Encoding of SweArrayObservations with values of type "
+                + "'org.n52.sos.ogc.swe.simpleType.SweBoolean' not supported.");
 
         encoder.encode(responseToEncode);
     }

@@ -34,6 +34,8 @@ import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.MultiValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -41,6 +43,12 @@ import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
+import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValues;
 import org.n52.sos.response.BinaryAttachmentResponse;
@@ -359,6 +367,37 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                     writeSingleObservationValue(fw, timeValuePair.getTime(), timeValuePair.getValue());
                 }
             }
+        } else if (values instanceof SweDataArrayValue) {
+            SweDataArray sweDataArray = (SweDataArray) values.getValue();
+            List<List<String>> blocks = sweDataArray.getValues();
+            SweTextEncoding encoding = (SweTextEncoding) sweDataArray.getEncoding();
+            SweDataRecord elementType = (SweDataRecord) sweDataArray.getElementType();
+            int timestampIndex = elementType.getFieldIndexByIdentifier(OmConstants.PHENOMENON_TIME);
+            final String valueFieldIdentifierOrName = omObservation.getObservationConstellation().getObservablePropertyIdentifier();
+            int valueIndex = elementType.getFieldIndexByIdentifier(
+                    valueFieldIdentifierOrName);
+            for (List<String> block : blocks) {
+                writeSingleObservationValue(fw,
+                        // FIXME do we always have time instants here?
+                        new TimeInstant(DateTimeHelper.parseIsoString2DateTime(block.get(timestampIndex))),
+                        encodeSweValue(elementType.getFieldByIdentifier(valueFieldIdentifierOrName),
+                                block.get(valueIndex),
+                                encoding.getDecimalSeparator()));
+            }
+        }
+    }
+
+    private Value<?> encodeSweValue(SweField field, String value, String decimalSeparator) throws CodedException {
+        SweAbstractDataComponent element = field.getElement();
+        if (element instanceof SweQuantity) {
+            value = value.replace(decimalSeparator, ".");
+            return new QuantityValue(Double.parseDouble(value), ((SweQuantity) element).getUom());
+        } else {
+            final String message = String.format(
+                    "Encoding of SweArrayObservations with values of type '%s' not supported.",
+                    element.getClass().getName());
+            LOGGER.error(message);
+            throw new NoApplicableCodeException().withMessage(message);
         }
     }
 

@@ -389,6 +389,9 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
 
     private Value<?> encodeSweValue(SweField field, String value, String decimalSeparator) throws CodedException {
         SweAbstractDataComponent element = field.getElement();
+        if (value == null || value.isEmpty()) {
+            value = UVFConstants.NO_DATA_STRING;
+        }
         if (element instanceof SweQuantity) {
             value = value.replace(decimalSeparator, ".");
             return new QuantityValue(Double.parseDouble(value), ((SweQuantity) element).getUom());
@@ -402,6 +405,9 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     }
 
     private String encodeObservationValue(Value<?> value) {
+        if (value == null) {
+            return UVFConstants.NO_DATA_STRING;
+        }
         Object val = value.getValue();
         String encodedValue = val.toString();
         if (encodedValue.length()> UVFConstants.MAX_VALUE_LENGTH) {

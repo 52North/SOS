@@ -23,5 +23,10 @@ public interface UVFConstants {
      */
     int MAX_VALUE_LENGTH = 10;
 
+    /**
+     * No data values MUST be encoded with <code>-777</code> in the UVF format.
+     */
+    public String NO_DATA_STRING = "-777";
+
 }
  

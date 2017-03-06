@@ -395,4 +395,43 @@ public class UVFEncoderTest {
 
         encoder.encode(responseToEncode);
     }
+
+    @Test
+    public void shouldEncodeSingleObservationWithNoDataValue() throws
+            UnsupportedEncoderInputException, OwsExceptionReport {
+        responseToEncode.getObservationCollection().get(0).getValue().setValue(null);;
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String expected = "7001011200-777      ";
+
+        Assert.assertThat(actual, Is.is(expected));
+    }
+
+    @Test
+    public void shouldEncodeMultiObservationValueSweDataArrayValueWithNoDataValue() throws
+            UnsupportedEncoderInputException, OwsExceptionReport {
+        SweDataRecord elementType = new SweDataRecord();
+        SweField valueField = new SweField(obsPropIdentifier, new SweQuantity());
+        final SweTime sweTime = new SweTime();
+        sweTime.setDefinition(OmConstants.PHENOMENON_TIME);
+        SweField timestampField = new SweField("phenomenonTime", sweTime);
+        List<SweField> fields = CollectionHelper.list(timestampField, valueField);
+        elementType.setFields(fields );
+        SweDataArray dataArray = SweDataArrayBuilder.aSweDataArray()
+                .setElementType(elementType)
+                .setEncoding("text", "@", ";", ".")
+                .addBlock("1969-12-31T12:00:00+00:00", null)
+                .addBlock("1970-01-01T12:00:00+00:00", "42.1234567890")
+                .build();
+
+        ObservationValue<MultiValue<SweDataArray>> value = SweDataArrayValueBuilder.aSweDataArrayValue()
+                .setSweDataArray(dataArray)
+                .build();
+        responseToEncode.getObservationCollection().get(0).setValue(value);
+
+        final String[] encodedLines = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+
+        Assert.assertThat(encodedLines[8], Is.is("69123112007001011200Zeit    "));
+        Assert.assertThat(encodedLines[9], Is.is("6912311200-777.0    "));
+        Assert.assertThat(encodedLines[10], Is.is("700101120042.1234567"));
+    }
 }

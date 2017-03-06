@@ -17,5 +17,11 @@ public interface UVFConstants {
      */
     int MAX_IDENTIFIER_LENGTH = 15;
 
+    /**
+     * The maximum length of a value string is limited to 10 characters. Hence, the values are shortened,
+     * e.g. <code>52.1234567890</code> will be cut to <code>52.1234567</code>
+     */
+    int MAX_VALUE_LENGTH = 10;
+
 }
  

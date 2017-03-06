@@ -28,7 +28,9 @@ import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -151,9 +153,10 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         writeLine2(fw, o.getObservationConstellation().getObservableProperty(), temporalBBox);
         writeLine3(fw, o.getObservationConstellation().getFeatureOfInterest());
         writeLine4(fw, temporalBBox);
+        /*
+         * Observation Data
+         */
         for (OmObservation omObservation : observationCollection) {
-            // TODO implement no data handling 5.Zeile 7008030730 -777
-            // TODO implement normal data handling
             writeObservationValue(fw, omObservation);
         }
         return uvfFile;
@@ -276,11 +279,32 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         writeToFile(fw, sb.toString());
     }
 
-    private void writeObservationValue(FileWriter fw, OmObservation omObservation) {
-        // TODO implement
+    private void writeObservationValue(FileWriter fw, OmObservation omObservation) throws IOException {
+        // TODO implement no data handling 5.Zeile 7008030730 -777
+        // TODO implement normal data handling
         // yymmddhhmmvvvvvvvvvv
         // ^ date with ten chars
         //           ^ observed/measured value with 10 chars
+        /*
+         * Welche Fälle sind hier zu beachten?
+         * 2. SingleObservationValue vs. MultiObservationValue vs. StreamingValue
+         *    2.1 single observation
+         *    2.2 multi observation value: schleife über values
+         *    TODO streaming value mal deployed testen mit den Testdaten
+         *    2.3 streaming observation value:
+         *      ((StreamingValue<?>)omObservation.getValue()).hasNextValue()
+         *      ((StreamingValue<?>)omObservation.getValue()).nextValue()
+         * 3. Welche Arten von NoDataValue gibt es?
+         *    --> 3.2 Null <--
+         * 4. Wie kürzen wir die Werte? Substring vs. String.format()
+         *    substring: werte von vorne schreiben; identifier von hinten
+         */
+        switch (omObservation.getValue().getClass().getSimpleName()) {
+        case "SingleObservationValue":
+            writeSingleObservationValue(fw, omObservation.getPhenomenonTime(),
+                    ((SingleObservationValue<?>)omObservation.getValue()).getValue());
+            break;
+        }
     }
 
     /* ***********************************************************************
@@ -288,6 +312,28 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
      *      Helper methods
      *
      * ***********************************************************************/
+
+    private void writeSingleObservationValue(FileWriter fw, Time phenomenonTime, Value<?> value) throws IOException {
+        StringBuilder sb = new StringBuilder(20);
+        if (phenomenonTime instanceof TimeInstant) {
+            sb.append(((TimeInstant)phenomenonTime).getValue().toString(UVFConstants.TIME_FORMAT));
+        } else {
+            sb.append(((TimePeriod)phenomenonTime).getEnd().toString(UVFConstants.TIME_FORMAT));
+        }
+        sb.append(encodeObservationValue(value));
+        
+        fillWithSpaces(sb, 20);
+        writeToFile(fw, sb.toString());
+    }
+
+    private String encodeObservationValue(Value<?> value) {
+        Object val = value.getValue();
+        String encodedValue = val.toString();
+        if (encodedValue.length()> UVFConstants.MAX_VALUE_LENGTH) {
+            encodedValue = encodedValue.substring(0, UVFConstants.MAX_VALUE_LENGTH);
+        }
+        return encodedValue;
+    }
 
     private TimePeriod getTemporalBBoxFromGlobalValues() {
         if (globalValues.isSetPhenomenonTime()) {
@@ -354,6 +400,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         while (sb.length() < i) {
             sb.append(" ");
         }
+        sb.trimToSize();
     }
 
     private void writeToFile(FileWriter fw, String string) throws IOException {

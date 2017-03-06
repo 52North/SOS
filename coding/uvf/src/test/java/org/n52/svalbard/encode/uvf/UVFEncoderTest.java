@@ -104,7 +104,7 @@ public class UVFEncoderTest {
         final String uomId = "test-uom";
         final double testValue = 52.0;
         Value<?> measuredValue = new QuantityValue(testValue, uomId);
-        final long testDateUnixTime = 43200l;
+        final long testDateUnixTime = 43200000l;
         Time phenomenonTime = new TimeInstant(new Date(testDateUnixTime));
         ObservationValue<?> value = new SingleObservationValue<>(phenomenonTime, measuredValue);
         omObservation.setValue(value);
@@ -135,7 +135,8 @@ public class UVFEncoderTest {
         BinaryAttachmentResponse encodedResponse = encoder.encode(responseToEncode);
 
         Assert.assertThat(encodedResponse, IsNot.not(CoreMatchers.nullValue()));
-        Assert.assertTrue(new String(encodedResponse.getBytes()).split("\n").length >= 6);
+        final String[] split = new String(encodedResponse.getBytes()).split("\n");
+        Assert.assertTrue("Expected >= 10 elements in array, got " + split.length, split.length >= 10);
     }
 
     @Test
@@ -242,6 +243,33 @@ public class UVFEncoderTest {
     public void shouldEncodeTemporalBoundingBox() throws UnsupportedEncoderInputException, OwsExceptionReport {
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[8];
         final String expected = "70010112007001011200Zeit    ";
+        
+        Assert.assertThat(actual, Is.is(expected));
+    }
+    
+    @Test
+    public void shouldEncodeSingleObservationValueAndTimestamp() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String expected = "700101120052.0      ";
+        
+        Assert.assertThat(actual, Is.is(expected));
+    }
+    
+    @Test
+    public void shouldEncodeShortenedSingleObservationValueAndTimestamp() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        ((QuantityValue)responseToEncode.getObservationCollection().get(0).getValue().getValue()).setValue(52.1234567890);
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String expected = "700101120052.1234567";
+        
+        Assert.assertThat(actual, Is.is(expected));
+    }
+    
+    @Test
+    public void shouldEncodeSingleObservationValueAndEndOfTimePeriodPhenomenonTime() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        Time phenomenonTime = new TimePeriod(new Date(-43200000l), new Date(43200000l));
+        responseToEncode.getObservationCollection().get(0).getValue().setPhenomenonTime(phenomenonTime );
+        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String expected = "700101120052.0      ";
         
         Assert.assertThat(actual, Is.is(expected));
     }

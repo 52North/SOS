@@ -25,11 +25,16 @@ import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.TimeLocationValueTriple;
+import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.MultiValue;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
@@ -279,7 +284,8 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         writeToFile(fw, sb.toString());
     }
 
-    private void writeObservationValue(FileWriter fw, OmObservation omObservation) throws IOException {
+    private void writeObservationValue(FileWriter fw, OmObservation omObservation) throws IOException,
+            CodedException {
         // TODO implement no data handling 5.Zeile 7008030730 -777
         // TODO implement normal data handling
         // yymmddhhmmvvvvvvvvvv
@@ -299,11 +305,11 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
          * 4. Wie kürzen wir die Werte? Substring vs. String.format()
          *    substring: werte von vorne schreiben; identifier von hinten
          */
-        switch (omObservation.getValue().getClass().getSimpleName()) {
-        case "SingleObservationValue":
+        if (omObservation.getValue() instanceof SingleObservationValue<?>) {
             writeSingleObservationValue(fw, omObservation.getPhenomenonTime(),
                     ((SingleObservationValue<?>)omObservation.getValue()).getValue());
-            break;
+        } else if (omObservation.getValue() instanceof MultiObservationValues) {
+            writeMultiObservationValues(fw, omObservation);
         }
     }
 
@@ -313,17 +319,47 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
      *
      * ***********************************************************************/
 
-    private void writeSingleObservationValue(FileWriter fw, Time phenomenonTime, Value<?> value) throws IOException {
+    private void writeSingleObservationValue(FileWriter fw, Time phenomenonTime, Value<?> value) throws IOException,
+            DateTimeFormatException {
         StringBuilder sb = new StringBuilder(20);
         if (phenomenonTime instanceof TimeInstant) {
-            sb.append(((TimeInstant)phenomenonTime).getValue().toString(UVFConstants.TIME_FORMAT));
+            sb.append(DateTimeHelper.formatDateTime2FormattedString(((TimeInstant)phenomenonTime).getValue(),
+                    UVFConstants.TIME_FORMAT));
         } else {
-            sb.append(((TimePeriod)phenomenonTime).getEnd().toString(UVFConstants.TIME_FORMAT));
+            sb.append(DateTimeHelper.formatDateTime2FormattedString(((TimePeriod)phenomenonTime).getEnd(),
+                    UVFConstants.TIME_FORMAT));
         }
         sb.append(encodeObservationValue(value));
         
         fillWithSpaces(sb, 20);
         writeToFile(fw, sb.toString());
+    }
+
+    private void writeMultiObservationValues(FileWriter fw, OmObservation omObservation)
+            throws IOException, CodedException {
+        MultiValue<?> values = ((MultiObservationValues<?>)omObservation.getValue()).getValue();
+        /*
+         * - SweDataArrayValue
+         * - TLVTValue => not supported, because UVF supports timeseries for one location only
+         * - TVPValue
+         */
+        if (values.getValue() instanceof List<?> &&
+                !((List<?>)values.getValue()).isEmpty()) {
+            Object object = ((List<?>)values.getValue()).get(0);
+            
+            if (object instanceof TimeLocationValueTriple) {
+                final String message = String.format("Encoding of Observations with values of type '%s' not supported.",
+                        TLVTValue.class.getName());
+                LOGGER.error(message);
+                throw new NoApplicableCodeException().withMessage(message);
+            } else if (object instanceof TimeValuePair) {
+                @SuppressWarnings("unchecked")
+                List<TimeValuePair> valuesList = (List<TimeValuePair>) values.getValue();
+                for (TimeValuePair timeValuePair : valuesList) {
+                    writeSingleObservationValue(fw, timeValuePair.getTime(), timeValuePair.getValue());
+                }
+            }
+        }
     }
 
     private String encodeObservationValue(Value<?> value) {

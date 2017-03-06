@@ -36,6 +36,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.n52.schetland.uvf.UVFConstants;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
@@ -44,13 +45,19 @@ import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.TimeLocationValueTriple;
+import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.MultiValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.TLVTValue;
+import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValues;
@@ -68,6 +75,8 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class UVFEncoderTest {
 
+    private static final long UTC_TIMESTAMP_1 = 43200000l;
+    private static final long UTC_TIMESTAMP_0 = -UTC_TIMESTAMP_1;
     private UVFEncoder encoder;
     private GetObservationResponse responseToEncode;
     private String obsPropIdentifier = "test-obs-prop-identifier";
@@ -104,7 +113,7 @@ public class UVFEncoderTest {
         final String uomId = "test-uom";
         final double testValue = 52.0;
         Value<?> measuredValue = new QuantityValue(testValue, uomId);
-        final long testDateUnixTime = 43200000l;
+        final long testDateUnixTime = UTC_TIMESTAMP_1;
         Time phenomenonTime = new TimeInstant(new Date(testDateUnixTime));
         ObservationValue<?> value = new SingleObservationValue<>(phenomenonTime, measuredValue);
         omObservation.setValue(value);
@@ -248,7 +257,8 @@ public class UVFEncoderTest {
     }
     
     @Test
-    public void shouldEncodeSingleObservationValueAndTimestamp() throws UnsupportedEncoderInputException, OwsExceptionReport {
+    public void shouldEncodeSingleObservationValueAndTimestamp() throws UnsupportedEncoderInputException,
+            OwsExceptionReport {
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
         final String expected = "700101120052.0      ";
         
@@ -256,8 +266,10 @@ public class UVFEncoderTest {
     }
     
     @Test
-    public void shouldEncodeShortenedSingleObservationValueAndTimestamp() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        ((QuantityValue)responseToEncode.getObservationCollection().get(0).getValue().getValue()).setValue(52.1234567890);
+    public void shouldEncodeShortenedSingleObservationValueAndTimestamp() throws UnsupportedEncoderInputException,
+            OwsExceptionReport {
+        ((QuantityValue)responseToEncode.getObservationCollection().get(0).getValue().getValue()).
+            setValue(52.1234567890);
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
         final String expected = "700101120052.1234567";
         
@@ -265,12 +277,56 @@ public class UVFEncoderTest {
     }
     
     @Test
-    public void shouldEncodeSingleObservationValueAndEndOfTimePeriodPhenomenonTime() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        Time phenomenonTime = new TimePeriod(new Date(-43200000l), new Date(43200000l));
+    public void shouldEncodeSingleObservationValueAndEndOfTimePeriodPhenomenonTime() throws
+            UnsupportedEncoderInputException, OwsExceptionReport {
+        Time phenomenonTime = new TimePeriod(new Date(UTC_TIMESTAMP_0), new Date(UTC_TIMESTAMP_1));
         responseToEncode.getObservationCollection().get(0).getValue().setPhenomenonTime(phenomenonTime );
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
         final String expected = "700101120052.0      ";
         
         Assert.assertThat(actual, Is.is(expected));
+    }
+
+    @Test
+    public void shouldEncodeMultiObservationValueTimeValuePair() throws UnsupportedEncoderInputException,
+            OwsExceptionReport {
+        ObservationValue<MultiValue<List<TimeValuePair>>> mv = new MultiObservationValues<>();
+        MultiValue<List<TimeValuePair>> value = new TVPValue();
+        value.setUnit(unit);
+        TimeValuePair tvp1 = new TimeValuePair(new TimeInstant(new Date(UTC_TIMESTAMP_0)), new QuantityValue(52.1234567890));
+        TimeValuePair tvp2 = new TimeValuePair(new TimeInstant(new Date(UTC_TIMESTAMP_1)), new QuantityValue(52.1234567890));
+        List<TimeValuePair> valueList = CollectionHelper.list(tvp1, tvp2);
+        value.setValue(valueList);
+        mv.setValue(value);
+        responseToEncode.getObservationCollection().get(0).setValue(mv);
+        
+        final String[] encodeLines = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+        
+        final String actual9 = encodeLines[9];
+        final String expected9 = "691231120052.1234567";
+        
+        final String actual10 = encodeLines[10];
+        final String expected10 = "700101120052.1234567";
+
+        Assert.assertThat(actual9, Is.is(expected9));
+        Assert.assertThat(actual10, Is.is(expected10));
+    }
+
+    @Test
+    public void shouldThrowExceptionOnWrongInputTLVTValue() throws UnsupportedEncoderInputException,
+            OwsExceptionReport {
+        ObservationValue<MultiValue<List<TimeLocationValueTriple>>> mv = new MultiObservationValues<>();
+        MultiValue<List<TimeLocationValueTriple>> value = new TLVTValue();
+        Time time = new TimeInstant(new Date(UTC_TIMESTAMP_1));
+        TimeLocationValueTriple tlvt = new TimeLocationValueTriple(time , null , null);
+        List<TimeLocationValueTriple> valueList = CollectionHelper.list(tlvt);
+        value.setValue(valueList);
+        mv.setValue(value);
+        responseToEncode.getObservationCollection().get(0).setValue(mv);
+        
+        exp.expect(NoApplicableCodeException.class);
+        exp.expectMessage("Encoding of Observations with values of type 'org.n52.sos.ogc.om.values.TLVTValue' not supported.");
+
+        encoder.encode(responseToEncode);
     }
 }

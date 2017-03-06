@@ -69,7 +69,7 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
         //execute all updates except offerings and procedures in parallel, then execute offering and procedure updates
         //(which spawn their own threads)
         super(new ParallelCacheUpdate(threadCount,
-                sessionStore,
+                                      sessionStore,
                                       new ObservablePropertiesCacheUpdate(),
                                       new FeatureOfInterestCacheUpdate(),
                                       new RelatedFeaturesCacheUpdate(),

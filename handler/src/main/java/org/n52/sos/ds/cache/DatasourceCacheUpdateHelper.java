@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.base.Strings;
@@ -144,10 +145,22 @@ public class DatasourceCacheUpdateHelper {
         Set<String> procedures = Sets.newTreeSet();
         for (DatasetEntity dataset : datasets) {
             if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getDomainId())) {
-                procedures.add(dataset.getProcedure().getDomainId());
+                if (ProcedureFlag.HIDDEN_CHILD.equals(parent)) {
+                    addChilds(dataset.getProcedure(), procedures);
+                } else {
+                    procedures.add(dataset.getProcedure().getDomainId());
+                }
             }
         }
         return procedures;
+    }
+
+    private static void addChilds(ProcedureEntity procedure, Collection<String> procedures) {
+        if (procedure.hasChilds()) {
+            for (ProcedureEntity child : procedure.getChilds()) {
+                procedures.add(child.getDomainId());
+            }
+        }
     }
 
     @SuppressWarnings("rawtypes")

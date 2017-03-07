@@ -30,6 +30,7 @@ import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
@@ -48,6 +49,7 @@ import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValues;
@@ -115,13 +117,31 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             if (aor.hasGlobalValues()) {
                 globalValues = aor.getGlobalValues();
             }
-            return encodeGetObsResponse(aor.getObservationCollection());
+            if (!aor.getObservationCollection().isEmpty()) {
+                return encodeGetObsResponse(aor.getObservationCollection());
+            } else {
+                return createEmptyFile();
+            }
         }
         throw new UnsupportedEncoderInputException(this, objectToEncode);
 
     }
 
+    private BinaryAttachmentResponse createEmptyFile() {
+        return new BinaryAttachmentResponse(null, null, null);
+    }
+
     private BinaryAttachmentResponse encodeGetObsResponse(List<OmObservation> observationCollection) throws CodedException {
+        if (observationCollection != null &&
+                !observationCollection.isEmpty() &&
+                !observationCollection.get(0).getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_MEASUREMENT) &&
+                !observationCollection.get(0).getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_COUNT_OBSERVATION)) {
+            String errorMessage = String.format("Observation Type '%s' not supported by this encoder '%s'.",
+                    observationCollection.get(0).getObservationConstellation().getObservationType(),
+                    this.getClass().getName());
+            LOGGER.error(errorMessage);
+            throw new NoApplicableCodeException().withMessage(errorMessage);
+        }
         File tempDir = Files.createTempDir();
         BinaryAttachmentResponse response = null;
         try {
@@ -149,7 +169,9 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         writeFunktionInterpretation(fw);
         writeIndex(fw);
         writeMessGroesse(fw, o);
-        writeMessEinheit(fw, o.getObservationConstellation().getObservableProperty());
+        if (o.getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_MEASUREMENT)) {
+            writeMessEinheit(fw, o.getObservationConstellation().getObservableProperty());
+        }
         writeMessStellennummer(fw, o);
         writeMessStellenname(fw, o);
         /*
@@ -196,16 +218,19 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         String unit = "";
         if (observableProperty instanceof OmObservableProperty) {
             unit = ((OmObservableProperty)observableProperty).getUnit();
-            unit = ensureIdentifierLength(unit,
-                    UVFConstants.MAX_IDENTIFIER_LENGTH);
+            if (unit != null  && !unit.isEmpty()) {
+                unit = ensureIdentifierLength(unit, UVFConstants.MAX_IDENTIFIER_LENGTH);
+            }
         }
         writeToFile(fw, String.format("$sb Mess-Einheit: %s", unit));
     }
 
     private void writeMessStellennummer(FileWriter fw, OmObservation o) throws IOException {
         String featureOfInterestIdentifier = o.getObservationConstellation().getFeatureOfInterestIdentifier();
-        featureOfInterestIdentifier = ensureIdentifierLength(featureOfInterestIdentifier,
+        if (featureOfInterestIdentifier != null && !featureOfInterestIdentifier.isEmpty()) {
+            featureOfInterestIdentifier = ensureIdentifierLength(featureOfInterestIdentifier,
                 UVFConstants.MAX_IDENTIFIER_LENGTH);
+        }
         writeToFile(fw, String.format("$sb Mess-Stellennummer: %s", featureOfInterestIdentifier));
     }
 
@@ -228,17 +253,21 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         StringBuilder sb = new StringBuilder(39);
         // Identifier
         String observablePropertyIdentifier = observableProperty.getIdentifier();
-        observablePropertyIdentifier = ensureIdentifierLength(observablePropertyIdentifier,
-                UVFConstants.MAX_IDENTIFIER_LENGTH);
+        if (observablePropertyIdentifier != null && !observablePropertyIdentifier.isEmpty()) {
+            observablePropertyIdentifier = ensureIdentifierLength(observablePropertyIdentifier,
+                    UVFConstants.MAX_IDENTIFIER_LENGTH);
+        }
         sb.append(observablePropertyIdentifier);
         fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
         // Unit (optional)
         if (observableProperty instanceof OmObservableProperty) {
             String unit = ((OmObservableProperty)observableProperty).getUnit();
-            unit = ensureIdentifierLength(unit,
+            if (unit != null && !unit.isEmpty()) {
+                unit = ensureIdentifierLength(unit,
                     UVFConstants.MAX_IDENTIFIER_LENGTH);
-            sb.append(" ");
-            sb.append(unit);
+                sb.append(" ");
+                sb.append(unit);
+            }
         }
         fillWithSpaces(sb, 30);
         // Centuries
@@ -250,7 +279,9 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         // 3.Zeile 88888 0 0 0.000
         StringBuilder sb = new StringBuilder(45);
         String foiIdentifier = f.getIdentifier();
-        foiIdentifier = ensureIdentifierLength(foiIdentifier, UVFConstants.MAX_IDENTIFIER_LENGTH);
+        if (foiIdentifier != null && !foiIdentifier.isEmpty()) {
+            foiIdentifier = ensureIdentifierLength(foiIdentifier, UVFConstants.MAX_IDENTIFIER_LENGTH);
+        }
         sb.append(foiIdentifier);
         fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
         if (f instanceof SamplingFeature) {
@@ -294,8 +325,6 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
 
     private void writeObservationValue(FileWriter fw, OmObservation omObservation) throws IOException,
             CodedException {
-        // TODO implement no data handling 5.Zeile 7008030730 -777
-        // TODO implement normal data handling
         // yymmddhhmmvvvvvvvvvv
         // ^ date with ten chars
         //           ^ observed/measured value with 10 chars
@@ -304,7 +333,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
          * 2. SingleObservationValue vs. MultiObservationValue vs. StreamingValue
          *    2.1 single observation
          *    2.2 multi observation value: schleife über values
-         *    TODO streaming value mal deployed testen mit den Testdaten
+         *    streaming value mal deployed testen mit den Testdaten
          *    2.3 streaming observation value:
          *      ((StreamingValue<?>)omObservation.getValue()).hasNextValue()
          *      ((StreamingValue<?>)omObservation.getValue()).nextValue()
@@ -318,6 +347,9 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                     ((SingleObservationValue<?>)omObservation.getValue()).getValue());
         } else if (omObservation.getValue() instanceof MultiObservationValues) {
             writeMultiObservationValues(fw, omObservation);
+        } else if (omObservation.getValue() instanceof StreamingValue<?>) {
+            throw new NoApplicableCodeException().withMessage("Support for '%s' not yet implemented.",
+                    StreamingValue.class.getName());
         }
     }
 
@@ -328,7 +360,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
      * ***********************************************************************/
 
     private void writeSingleObservationValue(FileWriter fw, Time phenomenonTime, Value<?> value) throws IOException,
-            DateTimeFormatException {
+            CodedException {
         StringBuilder sb = new StringBuilder(20);
         if (phenomenonTime instanceof TimeInstant) {
             sb.append(DateTimeHelper.formatDateTime2FormattedString(((TimeInstant)phenomenonTime).getValue(),
@@ -347,7 +379,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             throws IOException, CodedException {
         MultiValue<?> values = ((MultiObservationValues<?>)omObservation.getValue()).getValue();
         /*
-         * - SweDataArrayValue
+         * - SweDataArrayValue => not allowed, only CountObservation and Measurement
          * - TLVTValue => not supported, because UVF supports timeseries for one location only
          * - TVPValue
          */
@@ -368,6 +400,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                 }
             }
         } else if (values instanceof SweDataArrayValue) {
+            // Should not be reached because currently, only Measurement and Count are allowed
             SweDataArray sweDataArray = (SweDataArray) values.getValue();
             List<List<String>> blocks = sweDataArray.getValues();
             SweTextEncoding encoding = (SweTextEncoding) sweDataArray.getEncoding();
@@ -378,7 +411,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                     valueFieldIdentifierOrName);
             for (List<String> block : blocks) {
                 writeSingleObservationValue(fw,
-                        // FIXME do we always have time instants here?
+                        // Do we always have time instants here?
                         new TimeInstant(DateTimeHelper.parseIsoString2DateTime(block.get(timestampIndex))),
                         encodeSweValue(elementType.getFieldByIdentifier(valueFieldIdentifierOrName),
                                 block.get(valueIndex),
@@ -404,9 +437,17 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         }
     }
 
-    private String encodeObservationValue(Value<?> value) {
+    private String encodeObservationValue(Value<?> value) throws CodedException {
         if (value == null) {
             return UVFConstants.NO_DATA_STRING;
+        }
+        if (!(value instanceof SweQuantity) && !(value instanceof SweCount)) {
+            String errorMessage = String.format("SweType '%s' not supported. Only '%s' and '%s'.",
+                    value.getClass().getName(),
+                    SweQuantity.class.getName(),
+                    SweCount.class.getName());
+            LOGGER.error(errorMessage);
+            throw new NoApplicableCodeException().withMessage(errorMessage);
         }
         Object val = value.getValue();
         String encodedValue = val.toString();

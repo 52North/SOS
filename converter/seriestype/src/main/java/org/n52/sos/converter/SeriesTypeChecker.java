@@ -47,16 +47,16 @@ import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.InsertObservationResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+/**
+ * TODO JAVADOC
+ *
+ */
 public class SeriesTypeChecker implements RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(SeriesTypeChecker.class);
-
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
     /**

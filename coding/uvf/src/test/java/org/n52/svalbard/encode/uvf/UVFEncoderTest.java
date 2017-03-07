@@ -23,6 +23,8 @@
  */
 package org.n52.svalbard.encode.uvf;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -52,9 +54,11 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.MultiValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TLVTValue;
@@ -83,6 +87,9 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  */
 public class UVFEncoderTest {
+
+    @Rule
+    public ExpectedException exp = ExpectedException.none();
 
     private static final long UTC_TIMESTAMP_1 = 43200000l;
     private static final long UTC_TIMESTAMP_0 = -UTC_TIMESTAMP_1;
@@ -118,14 +125,20 @@ public class UVFEncoderTest {
         ((SamplingFeature) featureOfInterest).setGeometry(point);
         observationConstellation.setFeatureOfInterest(featureOfInterest);
 
-        // timestamps
+        // value
         final String uomId = "test-uom";
         final double testValue = 52.0;
         Value<?> measuredValue = new QuantityValue(testValue, uomId);
-        final long testDateUnixTime = UTC_TIMESTAMP_1;
-        Time phenomenonTime = new TimeInstant(new Date(testDateUnixTime));
+
+        // timestamps
+        Time phenomenonTime = new TimeInstant(new Date(UTC_TIMESTAMP_1));
+
+        // observation value
         ObservationValue<?> value = new SingleObservationValue<>(phenomenonTime, measuredValue);
         omObservation.setValue(value);
+
+        // observation type
+        observationConstellation.setObservationType(OmConstants.OBS_TYPE_MEASUREMENT);
 
         // Final package
         omObservation.setObservationConstellation(observationConstellation);
@@ -133,9 +146,6 @@ public class UVFEncoderTest {
         responseToEncode = new GetObservationResponse();
         responseToEncode.setObservationCollection(observationCollection);
     }
-
-    @Rule
-    public ExpectedException exp = ExpectedException.none();
 
     @Test
     public void shouldThrowExceptionOnWrongInput() throws UnsupportedEncoderInputException, OwsExceptionReport {
@@ -433,5 +443,108 @@ public class UVFEncoderTest {
         Assert.assertThat(encodedLines[8], Is.is("69123112007001011200Zeit    "));
         Assert.assertThat(encodedLines[9], Is.is("6912311200-777.0    "));
         Assert.assertThat(encodedLines[10], Is.is("700101120042.1234567"));
+    }
+    
+    @Test
+    public void shouldThrowNoApplicableCodeExceptionWhenReceivingNotMeasurementObservations() throws 
+            UnsupportedEncoderInputException, OwsExceptionReport {
+        String[] notSupportedTypes = {
+                OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
+                OmConstants.OBS_TYPE_COMPLEX_OBSERVATION,
+                OmConstants.OBS_TYPE_DISCRETE_COVERAGE_OBSERVATION,
+                OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
+                OmConstants.OBS_TYPE_OBSERVATION,
+                OmConstants.OBS_TYPE_POINT_COVERAGE_OBSERVATION,
+                OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION,
+                OmConstants.OBS_TYPE_TEXT_OBSERVATION,
+                OmConstants.OBS_TYPE_TIME_SERIES_OBSERVATION,
+                OmConstants.OBS_TYPE_TRUTH_OBSERVATION,
+                OmConstants.OBS_TYPE_UNKNOWN
+        };
+        for (String notSupportedType : notSupportedTypes) {
+            responseToEncode.getObservationCollection().get(0).getObservationConstellation()
+                .setObservationType(notSupportedType);
+            
+            exp.expect(NoApplicableCodeException.class);
+            exp.expectMessage("Observation Type '" + notSupportedType + "' not supported by this encoder '" + 
+                    encoder.getClass().getName() + "'.");
+
+            encoder.encode(responseToEncode);
+        }
+    }
+
+    @Test
+    public void shouldNotEncodeUnitOfMeasurementForCountObservations() throws UnsupportedEncoderInputException,
+            OwsExceptionReport {
+        responseToEncode.getObservationCollection().get(0).getObservationConstellation().
+                setObservationType(OmConstants.OBS_TYPE_COUNT_OBSERVATION);
+        final String[] actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+        final String expected = "$sb Mess-Einheit: " + unit;
+
+        Assert.assertThat(Arrays.asList(actual), IsNot.not(CoreMatchers.hasItems(expected)));
+    }
+
+    @Test
+    public void shouldEncodeTimeseriesIdentifierAndCenturiesWithoutUnitForCountObservations() throws
+    UnsupportedEncoderInputException,
+            OwsExceptionReport {
+        responseToEncode.getObservationCollection().get(0).getObservationConstellation().
+            setObservationType(OmConstants.OBS_TYPE_COUNT_OBSERVATION);
+        Time phenTime = new TimeInstant(new Date(UTC_TIMESTAMP_1));
+        responseToEncode.getObservationCollection().get(0).setValue(new SingleObservationValue<>(phenTime, 
+                new CountValue(52)));
+        ((OmObservableProperty)responseToEncode.getObservationCollection().get(0).getObservationConstellation()
+                .getObservableProperty()).setUnit(null);
+        final String[] actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+        final String expected = obsPropIdentifier.substring(
+            obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
+            obsPropIdentifier.length()) +
+            " " + unit + "     " + 
+            "1970 1970";
+
+        Assert.assertThat(Arrays.asList(actual), IsNot.not(CoreMatchers.hasItem(expected)));
+    }
+
+    @Test
+    public void shouldThrowExceptionOnStreamingValue() throws UnsupportedEncoderInputException,
+            OwsExceptionReport {
+        ObservationValue<?> mv = new StreamingValue<Object>() {
+
+            private static final long serialVersionUID = 42L;
+
+            public Object nextEntity() throws OwsExceptionReport { return null; }
+
+            protected void queryTimes() {
+                setPhenomenonTime(new TimeInstant(new Date(UTC_TIMESTAMP_1)));
+            }
+
+            protected void queryUnit() {}
+
+            public TimeValuePair nextValue() throws OwsExceptionReport { return null; }
+
+            public void mergeValue(StreamingValue<Object> streamingValue) {}
+
+            public boolean hasNextValue() throws OwsExceptionReport { return false; }
+
+            public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
+                return null;
+            }
+        };
+        responseToEncode.getObservationCollection().get(0).setValue(mv);
+        
+        exp.expect(NoApplicableCodeException.class);
+        exp.expectMessage("Support for 'org.n52.sos.ogc.om.StreamingValue' not yet implemented.");
+
+        encoder.encode(responseToEncode);
+    }
+    
+    @Test
+    public void shouldReturnEmptyFileWhenObservationCollectionIsEmpty() throws UnsupportedEncoderInputException,
+            OwsExceptionReport {
+        List<OmObservation> observationCollection = Collections.emptyList();
+        responseToEncode.setObservationCollection(observationCollection);
+        
+        BinaryAttachmentResponse encodedResponse = encoder.encode(responseToEncode);
+        Assert.assertThat(encodedResponse.getSize(), Is.is(-1));
     }
 }

@@ -28,6 +28,9 @@
  */
 package org.n52.sos.convert;
 
+/**
+ * TODO JAVADOC
+ */
 public class RequestResponseModifierFacilitator {
     
     private boolean merger = false;

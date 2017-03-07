@@ -54,6 +54,7 @@ import org.n52.sos.ds.cache.ProcedureFlag;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Envelope;
 
 /**
  *
@@ -232,6 +233,18 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     protected ReferencedEnvelope getEnvelopeForOffering(OfferingEntity offering) throws OwsExceptionReport {
         if (offering.hasEnvelope()) {
             return new ReferencedEnvelope(offering.getEnvelope().getEnvelopeInternal(), offering.getEnvelope().getSRID());
+        } else if (datasets != null && !datasets.isEmpty()) {
+            Envelope e = new Envelope();
+            int srid = -1;
+            for (DatasetEntity de : datasets) {
+                if (de.getFeature().isSetGeometry()) {
+                    if (srid < 0 ) {
+                        srid = de.getFeature().getGeometry().getSRID();
+                    }
+                    e.expandToInclude(de.getFeature().getGeometry().getEnvelopeInternal());
+                }
+            }
+            return new ReferencedEnvelope(e, srid);
         }
         return new ReferencedEnvelope();
     }

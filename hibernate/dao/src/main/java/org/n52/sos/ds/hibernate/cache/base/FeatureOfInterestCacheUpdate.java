@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -79,6 +79,15 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                 Collection<String> parentFois = foisWithParents.get(featureOfInterestIdentifier);
                 if (!CollectionHelper.isEmpty(parentFois)) {
                     getCache().addParentFeatures(featureOfInterestIdentifier, parentFois);
+                }
+            }
+            
+            for (FeatureOfInterest featureOfInterest : featureOfInterestDAO.getPublishedFeatureOfInterest(getSession())) {
+                String identifier = featureOfInterest.getIdentifier();
+                getCache().addPublishedFeatureOfInterest(identifier);
+                Collection<String> parentFois = foisWithParents.get(identifier);
+                if (!CollectionHelper.isEmpty(parentFois)) {
+                    getCache().addPublishedFeaturesOfInterest(parentFois);
                 }
             }
             

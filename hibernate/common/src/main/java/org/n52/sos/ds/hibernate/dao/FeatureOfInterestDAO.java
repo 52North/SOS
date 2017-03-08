@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -207,9 +207,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
     }
 
     private DetachedCriteria getDetachedCriteriaSeriesForOffering(String offering, Session session) throws CodedException {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
-        detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.FEATURE_OF_INTEREST)));
+        final DetachedCriteria detachedCriteria = getDetachedCriteriaSeries(session);
         detachedCriteria.createCriteria(Series.OFFERING).add(Restrictions.eq(Offering.IDENTIFIER, offering));
         return detachedCriteria;
     }
@@ -406,5 +404,22 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                     featureOfInterest != null ? featureOfInterest.getClass().getName() : featureOfInterest).setStatus(
                     BAD_REQUEST);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<FeatureOfInterest> getPublishedFeatureOfInterest(Session session) throws CodedException {
+       if (HibernateHelper.isEntitySupported(Series.class)) {
+           Criteria c = session.createCriteria(FeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+           c.add(Subqueries.propertyIn(FeatureOfInterest.ID, getDetachedCriteriaSeries(session)));
+           return c.list();
+       } 
+       return getFeatureOfInterestObjects(session);
+    }
+    
+    private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
+        detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.FEATURE_OF_INTEREST)));
+        return detachedCriteria;
     }
 }

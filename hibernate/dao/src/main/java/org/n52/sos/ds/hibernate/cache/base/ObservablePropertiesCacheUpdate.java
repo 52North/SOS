@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,8 +29,10 @@
 package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
@@ -38,10 +40,13 @@ import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.TObservableProperty;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.util.CollectionHelper;
 
 import org.slf4j.Logger;
@@ -62,7 +67,8 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
     public void execute() {
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate");
         startStopwatch();
-        List<ObservableProperty> ops = new ObservablePropertyDAO().getObservablePropertyObjects(getSession());
+        ObservablePropertyDAO observablePropertyDAO = new ObservablePropertyDAO();
+        List<ObservableProperty> ops = observablePropertyDAO.getObservablePropertyObjects(getSession());
         // if ObservationConstellation is supported load them all at once,
         // otherwise query obs directly
         if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
@@ -107,6 +113,27 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 }
             }
         }
+        
+        try {
+            for (ObservableProperty observableProperty : observablePropertyDAO.getPublishedObservableProperty(getSession())) {
+                String identifier = observableProperty.getIdentifier();
+                getCache().addPublishedObservableProperty(identifier);
+                Set<String> parents = new HashSet<>();
+                getParents(parents, observableProperty);
+                getCache().addPublishedObservableProperties(parents);
+            }
+        } catch (CodedException e) {
+           getErrors().add(e);
+        }
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate ({})", getStopwatchResult());
     }
+    
+    private void getParents(Set<String> parents, ObservableProperty observableProperty) {
+        if (observableProperty instanceof TObservableProperty && ((TObservableProperty)observableProperty).getParents() != null) {
+            for (ObservableProperty parent : ((TObservableProperty)observableProperty).getParents()) {
+                getParents(parents, parent);
+            }
+        }
+    }
+    
 }

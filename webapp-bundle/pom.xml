@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>52n-sos</artifactId>
 		<groupId>org.n52.sensorweb.sos</groupId>
-		 <version>4.3.10</version>
+		 <version>4.3.11</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>webapp-bundle</artifactId>
@@ -11,7 +11,7 @@
 	<name>52°North SOS - Webapp with Sensor Web REST API</name>
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
-		<timeseries.api.version>1.9.0</timeseries.api.version>
+		<timeseries.api.version>1.9.5</timeseries.api.version>
 	</properties>
 	<build>
 		<finalName>${conf.sos.name}##${project.version}</finalName>
@@ -74,11 +74,11 @@
 							<groupId>org.n52.sensorweb</groupId>
     						<artifactId>restful-timeseries-client</artifactId>
     						<excludes>
-			                	<exclude>**/WEB-INF/**</exclude>
-			                	<exclude>**/META-INF/**</exclude>
-			                	<exclude>settings.json</exclude>
-			              	</excludes>
-			              	<targetPath>static/client/jsClient</targetPath>
+                	<exclude>**/WEB-INF/**</exclude>
+                	<exclude>**/META-INF/**</exclude>
+                	<exclude>settings.json</exclude>
+              	</excludes>
+              	<targetPath>static/client/jsClient</targetPath>
 						</overlay>
 					</overlays>
 				</configuration>
@@ -86,6 +86,12 @@
 		</plugins>
 	</build>
 	<dependencies>
+    <dependency>
+        <groupId>com.mchange</groupId>
+        <artifactId>c3p0</artifactId>
+        <scope>runtime</scope>
+		</dependency>
+
 		<!-- REST API Dependencies -->
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>

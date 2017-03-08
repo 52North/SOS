@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -500,7 +500,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
             final Collection<String> responseFormats =
                     CodingRepository.getInstance().getSupportedResponseFormats(SosConstants.SOS,
                             Sos1Constants.SERVICEVERSION);
-            if (checkOfferingValues(envelopeForOffering, featuresForoffering, responseFormats)) {
+            if (checkOfferingValues(envelopeForOffering, featuresForoffering, responseFormats, procedures)) {
                 final SosObservationOffering sosObservationOffering = new SosObservationOffering();
 
                 // insert observationTypes
@@ -577,9 +577,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
     }
 
     private boolean checkOfferingValues(final SosEnvelope envelopeForOffering, final Set<String> featuresForOffering,
-            final Collection<String> responseFormats) {
+            final Collection<String> responseFormats, Collection<String> procedures) {
         return SosEnvelope.isNotNullOrEmpty(envelopeForOffering) && CollectionHelper.isNotEmpty(featuresForOffering)
-                && CollectionHelper.isNotEmpty(responseFormats);
+                && CollectionHelper.isNotEmpty(responseFormats) && CollectionHelper.isNotEmpty(procedures);
     }
 
     /**
@@ -992,7 +992,13 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
                             "No procedures are contained in the database for the offering '%s'! Please contact the admin of this SOS.",
                             offering);
         }
-        return procedures;
+        Collection<String> published = Sets.newHashSet();
+        for (String procedure : procedures) {
+            if (getCache().getPublishedProcedures().contains(procedure)) {
+                published.add(procedure);
+            }
+        }
+        return published;
     }
 
     private boolean isVersionSos2(final GetCapabilitiesResponse response) {

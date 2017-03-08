@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,7 +30,9 @@ package org.n52.sos.ds;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -67,13 +69,14 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
     protected void setOperationsMetadata(final OwsOperation opsMeta, final String service, final String version)
             throws OwsExceptionReport {
 
-        final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
-        addOfferingParameter(opsMeta);
-        addProcedureParameter(opsMeta);
+        final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getPublishedFeatureOfInterest(), version);
+//        addOfferingParameter(opsMeta);
+        addOfferingParameter(opsMeta, getPublishedOfferings());
+        addPublishedProcedureParameter(opsMeta);
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat, CodingRepository
                 .getInstance().getSupportedResponseFormats(SosConstants.SOS, version));
 
-        addObservablePropertyParameter(opsMeta);
+        addPublishedObservablePropertyParameter(opsMeta);
         addFeatureOfInterestParameter(opsMeta, featureIDs);
 
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
@@ -97,6 +100,15 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
             opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseMode,
                     SosConstants.RESPONSE_MODES);
         }
+    }
+
+    private Collection<String> getPublishedOfferings() {
+        Set<String> procedures = getCache().getPublishedProcedures();
+        Set<String> offerings = new HashSet<>();
+        for (String procedure : procedures) {
+            offerings.addAll(getCache().getOfferingsForProcedure(procedure));
+        }
+        return offerings;
     }
 
     /**

@@ -741,7 +741,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     public void addOfferingRestricionForObservation(DetachedCriteria dc, String offering) {
         dc.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
     }
-
+    
     @SuppressWarnings("unchecked")
     public List<Offering> getPublishedOffering(Collection<String> identifiers, Session session) throws CodedException {
         if (HibernateHelper.isEntitySupported(Series.class)) {
@@ -751,11 +751,12 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         } 
         return getOfferingObjectsForCacheUpdate(identifiers, session);
      }
-     
-     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
+
+    private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
          final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
          detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
          detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.OFFERING)));
          return detachedCriteria;
      }
+
 }

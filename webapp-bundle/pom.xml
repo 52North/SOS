@@ -81,11 +81,11 @@
 							<groupId>org.n52.sensorweb</groupId>
     						<artifactId>restful-timeseries-client</artifactId>
     						<excludes>
-			                	<exclude>**/WEB-INF/**</exclude>
-			                	<exclude>**/META-INF/**</exclude>
-			                	<exclude>settings.json</exclude>
-			              	</excludes>
-			              	<targetPath>static/client/jsClient</targetPath>
+                	<exclude>**/WEB-INF/**</exclude>
+                	<exclude>**/META-INF/**</exclude>
+                	<exclude>settings.json</exclude>
+              	</excludes>
+              	<targetPath>static/client/jsClient</targetPath>
 						</overlay>
 					</overlays>
 				</configuration>
@@ -93,11 +93,10 @@
 		</plugins>
 	</build>
 	<dependencies>
-
-                <dependency>
-                    <groupId>com.mchange</groupId>
-                    <artifactId>c3p0</artifactId>
-	            <scope>runtime</scope>
+    <dependency>
+        <groupId>com.mchange</groupId>
+        <artifactId>c3p0</artifactId>
+        <scope>runtime</scope>
 		</dependency>
 
 		<!-- REST API Dependencies -->

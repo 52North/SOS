@@ -1,5 +1,9 @@
 package org.n52.schetland.uvf;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaType;
 
 public interface UVFConstants {
@@ -27,6 +31,18 @@ public interface UVFConstants {
      * No data values MUST be encoded with <code>-777</code> in the UVF format.
      */
     public String NO_DATA_STRING = "-777";
-
+    
+    /**
+     * The list of allowed CRS EPSG codes. Here, the German GK bands:
+     * <ul>
+     * <li>31466</li>
+     * <li>31467</li>
+     * <li>31468</li>
+     * <li>31469</li>
+     * </ul>
+     */
+    public List<Integer> ALLOWED_CRS = Collections.unmodifiableList(CollectionHelper.list(31466, 31467, 31468,
+            31469));
+    
 }
  

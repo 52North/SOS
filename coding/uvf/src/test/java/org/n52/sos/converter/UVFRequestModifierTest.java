@@ -35,16 +35,19 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.n52.schetland.uvf.UVFConstants;
-import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
+import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.RequestContext;
-import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaTypes;
 
@@ -57,13 +60,14 @@ public class UVFRequestModifierTest {
     @Rule
     public ExpectedException exp = ExpectedException.none();
 
-    private RequestResponseModifier<GetObservationRequest,AbstractServiceResponse> modifier;
+    private UVFRequestModifier modifier;
     
     private GetObservationRequest request;
 
     @Before
     public void setUp() throws Exception {
         modifier = new UVFRequestModifier();
+        modifier.setDefaultCRS(UVFConstants.ALLOWED_CRS.get(0));
         request = new GetObservationRequest();
         RequestContext requestContext = new RequestContext();
         requestContext.setAcceptType(Collections.singletonList(UVFConstants.CONTENT_TYPE_UVF));
@@ -71,6 +75,10 @@ public class UVFRequestModifierTest {
         request.setFeatureIdentifiers(Collections.singletonList("test-feature-of-interest"));
         request.setProcedures(Collections.singletonList("test-procedure"));
         request.setObservedProperties(Collections.singletonList("test-observed-property"));
+        SweCount crsExtension = (SweCount) new SweCount()
+                .setValue(UVFConstants.ALLOWED_CRS.get(0))
+                .setIdentifier(OWSConstants.AdditionalRequestParams.crs.name());
+        request.addExtension(new SwesExtensionImpl<SweCount>().setValue(crsExtension));
     }
 
     @Test
@@ -144,7 +152,7 @@ public class UVFRequestModifierTest {
         request.setObservedProperties(emptyList);
         modifier.modifyRequest(request);
     }
-    
+
     @Test
     public void shouldNotModifyRequestNotForUVF() throws OwsExceptionReport{
         request.getRequestContext().setContentType(MediaTypes.APPLICATION_JSON.toString());
@@ -153,14 +161,14 @@ public class UVFRequestModifierTest {
         
         Assert.assertThat(modifiedRequest, IsEqual.equalTo(modifiedRequest));
     }
-    
+
     @Test
     public void shouldNotModifyValidRequest() throws OwsExceptionReport {
         GetObservationRequest modifiedRequest = modifier.modifyRequest(request);
         
         Assert.assertThat(modifiedRequest, IsEqual.equalTo(request));
     }
-    
+
     @Test
     public void shouldReturnValidRequestResponseModifierFacilitator() {
         RequestResponseModifierFacilitator facilitator = modifier.getFacilitator();
@@ -168,5 +176,45 @@ public class UVFRequestModifierTest {
         Assert.assertThat(facilitator.isAdderRemover(), Is.is(false));
         Assert.assertThat(facilitator.isMerger(), Is.is(false));
         Assert.assertThat(facilitator.isSplitter(), Is.is(false));
+    }
+
+    @Test
+    public void shouldThrowConfigExcetionIfDefaultCrsEpsgIsBelowAllowedMinumum() {
+        exp.expect(ConfigurationException.class);
+        exp.expectMessage("Setting with key 'uvf.default.crs': '31465' outside allowed interval ]31466, 31469[.");
+
+        modifier.setDefaultCRS(31465);
+    }
+
+    @Test
+    public void shouldThrowConfigExcetionIfDefaultCrsEpsgIsAbovenAllowedMaximum() {
+        exp.expect(ConfigurationException.class);
+        exp.expectMessage("Setting with key 'uvf.default.crs': '31470' outside allowed interval ]31466, 31469[.");
+
+        modifier.setDefaultCRS(31470);
+    }
+
+    @Test
+    public void shouldAddExtensionWithDefaultCRSIfNotPresent() throws OwsExceptionReport {
+        request.setExtensions(null);
+
+        GetObservationRequest modifiedRequest = modifier.modifyRequest(request);
+        final SwesExtensions extensions = modifiedRequest.getExtensions();
+
+        Assert.assertThat(extensions.getExtensions().size(), Is.is(1));
+        Assert.assertThat(extensions.containsExtension(OWSConstants.AdditionalRequestParams.crs), Is.is(true));
+        Assert.assertThat(
+                ((SweCount)extensions.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).getValue(),
+                Is.is(UVFConstants.ALLOWED_CRS.get(0)));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenRequestedCRSIsOutsideAllowedValues() throws OwsExceptionReport {
+        ((SweCount)request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).setValue(42);
+        exp.expect(NoApplicableCodeException.class);
+        exp.expectMessage("When requesting UVF format, the request MUST have a CRS of the German GK bands, e.g. "
+                + "'[31466, 31467, 31468, 31469]'. Requested was: '42'.");
+
+        modifier.modifyRequest(request);
     }
 }

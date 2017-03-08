@@ -12,6 +12,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.schetland.uvf.UVFConstants;
+import org.n52.sos.converter.UVFRequestModifier;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.ObservationEncoder;
 import org.n52.sos.encode.OperationEncoderKey;
@@ -67,8 +68,85 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
+/**
+ * The UVFEncoder implements the so called <b>U</b>niversal <b>V</b>ariable <b>F</b>ormat.
+ * 
+ * The definitions found on the internet are the following:
+ * 
+ * <ul>
+ *  <li>
+ *      <a href="http://www.aquaplan.de/public_papers/imex/sectionUVF.html">Aquaplan Specification of UVF</a> 
+ *      (<a href="https://web.archive.org/web/20080220032227/http://www.aquaplan.de/public_papers/imex/sectionUVF.html">
+ *      archived Version</a>)
+ *  </li>
+ *  <li>
+ *      <a href="http://wiki.bluemodel.org/index.php/UVF-Format">Bluemodel.org updated version</a> 
+ *      (<a href="https://web.archive.org/web/20080220032227/http://wiki.bluemodel.org/index.php/UVF-Format">archived 
+ *      version</a>)
+ * </li>
+ * </ul>
+ * 
+ * It is used for exchanging timeseries and looks like the following:
+ * <pre> 0: $sb Index-Einheit: 
+ 1: $ib Funktion-Interpretation: Summenlinie
+ 2: $sb Mess-Groesse: Niederschlag
+ 3: $sb Mess-Einheit: mm
+ 4: $sb Mess-Stellennummer: 5242
+ 5: *Z
+ 6: Niederschlag: mm             1900 2000
+ 7: 5242              1231240   1413414     52.52
+ 8: 73110107301002100636Zeit    
+ 9: 7311010730         0
+10: 7311050224         0
+11: 7311050240 .30333331
+12: 7311050255        .5
+13: 7311050414        .5
+14: 7311050415 -777     
+15: 7311050419 -777     
+16: 7311050420 .80000001</pre>
+ * The Lines 0 to 8 specify the header of the dataset. Hereby, the lines 0 to 4 provide optional metadata. The lines 5 
+ * to 8 are mandatory and are referenced in the specification by "Zeile 1,2,3,4".
+ * Line 14 and 15 show the handling of gaps or no data values. They are encoded with <code>-777</code>. Gaps are defined
+ * by two values: one for the start and one for the end of the gap.
+ * The following assumptions/constraints are implemented:
+ * <ul>
+ * <li>
+ *      Only one timeseries will be encoded. Hence, the {@link UVFRequestModifier} ensures, that each request for the 
+ *      UVF contains ONE observed property, ONE feature of interest, and ONE procedure.
+ * </li>
+ * <li>
+ *      Only observations of type Measurement and Count are supported.
+ * </li>
+ * <li>
+ *      The encoder does not check for gaps and encodes only start and end. This MUST be done before inserting the data
+ *      in the SOS database.
+ * </li>
+ * <li>
+ *      Identifiers are shortened via {@link String#substring(int, int)} to the length of 
+ *      {@link UVFConstants#MAX_IDENTIFIER_LENGTH} (15) starting from the end of the given identifier.
+ * </li>
+ * <li>
+ *      Values are shortened via {@link String#substring(int, int)} to the length of
+ *      {@link UVFConstants#MAX_VALUE_LENGTH} (10) starting form the beginning of the String representation of the 
+ *      value. No rounding is performed.
+ * </li>
+ * <li>
+ *      The UVF requires that all coordinates are in Gauß Krüger, hence a coordinate transformation is performed
+ *      before the response is encoded. This requires that the EPSG code of the best matching GK band is given. When
+ *      not present in the request, a default value is used. This value can be specified using the admin WebUI of the
+ *      SOS. Currently the following EPSG codes are allowed (see {@link UVFConstants#ALLOWED_CRS}):
+ *      <ul>
+ *      <li>31466</li>
+ *      <li>31467</li>
+ *      <li>31468</li>
+ *      <li>31469</li>
+ *      </ul>
+ * </ul>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ *
+ */
 public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, Object> {
-    
+
     private final Logger LOGGER = LoggerFactory.getLogger(UVFEncoder.class);
     private final Set<String> MEDIA_TYPES = Sets.newHashSet(UVFConstants.CONTENT_TYPE_UVF.toString());
 

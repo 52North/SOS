@@ -867,11 +867,11 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         Collection<String> phenomenons = new LinkedList<>();
         Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
         for (PhenomenonEntity observableProperty : observableProperties) {
-            if (!observableProperty.hasChilds() && !observableProperty.hasParents()) {
+            if (!observableProperty.hasChildren() && !observableProperty.hasParents()) {
                 phenomenons.add(observableProperty.getDomainId());
-            } else if (observableProperty.hasChilds() && !observableProperty.hasParents()) {
+            } else if (observableProperty.hasChildren() && !observableProperty.hasParents()) {
                 Set<String> childs = new TreeSet<String>();
-                for (PhenomenonEntity child : observableProperty.getChilds()) {
+                for (PhenomenonEntity child : observableProperty.getChildren()) {
                     childs.add(child.getDomainId());
                 }
             }

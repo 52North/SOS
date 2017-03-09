@@ -156,8 +156,8 @@ public class DatasourceCacheUpdateHelper {
     }
 
     private static void addChilds(ProcedureEntity procedure, Collection<String> procedures) {
-        if (procedure.hasChilds()) {
-            for (ProcedureEntity child : procedure.getChilds()) {
+        if (procedure.hasChildren()) {
+            for (ProcedureEntity child : procedure.getChildren()) {
                 procedures.add(child.getDomainId());
             }
         }

@@ -255,8 +255,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
 
     private Set<String> getChildOfferings(OfferingEntity offering) {
       Set<String> childs = Sets.newTreeSet();
-      if (offering.hasChilds()) {
-          for (OfferingEntity child : offering.getChilds()) {
+      if (offering.hasChildren()) {
+          for (OfferingEntity child : offering.getChildren()) {
               childs.add(child.getDomainId());
               childs.addAll(getChildOfferings(child));
           }

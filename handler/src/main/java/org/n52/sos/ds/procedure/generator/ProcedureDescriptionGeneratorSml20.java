@@ -81,14 +81,14 @@ class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGen
             if (isStation(procedure, session)) {
                 // 2.1 if position is available -> system -> own class <- should
                 // be compliant with SWE lightweight profile
-                if (procedure.hasChilds()) {
+                if (procedure.hasChildren()) {
                     return new SosProcedureDescription<>(createPhysicalSystem(procedure, session));
                 } else {
                     return new SosProcedureDescription<>(createPhysicalComponent(procedure, session));
                 }
             } else {
                 // 2.2 if no position is available -> SimpleProcess -> own class
-                if (procedure.hasChilds()) {
+                if (procedure.hasChildren()) {
                     return new SosProcedureDescription<>(createAggregateProcess(procedure, session));
                 } else {
                     return new SosProcedureDescription<>(createSimpleProcess(procedure, session));

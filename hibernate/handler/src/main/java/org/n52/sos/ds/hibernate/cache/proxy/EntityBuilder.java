@@ -91,7 +91,7 @@ public class EntityBuilder {
             for (Procedure child : sosProc.getChilds()) {
                 childs.add(createProcedure(child, service, false, true));
             }
-            procedure.setChilds(childs);
+            procedure.setChildren(childs);
         }
         return procedure;
     }
@@ -112,7 +112,7 @@ public class EntityBuilder {
             for (Offering child : sosOffering.getChilds()) {
                 childs.add(createOffering(child, service, false, true));
             }
-            offering.setChilds(childs);
+            offering.setChildren(childs);
         }
         if (sosOffering.hasObservationTypes()) {
             offering.setObservationTypes(sosOffering.getObservationTypes().stream().map(ot -> ot.getObservationType())
@@ -144,7 +144,7 @@ public class EntityBuilder {
             for (ObservableProperty child : sosObsProp.getChilds()) {
                 childs.add(createPhenomenon(child, service, false, true));
             }
-            phenomenon.setChilds(childs);
+            phenomenon.setChildren(childs);
         }
         return phenomenon;
     }
@@ -166,7 +166,7 @@ public class EntityBuilder {
             for (FeatureOfInterest child : sosFeature.getChilds()) {
                 childs.add(createFeature(child, service, false, true));
             }
-            feature.setChilds(childs);
+            feature.setChildren(childs);
         }
         return feature;
     }

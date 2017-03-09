@@ -67,8 +67,8 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                     getCache().addObservablePropertyIdentifierHumanReadableName(identifier,
                             observableProperty.getName());
                 }
-                if (observableProperty.hasChilds()) {
-                    for (PhenomenonEntity child : observableProperty.getChilds()) {
+                if (observableProperty.hasChildren()) {
+                    for (PhenomenonEntity child : observableProperty.getChildren()) {
                         getCache().addCompositePhenomenonForObservableProperty(child.getDomainId(), identifier);
                         getCache().addObservablePropertyForCompositePhenomenon(identifier, child.getDomainId());
                     }

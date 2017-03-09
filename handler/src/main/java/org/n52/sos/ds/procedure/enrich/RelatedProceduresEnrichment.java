@@ -71,12 +71,12 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
      */
     private Set<AbstractSensorML> getChildProcedures() throws OwsExceptionReport {
 
-        if (!getProcedure().hasChilds()) {
+        if (!getProcedure().hasChildren()) {
             return Sets.newHashSet();
         }
 
         Set<AbstractSensorML> childProcedures = Sets.newHashSet();
-        for (ProcedureEntity child : getProcedure().getChilds()) {
+        for (ProcedureEntity child : getProcedure().getChildren()) {
             SosProcedureDescription<?> childDescription = getConverter().createSosProcedureDescription(child,
                     getProcedureDescriptionFormat(), getVersion(), getLocale(), getI18NDAORepository(), getSession());
             if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {

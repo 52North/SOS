@@ -92,8 +92,9 @@ public class UVFRequestModifier implements RequestResponseModifier<GetObservatio
                     request.isSetObservableProperty() && request.getObservedProperties().size() == 1 &&
                     request.isSetProcedure() && request.getProcedures().size() == 1) {
                 if (request.hasExtension(OWSConstants.AdditionalRequestParams.crs) &&
-                        request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue() instanceof SweCount &&
-                        ((SweCount)request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).getValue() > 0) {
+                        // TODO Switch back to SweText
+                        // Check coordinate modifier for methode to get the epsg code from the request
+                        request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue() instanceof SweCount) {
                     int requestedCRS = ((SweCount)request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).getValue();
                     if (UVFConstants.ALLOWED_CRS.contains(requestedCRS)) {
                         return request;
@@ -103,6 +104,7 @@ public class UVFRequestModifier implements RequestResponseModifier<GetObservatio
                                 UVFConstants.ALLOWED_CRS.toString(), requestedCRS);
                     }
                 }
+                // TODO switch back to swe text
                 // add default CRS as swe text extension
                 SweCount crsExtension = (SweCount) new SweCount()
                         .setValue(getDefaultCRS())

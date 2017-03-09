@@ -50,6 +50,7 @@ import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.response.AbstractObservationResponse;
@@ -57,6 +58,7 @@ import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValu
 import org.n52.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
@@ -111,7 +113,7 @@ import com.google.common.io.Files;
  * The following assumptions/constraints are implemented:
  * <ul>
  * <li>
- *      Only one timeseries will be encoded. Hence, the {@link UVFRequestModifier} ensures, that each request for the 
+ *      Only ONE timeseries will be encoded. Hence, the {@link UVFRequestModifier} ensures, that each request for the 
  *      UVF contains ONE observed property, ONE feature of interest, and ONE procedure.
  * </li>
  * <li>
@@ -126,7 +128,7 @@ import com.google.common.io.Files;
  *      {@link UVFConstants#MAX_IDENTIFIER_LENGTH} (15) starting from the end of the given identifier.
  * </li>
  * <li>
- *      Values are shortened via {@link String#substring(int, int)} to the length of
+ *      Values (e.g. measurements and coordinates) are shortened via {@link String#substring(int, int)} to the length of
  *      {@link UVFConstants#MAX_VALUE_LENGTH} (10) starting form the beginning of the String representation of the 
  *      value. No rounding is performed.
  * </li>
@@ -247,7 +249,8 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         writeFunktionInterpretation(fw);
         writeIndex(fw);
         writeMessGroesse(fw, o);
-        if (o.getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_MEASUREMENT)) {
+        if (o.getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_MEASUREMENT) ||
+                o.getValue().getValue() instanceof SweAbstractUomType<?>) {
             writeMessEinheit(fw, o.getObservationConstellation().getObservableProperty());
         }
         writeMessStellennummer(fw, o);
@@ -406,28 +409,14 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         // yymmddhhmmvvvvvvvvvv
         // ^ date with ten chars
         //           ^ observed/measured value with 10 chars
-        /*
-         * Welche Fälle sind hier zu beachten?
-         * 2. SingleObservationValue vs. MultiObservationValue vs. StreamingValue
-         *    2.1 single observation
-         *    2.2 multi observation value: schleife über values
-         *    streaming value mal deployed testen mit den Testdaten
-         *    2.3 streaming observation value:
-         *      ((StreamingValue<?>)omObservation.getValue()).hasNextValue()
-         *      ((StreamingValue<?>)omObservation.getValue()).nextValue()
-         * 3. Welche Arten von NoDataValue gibt es?
-         *    --> 3.2 Null <--
-         * 4. Wie kürzen wir die Werte? Substring vs. String.format()
-         *    substring: werte von vorne schreiben; identifier von hinten
-         */
         if (omObservation.getValue() instanceof SingleObservationValue<?>) {
             writeSingleObservationValue(fw, omObservation.getPhenomenonTime(),
                     ((SingleObservationValue<?>)omObservation.getValue()).getValue());
         } else if (omObservation.getValue() instanceof MultiObservationValues) {
             writeMultiObservationValues(fw, omObservation);
-        } else if (omObservation.getValue() instanceof StreamingValue<?>) {
+        } else {
             throw new NoApplicableCodeException().withMessage("Support for '%s' not yet implemented.",
-                    StreamingValue.class.getName());
+                    omObservation.getValue().getClass().getName());
         }
     }
 
@@ -465,53 +454,16 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                 !((List<?>)values.getValue()).isEmpty()) {
             Object object = ((List<?>)values.getValue()).get(0);
             
-            if (object instanceof TimeLocationValueTriple) {
-                final String message = String.format("Encoding of Observations with values of type '%s' not supported.",
-                        TLVTValue.class.getName());
-                LOGGER.error(message);
-                throw new NoApplicableCodeException().withMessage(message);
-            } else if (object instanceof TimeValuePair) {
+           if (object instanceof TimeValuePair) {
                 @SuppressWarnings("unchecked")
                 List<TimeValuePair> valuesList = (List<TimeValuePair>) values.getValue();
                 for (TimeValuePair timeValuePair : valuesList) {
                     writeSingleObservationValue(fw, timeValuePair.getTime(), timeValuePair.getValue());
                 }
-            }
-        } else if (values instanceof SweDataArrayValue) {
-            // Should not be reached because currently, only Measurement and Count are allowed
-            SweDataArray sweDataArray = (SweDataArray) values.getValue();
-            List<List<String>> blocks = sweDataArray.getValues();
-            SweTextEncoding encoding = (SweTextEncoding) sweDataArray.getEncoding();
-            SweDataRecord elementType = (SweDataRecord) sweDataArray.getElementType();
-            int timestampIndex = elementType.getFieldIndexByIdentifier(OmConstants.PHENOMENON_TIME);
-            final String valueFieldIdentifierOrName = omObservation.getObservationConstellation().getObservablePropertyIdentifier();
-            int valueIndex = elementType.getFieldIndexByIdentifier(
-                    valueFieldIdentifierOrName);
-            for (List<String> block : blocks) {
-                writeSingleObservationValue(fw,
-                        // Do we always have time instants here?
-                        new TimeInstant(DateTimeHelper.parseIsoString2DateTime(block.get(timestampIndex))),
-                        encodeSweValue(elementType.getFieldByIdentifier(valueFieldIdentifierOrName),
-                                block.get(valueIndex),
-                                encoding.getDecimalSeparator()));
-            }
-        }
-    }
-
-    private Value<?> encodeSweValue(SweField field, String value, String decimalSeparator) throws CodedException {
-        SweAbstractDataComponent element = field.getElement();
-        if (value == null || value.isEmpty()) {
-            value = UVFConstants.NO_DATA_STRING;
-        }
-        if (element instanceof SweQuantity) {
-            value = value.replace(decimalSeparator, ".");
-            return new QuantityValue(Double.parseDouble(value), ((SweQuantity) element).getUom());
-        } else {
-            final String message = String.format(
-                    "Encoding of SweArrayObservations with values of type '%s' not supported.",
-                    element.getClass().getName());
-            LOGGER.error(message);
-            throw new NoApplicableCodeException().withMessage(message);
+           } else {
+               throw new NoApplicableCodeException().withMessage("Support for '%s' not yet implemented.",
+                       object.getClass().getName());
+           }
         }
     }
 
@@ -527,8 +479,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             LOGGER.error(errorMessage);
             throw new NoApplicableCodeException().withMessage(errorMessage);
         }
-        Object val = value.getValue();
-        String encodedValue = val.toString();
+        String encodedValue = JavaHelper.asString(value.getValue());
         if (encodedValue.length()> UVFConstants.MAX_VALUE_LENGTH) {
             encodedValue = encodedValue.substring(0, UVFConstants.MAX_VALUE_LENGTH);
         }

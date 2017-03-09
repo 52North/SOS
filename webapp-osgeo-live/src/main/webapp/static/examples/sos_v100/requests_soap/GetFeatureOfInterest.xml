@@ -1,0 +1,13 @@
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope http://www.opengis.net/sos/1.0
+	http://schemas.opengis.net/sos/1.0.0/sosGetFeatureOfInterest.xsd"
+	xmlns:sos="http://www.opengis.net/sos/1.0" xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc">
+	<env:Body>
+		<sos:GetFeatureOfInterest service="SOS" version="1.0.0">
+			<!-- mandatory, multiple values possible -->
+			<sos:FeatureOfInterestId>http://www.52north.org/test/featureOfInterest/6</sos:FeatureOfInterestId>
+		</sos:GetFeatureOfInterest>
+	</env:Body>
+</env:Envelope>

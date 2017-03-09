@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd 
+    http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
+	<env:Body>
+		<swes:InsertSensor service="SOS" version="2.0.0"
+			xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:sos="http://www.opengis.net/sos/2.0"
+			xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+			xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+			<swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
+			<swes:procedureDescription>
+				<sml:SensorML version="1.0.1">
+					<sml:member>
+						<sml:System>
+		
+							<!-- optional; generated if not present -->
+							<sml:identification>
+								<sml:IdentifierList>
+									<sml:identifier name="uniqueID">
+										<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:uniqueID">
+											<sml:value>http://www.52north.org/test/procedure/9</sml:value>
+										</sml:Term>
+									</sml:identifier>
+									<sml:identifier name="longName">
+										<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+											<sml:value>52°North Initiative for Geospatial Open Source
+												Software GmbH (http://52north.org)</sml:value>
+										</sml:Term>
+									</sml:identifier>
+									<sml:identifier name="shortName">
+										<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+											<sml:value>52°North GmbH</sml:value>
+										</sml:Term>
+									</sml:identifier>
+								</sml:IdentifierList>
+							</sml:identification>
+		
+							<sml:capabilities name="offerings">
+								<!-- Special capabilities used to specify offerings. -->
+								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+									added during DescribeSensor. -->
+								<!-- Offering is generated if not specified. -->
+								<swe:SimpleDataRecord>
+									<!-- Field name or gml:name is used for the offering's name -->
+									<swe:field name="Offering for sensor 9">
+										<swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
+											<gml:name>Offering for sensor 9</gml:name>
+											<swe:value>http://www.52north.org/test/offering/9</swe:value>
+										</swe:Text>
+									</swe:field>
+								</swe:SimpleDataRecord>
+							</sml:capabilities>
+							<sml:capabilities name="parentProcedures">
+								<!-- Special capabilities used to specify parent procedures. -->
+								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+									added during DescribeSensor. -->
+								<swe:SimpleDataRecord>
+									<swe:field name="parentProcedure">
+										<swe:Text>
+											<swe:value>http://www.52north.org/test/procedure/1</swe:value>
+										</swe:Text>
+									</swe:field>
+								</swe:SimpleDataRecord>
+							</sml:capabilities>
+							<sml:capabilities name="featuresOfInterest">
+								<!-- Special capabilities used to specify features of interest. -->
+								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+									added during DescribeSensor. -->
+								<swe:SimpleDataRecord>
+									<swe:field name="featureOfInterestID">
+										<swe:Text>
+											<swe:value>http://www.52north.org/test/featureOfInterest/9
+											</swe:value>
+										</swe:Text>
+									</swe:field>
+								</swe:SimpleDataRecord>
+							</sml:capabilities>
+		
+							<sml:position name="sensorPosition">
+								<swe:Position referenceFrame="urn:ogc:def:crs:EPSG::4326">
+									<swe:location>
+										<swe:Vector gml:id="STATION_LOCATION">
+											<swe:coordinate name="easting">
+												<swe:Quantity axisID="x">
+													<swe:uom code="degree" />
+													<swe:value>7.651968812254194</swe:value>
+												</swe:Quantity>
+											</swe:coordinate>
+											<swe:coordinate name="northing">
+												<swe:Quantity axisID="y">
+													<swe:uom code="degree" />
+													<swe:value>51.935101100104916</swe:value>
+												</swe:Quantity>
+											</swe:coordinate>
+											<swe:coordinate name="altitude">
+												<swe:Quantity axisID="z">
+													<swe:uom code="m" />
+													<swe:value>52.0</swe:value>
+												</swe:Quantity>
+											</swe:coordinate>
+										</swe:Vector>
+									</swe:location>
+								</swe:Position>
+							</sml:position>
+							<sml:inputs>
+								<sml:InputList>
+									<sml:input name="test_observable_property_9">
+										<swe:ObservableProperty
+											definition="http://www.52north.org/test/observableProperty/9" />
+									</sml:input>
+								</sml:InputList>
+							</sml:inputs>
+							<sml:outputs>
+								<sml:OutputList>
+									<sml:output name="test_observable_property_9_1">
+										<swe:Category
+											definition="http://www.52north.org/test/observableProperty/9_1">
+											<swe:codeSpace xlink:href="NOT_DEFINED" />
+										</swe:Category>
+									</sml:output>
+									<sml:output name="test_observable_property_9_2">
+										<swe:Count definition="http://www.52north.org/test/observableProperty/9_2" />
+									</sml:output>
+									<sml:output name="test_observable_property_9_3">
+										<swe:Quantity
+											definition="http://www.52north.org/test/observableProperty/9_3">
+											<swe:uom code="NOT_DEFINED" />
+										</swe:Quantity>
+									</sml:output>
+									<sml:output name="test_observable_property_9_4">
+										<swe:Text definition="http://www.52north.org/test/observableProperty/9_4" />
+									</sml:output>
+									<sml:output name="test_observable_property_9_5">
+										<swe:Boolean
+											definition="http://www.52north.org/test/observableProperty/9_5" />
+									</sml:output>
+									<sml:output name="test_observable_property_9_7">
+										<swe:DataArray>
+											<swe:elementCount>
+												<swe:Count/>
+											</swe:elementCount>
+											<swe:elementType name="defs">
+												<swe:DataRecord>
+													<swe:field name="phenomenonTime">
+														<swe:Time
+															definition="http://www.opengis.net/def/property/OGC/0/PhenomenonTime">
+															<swe:uom
+																xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian" />
+														</swe:Time>
+													</swe:field>
+													<swe:field name="test_observable_property_6">
+														<swe:Quantity
+															definition="http://www.52north.org/test/observableProperty/6">
+															<swe:uom code="test_unit_6" />
+														</swe:Quantity>
+													</swe:field>
+												</swe:DataRecord>
+											</swe:elementType>
+										</swe:DataArray>
+									</sml:output>
+								</sml:OutputList>
+							</sml:outputs>
+						</sml:System>
+					</sml:member>
+				</sml:SensorML>
+			</swes:procedureDescription>
+			<!-- multiple values possible -->
+			<swes:observableProperty>http://www.52north.org/test/observableProperty/9_1</swes:observableProperty>
+			<swes:observableProperty>http://www.52north.org/test/observableProperty/9_2</swes:observableProperty>
+			<swes:observableProperty>http://www.52north.org/test/observableProperty/9_3</swes:observableProperty>
+			<swes:observableProperty>http://www.52north.org/test/observableProperty/9_4</swes:observableProperty>
+			<swes:observableProperty>http://www.52north.org/test/observableProperty/9_5</swes:observableProperty>
+			<swes:observableProperty>http://www.52north.org/test/observableProperty/9_6</swes:observableProperty>
+			<swes:observableProperty>http://www.52north.org/test/observableProperty/9_7</swes:observableProperty>
+			<swes:metadata>
+				<sos:SosInsertionMetadata>
+					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement</sos:observationType>
+					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation</sos:observationType>
+					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation</sos:observationType>
+					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation</sos:observationType>
+					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation</sos:observationType>
+					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation</sos:observationType>
+					<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation</sos:observationType>
+					<!-- multiple values possible -->
+					<sos:featureOfInterestType>http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint</sos:featureOfInterestType>
+				</sos:SosInsertionMetadata>
+			</swes:metadata>
+		</swes:InsertSensor>
+	</env:Body>
+</env:Envelope>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd">
+	<env:Body>
+		<sos:GetFeatureOfInterest service="SOS" version="2.0.0" 
+			xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:fes="http://www.opengis.net/fes/2.0" 
+			xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:swe="http://www.opengis.net/swe/2.0" 
+			xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:swes="http://www.opengis.net/swes/2.0"
+			xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
+			<!-- 
+			<swes:extension xsi:type="swe:BooleanPropertyType">
+				<swe:Boolean>
+					<swe:identifier>returnHumanReadableIdentifier</swe:identifier>
+					<swe:value>true</swe:value>
+				</swe:Boolean>
+			</swes:extension>
+			 -->
+			<!-- optional, multiple values possible -->
+			<sos:procedure>http://www.52north.org/test/procedure/1</sos:procedure>
+			<sos:procedure>http://www.52north.org/test/procedure/2</sos:procedure>
+
+			<!-- optional, multiple values possible -->
+			<sos:observedProperty>http://www.52north.org/test/observableProperty/1</sos:observedProperty>
+			<sos:observedProperty>http://www.52north.org/test/observableProperty/2</sos:observedProperty>
+
+			<!-- optional, multiple values possible -->
+			<sos:featureOfInterest>http://www.52north.org/test/featureOfInterest/1</sos:featureOfInterest>
+			<sos:featureOfInterest>http://www.52north.org/test/featureOfInterest/2</sos:featureOfInterest>
+
+			<!-- optional -->
+			<sos:spatialFilter>
+				<fes:BBOX>
+					<fes:ValueReference>sams:shape</fes:ValueReference>
+					<gml:Envelope srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+						<gml:lowerCorner>0 0</gml:lowerCorner>
+						<gml:upperCorner>60 60</gml:upperCorner>
+					</gml:Envelope>
+				</fes:BBOX>
+			</sos:spatialFilter>
+
+		</sos:GetFeatureOfInterest>
+	</env:Body>
+</env:Envelope>

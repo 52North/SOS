@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd">
+	<env:Body>
+		<sosdo:DeleteObservation version="2.0.0" service="SOS" xmlns:sosdo="http://www.opengis.net/sosdo/1.0">
+			<sosdo:observation>http://www.52north.org/test/observation/1</sosdo:observation>
+		</sosdo:DeleteObservation>
+	</env:Body>
+</env:Envelope>

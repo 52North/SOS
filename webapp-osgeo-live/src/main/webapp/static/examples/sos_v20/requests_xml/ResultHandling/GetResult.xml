@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sos:GetResult service="SOS" version="2.0.0" xmlns:sos="http://www.opengis.net/sos/2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
+	<sos:offering>http://www.52north.org/test/offering/6</sos:offering>
+	<sos:observedProperty>http://www.52north.org/test/observableProperty/6</sos:observedProperty>
+</sos:GetResult>

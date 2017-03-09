@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd">
+	<env:Body>
+		<sos:InsertResultTemplate service="SOS"
+			version="2.0.0" xmlns:swes="http://www.opengis.net/swes/2.0"
+			xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:swe="http://www.opengis.net/swe/2.0"
+			xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+			xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:om="http://www.opengis.net/om/2.0"
+			xmlns:sams="http://www.opengis.net/samplingSpatial/2.0" xmlns:sf="http://www.opengis.net/sampling/2.0"
+			xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
+			<sos:proposedTemplate>
+				<!-- Before using this example, make sure that all preconditions are 
+					fulfilled, e.g. perform InsertSensor example. -->
+				<sos:ResultTemplate>
+					<swes:identifier>http://www.52north.org/test/procedure/9/template/1</swes:identifier>
+					<sos:offering>http://www.52north.org/test/offering/9</sos:offering>
+					<sos:observationTemplate>
+						<om:OM_Observation gml:id="sensor2obsTemplate">
+							<om:type
+								xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement" />
+							<om:phenomenonTime nilReason="template" />
+							<om:resultTime nilReason="template" />
+							<om:procedure xlink:href="http://www.52north.org/test/procedure/9" />
+							<om:observedProperty
+								xlink:href="http://www.52north.org/test/observableProperty/9_3" />
+							<om:featureOfInterest>
+								<sams:SF_SpatialSamplingFeature
+									gml:id="sf_test_feature_9">
+									<gml:identifier codeSpace="">http://www.52north.org/test/featureOfInterest/9</gml:identifier>
+									<gml:name>52°North</gml:name>
+									<sf:type
+										xlink:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint" />
+									<sf:sampledFeature
+										xlink:href="http://www.opengis.net/def/nil/OGC/0/unknown" />
+									<sams:shape>
+										<gml:Point gml:id="point_sf_test_feature_9">
+											<gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/4326">51.935101100104916 7.651968812254194</gml:pos>
+										</gml:Point>
+									</sams:shape>
+								</sams:SF_SpatialSamplingFeature>
+							</om:featureOfInterest>
+							<om:result />
+						</om:OM_Observation>
+					</sos:observationTemplate>
+					<sos:resultStructure>
+						<swe:DataRecord>
+							<swe:field name="phenomenonTime">
+								<swe:Time
+									definition="http://www.opengis.net/def/property/OGC/0/PhenomenonTime">
+									<swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian" />
+								</swe:Time>
+							</swe:field>
+							<swe:field name="test_observable_property_9">
+								<swe:Quantity definition="http://www.52north.org/test/observableProperty/9_3">
+									<swe:uom code="test_unit_9" />
+								</swe:Quantity>
+							</swe:field>
+						</swe:DataRecord>
+					</sos:resultStructure>
+					<sos:resultEncoding>
+						<swe:TextEncoding tokenSeparator="#"
+							blockSeparator="@" />
+					</sos:resultEncoding>
+				</sos:ResultTemplate>
+			</sos:proposedTemplate>
+		</sos:InsertResultTemplate>
+	</env:Body>
+</env:Envelope>

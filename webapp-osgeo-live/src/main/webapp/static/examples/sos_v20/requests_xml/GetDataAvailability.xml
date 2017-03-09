@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gda:GetDataAvailability service="SOS" version="2.0.0"
+	xmlns:gda="http://www.opengis.net/sosgda/1.0" xmlns:swes="http://www.opengis.net/swes/2.0"
+	xmlns:fes="http://www.opengis.net/fes/2.0" xmlns:gml="http://www.opengis.net/gml/3.2"
+	xmlns:swe="http://www.opengis.net/swe/2.0">
+	<!-- show optional observation count for timeseries in GetDataAvailability response -->
+	<!-- <swes:extension>
+		<swe:Boolean definition="ShowCount">
+			<swe:value>true</swe:value>
+		</swe:Boolean>
+	</swes:extension> -->
+	<!-- Inlcude result times in GetDataAvailability response as swe:DataRecord in gda:extension -->
+	<!-- <swes:extension>
+		<swe:Boolean definition="IncludeResultTimes">
+			<swe:value>true</swe:value>
+		</swe:Boolean>
+	</swes:extension> -->
+	<!-- Inlcude result times with matching phenomenonTime in GetDataAvailability response as swe:DataRecord in gda:extension -->
+	<!-- <swes:extension>
+		<fes:During>
+			<fes:ValueReference>phenomenonTime</fes:ValueReference>
+			<gml:TimePeriod gml:id="tp_1">
+				<gml:beginPosition>2012-11-19T12:59:59.000Z</gml:beginPosition>
+				<gml:endPosition>2012-11-19T13:05:00.000Z</gml:endPosition>
+			</gml:TimePeriod>
+		</fes:During>
+	</swes:extension> -->
+	<!-- 
+	<swes:extension xsi:type="swe:BooleanPropertyType">
+		<swe:Boolean>
+			<swe:identifier>returnHumanReadableIdentifier</swe:identifier>
+			<swe:value>true</swe:value>
+		</swe:Boolean>
+	</swes:extension>
+	 -->
+	<gda:procedure>http://www.52north.org/test/procedure/1</gda:procedure>
+	<gda:procedure>http://www.52north.org/test/procedure/4</gda:procedure>
+	<gda:observedProperty>http://www.52north.org/test/observableProperty/1</gda:observedProperty>
+	<gda:observedProperty>http://www.52north.org/test/observableProperty/2</gda:observedProperty>
+	<gda:observedProperty>http://www.52north.org/test/observableProperty/3</gda:observedProperty>
+	<gda:observedProperty>http://www.52north.org/test/observableProperty/4</gda:observedProperty>
+	<gda:observedProperty>http://www.52north.org/test/observableProperty/5</gda:observedProperty>
+	<gda:featureOfInterest>http://www.52north.org/test/featureOfInterest/1</gda:featureOfInterest>
+	<gda:featureOfInterest>http://www.52north.org/test/featureOfInterest/4</gda:featureOfInterest>
+	<gda:offering>http://www.52north.org/test/offering/1</gda:offering>
+	<gda:offering>http://www.52north.org/test/offering/4</gda:offering>
+</gda:GetDataAvailability>

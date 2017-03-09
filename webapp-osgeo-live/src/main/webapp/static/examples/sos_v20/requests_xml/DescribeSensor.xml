@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<swes:DescribeSensor service="SOS" version="2.0.0" xmlns:swes="http://www.opengis.net/swes/2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml/3.2"
+	xmlns:swe="http://www.opengis.net/swe/2.0" 
+	xsi:schemaLocation="http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd">
+	<!-- 
+	<swes:extension xsi:type="swe:BooleanPropertyType">
+		<swe:Boolean>
+			<swe:identifier>returnHumanReadableIdentifier</swe:identifier>
+			<swe:value>true</swe:value>
+		</swe:Boolean>
+	</swes:extension>
+	 -->
+	<swes:procedure>http://www.52north.org/test/procedure/1</swes:procedure>
+	<swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
+	<!-- optional validTime: not set, latest sensor description is returned. -->
+	<!-- 
+	<swes:validTime>
+		<gml:TimeInstant gml:id="validTime">
+			<gml:timePosition>2013-08-14T15:02:43.219</gml:timePosition>
+		</gml:TimeInstant>
+	</swes:validTime>
+	 -->
+	<!-- 	
+	<swes:validTime>
+		<gml:TimeInstant gml:id="validTime">
+			<gml:timePosition indeterminatePosition="after">2013-08-14T15:00:00</gml:timePosition>
+		</gml:TimeInstant>
+	</swes:validTime>
+	 -->
+	<!-- 
+	<swes:validTime>
+		<gml:TimePeriod gml:id="validTime">
+			<gml:beginPosition>2013-08-14T15:02:43.219</gml:beginPosition>
+            <gml:endPosition>2013-08-14t15:02:47</gml:endPosition>
+		</gml:TimePeriod>
+	</swes:validTime>
+	 -->
+</swes:DescribeSensor>

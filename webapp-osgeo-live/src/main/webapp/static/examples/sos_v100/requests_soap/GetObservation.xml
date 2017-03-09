@@ -1,0 +1,88 @@
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope http://www.opengis.net/sos/1.0
+			http://schemas.opengis.net/sos/1.0.0/sosGetObservation.xsd"
+	xmlns:sos="http://www.opengis.net/sos/1.0" xmlns:ows="http://www.opengis.net/ows/1.1"
+			xmlns:gml="http://www.opengis.net/gml"
+			xmlns:ogc="http://www.opengis.net/ogc"
+			xmlns:om="http://www.opengis.net/om/1.0">
+	<env:Body>
+		<sos:GetObservation service="SOS" version="1.0.0" srsName="urn:ogc:def:crs:EPSG::4326" xmlns:sos="http://www.opengis.net/sos/1.0" xmlns:ows="http://www.opengis.net/ows/1.1"
+			xmlns:gml="http://www.opengis.net/gml"
+			xmlns:ogc="http://www.opengis.net/ogc"
+			xmlns:om="http://www.opengis.net/om/1.0">
+			
+			<!-- mandatory -->
+			<sos:offering>http://www.52north.org/test/offering/6</sos:offering>
+			
+			<!-- optional -->
+			<sos:eventTime>
+				<ogc:TM_During>
+					<ogc:PropertyName>om:samplingTime</ogc:PropertyName>
+					<gml:TimePeriod>
+						<gml:beginPosition>2012-11-19T14:00:00.000+01:00</gml:beginPosition>
+						<gml:endPosition>2012-11-19T15:00:00.000+01:00</gml:endPosition>
+					</gml:TimePeriod>
+				</ogc:TM_During>
+			</sos:eventTime>
+			<!-- optional
+			<sos:eventTime>
+				<ogc:TM_Equals>
+					<ogc:PropertyName>om:samplingTime</ogc:PropertyName>
+					<gml:TimeInstant>
+						<gml:timePosition>2012-11-19T14:00:00.000+01:00</gml:timePosition>
+					</gml:TimeInstant>
+				</ogc:TM_Equals>
+			</sos:eventTime>
+			
+			<sos:eventTime>
+				<ogc:TM_Equals>
+					<ogc:PropertyName>om:samplingTime</ogc:PropertyName>
+					<gml:TimeInstant>
+						<gml:timePosition>first</gml:timePosition>
+					</gml:TimeInstant>
+				</ogc:TM_Equals>
+			</sos:eventTime>
+			
+			<sos:eventTime>
+				<ogc:TM_Equals>
+					<ogc:PropertyName>om:samplingTime</ogc:PropertyName>
+					<gml:TimeInstant>
+						<gml:timePosition>latest</gml:timePosition>
+					</gml:TimeInstant>
+				</ogc:TM_Equals>
+			</sos:eventTime>
+			-->
+			
+			<!-- optional, multiple values possible -->
+			<sos:procedure>http://www.52north.org/test/procedure/6</sos:procedure>
+			
+			<!-- mandatory, multiple values possible -->
+			<sos:observedProperty>http://www.52north.org/test/observableProperty/6</sos:observedProperty>
+			
+			<!-- optional, multiple values possible -->
+			<sos:featureOfInterest>
+				<sos:ObjectID>http://www.52north.org/test/featureOfInterest/6</sos:ObjectID>
+			</sos:featureOfInterest>
+			<!-- or optional
+			<featureOfInterest>
+				<ogc:BBOX>
+					<ogc:PropertyName>urn:ogc:data:location</ogc:PropertyName>
+					<gml:Envelope srsName="urn:ogc:def:crs:EPSG::4326">
+						<gml:lowerCorner>50.0 7.0</gml:lowerCorner>
+						<gml:upperCorner>53.0 10.0</gml:upperCorner>
+					</gml:Envelope>
+				</ogc:BBOX>
+			</featureOfInterest>
+			 -->
+			
+			<!-- mandatory -->
+			<sos:responseFormat>text/xml;subtype=&quot;om/1.0.0&quot;</sos:responseFormat>
+			<!-- optional -->
+			<sos:resultModel>om:Measurement</sos:resultModel>
+			<!-- optional -->
+			<sos:responseMode>inline</sos:responseMode>
+		
+		</sos:GetObservation>
+	</env:Body>
+</env:Envelope>

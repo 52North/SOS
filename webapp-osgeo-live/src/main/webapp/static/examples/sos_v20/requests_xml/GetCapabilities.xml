@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sos:GetCapabilities service="SOS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:swe="http://www.opengis.net/swe/2.0"
+	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosGetCapabilities.xsd">
+	<ows:AcceptVersions>
+		<ows:Version>2.0.0</ows:Version>
+	</ows:AcceptVersions>
+	<ows:Sections>
+		<ows:Section>OperationsMetadata</ows:Section>
+		<ows:Section>ServiceIdentification</ows:Section>
+		<ows:Section>ServiceProvider</ows:Section>
+		<ows:Section>FilterCapabilities</ows:Section>
+		<ows:Section>Contents</ows:Section>
+	</ows:Sections>
+	<!-- 
+	<sos:extension xsi:type="swe:CountPropertyType">
+		<swe:Count>
+			<swe:identifier>crs</swe:identifier>
+			<swe:value>4326</swe:value>
+		</swe:Count>
+	</sos:extension>
+	-->
+	<!-- 
+	<sos:extension xsi:type="swe:TextPropertyType">
+		<swe:Text>
+			<swe:identifier>language</swe:identifier>
+			<swe:value>ger</swe:value>
+		</swe:Text>
+	</sos:extension>
+	-->
+	<!-- 
+	<sos:extension xsi:type="swe:BooleanPropertyType">
+		<swe:Boolean>
+			<swe:identifier>returnHumanReadableIdentifier</swe:identifier>
+			<swe:value>true</swe:value>
+		</swe:Boolean>
+	</sos:extension>
+	 -->
+</sos:GetCapabilities>

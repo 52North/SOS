@@ -47,25 +47,25 @@
 			<!-- optional, multiple values possible -->
 			<sos:procedure>http://www.52north.org/test/procedure/1</sos:procedure>
 			<sos:procedure>http://www.52north.org/test/procedure/2</sos:procedure>
-			<sos:procedure>http://www.52north.org/test/procedure/6</sos:procedure>
+			<sos:procedure>52NorthWS1</sos:procedure>
 
 			<!-- optional, multiple values possible -->
 			<sos:offering>http://www.52north.org/test/offering/1</sos:offering>
 			<sos:offering>http://www.52north.org/test/offering/2</sos:offering>
-			<sos:offering>http://www.52north.org/test/offering/6</sos:offering>
+			<sos:offering>wether-data-muenster</sos:offering>
 
 			<!-- optional, multiple values possible -->
 			<sos:observedProperty>http://www.52north.org/test/observableProperty/1</sos:observedProperty>
 			<sos:observedProperty>http://www.52north.org/test/observableProperty/2</sos:observedProperty>
-			<sos:observedProperty>http://www.52north.org/test/observableProperty/6</sos:observedProperty>
+			<sos:observedProperty>Temperature</sos:observedProperty>
 
 			<!-- optional -->
 			<sos:temporalFilter>
 				<fes:During>
 					<fes:ValueReference>phenomenonTime</fes:ValueReference>
 					<gml:TimePeriod gml:id="tp_1">
-						<gml:beginPosition>2012-11-19T14:00:00.000+01:00</gml:beginPosition>
-						<gml:endPosition>2012-11-19T15:00:00.000+01:00</gml:endPosition>
+						<gml:beginPosition>2017-03-19T14:00:00.000+00:00</gml:beginPosition>
+						<gml:endPosition>2017-03-19T14:00:00.000+00:00</gml:endPosition>
 					</gml:TimePeriod>
 				</fes:During>
 			</sos:temporalFilter>
@@ -75,7 +75,7 @@
 				<fes:TEquals>
 					<fes:ValueReference>phenomenonTime</fes:ValueReference>
 					<gml:TimeInstant gml:id="ti_1">
-						<gml:timePosition>2012-11-19T14:00:00.000+01:00</gml:timePosition>
+						<gml:timePosition>2017-03-19T14:00:00.000+00:00</gml:timePosition>
 					</gml:TimeInstant>
 				</fes:TEquals>
 			</sos:temporalFilter>
@@ -112,7 +112,7 @@
 				<fes:TEquals>
 					<fes:ValueReference>resultTime</fes:ValueReference>
 					<gml:TimeInstant gml:id="ti_1">
-						<gml:timePosition>2012-11-19T14:00:00.000+01:00</gml:timePosition>
+						<gml:timePosition>2017-03-19T14:00:00.000+00:00</gml:timePosition>
 					</gml:TimeInstant>
 				</fes:TEquals>
 			</sos:temporalFilter>

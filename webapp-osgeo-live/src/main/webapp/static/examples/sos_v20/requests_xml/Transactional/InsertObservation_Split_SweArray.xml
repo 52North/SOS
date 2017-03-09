@@ -17,7 +17,7 @@
         <swe:Boolean definition="SplitDataArrayIntoObservations"><swe:value>true</swe:value></swe:Boolean>
     </swes:extension>
 	<!-- multiple offerings are possible -->
-	<sos:offering>http://www.52north.org/test/offering/6</sos:offering>
+	<sos:offering>wether-data-muenster</sos:offering>
 	<sos:observation>
 		<om:OM_Observation gml:id="o1">
 			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation"/>

@@ -9,7 +9,7 @@
   <env:Body>
     <sos:GetObservationById
         xmlns:sos="http://www.opengis.net/sos/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" service="SOS" version="1.0.0" srsName="urn:ogc:def:crs:EPSG::4326">
-        <sos:ObservationId>http://www.52north.org/test/observation/1</sos:ObservationId>
+        <sos:ObservationId>osgeolive-observation-must-be-inserted-beforehand</sos:ObservationId>
         <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
     </sos:GetObservationById>
   </env:Body>

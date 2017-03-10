@@ -13,7 +13,7 @@
       xmlns:om="http://www.opengis.net/om/1.0">
 
       <!-- mandatory -->
-      <sos:offering>wether-data-muenster</sos:offering>
+      <sos:offering>weather-data-muenster</sos:offering>
 
       <!-- optional -->
       <sos:eventTime>

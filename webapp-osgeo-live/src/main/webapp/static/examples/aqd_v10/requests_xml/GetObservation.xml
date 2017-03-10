@@ -108,7 +108,7 @@
   -->
 
   <!-- optional, multiple values possible -->
-  <sos:featureOfInterest>http://www.52north.org/test/featureOfInterest/1</sos:featureOfInterest>
+  <sos:featureOfInterest>52NorthWS1</sos:featureOfInterest>
 
   <!-- optional -->
   <sos:spatialFilter>

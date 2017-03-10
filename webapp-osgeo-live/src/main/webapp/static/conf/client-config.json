@@ -2249,8 +2249,8 @@
           "during":{
             "ref":"om:phenomenonTime",
             "value":[
-              "2017-03-14T14:00:00+01:00",
-              "2017-03-14T15:00:00+01:00"
+              "2017-03-14T14:00:00+00:00",
+              "2017-03-14T17:00:00+00:00"
             ]
           }
         }
@@ -2318,30 +2318,13 @@
         "featureOfInterest":[
           "52NorthWS1"
         ],
-        "spatialFilter":{
-          "bbox":{
-            "ref":"om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape",
-            "value":{
-              "type": "Polygon",
-              "coordinates": [
-                [
-                  [7.0,45.0],
-                  [15.0,45.0],
-                  [15.0,55.0],
-                  [7.0,55.0],
-                  [7.0,45.0]
-                ]
-              ]
-            }
-          }
-        },
         "temporalFilter":[
           {
             "during":{
               "ref":"om:phenomenonTime",
               "value":[
                 "2017-03-14T14:00:00+00:00",
-                "2017-03-14T15:00:00+00:00"
+                "2017-03-14T18:00:00+00:00"
               ]
             }
           },
@@ -2393,7 +2376,9 @@
           "52NorthWS1"
         ],
         "observedProperty":[
-          "Temperature"
+          "Temperature",
+          "WindDirection",
+          "WindSpeed"
         ],
         "featureOfInterest":[
           "52NorthWS1"

@@ -58,7 +58,7 @@
       <fes:ValueReference>phenomenonTime</fes:ValueReference>
       <gml:TimePeriod gml:id="tp_1">
         <gml:beginPosition>2017-03-19T14:00:00.000+00:00</gml:beginPosition>
-        <gml:endPosition>2017-03-19T14:00:00.000+00:00</gml:endPosition>
+        <gml:endPosition>2017-03-20T14:00:00.000+00:00</gml:endPosition>
       </gml:TimePeriod>
     </fes:During>
   </sos:temporalFilter>

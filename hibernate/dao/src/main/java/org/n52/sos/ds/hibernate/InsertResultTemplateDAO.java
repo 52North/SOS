@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -198,14 +198,6 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                         swefield.getElement().getClass().getName());
             }
             helper.checkDataRecordForObservedProperty(swefield, observedProperty);
-//            if (allowTemplateWithoutProcedureAndFeature){
-//                if (sosObsConst.getNillableFeatureOfInterest().isNil() && helper.checkDefinition(swefield, "om:featureOfInterest")) {
-//                    helper.checkForFeatureOfInterest(swefield, "om:featureOfInterest");
-//                }
-//                if (sosObsConst.getNillableProcedure().isNil() && helper.checkDefinition(swefield, "om:procedure")) {
-//                    helper.checkForProcedure(swefield, "om:procedure");
-//                }
-//            }
             helper.checkVectorForSamplingGeometry(swefield);
         }
         if (helper.hasPhenomenonTime(record) == -1) {
@@ -217,13 +209,13 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                     .withMessage("Missing swe:field content with element definition %s", observedProperty);
         }
         if (allowTemplateWithoutProcedureAndFeature){
-            if (sosObsConst.getNillableFeatureOfInterest().isNil() && helper.checkFields(record.getFields(), "om:featureOfInterest") == -1) {
+            if (sosObsConst.getNillableFeatureOfInterest().isNil() && helper.checkFields(record.getFields(), helper.OM_FEATURE_OF_INTEREST) == -1) {
                 throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-                    .withMessage("Missing swe:field content with element definition '%s' because the featureOfInterest is not defined in the observationTemplate!", "om:featureOfInterest");
+                    .withMessage("Missing swe:field content with element definition '%s' because the featureOfInterest is not defined in the observationTemplate!", helper.OM_FEATURE_OF_INTEREST);
             }
-            if (sosObsConst.getNillableProcedure().isNil() && helper.checkFields(record.getFields(), "om:procedure") == -1) {
+            if (sosObsConst.getNillableProcedure().isNil() && helper.checkFields(record.getFields(), helper.OM_PROCEDURE) == -1) {
                 throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-                    .withMessage("Missing swe:field content with element definition '%s' because the procdure is not defined in the observationTemplate!", "om:procedure");
+                    .withMessage("Missing swe:field content with element definition '%s' because the procdure is not defined in the observationTemplate!", helper.OM_PROCEDURE);
             }
         }
         if (record.getFields().size() > getAllowedSize(record)) {
@@ -234,7 +226,7 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                             + "with element definition '%s' or swe:Vector with element defintion '%s' or swe:Text with element definitions "
                             + "'%s' and '%s'!",
                             OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY,
-                            "om:featureOfInterest", "om:procedure");
+                            helper.OM_FEATURE_OF_INTEREST, helper.OM_PROCEDURE);
         }
     }
 
@@ -249,10 +241,10 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                 additionalValues++;
             }
             if (allowTemplateWithoutProcedureAndFeature) {
-                if (helper.isText(swefield) && helper.checkDefinition(swefield, "om:featureOfInterest")) {
+                if (helper.isText(swefield) && helper.checkDefinition(swefield, helper.OM_FEATURE_OF_INTEREST)) {
                     additionalValues++;
                 }
-                if (helper.isText(swefield) && helper.checkDefinition(swefield, "om:procedure")) {
+                if (helper.isText(swefield) && helper.checkDefinition(swefield, helper.OM_PROCEDURE)) {
                     additionalValues++;
                 }
             }

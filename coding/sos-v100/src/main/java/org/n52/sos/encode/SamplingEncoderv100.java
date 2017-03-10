@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -206,6 +206,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
         if (sampFeat.isSetIdentifier()
                 && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifierCodeWithAuthority().getValue(),
                         Sos1Constants.SERVICEVERSION)) {
+            sampFeat.getIdentifierCodeWithAuthority().setCodeSpace("uniquID");
             xbSamplingFeature.addNewName().set(
                     CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, sampFeat.getIdentifierCodeWithAuthority()));
         }

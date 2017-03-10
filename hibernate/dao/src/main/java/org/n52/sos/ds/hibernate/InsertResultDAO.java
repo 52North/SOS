@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -168,7 +168,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
                 if (resultTemplate.isSetFeatureOfInterest()) {
                     feature = resultTemplate.getFeatureOfInterest();
                 } else {
-                    if (!featureEntityMap.containsKey(omObsConst.getFeatureOfInterestIdentifier())) {
+                    if (featureEntityMap.containsKey(omObsConst.getFeatureOfInterestIdentifier())) {
                         feature = featureEntityMap.get(omObsConst.getFeatureOfInterestIdentifier());
                     } else {
                         FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
@@ -390,9 +390,9 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
                 if (swefield.getElement() instanceof SweAbstractSimpleType<?>) {
                     final SweAbstractSimpleType<?> sweAbstractSimpleType =
                             (SweAbstractSimpleType<?>) swefield.getElement();
-                    if (swefield.getElement() instanceof SweText && swefield.getElement().getDefinition().contains("om:featureOfInterest")) {
+                    if (swefield.getElement() instanceof SweText && swefield.getElement().getDefinition().contains(helper.OM_FEATURE_OF_INTEREST)) {
                         featureOfInterest.put(index, swefield.getElement().getDefinition());
-                    } else if (swefield.getElement() instanceof SweText && swefield.getElement().getDefinition().contains("om:procedure")) {
+                    } else if (swefield.getElement() instanceof SweText && swefield.getElement().getDefinition().contains(helper.OM_PROCEDURE)) {
                         procedure.put(index, swefield.getElement().getDefinition());
                     } else {
                         observedProperties.put(index, swefield.getElement().getDefinition());

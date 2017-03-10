@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ows.OperationNotSupportedException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
@@ -41,12 +43,17 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.response.GetResultResponse;
+import org.n52.sos.service.ServiceSettings;
 
 /**
  * @since 4.0.0
  * 
  */
+@Configurable
 public abstract class AbstractGetResultDAO extends AbstractOperationDAO {
+    
+    private boolean listOnlyParentOfferings = false;
+    
     public AbstractGetResultDAO(String service) {
         super(service, SosConstants.Operations.GetResult.name());
     }
@@ -67,7 +74,7 @@ public abstract class AbstractGetResultDAO extends AbstractOperationDAO {
             throw new OperationNotSupportedException().at(SosConstants.Operations.GetResult).withMessage(
                     "This operation is not supported for SOS {}!", Sos1Constants.SERVICEVERSION);
         } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            addOfferingParameter(opsMeta, offerings);
+            addOfferingParameter(opsMeta);
             addObservablePropertyParameter(opsMeta, observableProperties);
             addFeatureOfInterestParameter(opsMeta, featureOfInterest);
             // TODO get the values for temporal and spatial filtering
@@ -79,7 +86,7 @@ public abstract class AbstractGetResultDAO extends AbstractOperationDAO {
             // new OWSParameterValuePossibleValues(null));
         }
     }
-
+    
     public abstract GetResultResponse getResult(GetResultRequest request) throws OwsExceptionReport;
 
 }

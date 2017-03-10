@@ -1499,6 +1499,18 @@
 			"method":"POST"
 		},
 		{
+            "request":"static/examples/sos_v20/requests_xml/Transactional/InsertFeatureOfInterest.xml",
+            "service":"SOS",
+            "version":"2.0.0",
+            "binding": "application/xml",
+            "operation":"InsertFeatureOfInterest",
+            "headers":{
+                "Accept":"application/xml",
+                "Content-Type":"application/xml"
+            },
+            "method":"POST"
+        },
+		{
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Category.xml",
 			"service":"SOS",
 			"version":"2.0.0",

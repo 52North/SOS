@@ -11,7 +11,7 @@
 	<name>52°North SOS - Webapp with Sensor Web REST API</name>
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
-		<series.api.version>2.0.0-SNAPSHOT</series.api.version>
+		<series.api.version>2.0.0-alpha.2</series.api.version>
 	</properties>
 	<build>
 		<finalName>${conf.sos.name}##${project.version}</finalName>
@@ -30,12 +30,19 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.n52.series-api</groupId>
-									<artifactId>series-dao-sos</artifactId>
+									<artifactId>rest</artifactId>
 									<includes>api-doc/**</includes>
 									<outputDirectory>${project.build.directory}/${project.build.finalName}/static/doc</outputDirectory>
 									<overWrite>false</overWrite>
 								</artifactItem>
-							</artifactItems>
+                <artifactItem> 
+                 <groupId>org.n52.series-api</groupId> 
+                 <artifactId>series-mappings</artifactId> 
+                 <includes>hbm/sos/v44/*.hbm.xml</includes>
+                 <outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly/</outputDirectory> 
+                 <overWrite>true</overWrite>
+                </artifactItem> 
+							 </artifactItems>
 							<overWriteReleases>false</overWriteReleases>
 						</configuration>
 					</execution>
@@ -74,11 +81,11 @@
 							<groupId>org.n52.sensorweb</groupId>
     						<artifactId>restful-timeseries-client</artifactId>
     						<excludes>
-			                	<exclude>**/WEB-INF/**</exclude>
-			                	<exclude>**/META-INF/**</exclude>
-			                	<exclude>settings.json</exclude>
-			              	</excludes>
-			              	<targetPath>static/client/jsClient</targetPath>
+                	<exclude>**/WEB-INF/**</exclude>
+                	<exclude>**/META-INF/**</exclude>
+                	<exclude>settings.json</exclude>
+              	</excludes>
+              	<targetPath>static/client/jsClient</targetPath>
 						</overlay>
 					</overlays>
 				</configuration>
@@ -86,6 +93,12 @@
 		</plugins>
 	</build>
 	<dependencies>
+    <dependency>
+        <groupId>com.mchange</groupId>
+        <artifactId>c3p0</artifactId>
+        <scope>runtime</scope>
+		</dependency>
+
 		<!-- REST API Dependencies -->
 		<dependency>
 			<groupId>org.n52.series-api</groupId>
@@ -110,6 +123,61 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+    <dependency>
+      <groupId>org.n52.series-api</groupId>
+      <artifactId>rest</artifactId>
+      <version>${series.api.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>c3p0</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.mchange</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+     <dependency>
+      <groupId>org.n52.series-api</groupId>
+      <artifactId>series-mappings</artifactId>
+      <version>${series.api.version}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-main</artifactId>

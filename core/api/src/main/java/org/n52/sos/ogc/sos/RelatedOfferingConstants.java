@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,11 +31,13 @@ package org.n52.sos.ogc.sos;
 import javax.xml.namespace.QName;
 
 public interface RelatedOfferingConstants {
-    String NS_RO = "http://52north.org/RelatedOffering/1.0";
+    String NS_RO = "http://www.opengis.net/sosro/1.0";
 
     String NS_RO_PREFIX = "ro";
 
     String ROLE = "sub-offering";
+
+    String RELATED_OFFERINGS = "relatedOfferings";
 
     String EN_RO_RELATED_OFFERINGS = "RelatedOfferings";
     

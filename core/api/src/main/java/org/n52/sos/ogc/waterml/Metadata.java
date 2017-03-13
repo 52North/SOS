@@ -43,7 +43,8 @@ public class Metadata {
         return timeseriesmetadata;
     }
 
-    public void setTimeseriesmetadata(TimeseriesMetadata timeseriesMetadata) {
+    public Metadata setTimeseriesmetadata(TimeseriesMetadata timeseriesMetadata) {
         this.timeseriesmetadata = timeseriesMetadata;
+        return this;
     }
 }

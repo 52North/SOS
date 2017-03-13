@@ -43,8 +43,9 @@ public class MeasurementTimeseriesMetadata extends TimeseriesMetadata {
         return cumulative;
     }
 
-    public void setCumulative(boolean cumulative) {
+    public MeasurementTimeseriesMetadata setCumulative(boolean cumulative) {
         this.cumulative = cumulative;
+        return this;
     }
 
 }

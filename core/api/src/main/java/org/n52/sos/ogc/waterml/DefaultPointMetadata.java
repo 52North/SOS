@@ -43,7 +43,8 @@ public class DefaultPointMetadata {
         return defaultTVPMeasurementMetadata;
     }
 
-    public void setDefaultTVPMeasurementMetadata(DefaultTVPMeasurementMetadata defaultTVPMeasurementMetadata) {
+    public DefaultPointMetadata setDefaultTVPMeasurementMetadata(DefaultTVPMeasurementMetadata defaultTVPMeasurementMetadata) {
         this.defaultTVPMeasurementMetadata = defaultTVPMeasurementMetadata;
+        return this;
     }
 }

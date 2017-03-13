@@ -47,8 +47,9 @@ public class DefaultTVPMeasurementMetadata {
         return interpolationtype;
     }
 
-    public void setInterpolationtype(InterpolationType interpolationtype) {
+    public DefaultTVPMeasurementMetadata setInterpolationtype(InterpolationType interpolationtype) {
         this.interpolationtype = interpolationtype;
+        return this;
     }
 
 }

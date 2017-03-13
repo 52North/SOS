@@ -56,6 +56,11 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.waterml.DefaultPointMetadata;
+import org.n52.sos.ogc.waterml.DefaultTVPMeasurementMetadata;
+import org.n52.sos.ogc.waterml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.waterml.TimeseriesMetadata;
+import org.n52.sos.ogc.waterml.WaterMLConstants.InterpolationType;
 import org.n52.sos.ogc.wml.ConformanceClassesWML2;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.response.GetObservationResponse;
@@ -229,7 +234,16 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();
         measurementTimeseries.setId("timeseries." + sosObservation.getObservationID());
-        addTimeseriesMetadata(measurementTimeseries, sosObservation.getPhenomenonTime().getGmlId());
+        // Default value
+        TimeseriesMetadata timeseriesMetadata = new MeasurementTimeseriesMetadata().setCumulative(false);
+        if (sosObservation.isSetValue() &&
+                sosObservation.getValue().isSetValue() &&
+                sosObservation.getValue().getValue().getClass().isAssignableFrom(TVPValue.class) &&
+                ((TVPValue)sosObservation.getValue().getValue()).isSetMetadata() &&
+                ((TVPValue)sosObservation.getValue().getValue()).getMetadata().isSetTimeseriesMetadata()) {
+            timeseriesMetadata = ((TVPValue)sosObservation.getValue().getValue()).getMetadata().getTimeseriesmetadata();
+        }
+        addTimeseriesMetadata(measurementTimeseries, sosObservation.getPhenomenonTime().getGmlId(), timeseriesMetadata);
 
         TVPDefaultMetadataPropertyType xbMetaComponent = measurementTimeseries.addNewDefaultPointMetadata();
 
@@ -366,7 +380,16 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();
         measurementTimeseries.setId("timeseries." + observationValue.getObservationID());
-        addTimeseriesMetadata(measurementTimeseries, observationValue.getPhenomenonTime().getGmlId());
+        // Default value
+        TimeseriesMetadata timeseriesMetadata = new MeasurementTimeseriesMetadata().setCumulative(false);
+        if (observationValue.isSetValue() &&
+                observationValue.getValue().getClass().isAssignableFrom(TVPValue.class) &&
+                ((TVPValue)observationValue.getValue()).isSetMetadata() &&
+                ((TVPValue)observationValue.getValue()).getMetadata().isSetTimeseriesMetadata()) {
+            timeseriesMetadata = ((TVPValue)observationValue.getValue()).getMetadata().getTimeseriesmetadata();
+        }
+        addTimeseriesMetadata(measurementTimeseries, observationValue.getPhenomenonTime().getGmlId(),
+                timeseriesMetadata);
 
         TVPDefaultMetadataPropertyType xbMetaComponent = measurementTimeseries.addNewDefaultPointMetadata();
 
@@ -374,10 +397,22 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                 DefaultTVPMeasurementMetadataDocument.Factory.newInstance();
         TVPMeasurementMetadataType defaultTVPMeasurementMetadata =
                 xbDefMeasureMetaComponent.addNewDefaultTVPMeasurementMetadata();
-        defaultTVPMeasurementMetadata.addNewInterpolationType()
-                .setHref("http://www.opengis.net/def/timeseriesType/WaterML/2.0/continuous");
+        // Default value
+        InterpolationType interpolationType = InterpolationType.Continuous;
+        if (observationValue.isSetValue() &&
+                observationValue.getValue().getClass().isAssignableFrom(TVPValue.class) &&
+                ((TVPValue)observationValue.getValue()).isSetDefaultPointMetadata() &&
+                ((TVPValue)observationValue.getValue()).getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata() &&
+                ((TVPValue)observationValue.getValue()).getDefaultPointMetadata()
+                    .getDefaultTVPMeasurementMetadata().isSetInterpolationType()) {
+            interpolationType = ((TVPValue)observationValue.getValue()).getDefaultPointMetadata()
+                    .getDefaultTVPMeasurementMetadata().getInterpolationtype();
+        }
 
-        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle("Instantaneous");
+        defaultTVPMeasurementMetadata.addNewInterpolationType().setHref(interpolationType.getIdentifier());
+        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle(
+                interpolationType.getTitle());
+
         String unit = null;
         if (observationValue instanceof SingleObservationValue) {
             SingleObservationValue<?> singleObservationValue = (SingleObservationValue<?>) observationValue;
@@ -449,11 +484,15 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         return measurementTimeseriesDoc;
     }
 
-    private void addTimeseriesMetadata(MeasurementTimeseriesType mtt, String gmlId) {
+    private void addTimeseriesMetadata(MeasurementTimeseriesType mtt, String gmlId, TimeseriesMetadata timeseriesMetadata) {
         MeasurementTimeseriesMetadataType mtmt =
                 (MeasurementTimeseriesMetadataType) mtt.addNewMetadata().addNewTimeseriesMetadata().substitute(
                         WaterMLConstants.QN_MEASUREMENT_TIMESERIES_METADATA, MeasurementTimeseriesMetadataType.type);
         createMeasurementTimeseriesMetadataType(mtmt, gmlId);
+        if (timeseriesMetadata != null &&
+                timeseriesMetadata.getClass().isAssignableFrom(MeasurementTimeseriesMetadata.class)) {
+            mtmt.setCumulative(((MeasurementTimeseriesMetadata)timeseriesMetadata).isCumulative());
+        }
     }
 
     private MeasurementTimeseriesMetadataType createMeasurementTimeseriesMetadataType(

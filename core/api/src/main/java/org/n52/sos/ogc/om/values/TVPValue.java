@@ -40,6 +40,7 @@ import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.waterml.DefaultPointMetadata;
+import org.n52.sos.ogc.waterml.Metadata;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
@@ -67,6 +68,8 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
     private UoM unit;
 
     private DefaultPointMetadata defaultPointMetadata;
+
+    private Metadata metadata;
 
     @Override
     public TVPValue setValue(List<TimeValuePair> value) {
@@ -156,7 +159,7 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
-    
+
     public boolean isSetDefaultPointMetadata() {
         return defaultPointMetadata != null;
     }
@@ -167,6 +170,18 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
 
     public void setDefaultPointMetadata(DefaultPointMetadata defaultPointMetadata) {
         this.defaultPointMetadata = defaultPointMetadata;
+    }
+
+    public boolean isSetMetadata() {
+        return metadata != null;
+    }
+
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
     }
 
 }

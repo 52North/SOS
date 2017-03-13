@@ -29,7 +29,7 @@ package org.n52.sos.ogc.waterml;
  * 
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @since 4.4.0
- * @see https://portal.opengeospatial.org/files/?artifact_id=48531
+ * @see http://www.opengeospatial.org/standards/waterml
  */
 public interface WaterMLConstants {
 

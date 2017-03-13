@@ -24,11 +24,12 @@
 package org.n52.sos.ogc.waterml;
 
 /**
- * This class implements the <a href="https://portal.opengeospatial.org/files/?artifact_id=48531">OGC WaterML 2.0</a> 
- * element <code>MeasurementTimeseries > defaultPointMetadata</code>. See <code>/req/xsd-timeseries-tvp/defaultPointMetadata</code>.
+ * This class implements the OGC WaterML 2.0 element <code>MeasurementTimeseries > defaultPointMetadata</code>.
+ * See <code>/req/xsd-timeseries-tvp/defaultPointMetadata</code>.
  * 
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @since 4.4.0
+ * @see http://www.opengeospatial.org/standards/waterml
  */
 public class DefaultPointMetadata {
 

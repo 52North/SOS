@@ -23,11 +23,14 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.junit.Assert;
 import org.junit.Test;
 import org.n52.sos.ogc.waterml.DefaultPointMetadata;
 import org.n52.sos.ogc.waterml.DefaultTVPMeasurementMetadata;
+import org.n52.sos.ogc.waterml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.waterml.Metadata;
 import org.n52.sos.ogc.waterml.WaterMLConstants;
 
 /**
@@ -48,6 +51,21 @@ public class TVPValueTest {
         Assert.assertThat(tvpValue.getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata(), Is.is(true));
         Assert.assertThat(tvpValue.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().isSetInterpolationType(), Is.is(true));
         Assert.assertThat(tvpValue.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().getInterpolationtype(), Is.is(WaterMLConstants.InterpolationType.Continuous));
+    }
+
+    @Test
+    public void shouldSetPropertyCumulative() {
+        TVPValue tvpValue = new TVPValue();
+        Metadata metadata = new Metadata();
+        MeasurementTimeseriesMetadata timeseriesMetadata = new MeasurementTimeseriesMetadata();
+        timeseriesMetadata.setCumulative(true);
+        metadata.setTimeseriesmetadata(timeseriesMetadata);
+        tvpValue.setMetadata(metadata);
+
+        Assert.assertThat(tvpValue.isSetMetadata(), Is.is(true));
+        Assert.assertThat(tvpValue.getMetadata().isSetTimeseriesMetadata(), Is.is(true));
+        Assert.assertThat(tvpValue.getMetadata().getTimeseriesmetadata(), CoreMatchers.instanceOf(MeasurementTimeseriesMetadata.class));
+        Assert.assertThat(((MeasurementTimeseriesMetadata)tvpValue.getMetadata().getTimeseriesmetadata()).isCumulative(), Is.is(true));
     }
 
 }

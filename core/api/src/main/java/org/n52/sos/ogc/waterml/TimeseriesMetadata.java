@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2013
+ * ﻿Copyright (C) 2017
  * by 52 North Initiative for Geospatial Open Source Software GmbH
  *
  * Contact: Andreas Wytzisk
@@ -23,32 +23,10 @@
  */
 package org.n52.sos.ogc.waterml;
 
-import org.n52.sos.ogc.waterml.WaterMLConstants.InterpolationType;
-
 /**
- * This class implements the OGC WaterML 2.0 element 
- * <code>MeasurementTimeseries > defaultPointMetadata > DefaultTVPMeasurementMetadata</code>.
- * 
- * See <code>/req/xsd-measurement-timeseries-tvp/interpolation-type</code>.
- * 
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- * @since 4.4.0
- * @see http://www.opengeospatial.org/standards/waterml
+ *
  */
-public class DefaultTVPMeasurementMetadata {
-
-    private InterpolationType interpolationtype;
-
-    public boolean isSetInterpolationType() {
-        return interpolationtype != null;
-    }
-
-    public InterpolationType getInterpolationtype() {
-        return interpolationtype;
-    }
-
-    public void setInterpolationtype(InterpolationType interpolationtype) {
-        this.interpolationtype = interpolationtype;
-    }
+public class TimeseriesMetadata {
 
 }

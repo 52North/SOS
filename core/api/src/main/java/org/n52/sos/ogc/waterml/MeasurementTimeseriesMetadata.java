@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2013
+ * ﻿Copyright (C) 2017
  * by 52 North Initiative for Geospatial Open Source Software GmbH
  *
  * Contact: Andreas Wytzisk
@@ -23,32 +23,28 @@
  */
 package org.n52.sos.ogc.waterml;
 
-import org.n52.sos.ogc.waterml.WaterMLConstants.InterpolationType;
-
 /**
- * This class implements the OGC WaterML 2.0 element 
- * <code>MeasurementTimeseries > defaultPointMetadata > DefaultTVPMeasurementMetadata</code>.
- * 
- * See <code>/req/xsd-measurement-timeseries-tvp/interpolation-type</code>.
+ * This class implements the OGC WaterML 2.0 element <code>metadata</code>. See <code>/req/uml-timeseries-observation/metadata</code>.
  * 
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- * @since 4.4.0
  * @see http://www.opengeospatial.org/standards/waterml
+ * @since 4.4.0
  */
-public class DefaultTVPMeasurementMetadata {
+public class MeasurementTimeseriesMetadata extends TimeseriesMetadata {
 
-    private InterpolationType interpolationtype;
+    private boolean cumulative;
 
-    public boolean isSetInterpolationType() {
-        return interpolationtype != null;
+    /**
+     * "A series that is defined as cumulative is one where the values indicate a sequentially increasing series; 
+     * i.e. each value is added to the last so the value represents the total of a value since accumulation began."
+     * (Source: OGC#10-126r3)
+     */
+    public boolean isCumulative() {
+        return cumulative;
     }
 
-    public InterpolationType getInterpolationtype() {
-        return interpolationtype;
-    }
-
-    public void setInterpolationtype(InterpolationType interpolationtype) {
-        this.interpolationtype = interpolationtype;
+    public void setCumulative(boolean cumulative) {
+        this.cumulative = cumulative;
     }
 
 }

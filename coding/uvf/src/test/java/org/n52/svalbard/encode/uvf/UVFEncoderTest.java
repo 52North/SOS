@@ -55,29 +55,19 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.MultiValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValues;
 import org.n52.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.JTSHelper;
-import org.n52.sos.util.builder.SweDataArrayBuilder;
-import org.n52.sos.util.builder.SweDataArrayValueBuilder;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -329,84 +319,6 @@ public class UVFEncoderTest {
     }
 
     @Test
-    public void shouldThrowExceptionOnWrongInputTLVTValue() throws UnsupportedEncoderInputException,
-            OwsExceptionReport {
-        ObservationValue<MultiValue<List<TimeLocationValueTriple>>> mv = new MultiObservationValues<>();
-        MultiValue<List<TimeLocationValueTriple>> value = new TLVTValue();
-        Time time = new TimeInstant(new Date(UTC_TIMESTAMP_1));
-        TimeLocationValueTriple tlvt = new TimeLocationValueTriple(time , null , null);
-        List<TimeLocationValueTriple> valueList = CollectionHelper.list(tlvt);
-        value.setValue(valueList);
-        mv.setValue(value);
-        responseToEncode.getObservationCollection().get(0).setValue(mv);
-        
-        exp.expect(NoApplicableCodeException.class);
-        exp.expectMessage("Encoding of Observations with values of type "
-                + "'org.n52.sos.ogc.om.values.TLVTValue' not supported.");
-
-        encoder.encode(responseToEncode);
-    }
-
-    @Test
-    public void shouldEncodeMultiObservationValueSweDataArrayValue() throws UnsupportedEncoderInputException,
-            OwsExceptionReport {
-        SweDataRecord elementType = new SweDataRecord();
-        SweField valueField = new SweField(obsPropIdentifier, new SweQuantity());
-        final SweTime sweTime = new SweTime();
-        sweTime.setDefinition(OmConstants.PHENOMENON_TIME);
-        SweField timestampField = new SweField("phenomenonTime", sweTime);
-        List<SweField> fields = CollectionHelper.list(timestampField, valueField);
-        elementType.setFields(fields );
-        SweDataArray dataArray = SweDataArrayBuilder.aSweDataArray()
-                .setElementType(elementType)
-                .setEncoding("text", "@", ";", ".")
-                .addBlock("1969-12-31T12:00:00+00:00", "52.1234567890")
-                .addBlock("1970-01-01T12:00:00+00:00", "42.1234567890")
-                .build();
-        
-        ObservationValue<MultiValue<SweDataArray>> value = SweDataArrayValueBuilder.aSweDataArrayValue()
-                .setSweDataArray(dataArray)
-                .build();
-        responseToEncode.getObservationCollection().get(0).setValue(value);
-
-        final String[] encodedLines = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
-
-        Assert.assertThat(encodedLines[8], Is.is("69123112007001011200Zeit    "));
-        Assert.assertThat(encodedLines[9], Is.is("691231120052.1234567"));
-        Assert.assertThat(encodedLines[10], Is.is("700101120042.1234567"));
-    }
-
-    @Test
-    public void shouldThrowExceptionOnWrongInputSweDataArrayWithBooleans() throws UnsupportedEncoderInputException,
-            OwsExceptionReport {
-        SweDataRecord elementType = new SweDataRecord();
-        SweField valueField = new SweField(obsPropIdentifier, new SweBoolean());
-        final SweTime sweTime = new SweTime();
-        sweTime.setDefinition(OmConstants.PHENOMENON_TIME);
-        SweField timestampField = new SweField("phenomenonTime", sweTime);
-        List<SweField> fields = CollectionHelper.list(timestampField, valueField);
-        elementType.setFields(fields );
-        SweDataArray dataArray = SweDataArrayBuilder.aSweDataArray()
-                .setElementType(elementType)
-                .setEncoding("text", "@", ";", ".")
-                .addBlock("1969-12-31T12:00:00+00:00", "52.1234567890")
-                .addBlock("1970-01-01T12:00:00+00:00", "42.1234567890")
-                .build();
-        
-        ObservationValue<MultiValue<SweDataArray>> value = SweDataArrayValueBuilder.aSweDataArrayValue()
-                .setSweDataArray(dataArray)
-                .build();
-
-        responseToEncode.getObservationCollection().get(0).setValue(value);
-
-        exp.expect(NoApplicableCodeException.class);
-        exp.expectMessage("Encoding of SweArrayObservations with values of type "
-                + "'org.n52.sos.ogc.swe.simpleType.SweBoolean' not supported.");
-
-        encoder.encode(responseToEncode);
-    }
-
-    @Test
     public void shouldEncodeSingleObservationWithNoDataValue() throws
             UnsupportedEncoderInputException, OwsExceptionReport {
         responseToEncode.getObservationCollection().get(0).getValue().setValue(null);;
@@ -416,35 +328,6 @@ public class UVFEncoderTest {
         Assert.assertThat(actual, Is.is(expected));
     }
 
-    @Test
-    public void shouldEncodeMultiObservationValueSweDataArrayValueWithNoDataValue() throws
-            UnsupportedEncoderInputException, OwsExceptionReport {
-        SweDataRecord elementType = new SweDataRecord();
-        SweField valueField = new SweField(obsPropIdentifier, new SweQuantity());
-        final SweTime sweTime = new SweTime();
-        sweTime.setDefinition(OmConstants.PHENOMENON_TIME);
-        SweField timestampField = new SweField("phenomenonTime", sweTime);
-        List<SweField> fields = CollectionHelper.list(timestampField, valueField);
-        elementType.setFields(fields );
-        SweDataArray dataArray = SweDataArrayBuilder.aSweDataArray()
-                .setElementType(elementType)
-                .setEncoding("text", "@", ";", ".")
-                .addBlock("1969-12-31T12:00:00+00:00", null)
-                .addBlock("1970-01-01T12:00:00+00:00", "42.1234567890")
-                .build();
-
-        ObservationValue<MultiValue<SweDataArray>> value = SweDataArrayValueBuilder.aSweDataArrayValue()
-                .setSweDataArray(dataArray)
-                .build();
-        responseToEncode.getObservationCollection().get(0).setValue(value);
-
-        final String[] encodedLines = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
-
-        Assert.assertThat(encodedLines[8], Is.is("69123112007001011200Zeit    "));
-        Assert.assertThat(encodedLines[9], Is.is("6912311200-777.0    "));
-        Assert.assertThat(encodedLines[10], Is.is("700101120042.1234567"));
-    }
-    
     @Test
     public void shouldThrowNoApplicableCodeExceptionWhenReceivingNotMeasurementObservations() throws 
             UnsupportedEncoderInputException, OwsExceptionReport {
@@ -478,6 +361,12 @@ public class UVFEncoderTest {
             OwsExceptionReport {
         responseToEncode.getObservationCollection().get(0).getObservationConstellation().
                 setObservationType(OmConstants.OBS_TYPE_COUNT_OBSERVATION);
+        Time phenTime = new TimeInstant(new Date(UTC_TIMESTAMP_1));
+        responseToEncode.getObservationCollection().get(0).setValue(new SingleObservationValue<>(phenTime, 
+                new CountValue(52)));
+        ((OmObservableProperty)responseToEncode.getObservationCollection().get(0).getObservationConstellation()
+                .getObservableProperty()).setUnit(null);
+        
         final String[] actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
         final String expected = "$sb Mess-Einheit: " + unit;
 
@@ -533,7 +422,7 @@ public class UVFEncoderTest {
         responseToEncode.getObservationCollection().get(0).setValue(mv);
         
         exp.expect(NoApplicableCodeException.class);
-        exp.expectMessage("Support for 'org.n52.sos.ogc.om.StreamingValue' not yet implemented.");
+        exp.expectMessage("Support for 'org.n52.svalbard.encode.uvf.UVFEncoderTest$1' not yet implemented.");
 
         encoder.encode(responseToEncode);
     }

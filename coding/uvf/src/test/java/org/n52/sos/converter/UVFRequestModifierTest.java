@@ -43,7 +43,7 @@ import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
@@ -75,10 +75,10 @@ public class UVFRequestModifierTest {
         request.setFeatureIdentifiers(Collections.singletonList("test-feature-of-interest"));
         request.setProcedures(Collections.singletonList("test-procedure"));
         request.setObservedProperties(Collections.singletonList("test-observed-property"));
-        SweCount crsExtension = (SweCount) new SweCount()
+        SweText crsExtension = (SweText) new SweText()
                 .setValue(UVFConstants.ALLOWED_CRS.get(0))
                 .setIdentifier(OWSConstants.AdditionalRequestParams.crs.name());
-        request.addExtension(new SwesExtensionImpl<SweCount>().setValue(crsExtension));
+        request.addExtension(new SwesExtensionImpl<SweText>().setValue(crsExtension));
     }
 
     @Test
@@ -183,7 +183,7 @@ public class UVFRequestModifierTest {
         exp.expect(ConfigurationException.class);
         exp.expectMessage("Setting with key 'uvf.default.crs': '31465' outside allowed interval ]31466, 31469[.");
 
-        modifier.setDefaultCRS(31465);
+        modifier.setDefaultCRS("31465");
     }
 
     @Test
@@ -191,7 +191,16 @@ public class UVFRequestModifierTest {
         exp.expect(ConfigurationException.class);
         exp.expectMessage("Setting with key 'uvf.default.crs': '31470' outside allowed interval ]31466, 31469[.");
 
-        modifier.setDefaultCRS(31470);
+        modifier.setDefaultCRS("31470");
+    }
+
+    @Test
+    public void shouldThrowConfigExcetionIfDefaultCrsEpsgIsNotParsebleToInteger() {
+        exp.expect(ConfigurationException.class);
+        exp.expectMessage("Could not parse given new default CRS EPSG code 'aString'. Choose an integer of the interval"
+                + " ]31466, 31469[.");
+
+        modifier.setDefaultCRS("aString");
     }
 
     @Test
@@ -204,13 +213,13 @@ public class UVFRequestModifierTest {
         Assert.assertThat(extensions.getExtensions().size(), Is.is(1));
         Assert.assertThat(extensions.containsExtension(OWSConstants.AdditionalRequestParams.crs), Is.is(true));
         Assert.assertThat(
-                ((SweCount)extensions.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).getValue(),
+                ((SweText)extensions.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).getValue(),
                 Is.is(UVFConstants.ALLOWED_CRS.get(0)));
     }
 
     @Test
     public void shouldThrowExceptionWhenRequestedCRSIsOutsideAllowedValues() throws OwsExceptionReport {
-        ((SweCount)request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).setValue(42);
+        ((SweText)request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).setValue(Integer.toString(42));
         exp.expect(NoApplicableCodeException.class);
         exp.expectMessage("When requesting UVF format, the request MUST have a CRS of the German GK bands, e.g. "
                 + "'[31466, 31467, 31468, 31469]'. Requested was: '42'.");

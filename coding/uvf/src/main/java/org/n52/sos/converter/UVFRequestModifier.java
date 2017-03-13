@@ -31,7 +31,7 @@ import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.config.settings.IntegerSettingDefinition;
+import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
@@ -41,7 +41,7 @@ import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.AbstractServiceResponse;
@@ -60,13 +60,11 @@ public class UVFRequestModifier implements RequestResponseModifier<GetObservatio
     private static final String DEFAULT_CRS_SETTING_KEY = "uvf.default.crs";
 
     private static final Set<SettingDefinition<?, ?>> DEFAULT_CRS_SETTING_DEFINITION = ImmutableSet.<SettingDefinition<?,?>>of(
-            new IntegerSettingDefinition()
+            new StringSettingDefinition()
             .setGroup(org.n52.sos.service.MiscSettings.GROUP)
             .setOrder(66)
             .setKey(DEFAULT_CRS_SETTING_KEY)
-            .setMinimum(31466)
-            .setMaximum(31469)
-            .setDefaultValue(31466)
+            .setDefaultValue("31466")
             .setTitle("The default CRS EPSG code used in UVF response")
             .setDescription(String.format("The default CRS EPSG code that is used if no swe extension is present in "
                     + "the request that specifies one. Allowed values are: %s", UVFConstants.ALLOWED_CRS)));
@@ -77,7 +75,7 @@ public class UVFRequestModifier implements RequestResponseModifier<GetObservatio
                     Sos2Constants.SERVICEVERSION,
                     new GetObservationRequest()));
 
-    private int defaultCRS;
+    private String defaultCRS;
     
     @Override
     public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
@@ -92,10 +90,8 @@ public class UVFRequestModifier implements RequestResponseModifier<GetObservatio
                     request.isSetObservableProperty() && request.getObservedProperties().size() == 1 &&
                     request.isSetProcedure() && request.getProcedures().size() == 1) {
                 if (request.hasExtension(OWSConstants.AdditionalRequestParams.crs) &&
-                        // TODO Switch back to SweText
-                        // Check coordinate modifier for methode to get the epsg code from the request
-                        request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue() instanceof SweCount) {
-                    int requestedCRS = ((SweCount)request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).getValue();
+                        request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue() instanceof SweText) {
+                    String requestedCRS = ((SweText)request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).getValue();
                     if (UVFConstants.ALLOWED_CRS.contains(requestedCRS)) {
                         return request;
                     } else {
@@ -104,12 +100,11 @@ public class UVFRequestModifier implements RequestResponseModifier<GetObservatio
                                 UVFConstants.ALLOWED_CRS.toString(), requestedCRS);
                     }
                 }
-                // TODO switch back to swe text
                 // add default CRS as swe text extension
-                SweCount crsExtension = (SweCount) new SweCount()
+                SweText crsExtension = (SweText) new SweText()
                         .setValue(getDefaultCRS())
                         .setIdentifier(OWSConstants.AdditionalRequestParams.crs.name());
-                request.addExtension(new SwesExtensionImpl<SweCount>().setValue(crsExtension));
+                request.addExtension(new SwesExtensionImpl<SweText>().setValue(crsExtension));
                 return request;
             } else {
                 throw new NoApplicableCodeException().withMessage("When requesting UVF format, the request MUST have "
@@ -119,19 +114,26 @@ public class UVFRequestModifier implements RequestResponseModifier<GetObservatio
         return request;
     }
 
-    public int getDefaultCRS() {
+    public String getDefaultCRS() {
         return defaultCRS;
     }
     
     @Setting(DEFAULT_CRS_SETTING_KEY)
-    public void setDefaultCRS(int defaultCRS) {
-        Validation.greaterZero(DEFAULT_CRS_SETTING_KEY, defaultCRS);
-        final IntegerSettingDefinition settingDefinition = (IntegerSettingDefinition)DEFAULT_CRS_SETTING_DEFINITION.iterator().next();
-        final int minimum = settingDefinition.getMinimum();
-        final int maximum = settingDefinition.getMaximum();
-        if (defaultCRS < minimum || defaultCRS > maximum) {
-            throw new ConfigurationException(String.format("Setting with key '%s': '%d' outside allowed interval ]%d, %d[.",
-                    DEFAULT_CRS_SETTING_KEY, defaultCRS, minimum, maximum));
+    public void setDefaultCRS(String defaultCRS) {
+        Validation.notNullOrEmpty(DEFAULT_CRS_SETTING_KEY, defaultCRS);
+        final int minimum = UVFConstants.MINIMUM_EPSG_CODE;
+        final int maximum = UVFConstants.MAXIMUM_EPSG_CODE;
+        try {
+            final int newDefaultCRS = Integer.parseInt(defaultCRS);
+            if (newDefaultCRS < minimum || newDefaultCRS > maximum) {
+                throw new ConfigurationException(String.format("Setting with key '%s': '%s' outside allowed interval "
+                        + "]%s, %s[.",
+                        DEFAULT_CRS_SETTING_KEY, defaultCRS, minimum, maximum));
+            }
+        } catch (NumberFormatException e) {
+            throw new ConfigurationException(String.format("Could not parse given new default CRS EPSG code '%s'. "
+                    + "Choose an integer of the interval ]%d, %d[.",
+                    defaultCRS, minimum, maximum));
         }
         this.defaultCRS = defaultCRS;
     }

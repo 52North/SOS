@@ -30,7 +30,7 @@ public interface UVFConstants {
     /**
      * No data values MUST be encoded with <code>-777</code> in the UVF format.
      */
-    public String NO_DATA_STRING = "-777";
+    String NO_DATA_STRING = "-777";
     
     /**
      * The list of allowed CRS EPSG codes. Here, the German GK bands:
@@ -41,8 +41,12 @@ public interface UVFConstants {
      * <li>31469</li>
      * </ul>
      */
-    public List<Integer> ALLOWED_CRS = Collections.unmodifiableList(CollectionHelper.list(31466, 31467, 31468,
-            31469));
+    List<String> ALLOWED_CRS = Collections.unmodifiableList(CollectionHelper.list("31466", "31467", "31468",
+            "31469"));
+
+    int MINIMUM_EPSG_CODE = 31466;
+
+    int MAXIMUM_EPSG_CODE = 31469;
     
 }
  

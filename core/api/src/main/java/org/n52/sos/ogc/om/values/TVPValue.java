@@ -39,6 +39,7 @@ import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.waterml.DefaultPointMetadata;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
@@ -56,7 +57,7 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
     private static final long serialVersionUID = -5156098026027119423L;
 
     /**
-     * Mesurement values
+     * Measurement values
      */
     private List<TimeValuePair> value = new ArrayList<TimeValuePair>(0);
 
@@ -64,6 +65,8 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
      * Unit of measure
      */
     private UoM unit;
+
+    private DefaultPointMetadata defaultPointMetadata;
 
     @Override
     public TVPValue setValue(List<TimeValuePair> value) {
@@ -141,7 +144,7 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
     public boolean isSetUnit() {
         return getUnitObject() != null && StringHelper.isNotEmpty(unit.getUom());
     }
-    
+
     @Override
     public <X> X accept(ValueVisitor<X> visitor)
             throws OwsExceptionReport {
@@ -152,6 +155,18 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
     public void accept(VoidValueVisitor visitor)
             throws OwsExceptionReport {
         visitor.visit(this);
+    }
+    
+    public boolean isSetDefaultPointMetadata() {
+        return defaultPointMetadata != null;
+    }
+
+    public DefaultPointMetadata getDefaultPointMetadata() {
+        return defaultPointMetadata;
+    }
+
+    public void setDefaultPointMetadata(DefaultPointMetadata defaultPointMetadata) {
+        this.defaultPointMetadata = defaultPointMetadata;
     }
 
 }

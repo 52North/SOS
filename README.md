@@ -3,13 +3,11 @@
 | ------------- | ------------- | ------------- |
 | [![Master Build Status](https://travis-ci.org/52North/SOS.png?branch=master)](https://travis-ci.org/52North/SOS) | [![Develop Build Status](https://travis-ci.org/52North/SOS.png?branch=develop)](https://travis-ci.org/52North/SOS) | [![OpenHUB](https://www.openhub.net/p/SensorObservationService/widgets/project_thin_badge.gif)](https://www.openhub.net/p/SensorObservationService) |
 
-## Introduction
+## Description
 
 **Standardized, web-based upload and download of sensor data and sensor metadata**
 
 *The 52°North Sensor Observation Service (SOS) provides an interoperable web-based interface for inserting and querying sensor data and sensor descriptions. It aggregates observations from live in-situ sensors as well as historical data sets (time series data).*
-
-## Description
 
 The 52°North SOS is a reference implementation of the
 [OGC Sensor Observation Service specification (version 2.0)](https://portal.opengeospatial.org/files/?artifact_id=47599), an interoperable interface for publishing and querying sensor data and metadata. 

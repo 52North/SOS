@@ -145,7 +145,7 @@ A link to the contributors license agreement and further explanations are availa
   </tr>
   <tr>
     <td align="center" style="padding:3px;width:30%;">
-        <a target="_blank" href="http://inspire.ec.europa.eu"><img alt="INSPIRE" align="middle" width="60" src="https://raw.githubusercontent.com/52North/SOS/developp/spring/views/src/main/webapp/static/images/funding/inspire-logo.jpg" /></a>
+        <a target="_blank" href="http://inspire.ec.europa.eu"><img alt="INSPIRE" align="middle" width="60" src="https://raw.githubusercontent.com/52North/SOS/develop/spring/views/src/main/webapp/static/images/funding/inspire-logo.jpg" /></a>
         <a target="_blank" href="http://ec.europa.eu/isa/"><img alt="ISA" align="middle" width="60" src="https://raw.githubusercontent.com/52North/SOS/develop/spring/views/src/main/webapp/static/images/funding/ISALogo.png" /></a>
         <a target="_blank" href="http://ec.europa.eu/isa/actions/01-trusted-information-exchange/1-17action_en.htm"><img alt="ARE3NA" align="middle" width="60" src="https://raw.githubusercontent.com/52North/SOS/develop/spring/views/src/main/webapp/static/images/funding/ARe3NA.png"/>"/></a>
     </td>

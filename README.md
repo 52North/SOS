@@ -121,6 +121,7 @@ A link to the contributors license agreement and further explanations are availa
     <td align="center" style="width:25%;"><a target="_blank" href="http://www.zgis.at"><img alt="ZIGS"  align="middle" width="128" src="https://raw.githubusercontent.com/52North/SOS/develop/spring/views/src/main/webapp/static/images/contribution/UniSalzburgZGIS_1.jpg"/></a></td>
     <td align="center" style="width:25%;"><a href="http://52north.org/about/licensing/cla-guidelines">Your logo?!<br/>Get involved!</a></td>
     <td align="center" style="width:25%;"><img alt="Placeholder" align="middle" width="85" src="https://raw.githubusercontent.com/52North/SOS/develop/spring/views/src/main/webapp/static/images/contribution/placeholder.png"/></td>
+    <td align="center" style="width:25%;"><img alt="Placeholder" align="middle" width="85" src="https://raw.githubusercontent.com/52North/SOS/develop/spring/views/src/main/webapp/static/images/contribution/placeholder.png"/></td>
   </tr>
 </table>
 

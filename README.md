@@ -147,7 +147,7 @@ A link to the contributors license agreement and further explanations are availa
     <td align="center" style="padding:3px;width:30%;">
         <a target="_blank" href="http://inspire.ec.europa.eu"><img alt="INSPIRE" align="middle" width="60" src="https://raw.githubusercontent.com/52North/SOS/develop/spring/views/src/main/webapp/static/images/funding/inspire-logo.jpg" /></a>
         <a target="_blank" href="http://ec.europa.eu/isa/"><img alt="ISA" align="middle" width="60" src="https://raw.githubusercontent.com/52North/SOS/develop/spring/views/src/main/webapp/static/images/funding/ISALogo.png" /></a>
-        <a target="_blank" href="http://ec.europa.eu/isa/actions/01-trusted-information-exchange/1-17action_en.htm"><img alt="ARE3NA" align="middle" width="60" src="https://raw.githubusercontent.com/52North/SOS/develop/spring/views/src/main/webapp/static/images/funding/ARe3NA.png"/>"/></a>
+        <a target="_blank" href="http://ec.europa.eu/isa/actions/01-trusted-information-exchange/1-17action_en.htm"><img alt="ARE3NA" align="middle" width="60" src="https://raw.githubusercontent.com/52North/SOS/develop/spring/views/src/main/webapp/static/images/funding/ARe3NA.png"/></a>
     </td>
     <td style="padding:3px;width:70%;">The enhancements to make the 52&deg;North SOS an <a target="_blank" href="http://inspire.ec.europa.eu/">INSPIRE</a> compliant Download Service were funded by the <a target="_blank" href="http://ec.europa.eu/dgs/jrc/">JRC</a> under the <a target="_blank" href="http://ec.europa.eu/isa/">ISA</a> Programme's Action 1.17: A Reusable INSPIRE Reference Platform (<a target="_blank" href="http://ec.europa.eu/isa/actions/01-trusted-information-exchange/1-17action_en.htm">ARE3NA</a>).</td>
   </tr>

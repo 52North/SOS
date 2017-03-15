@@ -229,6 +229,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
      *             If an error occurs
      */
     private XmlObject createMeasurementTimeseries(OmObservation sosObservation) throws OwsExceptionReport {
+        // FIXME duplicate code see createMeasurementTimeseries(AbstractObservationValue)
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();
         measurementTimeseries.setId("timeseries." + sosObservation.getObservationID());
@@ -388,6 +389,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
     private XmlObject createMeasurementTimeseries(AbstractObservationValue<?> observationValue)
             throws OwsExceptionReport {
+        // FIXME duplicate code see createMeasurementTimeseries(OmObservation)
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();
         measurementTimeseries.setId("timeseries." + observationValue.getObservationID());

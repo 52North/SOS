@@ -124,20 +124,21 @@ public class WmlTVPEncoderv20Test {
         TVPDefaultMetadataPropertyType defaultPointMetadata = ((MeasurementTimeseriesDocument)encodedElement).getTimeseries().getDefaultPointMetadataArray(0);
         DefaultTVPMeasurementMetadataDocument tvpMeasurementMetadataDocument = DefaultTVPMeasurementMetadataDocument.Factory.parse(defaultPointMetadata.xmlText());
         ReferenceType interpolationType = tvpMeasurementMetadataDocument.getDefaultTVPMeasurementMetadata().getInterpolationType();
-        Assert.assertThat(interpolationType.getHref(), Is.is(type.getIdentifier()));
-        Assert.assertThat(interpolationType.getTitle(), Is.is(type.getTitle()));
+        Assert.assertThat(interpolationType.getHref(), Is.is("http://www.opengis.net/def/waterml/2.0/interpolationType/MinPrec"));
+        Assert.assertThat(interpolationType.getTitle(), Is.is("MinPrec"));
     }
-    
+
     @Test
     public void shouldEncodeInterpolationTypeContinuousAsDefault() throws OwsExceptionReport, XmlException {
-        final InterpolationType type = WaterMLConstants.InterpolationType.Continuous;
         XmlObject encodedElement = encoder.encode(mv);
 
         TVPDefaultMetadataPropertyType defaultPointMetadata = ((MeasurementTimeseriesDocument)encodedElement).getTimeseries().getDefaultPointMetadataArray(0);
         DefaultTVPMeasurementMetadataDocument tvpMeasurementMetadataDocument = DefaultTVPMeasurementMetadataDocument.Factory.parse(defaultPointMetadata.xmlText());
         ReferenceType interpolationType = tvpMeasurementMetadataDocument.getDefaultTVPMeasurementMetadata().getInterpolationType();
-        Assert.assertThat(interpolationType.getHref(), Is.is(type.getIdentifier()));
-        Assert.assertThat(interpolationType.getTitle(), Is.is(type.getTitle()));
+        Assert.assertThat(interpolationType.getHref(), Is.is("http://www.opengis.net/def/waterml/2.0/interpolationType/Continuous"));
+        Assert.assertThat(interpolationType.getTitle(), Is.is("Continuous"));
     }
+
+    // TODO add tests für sosObservation or remove duplicate code in WmlTVPEncoderv20
 
 }

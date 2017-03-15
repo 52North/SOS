@@ -114,11 +114,11 @@ public interface WaterMLConstants {
         Statistical;
 
         public String getIdentifier() {
-            return "http://www.opengis.net/def/waterml/2.0/interpolationType/" + this.name();
+            return "http://www.opengis.net/def/waterml/2.0/interpolationType/" + this.toString();
         }
 
         public String getTitle() {
-            return this.name();
+            return this.toString();
         }
     }
 

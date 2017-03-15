@@ -56,8 +56,6 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.waterml.DefaultPointMetadata;
-import org.n52.sos.ogc.waterml.DefaultTVPMeasurementMetadata;
 import org.n52.sos.ogc.waterml.MeasurementTimeseriesMetadata;
 import org.n52.sos.ogc.waterml.TimeseriesMetadata;
 import org.n52.sos.ogc.waterml.WaterMLConstants.InterpolationType;
@@ -251,10 +249,23 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                 DefaultTVPMeasurementMetadataDocument.Factory.newInstance();
         TVPMeasurementMetadataType defaultTVPMeasurementMetadata =
                 xbDefMeasureMetaComponent.addNewDefaultTVPMeasurementMetadata();
-        defaultTVPMeasurementMetadata.addNewInterpolationType()
-                .setHref("http://www.opengis.net/def/timeseriesType/WaterML/2.0/continuous");
 
-        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle("Instantaneous");
+        // Default value
+        InterpolationType interpolationType = InterpolationType.Continuous;
+        if (sosObservation.isSetValue() &&
+                sosObservation.getValue().isSetValue() &&
+                sosObservation.getValue().getValue().getClass().isAssignableFrom(TVPValue.class) &&
+                ((TVPValue)sosObservation.getValue().getValue()).isSetDefaultPointMetadata() &&
+                ((TVPValue)sosObservation.getValue().getValue()).getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata() &&
+                ((TVPValue)sosObservation.getValue().getValue()).getDefaultPointMetadata()
+                    .getDefaultTVPMeasurementMetadata().isSetInterpolationType()) {
+            interpolationType = ((TVPValue)sosObservation.getValue().getValue()).getDefaultPointMetadata()
+                    .getDefaultTVPMeasurementMetadata().getInterpolationtype();
+        }
+
+        defaultTVPMeasurementMetadata.addNewInterpolationType().setHref(interpolationType.getIdentifier());
+        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType()
+            .setTitle(interpolationType.getTitle());
         String unit = null;
         if (sosObservation.getValue() instanceof SingleObservationValue) {
             SingleObservationValue<?> singleObservationValue =

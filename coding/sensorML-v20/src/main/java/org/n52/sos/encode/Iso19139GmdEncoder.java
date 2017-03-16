@@ -32,6 +32,7 @@ import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 import static org.n52.sos.util.CollectionHelper.union;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -949,8 +950,8 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
                     if (verticalExtent.isInstance()) {
                         Nillable<EXVerticalExtent> nillable = verticalExtent.getInstance();
                         if (nillable.isPresent()) {
-                            XmlObject xml = encode(nillable.get());
-                            if (xml != null && xml instanceof AbstractDatumType) {
+                            XmlObject xml = encodeEXVerticalExtent(nillable.get(), new EnumMap<HelperValues, String>(HelperValues.class));
+                            if (xml != null && xml instanceof EXVerticalExtentType) {
                                 exvept.setEXVerticalExtent((EXVerticalExtentType) xml);
                             } else {
                                 exvept.setNil();

@@ -26,9 +26,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.iso.gco;
+package org.n52.sos.iso.gmd;
 
-import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.ogc.DefaultEncoding;
 
 import com.google.common.base.Strings;

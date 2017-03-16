@@ -2,10 +2,14 @@ package org.n52.sos.ogc.gml;
 
 import com.google.common.base.Strings;
 
-public class Definition extends AbstractGML {
+public abstract class Definition extends DefinitionBase {
 
     private static final long serialVersionUID = -1766983518556023433L;
     private String remarks;
+
+    public Definition(CodeWithAuthority identifier) {
+        super(identifier);
+    }
 
     /**
      * @return the remarks
@@ -21,7 +25,7 @@ public class Definition extends AbstractGML {
         this.remarks = remarks;
     }
     
-    public boolean hasRemorks() {
+    public boolean hasRemarks() {
         return !Strings.isNullOrEmpty(getRemarks());
     }
 }

@@ -29,7 +29,7 @@
 package org.n52.sos.encode;
 
 import org.isotc211.x2005.gco.AbstractObjectType;
-import org.n52.sos.iso.gco.AbstractObject;
+import org.n52.sos.iso.gmd.AbstractObject;
 
 public abstract class AbstractIso19139GcoEncoder extends AbstractXmlEncoder<Object> {
     

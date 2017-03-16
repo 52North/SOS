@@ -3,28 +3,32 @@ package org.n52.sos.ogc.gml;
 import java.util.ArrayList;
 import java.util.List;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.w3c.xlink.Referenceable;
+
+import com.google.common.collect.Lists;
 
 public abstract class AbstractCRS extends IdentifiedObject {
 
     private static final long serialVersionUID = 2034560874264953187L;
     /* 0..* */
-    private List<DomainOfValidity> domainOfValidity = new ArrayList<>();
+    private List<Referenceable<DomainOfValidity>> domainOfValidity = new ArrayList<>();
     /* 1..* */
     private List<String> scope = new ArrayList<>();
     
-    public AbstractCRS(String scope) {
-        addScope(scope);
+    public AbstractCRS(CodeWithAuthority identifier, String scope) {
+        this(identifier, Lists.newArrayList(scope));
     }
     
-    public AbstractCRS(List<String> scope) {
+    public AbstractCRS(CodeWithAuthority identifier, List<String> scope) {
+        super(identifier);
         setScope(scope);
     }
     
-    public List<DomainOfValidity> getDomainOfValidity() {
+    public List<Referenceable<DomainOfValidity>> getDomainOfValidity() {
         return domainOfValidity;
     }
 
-    public AbstractCRS setDomainOfValidity(List<DomainOfValidity> domainOfValidity) {
+    public AbstractCRS setDomainOfValidity(List<Referenceable<DomainOfValidity>> domainOfValidity) {
         this.domainOfValidity.clear();
         if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(domainOfValidity)) {
             this.domainOfValidity.addAll(domainOfValidity);
@@ -32,12 +36,12 @@ public abstract class AbstractCRS extends IdentifiedObject {
         return this;
     }
     
-    public AbstractCRS addDomainOfValidity(List<DomainOfValidity> domainOfValidity) {
+    public AbstractCRS addDomainOfValidity(List<Referenceable<DomainOfValidity>> domainOfValidity) {
         this.domainOfValidity.addAll(domainOfValidity);
         return this;
     }
     
-    public AbstractCRS addDomainOfValidity(DomainOfValidity domainOfValidity) {
+    public AbstractCRS addDomainOfValidity(Referenceable<DomainOfValidity> domainOfValidity) {
         this.domainOfValidity.add(domainOfValidity);
         return this;
     }
@@ -71,4 +75,5 @@ public abstract class AbstractCRS extends IdentifiedObject {
     public boolean hasScope() {
         return !CollectionHelper.nullEmptyOrContainsOnlyNulls(getScope());
     }
+    
 }

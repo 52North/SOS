@@ -4,12 +4,12 @@ import java.util.List;
 
 public class VerticalDatum extends AbstractDatum {
 
-    public VerticalDatum(String scope) {
-        super(scope);
+    public VerticalDatum(CodeWithAuthority identifier, String scope) {
+        super(identifier, scope);
     }
     
-    public VerticalDatum(List<String> scope) {
-        super(scope);
+    public VerticalDatum(CodeWithAuthority identifier, List<String> scope) {
+        super(identifier, scope);
     }
 
 }

@@ -1,82 +1,103 @@
 package org.n52.sos.ds.hibernate.entities.feature;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import org.n52.sos.iso.gmd.CiResponsibleParty;
-import org.n52.sos.ogc.gml.VerticalDatum;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.entities.feature.gmd.ResponsiblePartyEntity;
+import org.n52.sos.ds.hibernate.entities.feature.gml.VerticalDatumEntity;
 
 public abstract class AbstractMonitoringFeature extends FeatureOfInterest {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
-    /* 0..* */
-    private List<CiResponsibleParty> relatedParty = new ArrayList<>();
-    /* 0..* */
-    private List<VerticalDatum> verticalDatum = new ArrayList<>();
     
-    public List<CiResponsibleParty> getRelatedParty() {
-        return relatedParty;
-    }
+    private MonitoringPointContent content;
     
-    public AbstractMonitoringFeature setRelatedParty(List<CiResponsibleParty> relatedParty) {
-        this.relatedParty.clear();
-        if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(relatedParty)) {
-            this.relatedParty.addAll(relatedParty);
-        }
-        return this;
-    }
-    
-    public AbstractMonitoringFeature addRelatedParty(List<CiResponsibleParty> relatedParty) {
-        if (relatedParty != null) {
-            this.relatedParty.addAll(relatedParty);
-        }
-        return this;
-    }
-    
-    public AbstractMonitoringFeature addRelatedParty(CiResponsibleParty relatedParty) {
-        if (relatedParty != null) {
-            this.relatedParty.add(relatedParty);
-        }
-        return this;
+    /**
+     * @return the content
+     */
+    public MonitoringPointContent getContent() {
+        return content;
     }
 
+    /**
+     * @param content the content to set
+     */
+    public void setContent(MonitoringPointContent content) {
+        this.content = content;
+    }
+    
+    public boolean isSetContent() {
+        return getContent() != null;
+    }
+
+    public List<ResponsiblePartyEntity> getRelatedParty() {
+        if (isSetContent()) {
+            return getContent().getRelatedParty();
+        }
+        return Collections.emptyList();
+    }
+    
+    public AbstractMonitoringFeature setRelatedParty(Collection<ResponsiblePartyEntity> relatedParty) {
+        if (!isSetContent()) {
+            setContent(new MonitoringPointContent());
+        }
+        getContent().setRelatedParty(relatedParty);
+        return this;
+    }
+    
+    public AbstractMonitoringFeature addRelatedParty(Collection<ResponsiblePartyEntity> relatedParty) {
+        if (!isSetContent()) {
+            setContent(new MonitoringPointContent());
+        }
+        getContent().addRelatedParty(relatedParty);
+        return this;
+    }
+    
+    public AbstractMonitoringFeature addRelatedParty(ResponsiblePartyEntity relatedParty) {
+        if (!isSetContent()) {
+            setContent(new MonitoringPointContent());
+        }
+        getContent().addRelatedParty(relatedParty);
+        return this;
+    }
+    
     public boolean hasRelatedParty() {
-        return !CollectionHelper.nullEmptyOrContainsOnlyNulls(getRelatedParty());
+        return isSetContent() ? getContent().hasRelatedParty() : false;
     }
     
-    public List<VerticalDatum> getVerticalDatum() {
-        return verticalDatum;
-    }
-    
-    public AbstractMonitoringFeature setVerticalDatum(List<VerticalDatum> verticalDatum) {
-        this.verticalDatum.clear();
-        if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(verticalDatum)) {
-            this.verticalDatum.addAll(verticalDatum);
+    public List<VerticalDatumEntity> getVerticalDatum() {
+        if (isSetContent()) {
+            return getContent().getVerticalDatum();
         }
+        return Collections.emptyList();
+    }
+    
+    public AbstractMonitoringFeature setVerticalDatum(Collection<VerticalDatumEntity> verticalDatum) {
+        if (!isSetContent()) {
+            setContent(new MonitoringPointContent());
+        }
+        getContent().setVerticalDatum(verticalDatum);
         return this;
     }
     
-    public AbstractMonitoringFeature addVerticalDatum(List<VerticalDatum> verticalDatum) {
-        if (verticalDatum != null) {
-            this.verticalDatum.addAll(verticalDatum);
+    public AbstractMonitoringFeature addVerticalDatum(Collection<VerticalDatumEntity> verticalDatum) {
+        if (!isSetContent()) {
+            setContent(new MonitoringPointContent());
         }
+        getContent().addVerticalDatum(verticalDatum);
         return this;
     }
     
-    public AbstractMonitoringFeature addVerticalDatum(VerticalDatum verticalDatum) {
-        if (verticalDatum != null) {
-            this.verticalDatum.add(verticalDatum);
+    public AbstractMonitoringFeature addVerticalDatum(VerticalDatumEntity verticalDatum) {
+        if (!isSetContent()) {
+            setContent(new MonitoringPointContent());
         }
+        getContent().addVerticalDatum(verticalDatum);
         return this;
     }
-    
     
     public boolean hasVerticalDatum() {
-        return !CollectionHelper.nullEmptyOrContainsOnlyNulls(getVerticalDatum());
+        return isSetContent() ? getContent().hasVerticalDatum() : false;
     }
-
 }

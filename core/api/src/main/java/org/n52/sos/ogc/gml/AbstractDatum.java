@@ -5,12 +5,16 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.w3c.Nillable;
+import org.n52.sos.w3c.xlink.Referenceable;
+
+import com.google.common.collect.Lists;
 
 public abstract class AbstractDatum extends IdentifiedObject {
     
     private static final long serialVersionUID = -4804549832513290875L;
     /* 0..1 */
-    private DomainOfValidity domainOfValidity;
+    private Referenceable<DomainOfValidity> domainOfValidity;
     /* 1..* */
     private List<String> scope = new ArrayList<>();
     /* 0..1 */
@@ -18,20 +22,30 @@ public abstract class AbstractDatum extends IdentifiedObject {
     /* 0..1 */
     private DateTime realizationEpoch;
     
-    public AbstractDatum(String scope) {
-        addScope(scope);
+    public AbstractDatum(CodeWithAuthority identifier, String scope) {
+        this(identifier, Lists.newArrayList(scope));
     }
     
-    public AbstractDatum(List<String> scope) {
+    public AbstractDatum(CodeWithAuthority identifier, List<String> scope) {
+        super(identifier);
         setScope(scope);
     }
 
-    public DomainOfValidity getDomainOfValidity() {
+    public Referenceable<DomainOfValidity> getDomainOfValidity() {
         return domainOfValidity;
     }
 
-    public AbstractDatum setDomainOfValidity(DomainOfValidity domainOfValidity) {
+    public AbstractDatum setDomainOfValidity(Referenceable<DomainOfValidity> domainOfValidity) {
         this.domainOfValidity = domainOfValidity;
+        return this;
+    }
+    
+    public AbstractDatum setDomainOfValidity(DomainOfValidity domainOfValidity) {
+        if (domainOfValidity != null) {
+            this.domainOfValidity = Referenceable.of(domainOfValidity);
+        } else {
+            this.domainOfValidity = Referenceable.of(Nillable.<DomainOfValidity>missing());
+        }
         return this;
     }
     

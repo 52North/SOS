@@ -40,7 +40,7 @@ import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameterAdder;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.SosHelper;
 
@@ -58,29 +58,29 @@ public abstract class AbstractFeatureOfInerestCreator<T extends FeatureOfInteres
             }
             final AbstractFeature absFeat = getFeatureType(identifier);
             addNameAndDescription(i18n, f, absFeat, featureOfInterestDAO);
-            if (absFeat instanceof SamplingFeature) {
-                SamplingFeature sampFeat = (SamplingFeature) absFeat;
-                sampFeat.setGeometry(createGeometryFrom(f, s));
-                sampFeat.setFeatureType(f.getFeatureOfInterestType().getFeatureOfInterestType());
-                sampFeat.setUrl(f.getUrl());
+            if (absFeat instanceof AbstractSamplingFeature) {
+                AbstractSamplingFeature absSampFeat = (AbstractSamplingFeature) absFeat;
+                absSampFeat.setGeometry(createGeometryFrom(f, s));
+                absSampFeat.setFeatureType(f.getFeatureOfInterestType().getFeatureOfInterestType());
+                absSampFeat.setUrl(f.getUrl());
                 if (f.isSetDescriptionXml()) {
-                    sampFeat.setXmlDescription(f.getDescriptionXml());
+                    absSampFeat.setXmlDescription(f.getDescriptionXml());
                 }
-                addParameter(sampFeat, f);
+                addParameter(absSampFeat, f);
                 final Set<AbstractFeatureOfInterest> parentFeatures = f.getParents();
                 if (parentFeatures != null && !parentFeatures.isEmpty()) {
                     final List<AbstractFeature> sampledFeatures = new ArrayList<AbstractFeature>(parentFeatures.size());
                     for (final AbstractFeatureOfInterest parentFeature : parentFeatures) {
                         sampledFeatures.add(parentFeature.accept(new HibernateFeatureVisitor(i18n, version, getStorageEPSG(), getStorage3DEPSG(), s)));
                     }
-                    sampFeat.setSampledFeatures(sampledFeatures);
+                    absSampFeat.setSampledFeatures(sampledFeatures);
                 }
             }
             return absFeat;
         }
         
-        protected void addParameter(SamplingFeature sampFeat,FeatureOfInterest f) throws OwsExceptionReport {
-            new FeatureParameterAdder(sampFeat, f).add();
+        protected void addParameter(AbstractSamplingFeature absSampFeat,FeatureOfInterest f) throws OwsExceptionReport {
+            new FeatureParameterAdder(absSampFeat, f).add();
         }
         
         protected abstract AbstractFeature getFeatureType(CodeWithAuthority identifier);

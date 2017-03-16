@@ -28,9 +28,10 @@
  */
 package org.n52.sos.iso.gmd;
 
-import org.n52.sos.iso.gco.AbtractGmd;
 import org.n52.sos.iso.gco.Role;
+import org.n52.sos.w3c.Nillable;
 import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.n52.sos.w3c.xlink.SimpleAttrs;
 
 /**
@@ -38,7 +39,7 @@ import org.n52.sos.w3c.xlink.SimpleAttrs;
  * @since
  *
  */
-public class CiResponsibleParty extends AbtractGmd implements AttributeSimpleAttrs {
+public class CiResponsibleParty extends AbstractObject implements AttributeSimpleAttrs {
 
     private SimpleAttrs simpleAttrs;
 
@@ -48,15 +49,20 @@ public class CiResponsibleParty extends AbtractGmd implements AttributeSimpleAtt
 
     private String positionName;
     
-    private CiContact contactInfo;
+    private Referenceable<CiContact> contactInfo;
     
-    private Role role;
+    private Nillable<Role> role;
 
     public CiResponsibleParty(SimpleAttrs simpleAttrs) {
         this.simpleAttrs = simpleAttrs;
+        this.role = Nillable.<Role>missing();
     }
 
     public CiResponsibleParty(Role role) {
+        this.role = Nillable.<Role>of(role);
+    }
+
+    public CiResponsibleParty(Nillable<Role> role) {
         this.role = role;
     }
 
@@ -118,24 +124,57 @@ public class CiResponsibleParty extends AbtractGmd implements AttributeSimpleAtt
      * @return the contactInfo
      */
     public CiContact getContactInfo() {
+        if (isSetContactInfo()) {
+            return contactInfo.getInstance().get();
+        }
+        return null;
+    }
+    
+    /**
+     * @return the contactInfo
+     */
+    public Referenceable<CiContact> getContactInfoReferencable() {
         return contactInfo;
     }
 
     /**
      * @param contactInfo the contactInfo to set
+     * @return 
      */
-    public void setContactInfo(CiContact contactInfo) {
+    public CiResponsibleParty setContactInfo(CiContact contactInfo) {
+        if (contactInfo != null) {
+            this.contactInfo = Referenceable.of(contactInfo);
+        }
+        return this;
+    }
+    
+    /**
+     * @param contactInfo the contactInfo to set
+     * @return 
+     */
+    public CiResponsibleParty setContactInfo(Referenceable<CiContact> contactInfo) {
         this.contactInfo = contactInfo;
+        return this;
     }
 
     public boolean isSetContactInfo() {
-        return getContactInfo() != null;
+        return contactInfo != null && contactInfo.isInstance() && contactInfo.getInstance().isPresent();
     }
 
     /**
      * @return the role
      */
     public Role getRole() {
+        if (role.isPresent()) {
+            return role.get();
+        }
+        return new Role("");
+    }
+    
+    /**
+     * @return the role
+     */
+    public Nillable<Role> getRoleNillable() {
         return role;
     }
     

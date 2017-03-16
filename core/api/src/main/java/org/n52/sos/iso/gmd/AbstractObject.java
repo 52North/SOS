@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.iso.gco;
+package org.n52.sos.iso.gmd;
 
 public abstract class AbstractObject extends AbtractGmd {
 

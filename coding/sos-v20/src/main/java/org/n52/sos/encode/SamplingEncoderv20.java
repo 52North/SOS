@@ -45,6 +45,7 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -193,7 +194,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         throw new UnsupportedEncoderInputException(this, absFeature);
     }
 
-    protected void addSampledFeatures(SFSamplingFeatureType sfsft, SamplingFeature sampFeat) throws OwsExceptionReport {
+    protected void addSampledFeatures(SFSamplingFeatureType sfsft, AbstractSamplingFeature sampFeat) throws OwsExceptionReport {
         if (sampFeat.isSetSampledFeatures()) {
             Map<HelperValues, String> additionalValues = Maps.newHashMap();
             additionalValues.put(HelperValues.REFERENCED, null);
@@ -207,7 +208,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         }
     }
 
-    protected void addFeatureType(SFSamplingFeatureType sfsft, SamplingFeature sampFeat) {
+    protected void addFeatureType(SFSamplingFeatureType sfsft, AbstractSamplingFeature sampFeat) {
         if (sampFeat.isSetFeatureType() && !OGCConstants.UNKNOWN.equals(sampFeat.getFeatureType())) {
             sfsft.addNewType().setHref(sampFeat.getFeatureType());
         } else {
@@ -227,7 +228,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         }
     }
 
-    private void encodeShape(final ShapeType xbShape, final SamplingFeature sampFeat) throws OwsExceptionReport {
+    private void encodeShape(final ShapeType xbShape, final AbstractSamplingFeature sampFeat) throws OwsExceptionReport {
         final Encoder<XmlObject, Geometry> encoder = CodingRepository.getInstance()
                 .getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sampFeat.getGeometry()));
         if (encoder != null) {
@@ -247,7 +248,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         }
     }
 
-    protected void addParameter(final SFSamplingFeatureType xbSampFeature, final SamplingFeature sampFeat)
+    protected void addParameter(final SFSamplingFeatureType xbSampFeature, final AbstractSamplingFeature sampFeat)
             throws OwsExceptionReport {
         if (sampFeat.isSetParameter()) {
             for (final NamedValue<?> namedValuePair : sampFeat.getParameters()) {
@@ -259,7 +260,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         }
     }
 
-    private void addNameDescription(SFSamplingFeatureType xbSamplingFeature, SamplingFeature samplingFeature)
+    private void addNameDescription(SFSamplingFeatureType xbSamplingFeature, AbstractSamplingFeature samplingFeature)
             throws OwsExceptionReport {
         addName(xbSamplingFeature, samplingFeature);
         addDescription(xbSamplingFeature, samplingFeature);
@@ -302,7 +303,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         return featurePropertyType;
     }
 
-    private void setMetaDataProperty(SFSpatialSamplingFeatureType sfssft, SamplingFeature sampFeat) throws OwsExceptionReport {
+    private void setMetaDataProperty(SFSpatialSamplingFeatureType sfssft, AbstractSamplingFeature sampFeat) throws OwsExceptionReport {
         if (sampFeat.isSetMetaDataProperty()) {
             for (AbstractMetaData abstractMetaData : sampFeat.getMetaDataProperty()) {
                 XmlObject encodeObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, abstractMetaData);

@@ -1,39 +1,17 @@
 package org.n52.sos.iso.gmd;
 
-import org.n52.sos.iso.gco.AbstractObject;
 import org.n52.sos.w3c.Nillable;
-import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
-import org.n52.sos.w3c.xlink.SimpleAttrs;
+import org.n52.sos.w3c.xlink.Referenceable;
 
-public class EXVerticalExtent extends AbstractObject implements AttributeSimpleAttrs {
+public class EXVerticalExtent extends AbstractObject{
     
-    private SimpleAttrs simpleAttrs;
     /* 1..1 */
     private Nillable<Double> minimumValue;
     /* 1..1 */
     private Nillable<Double> maximumValue;
     /* 1..1 */
-    private Nillable<ScCRS> verticalCRS;
+    private Referenceable<ScCRS> verticalCRS;
     
-    public EXVerticalExtent() {
-        super();
-    }
-
-    @Override
-    public void setSimpleAttrs(SimpleAttrs simpleAttrs) {
-       this.simpleAttrs = simpleAttrs;
-    }
-
-    @Override
-    public SimpleAttrs getSimpleAttrs() {
-        return simpleAttrs;
-    }
-
-    @Override
-    public boolean isSetSimpleAttrs() {
-        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
-    }
-
     /**
      * @return the minimumValue
      */
@@ -65,14 +43,14 @@ public class EXVerticalExtent extends AbstractObject implements AttributeSimpleA
     /**
      * @return the verticalCRS
      */
-    public Nillable<ScCRS> getVerticalCRS() {
+    public Referenceable<ScCRS> getVerticalCRS() {
         return verticalCRS;
     }
 
     /**
      * @param verticalCRS the verticalCRS to set
      */
-    public void setVerticalCRS(Nillable<ScCRS> verticalCRS) {
+    public void setVerticalCRS(Referenceable<ScCRS> verticalCRS) {
         this.verticalCRS = verticalCRS;
     }
 }

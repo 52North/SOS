@@ -41,12 +41,12 @@ import org.n52.sos.ogc.om.values.MultiValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.wml.DefaultPointMetadata;
-import org.n52.sos.ogc.wml.DefaultTVPMeasurementMetadata;
-import org.n52.sos.ogc.wml.MeasurementTimeseriesMetadata;
-import org.n52.sos.ogc.wml.Metadata;
-import org.n52.sos.ogc.wml.WaterMLConstants;
-import org.n52.sos.ogc.wml.WaterMLConstants.InterpolationType;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.DefaultTVPMeasurementMetadata;
+import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
+import org.n52.sos.ogc.series.wml.WaterMLConstants.InterpolationType;
 import org.n52.sos.util.CollectionHelper;
 
 import net.opengis.gml.x32.ReferenceType;

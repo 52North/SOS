@@ -32,8 +32,8 @@ import java.io.Serializable;
 
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.wml.DefaultPointMetadata;
-import org.n52.sos.ogc.wml.Metadata;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
 
 /**
  * Interface for observation values.

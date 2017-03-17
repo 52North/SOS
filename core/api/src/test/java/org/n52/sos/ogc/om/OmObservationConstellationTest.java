@@ -39,12 +39,12 @@ import org.junit.Test;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sensorML.SensorML;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.DefaultTVPMeasurementMetadata;
+import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.wml.DefaultPointMetadata;
-import org.n52.sos.ogc.wml.DefaultTVPMeasurementMetadata;
-import org.n52.sos.ogc.wml.MeasurementTimeseriesMetadata;
-import org.n52.sos.ogc.wml.Metadata;
-import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 
 public class OmObservationConstellationTest {
 

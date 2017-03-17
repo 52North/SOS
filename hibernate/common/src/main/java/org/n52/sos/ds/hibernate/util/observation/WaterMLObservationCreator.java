@@ -34,7 +34,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObserv
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -78,7 +78,7 @@ public class WaterMLObservationCreator implements AdditionalObservationCreator<S
     public OmObservation create(OmObservation omObservation, Observation<?> observation, Session session)
             throws CodedException {
         create(omObservation, observation);
-        if (observation.getClass().isAssignableFrom(AbstractSeriesObservation.class)) {
+        if (observation instanceof AbstractSeriesObservation) {
             return addWaterMLMetadata(omObservation, ((AbstractSeriesObservation<?>)observation).getSeries(), session);
         }
         return omObservation;
@@ -88,7 +88,7 @@ public class WaterMLObservationCreator implements AdditionalObservationCreator<S
     public OmObservation add(OmObservation omObservation, Observation<?> observation, Session session)
             throws CodedException {
         add(omObservation, observation);
-        if (observation.getClass().isAssignableFrom(AbstractSeriesObservation.class)) {
+        if (observation instanceof AbstractSeriesObservation) {
             return addWaterMLMetadata(omObservation, ((AbstractSeriesObservation<?>)observation).getSeries(), session);
         }
         return omObservation;

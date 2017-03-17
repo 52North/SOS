@@ -34,9 +34,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.wml.DefaultPointMetadata;
-import org.n52.sos.ogc.wml.Metadata;
 import org.n52.sos.util.Constants;
 import org.n52.sos.w3c.Nillable;
 

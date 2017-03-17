@@ -49,10 +49,10 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
 import org.n52.sos.ogc.series.wml.WaterMLConstants;
-import org.n52.sos.ogc.wml.DefaultPointMetadata;
-import org.n52.sos.ogc.wml.MeasurementTimeseriesMetadata;
-import org.n52.sos.ogc.wml.WaterMLConstants.InterpolationType;
+import org.n52.sos.ogc.series.wml.WaterMLConstants.InterpolationType;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.W3CConstants;
 

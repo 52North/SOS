@@ -21,9 +21,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.sos.ogc.wml;
+package org.n52.sos.ogc.series.wml;
 
-import org.n52.sos.ogc.wml.WaterMLConstants.InterpolationType;
+import org.n52.sos.ogc.series.wml.WaterMLConstants.InterpolationType;
 
 /**
  * This class implements the OGC WaterML 2.0 element 

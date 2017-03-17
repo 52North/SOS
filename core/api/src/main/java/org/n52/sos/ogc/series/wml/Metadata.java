@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.sos.ogc.wml;
+package org.n52.sos.ogc.series.wml;
 
 /**
  * This class implements the <a href="https://portal.opengeospatial.org/files/?artifact_id=48531">OGC WaterML 2.0</a> 

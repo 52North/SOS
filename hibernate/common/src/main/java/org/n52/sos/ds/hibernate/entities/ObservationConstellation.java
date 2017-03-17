@@ -37,8 +37,8 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropert
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
-import org.n52.sos.ogc.wml.DefaultPointMetadata;
-import org.n52.sos.ogc.wml.Metadata;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
 
 /**
  * @since 4.0.0

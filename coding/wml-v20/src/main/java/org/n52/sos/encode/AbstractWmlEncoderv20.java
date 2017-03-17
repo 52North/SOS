@@ -67,7 +67,7 @@ import org.n52.sos.ogc.series.wml.WmlMonitoringPoint;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.wml.ObservationProcess;
+import org.n52.sos.ogc.series.wml.ObservationProcess;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;

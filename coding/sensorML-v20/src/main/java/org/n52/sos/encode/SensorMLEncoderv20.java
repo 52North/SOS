@@ -685,6 +685,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                         }
                     }
                 }
+                dot.addNewContacts().setContactList(cl);
             }
         }
         // set documentation

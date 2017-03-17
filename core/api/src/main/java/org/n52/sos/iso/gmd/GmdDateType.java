@@ -28,8 +28,6 @@
  */
 package org.n52.sos.iso.gmd;
 
-import org.n52.sos.iso.gco.AbtractGmd;
-
 /**
  * TODO JavaDoc
  *

@@ -131,9 +131,9 @@ public class ReportObligationRepository {
 	                .setReportingAuthority(getReportingAuthority());
         }
 		throw new NoApplicableCodeException()
-					.at("AQD Repoting Header")
+					.at("AQD Reporting Header")
 					.withMessage(
-							"No AQD Repoting Header set for %s! Please go to the admin interface (Admin -> Settings -> eReporting Header) and configure the AQD Repoting Header!", flow.name());
+							"No AQD Reporting Header set for %s! Please go to the admin interface (Admin -> Settings -> eReporting Header) and configure the AQD Repoting Header!", flow.name());
     }
 
     private void _saveReportingAuthority(RelatedParty relatedParty) {

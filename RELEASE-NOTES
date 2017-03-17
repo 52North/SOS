@@ -32,6 +32,22 @@ RELEASE NOTES
   
   
 
+    Release 52n-sensorweb-sos-4.3.11
+=====================================
+
+  --- New features ---
+  
+    
+  --- Changes ---
+    
+    * Update REST-API version of bundle to 1.9.5
+  
+  --- Fixed issues ---
+
+    * Issue #506: Get HTTP Status 500 - Handler processing failed when install 52North SOS-webapp-4.3.10
+      * Missing c3p0 library
+    * Do not list not published procedure/featureOfInterest/observedProperty in Capabilities (series concept)
+ 
    Release 52n-sensorweb-sos-4.3.10
 =====================================
 

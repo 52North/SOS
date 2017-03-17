@@ -585,7 +585,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
     private boolean checkOfferingValues(final Collection<String> procedures, final SosEnvelope envelopeForOffering, final Set<String> featuresForOffering,
             final Collection<String> responseFormats) {
         return CollectionHelper.isNotEmpty(procedures) && SosEnvelope.isNotNullOrEmpty(envelopeForOffering) && CollectionHelper.isNotEmpty(featuresForOffering)
-                && CollectionHelper.isNotEmpty(responseFormats);
+                && CollectionHelper.isNotEmpty(responseFormats) && CollectionHelper.isNotEmpty(procedures);
     }
 
     /**
@@ -1188,7 +1188,13 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
             procedures.addAll(getCache().getHiddenChildProceduresForOffering(offering));
         }
-        return procedures;
+        Collection<String> published = Sets.newHashSet();
+        for (String procedure : procedures) {
+            if (getCache().getPublishedProcedures().contains(procedure)) {
+                published.add(procedure);
+            }
+        }
+        return published;
     }
 
     private boolean isVersionSos2(final GetCapabilitiesResponse response) {

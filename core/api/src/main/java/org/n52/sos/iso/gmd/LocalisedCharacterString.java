@@ -28,8 +28,6 @@
  */
 package org.n52.sos.iso.gmd;
 
-import org.n52.sos.iso.gco.AbtractGmd;
-
 import com.google.common.base.Strings;
 
 public class LocalisedCharacterString extends AbtractGmd {

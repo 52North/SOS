@@ -64,6 +64,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -72,11 +73,13 @@ import org.n52.sos.ogc.gml.FeatureWith.FeatureWithGeometry;
 import org.n52.sos.ogc.gml.FeatureWith.FeatureWithXmlDescription;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.FeatureOfInterestVisitor;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SfSpecimen;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.WmlMonitoringPoint;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.HTTPStatus;
@@ -464,6 +467,12 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             return persist(feature, value, false);
         }
         
+        @Override
+        public AbstractFeatureOfInterest visit(WmlMonitoringPoint monitoringPoint) throws OwsExceptionReport {
+           throw new NotYetSupportedException(WmlMonitoringPoint.class.getSimpleName());
+//            return null;
+        }
+
         private AbstractFeatureOfInterest persist(AbstractFeatureOfInterest feature, AbstractFeature abstractFeature, boolean add) throws OwsExceptionReport {
             if (add) {
                 dao.addIdentifierNameDescription(abstractFeature, feature, session);
@@ -516,7 +525,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             return value.isSetUnit() ? new UnitDAO().getOrInsertUnit(value.getUnitObject(), session) : null;
         }
 
-        private AbstractFeatureOfInterest getFeatureOfInterest(SamplingFeature value) throws OwsExceptionReport {
+        private AbstractFeatureOfInterest getFeatureOfInterest(AbstractSamplingFeature value) throws OwsExceptionReport {
             final String newId = value.getIdentifierCodeWithAuthority().getValue();
             Geometry geom = null;
             if (value instanceof FeatureWithGeometry) {

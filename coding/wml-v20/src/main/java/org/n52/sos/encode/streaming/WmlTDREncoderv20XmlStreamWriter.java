@@ -33,7 +33,7 @@ import javax.xml.stream.XMLStreamException;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 
 /**
  * Implementation of {@link AbstractOmV20XmlStreamWriter} to write WaterML 2.0

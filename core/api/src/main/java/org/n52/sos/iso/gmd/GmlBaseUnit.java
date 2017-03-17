@@ -28,7 +28,6 @@
  */
 package org.n52.sos.iso.gmd;
 
-import org.n52.sos.iso.gco.AbtractGmd;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.JavaHelper;

@@ -60,7 +60,6 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.wml.ConformanceClassesWML2;
 import org.n52.sos.ogc.wml.MeasurementTimeseriesMetadata;
 import org.n52.sos.ogc.wml.TimeseriesMetadata;
-import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.ogc.wml.WaterMLConstants.InterpolationType;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;

@@ -159,7 +159,11 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
           (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
                   SosConstants.Operations.GetObservation, UVFConstants.CONTENT_TYPE_UVF),
           (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-                  SosConstants.Operations.GetObservation, UVFConstants.CONTENT_TYPE_UVF));
+                  SosConstants.Operations.GetObservation, UVFConstants.CONTENT_TYPE_UVF),
+          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
+                  SosConstants.Operations.GetObservationById, UVFConstants.CONTENT_TYPE_UVF),
+          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                  SosConstants.Operations.GetObservationById, UVFConstants.CONTENT_TYPE_UVF));
     
     private final Set<String> CONFORMANCE_CLASSES = ImmutableSet
             .of("http://www.opengis.net/spec/OMXML/2.0/conf/measurement");

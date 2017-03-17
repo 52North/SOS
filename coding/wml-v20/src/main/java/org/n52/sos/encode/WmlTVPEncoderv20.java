@@ -53,6 +53,7 @@ import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,57 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.iso.gco;
+package org.n52.sos.iso.gmd;
 
-public abstract class AbstractObject extends AbtractGmd {
+import org.n52.sos.ogc.DefaultEncoding;
 
-    private String id;
+import com.google.common.base.Strings;
+
+public abstract class AbtractGmd implements DefaultEncoding<AbtractGmd> {
     
-    private String uuid;
+    private String defaultEncoding = GmdConstants.NS_GMD;
+
+    @Override
+    public String getDefaultElementEncoding() {
+        return defaultEncoding;
+    }
     
-    protected AbstractObject() {
-        
+    @Override
+    public AbtractGmd setDefaultElementEncoding(String defaultEncoding) {
+        this.defaultEncoding = defaultEncoding;
+        return this;
     }
     
-    public AbstractObject(String id, String uuid) {
-        this.id = id;
-        this.uuid = uuid;
+    @Override
+    public boolean isSetDefaultElementEncoding() {
+        return !Strings.isNullOrEmpty(getDefaultElementEncoding());
     }
-
-    /**
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public boolean isSetId() {
-        return id != null && !id.isEmpty();
-    }
-
-    /**
-     * @return the uuid
-     */
-    public String getUuid() {
-        return uuid;
-    }
-
-    /**
-     * @param uuid the uuid to set
-     */
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public boolean isSetUuid() {
-        return uuid != null && !uuid.isEmpty();
-    }
-
 }

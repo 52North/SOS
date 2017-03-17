@@ -31,7 +31,6 @@ package org.n52.sos.iso.gmd;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.n52.sos.iso.gco.AbstractObject;
 import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
 import org.n52.sos.w3c.xlink.SimpleAttrs;
 

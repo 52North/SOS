@@ -252,7 +252,7 @@ public class UVFEncoderTest {
     public void shouldEncodeMeasurementLocationIdAndCoordinates() throws UnsupportedEncoderInputException,
             OwsExceptionReport {
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[7];
-        final String expected = "-foi-identifier51.93503827.6521225 0.000     ";
+        final String expected = "1              51.93503827.6521225 0.000     ";
         
         Assert.assertThat(actual, Is.is(expected));
     }
@@ -329,34 +329,6 @@ public class UVFEncoderTest {
     }
 
     @Test
-    public void shouldThrowNoApplicableCodeExceptionWhenReceivingNotMeasurementObservations() throws 
-            UnsupportedEncoderInputException, OwsExceptionReport {
-        String[] notSupportedTypes = {
-                OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
-                OmConstants.OBS_TYPE_COMPLEX_OBSERVATION,
-                OmConstants.OBS_TYPE_DISCRETE_COVERAGE_OBSERVATION,
-                OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
-                OmConstants.OBS_TYPE_OBSERVATION,
-                OmConstants.OBS_TYPE_POINT_COVERAGE_OBSERVATION,
-                OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION,
-                OmConstants.OBS_TYPE_TEXT_OBSERVATION,
-                OmConstants.OBS_TYPE_TIME_SERIES_OBSERVATION,
-                OmConstants.OBS_TYPE_TRUTH_OBSERVATION,
-                OmConstants.OBS_TYPE_UNKNOWN
-        };
-        for (String notSupportedType : notSupportedTypes) {
-            responseToEncode.getObservationCollection().get(0).getObservationConstellation()
-                .setObservationType(notSupportedType);
-            
-            exp.expect(NoApplicableCodeException.class);
-            exp.expectMessage("Observation Type '" + notSupportedType + "' not supported by this encoder '" + 
-                    encoder.getClass().getName() + "'.");
-
-            encoder.encode(responseToEncode);
-        }
-    }
-
-    @Test
     public void shouldNotEncodeUnitOfMeasurementForCountObservations() throws UnsupportedEncoderInputException,
             OwsExceptionReport {
         responseToEncode.getObservationCollection().get(0).getObservationConstellation().
@@ -392,39 +364,6 @@ public class UVFEncoderTest {
             "1970 1970";
 
         Assert.assertThat(Arrays.asList(actual), IsNot.not(CoreMatchers.hasItem(expected)));
-    }
-
-    @Test
-    public void shouldThrowExceptionOnStreamingValue() throws UnsupportedEncoderInputException,
-            OwsExceptionReport {
-        ObservationValue<?> mv = new StreamingValue<Object>() {
-
-            private static final long serialVersionUID = 42L;
-
-            public Object nextEntity() throws OwsExceptionReport { return null; }
-
-            protected void queryTimes() {
-                setPhenomenonTime(new TimeInstant(new Date(UTC_TIMESTAMP_1)));
-            }
-
-            protected void queryUnit() {}
-
-            public TimeValuePair nextValue() throws OwsExceptionReport { return null; }
-
-            public void mergeValue(StreamingValue<Object> streamingValue) {}
-
-            public boolean hasNextValue() throws OwsExceptionReport { return false; }
-
-            public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
-                return null;
-            }
-        };
-        responseToEncode.getObservationCollection().get(0).setValue(mv);
-        
-        exp.expect(NoApplicableCodeException.class);
-        exp.expectMessage("Support for 'org.n52.svalbard.encode.uvf.UVFEncoderTest$1' not yet implemented.");
-
-        encoder.encode(responseToEncode);
     }
     
     @Test

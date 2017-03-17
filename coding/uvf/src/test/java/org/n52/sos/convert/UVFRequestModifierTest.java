@@ -21,14 +21,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.sos.converter;
+package org.n52.sos.convert;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -37,6 +37,7 @@ import org.junit.rules.ExpectedException;
 import org.n52.schetland.uvf.UVFConstants;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
+import org.n52.sos.convert.UVFRequestModifier;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OWSConstants;
@@ -46,9 +47,10 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.sos.request.AbstractObservationRequest;
+import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.RequestContext;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaTypes;
 
 /**
@@ -83,90 +85,92 @@ public class UVFRequestModifierTest {
 
     @Test
     public void shouldModifyOnlySOS200GetObservationRequests() {
-        Assert.assertThat(modifier.getRequestResponseModifierKeyTypes().size(), Is.is(1));
+        Assert.assertThat(modifier.getRequestResponseModifierKeyTypes().size(), Is.is(2));
         final RequestResponseModifierKeyType key = modifier.getRequestResponseModifierKeyTypes().iterator().next();
         Assert.assertThat(key.getService(), Is.is(SosConstants.SOS));
         Assert.assertThat(key.getVersion(), Is.is(Sos2Constants.SERVICEVERSION));
-        Assert.assertThat(key.getRequest(), Is.is(CoreMatchers.instanceOf(GetObservationRequest.class)));
+        Assert.assertThat(key.getRequest(),
+                CoreMatchers.either(Is.is(CoreMatchers.instanceOf(GetObservationRequest.class)))
+                        .or(Is.is(CoreMatchers.instanceOf(GetObservationByIdRequest.class))));
     }
     
-    @Test
-    public void shouldThrowExceptionIfFormatUVFAndMoreThanOneFeatureOfInterestRequested() throws OwsExceptionReport {
-        exp.expect(NoApplicableCodeException.class);
-        exp.expectMessage("When requesting UVF format, the request MUST have "
-                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
-
-        request.setFeatureIdentifiers(CollectionHelper.list("foi-1", "foi-2"));
-        modifier.modifyRequest(request);
-    }
-
-    @Test
-    public void shouldThrowExceptionIfFormatUVFAndNoFeatureOfInterestRequested() throws OwsExceptionReport {
-        exp.expect(NoApplicableCodeException.class);
-        exp.expectMessage("When requesting UVF format, the request MUST have "
-                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
-
-        final List<String> emptyList = Collections.emptyList();
-        request.setFeatureIdentifiers(emptyList);
-        modifier.modifyRequest(request);
-    }
-
-    @Test
-    public void shouldThrowExceptionIfFormatUVFAndMoreThanOneProcedureRequested() throws OwsExceptionReport {
-        exp.expect(NoApplicableCodeException.class);
-        exp.expectMessage("When requesting UVF format, the request MUST have "
-                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
-
-        request.setProcedures(CollectionHelper.list("procedure-1", "procedure-2"));
-        modifier.modifyRequest(request);
-    }
-
-    @Test
-    public void shouldThrowExceptionIfFormatUVFAndNoProcedureRequested() throws OwsExceptionReport {
-        exp.expect(NoApplicableCodeException.class);
-        exp.expectMessage("When requesting UVF format, the request MUST have "
-                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
-
-        final List<String> emptyList = Collections.emptyList();
-        request.setProcedures(emptyList);
-        modifier.modifyRequest(request);
-    }
-
-    @Test
-    public void shouldThrowExceptionIfFormatUVFAndMoreThanOneObservedPropertyRequested() throws OwsExceptionReport {
-        exp.expect(NoApplicableCodeException.class);
-        exp.expectMessage("When requesting UVF format, the request MUST have "
-                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
-
-        request.setObservedProperties(CollectionHelper.list("obs-prop-1", "obs-prop-2"));
-        modifier.modifyRequest(request);
-    }
-
-    @Test
-    public void shouldThrowExceptionIfFormatUVFAndNoObservedPropertyRequested() throws OwsExceptionReport {
-        exp.expect(NoApplicableCodeException.class);
-        exp.expectMessage("When requesting UVF format, the request MUST have "
-                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
-
-        final List<String> emptyList = Collections.emptyList();
-        request.setObservedProperties(emptyList);
-        modifier.modifyRequest(request);
-    }
+//    @Test
+//    public void shouldThrowExceptionIfFormatUVFAndMoreThanOneFeatureOfInterestRequested() throws OwsExceptionReport {
+//        exp.expect(NoApplicableCodeException.class);
+//        exp.expectMessage("When requesting UVF format, the request MUST have "
+//                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
+//
+//        request.setFeatureIdentifiers(CollectionHelper.list("foi-1", "foi-2"));
+//        modifier.modifyRequest(request);
+//    }
+//
+//    @Test
+//    public void shouldThrowExceptionIfFormatUVFAndNoFeatureOfInterestRequested() throws OwsExceptionReport {
+//        exp.expect(NoApplicableCodeException.class);
+//        exp.expectMessage("When requesting UVF format, the request MUST have "
+//                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
+//
+//        final List<String> emptyList = Collections.emptyList();
+//        request.setFeatureIdentifiers(emptyList);
+//        modifier.modifyRequest(request);
+//    }
+//
+//    @Test
+//    public void shouldThrowExceptionIfFormatUVFAndMoreThanOneProcedureRequested() throws OwsExceptionReport {
+//        exp.expect(NoApplicableCodeException.class);
+//        exp.expectMessage("When requesting UVF format, the request MUST have "
+//                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
+//
+//        request.setProcedures(CollectionHelper.list("procedure-1", "procedure-2"));
+//        modifier.modifyRequest(request);
+//    }
+//
+//    @Test
+//    public void shouldThrowExceptionIfFormatUVFAndNoProcedureRequested() throws OwsExceptionReport {
+//        exp.expect(NoApplicableCodeException.class);
+//        exp.expectMessage("When requesting UVF format, the request MUST have "
+//                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
+//
+//        final List<String> emptyList = Collections.emptyList();
+//        request.setProcedures(emptyList);
+//        modifier.modifyRequest(request);
+//    }
+//
+//    @Test
+//    public void shouldThrowExceptionIfFormatUVFAndMoreThanOneObservedPropertyRequested() throws OwsExceptionReport {
+//        exp.expect(NoApplicableCodeException.class);
+//        exp.expectMessage("When requesting UVF format, the request MUST have "
+//                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
+//
+//        request.setObservedProperties(CollectionHelper.list("obs-prop-1", "obs-prop-2"));
+//        modifier.modifyRequest(request);
+//    }
+//
+//    @Test
+//    public void shouldThrowExceptionIfFormatUVFAndNoObservedPropertyRequested() throws OwsExceptionReport {
+//        exp.expect(NoApplicableCodeException.class);
+//        exp.expectMessage("When requesting UVF format, the request MUST have "
+//                + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
+//
+//        final List<String> emptyList = Collections.emptyList();
+//        request.setObservedProperties(emptyList);
+//        modifier.modifyRequest(request);
+//    }
 
     @Test
     public void shouldNotModifyRequestNotForUVF() throws OwsExceptionReport{
         request.getRequestContext().setContentType(MediaTypes.APPLICATION_JSON.toString());
-        
-        GetObservationRequest modifiedRequest = modifier.modifyRequest(request);
-        
-        Assert.assertThat(modifiedRequest, IsEqual.equalTo(modifiedRequest));
+        AbstractObservationRequest modifiedRequest = modifier.modifyRequest(request);
+        Assert.assertThat(modifiedRequest, IsInstanceOf.instanceOf(request.getClass()));
+        Assert.assertThat((GetObservationRequest)modifiedRequest, IsEqual.equalTo(request));
     }
 
     @Test
     public void shouldNotModifyValidRequest() throws OwsExceptionReport {
-        GetObservationRequest modifiedRequest = modifier.modifyRequest(request);
-        
-        Assert.assertThat(modifiedRequest, IsEqual.equalTo(request));
+        AbstractObservationRequest modifiedRequest = modifier.modifyRequest(request);
+        Assert.assertThat(modifiedRequest, IsInstanceOf.instanceOf(request.getClass()));
+        Assert.assertThat((GetObservationRequest)modifiedRequest, IsEqual.equalTo(request));
+        Assert.assertThat((GetObservationRequest)modifiedRequest, IsEqual.equalTo(request));
     }
 
     @Test
@@ -207,7 +211,7 @@ public class UVFRequestModifierTest {
     public void shouldAddExtensionWithDefaultCRSIfNotPresent() throws OwsExceptionReport {
         request.setExtensions(null);
 
-        GetObservationRequest modifiedRequest = modifier.modifyRequest(request);
+        AbstractObservationRequest modifiedRequest = modifier.modifyRequest(request);
         final SwesExtensions extensions = modifiedRequest.getExtensions();
 
         Assert.assertThat(extensions.getExtensions().size(), Is.is(1));

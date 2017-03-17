@@ -756,7 +756,7 @@ public class CoordinateTransformator implements
 				lastIndex = crs.lastIndexOf(Constants.COLON_STRING);
 			}
             try {
-                return Integer.valueOf(crs.substring(lastIndex + 1));
+                return lastIndex == 0 ? Integer.valueOf(crs) : Integer.valueOf(crs.substring(lastIndex + 1));
             } catch (final NumberFormatException nfe) {
                 String parameter =
                         new StringBuilder().append(SosConstants.GetObservationParams.srsName.name())

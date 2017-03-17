@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.sos.converter;
+package org.n52.sos.convert;
 
 import java.util.Collections;
 import java.util.Set;
@@ -43,9 +43,12 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.sos.request.AbstractObservationRequest;
+import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.util.Validation;
+import org.n52.sos.util.http.MediaType;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -55,7 +58,7 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
-public class UVFRequestModifier implements RequestResponseModifier<GetObservationRequest, AbstractServiceResponse>, SettingDefinitionProvider {
+public class UVFRequestModifier implements RequestResponseModifier<AbstractObservationRequest, AbstractServiceResponse>, SettingDefinitionProvider {
 
     private static final String DEFAULT_CRS_SETTING_KEY = "uvf.default.crs";
 
@@ -73,7 +76,11 @@ public class UVFRequestModifier implements RequestResponseModifier<GetObservatio
             new RequestResponseModifierKeyType(
                     SosConstants.SOS,
                     Sos2Constants.SERVICEVERSION,
-                    new GetObservationRequest()));
+                    new GetObservationRequest()),
+            new RequestResponseModifierKeyType(
+                    SosConstants.SOS,
+                    Sos2Constants.SERVICEVERSION,
+                    new GetObservationByIdRequest()));
 
     private String defaultCRS;
     
@@ -83,33 +90,30 @@ public class UVFRequestModifier implements RequestResponseModifier<GetObservatio
     }
 
     @Override
-    public GetObservationRequest modifyRequest(GetObservationRequest request) throws OwsExceptionReport {
-        if (request.getRequestContext().getAcceptType().isPresent() && 
-                request.getRequestContext().getAcceptType().get().contains(UVFConstants.CONTENT_TYPE_UVF)) {
-            if (request.isSetFeatureOfInterest() && request.getFeatureIdentifiers().size() == 1 &&
-                    request.isSetObservableProperty() && request.getObservedProperties().size() == 1 &&
-                    request.isSetProcedure() && request.getProcedures().size() == 1) {
-                if (request.hasExtension(OWSConstants.AdditionalRequestParams.crs) &&
-                        request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue() instanceof SweText) {
-                    String requestedCRS = ((SweText)request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).getValue();
-                    if (UVFConstants.ALLOWED_CRS.contains(requestedCRS)) {
-                        return request;
-                    } else {
-                        throw new NoApplicableCodeException().withMessage("When requesting UVF format, the request MUST have "
-                                + "a CRS of the German GK bands, e.g. '%s'. Requested was: '%s'.",
-                                UVFConstants.ALLOWED_CRS.toString(), requestedCRS);
-                    }
+    public AbstractObservationRequest modifyRequest(AbstractObservationRequest request) throws OwsExceptionReport {
+        if ((request.getRequestContext().getAcceptType().isPresent()
+                && request.getRequestContext().getAcceptType().get().contains(UVFConstants.CONTENT_TYPE_UVF))
+                || (request.isSetResponseFormat() 
+                        && request.getResponseFormat().contains(UVFConstants.CONTENT_TYPE_UVF.getSubtype())
+                        && UVFConstants.CONTENT_TYPE_UVF.isCompatible(MediaType.parse(request.getResponseFormat())))) {
+            if (request.hasExtension(OWSConstants.AdditionalRequestParams.crs)
+                    && request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue() instanceof SweText) {
+                String requestedCRS =
+                        ((SweText) request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue())
+                                .getValue();
+                if (UVFConstants.ALLOWED_CRS.contains(requestedCRS)) {
+                    return request;
+                } else {
+                    throw new NoApplicableCodeException().withMessage(
+                            "When requesting UVF format, the request MUST have "
+                                    + "a CRS of the German GK bands, e.g. '%s'. Requested was: '%s'.",
+                            UVFConstants.ALLOWED_CRS.toString(), requestedCRS);
                 }
-                // add default CRS as swe text extension
-                SweText crsExtension = (SweText) new SweText()
-                        .setValue(getDefaultCRS())
-                        .setIdentifier(OWSConstants.AdditionalRequestParams.crs.name());
-                request.addExtension(new SwesExtensionImpl<SweText>().setValue(crsExtension));
-                return request;
-            } else {
-                throw new NoApplicableCodeException().withMessage("When requesting UVF format, the request MUST have "
-                        + "ONE procedure, ONE observedProperty, and ONE featureOfInterest.");
             }
+            // add default CRS as swe text extension
+            SweText crsExtension = (SweText) new SweText().setValue(getDefaultCRS())
+                    .setIdentifier(OWSConstants.AdditionalRequestParams.crs.name());
+            request.addExtension(new SwesExtensionImpl<SweText>().setValue(crsExtension));
         }
         return request;
     }
@@ -140,7 +144,7 @@ public class UVFRequestModifier implements RequestResponseModifier<GetObservatio
 
 
     @Override
-    public AbstractServiceResponse modifyResponse(GetObservationRequest request, AbstractServiceResponse response)
+    public AbstractServiceResponse modifyResponse(AbstractObservationRequest request, AbstractServiceResponse response)
             throws OwsExceptionReport {
         return response;
     }

@@ -35,24 +35,46 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
 
+import com.google.common.base.Optional;
+
 public class SeriesMetadataDAO {
-    
+
     @SuppressWarnings("unchecked")
     public List<SeriesMetadata> getMetadata(long series, Session session) {
         Criteria c = getDefaultSeriesCriteria(session);
-        c.add(Restrictions.eq(SeriesMetadata.SERIES_ID, series));
+        addSeriesRestriction(series, c);
         return c.list();
     }
-    
-    /**
-     * Get default Hibernate Criteria for querying metadata
-     *
-     * @param session
-     *            Hibernate Session
-     * @return Default criteria
-     */
-    public Criteria getDefaultSeriesCriteria(Session session) {
+
+    private Criteria getDefaultSeriesCriteria(Session session) {
         return session.createCriteria(SeriesMetadata.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<SeriesMetadata> getDomainMetadata(long seriesId, String domainIdentifier, Session session) {
+        Criteria c = getDefaultSeriesCriteria(session);
+        addSeriesRestriction(seriesId, c);
+        addDomainRestriction(domainIdentifier, c);
+        return c.list();
+    }
+
+    public Optional<String> getMetadataElement(List<SeriesMetadata> seriesMetadata, String domainIdentifier,
+            String identifier) {
+        for (SeriesMetadata seriesMetadataElement : seriesMetadata) {
+            if (seriesMetadataElement.getDomain().equals(domainIdentifier) &&
+                    seriesMetadataElement.getIdentifier().equals(identifier)) {
+                return Optional.fromNullable(seriesMetadataElement.getValue());
+            }
+        }
+        return Optional.absent();
+    }
+
+    private void addSeriesRestriction(long series, Criteria c) {
+        c.add(Restrictions.eq(SeriesMetadata.SERIES_ID, series));
+    }
+
+    private void addDomainRestriction(String domainIdentifier, Criteria c) {
+        c.add(Restrictions.eq(SeriesMetadata.DOMAIN, domainIdentifier));
     }
 
 }

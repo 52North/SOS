@@ -80,9 +80,13 @@ public interface ObservationValue<T extends Value<?>> extends Serializable {
     boolean isSetDefaultPointMetadata();
 
     void setDefaultPointMetadata(DefaultPointMetadata defaultPointMetadata);
+    
+    DefaultPointMetadata getDefaultPointMetadata();
 
     boolean isSetMetadata();
 
     void setMetadata(Metadata metadata);
+    
+    Metadata getMetadata();
 
 }

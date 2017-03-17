@@ -134,7 +134,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import net.opengis.gml.x32.AbstractCRSType;
-import net.opengis.gml.x32.AbstractDatumType;
 import net.opengis.gml.x32.BaseUnitType;
 import net.opengis.gml.x32.CodeType;
 
@@ -384,7 +383,7 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
         }
         // set contact
         if (responsibleParty.isSetContactInfo()) {
-            encodeContact(cirpt.addNewContactInfo(), responsibleParty.getContactInfoReferencable());
+            encodeContact(cirpt.addNewContactInfo(), responsibleParty.getContactInfo());
         }
         // set role
         encodeRole(cirpt.addNewRole(), responsibleParty.getRoleNillable());

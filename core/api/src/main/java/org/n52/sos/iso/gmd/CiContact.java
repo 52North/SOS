@@ -61,7 +61,7 @@ public class CiContact extends AbstractObject {
     }
 
     public boolean isSetPhone() {
-        return getPhone() != null && (isSetPhoneFax() || isSetPhoneVoice());
+        return getPhone() != null;
     }
     
     private boolean isSetPhoneInstance() {
@@ -149,8 +149,7 @@ public class CiContact extends AbstractObject {
     }
 
     public boolean isSetAddress() {
-        return getAddress() != null && (isSetDeliveryPoint() || isSetCity() || isSetAdministrativeArea() || isSetPostalCode() || isSetCountry()
-                || isSetEmail());
+        return getAddress() != null;
     }
     
     private boolean isSetAddressInstance() {

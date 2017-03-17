@@ -119,21 +119,11 @@ public class CiResponsibleParty extends AbstractObject implements AttributeSimpl
         this.positionName = positionName;
         return this;
     }
-
-    /**
-     * @return the contactInfo
-     */
-    public CiContact getContactInfo() {
-        if (isSetContactInfo()) {
-            return contactInfo.getInstance().get();
-        }
-        return null;
-    }
     
     /**
      * @return the contactInfo
      */
-    public Referenceable<CiContact> getContactInfoReferencable() {
+    public Referenceable<CiContact> getContactInfo() {
         return contactInfo;
     }
 
@@ -158,7 +148,7 @@ public class CiResponsibleParty extends AbstractObject implements AttributeSimpl
     }
 
     public boolean isSetContactInfo() {
-        return contactInfo != null && contactInfo.isInstance() && contactInfo.getInstance().isPresent();
+        return contactInfo != null;
     }
 
     /**

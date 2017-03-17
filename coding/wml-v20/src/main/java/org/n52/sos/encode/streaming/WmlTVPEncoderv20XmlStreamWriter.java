@@ -88,6 +88,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
         start(WaterMLConstants.QN_MEASUREMENT_TIMESERIES);
         attr(GmlConstants.QN_ID_32, "timeseries." + observation.getObservationID());
         writeNewLine();
+        // TODO update here: move down because required information is available when the first value from the database is streamed
         writeMeasurementTimeseriesMetadata(observation.getPhenomenonTime().getGmlId());
         writeNewLine();
         if (observation.getValue() instanceof SingleObservationValue) {
@@ -99,6 +100,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             writeNewLine();
             close();
         } else if (observation.getValue() instanceof MultiObservationValues) {
+            // XML streaming to client
             MultiObservationValues<?> observationValue = (MultiObservationValues<?>) observation.getValue();
             writeDefaultPointMetadata(observationValue.getValue().getUnit());
             writeNewLine();
@@ -110,6 +112,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             }
             close();
         } else if (observation.getValue() instanceof StreamingValue) {
+            // Database streaming + XML streaming to client
             StreamingValue observationValue = (StreamingValue) observation.getValue();
             writeDefaultPointMetadata(observationValue.getUnit());
             writeNewLine();

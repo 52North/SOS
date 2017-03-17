@@ -371,13 +371,13 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
 //        setObservationTypeToSweArrayObservation();
     }
 
-    /**
-     * Set the observation type to
-     * {@link OmConstants#OBS_TYPE_SWE_ARRAY_OBSERVATION}
-     */
-    private void setObservationTypeToSweArrayObservation() {
-        observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
-    }
+//    /**
+//     * Set the observation type to
+//     * {@link OmConstants#OBS_TYPE_SWE_ARRAY_OBSERVATION}
+//     */
+//    private void setObservationTypeToSweArrayObservation() {
+//        observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+//    }
 
     /**
      * Merge result time with passed observation result time
@@ -422,13 +422,13 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     }
 
     /**
-     * Convert {@link SingleObservationValue} to {@link TVPValue}
+     * Converts {@link SingleObservationValue} to {@link TVPValue} and updates the value of this observation.
      * 
      * @param singleValue
      *            Single observation value
      * @return Converted TVPValue value
      */
-    private TVPValue convertSingleValueToMultiValue(final SingleObservationValue<?> singleValue) {
+    public TVPValue convertSingleValueToMultiValue(final SingleObservationValue<?> singleValue) {
         final MultiObservationValues<List<TimeValuePair>> multiValue =
                 new MultiObservationValues<List<TimeValuePair>>();
         final TVPValue tvpValue = new TVPValue();

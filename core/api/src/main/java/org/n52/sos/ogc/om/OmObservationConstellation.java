@@ -35,6 +35,8 @@ import java.util.Set;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.wml.Metadata;
 import org.n52.sos.util.Constants;
 import org.n52.sos.w3c.Nillable;
 
@@ -64,6 +66,10 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     private String observationType;
 
     // private SosResultTemplate sosResultTemplate;
+
+    private DefaultPointMetadata defaultPointMetadata;
+
+    private Metadata metadata;
 
     /**
      * default constructor
@@ -403,6 +409,30 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     private boolean hasProcedure() {
         return getProcedure() != null && getProcedure().isSetIdentifier();
+    }
+
+    public boolean isSetDefaultPointMetadata() {
+        return defaultPointMetadata != null;
+    }
+
+    public DefaultPointMetadata getDefaultPointMetadata() {
+        return defaultPointMetadata;
+    }
+
+    public void setDefaultPointMetadata(DefaultPointMetadata defaultPointMetadata) {
+        this.defaultPointMetadata = defaultPointMetadata;
+    }
+
+    public boolean isSetMetadata() {
+        return metadata != null;
+    }
+
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
     }
 
     @Override

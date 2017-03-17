@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.convert.RequestResponseModifier;
+import org.n52.sos.convert.AbstractRequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.ogc.om.OmObservation;
@@ -51,19 +51,10 @@ import org.n52.sos.response.InsertObservationResponse;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-/**
- * TODO JAVADOC
- *
- */
-public class SeriesTypeChecker implements RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
-    
+public class SeriesTypeChecker extends AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
-    /**
-     * Get the keys
-     * 
-     * @return Set of keys
-     */
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
@@ -111,14 +102,8 @@ public class SeriesTypeChecker implements RequestResponseModifier<AbstractServic
     }
 
     @Override
-    public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
-            throws OwsExceptionReport {
-        return response;
-    }
-
-    @Override
     public RequestResponseModifierFacilitator getFacilitator() {
-        return new RequestResponseModifierFacilitator().setAdderRemover(true);
+        return super.getFacilitator().setAdderRemover(true);
     }
 
 }

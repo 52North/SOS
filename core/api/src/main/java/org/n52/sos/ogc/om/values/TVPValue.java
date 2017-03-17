@@ -56,7 +56,7 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
     private static final long serialVersionUID = -5156098026027119423L;
 
     /**
-     * Mesurement values
+     * Measurement values
      */
     private List<TimeValuePair> value = new ArrayList<TimeValuePair>(0);
 
@@ -141,7 +141,7 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
     public boolean isSetUnit() {
         return getUnitObject() != null && StringHelper.isNotEmpty(unit.getUom());
     }
-    
+
     @Override
     public <X> X accept(ValueVisitor<X> visitor)
             throws OwsExceptionReport {

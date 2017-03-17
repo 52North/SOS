@@ -7,6 +7,11 @@ import org.n52.sos.w3c.xlink.Reference;
 
 import com.google.common.base.Strings;
 
+/**
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public abstract class ReferenceEntity extends NilReasonEntity {
 
     private String href;

@@ -2,6 +2,13 @@ package org.n52.sos.ds.hibernate.entities.feature.gmd;
 
 import org.n52.sos.ds.hibernate.entities.feature.NilReasonEntity;
 
+/**
+ * Hibernate entity for role.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class RoleEntity extends NilReasonEntity {
 
     private String codeList;

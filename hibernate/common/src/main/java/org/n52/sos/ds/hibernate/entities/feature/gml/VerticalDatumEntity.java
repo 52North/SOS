@@ -5,10 +5,16 @@ import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.feature.ReferenceEntity;
-import org.n52.sos.w3c.xlink.Reference;
 
 import com.google.common.base.Strings;
 
+/**
+ * Hibernate entiity for the verticalDatum
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class VerticalDatumEntity extends ReferenceEntity {
 
     private String remarks;

@@ -7,8 +7,10 @@ import org.n52.sos.ds.hibernate.entities.feature.ReferenceEntity;
 import com.google.common.base.Strings;
 
 /**
+ * Hibernate entiity for the verticalCRS
+ * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since
+ * @since 4.4.0
  *
  */
 public class VerticalCRSEntity extends ReferenceEntity {

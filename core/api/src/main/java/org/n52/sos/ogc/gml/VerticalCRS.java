@@ -7,6 +7,13 @@ import org.n52.sos.w3c.xlink.Referenceable;
 
 import com.google.common.collect.Lists;
 
+/**
+ * Internal representation of the OGC GML VerticlaCRS.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class VerticalCRS extends AbstractCRS {
 
     private static final long serialVersionUID = -3827860576029113036L;

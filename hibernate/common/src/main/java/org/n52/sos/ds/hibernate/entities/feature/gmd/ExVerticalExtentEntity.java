@@ -1,10 +1,16 @@
 package org.n52.sos.ds.hibernate.entities.feature.gmd;
 
-import org.n52.sos.ds.hibernate.entities.feature.ReferenceEntity;
 import org.n52.sos.ds.hibernate.entities.feature.gml.VerticalCRSEntity;
 
 import com.google.common.base.Strings;
 
+/**
+ * Hibernate entity for exVerticalExtent.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class ExVerticalExtentEntity extends AbstractCiEntity {
     
     private Double minimumValue;

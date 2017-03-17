@@ -35,8 +35,10 @@ import org.n52.sos.w3c.xlink.Referenceable;
 import org.n52.sos.w3c.xlink.SimpleAttrs;
 
 /**
- * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since
+ * Internal representation of the ISO GMD ResponsibleParty.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
  *
  */
 public class CiResponsibleParty extends AbstractObject implements AttributeSimpleAttrs {

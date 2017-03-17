@@ -6,6 +6,13 @@ import org.n52.sos.ds.hibernate.entities.feature.ReferenceEntity;
 
 import com.google.common.base.Strings;
 
+/**
+ * Hibernate entiity for the coordinateSystemAxis
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class CoordinateSystemAxisEntity extends ReferenceEntity {
 
     private String remarks;
@@ -33,7 +40,7 @@ public class CoordinateSystemAxisEntity extends ReferenceEntity {
     public void setRemarks(String remarks) {
         this.remarks = remarks;
     }
-    
+
     public boolean isSetRemarks() {
         return !Strings.isNullOrEmpty(getRemarks());
     }
@@ -158,7 +165,7 @@ public class CoordinateSystemAxisEntity extends ReferenceEntity {
     public void setRangeMeaning(String rangeMeaning) {
         this.rangeMeaning = rangeMeaning;
     }
-    
+
     public boolean isSetRangeMeaning() {
         return !Strings.isNullOrEmpty(getRangeMeaning());
     }

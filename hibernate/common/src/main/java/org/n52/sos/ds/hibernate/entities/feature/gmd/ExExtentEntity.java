@@ -2,8 +2,13 @@ package org.n52.sos.ds.hibernate.entities.feature.gmd;
 
 import java.util.Set;
 
-import com.google.common.base.Strings;
-
+/**
+ * Hibernate entity for exExtent.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class ExExtentEntity extends AbstractCiEntity {
 
     private Set<ExVerticalExtentEntity> verticalExtent;

@@ -38,6 +38,13 @@ import org.n52.sos.w3c.xlink.Referenceable;
 
 import com.google.common.collect.Lists;
 
+/**
+ * Internal representation of the ISO GMD Contact.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class CiContact extends AbstractObject {
     
     private Referenceable<CiTelephone> phone;

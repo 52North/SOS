@@ -5,6 +5,13 @@ import java.util.List;
 
 import org.n52.sos.w3c.xlink.Referenceable;
 
+/**
+ * Internal representation of the OGC GML AbstractCoordinateSystem.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public abstract class AbstractCoordinateSystem extends IdentifiedObject {
 
     private static final long serialVersionUID = -8178398617300946309L;

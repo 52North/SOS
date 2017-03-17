@@ -4,6 +4,13 @@ import java.util.Set;
 
 import com.google.common.base.Strings;
 
+/**
+ * Hibernate entity for address.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class AddressEntity extends AbstractCiEntity {
 
     private Set<String> deliveryPoint;

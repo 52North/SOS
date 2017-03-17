@@ -6,6 +6,13 @@ import org.n52.sos.ds.hibernate.entities.feature.ReferenceEntity;
 
 import com.google.common.base.Strings;
 
+/**
+ * Hibernate entiity for the verticalCS
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class VerticalCSEntity extends ReferenceEntity {
 
     private String remarks;
@@ -26,7 +33,7 @@ public class VerticalCSEntity extends ReferenceEntity {
     public void setRemarks(String remarks) {
         this.remarks = remarks;
     }
-    
+
     public boolean isSetRemarks() {
         return !Strings.isNullOrEmpty(getRemarks());
     }

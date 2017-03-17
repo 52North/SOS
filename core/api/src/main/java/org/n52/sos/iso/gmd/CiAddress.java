@@ -6,6 +6,13 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 
+/**
+ * Internal representation of the ISO GMD Address.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class CiAddress extends AbstractObject {
     
     private List<String> deliveryPoints = new ArrayList<>();

@@ -2,6 +2,13 @@ package org.n52.sos.ds.hibernate.entities.feature.gmd;
 
 import java.util.Set;
 
+/**
+ * Hibernate entity for telephone.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class TelephoneEntity extends AbstractCiEntity {
 
     private Set<String> voice;

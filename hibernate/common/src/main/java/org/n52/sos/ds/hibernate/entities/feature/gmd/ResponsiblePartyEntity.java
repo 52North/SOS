@@ -3,7 +3,10 @@ package org.n52.sos.ds.hibernate.entities.feature.gmd;
 import com.google.common.base.Strings;
 
 /**
+ * Hibernate entity for responsibleParty.
+ * 
  * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
  *
  */
 public class ResponsiblePartyEntity extends AbstractCiEntity {

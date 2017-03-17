@@ -6,6 +6,13 @@ import java.util.List;
 
 import org.n52.sos.util.CollectionHelper;
 
+/**
+ * Internal representation of the ISO GMD Telephone.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class CiTelephone extends AbstractObject {
 
     private List<String> voice = new ArrayList<>();

@@ -34,6 +34,13 @@ import org.n52.sos.w3c.Nillable;
 
 import com.google.common.base.Strings;
 
+/**
+ * Internal representation of the ISO GMD OnlineResource.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class CiOnlineResource extends AbstractObject {
     
     /* 1..1 */

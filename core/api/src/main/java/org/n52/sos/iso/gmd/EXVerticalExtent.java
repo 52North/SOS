@@ -3,6 +3,13 @@ package org.n52.sos.iso.gmd;
 import org.n52.sos.w3c.Nillable;
 import org.n52.sos.w3c.xlink.Referenceable;
 
+/**
+ * Internal representation of the ISO GMD ExVerticalExtent.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class EXVerticalExtent extends AbstractObject{
     
     /* 1..1 */

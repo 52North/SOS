@@ -10,6 +10,13 @@ import org.n52.sos.w3c.xlink.Referenceable;
 
 import com.google.common.collect.Lists;
 
+/**
+ * Internal representation of the OGC GML AbstractDatum.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public abstract class AbstractDatum extends IdentifiedObject {
     
     private static final long serialVersionUID = -4804549832513290875L;

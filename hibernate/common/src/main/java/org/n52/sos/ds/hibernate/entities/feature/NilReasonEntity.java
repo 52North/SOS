@@ -4,6 +4,11 @@ import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity
 
 import com.google.common.base.Strings;
 
+/**
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public abstract class NilReasonEntity extends AbstractIdentifierNameDescriptionEntity {
 
     private long pkid;

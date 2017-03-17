@@ -4,7 +4,14 @@ import org.n52.sos.ds.hibernate.entities.feature.ReferenceEntity;
 
 import com.google.common.base.Strings;
 
-public class AbstractCiEntity extends ReferenceEntity {
+/**
+ * Hibernate entity for CI entities.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
+public abstract class AbstractCiEntity extends ReferenceEntity {
 
     private String id;
     private String uuid;

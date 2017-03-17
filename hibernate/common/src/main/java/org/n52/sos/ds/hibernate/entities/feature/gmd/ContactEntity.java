@@ -1,9 +1,15 @@
 package org.n52.sos.ds.hibernate.entities.feature.gmd;
 
-import org.n52.sos.ds.hibernate.entities.feature.ReferenceEntity;
 
 import com.google.common.base.Strings;
 
+/**
+ * Hibernate entity for contact.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public class ContactEntity extends AbstractCiEntity {
     
     private TelephoneEntity phone;

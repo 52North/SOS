@@ -7,10 +7,14 @@ import java.util.List;
 import org.n52.sos.ds.hibernate.entities.feature.gmd.ResponsiblePartyEntity;
 import org.n52.sos.ds.hibernate.entities.feature.gml.VerticalDatumEntity;
 
+/**
+ * Hibernate entiity for the abstract monitoringPoint
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
 public abstract class AbstractMonitoringFeature extends FeatureOfInterest {
 
-    private static final long serialVersionUID = 1L;
-    
     private MonitoringPointContent content;
     
     /**

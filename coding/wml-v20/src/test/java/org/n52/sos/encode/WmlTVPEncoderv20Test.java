@@ -41,12 +41,12 @@ import org.n52.sos.ogc.om.values.MultiValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.waterml.DefaultPointMetadata;
-import org.n52.sos.ogc.waterml.DefaultTVPMeasurementMetadata;
-import org.n52.sos.ogc.waterml.MeasurementTimeseriesMetadata;
-import org.n52.sos.ogc.waterml.Metadata;
-import org.n52.sos.ogc.waterml.WaterMLConstants;
-import org.n52.sos.ogc.waterml.WaterMLConstants.InterpolationType;
+import org.n52.sos.ogc.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.wml.DefaultTVPMeasurementMetadata;
+import org.n52.sos.ogc.wml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.wml.Metadata;
+import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.sos.ogc.wml.WaterMLConstants.InterpolationType;
 import org.n52.sos.util.CollectionHelper;
 
 import net.opengis.gml.x32.ReferenceType;
@@ -100,7 +100,7 @@ public class WmlTVPEncoderv20Test {
     
     @Test
     public void shouldEncodeCumulativeProperty() throws OwsExceptionReport {
-        ((TVPValue) mv.getValue()).setMetadata(
+        mv.setMetadata(
                 new Metadata().setTimeseriesmetadata(
                         new MeasurementTimeseriesMetadata().setCumulative(true)));
 
@@ -114,7 +114,7 @@ public class WmlTVPEncoderv20Test {
     public void shouldEncodeInterpolationType() throws OwsExceptionReport, XmlException {
         final InterpolationType type = WaterMLConstants.InterpolationType.MinPrec;
         
-        ((TVPValue) mv.getValue()).setDefaultPointMetadata(
+        mv.setDefaultPointMetadata(
                 new DefaultPointMetadata().setDefaultTVPMeasurementMetadata(
                         new DefaultTVPMeasurementMetadata().setInterpolationtype(
                                 type)));

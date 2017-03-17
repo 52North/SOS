@@ -32,6 +32,8 @@ import java.io.Serializable;
 
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.wml.Metadata;
 
 /**
  * Interface for observation values.
@@ -73,6 +75,14 @@ public interface ObservationValue<T extends Value<?>> extends Serializable {
      */
     void setValue(T value);
 
-	boolean isSetValue();
+    boolean isSetValue();
+
+    boolean isSetDefaultPointMetadata();
+
+    void setDefaultPointMetadata(DefaultPointMetadata defaultPointMetadata);
+
+    boolean isSetMetadata();
+
+    void setMetadata(Metadata metadata);
 
 }

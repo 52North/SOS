@@ -56,11 +56,11 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.waterml.MeasurementTimeseriesMetadata;
-import org.n52.sos.ogc.waterml.TimeseriesMetadata;
-import org.n52.sos.ogc.waterml.WaterMLConstants.InterpolationType;
 import org.n52.sos.ogc.wml.ConformanceClassesWML2;
+import org.n52.sos.ogc.wml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.wml.TimeseriesMetadata;
 import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.sos.ogc.wml.WaterMLConstants.InterpolationType;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
@@ -238,9 +238,9 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         if (sosObservation.isSetValue() &&
                 sosObservation.getValue().isSetValue() &&
                 sosObservation.getValue().getValue().getClass().isAssignableFrom(TVPValue.class) &&
-                ((TVPValue)sosObservation.getValue().getValue()).isSetMetadata() &&
-                ((TVPValue)sosObservation.getValue().getValue()).getMetadata().isSetTimeseriesMetadata()) {
-            timeseriesMetadata = ((TVPValue)sosObservation.getValue().getValue()).getMetadata().getTimeseriesmetadata();
+                sosObservation.getObservationConstellation().isSetMetadata() &&
+                sosObservation.getObservationConstellation().getMetadata().isSetTimeseriesMetadata()) {
+            timeseriesMetadata = sosObservation.getObservationConstellation().getMetadata().getTimeseriesmetadata();
         }
         addTimeseriesMetadata(measurementTimeseries, sosObservation.getPhenomenonTime().getGmlId(), timeseriesMetadata);
 
@@ -256,11 +256,11 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         if (sosObservation.isSetValue() &&
                 sosObservation.getValue().isSetValue() &&
                 sosObservation.getValue().getValue().getClass().isAssignableFrom(TVPValue.class) &&
-                ((TVPValue)sosObservation.getValue().getValue()).isSetDefaultPointMetadata() &&
-                ((TVPValue)sosObservation.getValue().getValue()).getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata() &&
-                ((TVPValue)sosObservation.getValue().getValue()).getDefaultPointMetadata()
+                sosObservation.getObservationConstellation().isSetDefaultPointMetadata() &&
+                sosObservation.getObservationConstellation().getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata() &&
+                sosObservation.getObservationConstellation().getDefaultPointMetadata()
                     .getDefaultTVPMeasurementMetadata().isSetInterpolationType()) {
-            interpolationType = ((TVPValue)sosObservation.getValue().getValue()).getDefaultPointMetadata()
+            interpolationType = sosObservation.getObservationConstellation().getDefaultPointMetadata()
                     .getDefaultTVPMeasurementMetadata().getInterpolationtype();
         }
 
@@ -396,10 +396,10 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         // Default value
         TimeseriesMetadata timeseriesMetadata = new MeasurementTimeseriesMetadata().setCumulative(false);
         if (observationValue.isSetValue() &&
-                observationValue.getValue().getClass().isAssignableFrom(TVPValue.class) &&
-                ((TVPValue)observationValue.getValue()).isSetMetadata() &&
-                ((TVPValue)observationValue.getValue()).getMetadata().isSetTimeseriesMetadata()) {
-            timeseriesMetadata = ((TVPValue)observationValue.getValue()).getMetadata().getTimeseriesmetadata();
+                observationValue.isSetMetadata() &&
+                observationValue.getMetadata().isSetTimeseriesMetadata()
+                ) {
+            timeseriesMetadata = observationValue.getMetadata().getTimeseriesmetadata();
         }
         addTimeseriesMetadata(measurementTimeseries, observationValue.getPhenomenonTime().getGmlId(),
                 timeseriesMetadata);
@@ -413,13 +413,12 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         // Default value
         InterpolationType interpolationType = InterpolationType.Continuous;
         if (observationValue.isSetValue() &&
-                observationValue.getValue().getClass().isAssignableFrom(TVPValue.class) &&
-                ((TVPValue)observationValue.getValue()).isSetDefaultPointMetadata() &&
-                ((TVPValue)observationValue.getValue()).getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata() &&
-                ((TVPValue)observationValue.getValue()).getDefaultPointMetadata()
-                    .getDefaultTVPMeasurementMetadata().isSetInterpolationType()) {
-            interpolationType = ((TVPValue)observationValue.getValue()).getDefaultPointMetadata()
-                    .getDefaultTVPMeasurementMetadata().getInterpolationtype();
+                observationValue.isSetDefaultPointMetadata() &&
+                observationValue.getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata() &&
+                observationValue.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().isSetInterpolationType()
+                ) {
+            interpolationType = observationValue.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata()
+                    .getInterpolationtype();
         }
 
         defaultTVPMeasurementMetadata.addNewInterpolationType().setHref(interpolationType.getIdentifier());

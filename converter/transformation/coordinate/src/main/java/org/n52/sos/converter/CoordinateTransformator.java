@@ -35,8 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.convert.RequestResponseModifier;
-import org.n52.sos.convert.RequestResponseModifierFacilitator;
+import org.n52.sos.convert.AbstractRequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
@@ -100,7 +99,6 @@ import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.service.ProcedureDescriptionSettings;
-import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.EpsgConstants;
@@ -128,17 +126,12 @@ import com.vividsolutions.jts.geom.Point;
  * @since 4.1.0
  * 
  */
-public class CoordinateTransformator implements
-        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+public class CoordinateTransformator extends
+        AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
     private final SweHelper helper = new SweHelper();
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
-    /**
-     * Get the keys
-     * 
-     * @return Set of keys
-     */
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
@@ -951,15 +944,6 @@ public class CoordinateTransformator implements
 
     private GeometryHandler getGeomtryHandler() {
         return GeometryHandler.getInstance();
-    }
-
-    private ServiceConfiguration getConfiguration() {
-        return ServiceConfiguration.getInstance();
-    }
-
-    @Override
-    public RequestResponseModifierFacilitator getFacilitator() {
-        return new RequestResponseModifierFacilitator();
     }
 
 }

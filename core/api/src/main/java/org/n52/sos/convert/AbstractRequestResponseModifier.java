@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2013
+ * ﻿Copyright (C) 2017
  * by 52 North Initiative for Geospatial Open Source Software GmbH
  *
  * Contact: Andreas Wytzisk
@@ -21,35 +21,31 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.sos.ogc.waterml;
+package org.n52.sos.convert;
 
-import org.n52.sos.ogc.waterml.WaterMLConstants.InterpolationType;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.sos.response.AbstractServiceResponse;
 
 /**
- * This class implements the OGC WaterML 2.0 element 
- * <code>MeasurementTimeseries > defaultPointMetadata > DefaultTVPMeasurementMetadata</code>.
- * 
- * See <code>/req/xsd-measurement-timeseries-tvp/interpolation-type</code>.
- * 
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- * @since 4.4.0
- * @see http://www.opengeospatial.org/standards/waterml
+ *
  */
-public class DefaultTVPMeasurementMetadata {
+public abstract class AbstractRequestResponseModifier<T extends AbstractServiceRequest<?>, S extends AbstractServiceResponse> implements RequestResponseModifier<T, S> {
 
-    private InterpolationType interpolationtype;
-
-    public boolean isSetInterpolationType() {
-        return interpolationtype != null;
+    @Override
+    public T modifyRequest(T request) throws OwsExceptionReport {
+        return request;
     }
 
-    public InterpolationType getInterpolationtype() {
-        return interpolationtype;
+    @Override
+    public S modifyResponse(T request, S response) throws OwsExceptionReport {
+        return response;
     }
 
-    public DefaultTVPMeasurementMetadata setInterpolationtype(InterpolationType interpolationtype) {
-        this.interpolationtype = interpolationtype;
-        return this;
+    @Override
+    public RequestResponseModifierFacilitator getFacilitator() {
+        return new RequestResponseModifierFacilitator();
     }
 
 }

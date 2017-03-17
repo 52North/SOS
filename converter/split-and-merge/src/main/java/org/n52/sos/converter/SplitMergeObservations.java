@@ -37,7 +37,7 @@ import java.util.Set;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.convert.RequestResponseModifier;
+import org.n52.sos.convert.AbstractRequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.encode.ObservationEncoder;
@@ -94,7 +94,7 @@ import com.google.common.collect.Sets;
 
 @Configurable
 public class SplitMergeObservations
-        implements RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+        extends AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SplitMergeObservations.class);
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
@@ -105,11 +105,6 @@ public class SplitMergeObservations
         this.includeResultTimeForMerging = includeResultTimeForMerging;
     }   
 
-    /**
-     * Get the keys
-     * 
-     * @return Set of keys
-     */
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
@@ -434,7 +429,7 @@ public class SplitMergeObservations
 
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
-        return new RequestResponseModifierFacilitator().setMerger(true).setSplitter(true);
+        return super.getFacilitator().setMerger(true).setSplitter(true);
     }
 
 }

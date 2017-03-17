@@ -108,6 +108,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
 
             final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
             final OmObservation sosObservation = new OmObservation();
+            sosObservation.setObservationID(Long.toString(series.getSeriesId()));
             addDefaultValuesToObservation(sosObservation);
             sosObservation.setObservationConstellation(obsConst);
             checkForAdditionalObservationCreator(series, sosObservation);

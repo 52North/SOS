@@ -36,6 +36,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.MultiObservationValues;
+import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
@@ -48,7 +49,10 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
 import org.n52.sos.ogc.series.wml.WaterMLConstants;
+import org.n52.sos.ogc.series.wml.WaterMLConstants.InterpolationType;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.W3CConstants;
 
@@ -88,19 +92,21 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
         start(WaterMLConstants.QN_MEASUREMENT_TIMESERIES);
         attr(GmlConstants.QN_ID_32, "timeseries." + observation.getObservationID());
         writeNewLine();
-        writeMeasurementTimeseriesMetadata(observation.getPhenomenonTime().getGmlId());
+        // TODO update here: move down because required information is available when the first value from the database is streamed
+        writeMeasurementTimeseriesMetadata(observation);
         writeNewLine();
         if (observation.getValue() instanceof SingleObservationValue) {
             SingleObservationValue<?> observationValue = (SingleObservationValue<?>) observation.getValue();
-            writeDefaultPointMetadata(observationValue.getValue().getUnit());
+            writeDefaultPointMetadata(observationValue, observationValue.getValue().getUnit());
             writeNewLine();
             String time = getTimeString(observationValue.getPhenomenonTime());
             writePoint(time, getValue(observation.getValue().getValue()));
             writeNewLine();
             close();
         } else if (observation.getValue() instanceof MultiObservationValues) {
+            // XML streaming to client
             MultiObservationValues<?> observationValue = (MultiObservationValues<?>) observation.getValue();
-            writeDefaultPointMetadata(observationValue.getValue().getUnit());
+            writeDefaultPointMetadata(observationValue, observationValue.getValue().getUnit());
             writeNewLine();
             TVPValue tvpValue = (TVPValue) observationValue.getValue();
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
@@ -110,8 +116,9 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             }
             close();
         } else if (observation.getValue() instanceof StreamingValue) {
+            // Database streaming + XML streaming to client
             StreamingValue observationValue = (StreamingValue) observation.getValue();
-            writeDefaultPointMetadata(observationValue.getUnit());
+            writeDefaultPointMetadata(observationValue, observationValue.getUnit());
             writeNewLine();
             while (observationValue.hasNextValue()) {
                 TimeValuePair timeValuePair = observationValue.nextValue();
@@ -148,18 +155,26 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     /**
      * Write timeseries metadata to stream
      * 
-     * @param id
+     * @param observation.getPhenomenonTime().getGmlId()
      *            Observation id
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
-    private void writeMeasurementTimeseriesMetadata(String id) throws XMLStreamException {
+    private void writeMeasurementTimeseriesMetadata(OmObservation o) throws XMLStreamException {
         start(WaterMLConstants.QN_METADATA);
         writeNewLine();
         start(WaterMLConstants.QN_MEASUREMENT_TIMESERIES_METADATA);
         writeNewLine();
         empty(WaterMLConstants.QN_TEMPORAL_EXTENT);
-        addXlinkHrefAttr("#" + id);
+        addXlinkHrefAttr("#" + o.getPhenomenonTime().getGmlId());
+        if (o.isSetValue() 
+                && o.getValue().isSetMetadata() 
+                && o.getValue().getMetadata().isSetTimeseriesMetadata()
+                && o.getValue().getMetadata().getTimeseriesmetadata() instanceof MeasurementTimeseriesMetadata) {
+            start(WaterMLConstants.QN_CUMULATIVE);
+            chars(Boolean.toString(((MeasurementTimeseriesMetadata)o.getValue().getMetadata().getTimeseriesmetadata()).isCumulative()));
+            endInline(WaterMLConstants.QN_CUMULATIVE);
+        }
         writeNewLine();
         indent--;
         end(WaterMLConstants.QN_MEASUREMENT_TIMESERIES_METADATA);
@@ -175,14 +190,14 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
-    private void writeDefaultPointMetadata(String unit) throws XMLStreamException {
+    private void writeDefaultPointMetadata(ObservationValue<?> value, String unit) throws XMLStreamException {
         start(WaterMLConstants.QN_DEFAULT_POINT_METADATA);
         writeNewLine();
         start(WaterMLConstants.QN_DEFAULT_TVP_MEASUREMENT_METADATA);
         writeNewLine();
         writeUOM(unit);
         writeNewLine();
-        writeInterpolationType();
+        writeInterpolationType(value);
         writeNewLine();
         indent--;
         end(WaterMLConstants.QN_DEFAULT_TVP_MEASUREMENT_METADATA);
@@ -208,14 +223,21 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:interpolationType to stream
+     * @param value 
      * 
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
-    private void writeInterpolationType() throws XMLStreamException {
+    private void writeInterpolationType(ObservationValue<?> value) throws XMLStreamException {
         empty(WaterMLConstants.QN_INTERPOLATION_TYPE);
-        addXlinkHrefAttr("http://www.opengis.net/def/timeseriesType/WaterML/2.0/continuous");
-        addXlinkTitleAttr("Instantaneous");
+        if (value != null && value.isSetMetadata() && value.getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata() && value.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().isSetInterpolationType()) {
+            InterpolationType interpolationtype = value.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().getInterpolationtype();
+            addXlinkHrefAttr(interpolationtype.getIdentifier());
+            addXlinkTitleAttr(interpolationtype.getTitle());
+        } else {
+            addXlinkHrefAttr("http://www.opengis.net/def/timeseriesType/WaterML/2.0/continuous");
+            addXlinkTitleAttr("Instantaneous");
+        }
     }
 
     /**

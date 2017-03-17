@@ -39,7 +39,7 @@ import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.series.wml.WaterMLConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.wml.ObservationProcess;
+import org.n52.sos.ogc.series.wml.ObservationProcess;
 import org.n52.sos.util.CollectionHelper;
 
 /**

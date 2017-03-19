@@ -4,7 +4,8 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
-	<display-name>${project.parent.name}, Git-Branch '${git.branch}' with
+	<display-name>${project.parent.name} -- customized for UBA (mergable series),
+                Git-Branch '${git.branch}' with
 		state '${git.commit.id}' @ ${git.commit.time}</display-name>
 	<description>This is an OGC SOS with Sensor Web REST-API.</description>
 	<context-param>

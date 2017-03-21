@@ -1,27 +1,28 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.n52.series.api.v1.db.da.beans">
-    <class name="SeriesEntity" table="base_series">
+    <class name="SeriesEntity" table="series_with_mergerole">
         <id name="pkid" type="long">
             <column name="seriesid" />
             <generator class="assigned" />
         </id>
+        <discriminator force="true" column="merge_role" type="string" />
         <many-to-one name="category" class="org.n52.series.api.v1.db.da.beans.CategoryEntity" column="observablepropertyid" insert="false" update="false" />
         <many-to-one name="procedure" class="org.n52.series.api.v1.db.da.beans.ProcedureEntity" column="procedureid" insert="false" update="false" />
         <many-to-one name="feature" class="org.n52.series.api.v1.db.da.beans.FeatureEntity" insert="false" update="false" 
                      formula="(select s.stationid from station s, samplingpoint sp where s.stationid = sp.station 
                                 and sp.samplingpointid = samplingpointid)" />
         <many-to-one name="offering" class="org.n52.series.api.v1.db.da.beans.OfferingEntity" column="procedureid" insert="false" update="false" />
-        <properties name="mergeProperties" >
+        <properties name="mergeProperties">
             <property name="samplingPointId" column="samplingpointid" type="long" insert="false" update="false" />
-<!--             <many-to-one name="phenomenon" class="org.n52.series.api.v1.db.da.beans.PhenomenonEntity" column="observablepropertyid" insert="false" update="false"  /> -->
         </properties>
-        <many-to-one name="phenomenon" class="org.n52.series.api.v1.db.da.beans.PhenomenonEntity" column="observablepropertyid" insert="false" update="false"  />
+        <many-to-one name="phenomenon" class="org.n52.series.api.v1.db.da.beans.PhenomenonEntity" column="observablepropertyid" insert="false" update="false" />
         
         <many-to-one name="unit" class="org.n52.series.api.v1.db.da.beans.UnitEntity" column="unitid" />
         <property name="numberOfDecimals" formula="3" type="int" />
         <property name="published" column="published" type="org.hibernate.type.TrueFalseType" />
         <property name="deleted" formula="'F'" type="org.hibernate.type.TrueFalseType" />
+        <property name="mergeRole" column="merge_role" type="string" insert="false" update="false" />
 
         <component name="firstValue" class="org.n52.series.api.v1.db.da.beans.ObservationEntity">
             <property name="timestamp" column="firsttimestamp" type="timestamp" />
@@ -37,19 +38,23 @@
             <one-to-many class="ObservationEntity" />
         </list>
         
+            <set name="mergableSeries" fetch="select" >
+<!--                 <key column="samplingpointid" /> -->
+                <key property-ref="mergeProperties" >
+                    <column name="samplingpointid" />
+<!--                     <column name="observablepropertyid" /> -->
+                </key>
+                <one-to-many class="MergableSeriesEntity" />
+            </set>
+            
+        <subclass name="MergableSeriesEntity" discriminator-value="slave">
         
-        <set name="mergableSeries" fetch="select" >
-            <key property-ref="mergeProperties">
-                <column name="samplingpointid" />
-<!--                 <column name="observablepropertyid" /> -->
-            </key>
-            <one-to-many class="MergableSeriesEntity" />
-        </set>
+        </subclass>
         
+        <subclass name="MergableBaseSeriesEntity" discriminator-value="master">
+
+        
+        </subclass>
     </class>
     
-    <joined-subclass extends="SeriesEntity" name="MergableSeriesEntity" table="mergable_series">
-        <key column="seriesid" />
-    
-    </joined-subclass>
 </hibernate-mapping>

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,27 +30,22 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.util.Set;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValidProcedureTimes;
 
 import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  */
-public class TProcedure extends Procedure implements HasValidProcedureTimes, HasParentChilds<Procedure, TProcedure> {
+public class TProcedure extends Procedure implements HasValidProcedureTimes {
 
     private static final long serialVersionUID = 3307492687846686350L;
 
     public static final String VALID_PROCEDURE_TIME = "validProcedureTimes";
 
     private Set<ValidProcedureTime> validProcedureTimes = Sets.newHashSet();
-
-    private Set<Procedure> childs = Sets.newHashSet();
-
-    private Set<Procedure> parents = Sets.newHashSet();
 
     public TProcedure() {
         super();
@@ -62,31 +57,8 @@ public class TProcedure extends Procedure implements HasValidProcedureTimes, Has
     }
 
     @Override
-    public TProcedure setValidProcedureTimes(final Set<ValidProcedureTime> validProcedureTimes) {
+    public void setValidProcedureTimes(
+            Set<ValidProcedureTime> validProcedureTimes) {
         this.validProcedureTimes = validProcedureTimes;
-        return this;
     }
-
-    @Override
-    public Set<Procedure> getParents() {
-        return parents;
-    }
-
-    @Override
-    public TProcedure setParents(final Set<Procedure> parents) {
-        this.parents = parents;
-        return this;
-    }
-
-    @Override
-    public Set<Procedure> getChilds() {
-        return childs;
-    }
-
-    @Override
-    public TProcedure setChilds(final Set<Procedure> childs) {
-        this.childs = childs;
-        return this;
-    }
-
 }

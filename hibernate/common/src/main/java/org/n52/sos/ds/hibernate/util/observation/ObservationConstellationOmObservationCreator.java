@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -91,12 +91,8 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
             for (final String featureId : getFeatureIds()) {
                 final AbstractFeature feature = createFeatureOfInterest(featureId);
                 final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
-
                 final OmObservation sosObservation = new OmObservation();
-                sosObservation.setNoDataValue(getNoDataValue());
-                sosObservation.setTokenSeparator(getTokenSeparator());
-                sosObservation.setTupleSeparator(getTupleSeparator());
-                sosObservation.setDecimalSeparator(getDecimalSeparator());
+                addDefaultValuesToObservation(sosObservation);
                 sosObservation.setObservationConstellation(obsConst);
                 final NilTemplateValue value = new NilTemplateValue();
                 value.setUnit(obsProp.getUnit());

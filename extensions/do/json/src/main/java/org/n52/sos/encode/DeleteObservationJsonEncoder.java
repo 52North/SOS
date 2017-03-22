@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -65,11 +65,14 @@ public class DeleteObservationJsonEncoder extends AbstractSosResponseEncoder<Del
         if (t.getVersion() == null) {
             exceptions.add(new MissingVersionParameterException());
         }
-        if (t.getObservationId() == null || t.getObservationId().isEmpty()) {
-            exceptions.add(new MissingParameterValueException(DeleteObservationConstants.PARAMETER_NAME));
+        if (DeleteObservationConstants.NS_SOSDO_1_0.equals(t.getOperationVersion())) {
+            if (t.getObservationId() == null || t.getObservationId().isEmpty()) {
+                exceptions.add(new MissingParameterValueException(DeleteObservationConstants.PARAM_OBSERVATION));
+            } else {
+                json.put(JSONConstants.DELETED_OBSERVATION, t.getObservationId());
+            }
         }
         exceptions.throwIfNotEmpty();
-        json.put(JSONConstants.DELETED_OBSERVATION, t.getObservationId());
     }
 
 }

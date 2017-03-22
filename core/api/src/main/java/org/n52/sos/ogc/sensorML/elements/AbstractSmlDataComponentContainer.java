@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,6 +31,7 @@ package org.n52.sos.ogc.sensorML.elements;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.sos.ogc.gml.AbstractReferenceType;
 import org.n52.sos.ogc.swe.DataRecord;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweField;
@@ -48,14 +49,14 @@ import com.google.common.collect.Sets;
  *
  * @param <T> Implemented class
  */
-public class AbstractSmlDataComponentContainer<T> {
+public class AbstractSmlDataComponentContainer<T> extends AbstractReferenceType {
 
     private String name;
 
     private String typeDefinition;
 
     private DataRecord dataRecord;
-
+    
     private Set<SweAbstractDataComponent> abstractDataComponents = Sets.newHashSet();
 
     public AbstractSmlDataComponentContainer() {
@@ -106,7 +107,7 @@ public class AbstractSmlDataComponentContainer<T> {
      * @return the dataRecord
      */
     public DataRecord getDataRecord() {
-        if (!isSetAbstractDataRecord() && isSetDataComponents()) {
+        if (!isSetDataRecord() && isSetDataComponents()) {
             SweSimpleDataRecord sdr = new SweSimpleDataRecord();
             int counter = 1;
             for (SweAbstractDataComponent element : abstractDataComponents) {
@@ -141,7 +142,7 @@ public class AbstractSmlDataComponentContainer<T> {
     }
 
     public Set<SweAbstractDataComponent> getAbstractDataComponents() {
-        if (!isSetDataComponents() && isSetAbstractDataRecord()) {
+        if (!isSetDataComponents() && isSetDataRecord()) {
             Set<SweAbstractDataComponent> components = Sets.newHashSet();
             for (SweField field : getDataRecord().getFields()) {
                 components.add(field.getElement());

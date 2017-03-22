@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -132,87 +132,89 @@
 </script>
 
 <script type="text/javascript">
-    $.getJSON("<c:url value="/static/conf/client-config.json"/>", function(config) {
-        function flatten(requests) {
-            var s, v, b, o, t, r, transformed = [];
-            for (s in requests) {
-                for (v in requests[s]) {
-                    for (b in requests[s][v]) {
-                        for (o in requests[s][v][b]) {
-                            for (t in requests[s][v][b][o]) {
-                                r = requests[s][v][b][o][t];
-                                r.service = s;
-                                r.version = v;
-                                r.operation = o;
-                                r.title = t;
-                                r.headers = {};
-                                switch (b) {
-                                    case "KVP":
-                                    case "/kvp":
-                                        r.method = "GET";
-                                        r.headers["Accept"] = "application/xml";
-                                        r.binding = "application/x-kvp";
-                                        break;
-                                    case "POX":
-                                    case "/pox":
-                                        r.method = "POST";
-                                        r.headers["Accept"] = "application/xml";
-                                        r.headers["Content-Type"] = "application/xml";
-                                        r.binding = "application/xml";
-                                    break;
-                                    case "SOAP":
-                                    case "/soap":
-                                        r.method = "POST";
-                                        r.headers["Accept"] = "application/soap+xml";
-                                        r.headers["Content-Type"] = "application/soap+xml";
-                                        r.binding = "application/soap+xml";
-                                        break;
-                                    case "JSON":
-                                    case "/json":
-                                        r.method = "POST";
-                                        r.headers["Accept"] = "application/json";
-                                        r.headers["Content-Type"] = "application/json";
-                                        r.binding = "application/json";
-                                        break;
-                                    default:
-                                        if (console && console.log) {
-                                            console.log("Unsupported binding" + b);
-                                        }
-                                        break;
-                                }
-                                if (r.binding) {
-                                    transformed.push(r);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return transformed;
-        }
-
-        if (!config.examples) {
-            /* transform old format */
-            config = { examples: flatten(config) };
-        }
-
-        /* accept endpoint based configs */
-        for (var i = 0; i < config.examples.length; ++i) {
-            switch (config.examples[i].binding) {
-                case "/kvp" : config.examples[i].binding = "application/x-kvp";    break;
-                case "/soap": config.examples[i].binding = "application/soap+xml"; break;
-                case "/pox" : config.examples[i].binding = "application/xml";      break;
-                case "/json": config.examples[i].binding = "application/json";     break;
-            }
-        }
-
-        config.sosUrl = document.location.protocol + "//"
-                + document.location.host + "<c:url value="/service" />";
-        config.availableOperations = availableOperations;
-        new Client(config);
-    })
-    .fail(function() {
-        alert('Error while loading request data!');
-    });
+	$(function() {
+	    $.getJSON("<c:url value="/static/conf/client-config.json"/>", function(config) {
+	        function flatten(requests) {
+	            var s, v, b, o, t, r, transformed = [];
+	            for (s in requests) {
+	                for (v in requests[s]) {
+	                    for (b in requests[s][v]) {
+	                        for (o in requests[s][v][b]) {
+	                            for (t in requests[s][v][b][o]) {
+	                                r = requests[s][v][b][o][t];
+	                                r.service = s;
+	                                r.version = v;
+	                                r.operation = o;
+	                                r.title = t;
+	                                r.headers = {};
+	                                switch (b) {
+	                                    case "KVP":
+	                                    case "/kvp":
+	                                        r.method = "GET";
+	                                        r.headers["Accept"] = "application/xml";
+	                                        r.binding = "application/x-kvp";
+	                                        break;
+	                                    case "POX":
+	                                    case "/pox":
+	                                        r.method = "POST";
+	                                        r.headers["Accept"] = "application/xml";
+	                                        r.headers["Content-Type"] = "application/xml";
+	                                        r.binding = "application/xml";
+	                                    break;
+	                                    case "SOAP":
+	                                    case "/soap":
+	                                        r.method = "POST";
+	                                        r.headers["Accept"] = "application/soap+xml";
+	                                        r.headers["Content-Type"] = "application/soap+xml";
+	                                        r.binding = "application/soap+xml";
+	                                        break;
+	                                    case "JSON":
+	                                    case "/json":
+	                                        r.method = "POST";
+	                                        r.headers["Accept"] = "application/json";
+	                                        r.headers["Content-Type"] = "application/json";
+	                                        r.binding = "application/json";
+	                                        break;
+	                                    default:
+	                                        if (console && console.log) {
+	                                            console.log("Unsupported binding" + b);
+	                                        }
+	                                        break;
+	                                }
+	                                if (r.binding) {
+	                                    transformed.push(r);
+	                                }
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	            return transformed;
+	        }
+	
+	        if (!config.examples) {
+	            /* transform old format */
+	            config = { examples: flatten(config) };
+	        }
+	
+	        /* accept endpoint based configs */
+	        for (var i = 0; i < config.examples.length; ++i) {
+	            switch (config.examples[i].binding) {
+	                case "/kvp" : config.examples[i].binding = "application/x-kvp";    break;
+	                case "/soap": config.examples[i].binding = "application/soap+xml"; break;
+	                case "/pox" : config.examples[i].binding = "application/xml";      break;
+	                case "/json": config.examples[i].binding = "application/json";     break;
+	            }
+	        }
+	
+	        config.sosUrl = document.location.protocol + "//"
+	                + document.location.host + "<c:url value="/service" />";
+	        config.availableOperations = availableOperations;
+	        new Client(config);
+	    })
+	    .fail(function() {
+	        alert('Error while loading request data!');
+	    })
+	});
 </script>
 <jsp:include page="common/footer.jsp" />

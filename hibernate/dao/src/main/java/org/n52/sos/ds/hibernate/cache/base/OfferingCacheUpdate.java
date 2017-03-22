@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,28 +34,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.util.collections.CollectionHelper;
-import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
-import org.n52.sos.ds.hibernate.dao.OfferingDAO.OfferingTimeExtrema;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.ObservationType;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
+import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.CacheHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,30 +105,32 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         //perform single threaded updates here
-        WritableContentCache cache = getCache();
+        Map<String, Collection<String>> procedureMap = offeringDAO.getOfferingIdentifiers(getSession());
+        for (Offering offering : getOfferingsToUpdate()) {
+            String offeringId = offering.getIdentifier();
+            if (shouldOfferingBeProcessed(offeringId)) {
+                getCache().addOffering(offeringId);
+                getCache().setAllowedObservationTypeForOffering(offeringId,
+                        getObservationTypesFromObservationType(offering.getObservationTypes()));
 
-        for (Offering offering : getOfferingsToUpdate()){
-//            try {
-                String offeringId = offering.getIdentifier();
-                if (shouldOfferingBeProcessed(offeringId)) {
-                    String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
-                    cache.addOffering(prefixedOfferingId);
-
-                    if (offering instanceof TOffering) {
-                        TOffering tOffering = (TOffering) offering;
-                        // Related features
-                        cache.setRelatedFeaturesForOffering(prefixedOfferingId,
-                                                             getRelatedFeatureIdentifiersFrom(tOffering));
-                        cache.setAllowedObservationTypeForOffering(prefixedOfferingId,
-                                                                    getObservationTypesFromObservationType(tOffering.getObservationTypes()));
-                        // featureOfInterestTypes
-                        cache.setAllowedFeatureOfInterestTypeForOffering(prefixedOfferingId,
-                                                                          getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
+                if (offering instanceof TOffering) {
+                    TOffering tOffering = (TOffering) offering;
+                    // Related features
+                    Set<String> relatedFeatures = getRelatedFeatureIdentifiersFrom(tOffering);
+                    if (!relatedFeatures.isEmpty()) {
+                        getCache().setRelatedFeaturesForOffering(offeringId, relatedFeatures);
                     }
+                    getCache().setAllowedObservationTypeForOffering(offeringId,
+                            getObservationTypesFromObservationType(tOffering.getObservationTypes()));
+                    // featureOfInterestTypes
+                    getCache().setAllowedFeatureOfInterestTypeForOffering(offeringId,
+                            getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
                 }
-//            } catch (OwsExceptionReport ex) {
-//                getErrors().add(ex);
-//            }
+                Collection<String> parentOfferings = procedureMap.get(offeringId);
+                if (!CollectionHelper.isEmpty(parentOfferings)) {
+                    getCache().addParentOfferings(offeringId, parentOfferings);
+                }
+            }
         }
 
         //time ranges
@@ -151,15 +145,16 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             getErrors().add(ce);
         }
         if (!CollectionHelper.isEmpty(offeringTimeExtrema)) {
-            for (Entry<String,OfferingTimeExtrema> entry : offeringTimeExtrema.entrySet()) {
+            for (Entry<String, OfferingTimeExtrema> entry : offeringTimeExtrema.entrySet()) {
                 String offeringId = entry.getKey();
                 OfferingTimeExtrema ote = entry.getValue();
-                cache.setMinPhenomenonTimeForOffering(offeringId, ote.getMinPhenomenonTime());
-                cache.setMaxPhenomenonTimeForOffering(offeringId, ote.getMaxPhenomenonTime());
-                cache.setMinResultTimeForOffering(offeringId, ote.getMinResultTime());
-                cache.setMaxResultTimeForOffering(offeringId, ote.getMaxResultTime());
+                getCache().setMinPhenomenonTimeForOffering(offeringId, ote.getMinPhenomenonTime());
+                getCache().setMaxPhenomenonTimeForOffering(offeringId, ote.getMaxPhenomenonTime());
+                getCache().setMinResultTimeForOffering(offeringId, ote.getMinResultTime());
+                getCache().setMaxResultTimeForOffering(offeringId, ote.getMaxResultTime());
             }
         }
+        
         LOGGER.debug("Finished executing OfferingCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
         //execute multi-threaded updates
@@ -168,12 +163,14 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         super.execute();
         LOGGER.debug("Finished executing OfferingCacheUpdate (Multi-Threaded Tasks) ({})", getStopwatchResult());
     }
+    
 
     @Override
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
         boolean hasSamplingGeometry = checkForSamplingGeometry();
         for (Offering offering : getOfferingsToUpdate()){
+            
             if (shouldOfferingBeProcessed(offering.getIdentifier())) {
                 offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering,
                         getOfferingObservationConstellationInfo().get(offering.getIdentifier()), hasSamplingGeometry));
@@ -199,23 +196,26 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     protected boolean shouldOfferingBeProcessed(String offeringIdentifier) {
-        try {        
-            if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
-                return getOfferingObservationConstellationInfo().containsKey(offeringIdentifier);
-            } else {
-                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-                Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(getSession());
-                criteria.createCriteria(AbstractObservation.OFFERINGS).add(
-                        Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
-                criteria.setProjection(Projections.rowCount());
-                LOGGER.debug("QUERY shouldOfferingBeProcessed(offering): {}", HibernateHelper.getSqlString(criteria));
-                return (Long) criteria.uniqueResult() > 0;
-            }
-        } catch (OwsExceptionReport e) {
-            LOGGER.error("Error while getting observation DAO class from factory!", e);
-            getErrors().add(e);
-        }
-        return false;
+     // TODO support for Offering Hierarchy!!!
+        return true;
+//        try {
+//            // TODO support for Offering Hierarchy!!!
+//            if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
+//                return getOfferingObservationConstellationInfo().containsKey(offeringIdentifier);
+//            } else {
+//                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+//                Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(getSession());
+//                criteria.createCriteria(AbstractObservation.OFFERINGS).add(
+//                        Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
+//                criteria.setProjection(Projections.rowCount());
+//                LOGGER.debug("QUERY shouldOfferingBeProcessed(offering): {}", HibernateHelper.getSqlString(criteria));
+//                return (Long) criteria.uniqueResult() > 0;
+//            }
+//        } catch (OwsExceptionReport e) {
+//            LOGGER.error("Error while getting observation DAO class from factory!", e);
+//            getErrors().add(e);
+//        }
+//        return false;
     }
 
     protected Set<String> getObservationTypesFromObservationType(Set<ObservationType> observationTypes) {
@@ -236,7 +236,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     protected Set<String> getRelatedFeatureIdentifiersFrom(TOffering hOffering) {
-        Set<String> relatedFeatureList = new HashSet<String>(hOffering.getRelatedFeatures().size());
+        Set<String> relatedFeatureList = new HashSet<>(hOffering.getRelatedFeatures().size());
         for (RelatedFeature hRelatedFeature : hOffering.getRelatedFeatures()) {
             if (hRelatedFeature.getFeatureOfInterest() != null
                     && hRelatedFeature.getFeatureOfInterest().getIdentifier() != null) {

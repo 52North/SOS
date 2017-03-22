@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,7 @@ import net.opengis.sensorML.x101.SystemType;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
-public class TransactionalSensorRequest implements ISensorsRequest {
+public abstract class TransactionalSensorRequest implements ISensorsRequest {
 
     private SystemType xb_smlSystem;
 

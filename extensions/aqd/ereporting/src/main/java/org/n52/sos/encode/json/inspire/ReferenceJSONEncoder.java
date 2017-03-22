@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,7 +31,7 @@ package org.n52.sos.encode.json.inspire;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.AQDJSONConstants;
-import org.n52.sos.util.Reference;
+import org.n52.sos.w3c.xlink.Reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -51,7 +51,9 @@ public class ReferenceJSONEncoder extends JSONEncoder<Reference> {
     public JsonNode encodeJSON(Reference t)
             throws OwsExceptionReport {
         ObjectNode ref = nodeFactory().objectNode();
-        ref.put(AQDJSONConstants.HREF, t.getHref().toString());
+        if (t.getHref().isPresent()) {
+            ref.put(AQDJSONConstants.HREF, t.getHref().get().toString());
+        }
         if (t.getActuate().isPresent()) {
             ref.put(AQDJSONConstants.ACTUATE, t.getActuate().get());
         }

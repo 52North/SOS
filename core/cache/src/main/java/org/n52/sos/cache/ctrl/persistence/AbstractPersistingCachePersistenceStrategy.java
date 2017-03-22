@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceConfiguration;
 
 import com.google.common.base.Optional;
 
@@ -60,7 +61,7 @@ public abstract class AbstractPersistingCachePersistenceStrategy
 
     public AbstractPersistingCachePersistenceStrategy(File cacheFile) {
         if (cacheFile == null) {
-            String basePath = Configurator.getInstance().getBasePath();
+            String basePath = getBasePath();
             this.cacheFile = new File(basePath, CACHE_FILE).getAbsolutePath();
         } else {
             this.cacheFile = cacheFile.getAbsolutePath();
@@ -122,6 +123,14 @@ public abstract class AbstractPersistingCachePersistenceStrategy
                 }
             }
         }
+    }
+    
+    protected String getBasePath() {
+        File cacheFileFolder = ServiceConfiguration.getInstance().getCacheFileFolder();
+        if (cacheFileFolder != null && cacheFileFolder.exists()) {
+            return cacheFileFolder.getAbsolutePath();
+        }
+        return Configurator.getInstance().getBasePath();
     }
 
     @Override

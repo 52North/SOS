@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -85,6 +85,8 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
      *             If an error occurs
      */
     public abstract TimeValuePair nextValue() throws OwsExceptionReport;
+    
+    public abstract void mergeValue(StreamingValue<S> streamingValue);
 
     /**
      * Set the observation template which contains all metadata
@@ -94,6 +96,10 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
      */
     public void setObservationTemplate(OmObservation observationTemplate) {
         this.observationTemplate = observationTemplate;
+    }
+    
+    public OmObservation getObservationTemplate() {
+        return observationTemplate;
     }
 
     @Override

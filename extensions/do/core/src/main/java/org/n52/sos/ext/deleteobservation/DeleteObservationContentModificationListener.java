@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -57,13 +57,22 @@ public class DeleteObservationContentModificationListener implements SosEventLis
     public void handle(SosEvent event) {
         if (event instanceof DeleteObservationEvent) {
             DeleteObservationEvent e = (DeleteObservationEvent) event;
-            DeleteObservationCacheControllerUpdate update =
-                    new DeleteObservationCacheControllerUpdate(e.getDeletedObservation());
-            LOGGER.debug("Updating Cache after content modification: {}", update);
-            try {
-                Configurator.getInstance().getCacheController().update(update);
-            } catch (OwsExceptionReport ex) {
-                LOGGER.error("Error processing Event", ex);
+            if (e.getDeletedObservation() != null) {
+                DeleteObservationCacheControllerUpdate update =
+                        new DeleteObservationCacheControllerUpdate(e.getDeletedObservation());
+                LOGGER.debug("Updating Cache after content modification: {}", update);
+                try {
+                    Configurator.getInstance().getCacheController().update(update);
+                } catch (OwsExceptionReport ex) {
+                    LOGGER.error("Error processing Event", ex);
+                }
+            } else {
+                LOGGER.debug("Updating Cache after content modification!");
+                try {
+                    Configurator.getInstance().getCacheController().update();
+                } catch (OwsExceptionReport ex) {
+                    LOGGER.error("Error processing Event", ex);
+                }
             }
         } else {
             LOGGER.debug("Can not handle modification event: {}", event);

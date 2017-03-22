@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -122,4 +122,14 @@ public interface SensorMLConstants {
 	String OBSERVED_BBOX_DEFINITION_URN = "urn:ogc:def:property:OGC:1.0:observedBBOX";
 
     String DEFAULT_FIELD_NAME = "field_";
+    
+    String STATIONARY = "stationary";
+    
+    String MOBILE = "mobile";
+    
+    String INSITU = "insitu";
+    
+    String REMOTE = "remote";
+
+    String FIXED = "fixed";
 }

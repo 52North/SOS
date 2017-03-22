@@ -1,6 +1,56 @@
 {
   "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
   "procedure": "http://52north.org/example/procedure/1",
+  "parameter":  [
+  	{
+      "NamedValue": {
+        "name": "http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry",
+        "value": {
+            "type" : "Point",
+            "coordinates" : [
+              52.9,
+              7.52
+            ]
+          }
+      }
+    },
+    {
+      "NamedValue": {
+        "name": "category",
+        "value": {
+            "codespace" : "codespace",
+            "value" : "category"
+         }
+      }
+    },
+    {
+      "NamedValue": {
+        "name": "quantity",
+        "value": {
+            "uom" : "uom",
+            "value" : 25.2
+         }
+      }
+    },
+    {
+      "NamedValue": {
+        "name": "boolean",
+        "value": true
+      }
+    },
+    {
+      "NamedValue": {
+        "name": "text",
+        "value": "text"
+      }
+    },
+    {
+      "NamedValue": {
+        "name": "count",
+        "value": 2
+      }
+    }
+  ],
   "observedProperty": "http://52north.org/example/observedProperty/1",
   "identifier": {
     "value": "measurement1",

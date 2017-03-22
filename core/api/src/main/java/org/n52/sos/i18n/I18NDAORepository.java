@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -73,6 +73,17 @@ public class I18NDAORepository extends AbstractConfiguringServiceLoaderRepositor
     public <T extends AbstractI18NMetadata> I18NDAO<T> getDAO(Class<T> c) {
         // TODO check for subtypes
         return (I18NDAO<T>) daos.get(c);
+    }
+    
+    public boolean isSupported() {
+        if (!daos.isEmpty()) {
+            for (I18NDAO<?> dao : daos.values()) {
+                if (dao.isSupported()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

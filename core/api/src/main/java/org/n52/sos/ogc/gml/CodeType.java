@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ogc.gml;
 
-import org.n52.sos.util.Constants;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Objects;
@@ -39,7 +38,7 @@ import com.google.common.base.Objects;
  * @since 4.0.0
  *
  */
-public class CodeType {
+public class CodeType implements Cloneable {
 
     /**
      * Value/identifier
@@ -124,6 +123,11 @@ public class CodeType {
      */
     public boolean isSetCodeSpace() {
         return StringHelper.isNotEmpty(getCodeSpace());
+    }
+    
+    @Override
+    public CodeType clone() throws CloneNotSupportedException {
+        return new CodeType(getValue()).setCodeSpace(getCodeSpace());
     }
 
     @Override

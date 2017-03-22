@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -49,6 +49,7 @@ import org.n52.sos.response.GetResultTemplateResponse;
  */
 public class GetResultTemplateDAO extends AbstractGetResultTemplateDAO {
     private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private ResultHandlingHelper helper = new ResultHandlingHelper();
 
     /**
      * constructor
@@ -74,9 +75,9 @@ public class GetResultTemplateDAO extends AbstractGetResultTemplateDAO {
                 GetResultTemplateResponse response = new GetResultTemplateResponse();
                 response.setService(request.getService());
                 response.setVersion(request.getVersion());
-                response.setResultEncoding(ResultHandlingHelper.createSosResultEncoding(resultTemplate
+                response.setResultEncoding(helper.createSosResultEncoding(resultTemplate
                         .getResultEncoding()));
-                response.setResultStructure(ResultHandlingHelper.createSosResultStructure(resultTemplate
+                response.setResultStructure(helper.createSosResultStructure(resultTemplate
                         .getResultStructure()));
                 return response;
             }

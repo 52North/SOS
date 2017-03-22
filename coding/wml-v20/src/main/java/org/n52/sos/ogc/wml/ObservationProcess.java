@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,9 +26,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ogc.wml;
+package org.n52.sos.ogc.series.wml;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -100,21 +101,20 @@ public class ObservationProcess extends SosProcedureDescription {
      */
     private final List<NamedValue<?>> parameters = new ArrayList<NamedValue<?>>(0);
 
-    private Set<SosOffering> offeringIdentifiers;
 
     @Override
     public Set<SosOffering> getOfferings() {
-        return offeringIdentifiers;
+        return super.getOfferings();
     }
 
     public ObservationProcess setOfferingIdentifiers(final Set<SosOffering> offeringIdentifiers) {
-        this.offeringIdentifiers = offeringIdentifiers;
+    	addOfferings(offeringIdentifiers);
         return this;
     }
 
     @Override
     public boolean isSetOfferings() {
-        return offeringIdentifiers != null && !offeringIdentifiers.isEmpty();
+        return super.isSetOfferings();
     }
 
     @Override
@@ -200,7 +200,7 @@ public class ObservationProcess extends SosProcedureDescription {
         return parameters;
     }
 
-    public ObservationProcess setParameters(final List<NamedValue<?>> parameters) {
+    public ObservationProcess setParameters(final Collection<NamedValue<?>> parameters) {
         this.parameters.addAll(parameters);
         return this;
     }
@@ -241,5 +241,4 @@ public class ObservationProcess extends SosProcedureDescription {
     public boolean isSetParameters() {
         return parameters != null && !parameters.isEmpty();
     }
-
 }

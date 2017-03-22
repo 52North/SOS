@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,9 +31,18 @@ package org.n52.sos.response;
 import java.util.Collections;
 import java.util.List;
 
+import org.n52.sos.ogc.om.AbstractStreaming;
+import org.n52.sos.ogc.om.ObservationMergeIndicator;
+import org.n52.sos.ogc.om.ObservationMerger;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.util.StringHelper;
+
+import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
@@ -42,7 +51,7 @@ import org.n52.sos.util.StringHelper;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractObservationResponse extends AbstractServiceResponse implements ResponseFormat {
+public abstract class AbstractObservationResponse extends AbstractServiceResponse implements ResponseFormat, StreamingDataResponse {
     private List<OmObservation> observationCollection;
 
     private String responseFormat;
@@ -50,6 +59,12 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     private String resultModel;
 
     private boolean mergeObservation = false;
+    
+    private ObservationMerger observationMerger;
+    
+    private ObservationMergeIndicator observationMergeIndicator;
+
+    private GlobalGetObservationValues globalValues;
 
     public List<OmObservation> getObservationCollection() {
         return Collections.unmodifiableList(observationCollection);
@@ -61,8 +76,6 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
         }
         return null;
     }
-
-   
 
     public void setObservationCollection(final List<OmObservation> observationCollection) {
         this.observationCollection = observationCollection;
@@ -112,5 +125,108 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     public boolean isSetMergeObservation() {
         return mergeObservation;
     }
+    
+    /**
+     * @return the observationMerger
+     */
+    public ObservationMerger getObservationMerger() {
+        if (observationMerger == null) {
+            observationMerger = new ObservationMerger();
+        }
+        return observationMerger;
+    }
 
+    /**
+     * @param observationMerger the observationMerger to set
+     */
+    public void setObservationMerger(ObservationMerger observationMerger) {
+        this.observationMerger = observationMerger;
+        setMergeObservations(true);
+    }
+    
+    public void setObservationMergeIndicator(ObservationMergeIndicator indicator) {
+        this.observationMergeIndicator = indicator;
+    }
+
+    public ObservationMergeIndicator getObservationMergeIndicator() {
+        if (this.observationMergeIndicator == null) {
+            setObservationMergeIndicator(new ObservationMergeIndicator());
+        }
+        return this.observationMergeIndicator;
+    }
+
+    @Override
+    public boolean hasStreamingData() {
+        OmObservation observation = getFirstObservation();
+        if (observation != null) {
+            return observation.getValue() instanceof AbstractStreaming;
+        }
+        return false;
+    }
+
+    @Override
+    public void mergeStreamingData() throws OwsExceptionReport {
+        List<OmObservation> observations = Lists.newArrayList();
+        if (hasStreamingData()) {
+            for (OmObservation observation : getObservationCollection()) {
+                AbstractStreaming values = (AbstractStreaming) observation.getValue();
+                if (values.hasNextValue()) {
+                    if (isSetMergeObservation()) { 
+                        observations.addAll(values.mergeObservation());
+                    } else {
+                        observations.addAll(values.getObservation());
+                    }
+                }
+            }
+        }
+        setObservationCollection(observations);
+    }
+
+    public AbstractObservationResponse setGlobalValues(GlobalGetObservationValues globalValues) {
+        this.globalValues = globalValues;
+        return this;
+    }
+    
+    public GlobalGetObservationValues getGlobalValues() {
+        return globalValues;
+    }
+    
+    public boolean hasGlobalValues() {
+        return getGlobalValues() != null && !getGlobalValues().isEmpty();
+    }
+
+    public class GlobalGetObservationValues {
+        private Time phenomenonTime;
+        
+        public GlobalGetObservationValues addPhenomenonTime(Time phenomenonTime) {
+            if (isSetPhenomenonTime()) {
+                if (phenomenonTime instanceof TimeInstant) {
+                    this.phenomenonTime = new TimePeriod(this.phenomenonTime, this.phenomenonTime);
+                }
+                ((TimePeriod)this.phenomenonTime).extendToContain(phenomenonTime);
+            } else {
+                this.phenomenonTime = phenomenonTime;
+            }
+            return this;
+        }
+        
+        public GlobalGetObservationValues setPhenomenonTime(Time phenomenonTime) {
+            this.phenomenonTime = phenomenonTime;
+            return this;
+        }
+        
+        public Time getPhenomenonTime() {
+            return phenomenonTime;
+        }
+        
+        public boolean isSetPhenomenonTime() {
+            return getPhenomenonTime() != null && !getPhenomenonTime().isEmpty();
+        }
+        
+        public boolean isEmpty() {
+            return !isSetPhenomenonTime();
+        }
+    
+    }
+    
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -149,6 +149,9 @@ public abstract class AbstractSettingValueFactory implements SettingValueFactory
     private SettingValue<String> newChoiceSettingValueFromGenericDefinition(SettingDefinition<?, ?> setting, String stringValue) {
         ChoiceSettingDefinition def = (ChoiceSettingDefinition) setting;
         if (!def.hasOption(stringValue)) {
+            if (def.hasDefaultValue()) {
+                return newChoiceSettingValue().setValue(def.getDefaultValue()).setKey(setting.getKey());
+            }
             throw new ConfigurationException("Invalid choice value");
         }
        return newChoiceSettingValue().setValue(stringValue).setKey(setting.getKey());

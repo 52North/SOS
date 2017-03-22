@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -83,7 +83,12 @@ public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabi
         if (!hasCapabilities() && isSetAbstractDataComponents()) {
             List<SmlCapability> capabilities = Lists.newArrayList();
             for (SweAbstractDataComponent component : getAbstractDataComponents()) {
-                SmlCapability smlCapability = new SmlCapability(component.getName().getValue());
+                SmlCapability smlCapability = new SmlCapability();
+                if (component.isSetName()) {
+                    smlCapability.setName(component.getName().getValue());
+                } else if (component.isSetDefinition()) {
+                    smlCapability.setName(component.getDefinition());
+                }
                 smlCapability.setAbstractDataComponent(component);
                 capabilities.add(smlCapability);
             }

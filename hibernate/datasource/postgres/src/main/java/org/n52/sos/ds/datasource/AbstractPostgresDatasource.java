@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,7 @@
 package org.n52.sos.ds.datasource;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -40,12 +41,16 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.security.auth.login.CredentialException;
+
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
-import org.hibernate.spatial.dialect.postgis.PostgisDialect;
+import org.hibernate.spatial.dialect.postgis.PostgisDialectSpatialIndex;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -55,6 +60,8 @@ import com.google.common.collect.Lists;
  *
  */
 public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDBDatasource {
+	
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPostgresDatasource.class);
 
     protected static final String POSTGRES_DRIVER_CLASS = "org.postgresql.Driver";
 
@@ -104,7 +111,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
 
     @Override
     protected Dialect createDialect() {
-        return new PostgisDialect();
+        return new PostgisDialectSpatialIndex();
     }
 
     @Override
@@ -208,44 +215,48 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
         CustomConfiguration config = getConfig(settings);
-        Iterator<Table> tables = config.getTableMappings();
-        List<String> names = new LinkedList<String>();
-        while (tables.hasNext()) {
-            Table table = tables.next();
-            if (table.isPhysicalTable()) {
-                names.add(table.getName());
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = openConnection(settings);
+            String catalog = checkCatalog(conn);
+            String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
+            Iterator<Table> tables = config.getTableMappings();
+            List<String> names = new LinkedList<String>();
+            while (tables.hasNext()) {
+                Table table = tables.next();
+                if (table.isPhysicalTable()) {
+                    names.add(table.getQualifiedName(createDialect(), null, schema));
+                }
             }
-        }
-        if (!names.isEmpty()) {
-            Connection conn = null;
-            Statement stmt = null;
-            try {
-                conn = openConnection(settings);
+            if (!names.isEmpty()) {
                 stmt = conn.createStatement();
                 stmt.execute(String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names)));
-            } catch (SQLException ex) {
-                throw new ConfigurationException(ex);
-            } finally {
-                close(stmt);
-                close(conn);
             }
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(stmt);
+            close(conn);
         }
     }
 
     @Override
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
+        	Class.forName(getDriverClass());
             String jdbc = toURL(settings);
-            Class.forName(getDriverClass());
             String pass = (String) settings.get(HibernateConstants.CONNECTION_PASSWORD);
             String user = (String) settings.get(HibernateConstants.CONNECTION_USERNAME);
+            precheckDriver(jdbc, user, pass);
             return DriverManager.getConnection(jdbc, user, pass);
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);
         }
     }
 
-    @Override
+
+	@Override
     protected String[] checkDropSchema(String[] dropSchema) {
         List<String> checkedSchema = Lists.newLinkedList();
         for (String string : dropSchema) {

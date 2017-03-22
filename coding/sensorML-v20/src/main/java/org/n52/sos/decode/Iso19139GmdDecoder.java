@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,8 +42,14 @@ import org.isotc211.x2005.gmd.CIResponsiblePartyDocument;
 import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
 import org.isotc211.x2005.gmd.CIResponsiblePartyType;
 import org.isotc211.x2005.gmd.CITelephoneType;
+import org.isotc211.x2005.gmd.LocalisedCharacterStringPropertyType;
+import org.isotc211.x2005.gmd.PTFreeTextDocument;
+import org.isotc211.x2005.gmd.PTFreeTextPropertyType;
+import org.isotc211.x2005.gmd.PTFreeTextType;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.iso.gmd.GmdConstants;
+import org.n52.sos.iso.gmd.LocalisedCharacterString;
+import org.n52.sos.iso.gmd.PT_FreeText;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
@@ -69,7 +75,8 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Iso19139GmdDecoder.class);
 
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(GmdConstants.NS_GMD,
-            CIResponsiblePartyDocument.class, CIResponsiblePartyPropertyType.class, CIResponsiblePartyType.class);
+            CIResponsiblePartyDocument.class, CIResponsiblePartyPropertyType.class, CIResponsiblePartyType.class,
+            PTFreeTextPropertyType.class, PTFreeTextDocument.class, PTFreeTextType.class);
 
     public Iso19139GmdDecoder() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -96,12 +103,43 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
         if (element instanceof CIResponsiblePartyDocument) {
             return decodeCIResponsibleParty(((CIResponsiblePartyDocument) element).getCIResponsibleParty());
         } else if (element instanceof CIResponsiblePartyPropertyType) {
-            return decodeCIResponsibleParty(((CIResponsiblePartyPropertyType) element).getCIResponsibleParty());
+            return decodeCIResponsiblePartyPropertyType((CIResponsiblePartyPropertyType) element);
         } else if (element instanceof CIResponsiblePartyType) {
             return decodeCIResponsibleParty((CIResponsiblePartyType) element);
+        } else if (element instanceof PTFreeTextDocument) {
+            return decodePTFreeTextType(((PTFreeTextDocument)element).getPTFreeText());
+        } else if (element instanceof PTFreeTextPropertyType) {
+            return decodePTFreeTextType(((PTFreeTextPropertyType)element).getPTFreeText());
+        } else if (element instanceof PTFreeTextType) {
+            return decodePTFreeTextType((PTFreeTextType)element);
         } else {
             throw new UnsupportedDecoderInputException(this, element);
         }
+    }
+
+    private PT_FreeText decodePTFreeTextType(PTFreeTextType ptftt) {
+        PT_FreeText ptFreeText = new PT_FreeText();
+        for (LocalisedCharacterStringPropertyType lcspt : ptftt.getTextGroupArray()) {
+            ptFreeText.addTextGroup(new LocalisedCharacterString(lcspt.getLocalisedCharacterString().getStringValue()));
+        }
+        return ptFreeText;
+    }
+
+    private Object decodeCIResponsiblePartyPropertyType(CIResponsiblePartyPropertyType element) throws OwsExceptionReport {
+        if (element.isSetCIResponsibleParty()) {
+            return decodeCIResponsibleParty(element.getCIResponsibleParty());
+        } else if (element.isSetHref()) {
+            SmlResponsibleParty responsibleParty = new SmlResponsibleParty();
+            responsibleParty.setHref(element.getHref());
+            if (element.isSetTitle()) {
+                responsibleParty.setTitle(element.getTitle());
+            }
+            if (element.isSetRole()) {
+                responsibleParty.setRole(element.getRole());
+            }
+            return responsibleParty;
+        }
+        throw new UnsupportedDecoderInputException(this, element);
     }
 
     private Object decodeCIResponsibleParty(CIResponsiblePartyType element) throws OwsExceptionReport {

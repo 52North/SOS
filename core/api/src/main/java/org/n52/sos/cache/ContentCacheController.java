@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -54,7 +54,7 @@ public interface ContentCacheController extends Cleanupable {
     void update(ContentCacheUpdate update) throws OwsExceptionReport;
 
     /**
-     * Renew the content cache completly.
+     * Renew the content cache completely.
      *
      * @throws OwsExceptionReport
      *             if an error occurs while updating the cache

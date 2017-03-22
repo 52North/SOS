@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,7 +46,20 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_MAPPING_CORE_PATH = HIBERNATE_MAPPING_PATH + "/core";
     
+    // TODO change to /feature
+    String HIBERNATE_MAPPING_FEATURE_PATH = HIBERNATE_MAPPING_PATH + "/feature";
+    
     String HIBERNATE_MAPPING_TRANSACTIONAL_PATH = HIBERNATE_MAPPING_PATH + "/transactional";
+    
+    String HIBERNATE_MAPPING_SERIES_PATH = HIBERNATE_MAPPING_PATH + "/metadata";
+            
+    String HIBERNATE_MAPPING_SERIES_METADATA_PATH = HIBERNATE_MAPPING_SERIES_PATH + "/series";
+    
+    String HIBERNATE_MAPPING_PARAMETER_PATH = HIBERNATE_MAPPING_PATH + "/parameter";
+    
+    String HIBERNATE_MAPPING_PARAMETER_FEATURE_PATH = HIBERNATE_MAPPING_PARAMETER_PATH + "/feature";
+    
+    String HIBERNATE_MAPPING_PARAMETER_OBSERVATION_PATH = HIBERNATE_MAPPING_PARAMETER_PATH + "/observation";
     
     String HIBERNATPE_MAPPING_OLD_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/old";
     
@@ -78,6 +91,12 @@ public interface HibernateDatasourceConstants {
     
     String HIBERNATE_DEFAULT_OGM_PACKAGE = "org.n52.sos.ds.hibernate.ogm.entities";
     
+    String HIBERNATE_DATASOURCE_TIMEZONE = "hibernate.datasource.timezone";
+    
+    String HIBERNATE_DATASOURCE_TIME_STRING_FORMAT = "hibernate.datasource.timeStringFormat";
+    
+    String HIBERNATE_DATASOURCE_TIME_STRING_Z  = "hibernate.datasource.timeStringZ";
+    
     public enum DatabaseConcept {
         OLD_CONCEPT("Old concept"),
         SERIES_CONCEPT("Series concept"),
@@ -86,6 +105,22 @@ public interface HibernateDatasourceConstants {
         private final String displayName;
         
         private DatabaseConcept(String displayName) {
+           this.displayName = displayName;
+        }
+        
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
+    
+    
+    public enum FeatureConcept {
+        DEFAULT_FEATURE_CONCEPT("Default feature concept"),
+        EXTENDED_FEATURE_CONCEPT("Extended feature concept");
+        
+        private final String displayName;
+        
+        private FeatureConcept(String displayName) {
            this.displayName = displayName;
         }
         

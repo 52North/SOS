@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,11 +31,12 @@ package org.n52.sos.ds.hibernate.values.series;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -44,7 +45,7 @@ import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Streaming observation class for series concept
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
@@ -59,10 +60,10 @@ public class HibernateSeriesStreamingObservation extends AbstractHibernateStream
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
-     * @throws OwsExceptionReport 
+     * @throws OwsExceptionReport
      */
     public HibernateSeriesStreamingObservation(GetObservationRequest request) throws OwsExceptionReport {
         super(request);
@@ -76,9 +77,9 @@ public class HibernateSeriesStreamingObservation extends AbstractHibernateStream
     }
 
     @Override
-    protected AbstractObservation checkShowMetadtaOfEmptyObservations(AbstractObservation abstractObservation) {
+    protected Observation<?> checkShowMetadataOfEmptyObservations(Observation<?> abstractObservation) {
         if (showMetadataOfEmptyObservation) {
-            if (abstractObservation instanceof SeriesObservation) {
+            if (abstractObservation instanceof AbstractSeriesObservation) {
                 seriesIDs.add(((SeriesObservation) abstractObservation).getSeries().getSeriesId());
             }
         }

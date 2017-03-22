@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -54,9 +54,9 @@
     <fieldset id="actions" style="display: none;">
         <legend>Actions</legend>
        		 <p><span class="label label-important">Note!</span></p> 
-       		 <p>To support the requirements of the <em>INSPIRE SOS</em>, the database model was adjusted from 52N SOS version 4.1 to 4.2.</p>
-       		 <p>This requires an update of existing database model but the <strong><em>Force updating existing tables</em></strong> function does not work.</p>
-       		 <p>Please, update your database model manually with the appropirate update script provided in the SOS sources folder <strong>/misc/db/...</strong>.</p>
+       		 <p>To fulfill some requirements, the database model was adjusted from 52N SOS version 4.3.7 to 4.3.8</p>
+       		 <p>This requires an update of existing database model which can be performed with <strong><em>Force updating existing tables</em></strong>, but the new column (offerinid in series) is not filled with values.</p>
+       		 <p>If your each of your observation relates to one offering, you can use the update script provided in the SOS sources folder <strong>/misc/db/.../.._437_to_438.sql</strong>.</p>
         <div class="control-group" id="create">
             <div class="controls">
                 <label class="checkbox">

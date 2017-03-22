@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -128,15 +128,19 @@ public class AqdHelper {
     
     public void processObservation(OmObservation observation, TimePeriod timePeriod, TimeInstant resultTime,
             FeatureCollection featureCollection, AbstractEReportingHeader eReportingHeader, int counter) {
+        processObservation(observation, resultTime, featureCollection, eReportingHeader, counter);
         if (observation.isSetPhenomenonTime()) {
-            // generate gml:id
-            observation.setGmlId(getObservationId(counter));
-            // add xlink:href to eReportingHeader.content
-            eReportingHeader.addContent((AbstractFeature)new OmObservation().setIdentifier(new CodeWithAuthority(getObservationXlink(observation.getGmlId()))));
             timePeriod.extendToContain(observation.getPhenomenonTime());
-            observation.setResultTime(resultTime);
-            featureCollection.addMember(observation);
         }
+    }
+
+    public void processObservation(OmObservation observation, TimeInstant resultTime,
+            FeatureCollection featureCollection, AbstractEReportingHeader eReportingHeader, int counter) {
+        observation.setGmlId(getObservationId(counter));
+        // add xlink:href to eReportingHeader.content
+        eReportingHeader.addContent((AbstractFeature)new OmObservation().setIdentifier(new CodeWithAuthority(getObservationXlink(observation.getGmlId()))));
+        observation.setResultTime(resultTime);
+        featureCollection.addMember(observation);
     }
 
     public String getObservationXlink(String gmlId) {

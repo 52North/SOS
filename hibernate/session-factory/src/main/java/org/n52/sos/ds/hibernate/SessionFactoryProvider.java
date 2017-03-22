@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -101,7 +101,7 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
             if (properties.containsKey(HIBERNATE_RESOURCES)) {
                 List<String> resources = (List<String>) properties.get(HIBERNATE_RESOURCES);
                 for (String resource : resources) {
-                    configuration.addResource(resource);
+                    configuration.addURL(SessionFactoryProvider.class.getResource(resource));
                 }
                 properties.remove(HIBERNATE_RESOURCES);
             } else if (properties.containsKey(HIBERNATE_DIRECTORY)) {
@@ -136,19 +136,14 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
                         HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH).toURI()));
             }
             return configuration;
-        } catch (HibernateException he) {
+        } catch (HibernateException | URISyntaxException he) {
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, he);
             cleanup();
             throw new ConfigurationException(exceptionText, he);
-        } catch (URISyntaxException urise) {
-            String exceptionText = "An error occurs during instantiation of the database connection pool!";
-            LOGGER.error(exceptionText, urise);
-            cleanup();
-            throw new ConfigurationException(exceptionText, urise);
         }
     }
-    
+
     @Override
     public String getConnectionProviderIdentifier() {
         return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;

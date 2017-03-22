@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,7 +37,6 @@ import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
@@ -53,6 +52,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
@@ -62,7 +62,6 @@ import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.service.operator.ServiceOperatorKey;
-import org.n52.sos.i18n.LocaleHelper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -193,7 +192,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
             } else {
                 if (!request.isSetValidTime()) {
                     throw new NoApplicableCodeException().causedBy(
-                            new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
+                            new IllegalArgumentException("Parameter 'procedure' was null or invalid!")).setStatus(
                             INTERNAL_SERVER_ERROR);
                 }
             }

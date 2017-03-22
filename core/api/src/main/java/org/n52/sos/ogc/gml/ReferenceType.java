@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,6 +35,13 @@ package org.n52.sos.ogc.gml;
  * 
  */
 public class ReferenceType extends AbstractReferenceType {
+    
+    
+    /**
+     * constructor
+     */
+    public ReferenceType() {
+    }
 
     /**
      * constructor
@@ -46,8 +53,25 @@ public class ReferenceType extends AbstractReferenceType {
         setHref(href);
     }
 
+    /**
+     * constructor
+     * 
+     * @param href
+     *            Href
+     * @param title
+     *            Title
+     */
+    public ReferenceType(String href, String title) {
+        setHref(href);
+        setTitle(title);
+    }
+
     @Override
     public String toString() {
         return String.format("ReferenceType [title=%s, role=%s, href=%s]", getTitle(), getRole(), getHref());
+    }
+
+    public boolean isEmpty() {
+        return !isSetHref() && !isSetTitle() && !isSetRole();
     }
 }

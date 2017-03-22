@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -49,5 +49,15 @@ public class ProcessModel extends AbstractProcess implements HasProcessMethod {
     @Override
     public boolean isSetMethod() {
         return method != null;
+    }
+    
+    @Override
+    public String getDescriptionFormat() {
+        return SensorMLConstants.NS_SML;
+    }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return SensorMLConstants.NS_SML;
     }
 }

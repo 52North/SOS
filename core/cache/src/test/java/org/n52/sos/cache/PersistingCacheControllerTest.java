@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -52,6 +52,7 @@ public class PersistingCacheControllerTest extends AbstractCacheControllerTest {
         ContentCacheControllerImpl cc = new TestableInMemoryCacheController();
         assertThat(cc.getCache().getFeaturesOfInterest(), is(empty()));
         cc.getCache().addFeatureOfInterest(IDENTIFIER);
+        cc.getCache().addPublishedFeatureOfInterest(IDENTIFIER);
         assertThat(cc.getCache().getFeaturesOfInterest(), contains(IDENTIFIER));
         cc.cleanup();
         assertThat(getTempFile(), is(existing()));

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -56,6 +56,8 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
      * Response mode
      */
     private String responseMode;
+    
+    private boolean checkForDuplicity = true;
 
     /**
      * Get response format
@@ -144,11 +146,26 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
         return StringHelper.isNotEmpty(getSrsName());
     }
     
+    /**
+     * @return the checkForDuplicity
+     */
+    public boolean isCheckForDuplicity() {
+        return checkForDuplicity;
+    }
+
+    /**
+     * @param checkForDuplicity the checkForDuplicity to set
+     */
+    public void setCheckForDuplicity(boolean checkForDuplicity) {
+        this.checkForDuplicity = checkForDuplicity;
+    }
+    
     public void copyOf(AbstractObservationRequest res) {
         res.setResponseFormat(this.responseFormat);
         res.setResponseMode(this.responseMode);
         res.setResultModel(this.resultModel);
         res.setSrsName(this.srsName);
+        res.setCheckForDuplicity(this.isCheckForDuplicity());
     }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -54,7 +54,7 @@ public abstract class AbstractDescribeSensorDAO extends AbstractOperationDAO {
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
         addProcedureParameter(opsMeta);
-        Set<String> pdfs = getCache().getRequstableProcedureDescriptionFormat();
+        Set<String> pdfs = getCache().getRequestableProcedureDescriptionFormat();
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
             pdfs.addAll(CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS,
                     Sos1Constants.SERVICEVERSION));

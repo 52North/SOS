@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -72,6 +72,8 @@ public class DefaultProfile implements Profile {
     private Map<String, Boolean> encodeProcedureInObservation = new HashMap<String, Boolean>(0);
 
     private Map<String, String> defaultObservationTypesForEncoding = new HashMap<String, String>(0);
+    
+    private String definition;
 
     @Override
     public String getIdentifier() {
@@ -81,6 +83,11 @@ public class DefaultProfile implements Profile {
     @Override
     public boolean isActiveProfile() {
         return true;
+    }
+
+    @Override
+    public void setActiveProfile(boolean active) {
+        // nothing to do;
     }
 
     @Override
@@ -174,6 +181,16 @@ public class DefaultProfile implements Profile {
     @Override
     public boolean isSetNoDataPlaceholder() {
         return defaultNoDataPlaceholder != null && !defaultNoDataPlaceholder.isEmpty();
+    }
+    
+    @Override
+    public void setDefinition(String definition) {
+        this.definition = definition;
+    }
+
+    @Override
+    public String getDefinition() {
+        return definition;
     }
 
 }

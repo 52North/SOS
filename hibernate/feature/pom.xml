@@ -19,6 +19,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
+         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>inspire-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-session-factory</artifactId>
@@ -37,7 +41,12 @@
             <artifactId>api</artifactId>
             <classifier>tests</classifier>
         </dependency>
-                <dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-h2</artifactId>
             <scope>test</scope>
@@ -45,11 +54,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sqlite-config</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

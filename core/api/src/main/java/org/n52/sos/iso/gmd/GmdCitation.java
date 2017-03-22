@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,21 +28,44 @@
  */
 package org.n52.sos.iso.gmd;
 
+import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
+
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class GmdCitation {
+public class GmdCitation extends AbtractGmd implements AttributeSimpleAttrs {
 
     private static final GmdCitation EC_50_2008
             = new GmdCitation("EC/50/2008", new GmdCitationDate(GmdDateType.publication(), "2008"));
-    private final String title;
-    private final GmdCitationDate date;
+    private SimpleAttrs simpleAttrs; 
+    private String title;
+    private GmdCitationDate date;
 
+    public GmdCitation(SimpleAttrs simpleAttrs) {
+        this.simpleAttrs = simpleAttrs;
+     }
+    
     public GmdCitation(String title, GmdCitationDate date) {
         this.title = title;
         this.date = date;
+    }
+    
+    @Override
+    public void setSimpleAttrs(SimpleAttrs simpleAttrs) {
+       this.simpleAttrs = simpleAttrs;
+    }
+
+    @Override
+    public SimpleAttrs getSimpleAttrs() {
+        return simpleAttrs;
+    }
+
+    @Override
+    public boolean isSetSimpleAttrs() {
+        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
     }
 
     public String getTitle() {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -77,6 +77,8 @@ public interface HibernateConstants {
     String THREAD_LOCAL_SESSION_CONTEXT = "thread";
 
     String HBM2DDL_UPDATE = "update";
+    
+    String HBM2DDL_NONE = "none";
 
     String HBM2DDL_VALIDATE = "validate";
 
@@ -97,6 +99,64 @@ public interface HibernateConstants {
     String C3P0_MAX_STATEMENTS = AvailableSettings.C3P0_MAX_STATEMENTS;
 
     String C3P0_PREFERRED_TEST_QUERY = "hibernate.c3p0.preferredTestQuery";
+    
+    /*
+     * Default: 0
+     * 
+     * Seconds. If set, if an application checks out but then fails to check-in
+     * [i.e. close()] a Connection within the specified period of time, the pool
+     * will unceremoniously destroy() the Connection. This permits applications
+     * with occasional Connection leaks to survive, rather than eventually
+     * exhausting the Connection pool. And that's a shame. Zero means no
+     * timeout, applications are expected to close() their own Connections.
+     * Obviously, if a non-zero value is set, it should be to a value longer
+     * than any Connection should reasonably be checked-out. Otherwise, the pool
+     * will occasionally kill Connections in active use, which is bad. This is
+     * basically a bad idea, but it's a commonly requested feature. Fix your
+     * $%!@% applications so they don't leak Connections! Use this temporarily
+     * in combination with debugUnreturnedConnectionStackTraces to figure out
+     * where Connections are being checked-out that don't make it back into the
+     * pool!
+     */
+    String C3P0_UNRETURNED_CONNECTION_TIMEOUT = "hibernate.c3p0.unreturnedConnectionTimeout";
+
+    /*
+     * Default: caller 
+     * 
+     * Must be one of caller, library, or none. Determines how
+     * the contextClassLoader (see java.lang.Thread) of c3p0-spawned Threads is
+     * determined. If caller, c3p0-spawned Threads (helper threads,
+     * java.util.Timer threads) inherit their contextClassLoader from the client
+     * Thread that provokes initialization of the pool. If library, the
+     * contextClassLoader will be the class that loaded c3p0 classes. If none,
+     * no contextClassLoader will be set (the property will be null), which in
+     * practice means the system ClassLoader will be used. The default setting
+     * of caller is sometimes a problem when client applications will be hot
+     * redeployed by an app-server. When c3p0's Threads hold a reference to a
+     * contextClassLoader from the first client that hits them, it may be
+     * impossible to garbage collect a ClassLoader associated with that client
+     * when it is undeployed in a running VM. Setting this to library can
+     * resolve these issues.
+     */
+    String C3P0_CONTEXT_CLASS_LOADER_SOURCE = "hibernate.c3p0.contextClassLoaderSource";
+
+    /*
+     * Default: false 
+     * 
+     * If true, c3p0-spawned Threads will have the
+     * java.security.AccessControlContext associated with c3p0 library classes.
+     * By default, c3p0-spawned Threads (helper threads, java.util.Timer
+     * threads) inherit their AccessControlContext from the client Thread that
+     * provokes initialization of the pool. This can sometimes be a problem,
+     * especially in application servers that support hot redeployment of client
+     * apps. If c3p0's Threads hold a reference to an AccessControlContext from
+     * the first client that hits them, it may be impossible to garbage collect
+     * a ClassLoader associated with that client when it is undeployed in a
+     * running VM. Also, it is possible client Threads might lack sufficient
+     * permission to perform operations that c3p0 requires. Setting this to true
+     * can resolve these issues.
+     */
+    String C3P0_PRIVILEGE_SPAWNED_THREAD = "hibernate.c3p0.privilegeSpawnedThreads";
 
     String JDBC_BATCH_SIZE = AvailableSettings.STATEMENT_BATCH_SIZE;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,6 +34,7 @@ import java.util.Collection;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 /**
  * Interface for the SOS internal representation of SWE simpleTypes
@@ -104,6 +105,13 @@ public abstract class SweAbstractSimpleType<T> extends SweAbstractDataComponent 
     public String toString() {
         return String.format("%s [value=%s; quality=%s; simpleType=%s]", this.getClass().getSimpleName(), getValue(),
                 getQuality(), getDataComponentType());
+    }
+    
+    protected Collection<SweQuality> cloneQuality() {
+        if (isSetQuality()) {
+            return Lists.newArrayList(getQuality());            
+        }
+        return null;
     }
 
 }

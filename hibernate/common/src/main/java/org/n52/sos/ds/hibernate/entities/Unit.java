@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -48,6 +48,10 @@ public class Unit implements Serializable {
     private long unitId;
 
     private String unit;
+    
+    private String name;
+    
+    private String link;
 
     public long getUnitId() {
         return this.unitId;
@@ -67,6 +71,42 @@ public class Unit implements Serializable {
 
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isSetName() {
+        return StringHelper.isNotEmpty(getName());
+    }
+    
+    /**
+     * @return the link
+     */
+    public String getLink() {
+        return link;
+    }
+
+    /**
+     * @param link the link to set
+     */
+    public void setLink(String link) {
+        this.link = link;
+    }
+    
+    public boolean isSetLink() {
+        return StringHelper.isNotEmpty(getLink());
     }
 
 }

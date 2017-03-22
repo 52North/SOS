@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -238,7 +238,7 @@ public interface Sos2Constants extends SosConstants{
      * The names of the extensions that we know off and might support
      */
     enum Extensions {
-        SplitDataArrayIntoObservations, MergeObservationsIntoDataArray, Language;
+        SplitDataArrayIntoObservations, MergeObservationsIntoDataArray, Language, SeriesType;
     }
 
     /** Constant for actual implementing version */
@@ -300,7 +300,7 @@ public interface Sos2Constants extends SosConstants{
     }
 
     enum InsertResultTemplateParams {
-        offering, observedProperty, procedure, observationType, resultStructure, resultEncoding, proposedTemplate, identifier;
+        offering, observedProperty, procedure, featureOfInterest, observationType, resultStructure, resultEncoding, proposedTemplate, identifier;
     }
 
     enum GetResultParams {

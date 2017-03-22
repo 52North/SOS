@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,12 +29,14 @@
 package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hibernate.internal.util.collections.CollectionHelper;
+import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
@@ -42,13 +44,18 @@ import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
+import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.TObservableProperty;
+import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
+import org.n52.sos.ds.hibernate.util.TimeExtrema;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -101,6 +108,29 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         getCache().setRequestableProcedureDescriptionFormat(new ProcedureDescriptionFormatDAO().getProcedureDescriptionFormat(getSession()));
     }
 
+
+    private void setTypeProcedure(Procedure procedure) {
+        if (procedure.isType()) {
+            getCache().addTypeInstanceProcedure(ContentCache.TypeInstance.TYPE, procedure.getIdentifier());
+        } else {
+            getCache().addTypeInstanceProcedure(ContentCache.TypeInstance.INSTANCE, procedure.getIdentifier());
+        }
+    }
+
+    private void setAggregatedProcedure(Procedure procedure) {
+        if (procedure.isAggregation()) {
+            getCache().addComponentAggregationProcedure(ContentCache.ComponentAggregation.AGGREGATION, procedure.getIdentifier());
+        } else {
+            getCache().addComponentAggregationProcedure(ContentCache.ComponentAggregation.COMPONENT, procedure.getIdentifier());
+        }
+    }
+
+    private void setTypeInstanceProcedure(Procedure procedure) {
+        if (procedure.isSetTypeOf()) {
+            getCache().addTypeOfProcedure(procedure.getTypeOf().getIdentifier(), procedure.getIdentifier());
+        }
+    }
+
     @Override
     protected ProcedureCacheUpdateTask[] getUpdatesToExecute() {
         Collection<ProcedureCacheUpdateTask> procedureUpdateTasks = Lists.newArrayList();
@@ -110,7 +140,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         }
         return procedureUpdateTasks.toArray(new ProcedureCacheUpdateTask[procedureUpdateTasks.size()]);
     }
-
+    
     @Override
     public void execute() {
         //single threaded updates
@@ -123,8 +153,8 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
         List<Procedure> procedures = procedureDAO.getProcedureObjects(getSession());
         for (Procedure procedure : procedures) {
-        	String procedureIdentifier = procedure.getIdentifier();
-        	 Collection<String> parentProcedures = procedureMap.get(procedureIdentifier);
+            String procedureIdentifier = procedure.getIdentifier();
+            Collection<String> parentProcedures = procedureMap.get(procedureIdentifier);
 //		}
 //        for (Entry<String, Collection<String>> entry : procedureMap.entrySet()) {
 //            String procedureIdentifier = entry.getKey();
@@ -153,10 +183,44 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
                 getCache().setObservablePropertiesForProcedure(procedureIdentifier, Sets.newHashSet(
                         observablePropertyDAO.getObservablePropertyIdentifiersForProcedure(procedureIdentifier, getSession())));
             }
+            
+            setTypeProcedure(procedure);
+            setAggregatedProcedure(procedure);
+            setTypeInstanceProcedure(procedure);
 
             if (!CollectionHelper.isEmpty(parentProcedures)) {
                 getCache().addParentProcedures(procedureIdentifier, parentProcedures);
             }
+        }
+        //time ranges
+        //TODO querying procedure time extrema in a single query is definitely faster for a properly
+        //     indexed Postgres db, but may not be true for all platforms. move back to multithreaded execution
+        //     in ProcedureCacheUpdateTask if needed
+        Map<String, TimeExtrema> procedureTimeExtrema = null;
+        try {
+            procedureTimeExtrema = procedureDAO.getProcedureTimeExtrema(getSession());
+        } catch (OwsExceptionReport ce) {
+            LOGGER.error("Error while querying offering time ranges!", ce);
+            getErrors().add(ce);
+        }
+        if (!CollectionHelper.isEmpty(procedureTimeExtrema)) {
+            for (Entry<String, TimeExtrema> entry : procedureTimeExtrema.entrySet()) {
+                String procedureId = entry.getKey();
+                TimeExtrema te = entry.getValue();
+                getCache().setMinPhenomenonTimeForProcedure(procedureId, te.getMinPhenomenonTime());
+                getCache().setMaxPhenomenonTimeForProcedure(procedureId, te.getMaxPhenomenonTime());
+            }
+        }
+        try {
+            for (Procedure procedure : procedureDAO.getPublishedProcedure(getSession())) {
+                String identifier = procedure.getIdentifier();
+                getCache().addPublishedProcedure(identifier);
+                Set<String> parents = new HashSet<>();
+                getParents(parents, procedure);
+                getCache().addPublishedProcedures(parents);
+            }
+        } catch (CodedException e) {
+           getErrors().add(e);
         }
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
@@ -165,5 +229,13 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         startStopwatch();
         super.execute();
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Multi-Threaded Tasks) ({})", getStopwatchResult());
+    }
+    
+    private void getParents(Set<String> parents, Procedure procedure) {
+        if (procedure instanceof TProcedure && ((TProcedure)procedure).getParents() != null) {
+            for (Procedure parent : ((TProcedure)procedure).getParents()) {
+                getParents(parents, parent);
+            }
+        }
     }
 }

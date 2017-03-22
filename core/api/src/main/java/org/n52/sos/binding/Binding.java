@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,7 +53,7 @@ import org.n52.sos.util.http.MediaType;
  * 
  * @since 4.0.0
  */
-public abstract class Binding implements ConformanceClass {
+public abstract class Binding implements ConformanceClass, OwsExceptionReportHandler {
     /**
      * HTTP DELETE request handling method
      * 
@@ -248,7 +248,7 @@ public abstract class Binding implements ConformanceClass {
     public boolean checkOperationHttpPutSupported(OperationKey decoderKey) throws HTTPException {
         return false;
     }
-
+    
     /**
      * @return the message encoding used as a constraint for the DCP
      */

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <!-- Remove the parent in the case of 52°North repos are not available -->
     <parent>
         <groupId>org.n52</groupId>
@@ -48,7 +49,8 @@
         <!-- sos name -->
         <conf.sos.name>52n-sos-webapp</conf.sos.name>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <!-- Source encoding during build process ** !!! DO NOT CHANGE !!! ** -->
+        <!-- Source encoding during build process ** !!! DO NOT CHANGE !!! 
+            ** -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -62,26 +64,27 @@
         <config.logger.history.max>30</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
-        <postgresql.version>9.3-1101-jdbc4</postgresql.version>
-        <postgis.version>2.1.3</postgis.version>
+        <postgresql.version>9.4.1211.jre7</postgresql.version>
+        <postgis.version>2.2.0</postgis.version>
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.2</slf4j.version>
-        <hibernate.version>4.3.5.Final</hibernate.version>
-        <hibernate.spatial.version>4.3-52N</hibernate.spatial.version>
+        <hibernate.version>4.3.11.Final</hibernate.version>
+        <hibernate.spatial.version>4.3.1-52N</hibernate.spatial.version>
+        <c3p0.version>0.9.5.2</c3p0.version>
         <sqlite.version>3.7.2</sqlite.version>
-        <geotools.version>3.7.2</geotools.version>
-        <jackson.version>2.3.3</jackson.version>
+        <geotools.version>14.0</geotools.version>
+        <jackson.version>2.7.3</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc4.version>4.0</sqljdbc4.version>
 
         <!-- 52N dependency versions -->
-        <n52.common.xml.version>2.1.0</n52.common.xml.version>
+        <n52.common.xml.version>2.2.1-SNAPSHOT</n52.common.xml.version>
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
-        <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
-        <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
+        <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
+        <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
-        <sos.test.suite.version>1.0.0-M5</sos.test.suite.version>
+        <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -161,6 +164,31 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-sos-v20</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-gml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-gml-cov</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-cv-gml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-gwml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-uvf</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -261,6 +289,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>binding-register</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>enhanced-v20</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -285,10 +318,10 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-	            <groupId>${project.groupId}</groupId>
-	            <artifactId>request-response-coordinate-transformer</artifactId>
-	             <version>${project.version}</version>
-	        </dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>request-response-coordinate-transformer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>common-controller</artifactId>
@@ -328,24 +361,44 @@
                 <type>war</type>
             </dependency>
             <dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>inspire-code</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-	        	<artifactId>inspire-xml</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			
-			 <!-- EREPORTING -->
-			<dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-inspire-omso</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-inspire-ompr</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>inspire-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>inspire-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>inspire-code</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>inspire-xml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- EREPORTING -->
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>ereporting</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			
-			<!-- AQD eReporting -->
+
+            <!-- AQD eReporting -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-aqd-v10</artifactId>
@@ -382,9 +435,15 @@
                 <artifactId>prefixed-identifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
-             <dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>ereporting-identifier</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Related offering encoding -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-related-offering</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Split and Merge observatioons -->
@@ -394,9 +453,14 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>seriestype</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>2.5</version>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.0.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -404,6 +468,12 @@
                 <artifactId>jsp-api</artifactId>
                 <version>2.0</version>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>javax.servlet-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -437,6 +507,12 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>1.9.5</version>
+                <exclusions>
+                	<exclusion>
+	                    <artifactId>hamcrest-core</artifactId>
+	                    <groupId>org.hamcrest</groupId>
+	                </exclusion>
+            	</exclusions>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -495,12 +571,7 @@
                 <artifactId>joda-time</artifactId>
                 <version>2.3</version>
             </dependency>
-            <dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>2.9.1</version>
-            </dependency>
-            
+
             <!-- Hibernate Core Dependencies -->
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -526,6 +597,10 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>com.mchange</groupId>
+                        <artifactId>c3p0</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -544,12 +619,17 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgresql.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.postgis</groupId>
+                <groupId>net.postgis</groupId>
                 <artifactId>postgis-jdbc</artifactId>
                 <version>${postgis.version}</version>
                 <exclusions>
@@ -568,6 +648,57 @@
                 <artifactId>sqlite-jdbc</artifactId>
                 <version>${sqlite.version}</version>
             </dependency>
+            <!-- TODO change if dependencies are officially released -->
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-cv-v022</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+           <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-base2-v20</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-base-v33</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-omor-v30</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-ompr-v30</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-omso-v30</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-omso-v301</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-ef-v40</artifactId>
+                <version>${n52.common.xml.version}</version>
+               </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gml-v33</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gwml-v22</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gml-v311</artifactId>
@@ -576,6 +707,11 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gml-v321</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gmlcov-v10</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
@@ -614,20 +750,35 @@
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
-	            <groupId>org.n52.sensorweb</groupId>
-	            <artifactId>52n-xml-gmd-v20120713</artifactId>
-	            <version>${n52.common.xml.version}</version>
-       		</dependency>
-       		<dependency>
-	            <groupId>org.n52.sensorweb</groupId>
-	            <artifactId>52n-xml-gco-v20120713</artifactId>
-	            <version>${n52.common.xml.version}</version>
-       		</dependency>
-       		<dependency>
-	            <groupId>org.n52.sensorweb</groupId>
-	            <artifactId>52n-xml-sosgda-v10</artifactId>
-	           <version>${n52.common.xml.version}</version>
-       		</dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gmd-v20120713</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gco-v20120713</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-ifoi-v10</artifactId>
+                <version>2.2.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosgda-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosgda-v20</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosro-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-om-v100</artifactId>
@@ -681,6 +832,16 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-waterML-dr-v20</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosdo-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosdo-v20</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
@@ -827,6 +988,42 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-oxm</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>test-suite-common</artifactId>
                 <version>${sos.test.suite.version}</version>
@@ -880,7 +1077,32 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>gda-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>gda-hibernate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi-operation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi-hibernate</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- required for common test classes -->
@@ -900,11 +1122,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
+            <!-- <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-xml</artifactId>
                 <version>${project.version}</version>
-            </dependency>
+            </dependency> -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-core</artifactId>
@@ -948,7 +1170,7 @@
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>5.1.26</version>
+                <version>5.1.38</version>
             </dependency>
             <dependency>
                 <groupId>com.github.fge</groupId>
@@ -976,12 +1198,19 @@
                 <version>15.0</version>
             </dependency>
             <dependency>
-			  <groupId>se.jiderhamn</groupId>
-			  <artifactId>classloader-leak-prevention</artifactId>
-			  <version>1.13.0</version>
-			</dependency>
+                <groupId>se.jiderhamn</groupId>
+                <artifactId>classloader-leak-prevention</artifactId>
+                <version>1.13.0</version>
+                <exclusions>
+                	<exclusion>
+                		<groupId>javax.servlet</groupId>
+                		<artifactId>servlet-api</artifactId>
+                	</exclusion>
+                </exclusions>
+            </dependency>
             <!-- third party dialects -->
-            <!-- Remove third party ncname resolver from SOS and use OXF instead -->
+            <!-- Remove third party ncname resolver from SOS and use OXF 
+                instead -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>third-party-ncname-resolver</artifactId>
@@ -992,65 +1221,87 @@
                 <artifactId>xmlunit</artifactId>
                 <version>1.5</version>
             </dependency>
-	        <dependency>
-	            <groupId>com.oracle</groupId>
-	            <artifactId>ojdbc6</artifactId>
-	            <version>${ojdbc6.version}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.microsoft</groupId>
-	            <artifactId>sqljdbc4</artifactId>
-	            <version>${sqljdbc4.version}</version>
-	        </dependency>            
-            <!-- geotools -->
-             <dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-epsg-hsql</artifactId>
-				<version>9.5</version>
-			</dependency>
-			<dependency>
-				<groupId>org.geotools</groupId>
-                <artifactId>gt-main</artifactId>
-                <version>9.5</version>
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc6</artifactId>
+                <version>${ojdbc6.version}</version>
             </dependency>
-			<dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-referencing</artifactId>
-				<version>9.5</version>
-				<exclusions>
-					<exclusion>
-						<groupId>java3d</groupId>
-						<artifactId>vecmath</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>java3d</groupId>
-				<artifactId>vecmath</artifactId>
-				<version>1.5.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-api</artifactId>
-				<version>9.5</version>
-			</dependency>
-			<dependency>
-				<groupId>org.reflections</groupId>
-				<artifactId>reflections</artifactId>
-				<version>0.9.9-RC1</version>
-			</dependency>
-			<!-- EXI - Efficient XML Interchange -->
-			<dependency>
-				<groupId>com.siemens.ct.exi</groupId>
-				<artifactId>exificient</artifactId>
-				<version>0.9.4</version>
-			</dependency>
-			<dependency>
+            <dependency>
+                <groupId>com.microsoft</groupId>
+                <artifactId>sqljdbc4</artifactId>
+                <version>${sqljdbc4.version}</version>
+            </dependency>
+            <!-- geotools -->
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-epsg-hsql</artifactId>
+                <version>${geotools.version}</version>
+		<exclusions>
+			<exclusion>
+				<groupId>javax.media</groupId>
+				<artifactId>jai_core</artifactId>
+			</exclusion>
+		</exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-main</artifactId>
+                <version>${geotools.version}</version>
+		<exclusions>
+		        <exclusion>
+				<groupId>javax.media</groupId>
+				<artifactId>jai_core</artifactId>
+			</exclusion>
+		</exclusions>
+	    </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-referencing</artifactId>
+                <version>${geotools.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>java3d</groupId>
+                        <artifactId>vecmath</artifactId>
+                    </exclusion>
+	            <exclusion>
+			<groupId>javax.media</groupId>
+			<artifactId>jai_core</artifactId>
+		    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>java3d</groupId>
+                <artifactId>vecmath</artifactId>
+                <version>1.5.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-api</artifactId>
+                <version>${geotools.version}</version>
+		<exclusions>
+	            <exclusion>
+			<groupId>javax.media</groupId>
+			<artifactId>jai_core</artifactId>
+		    </exclusion>
+		</exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.9-RC1</version>
+            </dependency>
+            <!-- EXI - Efficient XML Interchange -->
+            <dependency>
+                <groupId>com.siemens.ct.exi</groupId>
+                <artifactId>exificient</artifactId>
+                <version>0.9.4</version>
+            </dependency>
+            <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>2.11.0</version>
             </dependency>
-			<dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>binding-exi</artifactId>
                 <version>${project.version}</version>
@@ -1060,22 +1311,60 @@
                 <artifactId>coding-exi</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <!-- netCDF -->
+            <dependency>
+                <groupId>edu.ucar</groupId>
+                <artifactId>netcdf</artifactId>
+                <version>4.3.22</version>
+                <exclusions>
+                  <exclusion>
+                    <groupId>c3p0</groupId>
+                    <artifactId>c3p0</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>com.mchange</groupId>
+                    <artifactId>c3p0</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.axiomalaska</groupId>
+                <artifactId>cf4j</artifactId>
+                <version>27.2</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>api-netcdf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-netcdf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-oceansites</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
         <plugins>
             <plugin>
-                <!-- execute "install" goal during release:prepare (instead of "integration-test") -->
+                <!-- execute "install" goal during release:prepare (instead 
+                    of "integration-test") -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <preparationGoals>clean install</preparationGoals>
                 </configuration>
             </plugin>
-            <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>license-maven-plugin</artifactId>
-            <version>1.5</version> <executions> <execution> <id>download-licenses</id>
-            <goals> <goal>download-licenses</goal> </goals> </execution> </executions>
-            </plugin> -->
+            <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>license-maven-plugin</artifactId> 
+                <version>1.5</version> <executions> <execution> <id>download-licenses</id> 
+                <goals> <goal>download-licenses</goal> </goals> </execution> </executions> 
+                </plugin> -->
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
@@ -1087,48 +1376,35 @@
                         </goals>
                         <phase>validate</phase>
                         <configuration>
-                        	<dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
-                            <!-- Only changing prefix since properties conflicts with jgit above
-                            <prefix>git-commit-id</prefix>-->
-                            <!-- We're using a pom in this example
-                            <skipPoms>false</skipPoms>-->
+                            <dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
+                            <!-- Only changing prefix since properties conflicts 
+                                with jgit above <prefix>git-commit-id</prefix> -->
+                            <!-- We're using a pom in this example <skipPoms>false</skipPoms> -->
                             <gitDescribe>
-                                <!-- Faster to get just branch if skip = true -->
-                                <!--  true to solve https://github.com/ktoso/maven-git-commit-id-plugin/issues/61 -->
+                                <!-- Faster to get just branch if skip = 
+                                    true -->
+                                <!-- true to solve https://github.com/ktoso/maven-git-commit-id-plugin/issues/61 -->
                                 <skip>true</skip>
                             </gitDescribe>
-                            <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
+                            <timestampFormat>{0,date,yyyy-MM-dd
+                                HH:mm:ss}</timestampFormat>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <!-- <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <configuration>
-                    <doCheck>false</doCheck>
-                    <doUpdate>false</doUpdate>
-                    <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
-                    <revisionOnScmFailure>0</revisionOnScmFailure>
-                    <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-                    <shortRevisionLength>5</shortRevisionLength>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin> -->
+            <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>buildnumber-maven-plugin</artifactId> 
+                <configuration> <doCheck>false</doCheck> <doUpdate>false</doUpdate> <timestampFormat>{0,date,yyyy-MM-dd 
+                HH:mm:ss}</timestampFormat> <revisionOnScmFailure>0</revisionOnScmFailure> 
+                <getRevisionOnlyOnce>true</getRevisionOnlyOnce> <shortRevisionLength>5</shortRevisionLength> 
+                </configuration> <executions> <execution> <phase>validate</phase> <goals> 
+                <goal>create</goal> </goals> </execution> </executions> </plugin> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <show>private</show>
                     <nohelp>true</nohelp>
-                     <!-- see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html -->
+                    <!-- see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html -->
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                 </configuration>
                 <executions>
@@ -1144,16 +1420,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.3</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>jar-no-fork</goal>
+                            <goal>test-jar-no-fork</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>            
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.groovy.maven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
@@ -1168,8 +1445,7 @@
                             <source>
                                 import java.util.Date
                                 import java.text.MessageFormat
-                                def vartimestamp = MessageFormat.format("{0,date,yyyy}", new
-                                Date())
+                                def vartimestamp = MessageFormat.format("{0,date,yyyy}", new Date())
                                 project.properties['currentYearDynamic'] = vartimestamp
                             </source>
                         </configuration>
@@ -1205,9 +1481,10 @@
                     <strictCheck>true</strictCheck>
                     <properties>
                         <inceptionYear>2012</inceptionYear>
-                        <latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>
+                        <latestYearOfContribution>2016</latestYearOfContribution>
                     </properties>
                 </configuration>
+                <!-- 
                 <executions>
                     <execution>
                         <id>check-license</id>
@@ -1217,29 +1494,33 @@
                         </goals>
                     </execution>
                 </executions>
+                 -->
             </plugin>
-            <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true -DallowSnapshots=true -Psqlserver,oracle -->
-            <!-- Finish new release: mvn jgitflow:release-finish -DnoDeploy=true -Psqlserver,oracle -->
+            <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true 
+                -DallowSnapshots=true -Psqlserver,oracle -->
+            <!-- Finish new release: mvn jgitflow:release-finish -DnoDeploy=true 
+                -Psqlserver,oracle -->
             <plugin>
-				<groupId>external.atlassian.jgitflow</groupId>
-				<artifactId>jgitflow-maven-plugin</artifactId>
-				<version>1.0-m5.1</version>
-				<configuration>
-					<flowInitContext>
-				         <masterBranchName>master</masterBranchName>
-				         <developBranchName>develop</developBranchName>
-				         <featureBranchPrefix>feature/</featureBranchPrefix>
-				         <releaseBranchPrefix>release/</releaseBranchPrefix>
-				         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-				         <versionTagPrefix />
-				       </flowInitContext>
-				       <useReleaseProfile>false</useReleaseProfile>
-				</configuration>
-			</plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m5.1</version>
+                <configuration>
+                    <flowInitContext>
+                        <masterBranchName>master</masterBranchName>
+                        <developBranchName>develop</developBranchName>
+                        <featureBranchPrefix>feature/</featureBranchPrefix>
+                        <releaseBranchPrefix>release/</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+                        <versionTagPrefix />
+                    </flowInitContext>
+                    <useReleaseProfile>false</useReleaseProfile>
+                </configuration>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
-                <!-- m2e fix – Plugin execution not covered by lifecycle configuration-->
+                <!-- m2e fix – Plugin execution not covered by lifecycle 
+                    configuration -->
                 <!-- See http://sourcevirtues.wordpress.com/2012/02/01/m2e-fix-plugin-execution-lifecycle-configuration/ -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -1295,8 +1576,8 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <!-- xmlbeans plugin only used to generate the classes not for compiling
-                        or jar generation. -->
+                        <!-- xmlbeans plugin only used to generate the classes 
+                            not for compiling or jar generation. -->
                         <noJavac>true</noJavac>
                         <memoryInitialSize>256</memoryInitialSize>
                         <memoryMaximumSize>256</memoryMaximumSize>
@@ -1317,21 +1598,16 @@
                     </configuration>
                 </plugin>
                 <plugin>
-	                <groupId>pl.project13.maven</groupId>
-	                <artifactId>git-commit-id-plugin</artifactId>
-	                <version>2.1.9</version>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>2.1.9</version>
                 </plugin>
-                <!-- 
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>1.3</version>
-                </plugin> 
-                -->
+                <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>buildnumber-maven-plugin</artifactId> 
+                    <version>1.3</version> </plugin> -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>2.8</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -1367,11 +1643,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>2.15</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.mortbay.jetty</groupId>
-                    <artifactId>maven-jetty-plugin</artifactId>
-                    <version>6.1.26</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
@@ -1447,13 +1718,6 @@
             </snapshots>
         </repository>
         <repository>
-            <id>Hibernate Spatial repo</id>
-            <url>http://www.hibernatespatial.org/repository</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>
             <url>http://download.osgeo.org/webdav/geotools/</url>
@@ -1462,10 +1726,18 @@
             </snapshots>
         </repository>
         <repository>
-			<id>boundless</id>
-			<name>Boundless, formerly OpenGeo</name>
-			<url>http://repo.boundlessgeo.com/main/</url>
-		</repository>
+            <id>boundlessgeo</id>
+            <name>Boundless Cloud Repository</name>
+            <url>https://boundless.artifactoryonline.com/boundless/main</url>
+        </repository>
+        <repository>
+            <id>unidata-releases</id>
+            <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+        </repository>
+        <repository>
+            <id>boundlessgeo-releases</id>
+            <url>https://repo.boundlessgeo.com/main</url>
+        </repository>
     </repositories>
     <profiles>
         <profile>
@@ -1478,8 +1750,8 @@
         </profile>
         <profile>
             <id>release</id>
-            <!-- a profile which shall be activated if a release is performed, it
-            is also automatic activated in the ci environment. -->
+            <!-- a profile which shall be activated if a release is performed, 
+                it is also automatic activated in the ci environment. -->
             <activation>
                 <property>
                     <name>env</name>
@@ -1492,8 +1764,8 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
                         <configuration>
-                            <!-- no build in release:prepare (takes to long time), so in bad cases
-                            release fails on perform -->
+                            <!-- no build in release:prepare (takes to long 
+                                time), so in bad cases release fails on perform -->
                             <preparationGoals>clean</preparationGoals>
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                             <tagBase>https://svn.52north.org/svn/swe/main/SOS/Service/tags/</tagBase>
@@ -1558,17 +1830,4 @@
             </build>
         </profile>
     </profiles>
-    <dependencies>
-    	<dependency>
-    		<groupId>org.mockito</groupId>
-    		<artifactId>mockito-core</artifactId>
-    		<version>1.9.0</version>
-    		<exclusions>
-    			<exclusion>
-    				<artifactId>hamcrest-core</artifactId>
-    				<groupId>org.hamcrest</groupId>
-    			</exclusion>
-    		</exclusions>
-    	</dependency>
-    </dependencies>
 </project>

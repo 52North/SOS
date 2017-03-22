@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -54,6 +54,7 @@ import org.n52.sos.event.events.SettingsChangeEvent;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
 import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesRepository;
+import org.n52.sos.ogc.sos.CapabilitiesExtensionRepository;
 import org.n52.sos.ogc.swes.OfferingExtensionKey;
 import org.n52.sos.ogc.swes.OfferingExtensionRepository;
 import org.n52.sos.request.operator.RequestOperatorKey;
@@ -337,6 +338,7 @@ public abstract class AbstractSettingsManager extends SettingsManager {
         setOperationStatus(rokt, active);
         if (Configurator.getInstance() != null) {
             RequestOperatorRepository.getInstance().setActive(rokt, active);
+            CapabilitiesExtensionRepository.getInstance().setOperationsChanged();
         }
     }
 

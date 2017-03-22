@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -95,6 +95,8 @@ public interface ControllerConstants {
         String ADMIN_RENAME_OBSERVABLE_PROPERTIES = "admin/observableProperties";
 
         String ADMIN_EXTENSIONS = "/admin/extensions";
+        
+        String ADMIN_PROFILES = "/admin/profiles";
     }
 
     /**
@@ -227,6 +229,8 @@ public interface ControllerConstants {
         String ADMIN_EXTENSIONS = "/admin/extensions";
 
         String ADMIN_EXTENSIONS_JSON_ENDPOINT = "/admin/extensions/json";
+        
+        String ADMIN_PROFILES = "/admin/profiles";
     }
 
     String SETTINGS_MODEL_ATTRIBUTE = "settings";

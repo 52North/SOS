@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,6 +39,6 @@ public class MissingObservationParameterException extends MissingParameterValueE
     private static final long serialVersionUID = 3719949467011196228L;
 
     public MissingObservationParameterException() {
-        super(DeleteObservationConstants.PARAMETER_NAME);
+        super(DeleteObservationConstants.PARAM_OBSERVATION);
     }
 }

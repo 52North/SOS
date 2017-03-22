@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,6 +39,6 @@ public class InvalidObservationParameterException extends InvalidParameterValueE
     private static final long serialVersionUID = -4544751541004584729L;
 
     public InvalidObservationParameterException(String value) {
-        super(DeleteObservationConstants.PARAMETER_NAME, value);
+        super(DeleteObservationConstants.PARAM_OBSERVATION, value);
     }
 }

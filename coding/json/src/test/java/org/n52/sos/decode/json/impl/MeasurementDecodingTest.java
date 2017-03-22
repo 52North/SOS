@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -68,6 +68,7 @@ import org.n52.sos.ogc.sos.SosProcedureDescription;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jackson.JsonLoader;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
 /**
@@ -325,5 +326,15 @@ public class MeasurementDecodingTest {
         thrown.expect(JSONDecodingException.class);
         thrown.expectMessage(is("Unsupported observationType: " + type));
         decoder.decode(c);
+    }
+    
+    @Test
+    public void testSamplingGeometry() throws OwsExceptionReport {
+        assertThat(observation, is(notNullValue()));
+        assertThat(observation.isSetSpatialFilteringProfileParameter(), is(true));
+        assertThat(observation.getSpatialFilteringProfileParameter().getValue(), is(notNullValue()));
+        assertThat(observation.getSpatialFilteringProfileParameter().getValue().getValue(), instanceOf(Geometry.class));
+        assertThat(observation.getSpatialFilteringProfileParameter().getValue().getValue().getCoordinate().x, is(52.9));
+        assertThat(observation.getSpatialFilteringProfileParameter().getValue().getValue().getCoordinate().y, is(7.52));
     }
 }

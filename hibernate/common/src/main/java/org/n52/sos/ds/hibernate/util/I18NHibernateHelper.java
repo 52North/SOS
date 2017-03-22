@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.n52.sos.ds.hibernate.entities.i18n.AbstractHibernateI18NMetadata;
-import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.metadata.AbstractI18NMetadata;
 import org.n52.sos.ogc.gml.AbstractFeature;

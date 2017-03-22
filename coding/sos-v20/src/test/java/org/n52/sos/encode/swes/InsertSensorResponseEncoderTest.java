@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -85,7 +85,7 @@ public class InsertSensorResponseEncoderTest {
     @Test
     public void should_return_correct_encoder_keys() {
         Set<EncoderKey> returnedKeySet = new InsertSensorResponseEncoder().getEncoderKeyType();
-        assertThat(returnedKeySet.size(), is(3));
+        assertThat(returnedKeySet.size(), is(5));
         assertThat(returnedKeySet, hasItem(new XmlEncoderKey(SwesConstants.NS_SWES_20, InsertSensorResponse.class)));
         assertThat(returnedKeySet, hasItem(new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                 Sos2Constants.Operations.InsertSensor, MediaTypes.TEXT_XML)));

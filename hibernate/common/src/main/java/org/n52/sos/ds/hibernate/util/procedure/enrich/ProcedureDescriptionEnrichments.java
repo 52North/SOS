@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
-
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -58,6 +57,8 @@ public class ProcedureDescriptionEnrichments {
     private HibernateProcedureConverter converter;
     private TimePeriod validTime;
     private Locale language = ServiceConfiguration.getInstance().getDefaultLanguage();
+    private String typeOfIdentifier;
+    private String typeOfFormat;
 
     private ProcedureDescriptionEnrichments() {
     }
@@ -113,6 +114,16 @@ public class ProcedureDescriptionEnrichments {
         }
         return this;
     }
+    
+    public ProcedureDescriptionEnrichments setTypeOfIdentifier(String typeOfIdentifier) {
+        this.typeOfIdentifier = typeOfIdentifier;
+        return this;
+    }
+    
+    public ProcedureDescriptionEnrichments setTypeOfFormat(String typeOfFormat) {
+        this.typeOfFormat = typeOfFormat;
+        return this;
+    }
 
     public Iterable<ProcedureDescriptionEnrichment> createAll() {
         return Iterables.filter(
@@ -127,7 +138,8 @@ public class ProcedureDescriptionEnrichments {
                         createContactsEnrichment(),
                         createKeywordEnrichment(),
                         createValidTimeEnrichment(),
-                        createObservablePropertyEnrichment()),
+                        createObservablePropertyEnrichment(),
+                        createTypeOfEnrichmentEnrichment()),
                 ProcedureDescriptionEnrichment.predicate());
     }
 
@@ -180,6 +192,10 @@ public class ProcedureDescriptionEnrichments {
         return setValues(new ObservablePropertyEnrichment());
     }
 
+    private TypeOfEnrichment createTypeOfEnrichmentEnrichment() {
+        return setValues(new TypeOfEnrichment()).setTypeOfIdentifier(typeOfIdentifier).setTypeOfFormat(typeOfFormat);
+    }
+    
     private <T extends ProcedureDescriptionEnrichment> T setValues(T enrichment) {
         enrichment.setDescription(description)
                 .setIdentifier(identifier)

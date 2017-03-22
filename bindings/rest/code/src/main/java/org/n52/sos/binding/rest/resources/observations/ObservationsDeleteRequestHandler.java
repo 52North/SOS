@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -56,7 +56,7 @@ public class ObservationsDeleteRequestHandler extends RequestHandler {
             XmlObject xb_deleteObservationResponse = executeSosRequest(doReq);
             if (xb_deleteObservationResponse instanceof DeleteObservationResponseDocument) {
                 DeleteObservationResponseType xb_delObsResponse = ((DeleteObservationResponseDocument) xb_deleteObservationResponse).getDeleteObservationResponse();
-                if (xb_delObsResponse.getDeletedObservation().equalsIgnoreCase(doReq.getObservationIdentifier())) {
+                if (xb_delObsResponse.getDeletedObservation().equalsIgnoreCase(doReq.getObservationIdentifiers().iterator().next())) {
                     return new ObservationsDeleteRespone(xb_delObsResponse.getDeletedObservation());
                 }
             }

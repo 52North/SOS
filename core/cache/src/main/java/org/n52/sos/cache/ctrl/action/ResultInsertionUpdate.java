@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,14 +30,16 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.util.Action;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -48,7 +50,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * <li>'Result template identifier' &rarr; 'feature of interest' relation</li>
  * </ul>
  * TODO update list above
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
@@ -56,7 +58,7 @@ import com.vividsolutions.jts.geom.Envelope;
 public class ResultInsertionUpdate extends InMemoryCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultInsertionUpdate.class);
 
-    private final OmObservation observation;
+    private final List<OmObservation> observations;
 
     private final String templateIdentifier;
 
@@ -68,7 +70,19 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
-        this.observation = observation;
+        this.observations = Lists.newArrayList(observation);
+        this.templateIdentifier = templateIdentifier;
+    }
+    
+    public ResultInsertionUpdate(String templateIdentifier, List<OmObservation> observations) {
+        if (observations == null || observations.isEmpty() || templateIdentifier == null || templateIdentifier.isEmpty()) {
+            String msg =
+                    String.format("Missing argument: '%s': %s; template identifier: '%s'",
+                            OmObservation.class.getName(), observations, templateIdentifier);
+            LOGGER.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        this.observations = observations;
         this.templateIdentifier = templateIdentifier;
     }
 
@@ -76,52 +90,55 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
     public void execute() {
         // TODO remove not required updates and adjust test accordingly
         final WritableContentCache cache = getCache();
-        final String observationType = observation.getObservationConstellation().getObservationType();
-        final String procedure = observation.getObservationConstellation().getProcedure().getIdentifier();
-        final String observableProperty = observation.getObservationConstellation().getObservableProperty().getIdentifier();
-        final Time phenomenonTime = observation.getPhenomenonTime();
-        final Time resultTime = observation.getResultTime();
-
-        cache.updatePhenomenonTime(phenomenonTime);
-        cache.updateResultTime(resultTime);
-
-        cache.addProcedure(procedure);
-        cache.updatePhenomenonTimeForProcedure(procedure, phenomenonTime);
-
-        cache.addProcedureForObservableProperty(observableProperty, procedure);
-        cache.addObservablePropertyForResultTemplate(templateIdentifier, observableProperty);
-        cache.addObservablePropertyForProcedure(procedure, observableProperty);
-
-        List<SamplingFeature> observedFeatures =
-                sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
-
-        final Envelope envelope = createEnvelopeFrom(observedFeatures);
-
-        cache.updateGlobalEnvelope(envelope);
-
-        for (SamplingFeature sosSamplingFeature : observedFeatures) {
-            final String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
-            cache.addFeatureOfInterest(featureOfInterest);
-            cache.addFeatureOfInterestForResultTemplate(templateIdentifier, featureOfInterest);
-            cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);
+        for (OmObservation observation : observations) {
+            final String observationType = observation.getObservationConstellation().getObservationType();
+            final String procedure = observation.getObservationConstellation().getProcedure().getIdentifier();
+            final String observableProperty = observation.getObservationConstellation().getObservableProperty().getIdentifier();
+            final Time phenomenonTime = observation.getPhenomenonTime();
+            final Time resultTime = observation.getResultTime();
+    
+            cache.updatePhenomenonTime(phenomenonTime);
+            cache.updateResultTime(resultTime);
+    
+            cache.addProcedure(procedure);
+            cache.updatePhenomenonTimeForProcedure(procedure, phenomenonTime);
+    
+            cache.addProcedureForObservableProperty(observableProperty, procedure);
+            cache.addObservablePropertyForResultTemplate(templateIdentifier, observableProperty);
+            cache.addObservablePropertyForProcedure(procedure, observableProperty);
+    
+            List<SamplingFeature> observedFeatures =
+                    sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
+    
+            final Envelope envelope = createEnvelopeFrom(observedFeatures);
+    
+            cache.updateGlobalEnvelope(envelope);
+    
+            for (SamplingFeature sosSamplingFeature : observedFeatures) {
+                final String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
+                cache.addFeatureOfInterest(featureOfInterest);
+            cache.addPublishedFeatureOfInterest(featureOfInterest);
+                cache.addFeatureOfInterestForResultTemplate(templateIdentifier, featureOfInterest);
+                cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);
+                for (String offering : observation.getObservationConstellation().getOfferings()) {
+                    cache.addFeatureOfInterestForOffering(offering, featureOfInterest);
+                }
+            }
             for (String offering : observation.getObservationConstellation().getOfferings()) {
-                cache.addFeatureOfInterestForOffering(offering, featureOfInterest);
+                cache.addOffering(offering);
+                if (!cache.getHiddenChildProceduresForOffering(offering).contains(procedure)) {
+                    cache.addProcedureForOffering(offering, procedure);
+                }
+                cache.addOfferingForProcedure(procedure, offering);
+                cache.updateEnvelopeForOffering(offering, envelope);
+                cache.updatePhenomenonTimeForOffering(offering, phenomenonTime);
+                cache.updateResultTimeForOffering(offering, resultTime);
+                // observable property
+                cache.addOfferingForObservableProperty(observableProperty, offering);
+                cache.addObservablePropertyForOffering(offering, observableProperty);
+                // observation type
+                cache.addObservationTypesForOffering(offering, observationType);
             }
-        }
-        for (String offering : observation.getObservationConstellation().getOfferings()) {
-            cache.addOffering(offering);
-            if (!cache.getHiddenChildProceduresForOffering(offering).contains(procedure)) {
-                cache.addProcedureForOffering(offering, procedure);
-            }
-            cache.addOfferingForProcedure(procedure, offering);
-            cache.updateEnvelopeForOffering(offering, envelope);
-            cache.updatePhenomenonTimeForOffering(offering, phenomenonTime);
-            cache.updateResultTimeForOffering(offering, resultTime);
-            // observable property
-            cache.addOfferingForObservableProperty(observableProperty, offering);
-            cache.addObservablePropertyForOffering(offering, observableProperty);
-            // observation type
-            cache.addObservationTypesForOffering(offering, observationType);
         }
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,14 +28,14 @@
  */
 package org.n52.sos.ogc.om;
 
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
-/**
- * class represents a composite phenomenon
- * 
- * @since 4.0.0
- */
-public class OmCompositePhenomenon extends AbstractPhenomenon {
+import com.google.common.collect.Iterators;
+
+
+public class OmCompositePhenomenon extends AbstractPhenomenon implements Iterable<OmObservableProperty>{
     /**
      * serial number
      */
@@ -46,7 +46,7 @@ public class OmCompositePhenomenon extends AbstractPhenomenon {
 
     /**
      * standard constructor
-     * 
+     *
      * @param compPhenId
      *            id of the composite phenomenon
      * @param compPhenDesc
@@ -60,9 +60,19 @@ public class OmCompositePhenomenon extends AbstractPhenomenon {
         this.phenomenonComponents = phenomenonComponents;
     }
 
+    public OmCompositePhenomenon(String identifier) {
+        super(identifier);
+        this.phenomenonComponents = new LinkedList<>();
+    }
+
+    public OmCompositePhenomenon(String identifier, String description) {
+        super(identifier, description);
+        this.phenomenonComponents = new LinkedList<>();
+    }
+
     /**
      * Get observableProperties
-     * 
+     *
      * @return Returns the phenomenonComponents.
      */
     public List<OmObservableProperty> getPhenomenonComponents() {
@@ -71,11 +81,37 @@ public class OmCompositePhenomenon extends AbstractPhenomenon {
 
     /**
      * Set observableProperties
-     * 
+     *
      * @param phenomenonComponents
      *            The phenomenonComponents to set.
      */
     public void setPhenomenonComponents(List<OmObservableProperty> phenomenonComponents) {
         this.phenomenonComponents = phenomenonComponents;
+    }
+
+    public void addPhenomenonComponent(OmObservableProperty observableProperty) {
+        if (this.phenomenonComponents == null) {
+            this.phenomenonComponents = new LinkedList<>();
+        }
+        this.phenomenonComponents.add(observableProperty);
+    }
+
+    @Override
+    public Iterator<OmObservableProperty> iterator() {
+        if (getPhenomenonComponents() == null) {
+            return Iterators.emptyIterator();
+        } else {
+            return getPhenomenonComponents().iterator();
+        }
+    }
+
+    @Override
+    public boolean isComposite() {
+        return true;
+    }
+
+    @Override
+    public boolean isObservableProperty() {
+        return false;
     }
 }

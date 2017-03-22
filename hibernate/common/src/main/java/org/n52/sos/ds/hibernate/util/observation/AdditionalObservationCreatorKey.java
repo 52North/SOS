@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -74,10 +74,9 @@ public class AdditionalObservationCreatorKey implements Similar<AdditionalObserv
 
     @Override
     public int getSimilarity(AdditionalObservationCreatorKey key) {
-        AdditionalObservationCreatorKey aocKey = (AdditionalObservationCreatorKey) key;
-        if (Objects.equal(getNamespace(), aocKey.getNamespace())) {
+        if (Objects.equal(getNamespace(), key.getNamespace())) {
             return ClassHelper.getSimiliarity(getType() != null ? getType() : Object.class,
-                    aocKey.getType() != null ? aocKey.getType() : Object.class);
+                    key.getType() != null ? key.getType() : Object.class);
         } else {
             return -1;
         }

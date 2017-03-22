@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,8 +31,16 @@ package org.n52.sos.converter.util;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
+import org.n52.sos.converter.PrefixedIdentifierModifier;
 import org.n52.sos.util.StringHelper;
 
+/**
+ * Helper class for the {@link PrefixedIdentifierModifier}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 @Configurable
 public class PrefixedIdentifierHelper {
     
@@ -160,7 +168,7 @@ public class PrefixedIdentifierHelper {
     }
 
     public boolean isSetAnyPrefix() {
-        return isSetGlobalPrefix() && isSetFeatureOfInterestPrefix() && isSetObservablePropertyPrefix() && isSetOfferingPrefix() && isSetProcedurePrefix();
+        return isSetGlobalPrefix() || isSetFeatureOfInterestPrefix() || isSetObservablePropertyPrefix() || isSetOfferingPrefix() || isSetProcedurePrefix();
     }
 
 }

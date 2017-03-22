@@ -3,6 +3,10 @@ jdk:
     - openjdk7
     - oraclejdk7
     - oraclejdk8
+addons:
+  hosts:
+    - myshorthost
+  hostname: myshorthost
 install: true
 script: mvn clean install
 notifications:

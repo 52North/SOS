@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -122,9 +122,14 @@ public class AdminDatasourceController extends AbstractDatasourceController {
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_CLEAR, method = RequestMethod.POST)
     public void clearDatasource() throws OwsExceptionReport, ConnectionProviderException {
         if (getDatasource().supportsClear()) {
-            LOG.info("Clearing database contents.");
+            LOG.info("Clearing database contents by calling clear method.");
             getDatasource().clear(getSettings());
-            updateCache();
+        } else {
+        	LOG.info("Clearing database contents by deleting and recreating the SOS database schema.");
+        	Map<String, Object> settings = getDatasource().parseDatasourceProperties(getSettings());
+        	getDatasource().dropSchema(settings);
+        	getDatasource().createSchema(settings);
         }
+        updateCache();
     }
 }

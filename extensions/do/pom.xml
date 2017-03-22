@@ -20,7 +20,6 @@
     </licenses>
     <inceptionYear>2012</inceptionYear>
     <modules>
-        <module>xml</module>
         <module>core</module>
         <module>hibernate</module>
         <module>kvp</module>

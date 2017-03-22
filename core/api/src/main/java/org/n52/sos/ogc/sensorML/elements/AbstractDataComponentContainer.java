@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
+import org.n52.sos.ogc.gml.AbstractReferenceType;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
 /**
@@ -39,7 +40,7 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
  * @param <T>
  *            Implemented class
  */
-public class AbstractDataComponentContainer<T> {
+public class AbstractDataComponentContainer<T> extends AbstractReferenceType {
 
     private String name;
 
@@ -86,7 +87,7 @@ public class AbstractDataComponentContainer<T> {
     }
 
     public boolean isSetName() {
-        return name != null && !name.isEmpty();
+        return getName() != null && !getName().isEmpty();
     }
 
     /**
@@ -105,6 +106,6 @@ public class AbstractDataComponentContainer<T> {
     }
 
     public boolean isSetAbstractDataComponent() {
-        return abstractDataComponent != null;
+        return getAbstractDataComponent() != null;
     }
 }

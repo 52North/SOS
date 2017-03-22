@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,6 +32,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.util.GeometryHandler;
@@ -44,15 +45,13 @@ import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SweEnvelope extends SweAbstractDataComponent {
+    private static final SweHelper helper = new SweHelper();
     private String referenceFrame;
-
     private SweVector upperCorner;
-
     private SweVector lowerCorner;
-
     private SweTimeRange time;
 
     public SweEnvelope() {
@@ -64,7 +63,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
     }
 
     public SweEnvelope(SosEnvelope sosEnvelope, String uom) {
-        this(String.valueOf(sosEnvelope.getSrid()), 
+        this(String.valueOf(sosEnvelope.getSrid()),
              createUpperCorner(sosEnvelope, uom),
              createLowerCorner(sosEnvelope, uom));
     }
@@ -208,7 +207,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
     }
 
     private Double extractDouble(SweCoordinate<?> coord) {
-        if (coord != null && 
+        if (coord != null &&
             coord.getValue() != null &&
             coord.getValue().getValue() instanceof Number) {
             return ((Number) coord.getValue().getValue()).doubleValue();
@@ -233,9 +232,35 @@ public class SweEnvelope extends SweAbstractDataComponent {
     }
 
     private static SweVector createSweVector(double x, double y, String uom) {
-        SweQuantity xCoord = SweHelper.createSweQuantity(x, SweConstants.X_AXIS, uom);
-        SweQuantity yCoord = SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, uom);
-        return new SweVector(new SweCoordinate<Double>(SweCoordinateName.easting.name(), xCoord),
-                new SweCoordinate<Double>(SweCoordinateName.northing.name(), yCoord));
+        SweQuantity xCoord = helper.createSweQuantity(x, SweConstants.X_AXIS, uom);
+        SweQuantity yCoord = helper.createSweQuantity(y, SweConstants.Y_AXIS, uom);
+        return new SweVector(new SweCoordinate<>(SweCoordinateName.easting.name(), xCoord),
+                             new SweCoordinate<>(SweCoordinateName.northing.name(), yCoord));
+    }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    @Override
+    public SweEnvelope clone() throws CloneNotSupportedException {
+        SweEnvelope clone = new SweEnvelope();
+        copyValueTo(clone);
+        clone.setReferenceFrame(getReferenceFrame());
+        if (isLowerCornerSet()) {
+            clone.setLowerCorner(getLowerCorner().clone());
+        }
+        if (isUpperCornerSet()) {
+            clone.setUpperCorner(getUpperCorner().clone());
+        }
+        return clone;
     }
 }

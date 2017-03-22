@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,11 +29,13 @@
 package org.n52.sos.ogc.swe;
 
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * SOS internal representation of SWE field
- * 
+ *
  * @since 4.0.0
  */
 public class SweField extends SweAbstractDataComponent {
@@ -45,7 +47,7 @@ public class SweField extends SweAbstractDataComponent {
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            Field name
      * @param element
@@ -56,7 +58,7 @@ public class SweField extends SweAbstractDataComponent {
         setName(name);
         this.element = element;
     }
-    
+
     public SweField(final CodeType name, final SweAbstractDataComponent element) {
         super();
         setName(name);
@@ -133,5 +135,24 @@ public class SweField extends SweAbstractDataComponent {
     @Override
     public SweDataComponentType getDataComponentType() {
         return SweDataComponentType.Field;
+    }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    @Override
+    public SweField clone() throws CloneNotSupportedException {
+        SweField clone = new SweField(getName().clone(), getElement().clone());
+        copyValueTo(clone);
+        return clone;
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,6 +36,7 @@ import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.ResponseFormat;
+import org.n52.sos.response.AbstractOperationResponse;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.StreamingDataResponse;
 import org.n52.sos.service.ServiceConfiguration;
@@ -50,41 +51,34 @@ import org.n52.sos.util.http.MediaType;
  */
 public class AbstractServiceResponseWriter extends AbstractResponseWriter<AbstractServiceResponse> {
 
-    // @Override
-    // public Class<AbstractServiceResponse> getType() {
-    // return AbstractServiceResponse.class;
-    // }
-
     @Override
-    public void write(AbstractServiceResponse asr, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        try {
-            Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
-            if (encoder != null) {
-                if (isStreaming(asr)) {
-                    ((StreamingEncoder<?, AbstractServiceResponse>) encoder).encode(asr, out);
-                } else {
-                    if (asr instanceof StreamingDataResponse && ((StreamingDataResponse)asr).hasStreamingData() && !(encoder instanceof StreamingDataEncoder)) {
-                        ((StreamingDataResponse)asr).mergeStreamingData();
+    public void write(AbstractServiceResponse asr, OutputStream out, ResponseProxy responseProxy)
+            throws IOException, OwsExceptionReport {
+        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
+        if (encoder != null) {
+            if (isStreaming(asr, encoder)) {
+                ((StreamingEncoder<?, AbstractServiceResponse>) encoder).encode(asr, out);
+            } else {
+                if (asr instanceof StreamingDataResponse && ((StreamingDataResponse) asr).hasStreamingData()
+                        && !(encoder instanceof StreamingDataEncoder)) {
+                    ((StreamingDataResponse) asr).mergeStreamingData();
+                }
+                // use encoded Object specific writer, e.g. XmlResponseWriter
+                Object encode = encoder.encode(asr);
+                if (encode != null) {
+                    ResponseWriter<Object> writer =
+                            ResponseWriterRepository.getInstance().getWriter(encode.getClass());
+                    if (writer == null) {
+                        throw new RuntimeException("no writer for " + encode.getClass() + " found!");
                     }
-                    // use encoded Object specific writer, e.g. XmlResponseWriter
-                    Object encode = encoder.encode(asr);
-                    if (encode != null) {
-                        ResponseWriter<Object> writer =
-                                ResponseWriterRepository.getInstance().getWriter(encode.getClass());
-                        if (writer == null) {
-                            throw new RuntimeException("no writer for " + encode.getClass() + " found!");
-                        }
-                        writer.write(encode, out, responseProxy);
-                    }
+                    writer.write(encode, out, responseProxy);
                 }
             }
-        } catch (OwsExceptionReport owsex) {
-            throw new IOException(owsex);
         }
     }
 
     @Override
-    public boolean supportsGZip(AbstractServiceResponse asr) {
+    public boolean supportsGZip(AbstractServiceResponse asr) throws NoEncoderForKeyException {
         if (isStreaming(asr)) {
             return false;
         }
@@ -98,15 +92,24 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      * @param asr
      *            {@link AbstractServiceResponse} to get {@link Encoder} for
      * @return {@link Encoder} for the {@link AbstractServiceResponse}
+     * @throws NoEncoderForKeyException
      */
-    private Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
-        OperationEncoderKey key = new OperationEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
+    private Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) throws NoEncoderForKeyException {
+        OperationEncoderKey key = getEncoderKey(asr); 
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(),
-                    getContentType())));
+            throw new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(),
+                    getContentType()));
         }
         return encoder;
+    }
+
+    private OperationEncoderKey getEncoderKey(AbstractServiceResponse asr) {
+        if (asr instanceof AbstractOperationResponse && ((AbstractOperationResponse) asr).isSetOperationVersion()) {
+            return new VersionedOperationEncoderKey(asr.getOperationKey(), getEncodedContentType(asr), ((AbstractOperationResponse) asr).getOperationVersion());
+        } else {
+            return new OperationEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
+        }
     }
 
     private MediaType getEncodedContentType(AbstractServiceResponse asr) {
@@ -126,11 +129,33 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      * @return <code>true</code>, if streaming encoding is forced and the
      *         {@link Encoder} for the {@link AbstractServiceResponse} is a
      *         {@link StreamingEncoder}
+     * @throws NoEncoderForKeyException 
      */
-    private boolean isStreaming(AbstractServiceResponse asr) {
-        if (getEncoder(asr) instanceof StreamingEncoder) {
-            return ServiceConfiguration.getInstance().isForceStreamingEncoding()
-                    || ((StreamingEncoder<?, ?>) getEncoder(asr)).forceStreaming();
+    private boolean isStreaming(AbstractServiceResponse asr) throws NoEncoderForKeyException {
+        return isStreaming(asr, getEncoder(asr));
+    }
+
+    /**
+     * Check if streaming encoding is forced and the {@link Encoder} for the
+     * {@link AbstractServiceResponse} is a {@link StreamingEncoder}
+     * 
+     * @param asr
+     *            {@link AbstractServiceResponse} to check the {@link Encoder}
+     *            for
+     * @param encoder 
+     * @return <code>true</code>, if streaming encoding is forced and the
+     *         {@link Encoder} for the {@link AbstractServiceResponse} is a
+     *         {@link StreamingEncoder}
+     */
+    private boolean isStreaming(AbstractServiceResponse asr, Encoder<Object, AbstractServiceResponse> encoder) {
+        try {
+            if (getEncoder(asr) instanceof StreamingEncoder) {
+                return ServiceConfiguration.getInstance().isForceStreamingEncoding()
+                        || ((StreamingEncoder<?, ?>) getEncoder(asr)).forceStreaming();
+            }
+        } catch (NoEncoderForKeyException e) {
+            // no encoder was found, return false
+            return false;
         }
         return false;
     }

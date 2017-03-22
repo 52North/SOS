@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.binding.rest.resources.sensors;
 
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetCapabilitiesRequest;
 
 /**
@@ -45,6 +46,16 @@ public class GetSensorsRequest implements ISensorsRequest {
     public GetCapabilitiesRequest getCapabilitiesRequest()
     {
         return capabilitiesRequest;
+    }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getCapabilitiesRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getCapabilitiesRequest();
     }
 
 }

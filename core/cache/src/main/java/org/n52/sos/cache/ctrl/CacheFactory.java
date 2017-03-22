@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,28 +28,30 @@
  */
 package org.n52.sos.cache.ctrl;
 
-import org.n52.sos.cache.WritableCache;
+import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.WritableContentCache;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class CacheFactory {
-    public static CacheFactory getInstance() {
-        return LazyHolder.INSTANCE;
+    private CacheFactory() {
     }
 
-    private CacheFactory() {}
-
     public WritableContentCache create() {
-        return new WritableCache();
+        return new InMemoryCacheImpl();
+    }
+
+    public static CacheFactory getInstance() {
+        return LazyHolder.INSTANCE;
     }
 
     private static class LazyHolder {
         private static final CacheFactory INSTANCE = new CacheFactory();
 
-        private LazyHolder() {}
+        private LazyHolder() {
+        }
     }
 }

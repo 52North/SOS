@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,18 +32,22 @@ import java.util.Collection;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.gml.DefaultEncoding;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public abstract class SweAbstractDataComponent {
+public abstract class SweAbstractDataComponent implements DefaultEncoding<SweAbstractDataComponent>, Cloneable {
 
     private String definition;
 
@@ -71,6 +75,8 @@ public abstract class SweAbstractDataComponent {
      * pre-set XML representation
      */
     private String xml;
+    
+    private String defaultEncoding = SweConstants.NS_SWE_20;
 
     public String getDefinition() {
         return definition;
@@ -195,6 +201,22 @@ public abstract class SweAbstractDataComponent {
     public boolean isSetXml() {
         return xml != null && !xml.isEmpty();
     }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return defaultEncoding;
+    }
+    
+    @Override
+    public SweAbstractDataComponent setDefaultElementEncoding(String defaultEncoding) {
+        this.defaultEncoding = defaultEncoding;
+        return this;
+    }
+    
+    @Override
+    public boolean isSetDefaultElementEncoding() {
+        return !Strings.isNullOrEmpty(getDefaultElementEncoding());
+    }
 
     @Override
     public int hashCode() {
@@ -226,14 +248,19 @@ public abstract class SweAbstractDataComponent {
     }
 
     public abstract SweDataComponentType getDataComponentType();
-
+    public abstract <T> T accept(SweDataComponentVisitor<T> visitor) throws OwsExceptionReport;
+    public abstract void accept(VoidSweDataComponentVisitor visitor) throws OwsExceptionReport;
+    
+    @Override
+    public abstract SweAbstractDataComponent clone() throws CloneNotSupportedException;
+    
     /**
      * Copies all values from this {@link SweAbstractDataComponent} to the
      * passed
      * 
      * @param copy
      *            {@link SweAbstractDataComponent} to copy values to
-     * @return 
+     * @return Copy of this
      */
     public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
         copy.setDefinition(definition);
@@ -243,5 +270,5 @@ public abstract class SweAbstractDataComponent {
         copy.setName(names);
         return copy;
     }
-
+    
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,18 +40,17 @@ import org.n52.sos.w3c.SchemaLocation;
 public class AqdDescribeSensorResponseEncoder extends
 AbstractAqdResponseEncoder<DescribeSensorResponse> {
 	
-	public AqdDescribeSensorResponseEncoder() {
-		  super(SosConstants.Operations.DescribeSensor.name(), DescribeSensorResponse.class);
-	}
+    public AqdDescribeSensorResponseEncoder() {
+        super(SosConstants.Operations.DescribeSensor.name(), DescribeSensorResponse.class);
+    }
 
-	@Override
-	protected Set<SchemaLocation> getConcreteSchemaLocations() {
-		return Collections.emptySet();
-	}
+    @Override
+    protected Set<SchemaLocation> getConcreteSchemaLocations() {
+        return Collections.emptySet();
+    }
 
-	@Override
-	protected XmlObject create(DescribeSensorResponse response)
-			throws OwsExceptionReport {
-		return encodeWithSosEncoder(response);
-	}
+    @Override
+    protected XmlObject create(DescribeSensorResponse response) throws OwsExceptionReport {
+        return encodeWithSosEncoder(response);
+    }
 }

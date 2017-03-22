@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -120,6 +120,8 @@ function generateSettings(settings, settingValues, container, tabbed) {
         var $input = null;
         switch (setting.type) {
         case "integer":
+            // TODO slider
+        case "number":
             // TODO slider
         case "string":
             $input = $("<input>").attr("type", "text").attr("name", setting.id).addClass("span8");

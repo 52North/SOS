@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,17 +29,16 @@
 package org.n52.sos.ds.hibernate.dao.i18n;
 
 import org.hibernate.Session;
-
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NFeatureOfInterestMetadata;
 import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
 
 
-public class FeatureI18NDAO extends AbstractHibernateI18NDAO<FeatureOfInterest, I18NFeatureMetadata, HibernateI18NFeatureOfInterestMetadata> {
+public class FeatureI18NDAO extends AbstractHibernateI18NDAO<AbstractFeatureOfInterest, I18NFeatureMetadata, HibernateI18NFeatureOfInterestMetadata> {
 
     @Override
-    protected FeatureOfInterest getEntity(String id, Session session) {
+    protected AbstractFeatureOfInterest getEntity(String id, Session session) {
         return new FeatureOfInterestDAO().getFeatureOfInterest(id, session);
     }
 

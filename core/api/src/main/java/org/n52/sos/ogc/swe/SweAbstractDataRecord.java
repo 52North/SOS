@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -91,6 +91,19 @@ public abstract class SweAbstractDataRecord extends SweAbstractDataComponent imp
             }
         }
         return -1;
+    }
+    
+    @Override
+    public SweField getFieldByIdentifier(final String fieldNameOrElementDefinition) {
+        if (existsFieldForIdentifier(fieldNameOrElementDefinition)) {
+            return getFields().get(getFieldIndexByIdentifier(fieldNameOrElementDefinition));
+        }
+        return null;
+    }
+    
+    @Override
+    public boolean existsFieldForIdentifier(final String fieldNameOrElementDefinition) {
+        return getFieldIndexByIdentifier(fieldNameOrElementDefinition) >= 0;
     }
 
     boolean isFieldName(final String fieldNameOrElementDefinition, final SweField sweField) {

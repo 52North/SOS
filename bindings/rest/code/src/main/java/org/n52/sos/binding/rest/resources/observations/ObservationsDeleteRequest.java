@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,7 @@
 package org.n52.sos.binding.rest.resources.observations;
 
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
+import org.n52.sos.request.AbstractServiceRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -45,6 +46,16 @@ public class ObservationsDeleteRequest implements IObservationsRequest{
     public DeleteObservationRequest getDeleteObservationRequest()
     {
         return deleteObservationRequest;
+    }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getDeleteObservationRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getDeleteObservationRequest();
     }
 
 }

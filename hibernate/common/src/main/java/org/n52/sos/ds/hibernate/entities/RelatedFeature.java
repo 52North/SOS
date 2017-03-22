@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,6 +35,7 @@ import java.util.Set;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasRelatedFeatureRoles;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 
 /**
  * @since 4.0.0
@@ -48,7 +49,7 @@ public class RelatedFeature implements Serializable, HasFeatureOfInterest, HasRe
 
     private long relatedFeatureId;
 
-    private FeatureOfInterest featureOfInterest;
+    private AbstractFeatureOfInterest featureOfInterest;
 
     private Set<RelatedFeatureRole> relatedFeatureRoles = new HashSet<RelatedFeatureRole>(0);
 
@@ -66,12 +67,12 @@ public class RelatedFeature implements Serializable, HasFeatureOfInterest, HasRe
     }
 
     @Override
-    public FeatureOfInterest getFeatureOfInterest() {
+    public AbstractFeatureOfInterest getFeatureOfInterest() {
         return this.featureOfInterest;
     }
 
     @Override
-    public void setFeatureOfInterest(FeatureOfInterest featureOfInterest) {
+    public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
     }
 
@@ -100,17 +101,9 @@ public class RelatedFeature implements Serializable, HasFeatureOfInterest, HasRe
         }
     }
     
-//    @Override
-//    public Offering getOffering() {
-//        return this.offering;
-//    }
-//    
-//    @Override
-//    public void setOfferings(final Offering offering) {
-//        if (getOfferings() == null)  {
-//            setOfferings( new HashSet<Offering>(0));
-//        }
-//        getOfferings().add(offering);
-//        this.offering = offering;
-//    }
+    @Override
+    public boolean isSetOfferings() {
+        return getOfferings() != null && !getOfferings().isEmpty();
+    }
+    
 }

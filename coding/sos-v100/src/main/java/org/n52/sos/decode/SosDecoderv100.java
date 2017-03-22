@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,24 +37,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.ogc.SpatialOpsType;
-import net.opengis.sos.x10.DescribeSensorDocument;
-import net.opengis.sos.x10.DescribeSensorDocument.DescribeSensor;
-import net.opengis.sos.x10.GetCapabilitiesDocument;
-import net.opengis.sos.x10.GetCapabilitiesDocument.GetCapabilities;
-import net.opengis.sos.x10.GetFeatureOfInterestDocument;
-import net.opengis.sos.x10.GetFeatureOfInterestDocument.GetFeatureOfInterest;
-import net.opengis.sos.x10.GetFeatureOfInterestDocument.GetFeatureOfInterest.Location;
-import net.opengis.sos.x10.GetObservationByIdDocument;
-import net.opengis.sos.x10.GetObservationByIdDocument.GetObservationById;
-import net.opengis.sos.x10.GetObservationDocument;
-import net.opengis.sos.x10.GetObservationDocument.GetObservation;
-import net.opengis.sos.x10.GetObservationDocument.GetObservation.FeatureOfInterest;
-import net.opengis.sos.x10.ResponseModeType.Enum;
-
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.InvalidOutputFormatParameterException;
+import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.filter.SpatialFilter;
@@ -82,6 +69,21 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import net.opengis.ogc.SpatialOpsType;
+import net.opengis.sos.x10.DescribeSensorDocument;
+import net.opengis.sos.x10.DescribeSensorDocument.DescribeSensor;
+import net.opengis.sos.x10.GetCapabilitiesDocument;
+import net.opengis.sos.x10.GetCapabilitiesDocument.GetCapabilities;
+import net.opengis.sos.x10.GetFeatureOfInterestDocument;
+import net.opengis.sos.x10.GetFeatureOfInterestDocument.GetFeatureOfInterest;
+import net.opengis.sos.x10.GetFeatureOfInterestDocument.GetFeatureOfInterest.Location;
+import net.opengis.sos.x10.GetObservationByIdDocument;
+import net.opengis.sos.x10.GetObservationByIdDocument.GetObservationById;
+import net.opengis.sos.x10.GetObservationDocument;
+import net.opengis.sos.x10.GetObservationDocument.GetObservation;
+import net.opengis.sos.x10.GetObservationDocument.GetObservation.FeatureOfInterest;
+import net.opengis.sos.x10.ResponseModeType.Enum;
 
 /**
  * @since 4.0.0
@@ -217,19 +219,24 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      * @param descSensorDoc
      *            XmlBean created from the incoming request stream
      * @return Returns SosDescribeSensorRequest representing the request
+     * @throws InvalidOutputFormatParameterException
      * 
      * 
      * @throws OwsExceptionReport
      *             * If parsing the XmlBean failed
      */
-    private AbstractServiceCommunicationObject parseDescribeSensor(DescribeSensorDocument descSensorDoc) {
-
+    private AbstractServiceCommunicationObject parseDescribeSensor(DescribeSensorDocument descSensorDoc)
+            throws InvalidOutputFormatParameterException {
         DescribeSensorRequest request = new DescribeSensorRequest();
         DescribeSensor descSensor = descSensorDoc.getDescribeSensor();
         request.setService(descSensor.getService());
         request.setVersion(descSensor.getVersion());
         //parse outputFormat through MediaType to ensure it's a mime type and eliminate whitespace variations
-        request.setProcedureDescriptionFormat(MediaType.normalizeString(descSensor.getOutputFormat()));
+        if (MediaType.isMediaType(descSensor.getOutputFormat())) {
+            request.setProcedureDescriptionFormat(MediaType.normalizeString(descSensor.getOutputFormat()));
+        } else {
+            throw new InvalidOutputFormatParameterException(descSensor.getOutputFormat());
+        }
         request.setProcedure(descSensor.getProcedure());
         return request;
     }

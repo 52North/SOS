@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
+import org.n52.sos.ogc.gml.AbstractReferenceType;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
 /**
@@ -37,7 +38,7 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
  * 
  * @since 4.0.0
  */
-public class SmlIo<T> {
+public class SmlIo<T> extends AbstractReferenceType {
 
     private String ioName;
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -65,6 +65,16 @@ public interface Datasource extends ConnectionProviderIdentificator, DatasourceD
      *         reinstallation
      */
     Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current);
+    
+    
+    /**
+     * Parse datasource properties to map
+     *
+     * @param current
+     *            Current datasource properties
+     * @return Map with String key and Object value
+     */
+	Map<String, Object> parseDatasourceProperties(Properties current);
 
     /**
      * Check if a connection is possible.

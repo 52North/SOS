@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -341,7 +341,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
          */
     }
 
-    private void encodeOfferingExtension(SosObservationOffering sosOffering, ObservationOfferingType xbObsOff) throws OwsExceptionReport {
+    private void encodeOfferingExtension(SosObservationOffering sosOffering, ObservationOfferingType xbObsOff) {
         if (sosOffering.isSetExtensions()) {
             for (SwesExtension<?> swesExtention : sosOffering.getExtensions().getExtensions()) {
                 if (swesExtention.getValue() instanceof OfferingExtension) {
@@ -349,12 +349,15 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
                     try {
                         xbObsOff.addNewExtension().set(XmlObject.Factory.parse(extension.getExtension()));
                     } catch (XmlException ex) {
-                            throw new XmlDecodingException("SwesExtension", extension.getExtension(), ex);
+                        LOGGER.error(String.format("Error while decoding %s:\n%s", "SwesExtension", extension.getExtension()), ex);
                     }
                 } else {
-                    xbObsOff.addNewExtension().set(CodingHelper.encodeObjectToXml(swesExtention.getNamespace(), swesExtention));
+                    try {
+                        xbObsOff.addNewExtension().set(CodingHelper.encodeObjectToXml(swesExtention.getNamespace(), swesExtention));
+                    } catch (OwsExceptionReport owse) {
+                        LOGGER.error(String.format("Error while encoding %s:\n%s", "SwesExtension", swesExtention), owse);
+                    }
                 }
-                
             }
         }
     }

@@ -1,0 +1,17 @@
+<div>
+    <div class="language-chooser">
+        <div class="language-chooser-box dropdown btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                    id="choose-language-box">
+                <span translate="settings.chooseLanguage">:</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu scrollable-menu" role="menu">
+                <li role="menuitem" ng-repeat="lang in languages" ng-click="useLanguage(lang.code)">
+                    {{lang.label}}
+                    <img src="images/blank.gif" name="de" class="flag flag-{{lang.code}} pull-right">
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

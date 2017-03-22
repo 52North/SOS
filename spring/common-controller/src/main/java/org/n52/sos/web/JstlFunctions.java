@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,7 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.service.DatabaseSettingsHandler;
 import org.n52.sos.util.JSONUtils;
 
@@ -135,5 +136,9 @@ public class JstlFunctions {
             node.put(key.toString(), String.valueOf(map.get(key)));
         }
         return JSONUtils.print(node);
+    }
+    
+    public static boolean supportsI18N() {
+    	return I18NDAORepository.getInstance().isSupported();
     }
 }

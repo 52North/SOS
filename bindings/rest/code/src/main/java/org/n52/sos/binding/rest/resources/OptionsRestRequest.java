@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,7 @@
 package org.n52.sos.binding.rest.resources;
 
 import org.n52.sos.binding.rest.requests.RestRequest;
+import org.n52.sos.request.AbstractServiceRequest;
 
 
 /**
@@ -62,6 +63,16 @@ public class OptionsRestRequest implements RestRequest {
     public boolean isResourceCollection()
     {
         return isResourceCollection;
+    }
+
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return false;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return null;
     }
 
 }

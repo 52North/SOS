@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,7 +37,7 @@ import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
  * @param <T>
  * @since 4.0.0
  */
-public class SweCoordinate<T> {
+public class SweCoordinate<T> implements Cloneable {
 
     /**
      * Coordinate name
@@ -97,5 +97,11 @@ public class SweCoordinate<T> {
     @Override
     public String toString() {
         return String.format("SosSweCoordinate[name=%s, value=%s]", getName(), getValue());
+    }
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    protected SweCoordinate clone() throws CloneNotSupportedException {
+        return new SweCoordinate(getName(), (SweAbstractSimpleType<?>)getValue().clone());
     }
 }

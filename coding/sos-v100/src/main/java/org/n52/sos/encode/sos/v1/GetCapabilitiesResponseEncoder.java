@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -175,6 +175,8 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
             ObservationOfferingType xbObservationOffering = xbObservationOfferings.addNewObservationOffering();
             // TODO check NAme or ID
             xbObservationOffering.setId(NcNameResolver.fixNcName(offering.getOffering().getIdentifier()));
+            xbObservationOffering.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML,
+                    new CodeType(offering.getOffering().getIdentifier(), "uniqueID")));
 
             // only if fois are contained for the offering set the values of the
             // envelope

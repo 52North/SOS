@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.response;
 
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.ogc.swes.SwesConstants.HasSwesExtension;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensions;
@@ -92,5 +93,37 @@ public abstract class AbstractServiceResponse extends AbstractServiceCommunicati
     @Override
     public boolean isSetExtensions() {
         return extensions != null && !extensions.isEmpty();
+    }
+    
+    @Override
+    public boolean hasExtension(Enum identifier) {
+        if (isSetExtensions()) {
+            return getExtensions().containsExtension(identifier);
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean hasExtension(String identifier) {
+        if (isSetExtensions()) {
+            return getExtensions().containsExtension(identifier);
+        }
+        return false;
+    }
+
+    @Override
+    public SwesExtension<?> getExtension(Enum identifier) throws InvalidParameterValueException {
+        if (hasExtension(identifier)) {
+            return getExtensions().getExtension(identifier);
+        }
+        return null;
+    }
+    
+    @Override
+    public SwesExtension<?> getExtension(String identifier) throws InvalidParameterValueException {
+        if (hasExtension(identifier)) {
+            return getExtensions().getExtension(identifier);
+        }
+        return null;
     }
 }

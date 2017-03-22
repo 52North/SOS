@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -76,6 +76,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.RequestContext;
 import org.n52.sos.response.ServiceResponse;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -151,7 +152,17 @@ public class RestBinding extends Binding {
         doOperation(request, response);
     }
 
-     /*
+    @Override
+	public ServiceResponse handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
+			OwsExceptionReport oer) throws HTTPException {
+		try {
+			 return encodeOwsExceptionReport(oer);
+		} catch (IOException e) {
+			throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
+		}
+	}
+
+	/*
      * (non-Javadoc)
      *
      * @see org.n52.sos.binding.rest.Binding#doGetOperation(javax.servlet.http.
@@ -175,7 +186,8 @@ public class RestBinding extends Binding {
             SosEventBus.fire(new ExceptionEvent(oer));
             serviceResponse = encodeOwsExceptionReport(oer);
         }
-        HTTPUtils.writeObject(request, response, serviceResponse);
+        HTTPUtils.writeObject(request, response, serviceResponse, this);
+        
     }
 
     private ServiceResponse encodeOwsExceptionReport(OwsExceptionReport oer) throws HTTPException, IOException {
@@ -226,6 +238,9 @@ public class RestBinding extends Binding {
             final String exceptionText = "Decoding of request failed but no exception is thrown.";
             LOGGER.debug(exceptionText);
             throw new NoApplicableCodeException().withMessage(exceptionText).setStatus(INTERNAL_SERVER_ERROR);
+        }
+        if (restRequest.hasAbstractServiceRequest()) {
+            restRequest.getAbstractServiceRequest().setRequestContext(getRequestContext(request));
         }
         return restRequest;
     }
@@ -362,6 +377,7 @@ public class RestBinding extends Binding {
                      request.getRequestURI());
         // Decode the request
         final RestRequest restRequest = decodeHttpRequest(request);
+        
         LOGGER.debug("Rest request decoded to {}",
                      restRequest != null ? restRequest.getClass().getName() : null);
         // Handle the request
@@ -375,5 +391,9 @@ public class RestBinding extends Binding {
         
         LOGGER.debug("Handling of REST request finished. Returning response to web tier");
         return serviceResponse;
+    }
+    
+    protected RequestContext getRequestContext(HttpServletRequest req) {
+        return RequestContext.fromRequest(req);
     }
 }

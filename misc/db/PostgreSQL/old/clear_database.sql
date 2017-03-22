@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -32,12 +32,18 @@ TRUNCATE
  public.booleanValue,
  public.categoryValue,
  public.codespace,
+ public.complexValue,
+ public.compositeObservation,
  public.compositePhenomenon,
  public.countValue,
  public.featureOfInterest,
  public.featureOfInterestType,
  public.featureRelation,
  public.geometryValue,
+ public.i18nfeatureOfInterest,
+ public.i18nobservableProperty,
+ public.i18noffering,
+ public.i18nprocedure,
  public.numericValue,
  public.observableProperty,
  public.observation,
@@ -56,7 +62,6 @@ TRUNCATE
  public.relatedFeatureRole,
  public.resultTemplate,
  public.sensorSystem,
- public.series,
  public.swedataarrayvalue,
  public.textValue,
  public.unit,

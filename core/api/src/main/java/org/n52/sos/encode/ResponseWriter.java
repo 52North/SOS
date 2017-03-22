@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,6 +31,8 @@ package org.n52.sos.encode;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.util.http.MediaType;
 
@@ -73,7 +75,7 @@ public interface ResponseWriter<T> {
      * @throws IOException
      *             If an error occurs during writing
      */
-    void write(T t, OutputStream out, ResponseProxy responseProxy) throws IOException;
+    void write(T t, OutputStream out, ResponseProxy responseProxy) throws IOException, OwsExceptionReport;
 
     /**
      * Check if GZip is supported by this writer
@@ -81,6 +83,7 @@ public interface ResponseWriter<T> {
      * @param t
      *            Object to write
      * @return <code>true</code>, if GZip is supported
+     * @throws NoEncoderForKeyException 
      */
-    boolean supportsGZip(T t);  
+    boolean supportsGZip(T t) throws NoEncoderForKeyException;  
 }

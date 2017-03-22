@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,8 +34,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.Constants;
+import org.n52.sos.w3c.Nillable;
 
 import com.google.common.base.Objects;
 
@@ -46,21 +49,27 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     private static final long serialVersionUID = 8758412729768944974L;
 
     /** Identifier of the procedure by which the observation is made */
-    private SosProcedureDescription procedure;
+    private Nillable<SosProcedureDescription> procedure = Nillable.<SosProcedureDescription>nil();
 
-    /** Identifier of the observableProperty to which the observation accords to */
+    /**
+     * Identifier of the observableProperty to which the observation accords to
+     */
     private AbstractPhenomenon observableProperty;
 
     /** Identifiers of the offerings to which this observation belongs */
     private Set<String> offerings;
 
     /** Identifier of the featureOfInterest to which this observation belongs */
-    private AbstractFeature featureOfInterest;
+    private Nillable<AbstractFeature> featureOfInterest = Nillable.<AbstractFeature>nil();
 
     /** type of the observation */
     private String observationType;
 
     // private SosResultTemplate sosResultTemplate;
+
+    private DefaultPointMetadata defaultPointMetadata;
+
+    private Metadata metadata;
 
     /**
      * default constructor
@@ -71,7 +80,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * constructor
-     * 
+     *
      * @param procedure
      *            Procedure by which the observation is made
      * @param observableProperty
@@ -82,14 +91,32 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     public OmObservationConstellation(SosProcedureDescription procedure, AbstractPhenomenon observableProperty,
             AbstractFeature featureOfInterest) {
         super();
-        this.procedure = procedure;
+        this.procedure = Nillable.of(procedure);
         this.observableProperty = observableProperty;
-        this.featureOfInterest = featureOfInterest;
+        this.featureOfInterest = Nillable.of(featureOfInterest);
+    }
+    
+    /**
+     * constructor
+     * 
+     * @param procedure
+     *            Procedure by which the observation is made
+     * @param observableProperty
+     *            observableProperty to which the observation accords to
+     * @param featureOfInterest
+     *            featureOfInterest to which this observation belongs
+     * @param offerings
+     *            offering to which this observation belongs
+     */
+    public OmObservationConstellation(SosProcedureDescription procedure, AbstractPhenomenon observableProperty,
+            AbstractFeature featureOfInterest, Set<String> offerings) {
+       this(procedure, observableProperty, featureOfInterest);
+       this.offerings = offerings;
     }
 
     /**
      * constructor
-     * 
+     *
      * @param procedure
      *            Procedure by which the observation is made
      * @param observableProperty
@@ -103,38 +130,68 @@ public class OmObservationConstellation implements Serializable, Cloneable {
      */
     public OmObservationConstellation(SosProcedureDescription procedure, AbstractPhenomenon observableProperty,
             Set<String> offerings, AbstractFeature featureOfInterest, String observationType) {
-        super();
-        this.procedure = procedure;
-        this.observableProperty = observableProperty;
-        this.offerings = offerings;
-        this.featureOfInterest = featureOfInterest;
+        this(procedure, observableProperty, featureOfInterest, offerings);
         this.observationType = observationType;
     }
 
     /**
      * Get the procedure
-     * 
+     *
      * @return the procedure
      */
     public SosProcedureDescription getProcedure() {
+        if (procedure.isPresent()){
+            return procedure.get();
+        }
+        return null;
+    }
+    
+    /**
+     * Get the procedure
+     *
+     * @return the procedure
+     */
+    public Nillable<SosProcedureDescription> getNillableProcedure() {
         return procedure;
+    }
+    
+    public String getProcedureIdentifier() {
+        if (getProcedure() != null) {
+            return getProcedure().getIdentifier();
+        }
+        return null;
     }
 
     /**
      * Set the procedure
-     * 
+     *
      * @param procedure
      *            the procedure to set
      * @return this
      */
     public OmObservationConstellation setProcedure(SosProcedureDescription procedure) {
+        if (featureOfInterest == null) {
+            return setProcedure(Nillable.<SosProcedureDescription>nil());
+        }
+        return setProcedure(Nillable.of(procedure));
+    }
+    
+    
+    /**
+     * Set the procedure
+     *
+     * @param procedure
+     *            the procedure to set
+     * @return this
+     */
+    public OmObservationConstellation setProcedure(Nillable<SosProcedureDescription> procedure) {
         this.procedure = procedure;
         return this;
     }
 
     /**
      * Get observableProperty
-     * 
+     *
      * @return the observableProperty
      */
     public AbstractPhenomenon getObservableProperty() {
@@ -143,7 +200,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set observableProperty
-     * 
+     *
      * @param observableProperty
      *            the observableProperty to set
      * @return this
@@ -152,10 +209,14 @@ public class OmObservationConstellation implements Serializable, Cloneable {
         this.observableProperty = observableProperty;
         return this;
     }
+    
+    public String getObservablePropertyIdentifier() {
+        return getObservableProperty().getIdentifier();
+    }
 
     /**
      * Get offering
-     * 
+     *
      * @return the offering
      */
     public Set<String> getOfferings() {
@@ -164,7 +225,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set offering
-     * 
+     *
      * @param offerings
      *            the offering to set
      * @return this
@@ -176,7 +237,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     public OmObservationConstellation setOfferings(List<String> offerings) {
         if (this.offerings == null) {
-            this.offerings = new HashSet<String>(0);
+            this.offerings = new HashSet<>(offerings.size());
         }
         this.offerings.addAll(offerings);
         return this;
@@ -184,7 +245,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     public OmObservationConstellation addOffering(String offering) {
         if (offerings == null) {
-            offerings = new HashSet<String>(0);
+            offerings = new HashSet<>(1);
         }
         offerings.add(offering);
         return this;
@@ -192,28 +253,61 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Get featureOfInterest
-     * 
+     *
      * @return the featureOfInterest
      */
     public AbstractFeature getFeatureOfInterest() {
-        return featureOfInterest;
+        if (featureOfInterest.isPresent()) {
+            return featureOfInterest.get();
+        }
+        return null;
     }
+    
+   /**
+    * Get featureOfInterest
+    *
+    * @return the featureOfInterest
+    */
+   public Nillable<AbstractFeature> getNillableFeatureOfInterest() {
+       return featureOfInterest;
+   }
 
     /**
      * Set featureOfInterest
-     * 
+     *
      * @param featureOfInterest
      *            the featureOfInterest to set
      * @return this
      */
     public OmObservationConstellation setFeatureOfInterest(AbstractFeature featureOfInterest) {
+        if (featureOfInterest == null) {
+            return setFeatureOfInterest(Nillable.<AbstractFeature>nil());
+        }
+        return setFeatureOfInterest(Nillable.of(featureOfInterest));
+    }
+    
+    /**
+     * Set featureOfInterest
+     *
+     * @param featureOfInterest
+     *            the featureOfInterest to set
+     * @return this
+     */
+    public OmObservationConstellation setFeatureOfInterest(Nillable<AbstractFeature> featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
         return this;
+    }
+    
+    public String getFeatureOfInterestIdentifier() {
+        if (getFeatureOfInterest() != null) {
+            return getFeatureOfInterest().getIdentifier();
+        }
+        return null;
     }
 
     /**
      * Get observation type
-     * 
+     *
      * @return the observationType
      */
     public String getObservationType() {
@@ -222,7 +316,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set observation type
-     * 
+     *
      * @param observationType
      *            the observationType to set
      * @return this
@@ -242,17 +336,18 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.procedure, Constants.HASH_CODE_19,this.observableProperty,
-                                this.offerings, Constants.HASH_CODE_43,this.featureOfInterest);
+        return Objects.hashCode(this.procedure, Constants.HASH_CODE_19, this.observableProperty, this.offerings,
+                Constants.HASH_CODE_43, this.featureOfInterest);
     }
 
     /**
      * Check if constellations are equal excluding observableProperty
-     * 
+     *
      * @param toCheckObsConst
      *            Observation constellation to chek
      * @return true if equals
      */
+    @Deprecated
     public boolean equalsExcludingObsProp(OmObservationConstellation toCheckObsConst) {
         return (procedure.equals(toCheckObsConst.getProcedure())
                 && featureOfInterest.equals(toCheckObsConst.getFeatureOfInterest())
@@ -260,10 +355,17 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     }
 
-    private boolean checkObservationTypeForMerging() {
-        return (!observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT)
-                && !observationType.equals(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION) && !observationType
-                    .equals(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION));
+    /**
+     * TODO change if currently not supported types could be merged.
+     * 
+     * @return <code>true</code>, if the observation can be merged
+     */
+    @Deprecated
+    public boolean checkObservationTypeForMerging() {
+        return (isSetObservationType() && !OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observationType)
+                && !OmConstants.OBS_TYPE_COMPLEX_OBSERVATION.equals(observationType)
+                && !OmConstants.OBS_TYPE_OBSERVATION.equals(observationType)
+                && !OmConstants.OBS_TYPE_UNKNOWN.equals(observationType));
     }
 
     public boolean isSetObservationType() {
@@ -272,6 +374,14 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     public boolean isSetOfferings() {
         return offerings != null && !offerings.isEmpty();
+    }
+    
+    public boolean isSetProcedure() {
+        return getNillableProcedure() != null && getNillableProcedure().isPresent();
+    }
+    
+    public boolean isSetFeatureOfInterest() {
+        return getNillableFeatureOfInterest() != null && getNillableFeatureOfInterest().isPresent();
     }
 
     @Override
@@ -286,19 +396,43 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     }
 
     public boolean isEmpty() {
-        return !isSetOfferings() && !isSetProcedure() && !isSetObservableProperty() && isSetFeatureOfInterest();
+        return !isSetOfferings() && !hasProcedure() && !hasObservableProperty() && hasFeatureOfInterest();
     }
 
-    private boolean isSetFeatureOfInterest() {
+    private boolean hasFeatureOfInterest() {
         return getFeatureOfInterest() != null && getFeatureOfInterest().isSetIdentifier();
     }
 
-    private boolean isSetObservableProperty() {
+    private boolean hasObservableProperty() {
         return getObservableProperty() != null && getObservableProperty().isSetIdentifier();
     }
 
-    private boolean isSetProcedure() {
+    private boolean hasProcedure() {
         return getProcedure() != null && getProcedure().isSetIdentifier();
+    }
+
+    public boolean isSetDefaultPointMetadata() {
+        return defaultPointMetadata != null;
+    }
+
+    public DefaultPointMetadata getDefaultPointMetadata() {
+        return defaultPointMetadata;
+    }
+
+    public void setDefaultPointMetadata(DefaultPointMetadata defaultPointMetadata) {
+        this.defaultPointMetadata = defaultPointMetadata;
+    }
+
+    public boolean isSetMetadata() {
+        return metadata != null;
+    }
+
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
     }
 
     @Override

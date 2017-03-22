@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -61,16 +61,19 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos1Constants;
+import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.Referenceable;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class AqdEncoder extends AbstractXmlEncoder<Object> implements ObservationEncoder<XmlObject, Object> {
@@ -107,7 +110,7 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
 
     @Override
     public boolean shouldObservationsWithSameXBeMerged() {
-        return false;
+        return true;
     }
 
     @Override
@@ -117,7 +120,17 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
 
     @Override
     public Set<String> getSupportedResponseFormats(String service, String version) {
+        //AQD response format is not a valid mime-type, breaks SOS 1.0 validation
+        if (service.equals(SosConstants.SOS) && version.equals(Sos1Constants.SERVICEVERSION)) {
+            return Sets.newHashSet();
+        }
+
         return Sets.newHashSet(AqdConstants.NS_AQD);
+    }
+
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
+        return Maps.newHashMap();
     }
 
     @Override
@@ -152,8 +165,11 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
                     }
                 } else {
                     while (value.hasNextValue()) {
-                        getAqdHelper().processObservation(value.nextSingleObservation(), timePeriod, resultTime,
-                                featureCollection, eReportingHeader, counter++);
+                        OmObservation obs = value.nextSingleObservation();
+                        if (value != null) {
+                            getAqdHelper().processObservation(obs, timePeriod, resultTime,
+                                    featureCollection, eReportingHeader, counter++);
+                        }
                     }
                 }
             } else {

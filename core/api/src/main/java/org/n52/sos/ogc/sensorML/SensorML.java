@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -153,5 +153,55 @@ public class SensorML extends AbstractSensorML {
             return members.get(0).getOfferings();
         }
         return super.getOfferings();
+    }
+    
+    @Override
+    public boolean isSetProcedureName() {
+        if (isWrapper()) {
+            return getMembers().iterator().next().isSetProcedureName();
+        }
+        return super.isSetProcedureName();
+    }
+
+    @Override
+    public String getProcedureName() {
+        if (isWrapper()) {
+            return getMembers().iterator().next().getProcedureName();
+        }
+        return super.getProcedureName();
+    }
+    
+    @Override
+    public boolean supportsObservablePropertyName() {
+        if (isWrapper()) {
+            return getMembers().iterator().next().supportsObservablePropertyName();
+        }
+        return super.supportsObservablePropertyName();
+    }
+    
+    @Override
+    public boolean isSetObservablePropertyNameFor(String observableProperty) {
+        if (isWrapper()) {
+            return getMembers().iterator().next().isSetObservablePropertyNameFor(observableProperty);
+        }
+        return super.isSetObservablePropertyNameFor(observableProperty);
+    }
+    
+    @Override
+    public String getObservablePropertyNameFor(String observableProperty) {
+        if (isWrapper()) {
+            return getMembers().iterator().next().getObservablePropertyNameFor(observableProperty);
+        }
+        return super.getObservablePropertyNameFor(observableProperty);
+    }
+    
+    @Override
+    public String getDescriptionFormat() {
+        return SensorMLConstants.NS_SML;
+    }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return SensorMLConstants.NS_SML;
     }
 }

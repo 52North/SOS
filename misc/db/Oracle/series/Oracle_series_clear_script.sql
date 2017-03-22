@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -32,10 +32,12 @@ TRUNCATE TABLE booleanValue REUSE STORAGE;
 TRUNCATE TABLE categoryValue REUSE STORAGE;
 TRUNCATE TABLE codespace REUSE STORAGE;
 TRUNCATE TABLE compositePhenomenon REUSE STORAGE;
+TRUNCATE TABLE compositeObservation REUSE STORAGE;
 TRUNCATE TABLE countValue REUSE STORAGE;
 TRUNCATE TABLE featureRelation REUSE STORAGE;
 TRUNCATE TABLE geometryValue REUSE STORAGE;
 TRUNCATE TABLE numericValue REUSE STORAGE;
+TRUNCATE TABLE complexValue REUSE STORAGE;
 TRUNCATE TABLE observableProperty REUSE STORAGE;
 TRUNCATE TABLE observation REUSE STORAGE;
 TRUNCATE TABLE observationConstellation REUSE STORAGE;

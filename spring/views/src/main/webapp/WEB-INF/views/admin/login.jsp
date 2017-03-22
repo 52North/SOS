@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -37,7 +37,7 @@
 	<jsp:param name="leadParagraph" value="Please login to view the admin console." />
 </jsp:include>
 <hr/>
-<form action="<c:url value="/j_spring_security_check" />" method="POST" class="form-horizontal">
+<form action="<c:url value="/login" />" method="POST" class="form-horizontal">
 	<div class="control-group">
 		<label class="control-label" for="username">Username</label>
 		<div class="controls">

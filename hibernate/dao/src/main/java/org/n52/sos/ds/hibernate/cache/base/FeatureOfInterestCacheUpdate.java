@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,12 +34,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.hibernate.internal.util.collections.CollectionHelper;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +79,15 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                 Collection<String> parentFois = foisWithParents.get(featureOfInterestIdentifier);
                 if (!CollectionHelper.isEmpty(parentFois)) {
                     getCache().addParentFeatures(featureOfInterestIdentifier, parentFois);
+                }
+            }
+            
+            for (FeatureOfInterest featureOfInterest : featureOfInterestDAO.getPublishedFeatureOfInterest(getSession())) {
+                String identifier = featureOfInterest.getIdentifier();
+                getCache().addPublishedFeatureOfInterest(identifier);
+                Collection<String> parentFois = foisWithParents.get(identifier);
+                if (!CollectionHelper.isEmpty(parentFois)) {
+                    getCache().addPublishedFeaturesOfInterest(parentFois);
                 }
             }
             

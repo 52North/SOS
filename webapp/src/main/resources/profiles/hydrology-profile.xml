@@ -8,7 +8,7 @@
 	You can find the ObservationConstellation and ObservationType tables in the 
 	[TOMCAT_HOME]\webapps\52n-sos-webapp\WEB-INF\classes\mapping\transactional folder of the deployed SOS.
 	 -->
-	<profile:identifier>hydrology</profile:identifier>
+	<profile:identifier>HYDROLOGY_PROFILE</profile:identifier>
 	<profile:activeProfile>false</profile:activeProfile>
 	<profile:observationResponseFormat>http://www.opengis.net/waterml/2.0</profile:observationResponseFormat>
 	<profile:encodeFeatureOfInterestInObservations>false</profile:encodeFeatureOfInterestInObservations>

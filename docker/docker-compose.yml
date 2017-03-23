@@ -17,6 +17,8 @@ version: '3'
 services:
   db:
     image: mdillon/postgis:9.5
+    ports:
+      - 5432:5432
     expose:
       - 5432
     environment:
@@ -35,27 +37,27 @@ services:
       - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
     depends_on:
       - db
-  sos-tomcat-8:
-    image: tomcat:8-jre8-alpine
-    ports:
-      - 8088:8080
-    links:
-      - db:postgres
-    volumes:
-      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT.war:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT.war"
-      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT"
-      - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
-    depends_on:
-      - db
-  sos-tomcat-7:
-    image: tomcat:7-jre8-alpine
-    ports:
-      - 8087:8080
-    links:
-      - db:postgres
-    volumes:
-      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT.war:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT.war"
-      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT"
-      - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
-    depends_on:
-      - db
+#  sos-tomcat-8:
+#    image: tomcat:8-jre8-alpine
+#    ports:
+#      - 8088:8080
+#    links:
+#      - db:postgres
+#    volumes:
+#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT.war:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT.war"
+#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT"
+#      - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
+#    depends_on:
+#      - db
+#  sos-tomcat-7:
+#    image: tomcat:7-jre8-alpine
+#    ports:
+#      - 8087:8080
+#    links:
+#      - db:postgres
+#    volumes:
+#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT.war:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT.war"
+#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT"
+#      - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
+#    depends_on:
+#      - db

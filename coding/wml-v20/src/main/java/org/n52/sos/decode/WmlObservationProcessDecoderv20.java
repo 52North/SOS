@@ -43,7 +43,7 @@ import org.n52.sos.ogc.series.wml.WaterMLConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.wml.ObservationProcess;
+import org.n52.sos.ogc.series.wml.ObservationProcess;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;

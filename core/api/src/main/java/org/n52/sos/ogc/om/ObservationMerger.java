@@ -44,7 +44,9 @@ public class ObservationMerger {
             int obsIdCounter = 1;
             for (final OmObservation sosObservation : observations) {
                 if (mergedObservations.isEmpty()) {
-                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
+                    if (!sosObservation.isSetGmlID()) {
+                        sosObservation.setObservationID(Integer.toString(obsIdCounter++));
+                    }
                     mergedObservations.add(sosObservation);
                 } else {
                     boolean combined = false;

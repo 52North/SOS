@@ -50,7 +50,7 @@ import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.wml.ObservationProcess;
+import org.n52.sos.ogc.series.wml.ObservationProcess;
 
 /**
  * Abstract converter for WaterML {@link ObservationProcess} and SensorML

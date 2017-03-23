@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.convert.RequestResponseModifier;
+import org.n52.sos.convert.AbstractRequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.ogc.om.OmObservation;
@@ -48,16 +48,11 @@ import org.n52.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Sets;
 
-public class AqdSplitMergeObservations implements
-        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+public class AqdSplitMergeObservations extends
+        AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
-    /**
-     * Get the keys
-     * 
-     * @return Set of keys
-     */
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
         Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
         keys.add(new RequestResponseModifierKeyType(AqdConstants.AQD, AqdConstants.VERSION,
@@ -157,7 +152,7 @@ public class AqdSplitMergeObservations implements
     
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
-        return new RequestResponseModifierFacilitator().setMerger(true).setSplitter(true);
+        return super.getFacilitator().setMerger(true).setSplitter(true);
     }
 
 }

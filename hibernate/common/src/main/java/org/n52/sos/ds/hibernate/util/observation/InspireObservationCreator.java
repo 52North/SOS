@@ -50,10 +50,10 @@ public class InspireObservationCreator implements AdditionalObservationCreator<S
     private final static String NS_OMSO_30 = "http://inspire.ec.europa.eu/schemas/omso/3.0";
 
     private static final Set<AdditionalObservationCreatorKey> KEYS =
-            AdditionalObservationCreatorRepository.encoderKeysForElements(NS_OMSO_30, 
-                    AbstractSeriesObservation.class, 
+            AdditionalObservationCreatorRepository.encoderKeysForElements(NS_OMSO_30,
+                    AbstractSeriesObservation.class,
                     AbstractEReportingObservation.class,
-                    Series.class, 
+                    Series.class,
                     EReportingSeries.class);
 
     @Override
@@ -100,13 +100,9 @@ public class InspireObservationCreator implements AdditionalObservationCreator<S
         create(omObservation, observation);
         if (observation instanceof AbstractSeriesObservation) {
             addRelatedSeries(omObservation, new RelatedSeriesDAO()
-                    .getRelatedSeries(((AbstractSeriesObservation) observation).getSeries(), session));
+                    .getRelatedSeries(((AbstractSeriesObservation<?>) observation).getSeries(), session));
         }
         return omObservation;
-    }
-
-    private void addRelatedSeries(OmObservation omObservation, List<RelatedSeries> relatedSeries) throws CodedException {
-        new RelatedSeriesAdder(omObservation, relatedSeries).add();
     }
 
     @Override
@@ -114,9 +110,12 @@ public class InspireObservationCreator implements AdditionalObservationCreator<S
         add(omObservation, observation);
         if (observation instanceof AbstractSeriesObservation) {
             addRelatedSeries(omObservation, new RelatedSeriesDAO()
-                    .getRelatedSeries(((AbstractSeriesObservation) observation).getSeries(), session));
+                    .getRelatedSeries(((AbstractSeriesObservation<?>) observation).getSeries(), session));
         }
         return omObservation;
     }
 
+    private void addRelatedSeries(OmObservation omObservation, List<RelatedSeries> relatedSeries) throws CodedException {
+        new RelatedSeriesAdder(omObservation, relatedSeries).add();
+    }
 }

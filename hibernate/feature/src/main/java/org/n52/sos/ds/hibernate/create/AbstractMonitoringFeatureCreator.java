@@ -458,7 +458,7 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
     }
 
     private Nillable<Role> createRole(RoleEntity cir) {
-        Role role = new Role("");
+        Role role = new Role(cir.getCodeListValue());
         role.setCodeList(cir.getCodeList());
         role.setCodeListValue(cir.getCodeListValue());
         return Nillable.<Role>of(role);

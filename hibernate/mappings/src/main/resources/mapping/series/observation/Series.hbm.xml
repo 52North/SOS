@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.series.Series" table="series">
+    <class name="org.n52.sos.ds.hibernate.entities.series.Series" table="series_with_mergerole">
     <comment>Table to store a (time-) series which consists of featureOfInterest, observableProperty, and procedure. Mapping file: mapping/series/Series.hbm.xml</comment>
         <id name="seriesId" type="long">
             <column name="seriesId">

@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.3.11-UBA-1.0.2-SNAPSHOT</version>
+    <version>4.3.11-UBA-1.0.2</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
@@ -1416,7 +1416,7 @@
         <connection>scm:git:git://github.com/52North/SOS.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
         <url>https://github.com/52North/SOS</url>
-      <tag>HEAD</tag>
+      <tag>v4.3.11-UBA-1.0.2</tag>
   </scm>
     <repositories>
         <repository>

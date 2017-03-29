@@ -1,9 +1,6 @@
 #
-# With this docker-compose file, you get three running tomcats:
-# - tomcat 7 with java 8: http://localhost:8087/
-# - tomcat 8 with java 8: http://localhost:8088/
-# - tomcat 9 with java 8: http://localhost:8089/
-# Each instance redirects to the 52n-sos-webapp and uses the latest version of the tomcat M.x branch with Java 8 JRE.
+# With this docker-compose file, you get a tomcats:
+# It redirects to the 52n-sos-webapp and uses the latest version of the tomcat M.x branch with Java 8 JRE.
 # When configuring the SOS, please use the following information:
 # - Datasource configuration
 #   - datasource: PostgreSQL/PostGIS
@@ -17,18 +14,17 @@ version: '3'
 services:
   db:
     image: mdillon/postgis:9.5
-    expose:
-      - 5432
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=sos
-  sos-tomcat-9:
-    image: tomcat:9-jre8-alpine
+  sos:
+    # change to 7- or 9- to change the tomcat version
+    image: tomcat:8-jre8-alpine
     ports:
-      - 8089:8080
+      - 80:8080
     links:
       - db:postgres
     volumes:
@@ -37,27 +33,8 @@ services:
       - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
     depends_on:
       - db
-#  sos-tomcat-8:
-#    image: tomcat:8-jre8-alpine
-#    ports:
-#      - 8088:8080
-#    links:
-#      - db:postgres
-#    volumes:
-#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT.war:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT.war"
-#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT"
-#      - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
-#    depends_on:
-#      - db
-#  sos-tomcat-7:
-#    image: tomcat:7-jre8-alpine
-#    ports:
-#      - 8087:8080
-#    links:
-#      - db:postgres
-#    volumes:
-#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT.war:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT.war"
-#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT"
-#      - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
-#    depends_on:
-#      - db
+    environment:
+      - JPDA_ADDRESS=8000
+      - JPDA_TRANSPORT=dt_socket
+    command: ["catalina.sh", "jpda", "run"]
+

@@ -20,6 +20,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=sos
+    container_name: testing-db
   sos:
     # change to 7- or 9- to change the tomcat version
     image: tomcat:8-jre8-alpine
@@ -36,5 +37,6 @@ services:
     environment:
       - JPDA_ADDRESS=8000
       - JPDA_TRANSPORT=dt_socket
+    container_name: testing-sos
     command: ["catalina.sh", "jpda", "run"]
 

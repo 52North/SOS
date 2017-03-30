@@ -48,6 +48,7 @@
 <div>
   <h3>Maintenance</h3>
     <ul class="inline">
+        <li><button data-target="#confirmDialogAddTestdata" data-toggle="modal" title="Insert test dataset" class="btn ">Insert test dataset</button></li>
         <li><button data-target="#confirmDialogDelete" data-toggle="modal" title="Delete deleted Observations" class="btn btn-danger">Delete deleted Observations</button></li>
         <li><button data-target="#confirmDialogClear" data-toggle="modal" title="Clear Datasource" class="btn btn-danger">Clear Datasource</button></li>
         <li><a href="<c:url value="/admin/reset" />" title="Reset Datasource Configuration" class="btn btn-warning">Reset Datasource Configuration</a></li>
@@ -75,6 +76,16 @@
 </form>
 <div id="result"></div>
 
+<div class="modal hide fade in" id="confirmDialogAddTestdata">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Insert test data?</h3>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button type="button" id="addTestdata" class="btn btn-primary">Insert test data!</button>
+    </div>
+</div>
 
 <div class="modal hide fade in" id="confirmDialogClear">
     <div class="modal-header">
@@ -108,8 +119,10 @@
     $(function() {
         var $clearDialog = $("#confirmDialogClear");
         var $deleteDeletedDialog = $("#confirmDialogDelete");
+        var $addTestdataDialog = $("#confirmDialogAddTestdata")
         var supportsClear = ${supportsClear};
         var supportsDeleteDeleted = ${supportsDeleteDeleted};
+        /*var supportsAddTestdata = ${supportsAddTestdata};*/
 
         if (supportsClear) {
             $("#clear").click(function() {
@@ -130,6 +143,26 @@
         } else {
             $("button[data-target=#confirmDialogClear]").attr("disabled", true);
         }
+
+        /*if (supportsAddTestdata) {*/
+            $("#addTestdata").click(function() {
+                $addTestdataDialog.find("button").attr("disabled", true);
+                $.ajax({
+                    "url": "<c:url value="/admin/datasource/addTestdata" />",
+                    "type": "POST"
+                }).fail(function(error) {
+                    showError("Inserting test data failed: " + error.status + " " + error.statusText);
+                    $addTestdataDialog.find("button").removeAttr("disabled");
+                    $addTestdataDialog.modal("hide");
+                }).done(function() {
+                    showSuccess("The testdata was inserted.");
+                    $addTestdataDialog.find("button").removeAttr("disabled");
+                    $addTestdataDialog.modal("hide");
+                })
+            });
+        /*} else {
+            $("button[data-target=#confirmDialogAddTestdata]").attr("disabled", true);
+        }*/
 
         if (supportsDeleteDeleted) {
             $("#delete").click(function() {

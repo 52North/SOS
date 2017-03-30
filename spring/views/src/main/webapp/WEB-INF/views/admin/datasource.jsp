@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2017 52Â°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -42,19 +42,20 @@
 <script type="text/javascript" src="<c:url value="/static/lib/vkbeautify-0.99.00.beta.js" />"></script>
 
 <jsp:include page="../common/logotitle.jsp">
-    <jsp:param name="title" value="Datasource Panel" />
-    <jsp:param name="leadParagraph" value="Here you can query the datasource directly." />
+    <jsp:param name="title" value="Datasource Maintenance" />
+    <jsp:param name="leadParagraph" value="Here you can maintain the datasource." />
 </jsp:include>
-
-<div class="pull-right">
+<div>
+  <h3>Maintenance</h3>
     <ul class="inline">
-        <li><button data-target="#confirmDialogClear" data-toggle="modal" title="Clear Datasource" class="btn btn-danger">Clear Datasource</button></li>
         <li><button data-target="#confirmDialogDelete" data-toggle="modal" title="Delete deleted Observations" class="btn btn-danger">Delete deleted Observations</button></li>
+        <li><button data-target="#confirmDialogClear" data-toggle="modal" title="Clear Datasource" class="btn btn-danger">Clear Datasource</button></li>
+        <li><a href="<c:url value="/admin/reset" />" title="Reset Datasource Configuration" class="btn btn-warning">Reset Datasource Configuration</a></li>
     </ul>
 </div>
 
 <form id="form" action="" method="POST">
-    <h3>Query</h3>
+    <h3>Query Examples</h3>
     <p>Here are some raw SQL query examples which can be copied and executed in the appropriate database tool, e.g. pgAdmin.</p>
     <p>The MySQL examples use 'sos' as schema. If you use another schema, please change the 'sos' definition to your schema. This can be easily done with a text editor by search for 'sos.' and replace with 'your_schema.'.</p>
     <div class="controls-row">
@@ -106,13 +107,13 @@
 <script type="text/javascript">
     $(function() {
         var $clearDialog = $("#confirmDialogClear");
-        var $deleteDeletedDialog = $("#confirmDialogDelete");        
+        var $deleteDeletedDialog = $("#confirmDialogDelete");
         var supportsClear = ${supportsClear};
         var supportsDeleteDeleted = ${supportsDeleteDeleted};
 
         if (supportsClear) {
             $("#clear").click(function() {
-                $clearDialog.find("button")/*.add($button)*/.attr("disabled", true);
+                $clearDialog.find("button").attr("disabled", true);
                 $.ajax({
                     "url": "<c:url value="/admin/datasource/clear" />",
                     "type": "POST"
@@ -132,7 +133,7 @@
 
         if (supportsDeleteDeleted) {
             $("#delete").click(function() {
-                $deleteDeletedDialog.find("button")/*.add($button)*/.attr("disabled", true);
+                $deleteDeletedDialog.find("button").attr("disabled", true);
                 $.ajax({
                     "url": "<c:url value="/admin/datasource/deleteDeletedObservations" />",
                     "type": "POST"

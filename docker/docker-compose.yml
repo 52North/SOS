@@ -19,16 +19,16 @@ services:
     image: mdillon/postgis:9.5
     ports:
       - 5432:5432
-    expose:
-      - 5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=sos
-  sos-tomcat-9:
-    image: tomcat:9-jre8-alpine
+    container_name: testing-db
+  sos:
+    # change to 7- or 9- to change the tomcat version
+    image: tomcat:8-jre8-alpine
     ports:
-      - 8089:8080
+      - 80:8080
     links:
       - db:postgres
     volumes:
@@ -37,27 +37,9 @@ services:
       - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
     depends_on:
       - db
-#  sos-tomcat-8:
-#    image: tomcat:8-jre8-alpine
-#    ports:
-#      - 8088:8080
-#    links:
-#      - db:postgres
-#    volumes:
-#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT.war:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT.war"
-#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT"
-#      - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
-#    depends_on:
-#      - db
-#  sos-tomcat-7:
-#    image: tomcat:7-jre8-alpine
-#    ports:
-#      - 8087:8080
-#    links:
-#      - db:postgres
-#    volumes:
-#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT.war:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT.war"
-#      - "../webapp-bundle/target/52n-sos-webapp##4.4.0-SNAPSHOT:/usr/local/tomcat/webapps/52n-sos-webapp##4.4.0-SNAPSHOT"
-#      - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
-#    depends_on:
-#      - db
+    environment:
+      - JPDA_ADDRESS=8000
+      - JPDA_TRANSPORT=dt_socket
+    container_name: testing-sos
+    command: ["catalina.sh", "jpda", "run"]
+

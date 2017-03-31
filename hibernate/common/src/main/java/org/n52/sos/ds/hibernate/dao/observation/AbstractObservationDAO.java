@@ -69,12 +69,17 @@ import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
 import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.MultiPointCoverage;
 import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.ProfileValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TLVTValue;
 import org.n52.shetland.ogc.om.values.TVPValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
@@ -119,8 +124,8 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
-import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
+import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.util.GeometryHandler;
@@ -1426,6 +1431,31 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             */
             daos.observation().checkForDuplicatedObservations(sosObservation, session);
 
+        }
+
+         @Override
+        public Observation<?> visit(TLVTValue value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(ProfileValue value) throws OwsExceptionReport {
+            throw notSupported(value);
         }
 
         @Override

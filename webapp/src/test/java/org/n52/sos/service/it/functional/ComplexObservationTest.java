@@ -588,7 +588,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     private static class NamespaceContextImpl implements NamespaceContext {
         private final ImmutableBiMap<String, String> map = ImmutableBiMap
                 .<String, String>builder()
-                .put(Sos2Constants.NS_SOS_PREFIX, Sos2Constants.NS_SOS_20)
+                .put(SosConstants.NS_SOS_PREFIX, Sos2Constants.NS_SOS_20)
                 .put(OWSConstants.NS_OWS_PREFIX, OWSConstants.NS_OWS)
                 .put(SweConstants.NS_SWE_PREFIX, SweConstants.NS_SWE_20)
                 .put(OmConstants.NS_OM_PREFIX, OmConstants.NS_OM_2)

@@ -29,8 +29,10 @@
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
 import org.hibernate.Session;
+
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.aqd.ReportObligations;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -46,8 +48,6 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingQuality;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
-import org.n52.svalbard.util.AqdHelper;
-import org.n52.svalbard.util.ReportObligations;
 
 import com.google.common.base.Strings;
 

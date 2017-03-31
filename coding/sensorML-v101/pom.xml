@@ -11,10 +11,6 @@
 	<name>52°North SOS - SensorML 101 Request Coding</name>
 	<description>52°North Sensor Observation Service SML 101 request Coding</description>
 	<dependencies>
-        <dependency>
-            <groupId>org.n52.svalbard</groupId>
-            <artifactId>svalbard</artifactId>
-        </dependency>
 		<dependency>
 			<groupId>org.n52.iceland</groupId>
 			<artifactId>iceland</artifactId>
@@ -22,14 +18,6 @@
         <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.janmayen</groupId>
-            <artifactId>janmayen</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.vividsolutions</groupId>
-            <artifactId>jts</artifactId>
         </dependency>
         <dependency>
             <groupId>stax</groupId>
@@ -41,84 +29,8 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.xmlbeans</groupId>
-            <artifactId>xmlbeans</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>stax</groupId>
-                   <artifactId>stax-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-		<!-- XML Beans Generated Classes -->
-		<dependency>
-			<groupId>org.n52.sensorweb</groupId>
-			<artifactId>52n-xml-sensorML-v101</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.sensorweb</groupId>
-			<artifactId>52n-xml-gml-v311</artifactId>
-		</dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-sweCommon-v101</artifactId>
-        </dependency>
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>api</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-            <groupId>org.n52.iceland</groupId>
-            <artifactId>iceland</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sqlite-config</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sqlite-config</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>xmlunit</groupId>
-			<artifactId>xmlunit</artifactId>
-            <scope>test</scope>
-		</dependency>
-	</dependencies>
+    </dependencies>
 </project>

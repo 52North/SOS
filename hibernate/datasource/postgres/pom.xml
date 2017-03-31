@@ -8,8 +8,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-datasource-postgres</artifactId>
     <packaging>jar</packaging>
-	<name>52°North SOS - Hibernate Postgres/PostGIS Datasource</name>
-	<description>52°North Sensor Observation Service Hibernate PostgresSQL/PostGIS module</description>
+    <name>52°North SOS - Hibernate Postgres/PostGIS Datasource</name>
+    <description>52°North Sensor Observation Service Hibernate PostgresSQL/PostGIS module</description>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -20,11 +20,15 @@
             <artifactId>hibernate-session-factory</artifactId>
             <scope>provided</scope>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.n52.faroe</groupId>
             <artifactId>faroe</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-utils</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -32,7 +36,7 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-	    <dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
@@ -64,7 +68,7 @@
             <artifactId>postgis-jdbc</artifactId>
             <scope>runtime</scope>
         </dependency>
-	</dependencies>
+    </dependencies>
     <build>
         <plugins>
             <plugin>

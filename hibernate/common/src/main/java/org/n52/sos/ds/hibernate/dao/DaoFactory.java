@@ -63,7 +63,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObserv
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.svalbard.EReportingSetting;
+import org.n52.shetland.util.EReportingSetting;
 
 /**
  * Hibernate data access factory.

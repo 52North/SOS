@@ -9,15 +9,19 @@
     <artifactId>hibernate-datasource-h2</artifactId>
     <packaging>jar</packaging>
     <name>52°North SOS - Hibernate H2 Datasource</name>
-	<description>52°North Sensor Observation Service Hibernate H2 module</description>
+    <description>52°North Sensor Observation Service Hibernate H2 module</description>
     <dependencies>
         <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
-         </dependency>
-         <dependency>
+        </dependency>
+        <dependency>
             <groupId>org.n52.faroe</groupId>
             <artifactId>faroe</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-utils</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

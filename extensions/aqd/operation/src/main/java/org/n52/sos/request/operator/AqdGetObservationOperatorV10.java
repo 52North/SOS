@@ -38,6 +38,7 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.aqd.ReportObligations;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -63,7 +64,6 @@ import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterExceptio
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.util.SosHelper;
-import org.n52.svalbard.util.ReportObligations;
 
 import com.google.common.collect.Lists;
 

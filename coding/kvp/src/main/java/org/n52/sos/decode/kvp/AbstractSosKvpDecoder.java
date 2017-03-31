@@ -40,10 +40,10 @@ import java.util.RandomAccess;
 import java.util.function.Supplier;
 
 import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.kvp.AbstractKvpDecoder;
-import org.n52.iceland.service.MiscSettings;
 import org.n52.janmayen.function.ThrowingBiConsumer;
 import org.n52.janmayen.function.ThrowingTriConsumer;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
@@ -63,7 +63,6 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.DateTimeParseException;
 import org.n52.sos.ds.FeatureQuerySettingsProvider;
 import org.n52.svalbard.CodingSettings;
-import org.n52.svalbard.Validation;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
 

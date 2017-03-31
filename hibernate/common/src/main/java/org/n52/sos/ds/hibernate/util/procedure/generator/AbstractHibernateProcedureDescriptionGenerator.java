@@ -42,6 +42,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
@@ -62,7 +63,6 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.service.ProcedureDescriptionSettings;
-import org.n52.svalbard.Validation;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;

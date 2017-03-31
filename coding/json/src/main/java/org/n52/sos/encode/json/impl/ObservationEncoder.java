@@ -58,11 +58,11 @@ import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.util.OMHelper;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
-import org.n52.svalbard.util.OMHelper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

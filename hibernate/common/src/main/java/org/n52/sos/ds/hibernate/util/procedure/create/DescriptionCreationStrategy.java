@@ -42,7 +42,7 @@ import com.google.common.base.Predicate;
  * Strategy pattern to create {@link SosProcedureDescription}.
  */
 public interface DescriptionCreationStrategy extends Predicate<Procedure> {
-    
+
     SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport;
 }

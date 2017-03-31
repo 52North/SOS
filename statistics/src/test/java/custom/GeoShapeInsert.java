@@ -38,9 +38,9 @@ import org.junit.Test;
 import org.n52.iceland.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.util.JTSHelper;
 import org.n52.sos.statistics.sos.SosDataMapping;
 import org.n52.sos.statistics.sos.models.SpatialFilterEsModel;
-import org.n52.svalbard.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 

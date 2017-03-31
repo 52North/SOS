@@ -29,7 +29,6 @@
 package org.n52.sos.web.admin;
 
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -97,7 +96,7 @@ public class AdminLoggingController extends AbstractController {
     public ModelAndView save(HttpServletRequest req) {
 
         @SuppressWarnings("unchecked")
-        Set<String> parameters = new HashSet<>(Collections.list((Enumeration<String>) req.getParameterNames()));
+        Set<String> parameters = new HashSet<>(Collections.list(req.getParameterNames()));
 
         int daysToKeep = Integer.parseInt(req.getParameter(DAYS_TO_KEEP_MDOEL_ATTRIBUTE));
         parameters.remove(DAYS_TO_KEEP_MDOEL_ATTRIBUTE);

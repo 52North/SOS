@@ -44,8 +44,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.n52.faroe.annotation.Setting;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.http.HttpUtils;
 import org.n52.janmayen.http.HTTPMethods;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
@@ -65,14 +65,15 @@ import org.n52.shetland.util.CRSHelper;
 import org.n52.shetland.util.DateTimeException;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.DateTimeParseException;
+import org.n52.shetland.util.JTSHelper;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.util.JTSHelper;
 
 import com.google.common.base.Strings;
+import com.vividsolutions.jts.io.ParseException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -333,8 +334,12 @@ public abstract class ResourceDecoder extends RestDecoder {
                     .format(Locale.US, "%f %f", new Float(coordinates.get(0)), new Float(coordinates.get(1)));
             final String upperCorner = String
                     .format(Locale.US, "%f %f", new Float(coordinates.get(2)), new Float(coordinates.get(3)));
-            spatialFilter.setGeometry(JTSHelper.createGeometryFromWKT(JTSHelper
-                    .createWKTPolygonFromEnvelope(lowerCorner, upperCorner), srid));
+            try {
+                spatialFilter.setGeometry(JTSHelper.createGeometryFromWKT(JTSHelper
+                        .createWKTPolygonFromEnvelope(lowerCorner, upperCorner), srid));
+            } catch (ParseException ex) {
+                throw new DecodingException(ex);
+            }
             spatialFilter.setOperator(SpatialOperator.BBOX);
             return spatialFilter;
         }

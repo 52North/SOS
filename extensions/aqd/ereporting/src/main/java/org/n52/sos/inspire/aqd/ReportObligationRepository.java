@@ -43,8 +43,8 @@ import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.inspire.RelatedParty;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.aqd.EReportObligationRepository;
 import org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager;
-import org.n52.svalbard.EReportObligationRepository;
 
 public class ReportObligationRepository implements EReportObligationRepository {
     private final ReadWriteLock reportingAuthorityLock = new ReentrantReadWriteLock();

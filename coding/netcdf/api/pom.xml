@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>api-netcdf</artifactId>
     <packaging>jar</packaging>
-    <name>52°North SOS - OceanSITES netCDF Coding</name>
+    <name>52°North SOS - OceanSITES netCDF API</name>
     <description>52°North Sensor Observation Service OceanSITES netCDF Coding</description>
     <dependencies>
         <dependency>
@@ -29,7 +29,11 @@
         </dependency>
         <dependency>
             <groupId>org.n52.faroe</groupId>
-            <artifactId>faroe</artifactId>
+            <artifactId>faroe-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-utils</artifactId>
         </dependency>
          <dependency>
             <groupId>com.google.guava</groupId>

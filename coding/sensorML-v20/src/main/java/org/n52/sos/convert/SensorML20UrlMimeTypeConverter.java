@@ -28,6 +28,8 @@
  */
 package org.n52.sos.convert;
 
+import static java.util.stream.Collectors.joining;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -40,7 +42,6 @@ import org.n52.iceland.convert.ConverterKey;
 import org.n52.shetland.ogc.sensorML.SensorML20Constants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -64,7 +65,7 @@ public class SensorML20UrlMimeTypeConverter implements Converter<SosProcedureDes
 
     public SensorML20UrlMimeTypeConverter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
-                Joiner.on(", ").join(CONVERTER_KEY_TYPES));
+                     CONVERTER_KEY_TYPES.stream().map(String::valueOf).collect(joining(", ")));
     }
 
     @Override

@@ -60,6 +60,7 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
@@ -294,11 +295,16 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
                     if (sosObservation.getValue() instanceof StreamingValue) {
                         StreamingValue streamingValue = (StreamingValue) sosObservation.getValue();
                         while (streamingValue.hasNextValue()) {
-                            xbObservationCollection.addNewMember().set(
-                                    createObservation(streamingValue.nextSingleObservation(), null));
+                            OmObservation o = streamingValue.nextSingleObservation();
+                            if (checkObservationHasValue(o)) {
+                                xbObservationCollection.addNewMember().set(
+                                        createObservation(o, null));
+                            }
                         }
                     } else {
-                        xbObservationCollection.addNewMember().set(createObservation(sosObservation, null));
+                        if (checkObservationHasValue(sosObservation)) {
+                            xbObservationCollection.addNewMember().set(createObservation(sosObservation, null));
+                        }
                     }
                 } else {
                     throw new InvalidParameterValueException().at(Sos1Constants.GetObservationParams.resultModel)
@@ -584,5 +590,9 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
                 Boolean.toString(activeProfile.isEncodeFeatureOfInterestInObservations()));
         XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, feature, additionalValues);
         observation.addNewFeatureOfInterest().set(encodeObjectToXml);
+    }
+    
+    protected boolean checkObservationHasValue(OmObservation o) {
+        return o != null && o.isSetValue() && o.getValue().isSetValue() && o.getValue().getValue().isSetValue();
     }
 }

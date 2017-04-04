@@ -65,7 +65,6 @@ public class WmlTDREncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     @Override
     protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException,
             OwsExceptionReport {
-        // TODO Auto-generated method stub
         super.writeResult(observation, encodingValues);
     }
 

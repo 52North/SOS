@@ -78,19 +78,21 @@ public class GetObservationByIdResponseEncoder extends AbstractObservationRespon
         List<OmObservation> oc = getObservationsAndCheckForStreaming(response, encoder);
         HashMap<CodeWithAuthority, String> gmlID4sfIdentifier = new HashMap<CodeWithAuthority, String>(oc.size());
         for (OmObservation observation : oc) {
-            Map<HelperValues, String> foiHelper = new EnumMap<HelperValues, String>(HelperValues.class);
-            final String gmlId;
-            CodeWithAuthority foiId = observation.getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority();
-            if (gmlID4sfIdentifier.containsKey(foiId)) {
-                gmlId = gmlID4sfIdentifier.get(foiId);
-                foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(true));
-            } else {
-                gmlId = GML_ID;
-                gmlID4sfIdentifier.put(foiId, gmlId);
-                foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(false));
+            if (checkObservationHasValue(observation)) {
+                Map<HelperValues, String> foiHelper = new EnumMap<HelperValues, String>(HelperValues.class);
+                final String gmlId;
+                CodeWithAuthority foiId = observation.getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority();
+                if (gmlID4sfIdentifier.containsKey(foiId)) {
+                    gmlId = gmlID4sfIdentifier.get(foiId);
+                    foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(true));
+                } else {
+                    gmlId = GML_ID;
+                    gmlID4sfIdentifier.put(foiId, gmlId);
+                    foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(false));
+                }
+                foiHelper.put(HelperValues.GMLID, gmlId);
+                xbResponse.addNewObservation().addNewOMObservation().set(encoder.encode(observation, foiHelper));
             }
-            foiHelper.put(HelperValues.GMLID, gmlId);
-            xbResponse.addNewObservation().addNewOMObservation().set(encoder.encode(observation, foiHelper));
         }
         XmlHelper.makeGmlIdsUnique(xbResponse.getDomNode());
         return doc;

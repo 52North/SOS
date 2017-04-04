@@ -74,6 +74,7 @@ import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -413,7 +414,9 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         @Override
         public XmlObject visit(QuantityValue value)
                 throws OwsExceptionReport {
-            if (observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT)) {
+            if (observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT)
+                    || observationType.equals(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP)
+                    || observationType.equals(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR)) {
                 return encodeGML(value);
             } else {
                 return null;

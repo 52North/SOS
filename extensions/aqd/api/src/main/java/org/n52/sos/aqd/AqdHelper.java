@@ -49,6 +49,7 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
+import org.omg.CORBA.portable.StreamableValue;
 
 @Configurable
 public class AqdHelper {
@@ -136,11 +137,13 @@ public class AqdHelper {
 
     public void processObservation(OmObservation observation, TimeInstant resultTime,
             FeatureCollection featureCollection, AbstractEReportingHeader eReportingHeader, int counter) {
-        observation.setGmlId(getObservationId(counter));
-        // add xlink:href to eReportingHeader.content
-        eReportingHeader.addContent((AbstractFeature)new OmObservation().setIdentifier(new CodeWithAuthority(getObservationXlink(observation.getGmlId()))));
-        observation.setResultTime(resultTime);
-        featureCollection.addMember(observation);
+        if (checkObservationHasValue(observation)) {
+            observation.setGmlId(getObservationId(counter));
+            // add xlink:href to eReportingHeader.content
+            eReportingHeader.addContent((AbstractFeature)new OmObservation().setIdentifier(new CodeWithAuthority(getObservationXlink(observation.getGmlId()))));
+            observation.setResultTime(resultTime);
+            featureCollection.addMember(observation);
+        }
     }
 
     public String getObservationXlink(String gmlId) {
@@ -203,4 +206,7 @@ public class AqdHelper {
         return CollectionHelper.isNotEmpty(getVerificationFlags());
     }
     
+    protected boolean checkObservationHasValue(OmObservation o) {
+        return o != null && (!(o instanceof StreamableValue) || (o.isSetValue() && o.getValue().isSetValue() && o.getValue().getValue().isSetValue()));
+    }
 }

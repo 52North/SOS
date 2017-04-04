@@ -91,7 +91,9 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
                      processAbstractStreaming(xbResponse, (AbstractStreaming) o.getValue(), encoder,
                              response.isSetMergeObservation());
                  } else {
-                     xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(o));
+                     if (checkObservationHasValue(o)) {
+                         xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(o));
+                     }
                  }
              }
         }
@@ -121,20 +123,25 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
         if (streamingValue.hasNextValue()) {
             if (merge) {
                 for (OmObservation obs : streamingValue.mergeObservation()) {
-                    xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
+                    if (checkObservationHasValue(obs)) {
+                        xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
+                    }
                 }
             } else {
                 do {
                     OmObservation obs = streamingValue.nextSingleObservation();
-                    if (obs != null) {
+                    if (checkObservationHasValue(obs)) {
                         xbResponse.addNewObservationData().addNewOMObservation()
                                 .set(encoder.encode(obs));
                     }
                 } while (streamingValue.hasNextValue());
             }
         } else if (streamingValue.getValue() != null) {
-            xbResponse.addNewObservationData().addNewOMObservation()
-                    .set(encoder.encode(streamingValue.getValue().getValue()));
+            OmObservation obs = streamingValue.getValue().getValue();
+            if (checkObservationHasValue(obs)) {
+                xbResponse.addNewObservationData().addNewOMObservation()
+                        .set(encoder.encode(obs));
+            }
         }
     }
 
@@ -144,20 +151,25 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
         if (streamingObservation.hasNextValue()) {
             if (merge) {
                 for (OmObservation obs : streamingObservation.mergeObservation()) {
-                    xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
+                    if (checkObservationHasValue(obs)) {
+                        xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
+                    }
                 }
             } else {
                 do {
-                    OmObservation observation = streamingObservation.nextSingleObservation();
-                    if (observation != null) {
+                    OmObservation obs = streamingObservation.nextSingleObservation();
+                    if (checkObservationHasValue(obs)) {
                         xbResponse.addNewObservationData().addNewOMObservation()
-                                .set(encoder.encode(observation));
+                                .set(encoder.encode(obs));
                     }
                 } while (streamingObservation.hasNextValue());
             }
         } else if (streamingObservation.getValue() != null) {
-            xbResponse.addNewObservationData().addNewOMObservation()
-                    .set(encoder.encode(streamingObservation.getValue().getValue()));
+            OmObservation obs = streamingObservation.getValue().getValue();
+            if (checkObservationHasValue(obs)) {
+                xbResponse.addNewObservationData().addNewOMObservation()
+                        .set(encoder.encode(obs));
+            }
         }
     }
 
@@ -172,5 +184,5 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
             throw new NoApplicableCodeException().causedBy(xmlse);
         }
     }
-
+    
 }

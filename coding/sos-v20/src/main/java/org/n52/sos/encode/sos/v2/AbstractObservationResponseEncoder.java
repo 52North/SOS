@@ -154,4 +154,8 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
             throws OwsExceptionReport {
         super.create(response, outputStream, encodingValues);
     }
+    
+    protected boolean checkObservationHasValue(OmObservation o) {
+        return o != null && o.isSetValue() && o.getValue().isSetValue() && o.getValue().getValue().isSetValue();
+    }
 }

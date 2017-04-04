@@ -350,7 +350,11 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         List<TimeValuePair> timeValuePairs = tvpValue.getValue();
         List<String> toList = Lists.newArrayListWithCapacity(timeValuePairs.size());
         for (TimeValuePair timeValuePair : timeValuePairs) {
-            toList.add(getTimeString(timeValuePair.getTime()));
+            if (timeValuePair.getValue() != null
+                    && (timeValuePair.getValue() instanceof CountValue || timeValuePair.getValue() instanceof QuantityValue)
+                    && timeValuePair.getValue().isSetValue()) {
+                toList.add(getTimeString(timeValuePair.getTime()));
+            }
         }
         return toList;
     }
@@ -368,10 +372,9 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         ArrayList<Object> values = new ArrayList<Object>(timeValuePairs.size());
         for (TimeValuePair timeValuePair : timeValuePairs) {
             if (timeValuePair.getValue() != null
-                    && (timeValuePair.getValue() instanceof CountValue || timeValuePair.getValue() instanceof QuantityValue)) {
+                    && (timeValuePair.getValue() instanceof CountValue || timeValuePair.getValue() instanceof QuantityValue)
+                    && timeValuePair.getValue().isSetValue()) {
                 values.add(timeValuePair.getValue().getValue());
-            } else {
-                values.add("");
             }
         }
         return values;

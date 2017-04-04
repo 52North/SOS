@@ -123,14 +123,16 @@ public final class SweHelper {
             } else if (multiValue.getValue() instanceof TVPValue) {
                 TVPValue tvpValues = (TVPValue) multiValue.getValue();
                 for (TimeValuePair timeValuePair : tvpValues.getValue()) {
-                    if (!dataArray.isSetElementTyp()) {
-                        dataArray.setElementType(createElementType(timeValuePair,
-                                observablePropertyIdentifier));
+                    if (timeValuePair != null && timeValuePair.getValue() != null && timeValuePair.getValue().isSetValue()) {
+                        if (!dataArray.isSetElementTyp()) {
+                            dataArray.setElementType(createElementType(timeValuePair,
+                                    observablePropertyIdentifier));
+                        }
+                        List<String> newBlock =
+                                createBlock(dataArray.getElementType(), timeValuePair.getTime(),
+                                        observablePropertyIdentifier, timeValuePair.getValue());
+                        dataArrayValue.addBlock(newBlock);
                     }
-                    List<String> newBlock =
-                            createBlock(dataArray.getElementType(), timeValuePair.getTime(),
-                                    observablePropertyIdentifier, timeValuePair.getValue());
-                    dataArrayValue.addBlock(newBlock);
                 }
             }
         }
@@ -170,14 +172,16 @@ public final class SweHelper {
             } else if (multiValue.getValue() instanceof TVPValue) {
                 TVPValue tvpValues = (TVPValue) multiValue.getValue();
                 for (TimeValuePair timeValuePair : tvpValues.getValue()) {
-                    if (!dataArray.isSetElementTyp()) {
-                        dataArray.setElementType(createElementType(timeValuePair,
-                                observablePropertyIdentifier));
+                    if (timeValuePair != null && timeValuePair.getValue() != null && timeValuePair.getValue().isSetValue()) {
+                        if (!dataArray.isSetElementTyp()) {
+                            dataArray.setElementType(createElementType(timeValuePair,
+                                    observablePropertyIdentifier));
+                        }
+                        List<String> newBlock =
+                                createBlock(dataArray.getElementType(), timeValuePair.getTime(),
+                                        observablePropertyIdentifier, timeValuePair.getValue());
+                        dataArrayValue.addBlock(newBlock);
                     }
-                    List<String> newBlock =
-                            createBlock(dataArray.getElementType(), timeValuePair.getTime(),
-                                    observablePropertyIdentifier, timeValuePair.getValue());
-                    dataArrayValue.addBlock(newBlock);
                 }
             }
         }

@@ -105,7 +105,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES =
             Collections.singletonMap(SupportedTypeKey.ObservationType,
-                    Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP));;
+                    Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -296,7 +296,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             for (TimeValuePair timeValuePair : timeValuePairs) {
                 if (timeValuePair.getValue() instanceof QuantityValue) {
                     QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
-                    if (!quantityValue.getValue().equals(Double.NaN)) {
+                    if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
                         String time = getTimeString(timeValuePair.getTime());
                         String value = Double.toString(quantityValue.getValue().doubleValue());
                         addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
@@ -304,7 +304,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                     }
                 } else if (timeValuePair.getValue() instanceof CountValue) {
                     CountValue countValue = (CountValue) timeValuePair.getValue();
-                    if (countValue.getValue() != null) {
+                    if (countValue.isSetValue()) {
                         String time = getTimeString(timeValuePair.getTime());
                         String value = Integer.toString(countValue.getValue().intValue());
                         addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
@@ -320,7 +320,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             for (TimeValuePair timeValuePair : timeValuePairs) {
                 if (timeValuePair.getValue() instanceof QuantityValue) {
                     QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
-                    if (!quantityValue.getValue().equals(Double.NaN)) {
+                    if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
                         timeValuePair.getTime();
                         String time = getTimeString(timeValuePair.getTime());
                         String value = Double.toString(quantityValue.getValue().doubleValue());
@@ -332,7 +332,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                     if (profileValue.isSetValue()) {
                         if (profileValue.getValue().iterator().next().getSimpleValue() instanceof QuantityValue) {
                             QuantityValue quantityValue = (QuantityValue)profileValue.getValue().iterator().next().getSimpleValue();
-                            if (!quantityValue.getValue().equals(Double.NaN)) {
+                            if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
                                 timeValuePair.getTime();
                                 String time = getTimeString(timeValuePair.getTime());
                                 String value = Double.toString(quantityValue.getValue().doubleValue());
@@ -343,7 +343,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                     } 
                 } else if (timeValuePair.getValue() instanceof CountValue) {
                     CountValue countValue = (CountValue) timeValuePair.getValue();
-                    if (countValue.getValue() != null) {
+                    if (countValue.isSetValue()) {
                         String time = getTimeString(timeValuePair.getTime());
                         String value = Integer.toString(countValue.getValue().intValue());
                         addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,

@@ -158,19 +158,21 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                 if (streamingObservation.hasNextValue()) {
                     if (response.isSetMergeObservation()) {
                         for (OmObservation obs : streamingObservation.mergeObservation()) {
-                            writeObservationData(obs, encoder, encodingValues);
-                            writeNewLine();
+                            if (checkObservationHasValue(obs)) {
+                                writeObservationData(obs, encoder, encodingValues);
+                                writeNewLine();
+                            }
                         }
                     } else {
                         do {
                             OmObservation observation = streamingObservation.nextSingleObservation();
-                            if (observation != null) {
+                            if (checkObservationHasValue(observation)) {
                                 writeObservationData(observation, encoder, encodingValues);
                                 writeNewLine();
                             }
                         } while (streamingObservation.hasNextValue());
                     }
-                } else if (streamingObservation.getValue() != null) {
+                } else if (streamingObservation.getValue() != null && checkObservationHasValue(streamingObservation.getValue().getValue())) {
                     writeObservationData(streamingObservation.getValue().getValue(), encoder, encodingValues);
                     writeNewLine();
                 }
@@ -183,26 +185,34 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                             writeNewLine();
                         } else {
                             for (OmObservation obs : streamingValue.mergeObservation()) {
-                                writeObservationData(obs, encoder, encodingValues);
-                                writeNewLine();
+                                if (checkObservationHasValue(obs)) {
+                                    writeObservationData(obs, encoder, encodingValues);
+                                    writeNewLine();
+                                }
                             }
                         }
                     } else {
                         do {
                             OmObservation obs = streamingValue.nextSingleObservation();
                             if (obs != null) {
-                                writeObservationData(obs, encoder, encodingValues);
-                                writeNewLine();
+                                if (checkObservationHasValue(obs)) {
+                                    writeObservationData(obs, encoder, encodingValues);
+                                    writeNewLine();
+                                }
                             }
                         } while (streamingValue.hasNextValue());
                     }
                 } else if (streamingValue.getValue() != null) {
-                    writeObservationData(streamingValue.getValue().getValue(), encoder, encodingValues);
-                    writeNewLine();
+                    if (checkObservationHasValue(streamingValue.getValue().getValue())) {
+                        writeObservationData(streamingValue.getValue().getValue(), encoder, encodingValues);
+                        writeNewLine();
+                    }
                 }
             } else {
-                writeObservationData(o, encoder, encodingValues);
-                writeNewLine();
+                if (checkObservationHasValue(o)) {
+                    writeObservationData(o, encoder, encodingValues);
+                    writeNewLine();
+                }
             }
         }
         indent--;
@@ -268,4 +278,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         }
     }
 
+    private boolean checkObservationHasValue(OmObservation o) {
+        return o != null && o.isSetValue() && o.getValue().isSetValue() && o.getValue().getValue().isSetValue();
+    }
 }

@@ -216,13 +216,16 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             && !getObservationResonse.getObservationCollection().isEmpty()) {
             Collection<OmObservation> sosObservations = getObservationResonse.getObservationCollection();
             if (sosObservations.size() == 1) {
+               
                 OMObservationDocument omObservationDoc =
                         OMObservationDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
                 for (OmObservation sosObservation : sosObservations) {
-                    Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
-                    String gmlId = "sf_" + sfIdCounter;
-                    foiHelper.put(HelperValues.GMLID, gmlId);
-                    omObservationDoc.setOMObservation((OMObservationType) encodeOmObservation(sosObservation, foiHelper));
+                    if (checkObservationHasValue(sosObservation)) {
+                        Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
+                        String gmlId = "sf_" + sfIdCounter;
+                        foiHelper.put(HelperValues.GMLID, gmlId);
+                        omObservationDoc.setOMObservation((OMObservationType) encodeOmObservation(sosObservation, foiHelper));
+                    }
                 }
                 return omObservationDoc;
             } else {
@@ -230,23 +233,25 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                         CollectionDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
                 CollectionType wmlCollection = xmlCollectionDoc.addNewCollection();
                 for (OmObservation sosObservation : sosObservations) {
-                    Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
-                    String gmlId;
-                    // FIXME CodeWithAuthority VS. String keys
-                    if (gmlID4sfIdentifier.containsKey(sosObservation.getObservationConstellation()
-                            .getFeatureOfInterest().getIdentifierCodeWithAuthority())) {
-                        gmlId = gmlID4sfIdentifier.get(sosObservation.getObservationConstellation()
-                                .getFeatureOfInterest().getIdentifierCodeWithAuthority());
-                        foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(true));
-                    } else {
-                        gmlId = "sf_" + sfIdCounter;
-                        gmlID4sfIdentifier.put(sosObservation.getObservationConstellation().getFeatureOfInterest()
-                                .getIdentifierCodeWithAuthority(), gmlId);
-                        foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(false));
+                    if (checkObservationHasValue(sosObservation)) {
+                        Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
+                        String gmlId;
+                        // FIXME CodeWithAuthority VS. String keys
+                        if (gmlID4sfIdentifier.containsKey(sosObservation.getObservationConstellation()
+                                .getFeatureOfInterest().getIdentifierCodeWithAuthority())) {
+                            gmlId = gmlID4sfIdentifier.get(sosObservation.getObservationConstellation()
+                                    .getFeatureOfInterest().getIdentifierCodeWithAuthority());
+                            foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(true));
+                        } else {
+                            gmlId = "sf_" + sfIdCounter;
+                            gmlID4sfIdentifier.put(sosObservation.getObservationConstellation().getFeatureOfInterest()
+                                    .getIdentifierCodeWithAuthority(), gmlId);
+                            foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(false));
+                        }
+                        foiHelper.put(HelperValues.GMLID, gmlId);
+                        wmlCollection.addNewObservationMember().setOMObservation(
+                                (OMObservationType) encodeOmObservation(sosObservation, foiHelper));
                     }
-                    foiHelper.put(HelperValues.GMLID, gmlId);
-                    wmlCollection.addNewObservationMember().setOMObservation(
-                            (OMObservationType) encodeOmObservation(sosObservation, foiHelper));
                 }
                 return xmlCollectionDoc;
             }
@@ -794,6 +799,10 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                 }
             }
         }
+    }
+    
+    protected boolean checkObservationHasValue(OmObservation o) {
+        return o != null && o.isSetValue() && o.getValue().isSetValue() && o.getValue().getValue().isSetValue();
     }
 
 }

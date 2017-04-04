@@ -70,7 +70,7 @@ An extension accomodates additional INSPIRE Directive requirements, thus ensurin
 
  - Carsten Hollmann (c.hollmann@52north.org)
  - Christian Autermann (c.autermann@52north.org)
- - Eike Hinderk Jürrens [@EHJ-52n](e.h.juerrens@52north.org)
+ - Eike Hinderk Jürrens [(EHJ-52n)](https://github.com/EHJ-52n/)
  
 ## Support
 

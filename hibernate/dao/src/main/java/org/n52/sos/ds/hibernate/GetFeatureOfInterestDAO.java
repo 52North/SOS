@@ -221,17 +221,21 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      */
     private FeatureCollection getFeatures(final GetFeatureOfInterestRequest request, final Session session)
             throws OwsExceptionReport {
-        final Set<String> foiIDs = new HashSet<String>(queryFeatureIdentifiersForParameter(request, session));
-        if (request.isSetFeatureOfInterestIdentifiers()) {
-            addRequestedRelatedFeatures(foiIDs, request.getFeatureIdentifiers());
-        }
-        // feature of interest
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
-            .setFeatureIdentifiers(foiIDs)
-            .setSpatialFilters(request.getSpatialFilters())
-            .setConnection(session)
-            .setVersion(request.getVersion())
-            .setI18N(LocaleHelper.fromRequest(request));
+                .setSpatialFilters(request.getSpatialFilters())
+                .setConnection(session)
+                .setVersion(request.getVersion())
+                .setI18N(LocaleHelper.fromRequest(request));
+        if (!request.hasNoParameter()) {
+            Set<String> foiIDs = new HashSet<>();
+            if (request.isSetFeatureOfInterestIdentifiers()) {
+                foiIDs.addAll(request.getFeatureIdentifiers());
+                addRequestedRelatedFeatures(foiIDs, request.getFeatureIdentifiers());
+            } else {
+                foiIDs = new HashSet<String>(queryFeatureIdentifiersForParameter(request, session));
+            }
+            queryObject.setFeatureIdentifiers(foiIDs);
+        }
         return new FeatureCollection(getConfigurator().getFeatureQueryHandler().getFeatures(queryObject));
     }
 
@@ -273,9 +277,6 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameter(final GetFeatureOfInterestRequest req,
             final Session session) throws OwsExceptionReport {
-        if (req.hasNoParameter()) {
-            return new FeatureOfInterestDAO().getFeatureOfInterestIdentifiers(session);
-        }
         if (req.containsOnlyFeatureParameter() && req.isSetFeatureOfInterestIdentifiers()) {
             final Criteria c =
                     session.createCriteria(FeatureOfInterest.class).setProjection(

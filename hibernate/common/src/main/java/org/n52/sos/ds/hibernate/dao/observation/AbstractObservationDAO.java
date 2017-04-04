@@ -1193,9 +1193,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             c.add(SpatialRestrictions.filter(Observation.SAMPLING_GEOMETRY, request.getSpatialFilter().getOperator(),
                     GeometryHandler.getInstance()
                             .switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter().getGeometry())));
-        } else {
-            // TODO add filter with lat/lon
-            LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
+//        } else {
+//            // TODO add filter with lat/lon
+//            LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
         }
 
     }

@@ -469,7 +469,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     }
 
     private String encodeObservationValue(Value<?> value) throws CodedException {
-        if (value == null) {
+        if (value == null || (value != null && !value.isSetValue())) {
             return UVFConstants.NO_DATA_STRING;
         }
         if (!(value instanceof SweQuantity) && !(value instanceof SweCount)) {

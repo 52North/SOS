@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -48,7 +48,6 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.filter.BinaryLogicFilter;
@@ -63,20 +62,20 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.coding.encode.ObservationEncoder;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.ObservationEncoder;
+import org.n52.svalbard.encode.XmlEncoderKey;
 
 import com.google.common.base.Strings;
 
@@ -108,8 +107,8 @@ public class HibernateGetObservationHelper {
      *                        If the size limit is exceeded
      */
     public static List<ObservationConstellation> getAndCheckObservationConstellationSize(
-            GetObservationRequest request, Session session) throws CodedException {
-        List<ObservationConstellation> observationConstellations = getObservationConstellations(session, request);
+            GetObservationRequest request, DaoFactory daoFactory, Session session) throws CodedException {
+        List<ObservationConstellation> observationConstellations = getObservationConstellations(session, request, daoFactory);
         checkMaxNumberOfReturnedSeriesSize(observationConstellations.size());
         return observationConstellations;
     }
@@ -174,10 +173,12 @@ public class HibernateGetObservationHelper {
         return getMaxNumberOfReturnedValues();
     }
 
-    public static List<String> getAndCheckFeatureOfInterest(final ObservationConstellation observationConstellation,
-                                                            final Set<String> featureIdentifier, final Session session)
+    public static List<String> getAndCheckFeatureOfInterest(ObservationConstellation observationConstellation,
+                                                            Set<String> featureIdentifier,
+                                                            DaoFactory  daoFactory,
+                                                            Session session)
             throws OwsExceptionReport {
-        final List<String> featuresForConstellation = new FeatureOfInterestDAO()
+        final List<String> featuresForConstellation = daoFactory.getFeatureOfInterestDAO()
                 .getFeatureOfInterestIdentifiersForObservationConstellation(
                         observationConstellation, session);
         if (featureIdentifier == null) {
@@ -187,15 +188,17 @@ public class HibernateGetObservationHelper {
         }
     }
 
-    public static List<OmObservation> toSosObservation(final Collection<Observation<?>> observations,
-                                                       final AbstractObservationRequest request,
-                                                       final LocalizedProducer<OwsServiceProvider> serviceProvider,
-                                                       Locale language, final Session session) throws OwsExceptionReport,
-                                                                                                      ConverterException {
+    public static List<OmObservation> toSosObservation(Collection<Observation<?>> observations,
+                                                       AbstractObservationRequest request,
+                                                       LocalizedProducer<OwsServiceProvider> serviceProvider,
+                                                       Locale language,
+                                                       String pdf,
+                                                       DaoFactory daoFactory,
+                                                       Session session) throws OwsExceptionReport, ConverterException {
         if (!observations.isEmpty()) {
             final long startProcess = System.currentTimeMillis();
             List<OmObservation> sosObservations = HibernateObservationUtilities.createSosObservationsFromObservations(
-                    new HashSet<>(observations), request, serviceProvider, language, session);
+                    new HashSet<>(observations), request, serviceProvider, language, pdf, daoFactory, session);
 
             LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
                          (System.currentTimeMillis() - startProcess));
@@ -207,11 +210,12 @@ public class HibernateGetObservationHelper {
 
     public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request,
                                                  LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language,
-                                                 final Session session) throws OwsExceptionReport, ConverterException {
+                                                 String pdf, DaoFactory daoFactory, Session session)
+            throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();
             OmObservation sosObservation = HibernateObservationUtilities
-                    .createSosObservationFromObservation(observation, request, serviceProvider, language, session);
+                    .createSosObservationFromObservation(observation, request, serviceProvider, language, pdf, daoFactory, session);
             LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));
             return sosObservation;
         }
@@ -348,8 +352,9 @@ public class HibernateGetObservationHelper {
      * @return Resulting ObservationConstellation entities
      */
     public static List<ObservationConstellation> getObservationConstellations(final Session session,
-                                                                              final GetObservationRequest request) {
-        return new ObservationConstellationDAO().getObservationConstellations(request.getProcedures(),
+                                                                              final GetObservationRequest request,
+                                                                              DaoFactory daoFactory) {
+        return daoFactory.getObservationConstellationDAO().getObservationConstellations(request.getProcedures(),
                                                                               request.getObservedProperties(), request
                                                                               .getOfferings(), session);
     }
@@ -369,7 +374,7 @@ public class HibernateGetObservationHelper {
 
         final List<TemporalFilter> filters = request.getNotFirstLatestTemporalFilter();
         if (request.hasTemporalFilters() && CollectionHelper.isNotEmpty(filters)) {
-            return TemporalRestrictions.filter(filters);
+            return SosTemporalRestrictions.filter(filters);
         } else {
             return null;
         }

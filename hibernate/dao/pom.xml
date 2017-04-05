@@ -36,6 +36,14 @@
             <artifactId>janmayen</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-annotations</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -83,6 +91,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-utils</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

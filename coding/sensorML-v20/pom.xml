@@ -11,120 +11,21 @@
 	<name>52°North SOS - SensorML 20 Request Coding</name>
 	<description>52°North Sensor Observation Service SML 20 request Coding</description>
 	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>api</artifactId>
-		</dependency>
         <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.svalbard</groupId>
-            <artifactId>svalbard</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.janmayen</groupId>
-            <artifactId>janmayen</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-        <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-        </dependency>
-		<dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sensorML</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb.sos</groupId>
-            <artifactId>third-party-ncname-resolver</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.xmlbeans</groupId>
-            <artifactId>xmlbeans</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>stax</groupId>
-                   <artifactId>stax-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <scope>compile</scope>
-        </dependency>
-		<!-- XML Beans Generated Classes -->
-		<dependency>
-			<groupId>org.n52.sensorweb</groupId>
-			<artifactId>52n-xml-sensorML-v20</artifactId>
-		</dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-gml-v321</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-sweCommon-v20</artifactId>
-        </dependency>
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>api</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-            <groupId>org.n52.iceland</groupId>
-            <artifactId>iceland</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sqlite-config</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sqlite-config</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sos-v20</artifactId>
-            <scope>test</scope>
-        </dependency>
-		<!-- <dependency>
-			<groupId>xmlunit</groupId>
-			<artifactId>xmlunit</artifactId>
-		</dependency> -->
 	</dependencies>
 </project>

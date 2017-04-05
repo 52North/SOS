@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,7 +41,7 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
 import org.n52.iceland.i18n.I18NSerializer;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.MultilingualString;
 
 /**
  * TODO JavaDoc

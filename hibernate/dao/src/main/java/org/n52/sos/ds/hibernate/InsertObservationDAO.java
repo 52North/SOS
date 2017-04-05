@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,7 +41,6 @@ import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.http.HTTPStatus;
@@ -85,13 +84,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     private static final String CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY = "obsIdentifierUK";
 
     private HibernateSessionHolder sessionHolder;
-    private final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
-    private final FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
-
-    @Inject
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
-    }
+    private DaoFactory daoFactory;
 
     /**
      * constructor
@@ -99,6 +92,17 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     public InsertObservationDAO() {
         super(SosConstants.SOS);
     }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
 
     @Override
     public synchronized InsertObservationResponse insertObservation(final InsertObservationRequest request)
@@ -182,11 +186,13 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         Set<ObservationConstellation> hObservationConstellations = new HashSet<>();
         FeatureOfInterest hFeature = null;
 
+        ObservationConstellationDAO observationConstellationDAO = daoFactory.getObservationConstellationDAO();
         for (String offeringID : sosObsConst.getOfferings()) {
             ObservationConstellation hObservationConstellation = cache.get(sosObsConst, offeringID);
             if (hObservationConstellation == null) {
                 if (!cache.isChecked(sosObsConst, offeringID)) {
                     try {
+
                         hObservationConstellation =
                                 observationConstellationDAO.checkObservationConstellation(
                                         sosObsConst, offeringID, session, Sos2Constants.InsertObservationParams.observationType.name());
@@ -206,7 +212,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
                 // only do feature checking once for each
                 // AbstractFeature/offering combo
                 if (!cache.isChecked(sosObsConst.getFeatureOfInterest(), offeringID)) {
-                    featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(
+                    new FeatureOfInterestDAO(daoFactory).checkOrInsertFeatureOfInterestRelatedFeatureRelation(
                             hFeature, hObservationConstellation.getOffering(), session);
                     cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
                 }
@@ -216,7 +222,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         }
 
         if (!hObservationConstellations.isEmpty()) {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             if (sosObservation.getValue() instanceof SingleObservationValue) {
                 observationDAO.insertObservationSingleValue(
                         hObservationConstellations, hFeature, sosObservation,
@@ -312,7 +318,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
             InsertObservationCache cache, Session session) throws OwsExceptionReport {
         FeatureOfInterest hFeature = cache.getFeature(abstractFeature);
         if (hFeature == null) {
-            hFeature = featureOfInterestDAO.checkOrInsertFeatureOfInterest(abstractFeature, session);
+            hFeature = new FeatureOfInterestDAO(daoFactory).checkOrInsertFeatureOfInterest(abstractFeature, session);
             cache.putFeature(abstractFeature, hFeature);
         }
         return hFeature;

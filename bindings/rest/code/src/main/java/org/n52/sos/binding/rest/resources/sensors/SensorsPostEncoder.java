@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,38 +28,40 @@
  */
 package org.n52.sos.binding.rest.resources.sensors;
 
-
 import net.opengis.sosREST.x10.SensorDocument;
 
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class SensorsPostEncoder extends ASensorsEncoder {
+    public SensorsPostEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
 
     @Override
-    public ServiceResponse encodeRestResponse(RestResponse restResponse) throws OwsExceptionReport
-    {
+    public ServiceResponse encodeRestResponse(RestResponse restResponse) throws OwsExceptionReport {
         if (restResponse != null && restResponse instanceof SensorsPostResponse) {
             SensorsPostResponse sensorsPostResponse = (SensorsPostResponse) restResponse;
             SensorDocument xb_SensorRestDoc = SensorDocument.Factory.newInstance();
             createRestDefaultRestSensor(sensorsPostResponse, xb_SensorRestDoc);
 
-            ServiceResponse response = createServiceResponseFromXBDocument(
-                    xb_SensorRestDoc,
-                    bindingConstants.getResourceSensors(),
-                    HTTPStatus.CREATED,
-                    false, true);
+            ServiceResponse response
+                    = createServiceResponseFromXBDocument(xb_SensorRestDoc, Constants.REST_RESOURCE_SENSORS,
+                                                          HTTPStatus.CREATED,
+                                                          false, true);
 
-            addLocationHeader(response, sensorsPostResponse.getProcedureIdentifier(), bindingConstants.getResourceSensors());
+            addLocationHeader(response, sensorsPostResponse.getProcedureIdentifier(), Constants.REST_RESOURCE_SENSORS);
             return response;
         }
-        throw createResponseNotSupportedException(SensorsPostResponse.class.getName(),restResponse);
+        throw createResponseNotSupportedException(SensorsPostResponse.class.getName(), restResponse);
     }
 
 }

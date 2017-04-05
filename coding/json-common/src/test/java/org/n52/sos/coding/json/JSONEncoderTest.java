@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,16 +41,16 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import org.n52.janmayen.http.MediaTypes;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncoderKey;
-import org.n52.svalbard.EncodingContext;
+import org.n52.sos.encode.json.JSONEncodingException;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  */
 public class JSONEncoderTest {
@@ -92,8 +92,8 @@ public class JSONEncoderTest {
 
     @Test
     public void testThrowingEncoder() throws EncodingException {
-        thrown.expect(NoApplicableCodeException.class);
-        thrown.expectCause(hasMessage(is("message")));
+        thrown.expect(JSONEncodingException.class);
+        thrown.expect(hasMessage(is("message")));
         throwingEncoder.encode("test");
     }
 }

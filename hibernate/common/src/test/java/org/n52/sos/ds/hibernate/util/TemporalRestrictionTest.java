@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+
 import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.valueOf;
 
 import java.util.EnumSet;
@@ -41,14 +42,15 @@ import org.hibernate.criterion.Projections;
 import org.junit.After;
 import org.junit.Before;
 
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -93,14 +95,14 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     protected abstract Time createScenario(Session session) throws OwsExceptionReport;
 
     protected HibernateObservationBuilder getBuilder(Session session) throws OwsExceptionReport {
-        return new HibernateObservationBuilder(session);
+        return new HibernateObservationBuilder(session, new DaoFactory());
     }
 
     @SuppressWarnings("unchecked")
     private Set<Identifier> filter(TimePrimitiveFieldDescriptor d, TemporalRestriction r, Time time, Session session)
             throws OwsExceptionReport {
         List<String> list =
-                session.createCriteria(getObservationClass()).add(r.get(d, time))
+                session.createCriteria(getObservationClass()).add(r.getCriterion(d, time))
                         .setProjection(Projections.distinct(Projections.property(AbstractObservation.IDENTIFIER))).list();
         Set<Identifier> s = EnumSet.noneOf(Identifier.class);
         for (String id : list) {
@@ -110,11 +112,11 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     }
 
     protected Set<Identifier> filterPhenomenonTime(Session session, TemporalRestriction r) throws OwsExceptionReport {
-        return filter(TemporalRestrictions.PHENOMENON_TIME_FIELDS, r, filter, session);
+        return filter(SosTemporalRestrictions.PHENOMENON_TIME_FIELDS, r, filter, session);
     }
 
     protected Set<Identifier> filterResultTime(Session session, TemporalRestriction r) throws OwsExceptionReport {
-        return filter(TemporalRestrictions.RESULT_TIME_FIELDS, r, filter, session);
+        return filter(SosTemporalRestrictions.RESULT_TIME_FIELDS, r, filter, session);
     }
 
     public enum Identifier {

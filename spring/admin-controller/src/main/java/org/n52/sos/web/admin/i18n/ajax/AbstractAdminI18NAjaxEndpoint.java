@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -52,7 +52,7 @@ import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.json.I18NJsonEncoder;
 import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.sos.exception.NoSuchIdentifierException;
@@ -112,7 +112,7 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
             throws NoImplementationFoundException, JSONException,
                    OwsExceptionReport {
         Iterable<T> i18n = getDao().getMetadata();
-        return JSONUtils.print(encoder.encode(i18n));
+        return Json.print(encoder.encode(i18n));
     }
 
     @ResponseBody
@@ -131,7 +131,7 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
         if (i18n == null) {
             i18n = create(id);
         }
-        return JSONUtils.print(encoder.encode(i18n));
+        return Json.print(encoder.encode(i18n));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -145,7 +145,7 @@ public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetada
                    IOException {
 
         @SuppressWarnings("unchecked")
-        T i18n = (T) encoder.decodeI18NMetadata(JSONUtils.loadString(json));
+        T i18n = (T) encoder.decodeI18NMetadata(Json.loadString(json));
         LOGGER.debug("Updating I18N for {}", i18n.getIdentifier());
         checkIdentifier(i18n.getIdentifier());
         LOGGER.debug("Saving I18N: {}", i18n);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,7 +37,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -46,6 +45,7 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
 import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
 import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
@@ -56,15 +56,22 @@ import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 
 /**
  * Implementation of the abstract class AbstractUpdateSensorDescriptionHandler
+ *
  * @since 4.0.0
  *
  */
 public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionHandler {
 
-private HibernateSessionHolder sessionHolder;
+    private HibernateSessionHolder sessionHolder;
+    private DaoFactory daoFactory;
 
     public UpdateSensorDescriptionDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     @Inject
@@ -83,29 +90,29 @@ private HibernateSessionHolder sessionHolder;
             UpdateSensorResponse response = new UpdateSensorResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
-            for (SosProcedureDescription procedureDescription : request.getProcedureDescriptions()) {
+            for (SosProcedureDescription<?> procedureDescription : request.getProcedureDescriptions()) {
                 DateTime currentTime = new DateTime(DateTimeZone.UTC);
                 // TODO: check for all validTimes of descriptions for this
                 // identifier
                 // ITime validTime =
                 // getValidTimeForProcedure(procedureDescription);
-                Procedure procedure =
-                        new ProcedureDAO().getProcedureForIdentifier(request.getProcedureIdentifier(), session);
+                Procedure procedure = new ProcedureDAO(daoFactory)
+                        .getProcedureForIdentifier(request.getProcedureIdentifier(), session);
                 if (procedure instanceof TProcedure) {
-                    ProcedureDescriptionFormat procedureDescriptionFormat =
-                            new ProcedureDescriptionFormatDAO().getProcedureDescriptionFormatObject(
+                    ProcedureDescriptionFormat procedureDescriptionFormat = new ProcedureDescriptionFormatDAO()
+                            .getProcedureDescriptionFormatObject(
                                     request.getProcedureDescriptionFormat(), session);
                     Set<ValidProcedureTime> validProcedureTimes = ((TProcedure) procedure).getValidProcedureTimes();
-                    ValidProcedureTimeDAO validProcedureTimeDAO = new ValidProcedureTimeDAO();
+                    ValidProcedureTimeDAO validProcedureTimeDAO = new ValidProcedureTimeDAO(daoFactory);
                     for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
-                        if (validProcedureTime.getProcedureDescriptionFormat().equals(procedureDescriptionFormat)
-                                && validProcedureTime.getEndTime() == null) {
+                        if (validProcedureTime.getProcedureDescriptionFormat().equals(procedureDescriptionFormat) &&
+                                 validProcedureTime.getEndTime() == null) {
                             validProcedureTime.setEndTime(currentTime.toDate());
                             validProcedureTimeDAO.updateValidProcedureTime(validProcedureTime, session);
                         }
                     }
                     validProcedureTimeDAO.insertValidProcedureTime(procedure, procedureDescriptionFormat,
-                            procedureDescription.getXml(), currentTime, session);
+                                                                   procedureDescription.getXml(), currentTime, session);
                 }
             }
             session.flush();

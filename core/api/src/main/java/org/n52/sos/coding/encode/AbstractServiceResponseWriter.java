@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,9 +33,7 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
@@ -44,10 +42,13 @@ import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.ows.service.ResponseFormat;
-import org.n52.sos.encode.streaming.StreamingDataEncoder;
-import org.n52.sos.encode.streaming.StreamingEncoder;
-import org.n52.sos.response.StreamingDataResponse;
+import org.n52.shetland.ogc.sos.response.StreamingDataResponse;
+import org.n52.svalbard.OperationKey;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.OperationResponseEncoderKey;
+import org.n52.svalbard.encode.StreamingDataEncoder;
+import org.n52.svalbard.encode.StreamingEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
@@ -65,11 +66,14 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
     private final ResponseWriterRepository responseWriterRepository;
     private final boolean forceStreamingEncoding;
 
-    public AbstractServiceResponseWriter(ResponseWriterRepository responseWriterRepository,
+    public AbstractServiceResponseWriter(EncoderRepository encoderRepository,
+                                         ResponseWriterRepository responseWriterRepository,
                                          boolean forceStreamingEncoding) {
+        super(encoderRepository);
         this.responseWriterRepository = responseWriterRepository;
         this.forceStreamingEncoding = forceStreamingEncoding;
     }
+
 
     public ResponseWriterRepository getResponseWriterRepository() {
         return responseWriterRepository;

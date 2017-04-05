@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,28 +32,28 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.OfferingExtensionKey;
-import org.n52.iceland.ogc.swes.OfferingExtensionProvider;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
+import org.n52.shetland.inspire.InspireConstants;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.inspire.AbstractInspireProvider;
-import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.settings.InspireSettings;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionProvider;
 
 /**
- * Implementation of {@link OfferingExtensionProvider} for INSPIRE
+ * Implementation of {@link SosObservationOfferingExtensionProvider} for INSPIRE
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
 public class InspireOfferingExtensionProvider extends AbstractInspireProvider
-        implements OfferingExtensionProvider {
-    private static final Set<OfferingExtensionKey> KEYS = Collections
-            .singleton(new OfferingExtensionKey(SosConstants.SOS,
+        implements SosObservationOfferingExtensionProvider {
+    private static final Set<SosObservationOfferingExtensionKey> KEYS = Collections
+            .singleton(new SosObservationOfferingExtensionKey(SosConstants.SOS,
                                                 Sos2Constants.SERVICEVERSION,
                                                 InspireConstants.INSPIRE));
 
@@ -65,7 +65,7 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider
     }
 
     @Override
-    public Set<OfferingExtensionKey> getKeys() {
+    public Set<SosObservationOfferingExtensionKey> getKeys() {
         return Collections.unmodifiableSet(KEYS);
     }
 

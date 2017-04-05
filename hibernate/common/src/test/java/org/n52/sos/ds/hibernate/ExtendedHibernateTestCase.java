@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,10 +30,10 @@ package org.n52.sos.ds.hibernate;
 
 import org.hibernate.Session;
 
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * Abstract test class that contains implemented methods
@@ -47,20 +47,20 @@ public abstract class ExtendedHibernateTestCase extends HibernateTestCase {
 
     @Deprecated
     protected static Class<?> getObservationClass(Session session) throws OwsExceptionReport {
-        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().observationClass();
+        return new DaoFactory().getObservationDAO().getObservationFactory().observationClass();
     }
 
     @Deprecated
     protected static Class<?> getObservationInfoClass(Session session) throws OwsExceptionReport {
-        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().contextualReferencedClass();
+        return new DaoFactory().getObservationDAO().getObservationFactory().contextualReferencedClass();
     }
 
     @SuppressWarnings("rawtypes")
     protected static Class<? extends Observation> getObservationClass() throws OwsExceptionReport {
-        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().observationClass();
+        return new DaoFactory().getObservationDAO().getObservationFactory().observationClass();
     }
 
     protected static Class<? extends ContextualReferencedObservation> getContextualReferencedObservationClass() throws OwsExceptionReport {
-        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().contextualReferencedClass();
+        return new DaoFactory().getObservationDAO().getObservationFactory().contextualReferencedClass();
     }
 }

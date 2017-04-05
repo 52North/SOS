@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -36,14 +37,13 @@ import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.util.CollectionHelper;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class KeywordEnrichment extends SensorMLEnrichment {
     @Override

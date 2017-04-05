@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -47,9 +47,9 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.sos.convert.AbstractIdentifierModifier;
 import org.n52.sos.converter.util.FlexibleIdentifierHelper;
-import org.n52.sos.gda.GetDataAvailabilityRequest;
-import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
@@ -59,7 +59,7 @@ import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
-import org.n52.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.sos.response.GetResultResponse;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 

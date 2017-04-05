@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,7 +36,7 @@ import org.n52.iceland.convert.ConverterKey;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.wml.ObservationProcess;
+import org.n52.shetland.ogc.wml.ObservationProcess;
 import org.n52.shetland.ogc.wml.WaterMLConstants;
 
 import org.slf4j.Logger;

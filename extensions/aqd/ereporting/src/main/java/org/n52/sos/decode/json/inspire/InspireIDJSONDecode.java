@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,10 +28,10 @@
  */
 package org.n52.sos.decode.json.inspire;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.iceland.util.Validation;
-import org.n52.sos.inspire.aqd.InspireID;
+import org.n52.faroe.Validation;
+import org.n52.shetland.inspire.InspireID;
 import org.n52.sos.util.AQDJSONConstants;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

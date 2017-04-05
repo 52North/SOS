@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,9 +30,9 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.iceland.config.SettingType;
-import org.n52.iceland.config.SettingValue;
-import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.joda.time.DateTime;
+
+import org.n52.faroe.SettingType;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -40,21 +40,29 @@ import org.n52.shetland.ogc.gml.time.TimeInstant;
  *
  */
 @Entity(name = "time_settings")
-public class TimeInstantSettingValue extends AbstractSettingValue<TimeInstant> {
+public class TimeInstantSettingValue extends AbstractSettingValue<DateTime> {
 
     private static final long serialVersionUID = 5397140191924717568L;
 
-    private TimeInstant value;
+    private DateTime value;
+
+    public TimeInstantSettingValue(String identifier, DateTime value) {
+        super(identifier);
+        this.value = value;
+    }
+
+    public TimeInstantSettingValue() {
+        this(null, null);
+    }
 
     @Override
-    public TimeInstant getValue() {
+    public DateTime getValue() {
         return value;
     }
 
     @Override
-    public SettingValue<TimeInstant> setValue(TimeInstant value) {
+    public void setValue(DateTime value) {
         this.value = value;
-        return this;
     }
 
     @Override

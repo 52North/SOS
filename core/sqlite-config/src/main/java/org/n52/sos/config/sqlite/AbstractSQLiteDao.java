@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,11 +28,15 @@
  */
 package org.n52.sos.config.sqlite;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.janmayen.function.ThrowingConsumer;
+import org.n52.janmayen.function.ThrowingFunction;
 
 /**
  * TODO JavaDoc
@@ -55,14 +59,21 @@ public class AbstractSQLiteDao {
         return this.sessionFactory != null;
     }
 
-    protected <T> T execute(HibernateAction<T> action) {
+    protected void execute(Consumer<Session> action) {
+        execute((session) -> {
+            action.accept(session);
+            return null;
+        });
+    }
+
+    protected <T> T execute(Function<Session, T> action) {
         synchronized (this) {
             Session session = null;
             Transaction transaction = null;
             try {
                 session = getSessionFactory().getConnection();
                 transaction = session.beginTransaction();
-                T result = action.call(session);
+                T result = action.apply(session);
                 session.flush();
                 transaction.commit();
                 return result;
@@ -77,23 +88,24 @@ public class AbstractSQLiteDao {
         }
     }
 
-    protected <T> T throwingExecute(ThrowingHibernateAction<T> action)
-            throws Exception {
+    protected void throwingExecute(ThrowingConsumer<Session, ? extends Exception> action) throws Exception {
+        throwingExecute((session) -> {
+            action.accept(session);
+            return null;
+        });
+    }
+
+    protected <T> T throwingExecute(ThrowingFunction<Session, T, ? extends Exception> action) throws Exception {
         synchronized (this) {
             Session session = null;
             Transaction transaction = null;
             try {
                 session = getSessionFactory().getConnection();
                 transaction = session.beginTransaction();
-                final T result = action.call(session);
+                final T result = action.apply(session);
                 session.flush();
                 transaction.commit();
                 return result;
-            } catch (ConnectionProviderException cpe) {
-                if (transaction != null) {
-                    transaction.rollback();
-                }
-                throw new RuntimeException(cpe);
             } catch (Exception e) {
                 if (transaction != null) {
                     transaction.rollback();
@@ -105,38 +117,33 @@ public class AbstractSQLiteDao {
         }
     }
 
+    @Deprecated
+    public static interface HibernateAction<T> extends Function<Session, T> {
 
-    public static interface HibernateAction<T> {
-        T call(Session session);
-    }
-
-    public static abstract class VoidHibernateAction
-            implements HibernateAction<Void> {
-        @Override
-        public Void call(Session session) {
-            run(session);
-            return null;
+        default T call(Session session) {
+            return apply(session);
         }
-
-        protected abstract void run(Session session);
     }
 
-    public static interface ThrowingHibernateAction<T> {
-        T call(Session session)
-                throws Exception;
-    }
-
-    public static abstract class ThrowingVoidHibernateAction
-            implements ThrowingHibernateAction<Void> {
-        @Override
-        public Void call(final Session session)
-                throws Exception {
-            run(session);
-            return null;
+    @Deprecated
+    public static interface VoidHibernateAction extends Consumer<Session> {
+        default void call(Session session) {
+            accept(session);
         }
+    }
 
-        protected abstract void run(Session session)
-                throws Exception;
+    @Deprecated
+    public static interface ThrowingHibernateAction<T> extends ThrowingFunction<Session, T, Exception> {
+        default T call(Session session) throws Exception {
+            return apply(session);
+        }
+    }
+
+    @Deprecated
+    public static interface ThrowingVoidHibernateAction extends ThrowingConsumer<Session, Exception> {
+        default void run(Session session) throws Exception {
+            accept(session);
+        }
     }
 
 }

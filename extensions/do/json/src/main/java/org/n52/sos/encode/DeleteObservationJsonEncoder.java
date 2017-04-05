@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,10 +28,10 @@
  */
 package org.n52.sos.encode;
 
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
+import org.n52.shetland.ogc.sos.response.DeleteObservationResponse;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
-import org.n52.sos.ext.deleteobservation.DeleteObservationResponse;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class DeleteObservationJsonEncoder extends AbstractSosResponseEncoder<DeleteObservationResponse> {
 

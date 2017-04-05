@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,64 +31,66 @@ package org.n52.sos.config;
 import java.util.Set;
 
 import org.n52.iceland.coding.encode.ResponseFormatKey;
+import org.n52.iceland.config.ActivationDao;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 
 /**
  *
  * @author Christian Autermann
  */
-public interface SosActivationDao {
+public interface SosActivationDao extends ActivationDao {
 
     /**
-     * Checks if the response format is active for the specified service and
-     * version.
+     * Checks if the offering extension is active.
      *
-     * @param key
-     *            the service/version/responseFormat combination
+     * @param key the offering extension key
+     *
+     * @return if the offering extension is active
+     */
+    boolean isSosObservationOfferingExtensionActive(SosObservationOfferingExtensionKey key);
+
+    void setSosObservationOfferingExtensionStatus(SosObservationOfferingExtensionKey key, boolean active);
+
+    Set<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionKeys();
+
+    /**
+     * Checks if the response format is active for the specified service and version.
+     *
+     * @param key the service/version/responseFormat combination
      *
      * @return if the format is active
      */
     boolean isResponseFormatActive(ResponseFormatKey key);
 
     /**
-     * Sets the status of a response format for the specified service and
-     * version.
+     * Sets the status of a response format for the specified service and version.
      *
-     * @param key
-     *               the service/version/responseFormat combination
-     * @param active
-     *               the status
+     * @param key    the service/version/responseFormat combination
+     * @param active the status
      *
-     * @see #setActive(ResponseFormatKey, boolean)
      */
     void setResponseFormatStatus(ResponseFormatKey key, boolean active);
 
     Set<ResponseFormatKey> getResponseFormatKeys();
 
     /**
-     * Checks if the procedure description format is active for the specified
-     * service and version.
+     * Checks if the procedure description format is active for the specified service and version.
      *
-     * @param key
-     *            the service/version/procedure description combination
+     * @param key the service/version/procedure description combination
      *
      * @return if the format is active
      */
     boolean isProcedureDescriptionFormatActive(ProcedureDescriptionFormatKey key);
 
     /**
-     * Sets the status of a response format for the specified service and
-     * version.
+     * Sets the status of a response format for the specified service and version.
      *
-     * @param key
-     *               the service/version/responseFormat combination
-     * @param active
-     *               the status
+     * @param key    the service/version/responseFormat combination
+     * @param active the status
      *
-     * @see #setActive(ProcedureDescriptionFormatKey, boolean)
      */
-    void setProcedureDescriptionFormatStatus(ProcedureDescriptionFormatKey key,
-                                             boolean active);
+    void setProcedureDescriptionFormatStatus(ProcedureDescriptionFormatKey key, boolean active);
 
     Set<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatKeys();
 

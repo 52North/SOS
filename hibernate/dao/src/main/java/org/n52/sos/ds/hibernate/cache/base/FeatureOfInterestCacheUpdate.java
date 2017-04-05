@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,13 +42,13 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 
 /**
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -56,9 +56,11 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
     private static final Logger LOGGER = LoggerFactory.getLogger(FeatureOfInterestCacheUpdate.class);
 
     private final FeatureQueryHandler featureQueryHandler;
+    private final DaoFactory daoFactory;
 
-    public FeatureOfInterestCacheUpdate(FeatureQueryHandler featureQueryHandler) {
+    public FeatureOfInterestCacheUpdate(FeatureQueryHandler featureQueryHandler, DaoFactory daoFactory) {
         this.featureQueryHandler = featureQueryHandler;
+        this.daoFactory =  daoFactory;
     }
 
     @Override
@@ -68,12 +70,12 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
         // FIXME shouldn't the identifiers be translated using
         // CacheHelper.addPrefixAndGetFeatureIdentifier()?
         try {
-            FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
-            Map<String,Collection<String>> foisWithParents = new FeatureOfInterestDAO()
+            FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
+            Map<String,Collection<String>> foisWithParents = featureOfInterestDAO
                 .getFeatureOfInterestIdentifiersWithParents(getSession());
             List<FeatureOfInterest> featureOfInterestObjects = featureOfInterestDAO.getFeatureOfInterestObjects(getSession());
 
-            Map<String, Collection<String>> procsForAllFois = new ProcedureDAO()
+            Map<String, Collection<String>> procsForAllFois = daoFactory.getProcedureDAO()
                     .getProceduresForAllFeaturesOfInterest(getSession());
 
             for (final FeatureOfInterest featureOfInterest : featureOfInterestObjects) {

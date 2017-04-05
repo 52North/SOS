@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,7 +42,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
@@ -51,6 +50,7 @@ import org.n52.janmayen.http.MediaType;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
+import org.n52.svalbard.OperationKey;
 
 import com.google.common.base.Objects;
 

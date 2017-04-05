@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,6 +38,7 @@ import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.shetland.ogc.sos.response.BinaryAttachmentResponse;
+import org.n52.svalbard.encode.EncoderRepository;
 
 import com.google.common.base.Strings;
 
@@ -50,6 +51,10 @@ import com.google.common.base.Strings;
  */
 public class BinaryAttachmentResponseWriter extends AbstractResponseWriter<BinaryAttachmentResponse> {
     public static final ResponseWriterKey KEY = new ResponseWriterKey(BinaryAttachmentResponse.class);
+
+    public BinaryAttachmentResponseWriter(EncoderRepository encoderRepository) {
+        super(encoderRepository);
+    }
 
     @Override
     public Set<ResponseWriterKey> getKeys() {

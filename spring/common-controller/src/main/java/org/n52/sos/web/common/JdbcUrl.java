@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,13 +35,11 @@ import java.util.Properties;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
-import org.n52.iceland.util.Constants;
-
 /**
  * @since 4.0.0
  *
  */
-public class JdbcUrl implements Constants {
+public class JdbcUrl {
 
     private static final String QUERY_PARAMETER_USER = "user";
 
@@ -107,16 +105,6 @@ public class JdbcUrl implements Constants {
         return properties;
     }
 
-    private static String toURI(Properties p) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(p.getProperty(CONNECTION_STRING_PROPERTY));
-        sb.append(QUERSTIONMARK_CHAR).append(QUERY_PARAMETER_USER).append(EQUAL_SIGN_CHAR)
-                .append(p.getProperty(USER_PROPERTY));
-        sb.append(AMPERSAND_CHAR).append(QUERY_PARAMETER_PASSWORD).append(EQUAL_SIGN_CHAR)
-                .append(p.getProperty(PASS_PROPERTY));
-        return sb.toString();
-    }
-
     protected final void parse(String string) throws URISyntaxException {
         URI uri = new URI(string);
         scheme = uri.getScheme();
@@ -124,7 +112,7 @@ public class JdbcUrl implements Constants {
         type = uri.getScheme();
         host = uri.getHost();
         port = uri.getPort();
-        String[] path = uri.getPath().split(SLASH_STRING);
+        String[] path = uri.getPath().split("/");
         if (path.length == 1 && !path[0].isEmpty()) {
             database = path[0];
         } else if (path.length == 2 && path[0].isEmpty() && !path[1].isEmpty()) {
@@ -190,96 +178,105 @@ public class JdbcUrl implements Constants {
         return scheme;
     }
 
-    public boolean isSchemeValid() {
-        return getScheme() != null && getScheme().equals(SCHEME);
-    }
 
     public void setScheme(String scheme) {
         this.scheme = scheme;
+    }
+    public boolean isSchemeValid() {
+        return getScheme() != null && getScheme().equals(SCHEME);
     }
 
     public String getType() {
         return type;
     }
 
-    public boolean isTypeValid() {
-        return getType() != null && getType().equals(TYPE);
-    }
 
     public void setType(String type) {
         this.type = type;
+    }
+    public boolean isTypeValid() {
+        return getType() != null && getType().equals(TYPE);
     }
 
     public String getHost() {
         return host;
     }
 
-    public boolean isHostValid() {
-        return getHost() != null && !getHost().isEmpty();
-    }
 
     public void setHost(String host) {
         this.host = host;
+    }
+    public boolean isHostValid() {
+        return getHost() != null && !getHost().isEmpty();
     }
 
     public int getPort() {
         return port;
     }
 
-    public boolean isPortValid() {
-        return getPort() >= 0;
-    }
 
     public void setPort(int port) {
         this.port = port;
+    }
+    public boolean isPortValid() {
+        return getPort() >= 0;
     }
 
     public String getDatabase() {
         return database;
     }
 
-    public boolean isDatabaseValid() {
-        return getDatabase() != null && !getDatabase().isEmpty();
-    }
 
     public void setDatabase(String database) {
         this.database = database;
+    }
+    public boolean isDatabaseValid() {
+        return getDatabase() != null && !getDatabase().isEmpty();
     }
 
     public String getUser() {
         return user;
     }
 
-    public boolean isUserValid() {
-        return getUser() != null && !getUser().isEmpty();
-    }
 
     public void setUser(String user) {
         this.user = user;
+    }
+    public boolean isUserValid() {
+        return getUser() != null && !getUser().isEmpty();
     }
 
     public String getPassword() {
         return password;
     }
 
-    public boolean isPasswordValid() {
-        return getPassword() != null && !getPassword().isEmpty();
-    }
 
     public void setPassword(String password) {
         this.password = password;
     }
+    public boolean isPasswordValid() {
+        return getPassword() != null && !getPassword().isEmpty();
+    }
 
     @Override
     public String toString() {
-        return new StringBuilder(getConnectionString()).append(QUERSTIONMARK_CHAR).append(QUERY_PARAMETER_USER)
-                .append(EQUAL_SIGN_CHAR).append(getUser()).append(AMPERSAND_CHAR).append(QUERY_PARAMETER_PASSWORD)
-                .append(EQUAL_SIGN_CHAR).append(getPassword()).toString();
+        return new StringBuilder(getConnectionString()).append('?').append(QUERY_PARAMETER_USER)
+                .append('=').append(getUser()).append('&').append(QUERY_PARAMETER_PASSWORD)
+                .append('=').append(getPassword()).toString();
     }
 
     public String getConnectionString() {
-        return new StringBuilder().append(getScheme()).append(COLON_CHAR).append(getType()).append(COLON_CHAR)
-                .append(SLASH_CHAR).append(SLASH_CHAR).append(getHost()).append(COLON_CHAR).append(getPort())
-                .append(SLASH_CHAR).append(getDatabase()).toString();
+        return new StringBuilder().append(getScheme()).append(':').append(getType()).append(':')
+                .append('/').append('/').append(getHost()).append(':').append(getPort())
+                .append('/').append(getDatabase()).toString();
+    }
+    private static String toURI(Properties p) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(p.getProperty(CONNECTION_STRING_PROPERTY));
+        sb.append('?').append(QUERY_PARAMETER_USER).append('=')
+                .append(p.getProperty(USER_PROPERTY));
+        sb.append('&').append(QUERY_PARAMETER_PASSWORD).append('=')
+                .append(p.getProperty(PASS_PROPERTY));
+        return sb.toString();
     }
 }

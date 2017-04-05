@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -69,12 +69,17 @@ import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
 import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.MultiPointCoverage;
 import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.ProfileValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TLVTValue;
 import org.n52.shetland.ogc.om.values.TVPValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
@@ -94,6 +99,7 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
@@ -118,8 +124,8 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.util.GeometryHandler;
@@ -141,6 +147,17 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDAO.class);
 
     private static final String SQL_QUERY_OBSERVATION_TIME_EXTREMA = "getObservationTimeExtrema";
+
+    private final DaoFactory daoFactory;
+
+    public AbstractObservationDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
+    protected DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
 
     /**
      * Add observation identifier (procedure, observableProperty,
@@ -586,6 +603,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         ObservationPersister persister = new ObservationPersister(
                 getGeometryHandler(),
                 this,
+                this.daoFactory,
                 sosObservation,
                 hObservationConstellations,
                 hFeature,
@@ -1234,7 +1252,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         List<TemporalFilter> filters = Lists.newArrayListWithCapacity(2);
         filters.add(getPhenomeonTimeFilter(c, sosObservation.getPhenomenonTime()));
         filters.add(getResultTimeFilter(c, sosObservation.getResultTime(), sosObservation.getPhenomenonTime()));
-        c.add(TemporalRestrictions.filter(filters));
+        c.add(SosTemporalRestrictions.filter(filters));
         if (sosObservation.isSetHeightDepthParameter()) {
             NamedValue<Double> hdp = sosObservation.getHeightDepthParameter();
             addParameterRestriction(c, hdp);
@@ -1371,16 +1389,16 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         private final ObservationFactory observationFactory;
         private final OmObservation sosObservation;
         private final boolean childObservation;
-
         ObservationPersister(GeometryHandler geometryHandler,
                              AbstractObservationDAO observationDao,
+                             DaoFactory daoFactory,
                              OmObservation sosObservation,
                              Set<ObservationConstellation> observationConstellations,
                              FeatureOfInterest featureOfInterest,
                              Map<String, Codespace> codespaceCache,
                              Map<String, Unit> unitCache,
                              Session session) throws OwsExceptionReport {
-            this(new DAOs(observationDao), new Caches(codespaceCache, unitCache), sosObservation,
+            this(new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache), sosObservation,
                  observationConstellations, featureOfInterest, getSamplingGeometry(geometryHandler, sosObservation), session, false);
         }
 
@@ -1413,6 +1431,31 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             */
             daos.observation().checkForDuplicatedObservations(sosObservation, session);
 
+        }
+
+         @Override
+        public Observation<?> visit(TLVTValue value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(ProfileValue value) throws OwsExceptionReport {
+            throw notSupported(value);
         }
 
         @Override
@@ -1618,12 +1661,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             private final ObservationTypeDAO observationType;
             private final ParameterDAO parameter;
 
-            DAOs(AbstractObservationDAO observationDAO) {
-                this.observation = observationDAO;
-                this.observableProperty = new ObservablePropertyDAO();
-                this.observationConstellation = new ObservationConstellationDAO();
-                this.observationType = new ObservationTypeDAO();
-                this.parameter = new ParameterDAO();
+            DAOs(AbstractObservationDAO observationDao, DaoFactory daoFactory) {
+                this.observation = observationDao;
+                this.observableProperty = daoFactory.getObservablePropertyDAO();
+                this.observationConstellation = daoFactory.getObservationConstellationDAO();
+                this.observationType = daoFactory.getObservationTypeDAO();
+                this.parameter = daoFactory.getParameterDAO();
             }
 
             public ObservablePropertyDAO observableProperty() {

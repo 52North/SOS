@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -79,10 +79,14 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesObservationDAO.class);
 
+    public AbstractSeriesObservationDAO(DaoFactory daoFactory) {
+        super(daoFactory);
+    }
+
     @Override
     protected void addObservationContextToObservation(ObservationContext ctx,
             Observation<?> observation, Session session) throws OwsExceptionReport {
-        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+        AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Series series = seriesDAO.getOrInsertSeries(ctx, session);
         ((SeriesObservation) observation).setSeries(series);
         seriesDAO.updateSeriesWithFirstLatestValues(series, observation, session);
@@ -115,7 +119,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     @Override
     public Criteria getObservationCriteriaForProcedure(String procedure, Session session) throws OwsExceptionReport {
-        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+        AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
         Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
@@ -125,7 +129,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     @Override
     public Criteria getObservationCriteriaForObservableProperty(String observableProperty, Session session)
             throws OwsExceptionReport {
-        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+        AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
         Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
@@ -135,7 +139,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     @Override
     public Criteria getObservationCriteriaForFeatureOfInterest(String featureOfInterest, Session session)
             throws OwsExceptionReport {
-        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+        AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
         Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
         seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
@@ -145,7 +149,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     @Override
     public Criteria getObservationCriteriaFor(String procedure, String observableProperty, Session session)
             throws OwsExceptionReport {
-        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+        AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
         Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
@@ -187,7 +191,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      */
     private Criteria addRestrictionsToCriteria(Criteria criteria, String procedure, String observableProperty,
             String featureOfInterest) throws OwsExceptionReport {
-        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+        AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
         seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
@@ -702,7 +706,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      *            Hibernate session
      * @return First not deleted observation
      */
-    public SeriesObservation getFirstObservationFor(Series series, Session session) {
+    public SeriesObservation<?> getFirstObservationFor(Series series, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
         c.add(Restrictions.eq(SeriesObservation.SERIES, series));
         c.addOrder(Order.asc(AbstractObservation.PHENOMENON_TIME_START));
@@ -721,7 +725,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      *            Hibernate session
      * @return Last not deleted observation
      */
-    public SeriesObservation getLastObservationFor(Series series, Session session) {
+    public SeriesObservation<?> getLastObservationFor(Series series, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
         c.add(Restrictions.eq(SeriesObservation.SERIES, series));
         c.addOrder(Order.desc(AbstractObservation.PHENOMENON_TIME_END));
@@ -730,5 +734,4 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                     HibernateHelper.getSqlString(c));
         return (SeriesObservation)c.uniqueResult();
     }
-
 }

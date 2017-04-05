@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,12 +32,16 @@ import net.opengis.sos.x20.InsertObservationResponseDocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
@@ -45,10 +49,13 @@ import org.n52.svalbard.encode.exception.EncodingException;
  *
  */
 public class ObservationsPostRequestHandler extends RequestHandler {
+    public ObservationsPostRequestHandler(Constants bindingConstants, EncoderRepository encoderRepository,
+                                          ServiceOperatorRepository serviceOperatorRepository) {
+        super(bindingConstants, encoderRepository, serviceOperatorRepository);
+    }
 
     @Override
-    public RestResponse handleRequest(RestRequest req) throws OwsExceptionReport, XmlException
-    {
+    public RestResponse handleRequest(RestRequest req) throws OwsExceptionReport, XmlException {
         if (req != null && req instanceof ObservationsPostRequest) {
             try {
                 InsertObservationRequest ioReq = ((ObservationsPostRequest) req).getInsertObservationRequest();
@@ -69,7 +76,7 @@ public class ObservationsPostRequestHandler extends RequestHandler {
                 throw new NoApplicableCodeException().causedBy(ee);
             }
         }
-        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(req,this.getClass().getName());
+        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(req, this.getClass().getName());
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.web.admin.AbstractAdminController;
 import org.n52.sos.web.common.ControllerConstants;
@@ -65,6 +65,6 @@ public class AdminI18NController extends AbstractAdminController {
 
     private static String asJSONArray(
             Collection<String> coll) {
-        return JSONUtils.print(JSONUtils.toJSON(new TreeSet<String>(coll)));
+        return Json.print(Json.toJSON(new TreeSet<String>(coll)));
     }
 }

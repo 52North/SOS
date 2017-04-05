@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,9 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.sos.inspire.aqd.GeographicalName;
-import org.n52.sos.inspire.aqd.Pronunciation;
-import org.n52.sos.inspire.aqd.Spelling;
+import org.n52.shetland.inspire.GeographicalName;
+import org.n52.shetland.inspire.Pronunciation;
+import org.n52.shetland.inspire.Spelling;
 import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;

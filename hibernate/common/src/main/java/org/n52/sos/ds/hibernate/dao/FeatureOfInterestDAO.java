@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,6 +45,7 @@ import org.hibernate.sql.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
@@ -52,7 +53,6 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.janmayen.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -86,6 +86,12 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
 
     private static final String SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OBSERVATION_CONSTELLATION =
             "getFeatureOfInterestIdentifiersForObservationConstellation";
+
+    private final DaoFactory daoFactory;
+
+    public FeatureOfInterestDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     /**
      * Get featureOfInterest object for identifier
@@ -130,7 +136,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                     SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OBSERVATION_CONSTELLATION);
             return namedQuery.list();
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 Criteria seriesCriteria = criteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
@@ -174,7 +180,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                     SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING);
             return namedQuery.list();
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             Criteria c = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 Criteria seriesCriteria = c.createCriteria(ContextualReferencedSeriesObservation.SERIES);
@@ -185,7 +191,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                 c.createCriteria(AbstractObservation.FEATURE_OF_INTEREST).setProjection(
                         Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
             }
-            new OfferingDAO().addOfferingRestricionForObservation(c, offeringIdentifiers);
+            new OfferingDAO(daoFactory).addOfferingRestricionForObservation(c, offeringIdentifiers);
             LOGGER.debug("QUERY getFeatureOfInterestIdentifiersForOffering(offeringIdentifiers): {}",
                     HibernateHelper.getSqlString(c));
             return c.list();
@@ -340,14 +346,14 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
      */
     public void checkOrInsertFeatureOfInterestRelatedFeatureRelation(final FeatureOfInterest featureOfInterest,
             final Offering offering, final Session session) {
-        final List<RelatedFeature> relatedFeatures =
-                new RelatedFeatureDAO().getRelatedFeatureForOffering(offering.getIdentifier(), session);
+        final List<RelatedFeature> relatedFeatures = new RelatedFeatureDAO(daoFactory)
+                .getRelatedFeatureForOffering(offering.getIdentifier(), session);
         if (CollectionHelper.isNotEmpty(relatedFeatures)) {
             for (final RelatedFeature relatedFeature : relatedFeatures) {
-            	if (!featureOfInterest.getIdentifier().equals(relatedFeature.getFeatureOfInterest().getIdentifier())) {
-	                insertFeatureOfInterestRelationShip(relatedFeature.getFeatureOfInterest(),
-	                        featureOfInterest, session);
-            	}
+                if (!featureOfInterest.getIdentifier().equals(relatedFeature.getFeatureOfInterest().getIdentifier())) {
+                    insertFeatureOfInterestRelationShip(relatedFeature.getFeatureOfInterest(),
+                                                        featureOfInterest, session);
+                }
             }
         }
     }

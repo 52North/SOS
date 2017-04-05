@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,8 +28,11 @@
  */
 package org.n52.sos.web.admin;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,18 +47,22 @@ import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.web.common.ControllerConstants;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS)
 public class AdminDeleteDeletedObservationsController extends AbstractAdminController {
+
     @Inject
-    private DeleteDeletedObservationDAO dao;
+    private Optional<DeleteDeletedObservationDAO> dao;
 
     private DeleteDeletedObservationDAO getDAO()
             throws NoImplementationFoundException {
-        return this.dao;
+        if (!dao.isPresent()) {
+            throw new NoImplementationFoundException(DeleteDeletedObservationDAO.class);
+        }
+        return this.dao.get();
     }
 
     @ResponseBody

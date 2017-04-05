@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -113,7 +114,7 @@ public class SensorDescriptionController extends AbstractAdminController {
             MediaTypes.APPLICATION_SOAP_XML);
 
     @Inject
-    private ProcedureFormatDAO dao;
+    private Optional<ProcedureFormatDAO> dao;
     @Inject
     private ContentCacheController contentCacheController;
     @Inject
@@ -122,7 +123,10 @@ public class SensorDescriptionController extends AbstractAdminController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() throws OwsExceptionReport {
         Map<String, Object> model = new HashMap<>(5);
-        boolean getKvp = false, getSoap = false, update = false, delete = false;
+        boolean getKvp = false;
+        boolean getSoap = false;
+        boolean update = false;
+        boolean delete = false;
         try {
             for (Binding b : this.bindingRepository.getBindings().values()) {
                 if (b.checkOperationHttpGetSupported(DESCRIBE_SENSOR_DECODER_KEY_KVP)) {
@@ -159,7 +163,9 @@ public class SensorDescriptionController extends AbstractAdminController {
         List<String> procedures = Lists.newArrayList(getCache().getProcedures());
         Collections.sort(procedures);
         model.put(SENSORS, procedures);
-        model.put(PROCEDURE_FORMAT_MAP, this.dao.getProcedureFormatMap());
+        if (this.dao.isPresent()) {
+            model.put(PROCEDURE_FORMAT_MAP, this.dao.get().getProcedureFormatMap());
+        }
         return new ModelAndView(ControllerConstants.Views.ADMIN_SENSOR_DESCRIPTIONS, model);
     }
 

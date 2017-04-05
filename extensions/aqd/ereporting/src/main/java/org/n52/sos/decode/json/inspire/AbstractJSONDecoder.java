@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,16 +30,16 @@ package org.n52.sos.decode.json.inspire;
 
 import java.net.URI;
 
-import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.util.DateTimeParseException;
+import org.n52.shetland.w3c.Nillable;
+import org.n52.shetland.w3c.xlink.Reference;
+import org.n52.shetland.w3c.xlink.Referenceable;
 import org.n52.sos.decode.json.JSONDecoder;
 import org.n52.sos.util.AQDJSONConstants;
-import org.n52.sos.util.Nillable;
-import org.n52.sos.util.Reference;
-import org.n52.sos.util.Referenceable;
 import org.n52.sos.util.ThrowableFunction;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

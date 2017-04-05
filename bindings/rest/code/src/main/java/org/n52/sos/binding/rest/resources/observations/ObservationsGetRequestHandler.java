@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,12 +40,15 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
@@ -56,19 +59,25 @@ public class ObservationsGetRequestHandler extends RequestHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationsGetRequestHandler.class);
 
+    public ObservationsGetRequestHandler(Constants bindingConstants, EncoderRepository encoderRepository,
+                                         ServiceOperatorRepository serviceOperatorRepository) {
+        super(bindingConstants, encoderRepository, serviceOperatorRepository);
+    }
+
     @Override
-    public RestResponse handleRequest(RestRequest observationsHttpGetRequest) throws OwsExceptionReport, XmlException, IOException
-    {
+    public RestResponse handleRequest(RestRequest observationsHttpGetRequest)
+            throws OwsExceptionReport, XmlException, IOException {
         if (observationsHttpGetRequest != null) {
             try {
-            if (observationsHttpGetRequest instanceof ObservationsGetRequest) {
-                // Case A: with ID
-                return handleObservationsGetRequest((ObservationsGetRequest)observationsHttpGetRequest);
+                if (observationsHttpGetRequest instanceof ObservationsGetRequest) {
+                    // Case A: with ID
+                    return handleObservationsGetRequest((ObservationsGetRequest) observationsHttpGetRequest);
 
-            } else if (observationsHttpGetRequest instanceof ObservationsSearchRequest) {
-                // Case B: search observations
-                return handleObservationsSearchRequest((ObservationsSearchRequest)observationsHttpGetRequest);
-            } /*else if (observationsHttpGetRequest instanceof ObservationsFeedRequest) {
+                } else if (observationsHttpGetRequest instanceof ObservationsSearchRequest) {
+                    // Case B: search observations
+                    return handleObservationsSearchRequest((ObservationsSearchRequest) observationsHttpGetRequest);
+                }
+                /*else if (observationsHttpGetRequest instanceof ObservationsFeedRequest) {
                 // Case C: Atom Feed
                 return handleObservationsFeedRequest((ObservationsFeedRequest)observationsHttpGetRequest);
             }*/
@@ -76,11 +85,12 @@ public class ObservationsGetRequestHandler extends RequestHandler {
                 throw new NoApplicableCodeException().causedBy(ee);
             }
         }
-        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(observationsHttpGetRequest,this.getClass().getName());
+        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(observationsHttpGetRequest, this.getClass()
+                                                                        .getName());
     }
 
-    private RestResponse handleObservationsGetRequest(ObservationsGetRequest req) throws OwsExceptionReport, XmlException, IOException, EncodingException
-    {
+    private RestResponse handleObservationsGetRequest(ObservationsGetRequest req)
+            throws OwsExceptionReport, XmlException, IOException, EncodingException {
         String procedureId = null;
         OMObservationType xb_observation = null;
 
@@ -89,72 +99,69 @@ public class ObservationsGetRequestHandler extends RequestHandler {
 
         if (xb_getObservationByIdResponse instanceof GetObservationByIdResponseDocument) {
             // 1 Get Offering from Capabilities
-            GetObservationByIdResponseDocument xb_ByIdResponseDocument = (GetObservationByIdResponseDocument) xb_getObservationByIdResponse;
-            Observation[] xb_observations = xb_ByIdResponseDocument.getGetObservationByIdResponse().getObservationArray();
+            GetObservationByIdResponseDocument xb_ByIdResponseDocument
+                    = (GetObservationByIdResponseDocument) xb_getObservationByIdResponse;
+            Observation[] xb_observations = xb_ByIdResponseDocument.getGetObservationByIdResponse()
+                    .getObservationArray();
 
             // 1.1 Get Procedure Id from GetObservationByIdResponse
-            if (xb_observations.length > 0){ // TODO should be one
-                if (xb_observations[0].getOMObservation() != null){
+            if (xb_observations.length > 0) { // TODO should be one
+                if (xb_observations[0].getOMObservation() != null) {
 
                     xb_observation = xb_observations[0].getOMObservation();
 
                     if (xb_observation.getProcedure() != null &&
-                            xb_observation.getProcedure().isSetHref()) {
+                        xb_observation.getProcedure().isSetHref()) {
                         procedureId = xb_observations[0].getOMObservation().getProcedure().getHref();
                     }
                 }
             }
 
-            LOGGER.debug("xb_observation == null? {}; procedureId? {}",xb_observation==null,procedureId);
+            LOGGER.debug("xb_observation == null? {}; procedureId? {}", xb_observation == null, procedureId);
 
-            if (xb_observation == null)
-            {
-                return new ResourceNotFoundResponse(bindingConstants.getResourceObservations(),
-                        req.getGetObservationByIdRequest().getObservationIdentifier().get(0)); // TODO NPE handling?
+            if (xb_observation == null) {
+                return new ResourceNotFoundResponse((Constants.REST_RESOURCE_RELATION_OBSERVATIONS),
+                                                    req.getGetObservationByIdRequest().getObservationIdentifier().get(0)); // TODO NPE handling?
             }
 
             // 2 collect results
-            return new ObservationsGetByIdResponse( xb_observation );
+            return new ObservationsGetByIdResponse(xb_observation);
 
         } else {
-            String exceptionText = String.format("Processing of SOS core operation \"GetObservationById\" response failed. Type of could not be handled: \"%s\"",
-                    xb_getObservationByIdResponse.getClass().getName());
+            String exceptionText = String
+                    .format("Processing of SOS core operation \"GetObservationById\" response failed. Type of could not be handled: \"%s\"",
+                            xb_getObservationByIdResponse.getClass().getName());
             LOGGER.debug(exceptionText);
             throw new NoApplicableCodeException().withMessage(exceptionText);
         }
     }
 
-    private RestResponse handleObservationsSearchRequest(ObservationsSearchRequest req) throws OwsExceptionReport, XmlException, EncodingException
-    {
+    private RestResponse handleObservationsSearchRequest(ObservationsSearchRequest req)
+            throws OwsExceptionReport, XmlException, EncodingException {
         // 0 submit request to core
         XmlObject xb_getObservationResponse = executeSosRequest(req.getGetObservationRequest());
         if (xb_getObservationResponse instanceof GetObservationResponseDocument) {
-            GetObservationResponseDocument xb_getObservationResponseDoc = (GetObservationResponseDocument) xb_getObservationResponse;
-
+            GetObservationResponseDocument xb_getObservationResponseDoc
+                    = (GetObservationResponseDocument) xb_getObservationResponse;
             ObservationsSearchResponse response;
-
             if (xb_getObservationResponseDoc.getGetObservationResponse().getObservationDataArray() != null &&
-                    xb_getObservationResponseDoc.getGetObservationResponse().getObservationDataArray().length > 0){
-
-                response = new ObservationsSearchResponse(xb_getObservationResponseDoc.getGetObservationResponse().getObservationDataArray(),
-                        req.getQueryString());
-
+                xb_getObservationResponseDoc.getGetObservationResponse().getObservationDataArray().length > 0) {
+                response = new ObservationsSearchResponse(xb_getObservationResponseDoc.getGetObservationResponse()
+                        .getObservationDataArray(),                                                          req.getQueryString());
             } else {
                 response = new ObservationsSearchResponse(null, req.getQueryString());
             }
-
             return response;
         }
         throw createHandlingOfSosCoreResponseFailedException(xb_getObservationResponse,
-                GetObservationResponseDocument.class.getName());
+                                                             GetObservationResponseDocument.class.getName());
     }
 
     private OwsExceptionReport createHandlingOfSosCoreResponseFailedException(XmlObject xb_getObservationResponse,
-            String nameOfExpectedType)
-    {
-        return new NoApplicableCodeException().withMessage("Handling of internal response failed. Expected '%s' and received '%s'.",
-                nameOfExpectedType,
-                xb_getObservationResponse.getClass().getName());
+                                                                              String nameOfExpectedType) {
+        return new NoApplicableCodeException()
+                .withMessage("Handling of internal response failed. Expected '%s' and received '%s'.",
+                             nameOfExpectedType, xb_getObservationResponse.getClass().getName());
     }
 
 }

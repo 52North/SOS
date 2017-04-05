@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -54,6 +54,7 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
@@ -82,6 +83,10 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     public static final String SQL_QUERY_GET_LATEST_OBSERVATION_TIME = "getLatestObservationTime";
 
     public static final String SQL_QUERY_GET_FIRST_OBSERVATION_TIME = "getFirstObservationTime";
+
+    public LegacyObservationDAO(DaoFactory daoFactory) {
+        super(daoFactory);
+    }
 
     @Override
     protected void addObservationContextToObservation(ObservationContext ctx, Observation<?> observation, Session session) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,7 +30,6 @@ package org.n52.sos.statistics.sos;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.event.ServiceEvent;
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventResolver;
@@ -41,17 +40,19 @@ import org.n52.sos.statistics.sos.resolvers.SosResponseEventResolver;
 
 import com.google.common.collect.ImmutableSet;
 
+import org.n52.janmayen.event.Event;
+
 public class SosStatisticsServiceEventListener extends AbstractStatisticsServiceEventListener {
 
     @Inject
     private StatisticsResolverFactory resolverFactory;
 
     public SosStatisticsServiceEventListener() {
-        registerEventType(ImmutableSet.<Class<? extends ServiceEvent>> of(RequestEvent.class, ResponseEvent.class));
+        registerEventType(ImmutableSet.<Class<? extends Event>> of(RequestEvent.class, ResponseEvent.class));
     }
 
     @Override
-    protected StatisticsServiceEventResolver<?> findResolver(ServiceEvent serviceEvent) {
+    protected StatisticsServiceEventResolver<?> findResolver(Event serviceEvent) {
         StatisticsServiceEventResolver<?> evtResolver = null;
         if (serviceEvent instanceof RequestEvent) {
             SosRequestEventResolver sosRequestEventResolver = resolverFactory.getPrototypeBean(SosRequestEventResolver.class);

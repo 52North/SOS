@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,9 +28,9 @@
  */
 package org.n52.sos.coding.json;
 
-import org.n52.svalbard.encode.EncoderKey;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncodingException;
+import org.n52.svalbard.encode.EncoderKey;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

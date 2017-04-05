@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,6 +37,7 @@ import net.opengis.sensorML.x101.SystemDocument;
 import net.opengis.swe.x20.DataRecordDocument;
 import net.opengis.swe.x20.TextEncodingDocument;
 
+import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -48,8 +49,9 @@ import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
 
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.event.ServiceEventBus;
-import org.n52.iceland.ogc.ows.ServiceProviderFactory;
+import org.n52.iceland.convert.ConverterRepository;
+import org.n52.iceland.ogc.ows.OwsServiceProviderFactory;
+import org.n52.janmayen.event.EventBus;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -64,6 +66,7 @@ import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.om.features.SfConstants;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.values.QuantityValue;
@@ -85,6 +88,7 @@ import org.n52.shetland.ogc.sos.request.InsertResultRequest;
 import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
@@ -102,22 +106,23 @@ import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.ogc.swes.SwesExtensions;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
-import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
-import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.CodingHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -185,7 +190,7 @@ public class InsertDAOTest extends HibernateTestCase {
     private static final double HEIGHT_DEPTH_VALUE_2 = 20.0;
     private static final String HEIGHT_DEPTH_UNIT = "m";
 
-    private ServiceEventBus serviceEventBus = new ServiceEventBus();
+    private EventBus serviceEventBus = new EventBus();
 
 
     /* FIXTURES */
@@ -196,6 +201,7 @@ public class InsertDAOTest extends HibernateTestCase {
     private final InsertResultDAO insertResultDAO = new InsertResultDAO();
     private final GetObservationDAO getObsDAO = new GetObservationDAO();
     private final SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
+    private final EncoderRepository encoderRepository = new EncoderRepository();
 
     // optionally run these tests multiple times to expose intermittent faults
     // (use -DrepeatDaoTest=x)
@@ -212,7 +218,7 @@ public class InsertDAOTest extends HibernateTestCase {
 
     @Before
     public void setUp() throws OwsExceptionReport, ConverterException, EncodingException, DecodingException {
-
+        encoderRepository.init();
         Session session = getSession();
         insertSensor(PROCEDURE1, OFFERING1, OBSPROP1, null);
         insertSensor(PROCEDURE2, OFFERING2, OBSPROP2, PROCEDURE1);
@@ -257,7 +263,7 @@ public class InsertDAOTest extends HibernateTestCase {
             }
         }
         SystemDocument xbSystemDoc = SystemDocument.Factory.newInstance();
-        xbSystemDoc.addNewSystem().set(CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, system));
+        xbSystemDoc.addNewSystem().set((XmlObject)encoderRepository.getEncoder(CodingHelper.getEncoderKey(SensorMLConstants.NS_SML, system)).encode(system));
         system.setXml(xbSystemDoc.xmlText());
         req.setProcedureDescription(pd);
         req.setAssignedOfferings(assignedOfferings);
@@ -287,7 +293,10 @@ public class InsertDAOTest extends HibernateTestCase {
         textEncoding.setBlockSeparator(BLOCK_SEPARATOR);
         SosResultEncoding resultEncoding = new SosResultEncoding(textEncoding);
         TextEncodingDocument xbTextEncDoc = TextEncodingDocument.Factory.newInstance();
-        xbTextEncDoc.addNewTextEncoding().set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, textEncoding));
+        xbTextEncDoc.addNewTextEncoding()
+                .set((XmlObject) encoderRepository
+                        .getEncoder(CodingHelper.getEncoderKey(SweConstants.NS_SWE_20, textEncoding))
+                        .encode(textEncoding));
         resultEncoding.setXml(xbTextEncDoc.xmlText());
         req.setResultEncoding(resultEncoding);
 
@@ -302,7 +311,10 @@ public class InsertDAOTest extends HibernateTestCase {
         dataRecord.addField(new SweField("air_temperature", airTemp));
         SosResultStructure resultStructure = new SosResultStructure(dataRecord);
         DataRecordDocument xbDataRecordDoc = DataRecordDocument.Factory.newInstance();
-        xbDataRecordDoc.addNewDataRecord().set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord));
+        xbDataRecordDoc.addNewDataRecord()
+                .set((XmlObject) encoderRepository
+                        .getEncoder(CodingHelper.getEncoderKey(SweConstants.NS_SWE_20, dataRecord))
+                        .encode(dataRecord));
         resultStructure.setXml(xbDataRecordDoc.xmlText());
         req.setResultStructure(resultStructure);
         InsertResultTemplateResponse resp = insertResultTemplateDAO.insertResultTemplate(req);
@@ -321,10 +333,15 @@ public class InsertDAOTest extends HibernateTestCase {
             String offeringId, String featureId, String obsType, Session session) throws OwsExceptionReport,
             ConverterException {
         OmObservationConstellation obsConst = new OmObservationConstellation();
-        Procedure procedure = new ProcedureDAO().getProcedureForIdentifier(procedureId, session);
-        ServiceProviderFactory serviceProviderFactory = Mockito.mock(ServiceProviderFactory.class);
-        SosProcedureDescription<?> spd =
-                new HibernateProcedureConverter(serviceProviderFactory).createSosProcedureDescription(procedure, SensorMLConstants.NS_SML,
+        Procedure procedure = new ProcedureDAO(new DaoFactory()).getProcedureForIdentifier(procedureId, session);
+        OwsServiceProviderFactory serviceProviderFactory = Mockito.mock(OwsServiceProviderFactory.class);
+
+
+        SosProcedureDescription<?> spd
+                = new HibernateProcedureConverter(serviceProviderFactory, new DaoFactory(), ConverterRepository
+                                                  .getInstance(), HibernateProcedureDescriptionGeneratorFactoryRepository
+                                                          .getInstance())
+                        .createSosProcedureDescription(procedure, SensorMLConstants.NS_SML,
                         Sos2Constants.SERVICEVERSION, session);
         obsConst.setProcedure(spd);
         OmObservableProperty omObservableProperty = new OmObservableProperty(obsPropId);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,12 +30,12 @@ package org.n52.sos.request.operator;
 
 import java.util.Map;
 
+import org.n52.iceland.request.handler.OperationHandler;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.iceland.request.handler.OperationHandler;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 
 /**
  * @param <D>
@@ -45,7 +45,7 @@ import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
  * @param <A>
  *            the response type
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
@@ -66,8 +66,6 @@ public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q ex
     }
 
     protected void checkExtensions(final OwsServiceRequest request, final CompositeOwsException exceptions) {
-        if (request.isSetExtensions()) {
-            // currently nothing to check
-        }
+        // currently nothing to check
     }
 }

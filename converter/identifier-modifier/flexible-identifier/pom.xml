@@ -24,6 +24,14 @@
             <artifactId>shetland</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-utils</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.n52.janmayen</groupId>
             <artifactId>janmayen</artifactId>
         </dependency>
@@ -31,10 +39,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>gda-operation</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>abstract-identifier</artifactId>

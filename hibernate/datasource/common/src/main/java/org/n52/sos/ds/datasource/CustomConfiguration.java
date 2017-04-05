@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -49,7 +49,6 @@ import org.hibernate.id.PersistentIdentifierGenerator;
 import org.hibernate.id.SequenceGenerator;
 import org.hibernate.internal.util.collections.ArrayHelper;
 import org.hibernate.mapping.AuxiliaryDatabaseObject;
-import org.hibernate.mapping.Collection;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.IdentifierCollection;
@@ -67,7 +66,7 @@ import org.hibernate.tool.hbm2ddl.UniqueConstraintSchemaUpdateStrategy;
 import com.google.common.base.Strings;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -77,16 +76,17 @@ public class CustomConfiguration extends Configuration {
     private transient Mapping mappingCC = buildMapping();
 
     @SuppressWarnings({ "unchecked" })
+    @Override
     public String[] generateSchemaCreationScript(Dialect dialect) throws HibernateException {
         secondPassCompile();
 
-        ArrayList<String> script = new ArrayList<String>(50);
+        ArrayList<String> script = new ArrayList<>(50);
         String defaultCatalog = getProperties().getProperty(Environment.DEFAULT_CATALOG);
         String defaultSchema = getProperties().getProperty(Environment.DEFAULT_SCHEMA);
 
         Iterator<Table> iter = getTableMappings();
         while (iter.hasNext()) {
-            Table table = (Table) iter.next();
+            Table table = iter.next();
             if (table.isPhysicalTable()) {
                 script.add(table.sqlCreateString(dialect, mappingCC, defaultCatalog, defaultSchema));
                 Iterator<String> comments = table.sqlCommentStrings(dialect, defaultCatalog, defaultSchema);
@@ -98,20 +98,21 @@ public class CustomConfiguration extends Configuration {
 
         iter = getTableMappings();
         while (iter.hasNext()) {
-            Table table = (Table) iter.next();
+            Table table = iter.next();
             if (table.isPhysicalTable()) {
 
                 Iterator<UniqueKey> subIterUK = table.getUniqueKeyIterator();
                 while (subIterUK.hasNext()) {
-                    UniqueKey uk = (UniqueKey) subIterUK.next();
+                    UniqueKey uk = subIterUK.next();
                     String constraintString = uk.sqlCreateString(dialect, mappingCC, defaultCatalog, defaultSchema);
-                    if (constraintString != null)
+                    if (constraintString != null) {
                         script.add(constraintString);
+                    }
                 }
 
                 Iterator<Index> subIterIdx = table.getIndexIterator();
                 while (subIterIdx.hasNext()) {
-                    Index index = (Index) subIterIdx.next();
+                    Index index = subIterIdx.next();
                     if (checkIndexForGeometry(index, dialect)) {
                         if (dialect instanceof SpatialIndexDialect) {
                             script.add((((SpatialIndexDialect)dialect).buildSqlCreateSpatialIndexString(index, defaultCatalog, defaultSchema)));
@@ -127,13 +128,13 @@ public class CustomConfiguration extends Configuration {
         // See HH-8390.
         iter = getTableMappings();
         while (iter.hasNext()) {
-            Table table = (Table) iter.next();
+            Table table = iter.next();
             if (table.isPhysicalTable()) {
 
                 if (dialect.hasAlterTable()) {
                     Iterator<ForeignKey> subIterFK = table.getForeignKeyIterator();
                     while (subIterFK.hasNext()) {
-                        ForeignKey fk = (ForeignKey) subIterFK.next();
+                        ForeignKey fk = subIterFK.next();
                         if (fk.isPhysicalConstraint()) {
                             script.add(fk.sqlCreateString(dialect, mappingCC, defaultCatalog, defaultSchema));
                         }
@@ -149,16 +150,17 @@ public class CustomConfiguration extends Configuration {
             script.addAll(Arrays.asList(lines));
         }
 
-        for (AuxiliaryDatabaseObject auxiliaryDatabaseObject : auxiliaryDatabaseObjects) {
-            if (auxiliaryDatabaseObject.appliesToDialect(dialect)) {
-                script.add(auxiliaryDatabaseObject.sqlCreateString(dialect, mappingCC, defaultCatalog, defaultSchema));
-            }
-        }
+        auxiliaryDatabaseObjects.stream()
+                .filter(auxiliaryDatabaseObject -> auxiliaryDatabaseObject.appliesToDialect(dialect))
+                .forEachOrdered(auxiliaryDatabaseObject ->
+                    script.add(auxiliaryDatabaseObject.sqlCreateString(dialect, mappingCC, defaultCatalog, defaultSchema))
+        );
 
         return ArrayHelper.toStringArray(script);
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public List<SchemaUpdateScript> generateSchemaUpdateScriptList(Dialect dialect, DatabaseMetadata databaseMetadata)
             throws HibernateException {
         secondPassCompile();
@@ -168,11 +170,11 @@ public class CustomConfiguration extends Configuration {
         UniqueConstraintSchemaUpdateStrategy constraintMethod = UniqueConstraintSchemaUpdateStrategy
                 .interpret(getProperties().get(Environment.UNIQUE_CONSTRAINT_SCHEMA_UPDATE_STRATEGY));
 
-        List<SchemaUpdateScript> scripts = new ArrayList<SchemaUpdateScript>();
+        List<SchemaUpdateScript> scripts = new ArrayList<>();
 
         Iterator<Table> iter = getTableMappings();
         while (iter.hasNext()) {
-            Table table = (Table) iter.next();
+            Table table = iter.next();
             String tableSchema = (table.getSchema() == null) ? defaultSchema : table.getSchema();
             String tableCatalog = (table.getCatalog() == null) ? defaultCatalog : table.getCatalog();
             if (table.isPhysicalTable()) {
@@ -200,7 +202,7 @@ public class CustomConfiguration extends Configuration {
 
         iter = getTableMappings();
         while (iter.hasNext()) {
-            Table table = (Table) iter.next();
+            Table table = iter.next();
             String tableSchema = (table.getSchema() == null) ? defaultSchema : table.getSchema();
             String tableCatalog = (table.getCatalog() == null) ? defaultCatalog : table.getCatalog();
             if (table.isPhysicalTable()) {
@@ -211,7 +213,7 @@ public class CustomConfiguration extends Configuration {
                 if (!constraintMethod.equals(UniqueConstraintSchemaUpdateStrategy.SKIP)) {
                     Iterator<UniqueKey> uniqueIter = table.getUniqueKeyIterator();
                     while (uniqueIter.hasNext()) {
-                        final UniqueKey uniqueKey = (UniqueKey) uniqueIter.next();
+                        final UniqueKey uniqueKey = uniqueIter.next();
                         // Skip if index already exists. Most of the time, this
                         // won't work since most Dialects use Constraints.
                         // However,
@@ -224,19 +226,18 @@ public class CustomConfiguration extends Configuration {
                         }
                         String constraintString =
                                 uniqueKey.sqlCreateString(dialect, mappingCC, tableCatalog, tableSchema);
-                        if (constraintString != null && !constraintString.isEmpty())
-                            if (constraintMethod.equals(UniqueConstraintSchemaUpdateStrategy.DROP_RECREATE_QUIETLY)) {
-                                String constraintDropString =
-                                        uniqueKey.sqlDropString(dialect, tableCatalog, tableSchema);
-                                scripts.add(new SchemaUpdateScript(constraintDropString, true));
-                            }
+                        if (constraintString != null && !constraintString.isEmpty() && constraintMethod
+                            .equals(UniqueConstraintSchemaUpdateStrategy.DROP_RECREATE_QUIETLY)) {
+                            String constraintDropString = uniqueKey.sqlDropString(dialect, tableCatalog, tableSchema);
+                            scripts.add(new SchemaUpdateScript(constraintDropString, true));
+                        }
                         scripts.add(new SchemaUpdateScript(constraintString, true));
                     }
                 }
 
                 Iterator<Index> subIter = table.getIndexIterator();
                 while (subIter.hasNext()) {
-                    final Index index = (Index) subIter.next();
+                    final Index index = subIter.next();
                     // Skip if index already exists
                     if (tableInfo != null && !Strings.isNullOrEmpty(index.getName())) {
                         final IndexMetadata meta = tableInfo.getIndexMetadata(index.getName());
@@ -262,7 +263,7 @@ public class CustomConfiguration extends Configuration {
         // See HH-8390.
         iter = getTableMappings();
         while (iter.hasNext()) {
-            Table table = (Table) iter.next();
+            Table table = iter.next();
             String tableSchema = (table.getSchema() == null) ? defaultSchema : table.getSchema();
             String tableCatalog = (table.getCatalog() == null) ? defaultCatalog : table.getCatalog();
             if (table.isPhysicalTable()) {
@@ -273,7 +274,7 @@ public class CustomConfiguration extends Configuration {
                 if (dialect.hasAlterTable()) {
                     Iterator<ForeignKey> subIter = table.getForeignKeyIterator();
                     while (subIter.hasNext()) {
-                        ForeignKey fk = (ForeignKey) subIter.next();
+                        ForeignKey fk = subIter.next();
                         if (fk.isPhysicalConstraint()) {
                             boolean create = tableInfo == null || (tableInfo.getForeignKeyMetadata(fk) == null && (
                             // Icky workaround for MySQL bug:
@@ -306,7 +307,7 @@ public class CustomConfiguration extends Configuration {
         if (index.getColumnSpan() == 1) {
             Iterator<Column> columnIterator = index.getColumnIterator();
             while (columnIterator.hasNext()) {
-                Column column = (Column) columnIterator.next();
+                Column column = columnIterator.next();
                 if (column.getSqlTypeCode(mappingCC) == 3000) {
                     return true;
                 }
@@ -332,7 +333,7 @@ public class CustomConfiguration extends Configuration {
         secondPassCompile();
         final String c = getProperties().getProperty(Environment.DEFAULT_CATALOG);
         final String s = getProperties().getProperty(Environment.DEFAULT_SCHEMA);
-        final List<String> script = new LinkedList<String>();
+        final List<String> script = new LinkedList<>();
         script.addAll(generateAuxiliaryDatabaseObjectDropScript(d, c, s));
         if (d.dropConstraints()) {
             script.addAll(generateConstraintDropScript(d, c, s, m));
@@ -348,8 +349,7 @@ public class CustomConfiguration extends Configuration {
      */
     private Iterator<PersistentIdentifierGenerator> iterateGenerators(final Dialect d, final String c, final String s)
             throws MappingException {
-        final TreeMap<Object, PersistentIdentifierGenerator> generators =
-                new TreeMap<Object, PersistentIdentifierGenerator>();
+        final TreeMap<Object, PersistentIdentifierGenerator> generators = new TreeMap<>();
         for (final PersistentClass pc : classes.values()) {
             if (!pc.isInherited()) {
                 final IdentifierGenerator ig =
@@ -363,24 +363,21 @@ public class CustomConfiguration extends Configuration {
                 }
             }
         }
-        for (final Collection collection : collections.values()) {
-            if (collection.isIdentified()) {
-                final IdentifierGenerator ig =
+        collections.values().stream()
+                .filter((collection) -> (collection.isIdentified()))
+                .map((collection) ->
                         ((IdentifierCollection) collection).getIdentifier().createIdentifierGenerator(
-                                getIdentifierGeneratorFactory(), d, c, s, null);
-                if (ig instanceof PersistentIdentifierGenerator) {
-                    final PersistentIdentifierGenerator pig = (PersistentIdentifierGenerator) ig;
-                    generators.put(pig.generatorKey(), pig);
-                }
-            }
-        }
+                                getIdentifierGeneratorFactory(), d, c, s, null))
+                .filter((ig) -> (ig instanceof PersistentIdentifierGenerator))
+                .map((ig) -> (PersistentIdentifierGenerator) ig)
+                .forEachOrdered((pig) -> generators.put(pig.generatorKey(), pig));
 
         return generators.values().iterator();
     }
 
     protected List<String> generateConstraintDropScript(final Dialect d, final String c, final String s,
             final DatabaseMetadata m) throws HibernateException {
-        final List<String> script = new LinkedList<String>();
+        final List<String> script = new LinkedList<>();
         final Iterator<Table> itr = getTableMappings();
         while (itr.hasNext()) {
             final Table table = itr.next();
@@ -403,7 +400,7 @@ public class CustomConfiguration extends Configuration {
 
     protected List<String> generateTableDropScript(final Dialect d, final String c, final String s,
             final DatabaseMetadata m) throws HibernateException {
-        final List<String> script = new LinkedList<String>();
+        final List<String> script = new LinkedList<>();
         final Iterator<Table> itr = getTableMappings();
         while (itr.hasNext()) {
             final Table table = itr.next();
@@ -421,7 +418,7 @@ public class CustomConfiguration extends Configuration {
     }
 
     protected List<String> generateAuxiliaryDatabaseObjectDropScript(final Dialect d, final String c, final String s) {
-        final List<String> script = new LinkedList<String>();
+        final List<String> script = new LinkedList<>();
         final ListIterator<AuxiliaryDatabaseObject> itr =
                 auxiliaryDatabaseObjects.listIterator(auxiliaryDatabaseObjects.size());
         while (itr.hasPrevious()) {
@@ -436,7 +433,7 @@ public class CustomConfiguration extends Configuration {
 
     protected List<String> generateIdentifierGeneratorDropScript(final Dialect d, final String c, final String s,
             final DatabaseMetadata m) throws MappingException, HibernateException {
-        final List<String> script = new LinkedList<String>();
+        final List<String> script = new LinkedList<>();
         final Iterator<PersistentIdentifierGenerator> itr = iterateGenerators(d, c, s);
         while (itr.hasNext()) {
             final PersistentIdentifierGenerator pig = itr.next();

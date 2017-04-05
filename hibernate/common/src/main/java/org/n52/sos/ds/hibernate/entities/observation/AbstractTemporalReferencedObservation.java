@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,7 @@ import org.joda.time.DateTime;
 
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.util.DateTimeHelper;
-import org.n52.sos.util.GmlHelper;
+import org.n52.svalbard.util.GmlHelper;
 
 /**
  * Abstract implementation of {@link TemporalReferencedObservation}.

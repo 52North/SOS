@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,7 +38,7 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.decode.json.JSONDecodingException;
 import org.n52.svalbard.decode.exception.DecodingException;
 
@@ -57,7 +57,7 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -78,43 +78,43 @@ public class JSONValidator {
     }
 
     public ProcessingReport validate(String json, String schema) throws IOException {
-        return validate(JSONUtils.loadString(json), schema);
+        return validate(Json.loadString(json), schema);
     }
 
     public boolean isValid(String json, String schema) throws IOException {
-        return isValid(JSONUtils.loadString(json), schema);
+        return isValid(Json.loadString(json), schema);
     }
 
     public ProcessingReport validate(URL url, String schema) throws IOException {
-        return validate(JSONUtils.loadURL(url), schema);
+        return validate(Json.loadURL(url), schema);
     }
 
     public boolean isValid(URL url, String schema) throws IOException {
-        return isValid(JSONUtils.loadURL(url), schema);
+        return isValid(Json.loadURL(url), schema);
     }
 
     public ProcessingReport validate(File file, String schema) throws IOException {
-        return validate(JSONUtils.loadFile(file), schema);
+        return validate(Json.loadFile(file), schema);
     }
 
     public boolean isValid(File file, String schema) throws IOException {
-        return isValid(JSONUtils.loadFile(file), schema);
+        return isValid(Json.loadFile(file), schema);
     }
 
     public ProcessingReport validate(InputStream is, String schema) throws IOException {
-        return validate(JSONUtils.loadStream(is), schema);
+        return validate(Json.loadStream(is), schema);
     }
 
     public boolean isValid(InputStream is, String schema) throws IOException {
-        return isValid(JSONUtils.loadStream(is), schema);
+        return isValid(Json.loadStream(is), schema);
     }
 
     public ProcessingReport validate(Reader reader, String schema) throws IOException {
-        return validate(JSONUtils.loadReader(reader), schema);
+        return validate(Json.loadReader(reader), schema);
     }
 
     public boolean isValid(Reader reader, String schema) throws IOException {
-        return isValid(JSONUtils.loadReader(reader), schema);
+        return isValid(Json.loadReader(reader), schema);
     }
 
     public boolean isValid(JsonNode node, String schema) {
@@ -132,13 +132,13 @@ public class JSONValidator {
     }
 
     public String encode(ProcessingReport report, JsonNode instance) {
-        ObjectNode objectNode = JSONUtils.nodeFactory().objectNode();
+        ObjectNode objectNode = Json.nodeFactory().objectNode();
         objectNode.set(JSONConstants.INSTANCE, instance);
         ArrayNode errors = objectNode.putArray(JSONConstants.ERRORS);
         for (ProcessingMessage m : report) {
             errors.add(m.asJson());
         }
-        return JSONUtils.print(objectNode);
+        return Json.print(objectNode);
     }
 
     public void validateAndThrow(JsonNode instance, String schema) throws DecodingException {

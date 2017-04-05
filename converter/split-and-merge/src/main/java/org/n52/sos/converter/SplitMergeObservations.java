@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,16 +42,9 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -71,19 +64,26 @@ import org.n52.shetland.ogc.om.values.SweDataArrayValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.shetland.util.DateTimeHelper;
-import org.n52.sos.coding.encode.ObservationEncoder;
-import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
-import org.n52.sos.response.GetObservationResponse;
-import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
+import org.n52.shetland.util.OMHelper;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.n52.sos.util.OMHelper;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.ObservationEncoder;
+import org.n52.svalbard.encode.OperationResponseEncoderKey;
+import org.n52.svalbard.encode.XmlEncoderKey;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -372,7 +372,7 @@ public class SplitMergeObservations implements RequestResponseModifier {
     }
 
     private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest sosRequest) {
-        return sosRequest.isSetExtensions() && sosRequest.getExtensions()
+        return sosRequest.getExtensions()
                 .isBooleanExtensionSet(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
     }
 

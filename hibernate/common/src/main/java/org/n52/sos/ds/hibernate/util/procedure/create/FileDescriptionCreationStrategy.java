@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,23 +32,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -62,10 +56,10 @@ public class FileDescriptionCreationStrategy extends XmlStringDescriptionCreatio
             .getLogger(FileDescriptionCreationStrategy.class);
 
     @Override
-    public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
+    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
         try {
-            SosProcedureDescription desc = new SosProcedureDescription<AbstractFeature>(readXml(read(p.getDescriptionFile())));
+            SosProcedureDescription<?> desc = new SosProcedureDescription<>(readXml(read(p.getDescriptionFile())));
             desc.setIdentifier(p.getIdentifier());
             desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
             return desc;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,17 +33,18 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
+import org.n52.iceland.request.handler.OperationHandler;
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.aqd.ReportObligations;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.MissingServiceParameterException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.iceland.request.handler.OperationHandler;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
-import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.AqdHelper;
-import org.n52.sos.aqd.ReportObligationType;
+import org.n52.shetland.util.AqdHelper;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
 
 public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
@@ -81,8 +82,8 @@ public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q e
 
     protected void checkExtensions(OwsServiceRequest request, CompositeOwsException exceptions)
             throws OwsExceptionReport {
-        if (request.isSetExtensions() && aqdHelper.hasFlowExtension(request.getExtensions())) {
-            aqdHelper.getFlow(request.getExtensions());
+        if (ReportObligations.hasFlow(request.getExtensions())) {
+            ReportObligations.getFlow(request.getExtensions());
         }
     }
 

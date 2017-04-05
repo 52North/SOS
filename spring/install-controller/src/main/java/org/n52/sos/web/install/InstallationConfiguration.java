@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,8 +31,8 @@ package org.n52.sos.web.install;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingValue;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingValue;
 import org.n52.iceland.ds.Datasource;
 
 /**
@@ -44,10 +44,9 @@ import org.n52.iceland.ds.Datasource;
  */
 public class InstallationConfiguration {
 
-    private Map<SettingDefinition<?, ?>, SettingValue<?>> settings =
-            new HashMap<SettingDefinition<?, ?>, SettingValue<?>>();
+    private Map<SettingDefinition<?>, SettingValue<?>> settings = new HashMap<>();
 
-    private Map<String, Object> databaseSettings = new HashMap<String, Object>();
+    private Map<String, Object> databaseSettings = new HashMap<>();
 
     private String username;
 
@@ -64,11 +63,11 @@ public class InstallationConfiguration {
     public InstallationConfiguration() {
     }
 
-    public Map<SettingDefinition<?, ?>, SettingValue<?>> getSettings() {
+    public Map<SettingDefinition<?>, SettingValue<?>> getSettings() {
         return settings;
     }
 
-    public InstallationConfiguration setSettings(Map<SettingDefinition<?, ?>, SettingValue<?>> settings) {
+    public InstallationConfiguration setSettings(Map<SettingDefinition<?>, SettingValue<?>> settings) {
         this.settings = settings;
         return this;
     }
@@ -125,11 +124,11 @@ public class InstallationConfiguration {
         return this;
     }
 
-    public SettingValue<?> getSetting(SettingDefinition<?, ?> k) {
+    public SettingValue<?> getSetting(SettingDefinition<?> k) {
         return settings.get(k);
     }
 
-    public InstallationConfiguration setSetting(SettingDefinition<?, ?> k, SettingValue<?> v) {
+    public InstallationConfiguration setSetting(SettingDefinition<?> k, SettingValue<?> v) {
         settings.put(k, v);
         return this;
     }

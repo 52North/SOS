@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.iceland.config.SettingType;
+import org.n52.faroe.SettingType;
 
 /**
  *
@@ -42,15 +42,23 @@ public class NumericSettingValue extends AbstractSettingValue<Double> {
 
     private Double value;
 
+    public NumericSettingValue(String identifier, Double value) {
+        super(identifier);
+        this.value = value;
+    }
+
+    public NumericSettingValue() {
+        this(null, null);
+    }
+
     @Override
     public Double getValue() {
         return this.value;
     }
 
     @Override
-    public NumericSettingValue setValue(Double value) {
+    public void setValue(Double value) {
         this.value = value;
-        return this;
     }
 
     @Override

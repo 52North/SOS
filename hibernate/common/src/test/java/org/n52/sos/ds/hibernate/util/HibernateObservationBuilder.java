@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -49,7 +49,6 @@ import org.n52.sos.ds.hibernate.entities.ObservationType;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
-import org.n52.sos.ds.hibernate.entities.TFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
@@ -81,14 +80,16 @@ public class HibernateObservationBuilder {
     public static final String EREPORTING_ASSESSMENT_TYPE = "assessmentType";
 
     private final Session session;
+    private final DaoFactory daoFactory;
 
-    public HibernateObservationBuilder(Session session) {
+    public HibernateObservationBuilder(Session session, DaoFactory daoFactory) {
         this.session = session;
+        this.daoFactory = daoFactory;
     }
 
     public Observation<?> createObservation(String id, Date phenomenonTimeStart, Date phenomenonTimeEnd, Date resultTime,
             Date validTimeStart, Date validTimeEnd) throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
 
         ObservationFactory observationFactory = observationDAO.getObservationFactory();
         BooleanObservation observation = observationFactory.truth();
@@ -257,7 +258,7 @@ public class HibernateObservationBuilder {
     }
 
     protected Series getSeries() throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
 
         SeriesObservationFactory observationFactory = (SeriesObservationFactory) observationDAO.getObservationFactory();
 

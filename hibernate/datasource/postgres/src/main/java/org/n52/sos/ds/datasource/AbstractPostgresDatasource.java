@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,11 +41,11 @@ import java.util.regex.Pattern;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.spatial.dialect.postgis.PostgisDialectSpatialIndex;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
-import org.n52.iceland.exception.ConfigurationError;
-import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.faroe.ConfigurationError;
+import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -149,9 +149,9 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
         try {
             StringBuilder builder = new StringBuilder();
             builder.append(SELECT);
-            builder.append(BLANK_CHAR);
+            builder.append(' ');
             builder.append(FUNC_POSTGIS_VERSION);
-            builder.append(SEMICOLON_CHAR);
+            builder.append(';');
             stmt = con.createStatement();
             stmt.execute(builder.toString());
             // TODO check PostGIS version
@@ -170,13 +170,13 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
             }
             StringBuilder builder = new StringBuilder();
             builder.append(SELECT);
-            builder.append(BLANK_CHAR);
+            builder.append(' ');
             builder.append(DEFAULT_COUNT);
-            builder.append(BLANK_CHAR);
+            builder.append(' ');
             builder.append(FROM);
-            builder.append(BLANK_CHAR);
+            builder.append(' ');
             builder.append(TAB_SPATIAL_REF_SYS);
-            builder.append(SEMICOLON_CHAR);
+            builder.append(';');
             stmt = con.createStatement();
             stmt.execute(builder.toString());
         } catch (SQLException ex) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,9 +35,10 @@ import org.apache.xmlbeans.XmlOptions;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
-import org.n52.janmayen.component.SingleTypeComponentFactory;
 import org.n52.janmayen.Producer;
+import org.n52.janmayen.component.SingleTypeComponentFactory;
 import org.n52.sos.exi.EXIObject;
+import org.n52.svalbard.encode.EncoderRepository;
 
 import com.siemens.ct.exi.EXIFactory;
 
@@ -57,6 +58,12 @@ public class EXIResponseWriterFactory
 
     private Producer<EXIFactory> exiFactoryProducer;
     private Producer<XmlOptions> xmlOptionsProducer;
+    private EncoderRepository encoderRepository;
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
 
     @Inject
     public void setExiFactoryProducer(Producer<EXIFactory> producer) {
@@ -75,7 +82,8 @@ public class EXIResponseWriterFactory
 
     @Override
     public EXIResponseWriter create() {
-        return new EXIResponseWriter(this.exiFactoryProducer,
+        return new EXIResponseWriter(this.encoderRepository,
+                                     this.exiFactoryProducer,
                                      this.xmlOptionsProducer);
     }
 }

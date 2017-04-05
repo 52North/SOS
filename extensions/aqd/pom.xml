@@ -11,7 +11,6 @@
     <name>52°North SOS - Extension for AQD</name>
     <description>52°North Sensor Observation Service Air Quality Data service module</description>
     <modules>
-    	<module>api</module>
         <module>operation</module>
         <module>coding</module>
         <module>ereporting</module>

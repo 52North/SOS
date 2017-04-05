@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,18 +37,17 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -63,7 +62,8 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
 
     private AbstractObservationDAO observationDAO = null;
 
-    private final OfferingDAO offeringDAO = new OfferingDAO();
+    private final DaoFactory daoFactory = new DaoFactory();
+    private final OfferingDAO offeringDAO = new OfferingDAO(daoFactory);
 
     @Before
     public void fillObservations() throws OwsExceptionReport {
@@ -71,10 +71,10 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
 
         Transaction transaction = null;
         try {
-            observationDAO = DaoFactory.getInstance().getObservationDAO();
+            observationDAO = daoFactory.getObservationDAO();
             transaction = session.beginTransaction();
             HibernateObservationBuilder b;
-            b = new HibernateObservationBuilder(session);
+            b = new HibernateObservationBuilder(session, daoFactory);
             DateTime begin = new DateTime();
             for (int i = 0; i < 50; ++i) {
                 b.createObservation(String.valueOf(i), begin.plusHours(i));

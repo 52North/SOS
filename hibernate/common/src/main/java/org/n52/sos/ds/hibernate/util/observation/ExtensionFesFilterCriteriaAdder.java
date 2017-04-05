@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import static org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator.And;
-import static org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator.Or;
 import static org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator.PropertyIsEqualTo;
 
 import java.util.Map;
@@ -39,7 +37,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
@@ -147,23 +144,6 @@ public class ExtensionFesFilterCriteriaAdder {
         }
         throw new NoApplicableCodeException().withMessage("The requested filter '{}' is not yet supported!",
                 filter.getClass().getSimpleName());
-    }
-
-    private Criterion getBinaryLogicFilterCriterion(BinaryLogicFilter filter) {
-        switch (((BinaryLogicFilter) filter).getOperator()) {
-        case And:
-            Conjunction conj = Restrictions.conjunction();
-
-            return conj;
-        case Or:
-            Disjunction disj = Restrictions.disjunction();
-
-            return disj;
-        default:
-            // TODO throw exception
-            return null;
-
-        }
     }
 
     private DetachedCriteria getDetachedCriteria(Class<?> clazz, Map<NameValue, Set<String>> map) {

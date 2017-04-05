@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -41,6 +40,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 
@@ -52,32 +52,24 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacy
  *
  */
 public class HibernateChunkStreamingValue extends HibernateStreamingValue {
-
-    private static final long serialVersionUID = -4898252375907510691L;
-
     private Iterator<ValuedObservation<?>> valuesResult;
-
     private int chunkSize;
-
     private int currentRow;
-
     private boolean noChunk = false;
 
     /**
      * constructor
      *
-     * @param request
-     *            {@link GetObservationRequest}
-     * @param procedure
-     *            Datasource procedure id
-     * @param observableProperty
-     *            Datasource observableProperty id
-     * @param featureOfInterest
-     *            Datasource featureOfInterest id
+     * @param connectionProvider the connection provider
+     * @param request            {@link GetObservationRequest}
+     * @param daoFactory         the DAO factory
+     * @param procedure          Datasource procedure id
+     * @param observableProperty Datasource observableProperty id
+     * @param featureOfInterest  Datasource featureOfInterest id
      */
-    public HibernateChunkStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long procedure, long observableProperty,
+    public HibernateChunkStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
-        super(connectionProvider, request, procedure, observableProperty, featureOfInterest);
+        super(connectionProvider, daoFactory, request, procedure, observableProperty, featureOfInterest);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 
@@ -128,7 +120,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                OmObservation observation = observationTemplate.cloneTemplate();
+                OmObservation observation = getObservationTemplate().cloneTemplate();
                 AbstractValuedLegacyObservation<?> resultObject = nextEntity();
                 resultObject.addValuesToObservation(observation, getResponseFormat());
 //                addValuesToObservation(observation, resultObject);

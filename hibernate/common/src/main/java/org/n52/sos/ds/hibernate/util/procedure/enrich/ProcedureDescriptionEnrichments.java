@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,13 +33,14 @@ import java.util.Map;
 
 import org.hibernate.Session;
 
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
-import org.n52.iceland.util.LocalizedProducer;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -47,11 +48,11 @@ import com.google.common.collect.Lists;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class ProcedureDescriptionEnrichments {
     private String identifier;
-    private SosProcedureDescription description;
+    private SosProcedureDescription<?> description;
     private String version;
     private String procedureDescriptionFormat;
     private Map<String, Procedure> procedureCache;
@@ -62,10 +63,12 @@ public class ProcedureDescriptionEnrichments {
     private final LocalizedProducer<OwsServiceProvider> serviceProvider;
     private String typeOfIdentifier;
     private String typeOfFormat;
+    private final DaoFactory daoFactory;
 
-    private ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider) {
+    private ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, DaoFactory daoFactory) {
         this.serviceProvider = serviceProvider;
         this.language = locale;
+        this.daoFactory = daoFactory;
     }
 
     public ProcedureDescriptionEnrichments setIdentifier(String identifier) {
@@ -74,7 +77,7 @@ public class ProcedureDescriptionEnrichments {
     }
 
     public ProcedureDescriptionEnrichments setDescription(
-            SosProcedureDescription description) {
+            SosProcedureDescription<?> description) {
         this.description = description;
         return this;
     }
@@ -172,7 +175,7 @@ public class ProcedureDescriptionEnrichments {
     }
 
     public RelatedProceduresEnrichment createRelatedProceduresEnrichment() {
-        return setValues(new RelatedProceduresEnrichment())
+        return setValues(new RelatedProceduresEnrichment(daoFactory))
                 .setConverter(converter).setProcedureCache(procedureCache)
                 .setProcedureDescriptionFormat(procedureDescriptionFormat)
                 .setValidTime(validTime);
@@ -203,7 +206,7 @@ public class ProcedureDescriptionEnrichments {
         return enrichment;
     }
 
-    public static ProcedureDescriptionEnrichments create(Locale language, LocalizedProducer<OwsServiceProvider> serviceProvider) {
-        return new ProcedureDescriptionEnrichments(language, serviceProvider);
+    public static ProcedureDescriptionEnrichments create(Locale language, LocalizedProducer<OwsServiceProvider> serviceProvider, DaoFactory daoFactory) {
+        return new ProcedureDescriptionEnrichments(language, serviceProvider, daoFactory);
     }
 }

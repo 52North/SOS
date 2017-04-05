@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,7 +35,6 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Scanner;
 
-import org.apache.xmlbeans.XmlException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +44,8 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.XmlHelper;
 
 import com.google.common.base.Strings;
 
@@ -61,7 +60,7 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
     }
 
     @Override
-    public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s) throws OwsExceptionReport {
+    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s) throws OwsExceptionReport {
         String xml = loadDescriptionFromHttp(p.getDescriptionFile());
         return new SosProcedureDescriptionUnknownType(p.getIdentifier(), p.getProcedureDescriptionFormat().getProcedureDescriptionFormat(), xml);
     }

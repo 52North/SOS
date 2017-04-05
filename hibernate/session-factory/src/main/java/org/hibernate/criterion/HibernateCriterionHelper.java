@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,8 +28,6 @@
  */
 package org.hibernate.criterion;
 
-import org.n52.iceland.util.Constants;
-
 /**
  * Helper class to create Hibernate LikeExpression
  *
@@ -57,7 +55,7 @@ public class HibernateCriterionHelper {
      */
     public static LikeExpression getLikeExpression(String propertyName, String value, MatchMode matchMode,
             Character escapeChar, boolean ignoreCase) {
-        return new LikeExpression(propertyName, value, MatchMode.ANYWHERE, Constants.DOLLAR_CHAR, ignoreCase);
+        return new LikeExpression(propertyName, value, MatchMode.ANYWHERE, '$', ignoreCase);
     }
 
 }

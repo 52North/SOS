@@ -1,0 +1,21 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <!-- Decoder implementations from bindings/soap -->
+    <bean class="org.n52.svalbard.decode.Soap11Decoder"/>
+    <bean class="org.n52.svalbard.decode.Soap11StringDecoder"/>
+    <bean class="org.n52.svalbard.decode.Soap12Decoder"/>
+    <bean class="org.n52.svalbard.decode.Soap12StringDecoder"/>
+    <bean class="org.n52.svalbard.decode.WsaDecoder"/>
+    <!-- Encoder implementations from bindings/soap -->
+    <bean class="org.n52.svalbard.encode.Soap11Encoder"/>
+    <bean class="org.n52.svalbard.encode.Soap12Encoder"/>
+    <bean class="org.n52.svalbard.encode.WsaEncoder"/>
+
+    <!-- ResponseWriterFactory implementations from bindings/soap -->
+    <bean class="org.n52.svalbard.encode.SoapResponseWriterFactory"/>
+    <bean class="org.n52.svalbard.encode.SoapChainResponseWriterFactory"/>
+
+</beans>

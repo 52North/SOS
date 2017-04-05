@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,9 +29,6 @@
 package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -42,7 +39,9 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
-import org.n52.sos.util.GmlHelper;
+import org.n52.svalbard.util.GmlHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract Hibernate series streaming value class for the series concept
@@ -52,9 +51,7 @@ import org.n52.sos.util.GmlHelper;
  *
  */
 public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStreamingValue {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
-    private static final long serialVersionUID = 201732114914686926L;
     protected final AbstractSeriesValueDAO seriesValueDAO;
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
     protected long series;
@@ -63,17 +60,18 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      * constructor
      *
      * @param connectionProvider the connection provider
+     * @param daoFactory the DAO factory
      * @param request
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long series) throws CodedException {
-        super(connectionProvider, request);
+    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long series) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request);
         this.series = series;
-        this.seriesValueDAO = (AbstractSeriesValueDAO) DaoFactory.getInstance().getValueDAO();
-        this.seriesValueTimeDAO = (AbstractSeriesValueTimeDAO) DaoFactory.getInstance().getValueTimeDAO();
+        this.seriesValueDAO = daoFactory.getValueDAO();
+        this.seriesValueTimeDAO = daoFactory.getValueTimeDAO();
     }
 
     @Override

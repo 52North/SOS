@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,10 +30,11 @@ package org.n52.sos.coding.encode;
 
 import java.util.Set;
 
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.janmayen.Producer;
 import org.n52.janmayen.Producers;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.ObservationEncoder;
 
 import com.google.common.collect.Sets;
 
@@ -53,12 +54,12 @@ public class SosEncoderRepository extends EncoderRepository {
     public void init() {
         super.init();
         this.observationEncoders.clear();
-        for (Producer<Encoder<?, ?>> producer : getComponentProviders()) {
+        getComponentProviders().forEach(producer -> {
             Encoder<?, ?> encoder = producer.get();
             if (encoder instanceof ObservationEncoder) {
                 this.observationEncoders.add(asObservationEncoderProducer(producer));
             }
-        }
+        });
     }
 
     public Set<ObservationEncoder<?, ?>> getObservationEncoders() {

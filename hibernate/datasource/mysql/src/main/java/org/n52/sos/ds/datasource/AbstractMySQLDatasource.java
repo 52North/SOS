@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,8 +42,9 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBTimestampDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

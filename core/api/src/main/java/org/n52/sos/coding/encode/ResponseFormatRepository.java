@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,35 +28,36 @@
  */
 package org.n52.sos.coding.encode;
 
-
-import org.n52.sos.coding.encode.ObservationEncoder;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
-import javax.inject.Inject;
-
-import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.activation.ActivationListener;
 import org.n52.iceland.util.activation.ActivationListeners;
 import org.n52.iceland.util.activation.ActivationManager;
+import org.n52.janmayen.function.Functions;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.ObservationEncoder;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderRepository;
-import org.n52.iceland.coding.encode.ResponseFormatKey;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class ResponseFormatRepository implements ActivationManager<ResponseFormatKey>, Constructable {
+public class ResponseFormatRepository implements ActivationManager<ResponseFormatKey> {
     @Deprecated
     private static ResponseFormatRepository instance;
     private final Map<String, Map<String, Set<String>>> responseFormats = Maps.newHashMap();
@@ -65,119 +66,80 @@ public class ResponseFormatRepository implements ActivationManager<ResponseForma
     private ServiceOperatorRepository serviceOperatorRepository;
     private EncoderRepository encoderRepository;
 
-    @Inject
-    public void setEncoderRepository(EncoderRepository encoderRepository) {
-        this.encoderRepository = encoderRepository;
-    }
-
-    @Inject
-    public void setServiceOperatorRepository(ServiceOperatorRepository serviceOperatorRepository) {
-        this.serviceOperatorRepository = serviceOperatorRepository;
-    }
-
-    @Override
-    public void init() {
+    /**
+     * This class does not implement {@link Constructable} due to some circular dependencies that can lead to an
+     * incorrect initialization order; instead {@link ResponseFormatRepositoryInitializer} does this for us.
+     *
+     * @param serviceOperatorRepository the service operator respository
+     * @param encoderRepository         the encoder repository
+     */
+    void init(ServiceOperatorRepository serviceOperatorRepository,
+              EncoderRepository encoderRepository) {
         ResponseFormatRepository.instance = this;
+        this.encoderRepository = encoderRepository;
+        this.serviceOperatorRepository = serviceOperatorRepository;
         generateResponseFormatMaps();
     }
 
     private void generateResponseFormatMaps() {
         this.responseFormats.clear();
-        Set<OwsServiceKey> serviceOperatorKeyTypes
-                = getServiceOperatorKeys();
+        Set<OwsServiceKey> serviceOperatorKeyTypes = getServiceOperatorKeys();
+        this.encoderRepository.getEncoders().stream()
+                .filter(x -> x instanceof ObservationEncoder)
+                .map(x -> (ObservationEncoder<?, ?>) x)
+                .forEach((ObservationEncoder<?, ?> encoder) -> {
+                    serviceOperatorKeyTypes.forEach((key) -> {
+                        Optional.ofNullable(encoder.getSupportedResponseFormats(key))
+                                .orElseGet(Collections::emptySet).stream()
+                                .map((String rf) -> new ResponseFormatKey(key, rf))
+                                .forEach(ResponseFormatRepository.this::addResponseFormat);
+                    });
+        });
 
-        for (Encoder<?, ?> encoder : this.encoderRepository.getEncoders()) {
-            if (encoder instanceof ObservationEncoder) {
-                ObservationEncoder<?, ?> observationEncoder = (ObservationEncoder<?, ?>) encoder;
-                for (OwsServiceKey key : serviceOperatorKeyTypes) {
-                    Set<String> responseFormats = observationEncoder.getSupportedResponseFormats(key.getService(), key.getVersion());
-                    if (responseFormats != null) {
-                        for (String responseFormat : responseFormats) {
-                            addResponseFormat(new ResponseFormatKey(key, responseFormat));
-                        }
-                    }
-                }
-            }
-        }
     }
 
     protected void addResponseFormat(ResponseFormatKey key) {
-        Map<String, Set<String>> byService = this.responseFormats.get(key.getService());
-        if (byService == null) {
-            this.responseFormats.put(key.getService(), byService = Maps.newHashMap());
-        }
-        Set<String> byVersion = byService.get(key.getVersion());
-        if (byVersion == null) {
-            byService.put(key.getVersion(), byVersion = Sets.newHashSet());
-        }
-        byVersion.add(key.getResponseFormat());
+        this.responseFormats.computeIfAbsent(key.getService(), Functions.forSupplier(HashMap::new))
+                .computeIfAbsent(key.getVersion(), Functions.forSupplier(HashSet::new))
+                .add(key.getResponseFormat());
     }
 
     public Set<String> getSupportedResponseFormats(OwsServiceKey sokt) {
         return getSupportedResponseFormats(sokt.getService(), sokt.getVersion());
     }
 
-    public Set<String> getSupportedResponseFormats(String service,
-                                                   String version) {
-        Map<String, Set<String>> byService = responseFormats.get(service);
-        if (byService == null) {
-            return Collections.emptySet();
-        }
-        Set<String> responseFormats = byService.get(version);
-        if (responseFormats == null) {
-            return Collections.emptySet();
-        }
-
+    public Set<String> getSupportedResponseFormats(String service, String version) {
         OwsServiceKey sokt = new OwsServiceKey(service, version);
-        Set<String> result = Sets.newHashSet();
-        for (String responseFormat : responseFormats) {
-            ResponseFormatKey rfkt = new ResponseFormatKey(sokt, responseFormat);
-            if (isActive(rfkt)) {
-                result.add(responseFormat);
-            }
-        }
-        return result;
+        return this.responseFormats.getOrDefault(service, Collections.emptyMap())
+                .getOrDefault(version, Collections.emptySet()).stream()
+                .map(rf -> new ResponseFormatKey(sokt, rf))
+                .filter(this::isActive)
+                .map(ResponseFormatKey::getResponseFormat)
+                .collect(toSet());
     }
 
-    public Set<String> getAllSupportedResponseFormats(String service,
-                                                      String version) {
-        Map<String, Set<String>> byService = this.responseFormats.get(service);
-        if (byService == null) {
-            return Collections.emptySet();
-        }
-        Set<String> rfs = byService.get(version);
-        if (rfs == null) {
-            return Collections.emptySet();
-        }
-        return Collections.unmodifiableSet(rfs);
+    public Set<String> getAllSupportedResponseFormats(String service, String version) {
+        return Collections.unmodifiableSet(this.responseFormats.getOrDefault(service, Collections.emptyMap())
+                .getOrDefault(version, Collections.emptySet()));
     }
 
     public Map<OwsServiceKey, Set<String>> getAllSupportedResponseFormats() {
-        Map<OwsServiceKey, Set<String>> map = Maps.newHashMap();
-        for (OwsServiceKey sokt : getServiceOperatorKeys()) {
-            map.put(sokt, getAllSupportedResponseFormats(sokt));
-        }
-        return map;
+        return getServiceOperatorKeys().stream().collect(toMap(Function.identity(), this::getAllSupportedResponseFormats));
     }
 
     private Set<OwsServiceKey> getServiceOperatorKeys() {
-        return this.serviceOperatorRepository
-                .getServiceOperatorKeys();
+        return this.serviceOperatorRepository.getServiceOperatorKeys();
     }
 
     public Set<String> getAllSupportedResponseFormats(OwsServiceKey sokt) {
-        return getAllSupportedResponseFormats(sokt.getService(),
-                                              sokt.getVersion());
+        return getAllSupportedResponseFormats(sokt.getService(), sokt.getVersion());
     }
 
-     public Map<OwsServiceKey, Set<String>> getSupportedResponseFormats() {
-        Map<OwsServiceKey, Set<String>> map = Maps.newHashMap();
-        for (OwsServiceKey sokt : getServiceOperatorKeys()) {
-            map.put(sokt, getSupportedResponseFormats(sokt));
-        }
-        return map;
+    public Map<OwsServiceKey, Set<String>> getSupportedResponseFormats() {
+        return getServiceOperatorKeys().stream().collect(toMap(Function.identity(), this::getSupportedResponseFormats));
     }
 
+    @Override
     public void setActive(ResponseFormatKey rfkt, boolean active) {
         this.activation.setActive(rfkt, active);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,22 +36,27 @@ import java.util.Set;
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.svalbard.encode.EncoderRepository;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
 
     public static final ResponseWriterKey KEY = new ResponseWriterKey(JsonNode.class);
+
+    public JSONResponseWriter(EncoderRepository encoderRepository) {
+        super(encoderRepository);
+    }
 
     @Override
     public Set<ResponseWriterKey> getKeys() {
@@ -60,7 +65,7 @@ public class JSONResponseWriter extends AbstractResponseWriter<JsonNode> {
 
     @Override
     public void write(JsonNode t, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        JSONUtils.print(out, t);
+        Json.print(out, t);
     }
 
     @Override

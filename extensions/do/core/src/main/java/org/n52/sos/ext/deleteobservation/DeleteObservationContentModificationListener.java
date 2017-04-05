@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,23 +38,23 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCacheUpdate;
-import org.n52.iceland.event.ServiceEvent;
-import org.n52.iceland.event.ServiceEventListener;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.janmayen.event.Event;
+import org.n52.janmayen.event.EventListener;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 1.0.0
  */
 public class DeleteObservationContentModificationListener implements
-        ServiceEventListener {
+        EventListener {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(DeleteObservationContentModificationListener.class);
 
-    private static final Set<Class<? extends ServiceEvent>> TYPES = Collections
-            .<Class<? extends ServiceEvent>>singleton(DeleteObservationEvent.class);
+    private static final Set<Class<? extends Event>> TYPES = Collections
+            .<Class<? extends Event>>singleton(DeleteObservationEvent.class);
 
     private ContentCacheController contentCacheController;
     private DeleteObservationCacheFeederDAO cacheFeederDAO;
@@ -77,12 +77,12 @@ public class DeleteObservationContentModificationListener implements
     }
 
     @Override
-    public Set<Class<? extends ServiceEvent>> getTypes() {
+    public Set<Class<? extends Event>> getTypes() {
         return Collections.unmodifiableSet(TYPES);
     }
 
     @Override
-    public void handle(ServiceEvent event) {
+    public void handle(Event event) {
         if (event instanceof DeleteObservationEvent) {
             DeleteObservationEvent e = (DeleteObservationEvent) event;
             ContentCacheUpdate update = createUpdate(e.getDeletedObservation());

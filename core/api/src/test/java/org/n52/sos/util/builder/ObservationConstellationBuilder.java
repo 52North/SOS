@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,13 +42,9 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
  */
 public class ObservationConstellationBuilder {
 
-    public static ObservationConstellationBuilder anObservationConstellation() {
-        return new ObservationConstellationBuilder();
-    }
-
     private AbstractFeature featureOfInterest;
 
-    private SosProcedureDescription procedure;
+    private SosProcedureDescription<?> procedure;
 
     private String observationType;
 
@@ -61,7 +57,7 @@ public class ObservationConstellationBuilder {
         return this;
     }
 
-    public ObservationConstellationBuilder setProcedure(SosProcedureDescription procedure) {
+    public ObservationConstellationBuilder setProcedure(SosProcedureDescription<?> procedure) {
         this.procedure = procedure;
         return this;
     }
@@ -79,7 +75,7 @@ public class ObservationConstellationBuilder {
     public ObservationConstellationBuilder addOffering(String offeringIdentifier) {
         if (offeringIdentifier != null && !offeringIdentifier.isEmpty()) {
             if (offerings == null) {
-                offerings = new ArrayList<>();
+                offerings = new ArrayList<>(1);
             }
             offerings.add(offeringIdentifier);
         }
@@ -96,6 +92,9 @@ public class ObservationConstellationBuilder {
             sosObservationConstellation.setOfferings(offerings);
         }
         return sosObservationConstellation;
+    }
+    public static ObservationConstellationBuilder anObservationConstellation() {
+        return new ObservationConstellationBuilder();
     }
 
 }

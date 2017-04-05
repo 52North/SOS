@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,16 +43,19 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
-import org.n52.sos.service.Configurator;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
@@ -62,95 +65,101 @@ public class SensorsGetRequestHandler extends SensorsRequestHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorsGetRequestHandler.class);
 
-    @Override
-    public RestResponse handleRequest(final RestRequest sensorsHttpGetRequest) throws OwsExceptionReport, XmlException, IOException
-    {
-        if (sensorsHttpGetRequest != null) {
-            if (sensorsHttpGetRequest instanceof GetSensorByIdRequest)
-            {
-                // Case A: with ID
-                return handleGetSensorByIdRequest((GetSensorByIdRequest)sensorsHttpGetRequest);
-            }
-            else if (sensorsHttpGetRequest instanceof GetSensorsRequest)
-            {
-                // Case C: global resource
-                return handleGetSensorsRequest((GetSensorsRequest)sensorsHttpGetRequest);
-            }
-        }
-        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(sensorsHttpGetRequest,this.getClass().getName());
+    public SensorsGetRequestHandler(ContentCacheController contentCacheController, Constants bindingConstants,
+                                    EncoderRepository encoderRepository,
+                                    ServiceOperatorRepository serviceOperatorRepository) {
+        super(contentCacheController, bindingConstants, encoderRepository, serviceOperatorRepository);
     }
 
-    private SensorsGetResponse handleGetSensorsRequest(final GetSensorsRequest getSensorsRequest) throws OwsExceptionReport, XmlException, IOException
-    {
-        final Set<String> sensorIds = Configurator.getInstance().getCache().getProcedures();
+
+    @Override
+    public RestResponse handleRequest(final RestRequest sensorsHttpGetRequest)
+            throws OwsExceptionReport, XmlException, IOException {
+        if (sensorsHttpGetRequest != null) {
+            if (sensorsHttpGetRequest instanceof GetSensorByIdRequest) {
+                // Case A: with ID
+                return handleGetSensorByIdRequest((GetSensorByIdRequest) sensorsHttpGetRequest);
+            } else if (sensorsHttpGetRequest instanceof GetSensorsRequest) {
+                // Case C: global resource
+                return handleGetSensorsRequest((GetSensorsRequest) sensorsHttpGetRequest);
+            }
+        }
+        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(sensorsHttpGetRequest, this.getClass().getName());
+    }
+
+    private SensorsGetResponse handleGetSensorsRequest(final GetSensorsRequest getSensorsRequest)
+            throws OwsExceptionReport, XmlException, IOException {
+        Set<String> sensorIds = getCache().getProcedures();
         String[] sensorIDs = sensorIds.toArray(new String[sensorIds.size()]);
         Arrays.sort(sensorIDs);
         return new SensorsGetResponse(sensorIDs);
     }
 
-    private RestResponse handleGetSensorByIdRequest(final GetSensorByIdRequest req) throws OwsExceptionReport, XmlException, IOException
-    {
+    private RestResponse handleGetSensorByIdRequest(final GetSensorByIdRequest req)
+            throws OwsExceptionReport, XmlException, IOException {
         SystemType xb_system;
         String procedureId;
         final XmlObject xb_describeSensorResponse;
 
         // 0 submit DescribeSensor (if response is an OWSException report -> cancel whole process and throw it)
         procedureId = req.getDescribeSensorRequest().getProcedure();
-        try
-        {
+        try {
             xb_describeSensorResponse = executeSosRequest(req.getDescribeSensorRequest());
-        }
-        catch (final OwsExceptionReport | EncodingException ee) {
+        } catch (OwsExceptionReport | EncodingException ee) {
             if (ee.getCause() != null && ee.getCause() instanceof CodedException) {
-                CodedException owsE = (CodedException)ee.getCause();
+                CodedException owsE = (CodedException) ee.getCause();
                 if (owsE.getCode().equals(OwsExceptionCode.InvalidParameterValue) &&
-                        owsE.getLocator().equals(SosConstants.DescribeSensorParams.procedure.toString()))
-                {
-                    return new ResourceNotFoundResponse(bindingConstants.getResourceSensors(), procedureId);
+                    owsE.getLocator().equals(SosConstants.DescribeSensorParams.procedure.toString())) {
+                    return new ResourceNotFoundResponse((Constants.REST_RESOURCE_SENSORS), procedureId);
                 }
             }
             throw new NoApplicableCodeException().causedBy(ee);
         }
 
-
-
         if (xb_describeSensorResponse instanceof DescribeSensorResponseDocument) {
 
-            final DescribeSensorResponseDocument xb_describeSensorResponseDoc = (DescribeSensorResponseDocument) xb_describeSensorResponse;
-            final Description xb_descriptionDoc = xb_describeSensorResponseDoc.getDescribeSensorResponse().getDescriptionArray()[0];
-            final SensorDescriptionType xb_description = xb_descriptionDoc.getSensorDescription();
+            DescribeSensorResponseDocument xb_describeSensorResponseDoc
+                    = (DescribeSensorResponseDocument) xb_describeSensorResponse;
+            Description xb_descriptionDoc = xb_describeSensorResponseDoc.getDescribeSensorResponse()
+                    .getDescriptionArray()[0];
+            SensorDescriptionType xb_description = xb_descriptionDoc.getSensorDescription();
             xb_system = getSmlSystemFromSensorDescription(xb_description);
 
             // 1 return result
-            return new GetSensorByIdResponse(xb_system,procedureId);
+            return new GetSensorByIdResponse(xb_system, procedureId);
 
         } else {
-            final String exceptionText = String.format("Processing of SOS core operation 'DescribeSensor' response failed. Type of could not be handled: '%s'",
-                    xb_describeSensorResponse.getClass().getName());
+            final String exceptionText = String
+                    .format("Processing of SOS core operation 'DescribeSensor' response failed. Type of could not be handled: '%s'",
+                            xb_describeSensorResponse.getClass().getName());
             LOGGER.debug(exceptionText);
             throw new NoApplicableCodeException().withMessage(exceptionText);
         }
     }
 
-    private SystemType getSmlSystemFromSensorDescription(final SensorDescriptionType sensorDescription) throws OwsExceptionReport
-    {
+    private SystemType getSmlSystemFromSensorDescription(SensorDescriptionType sensorDescription)
+            throws OwsExceptionReport {
         try {
-            final SensorMLDocument xb_sensorML = SensorMLDocument.Factory.parse(sensorDescription.getData().newInputStream());
+            SensorMLDocument xb_sensorML = SensorMLDocument.Factory.parse(sensorDescription.getData()
+                    .newInputStream());
 
-            final SystemType xb_system = (SystemType) xb_sensorML.getSensorML().getMemberArray()[0].getProcess().substitute(SensorMLConstants.SYSTEM_QNAME,SystemType.type);
+            SystemType xb_system = (SystemType) xb_sensorML.getSensorML().getMemberArray()[0].getProcess()
+                    .substitute(SensorMLConstants.SYSTEM_QNAME, SystemType.type);
             return xb_system;
         } catch (final IOException ioe) {
-            throw logAndCreateException(ioe,String.format("Processing of '%s' failed.",
-                    GetSensorByIdResponse.class.getName()));
+            throw logAndCreateException(ioe, String.format("Processing of '%s' failed.",
+                                                           GetSensorByIdResponse.class.getName()));
         } catch (final XmlException xe) {
-            throw logAndCreateException(xe,String.format("XML Processing of '%s' failed.",
-                    GetSensorByIdResponse.class.getName()));
+            throw logAndCreateException(xe, String.format("XML Processing of '%s' failed.",
+                                                          GetSensorByIdResponse.class.getName()));
         }
     }
 
-    private CodedException logAndCreateException(final Exception e, final String exceptionText) throws CodedException
-    {
+    private CodedException logAndCreateException(Exception e, String exceptionText) throws OwsExceptionReport {
         LOGGER.debug(exceptionText);
-        return new NoApplicableCodeException().causedBy(e).withMessage("%s Exception: %s",exceptionText,e.getMessage());
+        return new NoApplicableCodeException().causedBy(e)
+                .withMessage("%s Exception: %s", exceptionText, e.getMessage());
     }
+
+
 }

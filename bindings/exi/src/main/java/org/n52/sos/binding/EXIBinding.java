@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,7 +43,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,6 @@ import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.MediaTypeBindingKey;
 import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.binding.SimpleBinding;
-import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.decode.OwsDecodingException;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -66,11 +64,12 @@ import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
 import org.n52.sos.utils.EXIUtils;
+import org.n52.svalbard.OperationKey;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlHelper;
 
 import com.google.common.collect.ImmutableSet;
 import com.siemens.ct.exi.EXIFactory;

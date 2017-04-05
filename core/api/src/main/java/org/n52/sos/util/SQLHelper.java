@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,7 +40,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.n52.iceland.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  *
  */
-public final class SQLHelper implements Constants {
+public final class SQLHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(SQLHelper.class);
 
@@ -78,8 +77,8 @@ public final class SQLHelper implements Constants {
                     if (strLine.equals("$$")) {
                         stringLiteral = !stringLiteral;
                     }
-                    sql.append(BLANK_CHAR).append(strLine).append(BLANK_CHAR);
-                    if (!stringLiteral && strLine.substring(strLine.length() - 1).equals(SEMICOLON_CHAR)) {
+                    sql.append(' ').append(strLine).append(' ');
+                    if (!stringLiteral && strLine.substring(strLine.length() - 1).equals(';')) {
                         st.execute(sql.substring(0, sql.length() - 1));
                         sql = new StringBuilder();
                     }

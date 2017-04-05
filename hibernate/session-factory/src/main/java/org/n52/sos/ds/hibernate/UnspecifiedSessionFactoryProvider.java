@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,7 +45,7 @@ import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.DataConnectionProvider;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;

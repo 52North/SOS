@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,9 +29,9 @@
 package org.n52.sos.encode.json.inspire;
 
 import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
+import org.n52.shetland.aqd.ReportObligation;
 import org.n52.sos.encode.json.JSONEncoder;
-import org.n52.sos.inspire.aqd.ReportObligation;
 import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -51,7 +51,7 @@ public class ReportObligationJSONEncoder extends JSONEncoder<ReportObligation> {
     @Override
     public JsonNode encodeJSON(ReportObligation header)
             throws EncodingException {
-        ObjectNode j = JSONUtils.nodeFactory().objectNode();
+        ObjectNode j = Json.nodeFactory().objectNode();
         j.set(AQDJSONConstants.CHANGE, encodeObjectToJson(header.getChange()));
         j.set(AQDJSONConstants.INSPIRE_ID, encodeObjectToJson(header.getInspireID()));
         j.set(AQDJSONConstants.REPORTING_PERIOD, encodeObjectToJson(header.getReportingPeriod()));

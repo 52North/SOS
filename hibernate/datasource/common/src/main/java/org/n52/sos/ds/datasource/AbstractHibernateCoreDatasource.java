@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,9 +32,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.settings.IntegerSettingDefinition;
-import org.n52.iceland.config.settings.StringSettingDefinition;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.settings.IntegerSettingDefinition;
+import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.iceland.ds.Datasource;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.HibernateDatasourceConstants;
@@ -142,8 +142,8 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     private int maxPoolSizeDefault;
 
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Sets.<SettingDefinition<?, ?>> newHashSet(createUsernameDefinition(usernameDefault),
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
+        return Sets.<SettingDefinition<?>> newHashSet(createUsernameDefinition(usernameDefault),
                 createPasswordDefinition(passwordDefault),
                 createDatabaseDefinition(databaseDefault),
                 createHostDefinition(hostDefault),
@@ -154,9 +154,9 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
+    public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties current) {
         Map<String, Object> settings = parseDatasourceProperties(current);
-        return Sets.<SettingDefinition<?, ?>> newHashSet(createUsernameDefinition((String) settings.get(USERNAME_KEY)),
+        return Sets.<SettingDefinition<?>> newHashSet(createUsernameDefinition((String) settings.get(USERNAME_KEY)),
                 createPasswordDefinition((String) settings.get(PASSWORD_KEY)),
                 createDatabaseDefinition((String) settings.get(DATABASE_KEY)),
                 createHostDefinition((String) settings.get(HOST_KEY)),
@@ -172,11 +172,12 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Username settings definition
      */
     protected StringSettingDefinition createUsernameDefinition() {
-        return new StringSettingDefinition()
-                .setGroup(BASE_GROUP)
-                .setOrder(1)
-                .setKey(USERNAME_KEY)
-                .setTitle(USERNAME_TITLE);
+        StringSettingDefinition def = new StringSettingDefinition();
+        def.setGroup(BASE_GROUP);
+        def.setOrder(1);
+        def.setKey(USERNAME_KEY);
+        def.setTitle(USERNAME_TITLE);
+        return def;
     }
 
     /**
@@ -185,11 +186,12 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Password settings definition
      */
     protected StringSettingDefinition createPasswordDefinition() {
-        return new StringSettingDefinition()
-                .setGroup(BASE_GROUP)
-                .setOrder(2)
-                .setKey(PASSWORD_KEY)
-                .setTitle(PASSWORD_TITLE);
+        StringSettingDefinition def = new StringSettingDefinition();
+        def.setGroup(BASE_GROUP);
+        def.setOrder(2);
+        def.setKey(PASSWORD_KEY);
+        def.setTitle(PASSWORD_TITLE);
+        return def;
     }
 
     /**
@@ -198,13 +200,14 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return database name settings definition
      */
     protected StringSettingDefinition createDatabaseDefinition() {
-        return new StringSettingDefinition()
-                .setGroup(BASE_GROUP)
-                .setOrder(3)
-                .setKey(DATABASE_KEY)
-                .setTitle(DATABASE_TITLE)
-                .setDescription(DATABASE_DESCRIPTION)
-                .setDefaultValue(DATABASE_DEFAULT_VALUE);
+        StringSettingDefinition def = new StringSettingDefinition();
+        def.setGroup(BASE_GROUP);
+        def.setOrder(3);
+        def.setKey(DATABASE_KEY);
+        def.setTitle(DATABASE_TITLE);
+        def.setDescription(DATABASE_DESCRIPTION);
+        def.setDefaultValue(DATABASE_DEFAULT_VALUE);
+        return def;
     }
 
     /**
@@ -213,13 +216,14 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Host settings definition
      */
     protected StringSettingDefinition createHostDefinition() {
-        return new StringSettingDefinition()
-                .setGroup(BASE_GROUP)
-                .setOrder(4)
-                .setKey(HOST_KEY)
-                .setTitle(HOST_TITLE)
-                .setDescription(HOST_DESCRIPTION)
-                .setDefaultValue(HOST_DEFAULT_VALUE);
+        StringSettingDefinition def = new StringSettingDefinition();
+        def.setGroup(BASE_GROUP);
+        def.setOrder(4);
+        def.setKey(HOST_KEY);
+        def.setTitle(HOST_TITLE);
+        def.setDescription(HOST_DESCRIPTION);
+        def.setDefaultValue(HOST_DEFAULT_VALUE);
+        return def;
     }
 
     /**
@@ -228,11 +232,12 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Port settings definition
      */
     protected IntegerSettingDefinition createPortDefinition() {
-        return new IntegerSettingDefinition()
-                .setGroup(BASE_GROUP)
-                .setOrder(5)
-                .setKey(PORT_KEY)
-                .setTitle(PORT_TITLE);
+        IntegerSettingDefinition def = new IntegerSettingDefinition();
+        def.setGroup(BASE_GROUP);
+        def.setOrder(5);
+        def.setKey(PORT_KEY);
+        def.setTitle(PORT_TITLE);
+        return def;
     }
 
     /**
@@ -241,13 +246,14 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Minimal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMinPoolSizeDefinition() {
-        return new IntegerSettingDefinition()
-                .setGroup(ADVANCED_GROUP)
-                .setOrder(6)
-                .setKey(MIN_POOL_SIZE_KEY)
-                .setTitle(MIN_POOL_SIZE_TITLE)
-                .setDescription(MIN_POOL_SIZE_DESCRIPTION)
-                .setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
+        IntegerSettingDefinition def = new IntegerSettingDefinition();
+        def.setGroup(ADVANCED_GROUP);
+        def.setOrder(6);
+        def.setKey(MIN_POOL_SIZE_KEY);
+        def.setTitle(MIN_POOL_SIZE_TITLE);
+        def.setDescription(MIN_POOL_SIZE_DESCRIPTION);
+        def.setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
+        return def;
     }
 
     /**
@@ -256,13 +262,14 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Maximal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
-        return new IntegerSettingDefinition()
-                .setGroup(ADVANCED_GROUP)
-                .setOrder(7)
-                .setKey(MAX_POOL_SIZE_KEY)
-                .setTitle(MAX_POOL_SIZE_TITLE)
-                .setDescription(MAX_POOL_SIZE_DESCRIPTION)
-                .setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
+        IntegerSettingDefinition def = new IntegerSettingDefinition();
+        def.setGroup(ADVANCED_GROUP);
+        def.setOrder(7);
+        def.setKey(MAX_POOL_SIZE_KEY);
+        def.setTitle(MAX_POOL_SIZE_TITLE);
+        def.setDescription(MAX_POOL_SIZE_DESCRIPTION);
+        def.setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
+        return def;
     }
 
     /**
@@ -271,45 +278,68 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Time zone settings definition
      */
     protected StringSettingDefinition createTimeZoneDefinition() {
-        return new StringSettingDefinition()
-                .setGroup(ADVANCED_GROUP).setOrder(8)
-                .setKey(TIMEZONE_KEY)
-                .setTitle(TIMEZONE_TITLE)
-                .setDescription(TIMEZONE_DESCRIPTION)
-                .setDefaultValue(TIMEZONE_DEFAULT_VALUE)
-                .setOptional(true);
+        StringSettingDefinition def = new StringSettingDefinition();
+        def.setGroup(ADVANCED_GROUP);
+        def.setOrder(8);
+        def.setKey(TIMEZONE_KEY);
+        def.setTitle(TIMEZONE_TITLE);
+        def.setDescription(TIMEZONE_DESCRIPTION);
+        def.setDefaultValue(TIMEZONE_DEFAULT_VALUE);
+        def.setOptional(true);
+        return def;
     }
 
     protected StringSettingDefinition createUsernameDefinition(String defaultValue) {
-        return createUsernameDefinition().setDescription(usernameDescription).setDefaultValue(defaultValue);
+        StringSettingDefinition def = createUsernameDefinition();
+        def.setDescription(usernameDescription);
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
     protected StringSettingDefinition createPasswordDefinition(String defaultValue) {
-        return createPasswordDefinition().setDescription(passwordDescription).setDefaultValue(defaultValue);
+        StringSettingDefinition def = createPasswordDefinition();
+        def.setDescription(passwordDescription);
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
     protected StringSettingDefinition createDatabaseDefinition(String defaultValue) {
-        return createDatabaseDefinition().setDescription(databaseDescription).setDefaultValue(defaultValue);
+        StringSettingDefinition def = createDatabaseDefinition();
+        def.setDescription(databaseDescription);
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
     protected StringSettingDefinition createHostDefinition(String defaultValue) {
-        return createHostDefinition().setDescription(hostDescription).setDefaultValue(defaultValue);
+        StringSettingDefinition def = createHostDefinition();
+        def.setDescription(hostDescription);
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
     protected IntegerSettingDefinition createPortDefinition(int defaultValue) {
-        return createPortDefinition().setDescription(portDescription).setDefaultValue(defaultValue);
+        IntegerSettingDefinition def = createPortDefinition();
+        def.setDescription(portDescription);
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
-    protected SettingDefinition<?, ?> createMinPoolSizeDefinition(Integer defaultValue) {
-        return createMinPoolSizeDefinition().setDefaultValue(defaultValue);
+    protected SettingDefinition<?> createMinPoolSizeDefinition(Integer defaultValue) {
+        IntegerSettingDefinition def = createMinPoolSizeDefinition();
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
-    protected SettingDefinition<?, ?> createMaxPoolSizeDefinition(Integer defaultValue) {
-        return createMaxPoolSizeDefinition().setDefaultValue(defaultValue);
+    protected SettingDefinition<?> createMaxPoolSizeDefinition(Integer defaultValue) {
+        IntegerSettingDefinition def = createMaxPoolSizeDefinition();
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
     protected StringSettingDefinition createTimeZoneDefinition(String defaultValue) {
-        return createTimeZoneDefinition().setDefaultValue(defaultValue);
+        StringSettingDefinition def = createTimeZoneDefinition();
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
     /**

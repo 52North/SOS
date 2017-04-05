@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,14 +31,14 @@ package org.n52.sos.ds.datasource;
 import java.util.Properties;
 import java.util.Set;
 
-import org.n52.iceland.config.SettingDefinition;
+import org.n52.faroe.SettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
 
 
 /**
  * ProstgreSQL datasource for core mapping
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -62,12 +62,12 @@ public class PostgresCoreDatasource extends AbstractPostgresDatasource {
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
+    public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties current) {
         return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
         return filter(super.getSettingDefinitions(), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
     }
 }

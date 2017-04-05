@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,12 +41,9 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.svalbard.decode.Decoder;
-import org.n52.svalbard.decode.DecoderKey;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.decode.JsonDecoderKey;
-import org.n52.svalbard.decode.NoDecoderForKeyException;
+import org.n52.svalbard.decode.AbstractDelegatingDecoder;
+import org.n52.janmayen.exception.CompositeException;
+import org.n52.janmayen.stream.Streams;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -55,10 +52,12 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.util.DateTimeParseException;
-import org.n52.janmayen.stream.Streams;
-import org.n52.janmayen.exception.CompositeException;
 import org.n52.sos.coding.json.JSONConstants;
-import org.n52.svalbard.AbstractDelegatingDecoder;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.JsonDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -66,7 +65,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

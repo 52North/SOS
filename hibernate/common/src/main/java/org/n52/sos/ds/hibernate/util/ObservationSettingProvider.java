@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 
@@ -52,6 +52,7 @@ public class ObservationSettingProvider implements Constructable {
     public void setIncludeChildObservableProperties(boolean include) {
         this.includeChildObservableProperties = include;
     }
+
     @Deprecated
     public static ObservationSettingProvider getInstance() {
         return instance;

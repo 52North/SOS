@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,13 +38,10 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
@@ -61,6 +58,7 @@ import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -68,9 +66,12 @@ import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 
 
 /**
@@ -87,13 +88,20 @@ import com.google.common.collect.Sets;
 public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements Constructable {
     private HibernateSessionHolder sessionHolder;
 
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
     private HibernateProcedureConverter procedureConverter;
     private ConverterRepository converterRepository;
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+    private DaoFactory daoFactory;
+    private HibernateProcedureDescriptionGeneratorFactoryRepository descriptionGeneratorFactoryRepository;
 
     public DescribeSensorDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     @Inject
@@ -108,7 +116,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
     }
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 
@@ -117,11 +125,18 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
+    @Inject
+    public void setDescriptionGeneratorFactoryRepository(
+            HibernateProcedureDescriptionGeneratorFactoryRepository descriptionGeneratorFactoryRepository) {
+        this.descriptionGeneratorFactoryRepository = descriptionGeneratorFactoryRepository;
+    }
+
     @Override
     public void init() {
         LocalizedProducer<OwsServiceProvider> serviceProvider
                 = this.serviceMetadataRepository.getServiceProviderFactory(SosConstants.SOS);
-        this.procedureConverter = new HibernateProcedureConverter(serviceProvider);
+        this.procedureConverter
+                = new HibernateProcedureConverter(serviceProvider, daoFactory, converterRepository, descriptionGeneratorFactoryRepository);
     }
 
     @Override
@@ -170,15 +185,15 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private SosProcedureDescription getProcedureDescription(DescribeSensorRequest request, Session session)
+    private SosProcedureDescription<?> getProcedureDescription(DescribeSensorRequest request, Session session)
             throws OwsExceptionReport {
-        final Procedure procedure = new ProcedureDAO().getProcedureForIdentifier(request.getProcedure(), session);
+        final Procedure procedure = new ProcedureDAO(daoFactory).getProcedureForIdentifier(request.getProcedure(), session);
         if (procedure == null) {
             throw new NoApplicableCodeException().causedBy(
                     new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
                             INTERNAL_SERVER_ERROR);
         }
-        Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+        Locale locale = getRequestedLocale(request);
         String pdf = request.getProcedureDescriptionFormat();
         String version = request.getVersion();
 
@@ -198,24 +213,24 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
         Set<String> possibleProcedureDescriptionFormats =
                 getPossibleProcedureDescriptionFormats(request.getProcedureDescriptionFormat());
         final TProcedure procedure =
-                new ProcedureDAO().getTProcedureForIdentifier(request.getProcedure(),
+                new ProcedureDAO(daoFactory).getTProcedureForIdentifier(request.getProcedure(),
                                                               possibleProcedureDescriptionFormats, request.getValidTime(), session);
         List<SosProcedureDescription<?>> list = Lists.newLinkedList();
         if (procedure != null) {
             List<ValidProcedureTime> validProcedureTimes =
-                    new ValidProcedureTimeDAO().getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats,
+                    new ValidProcedureTimeDAO(daoFactory).getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats,
                                                                                   request.getValidTime(), session);
             for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
-                Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+                Locale locale = getRequestedLocale(request);
                 String pdf = request.getProcedureDescriptionFormat();
                 String version = request.getVersion();
-                SosProcedureDescription sosProcedureDescription
+                SosProcedureDescription<?> sosProcedureDescription
                         = procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure, pdf,
                                 validProcedureTime, version, locale, session);
                 list.add(convertProcedureDescription(sosProcedureDescription, request));
             }
         } else {
-            SosProcedureDescription procedureDescription = getProcedureDescription(request, session);
+            SosProcedureDescription<?> procedureDescription = getProcedureDescription(request, session);
             if (procedureDescription != null) {
                 list.add(procedureDescription);
             } else {
@@ -273,12 +288,12 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
         return possibleFormats;
     }
 
-    private SosProcedureDescription convertProcedureDescription(
-            SosProcedureDescription procedureDescription,
+    private SosProcedureDescription<?> convertProcedureDescription(
+            SosProcedureDescription<?> procedureDescription,
                                                                 DescribeSensorRequest request)
             throws CodedException {
         if (!checkForUrlVsMimeType(procedureDescription.getDescriptionFormat()).contains(request.getProcedureDescriptionFormat())) {
-            Converter<SosProcedureDescription, SosProcedureDescription> converter =
+            Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> converter =
                     converterRepository.getConverter(procedureDescription.getDescriptionFormat(), request.getProcedureDescriptionFormat());
             if (converter != null) {
                 try {

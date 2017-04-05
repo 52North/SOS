@@ -6,7 +6,7 @@
 	<bean id="elasticsearchSettings" class="org.n52.iceland.statistics.api.ElasticsearchSettings" />
 	<bean id="adminDataHandler" class="org.n52.iceland.statistics.impl.ElasticsearchAdminHandler" depends-on="elasticsearchSettings" />
 	<bean id="elasticsearchDataHandler" class="org.n52.iceland.statistics.impl.ElasticsearchDataHandler" depends-on="adminDataHandler"></bean>
-	<bean id="statisticsLocationUtil" class="org.n52.iceland.statistics.impl.StatisticsLocationUtil"></bean>
+	<bean id="statisticsLocationUtil" class="org.n52.iceland.statistics.impl.geolocation.StatisticsLocationUtil"></bean>
 	<bean id="statisticsResolverFactory" class="org.n52.iceland.statistics.impl.StatisticsResolverFactory"></bean>
 
 	<import resource="classpath:statistics/countingoutputstream-event.xml" />

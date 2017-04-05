@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,16 +39,16 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 
 public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
 
-
     public EReportingSeriesOmObservationCreator(EReportingSeries series,
                                                 AbstractObservationRequest request,
                                                 LocalizedProducer<OwsServiceProvider> serviceProvider,
-                                                Locale language, Session session) {
-        super(series, request, serviceProvider, language, session);
+                                                Locale language, String pdf, DaoFactory daoFactory, Session session) {
+        super(series, request, serviceProvider, language, pdf, daoFactory, session);
     }
 
     @Override

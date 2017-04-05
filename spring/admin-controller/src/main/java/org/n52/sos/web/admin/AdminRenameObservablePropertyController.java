@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,6 +31,7 @@ package org.n52.sos.web.admin;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -57,7 +58,7 @@ import org.n52.sos.web.common.ControllerConstants;
 import com.google.common.collect.Lists;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.ADMIN_RENAME_OBSERVABLE_PROPERTIES)
@@ -65,8 +66,9 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
     public static final String OLD_IDENTIFIER_REQUEST_PARAM = "old";
     public static final String NEW_IDENTIFIER_REQUEST_PARAM = "new";
     private static final Logger log = LoggerFactory.getLogger(AdminRenameObservablePropertyController.class);
+
     @Inject
-    private RenameDAO dao;
+    private Optional<RenameDAO> dao;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
@@ -93,7 +95,10 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
         if (cache.hasObservableProperty(newName)) {
             throw new AlreadyUsedIdentifierException(newName);
         }
-        this.dao.renameObservableProperty(oldName, newName);
+        if (!this.dao.isPresent()) {
+            throw new NoImplementationFoundException(RenameDAO.class);
+        }
+        this.dao.get().renameObservableProperty(oldName, newName);
         updateCache();
 }
 

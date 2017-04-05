@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,18 +31,28 @@ package org.n52.sos.ds.hibernate.dao.i18n;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
+
 import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NOfferingMetadata;
 
 public class OfferingI18NDAO extends AbstractHibernateI18NDAO<Offering, I18NOfferingMetadata, HibernateI18NOfferingMetadata> {
+    private final DaoFactory daoFactory;
+
+    @Inject
+    public OfferingI18NDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Override
     protected Offering getEntity(String id, Session session) {
-        return new OfferingDAO().getOfferingForIdentifier(id, session);
+        return new OfferingDAO(daoFactory).getOfferingForIdentifier(id, session);
     }
 
     @Override

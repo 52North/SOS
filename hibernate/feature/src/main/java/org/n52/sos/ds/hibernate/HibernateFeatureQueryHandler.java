@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -53,24 +53,25 @@ import org.hibernate.spatial.criterion.SpatialProjections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
-import org.n52.shetland.i18n.LocalizedString;
+import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.JTSHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.FeatureQueryHandler;
@@ -86,11 +87,8 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
-import org.n52.svalbard.decode.exception.DecodingException;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -99,6 +97,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.ParseException;
 
 
 @Configurable
@@ -108,6 +107,12 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     private Locale defaultLocale;
     private boolean showAllLanguages;
     private I18NDAORepository i18NDAORepository;
+    private DaoFactory daoFactory;
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -116,7 +121,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
     public void setDefaultLocale(String defaultLocale) {
-        this.defaultLocale = LocaleHelper.fromString(defaultLocale);
+        this.defaultLocale = new Locale(defaultLocale);
     }
 
     @Setting(I18NSettings.I18N_SHOW_ALL_LANGUAGE_VALUES)
@@ -227,7 +232,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 } else {
                     final Envelope envelope = new Envelope();
                     final List<FeatureOfInterest> featuresOfInterest =
-                            new FeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatureIdentifiers(),
+                            daoFactory.getFeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatureIdentifiers(),
                                     session);
                     for (final FeatureOfInterest feature : featuresOfInterest) {
                         try {
@@ -376,7 +381,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         if (feature == null) {
             return null;
         }
-        FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
+        FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
         final CodeWithAuthority identifier = featureOfInterestDAO.getIdentifier(feature);
         if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(feature.getIdentifier(), queryObject.getVersion())) {
             identifier.setValue(null);
@@ -421,12 +426,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 // specific locale was requested
                 Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(requestedLocale, this.defaultLocale);
                 if (name.isPresent()) {
-                    try {
-                        samplingFeature.addName(name.get().asCodeType());
-                    } catch (URISyntaxException e) {
-                        throw new NoApplicableCodeException().causedBy(e)
-                                .withMessage("Error while creating URI from '{}'", name.get().getLang().toString());
-                    }
+                    samplingFeature.addName(new CodeType(name.get()));
                 }
                 Optional<LocalizedString> description =
                         i18n.getDescription().getLocalizationOrDefault(requestedLocale, this.defaultLocale);
@@ -437,22 +437,12 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             } else {
                 if (this.showAllLanguages) {
                     for (LocalizedString name : i18n.getName()) {
-                        try {
-                            samplingFeature.addName(name.asCodeType());
-                        } catch (URISyntaxException e) {
-                            throw new NoApplicableCodeException().causedBy(e)
-                                    .withMessage("Error while creating URI from '{}'", name.getLang().toString());
-                        }
+                        samplingFeature.addName(new CodeType(name));
                     }
                 } else {
                     Optional<LocalizedString> name = i18n.getName().getLocalization(this.defaultLocale);
                     if (name.isPresent()) {
-                        try {
-                            samplingFeature.addName(name.get().asCodeType());
-                        } catch (URISyntaxException e) {
-                            throw new NoApplicableCodeException().causedBy(e).withMessage(
-                                    "Error while creating URI from '{}'", name.get().getLang().toString());
-                        }
+                        samplingFeature.addName(new CodeType(name.get()));
                     }
                 }
                 // choose always the description in the default locale
@@ -469,7 +459,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         if (!getGeometryHandler().isSpatialDatasource()) {
             throw new NotYetSupportedException("Insertion of full encoded features for non spatial datasources");
         }
-        FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
+        FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
         final String newId = samplingFeature.getIdentifierCodeWithAuthority().getValue();
         FeatureOfInterest feature = getFeatureOfInterest(newId, samplingFeature.getGeometry(), session);
         if (feature == null) {
@@ -526,28 +516,28 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             return getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeom());
         } else if (feature.isSetLongLat()) {
             try {
-            int epsg = getStorageEPSG();
-            if (feature.isSetSrid()) {
-                epsg = feature.getSrid();
-            }
-            final String wktString =
-                    getGeometryHandler().getWktString(feature.getLongitude(), feature.getLatitude(), epsg);
-            Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
-            if (feature.isSetAltitude()) {
-                geom.getCoordinate().z = JavaHelper.asDouble(feature.getAltitude());
-                if (geom.getSRID() == getStorage3DEPSG()) {
-                    geom.setSRID(getStorage3DEPSG());
+                int epsg = getStorageEPSG();
+                if (feature.isSetSrid()) {
+                    epsg = feature.getSrid();
                 }
-            }
-            return geom;
-            } catch (DecodingException de) {
+                final String wktString =
+                        getGeometryHandler().getWktString(feature.getLongitude(), feature.getLatitude(), epsg);
+                Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
+                if (feature.isSetAltitude()) {
+                    geom.getCoordinate().z = JavaHelper.asDouble(feature.getAltitude());
+                    if (geom.getSRID() == getStorage3DEPSG()) {
+                        geom.setSRID(getStorage3DEPSG());
+                    }
+                }
+                return geom;
+            } catch (ParseException de) {
                 throw new NoApplicableCodeException().causedBy(de);
             }
             // return
             // getGeometryHandler().switchCoordinateAxisOrderIfNeeded(geom);
         } else {
             if (session != null) {
-                List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
+                List<Geometry> geometries = daoFactory.getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
                 int srid = getGeometryHandler().getStorageEPSG();
                 if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
                     List<Coordinate> coordinates = Lists.newLinkedList();
@@ -597,7 +587,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             }
         }
         final List<FeatureOfInterest> featuresOfInterest =
-                new FeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatureIdentifiers(), session);
+                daoFactory.getFeatureOfInterestDAO().getFeatureOfInterestObject(queryObject.getFeatureIdentifiers(), session);
         for (final FeatureOfInterest feature : featuresOfInterest) {
             final SamplingFeature sosAbstractFeature =
                     (SamplingFeature) createSosAbstractFeature(feature, queryObject);

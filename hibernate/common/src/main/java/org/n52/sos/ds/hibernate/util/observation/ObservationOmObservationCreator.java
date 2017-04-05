@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -60,6 +60,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -80,15 +81,15 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private final AbstractObservationRequest request;
     private final Map<String, AbstractFeature> features = Maps.newHashMap();
     private final Map<String, AbstractPhenomenon> observedProperties = Maps.newHashMap();
-    private final Map<String, SosProcedureDescription> procedures = Maps.newHashMap();
+    private final Map<String, SosProcedureDescription<?>> procedures = Maps.newHashMap();
     private final Map<Integer, OmObservationConstellation> observationConstellations = Maps.newHashMap();
     private List<OmObservation> observationCollection;
 
 
     public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations,
             AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider,
-            Locale language, Session session) {
-        super(request, language, serviceProvider, session);
+            Locale language, String pdf, DaoFactory daoFactory, Session session) {
+        super(request, language, serviceProvider, pdf, daoFactory, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -105,7 +106,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return request.getResultModel();
     }
 
-    private SosProcedureDescription getProcedure(String procedureId) {
+    private SosProcedureDescription<?> getProcedure(String procedureId) {
         return procedures.get(procedureId);
     }
 
@@ -264,7 +265,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Procedure...");
         final String procedureId = hObservation.getProcedure().getIdentifier();
         if (!procedures.containsKey(procedureId)) {
-            final SosProcedureDescription procedure = createProcedure(procedureId);
+            final SosProcedureDescription<?> procedure = createProcedure(procedureId);
             procedures.put(procedureId, procedure);
         }
         LOGGER.trace("Creating Procedure done.");
@@ -275,7 +276,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Feature...");
         final String foiID = hObservation.getFeatureOfInterest().getIdentifier();
         if (!features.containsKey(foiID)) {
-            final AbstractFeature featureByID = createFeatureOfInterest(foiID);
+            final AbstractFeature featureByID = createFeatureOfInterest(hObservation.getFeatureOfInterest());
             features.put(foiID, featureByID);
         }
         LOGGER.trace("Creating Feature done.");
@@ -302,7 +303,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             if (!Strings.isNullOrEmpty(getResultModel())) {
                 obsConst.setObservationType(getResultModel());
             }
-            final ObservationConstellationDAO dao = new ObservationConstellationDAO();
+            final ObservationConstellationDAO dao = getDaoFactory().getObservationConstellationDAO();
             final ObservationConstellation hoc =
                     dao.getFirstObservationConstellationForOfferings(hObservation.getProcedure(),
                             hObservation.getObservableProperty(), hObservation.getOfferings(), getSession());

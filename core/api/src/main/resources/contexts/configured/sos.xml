@@ -4,7 +4,7 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
     <bean id="xmlResponseWriterFactory"
-          class="org.n52.sos.coding.encode.XmlResponseWriterFactory" />
+          class="org.n52.iceland.response.XmlResponseWriterFactory" />
 
     <bean id="abstractServiceResponseWriterFactory"
           class="org.n52.sos.coding.encode.AbstractServiceResponseWriterFactory"/>
@@ -21,6 +21,9 @@
     <bean id="responseFormatRepository"
           class="org.n52.sos.coding.encode.ResponseFormatRepository"/>
 
+    <bean id="responseFormatRepositoryInitializer"
+          class="org.n52.sos.coding.encode.ResponseFormatRepositoryInitializer"/>
+
     <bean id="geometryHandler"
           class="org.n52.sos.util.GeometryHandler" />
 
@@ -36,9 +39,6 @@
     <bean id="transactionalSecurityConfiguration"
           class="org.n52.sos.service.TransactionalSecurityConfiguration" />
 
-    <bean id="xmlOptionsHelper"
-          class="org.n52.sos.util.XmlOptionsHelper" />
-
     <bean id="driverCleanupListener"
           class="org.n52.sos.service.DriverCleanupListener" />
 
@@ -48,21 +48,21 @@
     <bean id="batchRequestOperator"
           class="org.n52.sos.request.operator.BatchRequestOperator"/>
 
-	<bean id="procedureRequestSettingProvider"
+    <bean id="procedureRequestSettingProvider"
           class="org.n52.sos.request.ProcedureRequestSettingProvider"/>
 
     <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
         <description>Used to wire up SOS specific activation persistence.</description>
         <property name="listeners">
             <map>
-                <entry key-ref="procedureDescriptionFormatRepository" value="#{sosActivationService.procedureDescriptionFormatListener}"/>
-                <entry key-ref="responseFormatRepository" value="#{sosActivationService.responseFormatListener}" />
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatListener}"/>
+                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatListener}" />
             </map>
         </property>
         <property name="initializers">
             <map>
-                <entry key-ref="procedureDescriptionFormatRepository" value="#{sosActivationService.procedureDescriptionFormatInitializer}" />
-                <entry key-ref="responseFormatRepository" value="#{sosActivationService.responseFormatInitializer}" />
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatInitializer}" />
+                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatInitializer}" />
             </map>
         </property>
     </bean>

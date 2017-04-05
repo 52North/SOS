@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,19 +33,20 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.util.JTSHelper;
+import org.n52.shetland.util.JTSHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
 
 public class SpatialFilterEsModelTest {
 
     @Test
-    public void createBBOXGeometryAndConvert() throws OwsExceptionReport, DecodingException {
+    public void createBBOXGeometryAndConvert() throws OwsExceptionReport, DecodingException, ParseException {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
 
@@ -57,7 +58,7 @@ public class SpatialFilterEsModelTest {
     }
 
     @Test
-    public void createInvalidOperatorTypeGeometry() throws OwsExceptionReport, DecodingException {
+    public void createInvalidOperatorTypeGeometry() throws OwsExceptionReport, DecodingException, ParseException {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.Crosses, geom, "value-ref");
 
@@ -68,7 +69,7 @@ public class SpatialFilterEsModelTest {
 
     @Test(
             expected = IllegalArgumentException.class)
-    public void createInvalidGeometry() throws OwsExceptionReport, DecodingException {
+    public void createInvalidGeometry() throws OwsExceptionReport, DecodingException, ParseException {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((40 40, 20 40, 10 20, 30 10))", 4326);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.Crosses, geom, "value-ref");
 
@@ -83,7 +84,7 @@ public class SpatialFilterEsModelTest {
     }
 
     @Test
-    public void createInvalidSridGeometry() throws OwsExceptionReport, DecodingException {
+    public void createInvalidSridGeometry() throws OwsExceptionReport, DecodingException, ParseException {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 9999);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
 
@@ -93,7 +94,7 @@ public class SpatialFilterEsModelTest {
     }
 
     @Test
-    public void createPointGeometry() throws OwsExceptionReport, DecodingException {
+    public void createPointGeometry() throws OwsExceptionReport, DecodingException, ParseException {
         Geometry geom = JTSHelper.createGeometryFromWKT("POINT (40 40)", 4326);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.Equals, geom, "value-ref");
 
@@ -103,7 +104,7 @@ public class SpatialFilterEsModelTest {
     }
 
     @Test
-    public void createPointButItisPologyonGeometry() throws OwsExceptionReport, DecodingException {
+    public void createPointButItisPologyonGeometry() throws OwsExceptionReport, DecodingException, ParseException {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.Equals, geom, "value-ref");
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,23 +35,19 @@ import java.util.Properties;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
+import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.DataConnectionProvider;
-import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.event.events.ConfiguratorInitializedEvent;
-import org.n52.iceland.exception.ConfigurationError;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.Producer;
+import org.n52.janmayen.event.EventBus;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 /**
  * Singleton class reads the configFile and builds the RequestOperator and DAO;
@@ -70,14 +66,14 @@ public class Configurator implements Constructable {
     private ContentCacheController contentCacheController;
     private String connectionProviderIdentificator;
     private String datasourceDaoIdentificator;
-    private ServiceEventBus eventBus;
+    private EventBus eventBus;
 
     public Configurator() {
         // ugly hack for singleton access
     }
 
     @Inject
-    public void setEventBus(ServiceEventBus eventBus) {
+    public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
     }
 

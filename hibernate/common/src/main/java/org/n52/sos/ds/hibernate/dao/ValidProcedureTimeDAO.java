@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -52,9 +55,6 @@ import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.collect.Maps;
 
 /**
@@ -66,6 +66,11 @@ import com.google.common.collect.Maps;
 public class ValidProcedureTimeDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidProcedureTimeDAO.class);
+    private final DaoFactory daoFactory;
+
+    public ValidProcedureTimeDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     /**
      * Insert valid procedure time for procedrue
@@ -118,7 +123,7 @@ public class ValidProcedureTimeDAO {
             Session session) throws UnsupportedTimeException, UnsupportedValueReferenceException,
             UnsupportedOperatorException {
         TProcedure procedure =
-                new ProcedureDAO().getTProcedureForIdentifier(procedureIdentifier, procedureDescriptionFormat, null,
+                new ProcedureDAO(daoFactory).getTProcedureForIdentifier(procedureIdentifier, procedureDescriptionFormat, null,
                         session);
         Set<ValidProcedureTime> validProcedureTimes = procedure.getValidProcedureTimes();
         for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
@@ -138,13 +143,12 @@ public class ValidProcedureTimeDAO {
      *            Hibernate session
      */
     public void setValidProcedureDescriptionEndTime(String procedureIdentifier, Session session) {
-        TProcedure procedure = new ProcedureDAO().getTProcedureForIdentifierIncludeDeleted(procedureIdentifier, session);
+        TProcedure procedure = new ProcedureDAO(daoFactory).getTProcedureForIdentifierIncludeDeleted(procedureIdentifier, session);
         Set<ValidProcedureTime> validProcedureTimes = procedure.getValidProcedureTimes();
-        for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
-            if (validProcedureTime.getEndTime() == null) {
-                validProcedureTime.setEndTime(new DateTime(DateTimeZone.UTC).toDate());
-            }
-        }
+        Date endTime = new DateTime(DateTimeZone.UTC).toDate();
+        validProcedureTimes.stream()
+                .filter(validProcedureTime -> validProcedureTime.getEndTime() == null)
+                .forEach(validProcedureTime -> validProcedureTime.setEndTime(endTime));
     }
 
     /**

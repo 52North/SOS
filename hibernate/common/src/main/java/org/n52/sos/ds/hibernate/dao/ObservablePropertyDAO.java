@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -66,6 +66,12 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservablePropertyDAO.class);
 
+    private final DaoFactory daoFactory;
+
+    public ObservablePropertyDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     /**
      * Get observable property objects for observable property identifiers
      *
@@ -109,7 +115,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
                             session)));
             c.setProjection(Projections.distinct(Projections.property(ObservableProperty.IDENTIFIER)));
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             c = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 Criteria seriesCriteria = c.createCriteria(ContextualReferencedSeriesObservation.SERIES);
@@ -120,7 +126,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
                 c.createCriteria(AbstractObservation.OBSERVABLE_PROPERTY).setProjection(
                         Projections.distinct(Projections.property(ObservableProperty.IDENTIFIER)));
             }
-            new OfferingDAO().addOfferingRestricionForObservation(c, offeringIdentifier);
+            new OfferingDAO(daoFactory).addOfferingRestricionForObservation(c, offeringIdentifier);
         }
         LOGGER.debug(
                 "QUERY getProcedureIdentifiersForOffering(offeringIdentifier) using ObservationContellation entitiy ({}): {}",

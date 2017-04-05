@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,30 +28,31 @@
  */
 package org.n52.sos.binding.rest.resources;
 
-
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class ServiceEndpointEncoder extends ResourceEncoder {
+    public ServiceEndpointEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
 
     @Override
-    public ServiceResponse encodeRestResponse(RestResponse response) throws OwsExceptionReport
-    {
-        if (response != null && response instanceof ServiceEndpointResponse)
-        {
+    public ServiceResponse encodeRestResponse(RestResponse response) throws OwsExceptionReport {
+        if (response != null && response instanceof ServiceEndpointResponse) {
             ServiceEndpointResponse restResponse = (ServiceEndpointResponse) response;
-            ServiceResponse serviceResponse =
-                    createContentlessResponse("", HTTPStatus.SEE_OHTER, false, true);
+            ServiceResponse serviceResponse = createContentlessResponse("", HTTPStatus.SEE_OHTER, false, true);
             addLocationHeader(serviceResponse, restResponse.getDefaultLandingPointResource());
             return serviceResponse;
         }
-        throw createResponseNotSupportedException(ServiceEndpointResponse.class.getName(),response);
+        throw createResponseNotSupportedException(ServiceEndpointResponse.class.getName(), response);
     }
 }

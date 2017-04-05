@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,16 +37,16 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderRepository;
-import org.n52.iceland.coding.encode.ProcedureEncoder;
-import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.activation.ActivationListener;
 import org.n52.iceland.util.activation.ActivationListeners;
 import org.n52.iceland.util.activation.ActivationManager;
 import org.n52.iceland.util.activation.ActivationSource;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.ProcedureEncoder;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

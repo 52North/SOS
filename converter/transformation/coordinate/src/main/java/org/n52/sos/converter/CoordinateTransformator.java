@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,7 +39,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
@@ -74,8 +74,26 @@ import org.n52.shetland.ogc.sensorML.elements.SmlPosition;
 import org.n52.shetland.ogc.sensorML.v20.AbstractPhysicalProcess;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosCapabilities;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosObservationOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.request.SrsNameRequest;
+import org.n52.shetland.ogc.sos.response.AbstractStreaming;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.response.GetResultResponse;
+import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 import org.n52.shetland.ogc.swe.CoordinateSettingsProvider;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweConstants.SweCoordinateNames;
@@ -87,28 +105,10 @@ import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
-import org.n52.sos.response.AbstractStreaming;
-import org.n52.shetland.ogc.sos.SosCapabilities;
-import org.n52.shetland.ogc.sos.SosObservationOffering;
-import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
-import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
-import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
-import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.shetland.ogc.sos.request.GetResultRequest;
-import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
-import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
-import org.n52.shetland.ogc.sos.request.SrsNameRequest;
-import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
-import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
-import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
-import org.n52.sos.response.GetObservationResponse;
-import org.n52.shetland.ogc.sos.response.GetResultResponse;
-import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
-import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.SweHelper;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -554,13 +554,28 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
                 x = coordinate.x;
                 y = coordinate.y;
             }
-            SweQuantity yq = SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, getLatLongUOM());
-            return Stream.of(new SweCoordinate<>(northingName, SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, getLatLongUOM())),
-                             new SweCoordinate<>(eastingName, SweHelper.createSweQuantity(x, SweConstants.X_AXIS, getLatLongUOM())),
+            SweQuantity yq = createSweQuantity(y, SweConstants.Y_AXIS, getLatLongUOM());
+            return Stream.of(new SweCoordinate<>(northingName, createSweQuantity(y, SweConstants.Y_AXIS, getLatLongUOM())),
+                             new SweCoordinate<>(eastingName, createSweQuantity(x, SweConstants.X_AXIS, getLatLongUOM())),
                              altitude)
                     .filter(Objects::nonNull).collect(toList());
         }
         return position;
+    }
+
+    /**
+     * Create a {@link SweQuantity} from parameter
+     *
+     * @param value
+     *            the {@link SweQuantity} value
+     * @param axis
+     *            the {@link SweQuantity} axis id
+     * @param uom
+     *            the {@link SweQuantity} unit of measure
+     * @return the {@link SweQuantity} from parameter
+     */
+    private SweQuantity createSweQuantity(Object value, String axis, String uom) {
+        return new SweQuantity().setAxisID(axis).setUom(uom).setValue(JavaHelper.asDouble(value));
     }
 
     /**

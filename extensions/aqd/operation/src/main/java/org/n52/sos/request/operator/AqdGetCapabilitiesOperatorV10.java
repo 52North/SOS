@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,6 +42,8 @@ import org.n52.iceland.exception.ows.concrete.InvalidAcceptVersionsParameterExce
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
 import org.n52.shetland.ogc.ows.OwsDCP;
@@ -54,8 +56,6 @@ import org.n52.shetland.ogc.ows.OwsValue;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.janmayen.http.HTTPMethods;
-import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
 import org.n52.shetland.ogc.sos.SosCapabilities;
 import org.n52.shetland.ogc.sos.SosObservationOffering;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,14 +37,10 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
+import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -58,6 +54,13 @@ import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.ObservationEncoder;
+import org.n52.svalbard.encode.XmlEncoderKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -71,14 +74,26 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationByIdDAO.class);
 
     private HibernateSessionHolder sessionHolder;
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
+    private DaoFactory daoFactory;
+    private EncoderRepository encoderRepository;
 
     public GetObservationByIdDAO() {
         super(SosConstants.SOS);
     }
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
+    @Inject
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 
@@ -97,10 +112,10 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
             response.setService(request.getService());
             response.setVersion(request.getVersion());
             response.setResponseFormat(request.getResponseFormat());
-            Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+            Locale locale = getRequestedLocale(request);
             LocalizedProducer<OwsServiceProvider> serviceProviderFactory
                     = this.serviceMetadataRepository.getServiceProviderFactory(request.getService());
-            response.setObservationCollection(HibernateObservationUtilities.createSosObservationsFromObservations(observations, request, serviceProviderFactory, locale, session));
+            response.setObservationCollection(HibernateObservationUtilities.createSosObservationsFromObservations(observations, request, serviceProviderFactory, locale, getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session));
             return response;
 
         } catch (HibernateException he) {
@@ -127,10 +142,18 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
     private List<Observation<?>> queryObservation(GetObservationByIdRequest request, Session session)
             throws OwsExceptionReport {
         Criteria c =
-                DaoFactory.getInstance().getObservationDAO()
+                daoFactory.getObservationDAO()
                         .getObservationClassCriteriaForResultModel(request.getResultModel(), session);
         c.add(Restrictions.in(AbstractObservation.IDENTIFIER, request.getObservationIdentifier()));
         LOGGER.debug("QUERY queryObservation(request): {}", HibernateHelper.getSqlString(c));
         return c.list();
+    }
+
+    private String getProcedureDescriptionFormat(String responseFormat) {
+        Encoder<Object, Object> encoder = encoderRepository.getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
+        if (encoder != null && encoder instanceof ObservationEncoder) {
+            return ((ObservationEncoder)encoder).getProcedureEncodingNamspace();
+        }
+        return null;
     }
 }

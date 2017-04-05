@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,9 +37,9 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsService;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingsService;
 import org.n52.sos.web.common.AbstractController;
 
 /**
@@ -68,10 +68,10 @@ public class AbstractInstallController extends AbstractController {
                 c.setSettings(this.settingsManager.getSettings());
                 // remove null values (in case new settings have been added
                 // since configuration was generated)
-                Iterator<Entry<SettingDefinition<?, ?>, SettingValue<?>>> iterator
+                Iterator<Entry<SettingDefinition<?>, SettingValue<?>>> iterator
                         = c.getSettings().entrySet().iterator();
                 while (iterator.hasNext()) {
-                    Entry<SettingDefinition<?, ?>, SettingValue<?>> setting
+                    Entry<SettingDefinition<?>, SettingValue<?>> setting
                             = iterator.next();
                     if (setting.getValue() == null) {
                         iterator.remove();

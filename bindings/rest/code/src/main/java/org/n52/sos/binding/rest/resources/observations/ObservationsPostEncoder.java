@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,37 +28,36 @@
  */
 package org.n52.sos.binding.rest.resources.observations;
 
-
 import net.opengis.sosREST.x10.ObservationDocument;
 
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestResponse;
-
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class ObservationsPostEncoder extends AObservationsEncoder {
-
+    public ObservationsPostEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
     @Override
-    public ServiceResponse encodeRestResponse(RestResponse restResponse) throws OwsExceptionReport
-    {
+    public ServiceResponse encodeRestResponse(RestResponse restResponse) throws OwsExceptionReport {
         if (restResponse != null && restResponse instanceof ObservationsPostResponse) {
             ObservationsPostResponse observationsPostResponse = (ObservationsPostResponse) restResponse;
-            ObservationDocument xb_ObservationRestDoc = createRestObservationDocumentFrom(observationsPostResponse.getXb_OMObservation());
+            ObservationDocument xb_ObservationRestDoc = createRestObservationDocumentFrom(observationsPostResponse
+                    .getXb_OMObservation());
 
-
-            ServiceResponse response = createServiceResponseFromXBDocument(
-                    xb_ObservationRestDoc,
-                    bindingConstants.getResourceObservations(),
-                    HTTPStatus.CREATED, false, true);
+            ServiceResponse response
+                    = createServiceResponseFromXBDocument(xb_ObservationRestDoc, Constants.REST_RESOURCE_RELATION_OBSERVATIONS,
+                                                          HTTPStatus.CREATED, false, true);
 
             addLocationHeader(response,
-                    observationsPostResponse.getObservationIdentifier(),
-                    bindingConstants.getResourceObservations());
+                              observationsPostResponse.getObservationIdentifier(), Constants.REST_RESOURCE_RELATION_OBSERVATIONS);
 
             return response;
         }

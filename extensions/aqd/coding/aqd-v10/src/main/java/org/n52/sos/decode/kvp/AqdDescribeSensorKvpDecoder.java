@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,9 +33,9 @@ import java.util.Set;
 
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.OperationDecoderKey;
+import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.janmayen.http.MediaTypes;
-import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.kvp.v2.DescribeSensorKvpDecoderv20;
 
 public class AqdDescribeSensorKvpDecoder  extends DescribeSensorKvpDecoderv20 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,11 +38,12 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingValueFactory;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingValueFactory;
 import org.n52.iceland.ds.Datasource;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
 
@@ -175,9 +176,9 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
     }
 
     protected Map<String, Object> parseDatasourceSettings(Datasource datasource, Map<String, String> parameters) {
-        Set<SettingDefinition<?, ?>> defs = datasource.getSettingDefinitions();
+        Set<SettingDefinition<?>> defs = datasource.getSettingDefinitions();
         Map<String, Object> parsedSettings = new HashMap<>(parameters.size());
-        for (SettingDefinition<?, ?> def : defs) {
+        for (SettingDefinition<?> def : defs) {
             SettingValue<?> newValue =
                     this.settingValueFactory.newSettingValue(def, parameters.get(def.getKey()));
             parsedSettings.put(def.getKey(), newValue.getValue());

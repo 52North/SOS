@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,9 +37,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.janmayen.lifecycle.Destroyable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.service.ServiceSettings;
+import org.n52.janmayen.lifecycle.Destroyable;
 
 import com.google.common.collect.Sets;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,6 +30,9 @@ package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 import java.net.MalformedURLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
@@ -42,8 +45,6 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.SosHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -72,7 +73,7 @@ public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
         return super.isApplicable() && isSetTypeOf();
     }
 
-    private SosProcedureDescription setTypeOfReferenceType(SosProcedureDescription description)
+    private SosProcedureDescription<?> setTypeOfReferenceType(SosProcedureDescription<?> description)
             throws OwsExceptionReport {
         String href = createKvpDescribeSensorOrReturnIdentifier(getTypeOfIdentifier(), getTypeOfFormat());
         description.setTypeOf(new ReferenceType(href, getTypeOfIdentifier()));

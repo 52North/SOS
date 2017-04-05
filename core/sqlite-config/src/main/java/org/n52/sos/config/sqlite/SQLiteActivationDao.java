@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,10 +28,13 @@
  */
 package org.n52.sos.config.sqlite;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
@@ -39,14 +42,10 @@ import org.hibernate.criterion.Projections;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.config.ActivationDao;
-import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderKey;
-import org.n52.iceland.ogc.swes.OfferingExtensionKey;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
 import org.n52.iceland.request.operator.RequestOperatorKey;
-import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.sos.config.sqlite.entities.Activatable;
 import org.n52.sos.config.sqlite.entities.Binding;
-import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
-import org.n52.sos.config.sqlite.entities.DynamicOfferingExtensionKey;
 import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilities;
 import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilitiesKey;
 import org.n52.sos.config.sqlite.entities.Operation;
@@ -61,41 +60,14 @@ public class SQLiteActivationDao
         extends AbstractSQLiteDao
         implements ActivationDao {
 
-    // OFFERING EXTENSION
     @Override
-    public void setOfferingExtensionStatus(OfferingExtensionKey oek,
-                                           boolean active) {
-        setActive(DynamicOfferingExtension.class, new DynamicOfferingExtension(oek), active);
+    public void setBindingStatus(BindingKey key, boolean active) {
+        setActive(Binding.class, new Binding(key.getKeyAsString()), active);
     }
 
     @Override
-    public boolean isOfferingExtensionActive(OfferingExtensionKey oek) {
-        return isActive(DynamicOfferingExtension.class, new DynamicOfferingExtensionKey(oek));
-    }
-
-    @Override
-    public Set<OfferingExtensionKey> getOfferingExtensionKeys() {
-        return asOfferingExtensionKeys(getKeys(DynamicOfferingExtension.class));
-    }
-
-    private Set<OfferingExtensionKey> asOfferingExtensionKeys(
-            List<DynamicOfferingExtensionKey> hkeys) {
-        Set<OfferingExtensionKey> keys = new HashSet<>(hkeys.size());
-        for (DynamicOfferingExtensionKey key : hkeys) {
-            keys.add(new OfferingExtensionKey(new OwsServiceKey(key.getService(), key.getVersion()), key.getDomain()));
-        }
-        return keys;
-    }
-
-    // BINDING
-    @Override
-    public void setBindingStatus(BindingKey bk, boolean active) {
-        setActive(Binding.class, new Binding(bk.getKeyAsString()), active);
-    }
-
-    @Override
-    public boolean isBindingActive(BindingKey bk) {
-        return isActive(Binding.class, bk.getKeyAsString());
+    public boolean isBindingActive(BindingKey key) {
+        return isActive(Binding.class, key.getKeyAsString());
     }
 
     @Override
@@ -103,51 +75,35 @@ public class SQLiteActivationDao
         return asBindingKeys(getKeys(Binding.class));
     }
 
-    private Set<BindingKey> asBindingKeys(List<String> hkeys) {
-        Set<BindingKey> keys = new HashSet<>(hkeys.size());
-        for (String key : hkeys) {
-            keys.add(new PathBindingKey(key));
-        }
-        return keys;
-    }
-
-    // OWS EXTENDED CAPABILITIES
-    @Override
-    public boolean isOwsExtendedCapabilitiesProviderActive(
-            OwsExtendedCapabilitiesProviderKey oeck) {
-        return isActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilitiesKey(oeck));
+    private Set<BindingKey> asBindingKeys(List<String> keys) {
+        return keys.stream().map(PathBindingKey::new).collect(toSet());
     }
 
     @Override
-    public void setOwsExtendedCapabilitiesStatus(
-            OwsExtendedCapabilitiesProviderKey oeck, boolean active) {
-        setActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilities(oeck), active);
+    public boolean isOwsOperationMetadataExtensionProviderActive(OwsOperationMetadataExtensionProviderKey key) {
+        return isActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilitiesKey(key));
     }
 
     @Override
-    public Set<OwsExtendedCapabilitiesProviderKey> getOwsExtendedCapabilitiesProviderKeys() {
+    public void setOwsOperationMetadataExtensionProviderStatus(OwsOperationMetadataExtensionProviderKey key, boolean active) {
+        setActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilities(key), active);
+    }
+
+    @Override
+    public Set<OwsOperationMetadataExtensionProviderKey> getOwsOperationMetadataExtensionProviderKeys() {
         return asOwsExtendedCapabilitiesProviderKeys(getKeys(DynamicOwsExtendedCapabilities.class));
     }
 
-    private Set<OwsExtendedCapabilitiesProviderKey> asOwsExtendedCapabilitiesProviderKeys(
-            List<DynamicOwsExtendedCapabilitiesKey> hkeys) {
-        Set<OwsExtendedCapabilitiesProviderKey> keys = new HashSet<>(hkeys
-                .size());
-        for (DynamicOwsExtendedCapabilitiesKey key : hkeys) {
-            keys
-                    .add(new OwsExtendedCapabilitiesProviderKey(new OwsServiceKey(key
-                                            .getService(), key.getVersion()), key
-                                                                .getDomain()));
-        }
-        return keys;
+    private Set<OwsOperationMetadataExtensionProviderKey> asOwsExtendedCapabilitiesProviderKeys(
+            List<DynamicOwsExtendedCapabilitiesKey> keys) {
+        return keys.stream()
+                .map(k -> new OwsOperationMetadataExtensionProviderKey(k.getService(), k.getVersion(), k.getDomain()))
+                .collect(toSet());
     }
 
-    // REQUEST OPERATOR
     @Override
-    public boolean isRequestOperatorActive(
-            RequestOperatorKey requestOperatorKeyType) {
-        return isActive(Operation.class, new OperationKey(requestOperatorKeyType), requestOperatorKeyType
-                        .isDefaultActive());
+    public boolean isRequestOperatorActive(RequestOperatorKey key) {
+        return isActive(Operation.class, new OperationKey(key), key.isDefaultActive());
     }
 
     @Override
@@ -160,38 +116,30 @@ public class SQLiteActivationDao
         return asRequestOperatorKeys(getKeys(Operation.class));
     }
 
-    private Set<RequestOperatorKey> asRequestOperatorKeys(
-            List<OperationKey> hkeys) {
-        Set<RequestOperatorKey> keys = new HashSet<>(hkeys.size());
-        for (OperationKey key : hkeys) {
-            keys.add(new RequestOperatorKey(new OwsServiceKey(key
-                    .getService(), key.getVersion()), key.getOperationName()));
-        }
-        return keys;
+    private Set<RequestOperatorKey> asRequestOperatorKeys(List<OperationKey> keys) {
+        return keys.stream()
+                .map(k -> new RequestOperatorKey(k.getService(), k.getVersion(), k.getOperationName()))
+                .collect(toSet());
     }
 
-    protected <K extends Serializable, T extends Activatable<K, T>> void setActive(
-            Class<T> type, T activatable, boolean active) {
+    protected <K extends Serializable, T extends Activatable<K, T>> void setActive(Class<T> type, T activatable, boolean active) {
         execute(new SetActiveAction<>(type, activatable, active));
     }
 
-    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(
-            Class<T> c, K key) {
+    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key) {
         return execute(new IsActiveAction<>(c, key));
     }
 
-    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(
-            Class<T> c, K key, boolean defaultActive) {
+    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key, boolean defaultActive) {
         return execute(new IsActiveAction<>(c, key, defaultActive));
     }
 
-    protected <K extends Serializable, T extends Activatable<K, T>> List<K> getKeys(
-            Class<T> c) {
+    protected <K extends Serializable, T extends Activatable<K, T>> List<K> getKeys(Class<T> c) {
         return execute(new GetKeysAction<>(c));
     }
 
     protected class GetKeysAction<K extends Serializable, T extends Activatable<K, T>>
-            implements HibernateAction<List<K>> {
+            implements Function<Session, List<K>> {
 
         private final Class<T> type;
 
@@ -201,7 +149,7 @@ public class SQLiteActivationDao
 
         @Override
         @SuppressWarnings("unchecked")
-        public List<K> call(Session session) {
+        public List<K> apply(Session session) {
             return session.createCriteria(type)
                     .setProjection(Projections.property("key"))
                     .list();
@@ -209,11 +157,10 @@ public class SQLiteActivationDao
     }
 
     protected class IsActiveAction<K extends Serializable, T extends Activatable<K, T>>
-            implements HibernateAction<Boolean> {
+            implements Function<Session, Boolean> {
+
         private final K key;
-
         private final Class<T> type;
-
         private boolean defaultActive;
 
         IsActiveAction(Class<T> type, K key) {
@@ -227,7 +174,7 @@ public class SQLiteActivationDao
         }
 
         @Override
-        public Boolean call(Session session) {
+        public Boolean apply(Session session) {
             @SuppressWarnings("unchecked")
             T o = (T) session.get(type, key);
             return (o == null) ? defaultActive : o.isActive();
@@ -235,11 +182,10 @@ public class SQLiteActivationDao
     }
 
     protected class SetActiveAction<K extends Serializable, T extends Activatable<K, T>>
-            extends VoidHibernateAction {
+            implements Consumer<Session> {
+
         private final Activatable<K, T> activatable;
-
         private final Class<T> type;
-
         private final boolean active;
 
         SetActiveAction(Class<T> type, T activatable, boolean active) {
@@ -249,7 +195,7 @@ public class SQLiteActivationDao
         }
 
         @Override
-        protected void run(Session session) {
+        public void accept(Session session) {
             @SuppressWarnings("unchecked")
             T o = (T) session.get(type, activatable.getKey());
             if (o != null) {

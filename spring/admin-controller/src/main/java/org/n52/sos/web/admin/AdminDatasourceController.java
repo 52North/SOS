@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,16 +33,18 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
 
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.ds.GeneralQueryDAO;
 import org.n52.sos.web.common.ControllerConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -69,8 +71,8 @@ public class AdminDatasourceController extends AbstractDatasourceController {
     private static final String SUPPORTS_CLEAR = "supportsClear";
     private static final String SUPPORTS_DELETE_DELETED = "supportsDeleteDeleted";
 
-    @Autowired(required = false)
-    private GeneralQueryDAO generalQueryDAO;
+    @Inject
+    private Optional<GeneralQueryDAO> generalQueryDAO;
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE)
     public ModelAndView index() throws SQLException, OwsExceptionReport {
@@ -84,20 +86,23 @@ public class AdminDatasourceController extends AbstractDatasourceController {
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_EXECUTE, method = RequestMethod.POST)
     public String processQuery(@RequestBody String querySQL) {
         try {
-            String q = URLDecoder.decode(querySQL, "UTF-8");
-            LOG.info("Query: {}", q);
-            GeneralQueryDAO.QueryResult rs = this.generalQueryDAO.query(q);
-            ObjectNode j = JSONUtils.nodeFactory().objectNode();
-            if (rs.getMessage() != null) {
-                j.put(rs.isError() ? "error" : "message", rs.getMessage());
-                return JSONUtils.print(j);
+            if (this.generalQueryDAO.isPresent()) {
+                String q = URLDecoder.decode(querySQL, "UTF-8");
+                LOG.info("Query: {}", q);
+                GeneralQueryDAO.QueryResult rs = this.generalQueryDAO.get().query(q);
+                ObjectNode j = Json.nodeFactory().objectNode();
+                if (rs.getMessage() != null) {
+                    j.put(rs.isError() ? "error" : "message", rs.getMessage());
+                    return Json.print(j);
+                }
+                j.putArray(ROWS).addAll(Json.toJSON(rs.getColumnNames()));
+                ArrayNode names = j.putArray(NAMES);
+                for (GeneralQueryDAO.Row row : rs.getRows()) {
+                    names.addArray().addAll(Json.toJSON(row.getValues()));
+                }
+                return Json.print(j);
             }
-            j.putArray(ROWS).addAll(JSONUtils.toJSON(rs.getColumnNames()));
-            ArrayNode names = j.putArray(NAMES);
-            for (GeneralQueryDAO.Row row : rs.getRows()) {
-                names.addArray().addAll(JSONUtils.toJSON(row.getValues()));
-            }
-            return JSONUtils.print(j);
+            return "No general query dao available!";
         } catch (UnsupportedEncodingException ex) {
             LOG.error("Could not decode String", ex);
             return "Could not decode String: " + ex.getMessage();

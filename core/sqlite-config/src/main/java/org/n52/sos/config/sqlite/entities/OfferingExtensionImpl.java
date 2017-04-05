@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,14 +34,14 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-import org.n52.iceland.ogc.ows.extension.OfferingExtension;
+import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name = "offering_extension")
 public class OfferingExtensionImpl extends Activatable<OfferingExtensionIdentifier, OfferingExtensionImpl> implements
-        OfferingExtension, Serializable {
+        SosObservationOfferingExtension, Serializable {
     private static final long serialVersionUID = 6232652141211194202L;
     public static final String EXTENSION = "extension";
     @Column(name = EXTENSION)

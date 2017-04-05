@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -56,13 +56,14 @@ import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.settings.BooleanSettingDefinition;
-import org.n52.iceland.config.settings.ChoiceSettingDefinition;
-import org.n52.iceland.config.settings.IntegerSettingDefinition;
-import org.n52.iceland.config.settings.StringSettingDefinition;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.settings.BooleanSettingDefinition;
+import org.n52.faroe.settings.ChoiceSettingDefinition;
+import org.n52.faroe.settings.IntegerSettingDefinition;
+import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
@@ -74,7 +75,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  * @since 4.0.0
@@ -152,9 +153,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *
      * @return Username settings definition
      */
+    @Override
     protected StringSettingDefinition createUsernameDefinition() {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(1)
-                .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
+        StringSettingDefinition def = new StringSettingDefinition();
+        def.setGroup(BASE_GROUP);
+        def.setOrder(1);
+        def.setKey(USERNAME_KEY);
+        def.setTitle(USERNAME_TITLE);
+        return def;
     }
 
     /**
@@ -163,23 +169,31 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Database schema settings definition
      */
     protected StringSettingDefinition createSchemaDefinition() {
-        return new StringSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(1)
-                .setKey(SCHEMA_KEY).setTitle(SCHEMA_TITLE).setDescription(SCHEMA_DESCRIPTION)
-                .setDefaultValue(SCHMEA_DEFAULT_VALUE);
+        StringSettingDefinition def = new StringSettingDefinition();
+        def.setGroup(ADVANCED_GROUP);
+        def.setOrder(1);
+        def.setKey(SCHEMA_KEY);
+        def.setTitle(SCHEMA_TITLE);
+        def.setDescription(SCHEMA_DESCRIPTION);
+        def.setDefaultValue(SCHMEA_DEFAULT_VALUE);
+        return def;
     }
 
     protected ChoiceSettingDefinition createDatabaseConceptDefinition() {
-        ChoiceSettingDefinition choiceSettingDefinition = new ChoiceSettingDefinition();
-        choiceSettingDefinition.setTitle(DATABASE_CONCEPT_TITLE).setDescription(DATABASE_CONCEPT_DESCRIPTION)
-                .setGroup(ADVANCED_GROUP).setOrder(2).setKey(DATABASE_CONCEPT_KEY);
-        choiceSettingDefinition.addOption(DatabaseConcept.SERIES_CONCEPT.name(),
-                DatabaseConcept.SERIES_CONCEPT.getDisplayName());
-        choiceSettingDefinition.addOption(DatabaseConcept.EREPORTING_CONCEPT.name(),
-                DatabaseConcept.EREPORTING_CONCEPT.getDisplayName());
-        choiceSettingDefinition.addOption(DatabaseConcept.OLD_CONCEPT.name(),
-                DatabaseConcept.OLD_CONCEPT.getDisplayName());
-        choiceSettingDefinition.setDefaultValue(DatabaseConcept.SERIES_CONCEPT.name());
-        return choiceSettingDefinition;
+        ChoiceSettingDefinition def = new ChoiceSettingDefinition();
+        def.setTitle(DATABASE_CONCEPT_TITLE);
+        def.setDescription(DATABASE_CONCEPT_DESCRIPTION);
+        def.setGroup(ADVANCED_GROUP);
+        def.setOrder(2);
+        def.setKey(DATABASE_CONCEPT_KEY);
+        def.addOption(DatabaseConcept.SERIES_CONCEPT.name(),
+                      DatabaseConcept.SERIES_CONCEPT.getDisplayName());
+        def.addOption(DatabaseConcept.EREPORTING_CONCEPT.name(),
+                      DatabaseConcept.EREPORTING_CONCEPT.getDisplayName());
+        def.addOption(DatabaseConcept.OLD_CONCEPT.name(),
+                      DatabaseConcept.OLD_CONCEPT.getDisplayName());
+        def.setDefaultValue(DatabaseConcept.SERIES_CONCEPT.name());
+        return def;
     }
 
     /**
@@ -188,15 +202,25 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return Transactional support settings definition
      */
     protected BooleanSettingDefinition createTransactionalDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(TRANSACTIONAL_DEFAULT_VALUE)
-                .setTitle(TRANSACTIONAL_TITLE).setDescription(TRANSACTIONAL_DESCRIPTION).setGroup(ADVANCED_GROUP)
-                .setOrder(3).setKey(TRANSACTIONAL_KEY);
+        BooleanSettingDefinition def = new BooleanSettingDefinition();
+        def.setDefaultValue(TRANSACTIONAL_DEFAULT_VALUE);
+        def.setTitle(TRANSACTIONAL_TITLE);
+        def.setDescription(TRANSACTIONAL_DESCRIPTION);
+        def.setGroup(ADVANCED_GROUP);
+        def.setOrder(3);
+        def.setKey(TRANSACTIONAL_KEY);
+        return def;
     }
 
     protected BooleanSettingDefinition createMultilingualismDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(MULTILINGUALISM_DEFAULT_VALUE)
-                .setTitle(MULTILINGUALISM_TITLE).setDescription(MULTILINGUALISM_DESCRIPTION).setGroup(ADVANCED_GROUP)
-                .setOrder(4).setKey(MULTILINGUALISM_KEY);
+        BooleanSettingDefinition def = new BooleanSettingDefinition();
+        def.setDefaultValue(MULTILINGUALISM_DEFAULT_VALUE);
+        def.setTitle(MULTILINGUALISM_TITLE);
+        def.setDescription(MULTILINGUALISM_DESCRIPTION);
+        def.setGroup(ADVANCED_GROUP);
+        def.setOrder(4);
+        def.setKey(MULTILINGUALISM_KEY);
+        return def;
     }
 
     /**
@@ -205,10 +229,15 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return JDBC driver settings definition
      */
     protected BooleanSettingDefinition createProvidedJdbcDriverDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE)
-                .setTitle(PROVIDED_JDBC_DRIVER_TITLE).setDescription(PROVIDED_JDBC_DRIVER_DESCRIPTION)
-                .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE).setGroup(ADVANCED_GROUP)
-                .setOrder(5).setKey(PROVIDED_JDBC_DRIVER_KEY);
+        BooleanSettingDefinition def = new BooleanSettingDefinition();
+        def.setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE);
+        def.setTitle(PROVIDED_JDBC_DRIVER_TITLE);
+        def.setDescription(PROVIDED_JDBC_DRIVER_DESCRIPTION);
+        def.setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE);
+        def.setGroup(ADVANCED_GROUP);
+        def.setOrder(5);
+        def.setKey(PROVIDED_JDBC_DRIVER_KEY);
+        return def;
     }
 
     /**
@@ -217,9 +246,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return JDBC batch size settings definition
      */
     protected IntegerSettingDefinition createBatchSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(8)
-                .setKey(BATCH_SIZE_KEY).setTitle(BATCH_SIZE_TITLE).setDescription(BATCH_SIZE_DESCRIPTION)
-                .setDefaultValue(BATCH_SIZE_DEFAULT_VALUE);
+        IntegerSettingDefinition def = new IntegerSettingDefinition();
+        def.setGroup(ADVANCED_GROUP);
+        def.setOrder(8);
+        def.setKey(BATCH_SIZE_KEY);
+        def.setTitle(BATCH_SIZE_TITLE);
+        def.setDescription(BATCH_SIZE_DESCRIPTION);
+        def.setDefaultValue(BATCH_SIZE_DEFAULT_VALUE);
+        return def;
     }
 
     /**
@@ -399,9 +433,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             conn = openConnection(settings);
             DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             getConfig(settings).validateSchema(getDialectInternal(), metadata);
-        } catch (SQLException ex) {
-            throw new ConfigurationError(ex);
-        } catch (HibernateException ex) {
+        } catch (SQLException | HibernateException ex) {
             throw new ConfigurationError(ex);
         } finally {
             close(conn);
@@ -545,8 +577,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return false;
     }
 
-    protected Set<SettingDefinition<?,?>> filter(Set<SettingDefinition<?,?>> definitions, Set<String> keysToExclude) {
-        Iterator<SettingDefinition<?, ?>> iterator = definitions.iterator();
+    protected Set<SettingDefinition<?>> filter(Set<SettingDefinition<?>> definitions, Set<String> keysToExclude) {
+        Iterator<SettingDefinition<?>> iterator = definitions.iterator();
         while(iterator.hasNext()) {
             if (keysToExclude.contains(iterator.next().getKey())) {
                 iterator.remove();
@@ -866,7 +898,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
         CustomConfiguration config = getConfig(settings);
         Iterator<Table> tables = config.getTableMappings();
-        List<String> names = new LinkedList<String>();
+        List<String> names = new LinkedList<>();
         while (tables.hasNext()) {
             Table table = tables.next();
             if (table.isPhysicalTable()) {
@@ -896,11 +928,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     @Override
+    @Deprecated
     public String getConnectionProviderIdentifier() {
         return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
     }
 
     @Override
+    @Deprecated
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }

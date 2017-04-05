@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,11 +28,11 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 public class UnsupportedTimeException extends NoApplicableCodeException {
@@ -40,7 +40,7 @@ public class UnsupportedTimeException extends NoApplicableCodeException {
     private static final long serialVersionUID = -6897786883586612395L;
 
     public UnsupportedTimeException(Time time) {
-        withMessage("ITime %s is not supported", time);
+        withMessage("Time %s is not supported", time);
     }
 
 }

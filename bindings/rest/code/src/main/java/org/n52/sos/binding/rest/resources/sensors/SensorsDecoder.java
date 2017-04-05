@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,13 +37,13 @@ import net.opengis.sensorML.x101.AbstractProcessType;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.IoComponentPropertyType;
 import net.opengis.sensorML.x101.SystemType;
-import net.opengis.sos.x20.impl.SosInsertionMetadataPropertyTypeImpl;
 import net.opengis.sosREST.x10.SensorDocument;
 import net.opengis.sosREST.x10.SensorType;
 import net.opengis.swe.x101.AnyScalarPropertyType;
 import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -63,8 +63,8 @@ import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
-import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.XmlHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -73,9 +73,10 @@ import org.n52.svalbard.decode.exception.DecodingException;
  */
 public class SensorsDecoder extends ResourceDecoder {
 
-    public SensorsDecoder() {
-        bindingConstants = Constants.getInstance();
+    public SensorsDecoder(Constants constants) {
+        super(constants);
     }
+
 
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
             String pathPayload) throws OwsExceptionReport
@@ -97,7 +98,7 @@ public class SensorsDecoder extends ResourceDecoder {
             return new GetSensorsRequest(capabilitiesRequest);
 
         } else {
-            String errorMsg = createBadGetRequestMessage(bindingConstants.getResourceSensors(),true,true,false);
+            String errorMsg = createBadGetRequestMessage(org.n52.sos.binding.rest.Constants.REST_RESOURCE_SENSORS,true,true,false);
             BadRequestException bR = new BadRequestException(errorMsg);
             throw new NoApplicableCodeException().causedBy(bR);
         }
@@ -107,8 +108,7 @@ public class SensorsDecoder extends ResourceDecoder {
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
             String pathPayload) throws OwsExceptionReport
     {
-        throw new OperationNotSupportedException(String.format("HTTP-DELETE + \"%s\"",
-                bindingConstants.getResourceSensors()));
+        throw new OperationNotSupportedException(String.format("HTTP-DELETE + \"%s\"", org.n52.sos.binding.rest.Constants.REST_RESOURCE_SENSORS));
     }
 
     @Override
@@ -123,7 +123,7 @@ public class SensorsDecoder extends ResourceDecoder {
             insertSensorRequest.setProcedureDescriptionFormat(bindingConstants.getDefaultDescribeSensorOutputFormat());
 
             // parse request in xml object and get procedure description
-            XmlObject sensorPostContent = XmlHelper.parseXmlRequest(httpRequest);
+            XmlObject sensorPostContent = XmlHelper.parseXmlString(xmlToString(httpRequest));
             if (sensorPostContent instanceof SensorDocument)
             {
                 SensorDocument xb_SensorRestDoc = (SensorDocument) sensorPostContent;
@@ -269,7 +269,7 @@ public class SensorsDecoder extends ResourceDecoder {
             updateSensorRequest.setProcedureDescriptionFormat(bindingConstants.getDefaultDescribeSensorOutputFormat());
             updateSensorRequest.setProcedureIdentifier(pathPayload);
 
-            XmlObject sensorPostContent = XmlHelper.parseXmlRequest(httpRequest);
+            XmlObject sensorPostContent = XmlHelper.parseXmlString(xmlToString(httpRequest));
             if(sensorPostContent instanceof SensorDocument) {
                 SensorDocument xb_RestSensorDoc = (SensorDocument) sensorPostContent;
                 SensorType xb_RestSensor = xb_RestSensorDoc.getSensor();
@@ -304,7 +304,7 @@ public class SensorsDecoder extends ResourceDecoder {
             isGlobal = true;
             isCollection = true;
         }
-        return new OptionsRestRequest(bindingConstants.getResourceSensors(),isGlobal,isCollection);
+        return new OptionsRestRequest((Constants.REST_RESOURCE_SENSORS),isGlobal,isCollection);
     }
 
 

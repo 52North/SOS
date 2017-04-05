@@ -12,10 +12,6 @@
     <description>52°North Sensor Observation Service EXI  Coding</description>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
         </dependency>
@@ -26,6 +22,14 @@
         <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.janmayen</groupId>
@@ -64,10 +68,6 @@
         <dependency>
             <groupId>com.siemens.ct.exi</groupId>
             <artifactId>exificient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>gda-operation</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

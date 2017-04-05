@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -48,6 +48,7 @@ import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 
@@ -118,29 +119,26 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         assertThat(observableProperties.get("child3"), is(instanceOf(ObservableProperty.class)));
         assertThat(observableProperties.get("single"), is(instanceOf(ObservableProperty.class)));
 
-        ObservableProperty parent = (ObservableProperty) observableProperties.get("parent");
-        ObservableProperty child1 = (ObservableProperty) observableProperties.get("child1");
-        ObservableProperty child2 = (ObservableProperty) observableProperties.get("child2");
-        ObservableProperty child3 = (ObservableProperty) observableProperties.get("child3");
-        ObservableProperty single = (ObservableProperty) observableProperties.get("single");
+        ObservableProperty parent = observableProperties.get("parent");
+        ObservableProperty child1 = observableProperties.get("child1");
+        ObservableProperty child2 = observableProperties.get("child2");
+        ObservableProperty child3 = observableProperties.get("child3");
+        ObservableProperty single = observableProperties.get("single");
 
         errors.checkThat(parent.isHiddenChild(), is(false));
         errors.checkThat(parent.getParents(), is(empty()));
-        errors.checkThat(parent.getChilds(), containsInAnyOrder(
-                         (ObservableProperty) child1,
-                         (ObservableProperty) child2,
-                         (ObservableProperty) child3));
+        errors.checkThat(parent.getChilds(), containsInAnyOrder(child1, child2, child3));
 
         errors.checkThat(child1.isHiddenChild(), is(true));
-        errors.checkThat(child1.getParents(), contains((ObservableProperty) parent));
+        errors.checkThat(child1.getParents(), contains(parent));
         errors.checkThat(child1.getChilds(), is(empty()));
 
         errors.checkThat(child2.isHiddenChild(), is(true));
-        errors.checkThat(child2.getParents(), contains((ObservableProperty) parent));
+        errors.checkThat(child2.getParents(), contains(parent));
         errors.checkThat(child2.getChilds(), is(empty()));
 
         errors.checkThat(child3.isHiddenChild(), is(true));
-        errors.checkThat(child3.getParents(), contains((ObservableProperty) parent));
+        errors.checkThat(child3.getParents(), contains(parent));
         errors.checkThat(child3.getChilds(), is(empty()));
 
         errors.checkThat(single.isHiddenChild(), is(false));
@@ -149,7 +147,7 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
     }
 
     protected Map<String, ObservableProperty> save(List<AbstractPhenomenon> abstractPhenomenons, Session session) {
-        ObservablePropertyDAO dao = new ObservablePropertyDAO();
+        ObservablePropertyDAO dao = new ObservablePropertyDAO(new DaoFactory());
         Collection<ObservableProperty> savedObservableProperties
                 = dao.getOrInsertObservableProperty(abstractPhenomenons, false, session);
         return asMap(savedObservableProperties);

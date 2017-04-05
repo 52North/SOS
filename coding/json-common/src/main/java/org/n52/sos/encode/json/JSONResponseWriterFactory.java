@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,11 +28,13 @@
  */
 package org.n52.sos.encode.json;
 
+import javax.inject.Inject;
 
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.janmayen.component.SingleTypeComponentFactory;
+import org.n52.svalbard.encode.EncoderRepository;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -50,6 +52,12 @@ public class JSONResponseWriterFactory
 
     private static final ResponseWriterKey RESPONSE_WRITER_KEY
             = new ResponseWriterKey(JsonNode.class);
+    private EncoderRepository encoderRepository;
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
 
     @Override
     public ResponseWriterKey getKey() {
@@ -58,7 +66,7 @@ public class JSONResponseWriterFactory
 
     @Override
     public JSONResponseWriter create() {
-        return new JSONResponseWriter();
+        return new JSONResponseWriter(this.encoderRepository);
     }
 
 }

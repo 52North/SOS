@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,12 +32,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.lifecycle.Constructable;
@@ -72,11 +69,12 @@ import org.n52.sos.binding.rest.resources.sensors.SensorsPostEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPostResponse;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutResponse;
-import org.n52.sos.util.CodingHelper;
-import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.SchemaAwareEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -88,20 +86,21 @@ import com.google.common.collect.Sets;
 public class RestEncoder implements Constructable, SchemaAwareEncoder<ServiceResponse, RestResponse> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestEncoder.class);
-    @Deprecated
-    protected Constants bindingConstants;
-
-    private Constants constants;
+    private final Constants constants;
+    private final XmlOptionsHelper xmlOptionsHelper;
     private Set<EncoderKey> encoderKeys;
 
-    @Inject
-    public void setConstants(Constants constants) {
+    public RestEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
         this.constants = constants;
-        this.bindingConstants = this.constants;
+        this.xmlOptionsHelper = xmlOptionsHelper;
     }
 
     public Constants getConstants() {
         return constants;
+    }
+
+    public XmlOptionsHelper getXmlOptionsHelper() {
+        return xmlOptionsHelper;
     }
 
     @Override
@@ -120,7 +119,8 @@ public class RestEncoder implements Constructable, SchemaAwareEncoder<ServiceRes
 
             // 1 get decoder for response
             final ResourceEncoder encoder = getRestEncoderForBindingResponse(restResponse);
-            LOGGER.debug("RestEncoder found for RestResponse {}: {}", restResponse.getClass().getName(), encoder.getClass()
+            LOGGER.debug("RestEncoder found for RestResponse {}: {}", restResponse.getClass().getName(), encoder
+                         .getClass()
                          .getName());
             // 2 decode
             encodedResponse = encoder.encodeRestResponse(restResponse);
@@ -128,36 +128,36 @@ public class RestEncoder implements Constructable, SchemaAwareEncoder<ServiceRes
             // 3 return the results
             return encodedResponse;
         } catch (OwsExceptionReport owse) {
-           throw new EncodingException(owse);
+            throw new EncodingException(owse);
         }
     }
 
     private ResourceEncoder getRestEncoderForBindingResponse(final RestResponse restResponse) throws EncodingException {
         if (restResponse != null) {
             if (isSensorsGetResponse(restResponse)) {
-                return new SensorsGetEncoder();
+                return new SensorsGetEncoder(constants, xmlOptionsHelper);
             } else if (isObservationsGetResponse(restResponse)) {
-                return new ObservationsGetEncoder();
+                return new ObservationsGetEncoder(constants, xmlOptionsHelper);
             } else if (restResponse instanceof CapabilitiesGetResponse) {
-                return new CapabilitiesGetEncoder();
+                return new CapabilitiesGetEncoder(constants, xmlOptionsHelper);
             } else if (restResponse instanceof ObservationsPostResponse) {
-                return new ObservationsPostEncoder();
+                return new ObservationsPostEncoder(constants, xmlOptionsHelper);
             } else if (restResponse instanceof SensorsPostResponse) {
-                return new SensorsPostEncoder();
+                return new SensorsPostEncoder(constants, xmlOptionsHelper);
             } else if (restResponse instanceof SensorsPutResponse) {
-                return new SensorsPutEncoder();
+                return new SensorsPutEncoder(constants, xmlOptionsHelper);
             } else if (isOfferingsGetResponse(restResponse)) {
-                return new OfferingsGetEncoder();
+                return new OfferingsGetEncoder(constants, xmlOptionsHelper);
             } else if (isFeatureResponse(restResponse)) {
-                return new FeaturesGetEncoder();
+                return new FeaturesGetEncoder(constants, xmlOptionsHelper);
             } else if (restResponse instanceof ObservationsDeleteRespone) {
-                return new ObservationsDeleteEncoder();
+                return new ObservationsDeleteEncoder(constants, xmlOptionsHelper);
             } else if (restResponse instanceof OptionsRestResponse) {
-                return new OptionsRestEncoder();
+                return new OptionsRestEncoder(constants, xmlOptionsHelper);
             } else if (restResponse instanceof ResourceNotFoundResponse) {
-                return new GenericRestEncoder();
+                return new GenericRestEncoder(constants, xmlOptionsHelper);
             } else if (restResponse instanceof ServiceEndpointResponse) {
-                return new ServiceEndpointEncoder();
+                return new ServiceEndpointEncoder(constants, xmlOptionsHelper);
             }
         }
         final String exceptionText = String
@@ -198,21 +198,19 @@ public class RestEncoder implements Constructable, SchemaAwareEncoder<ServiceRes
     @Override
     public void addNamespacePrefixToMap(final Map<String, String> nameSpacePrefixMap) {
         if (nameSpacePrefixMap != null) {
-            nameSpacePrefixMap.put(bindingConstants.getEncodingNamespace(), bindingConstants.getEncodingPrefix());
+            nameSpacePrefixMap.put(constants.getEncodingNamespace(), constants.getEncodingPrefix());
         }
     }
 
     @Override
     public MediaType getContentType() {
-        return Constants.getInstance().getContentTypeDefault();
+        return constants.getContentTypeDefault();
     }
 
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet(
-                new SchemaLocation(
-                        bindingConstants.getEncodingNamespace(),
-                        bindingConstants.getEncodingSchemaUrl().toString()));
+        return Sets.newHashSet(new SchemaLocation(constants.getEncodingNamespace(),
+                                                  constants.getEncodingSchemaUrl().toString()));
     }
 
 }

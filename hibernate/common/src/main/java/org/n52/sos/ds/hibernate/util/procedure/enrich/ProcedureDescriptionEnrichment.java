@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,14 +35,13 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 
-import org.n52.sos.cache.SosContentCache;
+import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sensorML.AbstractProcess;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.I18NHelper;
 
@@ -52,14 +51,15 @@ import com.google.common.collect.Lists;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public abstract class ProcedureDescriptionEnrichment {
     private static final IsApplicable IS_APPLICABLE = new IsApplicable();
-    private SosProcedureDescription description;
+    private SosProcedureDescription<?> description;
     private String version;
     private String identifier;
     private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
+    private boolean showAllLanguageValues = ServiceConfiguration.getInstance().isShowAllLanguageValues();
     private Session session;
 
     protected ProcedureDescriptionSettings procedureSettings() {
@@ -71,6 +71,7 @@ public abstract class ProcedureDescriptionEnrichment {
     }
 
     protected Collection<SosOffering> getSosOfferings() throws CodedException {
+
         Collection<String> identifiers = getCache()
                 .getOfferingsForProcedure(getIdentifier());
         Collection<SosOffering> offerings = Lists
@@ -78,20 +79,20 @@ public abstract class ProcedureDescriptionEnrichment {
         for (String offering : identifiers) {
             SosOffering sosOffering = new SosOffering(offering, false);
             // add offering name
-            I18NHelper.addOfferingNames(sosOffering, getLocale());
+            I18NHelper.addOfferingNames(getCache(), sosOffering, getLocale(), getLocale(), showAllLanguageValues);
             // add offering description
-            I18NHelper.addOfferingDescription(sosOffering, getLocale());
+            I18NHelper.addOfferingDescription(sosOffering, getLocale(), getLocale(), getCache());
             // add to list
             offerings.add(sosOffering);
         }
         return offerings;
     }
 
-    public SosProcedureDescription getDescription() {
+    public SosProcedureDescription<?> getDescription() {
         return description;
     }
 
-    public ProcedureDescriptionEnrichment setDescription(SosProcedureDescription description) {
+    public ProcedureDescriptionEnrichment setDescription(SosProcedureDescription<?> description) {
         this.description = checkNotNull(description);
         return this;
     }

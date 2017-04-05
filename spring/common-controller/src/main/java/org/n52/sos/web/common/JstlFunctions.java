@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import org.n52.iceland.service.DatabaseSettingsHandler;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -130,10 +130,10 @@ public class JstlFunctions {
     }
 
     public static String mapToJson(@SuppressWarnings("rawtypes") Map map) {
-        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        ObjectNode node = Json.nodeFactory().objectNode();
         for (Object key : map.keySet()) {
             node.put(key.toString(), String.valueOf(map.get(key)));
         }
-        return JSONUtils.print(node);
+        return Json.print(node);
     }
 }

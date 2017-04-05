@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,12 +41,11 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-
+import org.n52.shetland.inspire.GeographicalName;
+import org.n52.shetland.inspire.Spelling;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.inspire.aqd.GeographicalName;
-import org.n52.sos.inspire.aqd.Spelling;
-import org.n52.sos.util.Nillable;
+import org.n52.shetland.w3c.Nillable;
 
 /**
  * TODO JavaDoc

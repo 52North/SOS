@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,14 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.util.Locale;
 
-import org.hibernate.Session;
-
-import org.n52.janmayen.component.Component;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.janmayen.component.ComponentFactory;
 
 /**
  * Interface for procedure description generator factories
@@ -44,8 +38,7 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
  * @since 4.2.0
  *
  */
-public interface HibernateProcedureDescriptionGeneratorFactory extends Component<HibernateProcedureDescriptionGeneratorFactoryKey> {
-
-    SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport;
+public interface HibernateProcedureDescriptionGeneratorFactory
+        extends ComponentFactory<HibernateProcedureDescriptionGeneratorKey, HibernateProcedureDescriptionGenerator> {
 
 }

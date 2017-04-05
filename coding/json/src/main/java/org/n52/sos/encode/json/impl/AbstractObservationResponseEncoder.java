@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,9 +28,12 @@
  */
 package org.n52.sos.encode.json.impl;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
@@ -45,12 +48,12 @@ import com.google.common.collect.Sets;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public abstract class AbstractObservationResponseEncoder<T extends AbstractObservationResponse> extends
-        AbstractSosResponseEncoder<T> implements org.n52.sos.coding.encode.ObservationEncoder<JsonNode, T>{
+        AbstractSosResponseEncoder<T> implements org.n52.svalbard.encode.ObservationEncoder<JsonNode, T>{
     public AbstractObservationResponseEncoder(Class<T> type, String operation) {
         super(type, operation);
     }
@@ -85,5 +88,10 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
     @Override
     public Set<String> getSupportedResponseFormats(String service, String version) {
         return Sets.newHashSet(MediaTypes.APPLICATION_JSON.toString());
+    }
+
+    @Override
+    public Map<String, Set<SupportedType>> getSupportedResponseFormatObservationTypes() {
+        return Collections.emptyMap();
     }
 }

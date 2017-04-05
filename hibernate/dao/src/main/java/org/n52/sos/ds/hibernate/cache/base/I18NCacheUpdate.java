@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,11 +40,12 @@ import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 
 /**
  * Cache update class for I18N
@@ -57,10 +58,10 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(I18NCacheUpdate.class);
 
-    private final ServiceMetadataRepository serviceMetadataRepository;
+    private final OwsServiceMetadataRepository serviceMetadataRepository;
     private final I18NDAORepository i18NDAORepository;
 
-    public I18NCacheUpdate(ServiceMetadataRepository serviceMetadataRepository,
+    public I18NCacheUpdate(OwsServiceMetadataRepository serviceMetadataRepository,
                            I18NDAORepository i18NDAORepository) {
         this.serviceMetadataRepository = serviceMetadataRepository;
         this.i18NDAORepository = i18NDAORepository;

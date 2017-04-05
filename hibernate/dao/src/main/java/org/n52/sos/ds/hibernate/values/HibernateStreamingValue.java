@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,15 +28,15 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ValueDAO;
 import org.n52.sos.ds.hibernate.dao.ValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract Hibernate streaming value class for old observation concept
@@ -58,18 +58,16 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     /**
      * constructor
      *
-     * @param request
-     *            {@link GetObservationRequest}
-     * @param procedure
-     *            Datasource procedure id
-     * @param observableProperty
-     *            observableProperty procedure id
-     * @param featureOfInterest
-     *            featureOfInterest procedure id
+     * @param connectionProvider the connection provider
+     * @param daoFactory         the DAO factory
+     * @param request            {@link GetObservationRequest}
+     * @param procedure          Datasource procedure id
+     * @param observableProperty observableProperty procedure id
+     * @param featureOfInterest  featureOfInterest procedure id
      */
-    public HibernateStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long procedure, long observableProperty,
+    public HibernateStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
-        super(connectionProvider, request);
+        super(connectionProvider, daoFactory, request);
         this.procedure = procedure;
         this.observableProperty = observableProperty;
         this.featureOfInterest = featureOfInterest;

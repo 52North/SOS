@@ -22,6 +22,6 @@
 		<module>json-common</module>
 		<module>exi</module>
 		<module>kvp</module>
-		<module>soap</module>
-		<module>netcdf</module>    </modules>
+		<module>netcdf</module>
+    </modules>
 </project>

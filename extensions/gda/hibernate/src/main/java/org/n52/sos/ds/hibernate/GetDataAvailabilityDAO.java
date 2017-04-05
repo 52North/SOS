@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,8 +53,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -65,6 +63,11 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -82,11 +85,9 @@ import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferenced
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.gda.AbstractGetDataAvailabilityHandler;
-import org.n52.sos.gda.GetDataAvailabilityRequest;
-import org.n52.sos.gda.GetDataAvailabilityResponse;
-import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -126,6 +127,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
+    private DaoFactory daoFactory;
+
 
     public GetDataAvailabilityDAO() {
         super(SosConstants.SOS);
@@ -256,7 +259,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
                     Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
         if (hasPhenomenonTimeFilter(request.getExtensions())) {
-            c.add(TemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions())));
+            c.add(SosTemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions())));
         }
         c.setProjection(Projections.distinct(Projections.property(ContextualReferencedObservation.RESULT_TIME)));
         c.addOrder(Order.asc(ContextualReferencedObservation.RESULT_TIME));
@@ -296,11 +299,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
         boolean supportsNamedQuery =
                 HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_DATA_AVAILABILITY_FOR_SERIES, session);
         boolean supportsSeriesObservationTime = EntitiyHelper.getInstance().isSeriesObservationTimeSupported();
-        for (final Series series : DaoFactory
-                .getInstance()
-                .getSeriesDAO()
-                .getSeries(request.getProcedures(), request.getObservedProperties(), request.getFeaturesOfInterest(),
-                        session)) {
+        for (Series series : daoFactory.getSeriesDAO().getSeries(request.getProcedures(),
+                                                                 request.getObservedProperties(),
+                                                                 request.getFeaturesOfInterest(), session)) {
             TimePeriod timePeriod = null;
             if (!request.isSetOfferings()) {
                 // get time information from series object
@@ -316,7 +317,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
             // supported
             if (timePeriod == null && supportsSeriesObservationTime) {
                 SeriesObservationTimeDAO seriesObservationTimeDAO =
-                        (SeriesObservationTimeDAO) DaoFactory.getInstance().getObservationTimeDAO();
+                        (SeriesObservationTimeDAO) daoFactory.getObservationTimeDAO();
                 timePeriod =
                         getTimePeriodFromSeriesGetDataAvailability(seriesObservationTimeDAO, series, request,
                                 seriesMinMaxTransformer, session);
@@ -332,7 +333,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
                 DataAvailability dataAvailability =
                         new DataAvailability(getProcedureReference(series, procedures), getObservedPropertyReference(
                                 series, observableProperties), getFeatureOfInterestReference(series,
-                                featuresOfInterest, session), timePeriod);
+                                featuresOfInterest, session), null, timePeriod);
                 if (isShowCount(request)) {
                     dataAvailability.setCount(getCountFor(series, request, session));
                 }
@@ -436,7 +437,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
             Series series, GetDataAvailabilityRequest request, Session session) throws OwsExceptionReport {
         Criterion filter = null;
         if (hasPhenomenonTimeFilter(request.getExtensions())) {
-            filter = TemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions()));
+            filter = SosTemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions()));
         }
         List<Date> dateTimes =
                 seriesObservationDAO.getResultTimesForSeriesObservation(series, request.getOfferings(), filter,
@@ -618,10 +619,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      * @return <code>true</code>, if optional count should be added
      */
     private boolean isShowCount(GetDataAvailabilityRequest request) {
-        if (request.isSetExtensions()) {
-            return request.getExtensions().isBooleanExtensionSet(SHOW_COUNT);
-        }
-        return isForceValueCount();
+        return request.getExtensions().isBooleanExtensionSet(SHOW_COUNT);
     }
 
     /**
@@ -632,11 +630,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      * @return <code>true</code>, if result times should be added
      */
     private boolean isIncludeResultTime(GetDataAvailabilityRequest request) {
-        if (request.isSetExtensions()) {
-            return request.getExtensions().isBooleanExtensionSet(INCLUDE_RESULT_TIMES)
-                    || hasPhenomenonTimeFilter(request.getExtensions());
-        }
-        return false;
+        return request.getExtensions().isBooleanExtensionSet(INCLUDE_RESULT_TIMES)
+                || hasPhenomenonTimeFilter(request.getExtensions());
     }
 
     /**
@@ -682,7 +677,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
     }
 
     protected AbstractSeriesObservationDAO getSeriesObservationDAO() throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
         if (observationDAO instanceof AbstractSeriesObservationDAO) {
             return (AbstractSeriesObservationDAO) observationDAO;
         } else {
@@ -755,7 +750,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
                         }
                     }
                     if (timePeriod != null && !timePeriod.isEmpty()) {
-                        return new DataAvailability(procedure, observableProperty, featureOfInterest, timePeriod,
+                        return new DataAvailability(procedure, observableProperty, featureOfInterest, null, timePeriod,
                                 valueCount);
                     }
                 } catch (OwsExceptionReport e) {

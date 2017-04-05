@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,27 +41,25 @@ import net.opengis.swe.x101.ObservablePropertyDocument.ObservableProperty;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public abstract class ASensorsEncoder extends ResourceEncoder {
-
-    /**
-     *
-     */
-    public ASensorsEncoder() {
-        super();
+    public ASensorsEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
     }
 
     protected SensorType createRestDefaultRestSensor(SensorResponse sensorsResponse,
-            SensorDocument xb_SensorRestDoc) throws OwsExceptionReport
-    {
+                                                     SensorDocument xb_SensorRestDoc) throws OwsExceptionReport {
         SensorType xb_SensorRest = xb_SensorRestDoc.addNewSensor();
         //
-        SystemType xb_abstractProcessType = (SystemType) xb_SensorRest.addNewProcess().substitute(SensorMLConstants.SYSTEM_QNAME,SystemType.type);
+        SystemType xb_abstractProcessType = (SystemType) xb_SensorRest.addNewProcess()
+                .substitute(SensorMLConstants.SYSTEM_QNAME, SystemType.type);
         xb_abstractProcessType.set(sensorsResponse.getSensorDescriptionXB());
         // sensor links
         addSelfLink(sensorsResponse, xb_SensorRest);
@@ -71,51 +69,43 @@ public abstract class ASensorsEncoder extends ResourceEncoder {
         String procedureId = sensorsResponse.getProcedureIdentifier();
         // rel:features-get
         setValuesOfLinkToDynamicResource(xb_SensorRest.addNewLink(),
-                createQueryStringForProcedureId(procedureId),
-                bindingConstants.getResourceRelationFeaturesGet(),
-                bindingConstants.getResourceFeatures());
+                                         createQueryStringForProcedureId(procedureId), Constants.REST_RESOURCE_RELATION_FEATURES_GET, Constants.REST_RESOURCE_RELATION_FEATURES);
 
         // rel:observations-get
         setValuesOfLinkToDynamicResource(xb_SensorRest.addNewLink(),
-                createQueryStringForProcedureId(procedureId),
-                bindingConstants.getResourceRelationObservationsGet(),
-                bindingConstants.getResourceObservations());
+                                         createQueryStringForProcedureId(procedureId),
+                                         Constants.REST_RESOURCE_RELATION_OBSERVATIONS_GET, Constants.REST_RESOURCE_RELATION_OBSERVATIONS);
 
         // rel:observable-property links
         setObservablePropertiesLinks(xb_SensorRest,
-                getObservablePropertiesFromSensorDescription(sensorsResponse.getSensorDescriptionXB()));
+                                     getObservablePropertiesFromSensorDescription(sensorsResponse
+                                             .getSensorDescriptionXB()));
         return xb_SensorRest;
     }
 
-    private Map<String,String> getObservablePropertiesFromSensorDescription(SystemType xb_system) throws OwsExceptionReport
-    {
-        Map<String,String> observableProperties = new HashMap<String,String>();
+    private Map<String, String> getObservablePropertiesFromSensorDescription(SystemType xb_system) throws
+            OwsExceptionReport {
+        Map<String, String> observableProperties = new HashMap<>();
         if (xb_system != null &&
-                xb_system.isSetInputs() &&
-                xb_system.getInputs().isSetInputList() &&
-                xb_system.getInputs().getInputList() != null &&
-                xb_system.getInputs().getInputList().getInputArray() != null)
-        {
+            xb_system.isSetInputs() &&
+            xb_system.getInputs().isSetInputList() &&
+            xb_system.getInputs().getInputList() != null &&
+            xb_system.getInputs().getInputList().getInputArray() != null) {
             IoComponentPropertyType[] xb_inputs = xb_system.getInputs().getInputList().getInputArray();
-            for (IoComponentPropertyType xb_input : xb_inputs)
-            {
-                if (xb_input != null && xb_input.isSetObservableProperty())
-                {
+            for (IoComponentPropertyType xb_input : xb_inputs) {
+                if (xb_input != null && xb_input.isSetObservableProperty()) {
                     String type = MediaTypes.APPLICATION_XML.toString();
-                    if (xb_input.getTitle() != null && !xb_input.getTitle().isEmpty())
-                    {
+                    if (xb_input.getTitle() != null && !xb_input.getTitle().isEmpty()) {
                         type = xb_input.getTitle();
                     }
                     ObservableProperty xb_ObservableProperty = xb_input.getObservableProperty();
-                    if (xb_ObservableProperty.isSetDefinition() && type != null && !type.isEmpty())
-                    {
+                    if (xb_ObservableProperty.isSetDefinition() && type != null && !type.isEmpty()) {
                         String property = xb_ObservableProperty.getDefinition();
                         observableProperties.put(property, type);
                     }
                 }
             }
-            if (observableProperties.size() > 0)
-            {
+            if (observableProperties.size() > 0) {
                 return observableProperties;
             }
         }
@@ -123,64 +113,45 @@ public abstract class ASensorsEncoder extends ResourceEncoder {
     }
 
     private void setObservablePropertiesLinks(SensorType xb_SensorRest,
-            Map<String,String> observableProperties)
-    {
-        LinkType xb_ObservablePropertyLink = null;
-        if (observableProperties != null)
-        {
+                                              Map<String, String> observableProperties) {
+        if (observableProperties != null) {
             for (String observableProperty : observableProperties.keySet()) {
-                xb_ObservablePropertyLink = xb_SensorRest.addNewLink();
-                xb_ObservablePropertyLink.setRel(
-                        bindingConstants.getEncodingNamespace().concat("/")
-                        .concat(bindingConstants.getResourceRelationObservablePropertyGet()));
-                if (observableProperty.indexOf("http://") != -1)
-                {
+                LinkType xb_ObservablePropertyLink = xb_SensorRest.addNewLink();
+                xb_ObservablePropertyLink.setRel(getConstants().getEncodingNamespace().concat("/")
+                        .concat(Constants.REST_RESOURCE_RELATION_OBSERVABLEPROPERTY_GET));
+                if (observableProperty.contains("http://")) {
                     xb_ObservablePropertyLink.setHref(observableProperty);
                     xb_ObservablePropertyLink.setType(observableProperties.get(observableProperty));
-                }
-                else
-                {
-                    xb_ObservablePropertyLink.setHref(createHrefForResourceAndIdentifier(
-                            bindingConstants.getResourceObservableProperties(),
-                            observableProperty));
-                    xb_ObservablePropertyLink.setType(bindingConstants.getContentTypeDefault().toString());
+                } else {
+                    xb_ObservablePropertyLink
+                            .setHref(createHrefForResourceAndIdentifier(Constants.REST_RESOURCE_RELATION_OBSERVABLE_PROPERTIES,
+                                                                        observableProperty));
+                    xb_ObservablePropertyLink.setType(getConstants().getContentTypeDefault().toString());
                 }
             }
         }
     }
 
-    private String createQueryStringForProcedureId(String procedureId)
-    {
-        return bindingConstants.getHttpGetParameterNameProcedure().concat("=").concat(procedureId);
+    private String createQueryStringForProcedureId(String procedureId) {
+        return (Constants.REST_HTTP_GET_PARAMETERNAME_PROCEDURES).concat("=").concat(procedureId);
     }
 
     private void addDeleteLink(SensorResponse sensorsPostResponse,
-            SensorType xb_SensorRest)
-    {
+                               SensorType xb_SensorRest) {
         setValuesOfLinkToUniqueResource(xb_SensorRest.addNewLink(),
-                sensorsPostResponse.getProcedureIdentifier(),
-                bindingConstants.getResourceRelationSensorDelete(),
-                bindingConstants.getResourceSensors());
+                                        sensorsPostResponse.getProcedureIdentifier(), Constants.REST_RESOURCE_RELATION_SENSOR_DELETE, Constants.REST_RESOURCE_SENSORS);
     }
 
     private void addUpdateLink(SensorResponse sensorsPostResponse,
-            SensorType xb_SensorRest)
-    {
+                               SensorType xb_SensorRest) {
         setValuesOfLinkToUniqueResource(xb_SensorRest.addNewLink(),
-                sensorsPostResponse.getProcedureIdentifier(),
-                bindingConstants.getResourceRelationSensorUpdate(),
-                bindingConstants.getResourceSensors());
+                                        sensorsPostResponse.getProcedureIdentifier(), Constants.REST_RESOURCE_RELATION_SENSOR_UPDATE, Constants.REST_RESOURCE_SENSORS);
     }
 
     private void addSelfLink(SensorResponse sensorsPostResponse,
-            SensorType xb_SensorRest)
-    {
-        setValuesOfLinkToUniqueResource(
-                xb_SensorRest.addNewLink(),
-                sensorsPostResponse.getProcedureIdentifier(),
-                bindingConstants.getResourceRelationSelf(),
-                bindingConstants.getResourceSensors());
+                             SensorType xb_SensorRest) {
+        setValuesOfLinkToUniqueResource(xb_SensorRest.addNewLink(),
+                                        sensorsPostResponse.getProcedureIdentifier(), Constants.REST_RESOURCE_RELATION_SELF, Constants.REST_RESOURCE_SENSORS);
     }
-
 
 }

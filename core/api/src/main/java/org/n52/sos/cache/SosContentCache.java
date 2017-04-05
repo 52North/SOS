@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,8 +34,8 @@ import java.util.Set;
 import org.joda.time.DateTime;
 
 import org.n52.iceland.cache.ContentCache;
-import org.n52.shetland.i18n.LocalizedString;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.janmayen.i18n.MultilingualString;
 
 
 /**
@@ -46,7 +46,7 @@ import org.n52.shetland.i18n.MultilingualString;
  * often change)
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -184,6 +184,16 @@ public interface SosContentCache
      * @return the observable properties
      */
     Set<String> getObservablePropertiesForProcedure(String procedure);
+
+    /**
+     * Checks if the specified procedure has the specified observable property.
+     *
+     * @param procedure          the procedure
+     * @param observableProperty the observable property
+     *
+     * @return if there exists an association
+     */
+    boolean hasObservablePropertyForProcedure(String procedure, String observableProperty);
 
     /**
      * @return all observation types

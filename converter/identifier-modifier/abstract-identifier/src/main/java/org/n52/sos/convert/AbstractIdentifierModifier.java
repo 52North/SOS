@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -78,6 +78,9 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosObservationOffering;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
@@ -94,9 +97,6 @@ import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.sos.cache.SosContentCache;
-import org.n52.sos.gda.GetDataAvailabilityRequest;
-import org.n52.sos.gda.GetDataAvailabilityResponse;
-import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
@@ -375,24 +375,24 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
 
     private void checkAndChangeProcedure(AbstractFeature abstractFeature) {
         if (abstractFeature instanceof SosProcedureDescription){
-            SosProcedureDescription procedure = (SosProcedureDescription)abstractFeature;
+            SosProcedureDescription<?> procedure = (SosProcedureDescription)abstractFeature;
             checkAndChangeProcedureIdentifier(procedure);
             if (procedure.isSetFeaturesOfInterest()) {
                 procedure.setFeaturesOfInterest(checkFeatureOfInterestIdentifier(procedure.getFeaturesOfInterest()));
             }
             if (procedure.isSetFeaturesOfInterestMap()) {
                 Map<String, AbstractFeature> checkedFeatures = Maps.newHashMap();
-                for (AbstractFeature feature : (Collection<AbstractFeature>)procedure.getFeaturesOfInterestMap().values()) {
+                for (AbstractFeature feature : procedure.getFeaturesOfInterestMap().values()) {
                     checkAndChangeFeatureOfInterestIdentifier(feature);
                     checkedFeatures.put(feature.getIdentifier(), feature);
                 }
                 procedure.setFeaturesOfInterestMap(checkedFeatures);
             }
             if (procedure.isSetOfferings()) {
-                procedure.getOfferings().forEach(off -> checkAndChangOfferingIdentifier((SosOffering)off));
+                procedure.getOfferings().forEach(off -> checkAndChangOfferingIdentifier(off));
             }
             if (procedure.isSetPhenomenon()) {
-                procedure.setPhenomenon((Map<String, AbstractFeature>)procedure.getPhenomenon().values().stream()
+                procedure.setPhenomenon(procedure.getPhenomenon().values().stream()
                         .map(phen -> {
                             checkAndChangeObservablePropertyIdentifier((AbstractFeature)phen);
                             return phen;

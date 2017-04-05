@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,9 +31,13 @@ package org.n52.sos.ds.hibernate.dao.i18n;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
+
 import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NObservablePropertyMetadata;
@@ -44,11 +48,16 @@ import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NObservablePropertyMet
  * @author Christian Autermann
  */
 public class ObservablePropertyI18NDAO extends AbstractHibernateI18NDAO<ObservableProperty, I18NObservablePropertyMetadata, HibernateI18NObservablePropertyMetadata> {
+    private final DaoFactory daoFactory;
+
+    @Inject
+    public ObservablePropertyI18NDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Override
     protected ObservableProperty getEntity(String id, Session session) {
-        return new ObservablePropertyDAO()
-                .getObservablePropertyForIdentifier(id, session);
+        return new ObservablePropertyDAO(daoFactory).getObservablePropertyForIdentifier(id, session);
     }
 
     @Override
@@ -65,7 +74,6 @@ public class ObservablePropertyI18NDAO extends AbstractHibernateI18NDAO<Observab
     protected HibernateI18NObservablePropertyMetadata createHibernateObject() {
         return new HibernateI18NObservablePropertyMetadata();
     }
-
 
     @Override
     public Set<I18NDAOKey> getKeys() {

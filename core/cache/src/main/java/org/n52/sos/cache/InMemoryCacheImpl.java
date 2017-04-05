@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,8 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.util.collections.SetMultiMap;
-import org.n52.shetland.i18n.LocalizedString;
-import org.n52.shetland.i18n.MultilingualString;
+import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.util.CollectionHelper;
@@ -385,7 +385,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     public LocalizedString getI18nNameForOffering(String offering, Locale i18n) {
         MultilingualString map = this.i18nNameForOfferings.get(offering);
         if (map != null) {
-            return map.getLocalization(i18n).orNull();
+            return map.getLocalization(i18n).orElse(null);
         }
         return null;
     }
@@ -405,7 +405,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     public LocalizedString getI18nDescriptionForOffering(String offering, Locale i18n) {
         MultilingualString map = this.i18nDescriptionForOfferings.get(offering);
         if (map != null) {
-            return map.getLocalization(i18n).orNull();
+            return map.getLocalization(i18n).orElse(null);
         }
         return null;
     }
@@ -481,6 +481,12 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     @Override
     public Set<String> getObservablePropertiesForProcedure(final String procedure) {
         return copyOf(this.observablePropertiesForProcedures.get(procedure));
+    }
+
+    @Override
+    public boolean hasObservablePropertyForProcedure(final String procedure, String observableProperty) {
+        return this.observablePropertiesForProcedures.containsKey(procedure) &&
+               this.observablePropertiesForProcedures.get(procedure).contains(observableProperty);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,19 +33,26 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.n52.iceland.coding.encode.ResponseFormatKey;
+import org.n52.iceland.config.ActivationService;
 import org.n52.iceland.util.activation.ActivationInitializer;
 import org.n52.iceland.util.activation.ActivationSource;
 import org.n52.iceland.util.activation.DefaultActivationInitializer;
 import org.n52.iceland.util.activation.FunctionalActivationListener;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 
-public class SosActivationService {
+public class SosActivationService extends ActivationService {
 
-    private SosActivationDao dao;
+    private SosActivationDao activationDao;
+
+    @Override
+    public SosActivationDao getActivationDao() {
+        return this.activationDao;
+    }
 
     @Inject
-    public void setSosActivationDao(SosActivationDao dao) {
-        this.dao = dao;
+    public void setActivationDao(SosActivationDao activationDao) {
+        this.activationDao = activationDao;
     }
 
     /**
@@ -58,20 +65,19 @@ public class SosActivationService {
      * @return if the format is active
      */
     public boolean isResponseFormatActive(ResponseFormatKey key) {
-        return this.dao.isResponseFormatActive(key);
+        return getActivationDao().isResponseFormatActive(key);
     }
 
     public FunctionalActivationListener<ResponseFormatKey> getResponseFormatListener() {
-        return this.dao::setResponseFormatStatus;
+        return getActivationDao()::setResponseFormatStatus;
     }
 
     public ActivationSource<ResponseFormatKey> getResponseFormatSource() {
-        return ActivationSource.create(this::isResponseFormatActive,
-                                       this::getResponseFormatKeys);
+        return ActivationSource.create(this::isResponseFormatActive, this::getResponseFormatKeys);
     }
 
     protected Set<ResponseFormatKey> getResponseFormatKeys() {
-        return this.dao.getResponseFormatKeys();
+        return getActivationDao().getResponseFormatKeys();
     }
 
     public ActivationInitializer<ResponseFormatKey> getResponseFormatInitializer() {
@@ -87,26 +93,51 @@ public class SosActivationService {
      *
      * @return if the format is active
      */
-    public boolean isProcedureDescriptionFormatActive(
-            ProcedureDescriptionFormatKey key) {
-        return this.dao.isProcedureDescriptionFormatActive(key);
+    public boolean isProcedureDescriptionFormatActive(ProcedureDescriptionFormatKey key) {
+        return getActivationDao().isProcedureDescriptionFormatActive(key);
     }
 
     public FunctionalActivationListener<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatListener() {
-        return this.dao::setProcedureDescriptionFormatStatus;
+        return getActivationDao()::setProcedureDescriptionFormatStatus;
     }
 
     public ActivationSource<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatSource() {
-        return ActivationSource.create(this::isProcedureDescriptionFormatActive,
-                                       this::getProcedureDescriptionFormatKeys);
+        return ActivationSource.create(this::isProcedureDescriptionFormatActive, this::getProcedureDescriptionFormatKeys);
     }
 
     protected Set<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatKeys() {
-        return dao.getProcedureDescriptionFormatKeys();
+        return getActivationDao().getProcedureDescriptionFormatKeys();
     }
 
     public ActivationInitializer<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatInitializer() {
         return new DefaultActivationInitializer<>(getProcedureDescriptionFormatSource());
+    }
+
+     /**
+     * Checks if the offering extension is active.
+     *
+     * @param key the offering extension key
+     *
+     * @return if the offering extension is active
+     */
+    public boolean isSosObservationOfferingExtensionActive(SosObservationOfferingExtensionKey key) {
+        return getActivationDao().isSosObservationOfferingExtensionActive(key);
+    }
+
+    public FunctionalActivationListener<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionListener() {
+        return getActivationDao()::setSosObservationOfferingExtensionStatus;
+    }
+
+    public ActivationSource<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionSource() {
+        return ActivationSource.create(this::isSosObservationOfferingExtensionActive, this::getSosObservationOfferingExtensionKeys);
+    }
+
+    protected Set<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionKeys() {
+        return getActivationDao().getSosObservationOfferingExtensionKeys();
+    }
+
+    public ActivationInitializer<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionInitializer() {
+        return new DefaultActivationInitializer<>(getSosObservationOfferingExtensionSource());
     }
 
 }

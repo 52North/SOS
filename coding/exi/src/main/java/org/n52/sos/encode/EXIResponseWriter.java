@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,7 +43,6 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.janmayen.Producer;
@@ -51,6 +50,8 @@ import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.exi.EXISettings;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Charsets;
 import com.siemens.ct.exi.EXIFactory;
@@ -73,9 +74,11 @@ public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
     private final Producer<XmlOptions> xmlOptions;
 
     // we can not use injection in this class as it is manually created by a factory
-    public EXIResponseWriter(Producer<EXIFactory> exiUtils,
+    public EXIResponseWriter(EncoderRepository encoderRepository,
+                             Producer<EXIFactory> exiFactory,
                              Producer<XmlOptions> xmlOptions) {
-        this.exiFactory = exiUtils;
+        super(encoderRepository);
+        this.exiFactory = exiFactory;
         this.xmlOptions = xmlOptions;
     }
 

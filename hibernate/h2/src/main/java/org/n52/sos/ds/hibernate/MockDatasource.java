@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.n52.iceland.config.SettingDefinition;
+import org.n52.faroe.SettingDefinition;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.ds.DatasourceCallback;
 import org.n52.sos.ds.HibernateDatasourceConstants;
@@ -56,13 +56,13 @@ public class MockDatasource implements Datasource {
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
+    public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties current) {
         // TODO Auto-generated method stub
         return null;
     }

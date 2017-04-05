@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,13 +39,17 @@ import net.opengis.swes.x20.AbstractContentsType.Offering;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
@@ -53,51 +57,48 @@ import org.n52.svalbard.encode.exception.EncodingException;
  *
  */
 public class OfferingsRequestHandler extends RequestHandler {
+    public OfferingsRequestHandler(Constants bindingConstants, EncoderRepository encoderRepository,
+                                   ServiceOperatorRepository serviceOperatorRepository) {
+        super(bindingConstants, encoderRepository, serviceOperatorRepository);
+    }
 
     @Override
-    public RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException
-    {
-        if (request != null && request instanceof OfferingsRequest){
+    public RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException {
+        if (request != null && request instanceof OfferingsRequest) {
             // 0 submit request to SOS core
             GetCapabilitiesRequest getCapabilitiesRequest = ((OfferingsRequest) request).getGetCapabilitiesRequest();
             // 1 handle core response
             try {
-            XmlObject xb_getCapabilitiesResponse = executeSosRequest(getCapabilitiesRequest);
-                if (xb_getCapabilitiesResponse instanceof CapabilitiesDocument)
-                {
+                XmlObject xb_getCapabilitiesResponse = executeSosRequest(getCapabilitiesRequest);
+                if (xb_getCapabilitiesResponse instanceof CapabilitiesDocument) {
                     CapabilitiesDocument xb_capaCapabilitiesDocument = (CapabilitiesDocument) xb_getCapabilitiesResponse;
                     CapabilitiesType xb_sosCapabilities = xb_capaCapabilitiesDocument.getCapabilities();
                     boolean isByIdRequest = request instanceof OfferingByIdRequest;
-                    List<String> offeringIdentifiers = new ArrayList<String>();
+                    List<String> offeringIdentifiers = new ArrayList<>();
 
-                    if (isOfferingArrayAvailable(xb_sosCapabilities))
-                    {
+                    if (isOfferingArrayAvailable(xb_sosCapabilities)) {
                         // 1.1 if by id: get observation offering for id
                         Offering[] xb_offerings = xb_sosCapabilities.getContents().getContents().getOfferingArray();
 
-                        for (Offering xb_offering : xb_offerings)
-                        {
-                            ObservationOfferingType xb_observationOffering = getObservationOfferingFromOffering(xb_offering);
+                        for (Offering xb_offering : xb_offerings) {
+                            ObservationOfferingType xb_observationOffering
+                                    = getObservationOfferingFromOffering(xb_offering);
 
-                            if (xb_observationOffering.isSetIdentifier())
-                            {
+                            if (xb_observationOffering.isSetIdentifier()) {
 
-                                if (isByIdRequest && hasOfferingTheCorrectIdForByIdRequest(request, xb_observationOffering))
-                                {
+                                if (isByIdRequest &&
+                                    hasOfferingTheCorrectIdForByIdRequest(request, xb_observationOffering)) {
                                     return new OfferingByIdResponse(getObservationOfferingFromOffering(xb_offering));
-                                }
-                                else if (!isByIdRequest)
-                                {
+                                } else if (!isByIdRequest) {
                                     offeringIdentifiers.add(xb_observationOffering.getIdentifier());
                                 }
                             }
                         }
                     }
                     // 2 return response
-                    if (isByIdRequest && offeringIdentifiers.isEmpty())
-                    {
-                        return new ResourceNotFoundResponse(bindingConstants.getResourceOfferings(),
-                                ((OfferingByIdRequest)request).getOfferingIdentifier());
+                    if (isByIdRequest && offeringIdentifiers.isEmpty()) {
+                        return new ResourceNotFoundResponse((Constants.REST_RESOURCE_RELATION_OFFERINGS),
+                                                            ((OfferingByIdRequest) request).getOfferingIdentifier());
                     }
                     return new OfferingsResponse(offeringIdentifiers);
                 }
@@ -105,21 +106,20 @@ public class OfferingsRequestHandler extends RequestHandler {
                 throw new NoApplicableCodeException().causedBy(ee);
             }
         }
-        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(request,this.getClass().getName());
+        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(request, this.getClass().getName());
     }
 
     private boolean hasOfferingTheCorrectIdForByIdRequest(RestRequest request,
-            ObservationOfferingType xb_observationOffering)
-    {
-        return xb_observationOffering.getIdentifier().equalsIgnoreCase(((OfferingByIdRequest)request).getOfferingIdentifier());
+                                                          ObservationOfferingType xb_observationOffering) {
+        return xb_observationOffering.getIdentifier().equalsIgnoreCase(((OfferingByIdRequest) request)
+                .getOfferingIdentifier());
     }
 
-    private boolean isOfferingArrayAvailable(CapabilitiesType xb_sosCapabilities)
-    {
+    private boolean isOfferingArrayAvailable(CapabilitiesType xb_sosCapabilities) {
         return xb_sosCapabilities.isSetContents() &&
-                xb_sosCapabilities.getContents() != null
-                && xb_sosCapabilities.getContents().getContents() != null
-                && xb_sosCapabilities.getContents().getContents().getOfferingArray() != null;
+               xb_sosCapabilities.getContents() != null &&
+                 xb_sosCapabilities.getContents().getContents() != null &&
+                 xb_sosCapabilities.getContents().getContents().getOfferingArray() != null;
     }
 
 }

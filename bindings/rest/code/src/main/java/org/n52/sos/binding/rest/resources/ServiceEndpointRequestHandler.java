@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,24 +32,30 @@ import java.io.IOException;
 
 import org.apache.xmlbeans.XmlException;
 
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.encode.EncoderRepository;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class ServiceEndpointRequestHandler extends RequestHandler {
+    public ServiceEndpointRequestHandler(Constants bindingConstants, EncoderRepository encoderRepository,
+                                         ServiceOperatorRepository serviceOperatorRepository) {
+        super(bindingConstants, encoderRepository, serviceOperatorRepository);
+    }
 
     @Override
-    public RestResponse handleRequest(final RestRequest request) throws OwsExceptionReport, XmlException, IOException
-    {
+    public RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException {
         if (request instanceof ServiceEndpointRequest) {
-            return new ServiceEndpointResponse(bindingConstants.getBindingEndPointResource());
+            return new ServiceEndpointResponse(getConstants().getBindingEndPointResource());
         }
-        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(request,this.getClass().getName());
+        throw logRequestTypeNotSupportedByThisHandlerAndCreateException(request, this.getClass().getName());
     }
 
 }

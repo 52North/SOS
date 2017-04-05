@@ -4,12 +4,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-    <bean id="exiBindingSettingDefintionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+    <bean id="exiBindingSettingDefintionGroup" class="org.n52.faroe.SettingDefinitionGroup">
         <property name="title" value="EXI Binding" />
         <property name="description" value="&lt;abbr title=&quot;Efficient XML Interchange&quot;&gt;EXI&lt;/abbr&gt; is a very compact representation for the &lt;a href=&quot;http://www.w3.org/TR/exi/&quot; target=&quot;_blank&quot;&gt;&lt;abbr title=&quot;Extensible Markup Language&quot;&gt;XML&lt;/abbr&gt;&lt;/a&gt; Information Set that is intended to simultaneously optimize performance and the utilization of computational resources. EXI encoding is available via content type &lt;code&gt;application/exi&lt;/code&gt;." />
         <property name="order" value="4.22" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="exi.fidelity.comments" />
         <property name="title" value="Preserve comments?" />
         <property name="description" value="Should the EXI encoder preserve comments and the decoder expect comments.&lt;br /&gt;&lt;i&gt;&lt;b&gt;Note&lt;/b&gt;: Requires fidelity &lt;b&gt;specific&lt;/b&gt;.&lt;/i&gt;" />
@@ -17,7 +17,7 @@
         <property name="group" ref="exiBindingSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="exi.fidelity.processing.instructions" />
         <property name="title" value="Preserve processing instructions?" />
         <property name="description" value="Should the EXI encoder preserve processing instructions and the decoder expect them.&lt;br /&gt;&lt;i&gt;&lt;b&gt;Note&lt;/b&gt;: Requires fidelity &lt;b&gt;specific&lt;/b&gt;.&lt;/i&gt;" />
@@ -25,7 +25,7 @@
         <property name="group" ref="exiBindingSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="exi.fidelity.dtd" />
         <property name="title" value="Preserve DTDs?" />
         <property name="description" value="Should the EXI encoder preserve &lt;abbr title=&quot;Document Type Definition&quot;&gt;DTD&lt;/abbr&gt;s and the decoder expect them.&lt;br /&gt;&lt;i&gt;&lt;b&gt;Note&lt;/b&gt;: Requires fidelity &lt;b&gt;specific&lt;/b&gt;.&lt;/i&gt;" />
@@ -33,7 +33,7 @@
         <property name="group" ref="exiBindingSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
+    <bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
         <property name="key" value="exi.fidelity" />
         <property name="title" value="Fidelity" />
         <property name="description" value="Fidelity options allow to preserve some features that might be removed by EXI because of better performance and compression.&lt;ul&gt;&lt;li&gt;&lt;b&gt;Default&lt;/b&gt;: uses some default options. If any of the other options is selected, default options is skipped.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Specific&lt;/b&gt;: uses the options activatedfurther down.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Strict&lt;/b&gt;: no namespace prefixes, comments etc are preserved nor schema deviations are allowed.&lt;/li&gt;&lt;/ul&gt;" />
@@ -48,7 +48,7 @@
             </map>
         </property>
     </bean>
-    <bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
+    <bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
         <property name="key" value="exi.grammar" />
         <property name="title" value="Grammar" />
         <property name="description" value="Grammar options define if the en/decoder use any grammar while processing XML streams.&lt;ul&gt;&lt;li&gt;&lt;b&gt;Schema based on XSD&lt;/b&gt;: schema information will be used while processing the EXI body (best results (compression)). Available schema can be  selected further down.&lt;/li&gt;&lt;li&gt;&lt;b&gt;schemaless&lt;/b&gt;: no schema information will be used to process the EXI stream (worst results (compression)).&lt;/li&gt;&lt;li&gt;&lt;b&gt;XSD Base Types&lt;/b&gt;: No user defined schema information is generated for processing the EXI body; however, the built-in XML schema types are available for use in the EXI  body.&lt;/li&gt;&lt;/ul&gt;" />
@@ -63,7 +63,7 @@
             </map>
         </property>
     </bean>
-    <bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
+    <bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
         <property name="key" value="exi.alignment" />
         <property name="title" value="Alignment" />
         <property name="description" value="The alignment option is used to control the alignment of event codes and content items.&lt;ul&gt;&lt;li&gt;&lt;b&gt;Bit packed&lt;/b&gt;: indicates that the event codes and associated content are packed in bits without any padding in-between.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Byte packed&lt;/b&gt;: indicates that the event codes and associated content are aligned on byte boundaries.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Compression&lt;/b&gt;: increases compactness using additional computational resources by applying the DEFLATE algorithm.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Pre-Compression&lt;/b&gt;: indicates that all steps involved in compression are to be done with the exception of the final step of applying the DEFLATE algorithm (the primary use case of pre-compression is to avoid a duplicate compression step when compression capability is built into the transport protocol).&lt;/li&gt;&lt;ul&gt;" />
@@ -79,7 +79,7 @@
             </map>
         </property>
     </bean>
-    <bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
+    <bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
         <property name="key" value="exi.grammar.schema" />
         <property name="title" value="Grammar Schema" />
         <property name="description" value="Which XSD to use for processing the EXI body. &lt;br /&gt;&lt;i&gt;&lt;b&gt;Note&lt;/b&gt;: Requires grammar &lt;b&gt;schema based on XSD&lt;/b&gt;.&lt;/i&gt;" />
@@ -93,7 +93,7 @@
             </map>
         </property>
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="exi.fidelity.lexical.value" />
         <property name="title" value="Preserve lexical form?" />
         <property name="description" value="Should the EXI encoder preserve the lexical form of element and attribute values and the decoder expect them.&lt;br /&gt;&lt;i&gt;&lt;b&gt;Note&lt;/b&gt;: Requires fidelity &lt;b&gt;specific&lt;/b&gt;.&lt;/i&gt;" />
@@ -101,7 +101,7 @@
         <property name="group" ref="exiBindingSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="exi.fidelity.prefixes" />
         <property name="title" value="Preserve prefixes?" />
         <property name="description" value="Should the EXI encoder preserve prefixes and the decoder expect them.&lt;br /&gt;&lt;i&gt;&lt;b&gt;Note&lt;/b&gt;: Requires fidelity &lt;b&gt;specific&lt;/b&gt;.&lt;/i&gt;" />

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,7 @@
 package org.n52.sos.util;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -37,7 +38,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,14 +47,14 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.MinMax;
-import org.n52.oxf.xml.NcNameResolver;
+import org.n52.janmayen.NcName;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.OwsRange;
@@ -67,18 +67,20 @@ import org.n52.shetland.ogc.sensorML.elements.SmlIo;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.MinMax;
 import org.n52.shetland.util.SosQueryBuilder;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
-import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.service.Configurator;
+import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.encode.Encoder;
 
 import com.google.common.base.Joiner;
@@ -310,12 +312,10 @@ public class SosHelper {
      */
     // FIXME move to ReadableCache
     public static Set<String> getHierarchy(final Map<String, Set<String>> hierarchy, final Set<String> keys,
-            final boolean fullHierarchy, final boolean includeStartKeys) {
-        final Set<String> parents = new HashSet<>();
-        for (final String key : keys) {
-            parents.addAll(getHierarchy(hierarchy, key, fullHierarchy, includeStartKeys));
-        }
-        return parents;
+                                           final boolean fullHierarchy, final boolean includeStartKeys) {
+        return keys.stream()
+                .flatMap(key -> getHierarchy(hierarchy, key, fullHierarchy, includeStartKeys).stream())
+                .collect(toSet());
     }
 
     /**
@@ -433,6 +433,7 @@ public class SosHelper {
      *            the envelope
      * @return the {@code MinMax} describing the envelope
      */
+    @Deprecated
     public static MinMax<String> getMinMaxFromEnvelope(final Envelope envelope) {
         // TODO for full 3D support add minz to parameter in setStringValue
         return new MinMax<String>()
@@ -472,7 +473,7 @@ public class SosHelper {
                         Lists.newArrayList(Double.toString(envelope.getMinX()), Double.toString(envelope.getMinY())));
     }
 
-    public static OmObservableProperty createSosOberavablePropertyFromSosSMLIo(final SmlIo<?> output) {
+    public static OmObservableProperty createSosOberavablePropertyFromSosSMLIo(final SmlIo output) {
         final SweAbstractDataComponent ioValue = output.getIoValue();
         final String identifier = ioValue.getDefinition();
         final String description = ioValue.getDescription();
@@ -577,16 +578,9 @@ public class SosHelper {
      * @see SosHelper#setConfiguration(org.n52.sos.util.SosHelper.Configuration)
      */
     protected static class Configuration {
+
         protected Collection<String> getObservationTypes() {
             return Configurator.getInstance().getCache().getObservationTypes();
-        }
-
-        protected String getSrsNamePrefix() {
-            return ServiceConfiguration.getInstance().getSrsNamePrefix();
-        }
-
-        protected String getSrsNamePrefixSosV2() {
-            return ServiceConfiguration.getInstance().getSrsNamePrefixSosV2();
         }
 
         protected Set<Encoder<?, ?>> getEncoders() {
@@ -601,8 +595,8 @@ public class SosHelper {
     public static Map<String, String> getNcNameResolvedOfferings(Collection<String> offerings) {
         Map<String, String> resolvedOfferings = new HashMap<>();
         for (String offering : offerings) {
-            if (!NcNameResolver.isNCName(offering)) {
-                resolvedOfferings.put(NcNameResolver.fixNcName(offering), offering);
+            if (!NcName.isValid(offering)) {
+                resolvedOfferings.put(NcName.makeValid(offering), offering);
             } else {
                 resolvedOfferings.put(offering, offering);
             }

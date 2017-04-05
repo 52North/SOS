@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,11 +33,6 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.sos.exception.NoSuchExtensionException;
-import org.n52.sos.exception.NoSuchIdentifierException;
-import org.n52.sos.exception.NoSuchOfferingException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -49,11 +44,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchIdentifierException;
+import org.n52.sos.exception.NoSuchOfferingException;
 import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -66,7 +64,7 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getCapabilitiesExtensions() {
-        ObjectNode response = JSONUtils.nodeFactory().objectNode();
+        ObjectNode response = Json.nodeFactory().objectNode();
         Map<String, StringBasedCapabilitiesExtension> capabilitiesExtensions
                 = getCapabilitiesExtensionService().getActiveCapabilitiesExtensions();
         for (String id : capabilitiesExtensions.keySet()) {
@@ -76,7 +74,7 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     }
 
     private JsonNode toJson(StringBasedCapabilitiesExtension capabilitiesExtension) {
-        return JSONUtils.nodeFactory().objectNode()
+        return Json.nodeFactory().objectNode()
                 .put(IDENTIFIER_PROPERTY, capabilitiesExtension.getSectionName())
                 .put(DISABLED_PROPERTY, capabilitiesExtension.isDisabled())
                 .put(EXTENSION_PROPERTY, capabilitiesExtension.getExtension());
@@ -99,7 +97,7 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     public void setCapabilitiesExtensionSettings(
             @PathVariable("identifier") String identifier,
             @RequestBody String settings) throws NoSuchExtensionException, NoSuchOfferingException, IOException {
-        JsonNode request = JSONUtils.loadString(settings);
+        JsonNode request = Json.loadString(settings);
 
         if (request.has(DISABLED_PROPERTY)) {
             getCapabilitiesExtensionService().disableCapabilitiesExtension(identifier, request.path(DISABLED_PROPERTY).asBoolean());

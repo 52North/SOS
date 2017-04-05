@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -47,13 +47,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingValueFactory;
-import org.n52.iceland.config.json.JsonSettingsEncoder;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingValueFactory;
+import org.n52.faroe.json.JsonSettingsEncoder;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -121,7 +121,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
         return new ModelAndView(new RedirectView(ControllerConstants.Paths.ADMIN_DATABASE_SETTINGS, true));
     }
 
-    protected Map<String, Object> parseDatasourceSettings(Set<SettingDefinition<?, ?>> defs, HttpServletRequest req) {
+    protected Map<String, Object> parseDatasourceSettings(Set<SettingDefinition<?>> defs, HttpServletRequest req) {
         Map<String, String> parameters = new HashMap<>(req.getParameterMap().size());
         Enumeration<?> e = req.getParameterNames();
         while (e.hasMoreElements()) {
@@ -129,7 +129,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
             parameters.put(key, req.getParameter(key));
         }
         Map<String, Object> parsedSettings = new HashMap<>(parameters.size());
-        for (SettingDefinition<?, ?> def : defs) {
+        for (SettingDefinition<?> def : defs) {
             SettingValue<?> newValue =
                     this.settingValueFactory.newSettingValue(def, parameters.get(def.getKey()));
             parsedSettings.put(def.getKey(), newValue.getValue());
@@ -152,28 +152,28 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
 
     private JsonNode encodeSettings(Properties p) throws JSONException {
         JsonSettingsEncoder enc = getSettingsEncoder();
-        Set<SettingDefinition<?, ?>> defs = getDatasource().getChangableSettingDefinitions(p);
+        Set<SettingDefinition<?>> defs = getDatasource().getChangableSettingDefinitions(p);
         JsonNode settings = enc.encode(enc.sortByGroup(defs));
-        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        ObjectNode node = Json.nodeFactory().objectNode();
         node.set(SETTINGS, settings);
         return node;
     }
 
     private JsonNode encodeSettings(Map<String, Object> p) throws JSONException {
         JsonSettingsEncoder enc = getSettingsEncoder();
-        Set<SettingDefinition<?, ?>> defs =
+        Set<SettingDefinition<?>> defs =
                 getDatasource().getChangableSettingDefinitions(
                         getDatasource().getDatasourceProperties(getSettings(), p));
-        for (SettingDefinition<?, ?> def : defs) {
+        for (SettingDefinition<?> def : defs) {
             setDefaultValue(def, p.get(def.getKey()));
         }
         JsonNode settings = enc.encode(enc.sortByGroup(defs));
-        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        ObjectNode node = Json.nodeFactory().objectNode();
         node.set(SETTINGS, settings);
         return node;
     }
 
-    protected void setDefaultValue(SettingDefinition<?, ?> def, String sval) {
+    protected void setDefaultValue(SettingDefinition<?> def, String sval) {
         if (sval != null) {
             Object val = this.settingValueFactory.newSettingValue(def, sval).getValue();
             setDefaultValue(def, val);
@@ -181,31 +181,31 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
     }
 
     @SuppressWarnings("unchecked")
-    protected void setDefaultValue(SettingDefinition<?, ?> def, Object val) {
+    protected void setDefaultValue(SettingDefinition<?> def, Object val) {
         if (val != null) {
             switch (def.getType()) {
             case BOOLEAN:
-                SettingDefinition<?, Boolean> bsd = (SettingDefinition<?, Boolean>) def;
+                SettingDefinition<Boolean> bsd = (SettingDefinition<Boolean>) def;
                 bsd.setDefaultValue((Boolean) val);
                 break;
             case FILE:
-                SettingDefinition<?, File> fsd = (SettingDefinition<?, File>) def;
+                SettingDefinition<File> fsd = (SettingDefinition<File>) def;
                 fsd.setDefaultValue((File) val);
                 break;
             case INTEGER:
-                SettingDefinition<?, Integer> isd = (SettingDefinition<?, Integer>) def;
+                SettingDefinition<Integer> isd = (SettingDefinition<Integer>) def;
                 isd.setDefaultValue((Integer) val);
                 break;
             case NUMERIC:
-                SettingDefinition<?, Double> dsd = (SettingDefinition<?, Double>) def;
+                SettingDefinition<Double> dsd = (SettingDefinition<Double>) def;
                 dsd.setDefaultValue((Double) val);
                 break;
             case STRING:
-                SettingDefinition<?, String> ssd = (SettingDefinition<?, String>) def;
+                SettingDefinition<String> ssd = (SettingDefinition<String>) def;
                 ssd.setDefaultValue((String) val);
                 break;
             case URI:
-                SettingDefinition<?, URI> usd = (SettingDefinition<?, URI>) def;
+                SettingDefinition<URI> usd = (SettingDefinition<URI>) def;
                 usd.setDefaultValue((URI) val);
                 break;
             case CHOICE:

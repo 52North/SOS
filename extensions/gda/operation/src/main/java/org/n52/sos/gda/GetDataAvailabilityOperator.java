@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,11 +32,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.gda.GetDataAvailabilityConstants.GetDataAvailabilityParams;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants.GetDataAvailabilityParams;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.request.operator.WSDLAwareRequestOperator;
 import org.n52.sos.wsdl.WSDLOperation;

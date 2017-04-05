@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,7 +43,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 
-import org.n52.iceland.util.JSONUtils;
+import org.n52.janmayen.Json;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
@@ -68,7 +68,7 @@ import com.github.fge.jsonschema.core.report.ProcessingReport;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -373,7 +373,7 @@ public class FieldDecoderTest {
     }
 
     protected ObjectNode createField() {
-        return JSONUtils.nodeFactory().objectNode().put(JSONConstants.NAME, NAME).put(JSONConstants.LABEL, LABEL)
+        return Json.nodeFactory().objectNode().put(JSONConstants.NAME, NAME).put(JSONConstants.LABEL, LABEL)
                 .put(JSONConstants.DEFINITION, DEFINITION).put(JSONConstants.DESCRIPTION, DESCRIPTION)
                 .put(JSONConstants.IDENTIFIER, IDENTIFIER);
     }

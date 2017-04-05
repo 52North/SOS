@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,7 +38,7 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
 /**
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
@@ -46,22 +46,29 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
 
     private HibernateSessionHolder sessionHolder;
+    private DaoFactory daoFactory;
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     @Override
     public Map<String, String> getProcedureFormatMap() throws OwsExceptionReport {
         Session session = null;
-        Map<String,String> procedureFormatMap = null;
+        Map<String, String> procedureFormatMap = null;
         try {
             session = this.sessionHolder.getSession();
-            procedureFormatMap = new ProcedureDAO().getProcedureFormatMap(session);
+            procedureFormatMap = daoFactory.getProcedureDAO().getProcedureFormatMap(session);
         } finally {
             this.sessionHolder.returnSession(session);
         }
         return procedureFormatMap;
     }
+
 }

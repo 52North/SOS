@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,14 +43,14 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.XmlHelper;
 import org.n52.sos.wsdl.WSDLConstants.Operations;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.XmlHelper;
 
 import com.google.common.annotations.VisibleForTesting;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */

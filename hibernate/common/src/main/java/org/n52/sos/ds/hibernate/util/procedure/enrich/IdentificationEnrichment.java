@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,24 +29,23 @@
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.shetland.i18n.LocalizedString;
+import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 
-import com.google.common.base.Optional;
-
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class IdentificationEnrichment extends SensorMLEnrichment {
 

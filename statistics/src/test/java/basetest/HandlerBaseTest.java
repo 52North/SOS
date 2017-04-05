@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,9 +34,8 @@ import org.joda.time.DateTime;
 import org.junit.BeforeClass;
 import org.mockito.Mock;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.iceland.statistics.api.interfaces.geolocation.IStatisticsLocationUtil;
+import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.net.IPAddress;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
@@ -54,11 +53,13 @@ import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
-import org.n52.sos.util.JTSHelper;
+import org.n52.shetland.util.JTSHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
 
 public abstract class HandlerBaseTest extends MockitoBaseTest {
 
@@ -72,7 +73,7 @@ public abstract class HandlerBaseTest extends MockitoBaseTest {
     protected IStatisticsLocationUtil locationUtil;
 
     @BeforeClass
-    public static void beforeClass() throws OwsExceptionReport, DecodingException {
+    public static void beforeClass() throws OwsExceptionReport, DecodingException, ParseException {
         requestContext = new OwsServiceRequestContext();
         requestContext.setContentType("application/json");
         requestContext.setAcceptType(Arrays.asList(new MediaType("*", "*")));
@@ -100,7 +101,7 @@ public abstract class HandlerBaseTest extends MockitoBaseTest {
         omConstellation.setObservationType("obstype");
     }
 
-    private static void createOmObservation() throws OwsExceptionReport, DecodingException {
+    private static void createOmObservation() throws OwsExceptionReport, DecodingException, ParseException {
         omObservation = new OmObservation();
         omObservation.setIdentifier("id");
 

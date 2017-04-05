@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,9 +35,9 @@ import javax.servlet.ServletContext;
 
 import org.springframework.stereotype.Controller;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.json.JsonSettingsEncoder;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.json.JsonSettingsEncoder;
 import org.n52.iceland.service.DatabaseSettingsHandler;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -100,7 +100,7 @@ public class AbstractController {
         return Boolean.FALSE;
     }
 
-    protected JsonNode encodeValues(Map<SettingDefinition<?, ?>, SettingValue<?>> settings) {
+    protected JsonNode encodeValues(Map<SettingDefinition<?>, SettingValue<?>> settings) {
         return this.settingsEncoder.encodeValues(settings);
     }
 

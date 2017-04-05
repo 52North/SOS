@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,18 +29,16 @@
 package org.n52.sos.config.sqlite;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingsDao;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingsDao;
 import org.n52.sos.config.sqlite.entities.AbstractSettingValue;
 
 public class SQLiteSettingsDao
@@ -53,18 +51,29 @@ public class SQLiteSettingsDao
 
     @Override
     public SettingValue<?> getSettingValue(String key) {
-        return execute(new GetSettingValueAction(key));
+        return execute(session -> (SettingValue<?>) session.get(AbstractSettingValue.class, key));
     }
 
     @Override
     public void saveSettingValue(SettingValue<?> setting) {
         LOG.debug("Saving Setting {}", setting);
         try {
-            execute(new SaveSettingValueAction(setting));
+            execute(session -> {
+                session.saveOrUpdate(setting);
+            });
         } catch (HibernateException e) {
             if (isSettingsTypeChangeException(e)) {
                 LOG.warn("Type of setting {} changed!", setting.getKey());
-                execute(new DeleteAndSaveValueAction(setting));
+                execute(session -> {
+                    AbstractSettingValue<?> hSetting = (AbstractSettingValue<?>) session
+                            .get(AbstractSettingValue.class, setting.getKey());
+                    if (hSetting != null) {
+                        LOG.debug("Deleting Setting {}", hSetting);
+                        session.delete(hSetting);
+                    }
+                    LOG.debug("Saving Setting {}", setting);
+                    session.save(setting);
+                });
             } else {
                 throw e;
             }
@@ -72,109 +81,37 @@ public class SQLiteSettingsDao
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Set<SettingValue<?>> getSettingValues() {
-        return execute(new GetSettingValuesAction());
+        return execute(session -> {
+            return new HashSet<>(session.createCriteria(AbstractSettingValue.class)
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list());
+        });
     }
 
     @Override
     public void deleteSettingValue(String setting) {
-        execute(new DeleteSettingValueAction(setting));
+        execute(session -> {
+            AbstractSettingValue<?> hSetting = (AbstractSettingValue<?>) session
+                    .get(AbstractSettingValue.class, setting);
+            if (hSetting != null) {
+                LOG.debug("Deleting Setting {}", hSetting);
+                session.delete(hSetting);
+            }
+        });
     }
 
     protected boolean isSettingsTypeChangeException(HibernateException e) {
         return e.getMessage() != null && SETTINGS_TYPE_CHANGED.matcher(e.getMessage()).matches();
     }
 
-
-
     @Override
     public void deleteAll() {
-        execute(new DeleteAllAction());
+        execute(session -> {
+            session.createCriteria(AbstractSettingValue.class)
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .list().forEach(session::delete);
+        });
     }
 
-    private class DeleteAllAction extends VoidHibernateAction {
-        @Override
-        @SuppressWarnings("unchecked")
-        protected void run(Session session) {
-            List<AbstractSettingValue<?>> settings =
-                    session.createCriteria(AbstractSettingValue.class)
-                            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-            for (SettingValue<?> v : settings) {
-                session.delete(v);
-            }
-        }
-    }
-
-    private class DeleteSettingValueAction extends VoidHibernateAction {
-        private final String setting;
-
-        DeleteSettingValueAction(String setting) {
-            this.setting = setting;
-        }
-
-        @Override
-        protected void run(Session session) {
-            AbstractSettingValue<?> hSetting =
-                    (AbstractSettingValue<?>) session.get(AbstractSettingValue.class, setting);
-            if (hSetting != null) {
-                LOG.debug("Deleting Setting {}", hSetting);
-                session.delete(hSetting);
-            }
-        }
-    }
-
-    private class GetSettingValueAction implements HibernateAction<SettingValue<?>> {
-        private final String key;
-
-        GetSettingValueAction(String key) {
-            this.key = key;
-        }
-
-        @Override
-        public SettingValue<?> call(Session session) {
-            return (SettingValue<?>) session.get(AbstractSettingValue.class, key);
-        }
-    }
-
-    private class SaveSettingValueAction extends VoidHibernateAction {
-        private final SettingValue<?> setting;
-
-        SaveSettingValueAction(SettingValue<?> setting) {
-            this.setting = setting;
-        }
-
-        @Override
-        protected void run(Session session) {
-            session.saveOrUpdate(setting);
-        }
-    }
-
-    private class DeleteAndSaveValueAction extends VoidHibernateAction {
-        private final SettingValue<?> setting;
-
-        DeleteAndSaveValueAction(SettingValue<?> setting) {
-            this.setting = setting;
-        }
-
-        @Override
-        protected void run(Session session) {
-            AbstractSettingValue<?> hSetting =
-                    (AbstractSettingValue<?>) session.get(AbstractSettingValue.class, setting.getKey());
-            if (hSetting != null) {
-                LOG.debug("Deleting Setting {}", hSetting);
-                session.delete(hSetting);
-            }
-            LOG.debug("Saving Setting {}", setting);
-            session.save(setting);
-        }
-    }
-
-    private class GetSettingValuesAction implements HibernateAction<Set<SettingValue<?>>> {
-        @Override
-        @SuppressWarnings("unchecked")
-        public Set<SettingValue<?>> call(Session session) {
-            return new HashSet<>(session.createCriteria(AbstractSettingValue.class)
-                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list());
-        }
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,23 +29,14 @@
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Set;
 
-import org.hibernate.Session;
-import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.gml.ReferenceType;
-import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.om.values.TextValue;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.wml.ObservationProcess;
+import javax.inject.Inject;
 
-import net.opengis.sos.x20.impl.SosInsertionMetadataPropertyTypeImpl;
-
-import org.n52.shetland.ogc.wml.WaterMLConstants;
+import org.n52.faroe.SettingsService;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
 /**
  * Generator class for WaterML 2.0 procedure descriptions
@@ -54,66 +45,54 @@ import org.n52.shetland.ogc.wml.WaterMLConstants;
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
-        HibernateProcedureDescriptionGeneratorFactory {
+public class HibernateProcedureDescriptionGeneratorFactoryWml20
+        implements HibernateProcedureDescriptionGeneratorFactory {
 
-    private static final Set<HibernateProcedureDescriptionGeneratorFactoryKey> GENERATOR_KEY_TYPES =
-            CollectionHelper.set(new HibernateProcedureDescriptionGeneratorFactoryKey(
-                    WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
+    private final DaoFactory daoFactory;
+    private final I18NDAORepository i18NDAORepository;
+    private final ContentCacheController cacheController;
+    private final SettingsService settingsService;
 
-    @Override
-    public Set<HibernateProcedureDescriptionGeneratorFactoryKey> getKeys() {
-        return Collections.unmodifiableSet(GENERATOR_KEY_TYPES);
+    @Inject
+    public HibernateProcedureDescriptionGeneratorFactoryWml20(DaoFactory daoFactory,
+                                                              I18NDAORepository i18NDAORepository,
+                                                              ContentCacheController cacheController,
+                                                              SettingsService settingsService) {
+        this.daoFactory = daoFactory;
+        this.i18NDAORepository = i18NDAORepository;
+        this.cacheController = cacheController;
+        this.settingsService = settingsService;
     }
 
     @Override
-    public SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-        return new SosProcedureDescription<AbstractFeature>(new HibernateProcedureDescriptionGeneratorWml20()
-                .generateProcedureDescription(procedure, i18n, session));
+    public Set<HibernateProcedureDescriptionGeneratorKey> getKeys() {
+        return Collections.unmodifiableSet(HibernateProcedureDescriptionGeneratorWml20.GENERATOR_KEY_TYPES);
     }
 
-    private class HibernateProcedureDescriptionGeneratorWml20 extends AbstractHibernateProcedureDescriptionGenerator {
-
-        /**
-         * Generate procedure description from Hibernate procedure entity if no
-         * description (file, XML text) is available
-         *
-         * @param procedure
-         *            Hibernate procedure entity
-         * @param session
-         *            the session
-         *
-         * @return Generated procedure description
-         *
-         * @throws OwsExceptionReport
-         *             If an error occurs
-         */
-        public SosProcedureDescription<AbstractFeature> generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
-                throws OwsExceptionReport {
-            setLocale(i18n);
-            final ObservationProcess op = new ObservationProcess();
-            setCommonData(procedure, op, session);
-            addName(procedure, op);
-            op.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_ALGORITHM));
-            return new SosProcedureDescription<AbstractFeature>(op);
-        }
-
-        private void addName(Procedure procedure, ObservationProcess op) {
-            String name = procedure.getIdentifier();
-            if (procedure.isSetName()) {
-               name = procedure.getName();
-            }
-            op.addParameter(createName("shortName", name));
-            op.addParameter(createName("longName", name));
-        }
-
-        private NamedValue<String> createName(String type, String name) {
-            final NamedValue<String> namedValueProperty = new NamedValue<String>();
-            final ReferenceType refType = new ReferenceType(type);
-            refType.setTitle(name);
-            namedValueProperty.setName(refType);
-            namedValueProperty.setValue(new TextValue(name));
-            return namedValueProperty;
-        }
+    @Override
+    public HibernateProcedureDescriptionGenerator create(HibernateProcedureDescriptionGeneratorKey key) {
+        HibernateProcedureDescriptionGenerator generator
+                = new HibernateProcedureDescriptionGeneratorWml20(getDaoFactory(),
+                                                                  getI18NDAORepository(),
+                                                                  getCacheController());
+        getSettingsService().configureOnce(generator);
+        return generator;
     }
+
+    public DaoFactory getDaoFactory() {
+        return this.daoFactory;
+    }
+
+    public I18NDAORepository getI18NDAORepository() {
+        return this.i18NDAORepository;
+    }
+
+    public ContentCacheController getCacheController() {
+        return this.cacheController;
+    }
+
+    public SettingsService getSettingsService() {
+        return this.settingsService;
+    }
+
 }

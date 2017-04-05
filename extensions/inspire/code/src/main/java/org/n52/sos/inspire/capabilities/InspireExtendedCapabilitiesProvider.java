@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,14 +34,26 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProvider;
-import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderKey;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.inspire.InspireConformity;
+import org.n52.shetland.inspire.InspireConformityCitation;
+import org.n52.shetland.inspire.InspireConstants;
+import org.n52.shetland.inspire.InspireDateOfCreation;
+import org.n52.shetland.inspire.InspireLanguageISO6392B;
+import org.n52.shetland.inspire.InspireMandatoryKeyword;
+import org.n52.shetland.inspire.InspireMandatoryKeywordValue;
+import org.n52.shetland.inspire.InspireMetadataPointOfContact;
+import org.n52.shetland.inspire.InspireResourceLocator;
+import org.n52.shetland.inspire.InspireTemporalReference;
+import org.n52.shetland.inspire.InspireUniqueResourceIdentifier;
+import org.n52.shetland.inspire.InspireConformity.InspireDegreeOfConformity;
+import org.n52.shetland.inspire.dls.FullInspireExtendedCapabilities;
+import org.n52.shetland.inspire.dls.MinimalInspireExtendedCapabilities;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.OwsAddress;
@@ -58,22 +70,13 @@ import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.DateTimeParseException;
 import org.n52.sos.inspire.AbstractInspireProvider;
-import org.n52.sos.inspire.InspireConformity;
-import org.n52.sos.inspire.InspireConformity.InspireDegreeOfConformity;
-import org.n52.sos.inspire.InspireConformityCitation;
-import org.n52.sos.inspire.InspireConstants;
-import org.n52.sos.inspire.InspireDateOfCreation;
-import org.n52.sos.inspire.InspireLanguageISO6392B;
-import org.n52.sos.inspire.InspireMandatoryKeyword;
-import org.n52.sos.inspire.InspireMandatoryKeywordValue;
-import org.n52.sos.inspire.InspireMetadataPointOfContact;
-import org.n52.sos.inspire.InspireResourceLocator;
-import org.n52.sos.inspire.InspireTemporalReference;
-import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
 import org.n52.sos.util.SosHelper;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 
 /**
  * Provider for the INSPIRE ExtendedCapabilities
@@ -84,15 +87,15 @@ import com.google.common.collect.Sets;
  */
 public class InspireExtendedCapabilitiesProvider
         extends AbstractInspireProvider
-        implements OwsExtendedCapabilitiesProvider {
+        implements OwsOperationMetadataExtensionProvider {
 
-    private final OwsExtendedCapabilitiesProviderKey key
-            = new OwsExtendedCapabilitiesProviderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
+    private final OwsOperationMetadataExtensionProviderKey key
+            = new OwsOperationMetadataExtensionProviderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
 
-    private ServiceMetadataRepository serviceMetadataRepository;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
 
     @Inject
-    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 
@@ -102,7 +105,7 @@ public class InspireExtendedCapabilitiesProvider
     }
 
     @Override
-    public Set<OwsExtendedCapabilitiesProviderKey> getKeys() {
+    public Set<OwsOperationMetadataExtensionProviderKey> getKeys() {
         return Collections.singleton(key);
     }
 

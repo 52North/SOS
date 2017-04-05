@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,11 +31,11 @@ package org.n52.sos.util.builder;
 import java.util.List;
 
 import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.ogc.sos.SosInsertionMetadata;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
+import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.collect.Lists;
 
@@ -46,7 +46,7 @@ import com.google.common.collect.Lists;
  */
 public class InsertSensorRequestBuilder {
 
-    private SosProcedureDescription procedureDescription;
+    private SosProcedureDescription<?> procedureDescription;
 
     private List<String> observableProperties;
 
@@ -56,11 +56,7 @@ public class InsertSensorRequestBuilder {
 
     private List<SwesFeatureRelationship> featureRelationships;
 
-    public static InsertSensorRequestBuilder anInsertSensorRequest() {
-        return new InsertSensorRequestBuilder();
-    }
-
-    public InsertSensorRequestBuilder setProcedure(SosProcedureDescription procedureDescription) {
+    public InsertSensorRequestBuilder setProcedure(SosProcedureDescription<?> procedureDescription) {
         this.procedureDescription = procedureDescription;
         return this;
     }
@@ -105,7 +101,7 @@ public class InsertSensorRequestBuilder {
         if (procedureDescription != null) {
             request.setProcedureDescription(procedureDescription);
             if (procedureDescription.isSetOfferings()) {
-                request.setAssignedOfferings(Lists.newArrayList(procedureDescription.getOfferings()));
+                request.setAssignedOfferings(procedureDescription.getOfferings());
             }
         }
         if (CollectionHelper.isNotEmpty(observableProperties)) {
@@ -129,6 +125,9 @@ public class InsertSensorRequestBuilder {
             request.setMetadata(meta);
         }
         return request;
+    }
+    public static InsertSensorRequestBuilder anInsertSensorRequest() {
+        return new InsertSensorRequestBuilder();
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.UpdateableConnectionProvider;
-import org.n52.iceland.exception.ConfigurationError;
+import org.n52.faroe.ConfigurationError;
 
 /**
  *

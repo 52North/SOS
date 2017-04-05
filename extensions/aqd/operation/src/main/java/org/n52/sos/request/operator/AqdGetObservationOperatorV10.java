@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,10 +34,11 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.aqd.ReportObligations;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -46,22 +47,22 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.DateTimeParseException;
-import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
-import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.SosHelper;
 
 import com.google.common.collect.Lists;
@@ -82,7 +83,7 @@ public class AqdGetObservationOperatorV10 extends
 
     @Override
     public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
-        ReportObligationType flow = getAqdHelper().getFlow(request.getExtensions());
+        ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
         checkReportingHeader(flow);
         checkRequestForFlowAndTemporalFilter(request, flow);
         boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);
@@ -144,8 +145,7 @@ public class AqdGetObservationOperatorV10 extends
     }
 
     private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest request) {
-        return request.isSetExtensions()
-                && request.getExtensions().isBooleanExtensionSet(
+        return request.getExtensions().isBooleanExtensionSet(
                         Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
     }
 

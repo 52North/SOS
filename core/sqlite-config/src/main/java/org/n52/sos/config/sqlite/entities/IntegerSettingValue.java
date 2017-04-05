@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,11 +30,11 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.iceland.config.SettingType;
+import org.n52.faroe.SettingType;
 
 /**
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name = "integer_settings")
 public class IntegerSettingValue extends AbstractSettingValue<Integer> {
@@ -42,15 +42,23 @@ public class IntegerSettingValue extends AbstractSettingValue<Integer> {
 
     private Integer value;
 
+    public IntegerSettingValue(String identifier, Integer value) {
+        super(identifier);
+        this.value = value;
+    }
+
+    public IntegerSettingValue() {
+        this(null, null);
+    }
+
     @Override
     public Integer getValue() {
         return this.value;
     }
 
     @Override
-    public IntegerSettingValue setValue(Integer value) {
+    public void setValue(Integer value) {
         this.value = value;
-        return this;
     }
 
     @Override

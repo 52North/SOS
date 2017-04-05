@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,18 +36,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.iceland.convert.ConverterException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sensorML.AbstractProcess;
-import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -55,13 +54,18 @@ import com.google.common.collect.Sets;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment {
     private String procedureDescriptionFormat;
     private HibernateProcedureConverter converter;
     private Map<String, Procedure> procedureCache;
     private TimePeriod validTime;
+    private final DaoFactory daoFactory;
+
+    public RelatedProceduresEnrichment(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     public RelatedProceduresEnrichment setProcedureDescriptionFormat(String pdf) {
         this.procedureDescriptionFormat = checkNotNull(pdf);
@@ -163,7 +167,7 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
 
             if (childVpt != null) {
                 //matching child validProcedureTime was found, use it to build procedure description
-                SosProcedureDescription childDescription =
+                SosProcedureDescription<?> childDescription =
                         converter.createSosProcedureDescriptionFromValidProcedureTime(
                                 child, procedureDescriptionFormat, childVpt, getVersion(), getLocale(), getSession());
                 if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
@@ -171,7 +175,7 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
                 }
             } else  if  (child != null) {
                 //no matching child validProcedureTime, generate the procedure description
-                SosProcedureDescription childDescription = converter.createSosProcedureDescription(
+                SosProcedureDescription<?> childDescription = converter.createSosProcedureDescription(
                         child, procedureDescriptionFormat, getVersion(), procedureCache, getLocale(), getSession());
                 // TODO check if call is necessary because it is also called in
                 // createSosProcedureDescription()
@@ -187,7 +191,7 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
 
     private Map<String, Procedure> createProcedureCache() {
         Set<String> identifiers = getCache().getChildProcedures(getIdentifier(), true, false);
-        List<Procedure> children = new ProcedureDAO().getProceduresForIdentifiers(identifiers, getSession());
+        List<Procedure> children = daoFactory.getProcedureDAO().getProceduresForIdentifiers(identifiers, getSession());
         Map<String, Procedure> cache = Maps.newHashMapWithExpectedSize(children.size());
         for (Procedure child : children) {
             cache.put(child.getIdentifier(), child);

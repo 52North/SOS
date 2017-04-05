@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
+import java.util.Set;
+
 import org.hibernate.Criteria;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -36,7 +38,25 @@ import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 
-public class EReportingValueDAO extends AbstractSeriesValueDAO {
+public class EReportingValueDAO extends AbstractSeriesValueDAO implements EReportingDaoHelper {
+
+    private final Set<Integer> verificationFlags;
+    private final Set<Integer> validityFlags;
+
+    public EReportingValueDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags) {
+        this.verificationFlags = verificationFlags;
+        this.validityFlags = validityFlags;
+    }
+
+    @Override
+    public Set<Integer> getVerificationFlags() {
+        return this.verificationFlags;
+    }
+
+    @Override
+    public Set<Integer> getValidityFlags() {
+        return this.validityFlags;
+    }
 
     @Override
     protected Class<?> getSeriesValueClass() {
@@ -45,8 +65,7 @@ public class EReportingValueDAO extends AbstractSeriesValueDAO {
 
     @Override
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
-
-        EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
+        addValidityAndVerificationRestrictions(c, request);
     }
 
 }

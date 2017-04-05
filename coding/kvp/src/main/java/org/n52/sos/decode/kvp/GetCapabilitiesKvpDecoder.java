@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,9 +29,9 @@
 package org.n52.sos.decode.kvp;
 
 import org.n52.iceland.binding.kvp.AbstractKvpDecoder;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.svalbard.decode.OperationDecoderKey;
@@ -42,8 +42,6 @@ import org.n52.svalbard.decode.OperationDecoderKey;
  *
  */
 public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder<GetCapabilitiesRequest> {
-
-
 
     public GetCapabilitiesKvpDecoder() {
         super(GetCapabilitiesRequest::new,
@@ -56,7 +54,6 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder<GetCapabilitie
 
     @Override
     protected void getRequestParameterDefinitions(Builder<GetCapabilitiesRequest> builder) {
-
         builder.add(GetCapabilitiesParams.Sections, decodeList(GetCapabilitiesRequest::setSections));
         builder.add(GetCapabilitiesParams.updateSequence, GetCapabilitiesRequest::setUpdateSequence);
         builder.add(GetCapabilitiesParams.AcceptFormats, decodeList(GetCapabilitiesRequest::setAcceptFormats));

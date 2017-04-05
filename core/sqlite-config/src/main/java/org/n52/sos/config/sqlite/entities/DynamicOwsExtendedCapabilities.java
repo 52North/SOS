@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderKey;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
 
 /**
  * Entity to store the active/inactive dynamic OWS ExtendedCapabilities extensions
@@ -55,9 +55,9 @@ public class DynamicOwsExtendedCapabilities extends Activatable<DynamicOwsExtend
      * constructor
      *
      * @param oeck
-     *            the {@link OwsExtendedCapabilitiesProviderKey} to set
+     *            the {@link OwsOperationMetadataExtensionProviderKey} to set
      */
-    public DynamicOwsExtendedCapabilities(OwsExtendedCapabilitiesProviderKey oeck) {
+    public DynamicOwsExtendedCapabilities(OwsOperationMetadataExtensionProviderKey oeck) {
        super(new DynamicOwsExtendedCapabilitiesKey(oeck));
     }
 

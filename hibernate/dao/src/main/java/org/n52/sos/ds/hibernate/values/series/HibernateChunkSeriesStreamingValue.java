@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -42,6 +41,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 
@@ -69,14 +69,16 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     /**
      * constructor
      *
+     * @param connectionProvider the connection provider
+     * @param daoFactory the DAO factory
      * @param request
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long series) throws CodedException {
-        super(connectionProvider, request, series);
+    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long series) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, series);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 
@@ -128,7 +130,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                OmObservation observation = observationTemplate.cloneTemplate();
+                OmObservation observation = getObservationTemplate().cloneTemplate();
                 AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
                 resultObject.addValuesToObservation(observation, getResponseFormat());
                 checkForModifications(observation);

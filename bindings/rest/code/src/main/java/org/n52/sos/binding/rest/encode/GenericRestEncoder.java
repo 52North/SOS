@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,14 +32,20 @@ package org.n52.sos.binding.rest.encode;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestResponse;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class GenericRestEncoder extends ResourceEncoder {
+    public GenericRestEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
+        super(constants, xmlOptionsHelper);
+    }
+
 
     @Override
     public ServiceResponse encodeRestResponse(RestResponse response) throws OwsExceptionReport

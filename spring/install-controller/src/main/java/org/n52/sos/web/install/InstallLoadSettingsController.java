@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,12 +35,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.settings.MultilingualStringSettingDefinition;
-import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.web.common.ControllerConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -53,7 +47,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.config.SettingsService;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingsService;
+import org.n52.faroe.settings.MultilingualStringSettingDefinition;
+import org.n52.janmayen.Json;
+import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -76,13 +75,13 @@ public class InstallLoadSettingsController extends AbstractInstallController {
     public void post(@RequestBody String config, HttpServletRequest req) throws ConfigurationError, IOException {
         final HttpSession session = req.getSession();
         InstallationConfiguration c = getSettings(session);
-        JsonNode settings = JSONUtils.loadString(config);
+        JsonNode settings = Json.loadString(config);
         Iterator<String> i = settings.fieldNames();
         while (i.hasNext()) {
             String value;
             String key = i.next();
             if (settings.path(key).isContainerNode()) {
-                value = JSONUtils.print(settings.path(key));
+                value = Json.print(settings.path(key));
             } else {
                 value = settings.path(key).asText();
             }
@@ -91,13 +90,13 @@ public class InstallLoadSettingsController extends AbstractInstallController {
                 LOG.warn("Value for setting with key {} is null", key);
                 continue;
             }
-            SettingDefinition<?, ?> def = settingsManager.getDefinitionByKey(key);
+            SettingDefinition<?> def = settingsManager.getDefinitionByKey(key);
             if (def == null) {
                 LOG.warn("No definition for setting with key {}", key);
                 continue;
             }
             if (def instanceof MultilingualStringSettingDefinition) {
-                c.setSetting(def, settingsManager.getSettingFactory().newMultiLingualStringValue((MultilingualStringSettingDefinition)def, value));
+                c.setSetting(def, settingsManager.getSettingFactory().newMultiLingualStringSettingValue((MultilingualStringSettingDefinition)def, value));
             } else {
                 c.setSetting(def, settingsManager.getSettingFactory().newSettingValue(def, value));
             }

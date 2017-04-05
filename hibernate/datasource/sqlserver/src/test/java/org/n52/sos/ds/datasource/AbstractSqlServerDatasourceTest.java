@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
-import org.n52.iceland.config.SettingDefinition;
+import org.n52.faroe.SettingDefinition;
 
 
 /**
@@ -53,9 +53,9 @@ public class AbstractSqlServerDatasourceTest {
     public void databaseDescriptionShouldNotBeHostDescription() {
         String databaseDescription = "";
         String hostDescription = "";
-        Set<SettingDefinition<?,?>> definitions = new AbstractSqlServerDatasourceSeam().getSettingDefinitions();
-        for (Iterator<SettingDefinition<?, ?>> iterator = definitions.iterator(); iterator.hasNext();) {
-            SettingDefinition<?, ?> settingDefinition = (SettingDefinition<?, ?>) iterator.next();
+        Set<SettingDefinition<?>> definitions = new AbstractSqlServerDatasourceSeam().getSettingDefinitions();
+        for (Iterator<SettingDefinition<?>> iterator = definitions.iterator(); iterator.hasNext();) {
+            SettingDefinition<?> settingDefinition = (SettingDefinition<?>) iterator.next();
             if (settingDefinition.getKey().equalsIgnoreCase(AbstractSqlServerDatasource.DATABASE_KEY)) {
                 databaseDescription = settingDefinition.getDescription();
             } else if (settingDefinition.getKey().equalsIgnoreCase(AbstractSqlServerDatasource.HOST_KEY)) {
@@ -69,10 +69,10 @@ public class AbstractSqlServerDatasourceTest {
 
     @Test
     public void instanceSettingShouldBeOptional() {
-        Set<SettingDefinition<?,?>> definitions = new AbstractSqlServerDatasourceSeam().getSettingDefinitions();
+        Set<SettingDefinition<?>> definitions = new AbstractSqlServerDatasourceSeam().getSettingDefinitions();
         boolean found = false;
-        for (Iterator<SettingDefinition<?, ?>> iterator = definitions.iterator(); iterator.hasNext();) {
-            SettingDefinition<?, ?> settingDefinition = (SettingDefinition<?, ?>) iterator.next();
+        for (Iterator<SettingDefinition<?>> iterator = definitions.iterator(); iterator.hasNext();) {
+            SettingDefinition<?> settingDefinition = (SettingDefinition<?>) iterator.next();
             if (settingDefinition.getKey().equalsIgnoreCase(AbstractSqlServerDatasource.INSTANCE_KEY)) {
                 found = true;
                 if (!settingDefinition.isOptional()) {

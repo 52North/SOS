@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,12 +28,10 @@
  */
 package org.n52.sos.service;
 
-
-import org.n52.iceland.config.SettingDefinitionGroup;
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
+import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.iceland.util.Validation;
 
 
 /**
@@ -47,10 +45,6 @@ import org.n52.iceland.util.Validation;
  */
 @Configurable
 public class ProcedureDescriptionSettings implements Constructable {
-
-    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Procedure Description Enrichment")
-            .setDescription("Settings to configure the procedure description generation and enrichment feature.")
-            .setOrder(4.2023f);
 
     public static final String IDENTIFIER_LONG_NAME_DEFINITION = "procedureDesc.IDENTIFIER_LONG_NAME_DEFINITION";
 
@@ -86,6 +80,8 @@ public class ProcedureDescriptionSettings implements Constructable {
     public static final String ENRICH_WITH_FEATURES = "procedureDesc.ENRICH_WITH_FEATURES";
 
     public static final String ENRICH_WITH_DISCOVERY_INFORMATION = "procedureDesc.ENRICH_WITH_DISCOVERY_INFORMATION";
+    @Deprecated
+    private static ProcedureDescriptionSettings instance = null;
 
     private String descriptionTemplate;
     private boolean generateClassification;
@@ -103,20 +99,15 @@ public class ProcedureDescriptionSettings implements Constructable {
     private boolean enrichWithFeatures;
     private boolean enrichWithDiscoveryInformation;
 
-    @Deprecated
-    private static ProcedureDescriptionSettings instance = null;
 
     @Override
+    @Deprecated
     public void init() {
         ProcedureDescriptionSettings.instance = this;
     }
 
-    @Deprecated
-    public static ProcedureDescriptionSettings getInstance() {
-        return instance;
-    }
 
-    @Setting(DESCRIPTION_TEMPLATE)
+    @Setting(ProcedureDescriptionSettings.DESCRIPTION_TEMPLATE)
     public void setDescriptionTemplate(final String descriptionTemplate) {
         Validation.notNullOrEmpty(DESCRIPTION_TEMPLATE, descriptionTemplate);
         this.descriptionTemplate = descriptionTemplate;
@@ -135,7 +126,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return generateClassification;
     }
 
-    @Setting(GENERATE_CLASSIFICATION)
+    @Setting(ProcedureDescriptionSettings.GENERATE_CLASSIFICATION)
     public void setGenerateClassification(final boolean generateClassification) {
         this.generateClassification = generateClassification;
     }
@@ -144,7 +135,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return classifierIntendedApplicationValue;
     }
 
-    @Setting(CLASSIFIER_INTENDED_APPLICATION_VALUE)
+    @Setting(ProcedureDescriptionSettings.CLASSIFIER_INTENDED_APPLICATION_VALUE)
     public void setClassifierIntendedApplicationValue(final String classifierIntendedApplicationValue) {
         this.classifierIntendedApplicationValue =
                 (classifierIntendedApplicationValue == null) ? "" : classifierIntendedApplicationValue;
@@ -154,7 +145,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return classifierIntendedApplicationDefinition;
     }
 
-    @Setting(CLASSIFIER_INTENDED_APPLICATION_DEFINITION)
+    @Setting(ProcedureDescriptionSettings.CLASSIFIER_INTENDED_APPLICATION_DEFINITION)
     public void setClassifierIntendedApplicationDefinition(final String classifierIntendedApplicationDefinition) {
         Validation.notNull(CLASSIFIER_INTENDED_APPLICATION_DEFINITION, classifierIntendedApplicationDefinition);
         this.classifierIntendedApplicationDefinition = classifierIntendedApplicationDefinition;
@@ -164,7 +155,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return classifierProcedureTypeDefinition;
     }
 
-    @Setting(CLASSIFIER_PROCEDURE_TYPE_DEFINITION)
+    @Setting(ProcedureDescriptionSettings.CLASSIFIER_PROCEDURE_TYPE_DEFINITION)
     public void setClassifierProcedureTypeDefinition(final String classifierProcedureTypeDefinition) {
         Validation.notNull(CLASSIFIER_PROCEDURE_TYPE_DEFINITION, classifierProcedureTypeDefinition);
         this.classifierProcedureTypeDefinition = classifierProcedureTypeDefinition;
@@ -174,7 +165,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return classifierProcedureTypeValue;
     }
 
-    @Setting(CLASSIFIER_PROCEDURE_TYPE_VALUE)
+    @Setting(ProcedureDescriptionSettings.CLASSIFIER_PROCEDURE_TYPE_VALUE)
     public void setClassifierProcedureTypeValue(final String classifierProcedureTypeValue) {
         this.classifierProcedureTypeValue = (classifierProcedureTypeValue == null) ? "" : classifierProcedureTypeValue;
     }
@@ -183,13 +174,13 @@ public class ProcedureDescriptionSettings implements Constructable {
         return useServiceContactAsProcedureContact;
     }
 
-    @Setting(USE_SERVICE_CONTACT_AS_PROCEDURE_CONTACT)
+    @Setting(ProcedureDescriptionSettings.USE_SERVICE_CONTACT_AS_PROCEDURE_CONTACT)
     public void setUseServiceContactAsProcedureContact(final boolean useServiceContactAsProcedureContact) {
         Validation.notNull(USE_SERVICE_CONTACT_AS_PROCEDURE_CONTACT, useServiceContactAsProcedureContact);
         this.useServiceContactAsProcedureContact = useServiceContactAsProcedureContact;
     }
 
-    @Setting(IDENTIFIER_SHORT_NAME_DEFINITION)
+    @Setting(ProcedureDescriptionSettings.IDENTIFIER_SHORT_NAME_DEFINITION)
     public void setIdentifierShortNameDefinition(final String identifierShortNameDefinition) {
         Validation.notNullOrEmpty(IDENTIFIER_SHORT_NAME_DEFINITION, identifierShortNameDefinition);
         this.identifierShortNameDefinition = identifierShortNameDefinition;
@@ -199,7 +190,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return identifierShortNameDefinition;
     }
 
-    @Setting(IDENTIFIER_LONG_NAME_DEFINITION)
+    @Setting(ProcedureDescriptionSettings.IDENTIFIER_LONG_NAME_DEFINITION)
     public void setIdentifierLongNameDefinition(final String identifierLongNameDefinition) {
         Validation.notNullOrEmpty(IDENTIFIER_LONG_NAME_DEFINITION, identifierLongNameDefinition);
         this.identifierLongNameDefinition = identifierLongNameDefinition;
@@ -209,7 +200,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return identifierLongNameDefinition;
     }
 
-    @Setting(LAT_LONG_UOM)
+    @Setting(ProcedureDescriptionSettings.LAT_LONG_UOM)
     public void setLatitudeUom(final String latLongUom) {
         this.latLongUom = latLongUom;
     }
@@ -218,7 +209,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return latLongUom;
     }
 
-    @Setting(ALTITUDE_UOM)
+    @Setting(ProcedureDescriptionSettings.ALTITUDE_UOM)
     public void setAltitudeUom(final String altitudeUom) {
         this.altitudeUom = altitudeUom;
     }
@@ -227,7 +218,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return altitudeUom;
     }
 
-    @Setting(PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE)
+    @Setting(ProcedureDescriptionSettings.PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE)
     public void setProcessMethodRulesDefinitionDescriptionTemplate(
             final String processMethodRulesDefinitionDescriptionTemplate) {
         Validation.notNullOrEmpty(PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE,
@@ -243,7 +234,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return processMethodRulesDefinitionDescriptionTemplate;
     }
 
-    @Setting(ENRICH_WITH_OFFERINGS)
+    @Setting(ProcedureDescriptionSettings.ENRICH_WITH_OFFERINGS)
     public void setEnrichWithOfferings(final boolean enrichWithOfferings) {
         Validation.notNull(ENRICH_WITH_OFFERINGS, enrichWithOfferings);
         this.enrichWithOfferings = enrichWithOfferings;
@@ -253,7 +244,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return enrichWithOfferings;
     }
 
-    @Setting(ENRICH_WITH_FEATURES)
+    @Setting(ProcedureDescriptionSettings.ENRICH_WITH_FEATURES)
     public void setEnrichWithFeatures(final boolean enrichWithFeatures) {
         Validation.notNull(ENRICH_WITH_FEATURES, enrichWithFeatures);
         this.enrichWithFeatures = enrichWithFeatures;
@@ -263,7 +254,7 @@ public class ProcedureDescriptionSettings implements Constructable {
         return enrichWithFeatures;
     }
 
-    @Setting(ENRICH_WITH_DISCOVERY_INFORMATION)
+    @Setting(ProcedureDescriptionSettings.ENRICH_WITH_DISCOVERY_INFORMATION)
     public void setEnrichWithDiscoveryInformation(final boolean enrichWithDiscoveryInformation) {
         Validation.notNull(ENRICH_WITH_DISCOVERY_INFORMATION, enrichWithDiscoveryInformation);
         this.enrichWithDiscoveryInformation = enrichWithDiscoveryInformation;
@@ -271,6 +262,11 @@ public class ProcedureDescriptionSettings implements Constructable {
 
     public boolean isEnrichWithDiscoveryInformation() {
         return enrichWithDiscoveryInformation;
+    }
+
+    @Deprecated
+    public static ProcedureDescriptionSettings getInstance() {
+        return instance;
     }
 
 }

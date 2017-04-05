@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,18 +46,17 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
 public abstract class TimeCreator {
 
     protected enum MinMax {
-        MIN, MAX
+        MIN,
+        MAX
     }
 
     /**
      * Creates a time period object from sources
      *
-     * @param minStart
-     *            Min start timestamp
-     * @param maxStart
-     *            Max start timestamp
-     * @param maxEnd
-     *            Max end timestamp
+     * @param minStart Min start timestamp
+     * @param maxStart Max start timestamp
+     * @param maxEnd Max end timestamp
+     *
      * @return Time period object
      */
     public TimePeriod createTimePeriod(Timestamp minStart, Timestamp maxStart, Timestamp maxEnd) {
@@ -75,22 +74,21 @@ public abstract class TimeCreator {
     /**
      * Add min/max projection to criteria
      *
-     * @param criteria
-     *            Hibernate Criteria to add projection
-     * @param minMax
-     *            Min/Max identifier
-     * @param property
-     *            Property to apply projection to
+     * @param criteria Hibernate Criteria to add projection
+     * @param minMax Min/Max identifier
+     * @param property Property to apply projection to
      */
     public void addMinMaxProjection(Criteria criteria, MinMax minMax, String property) {
         // TODO move this to a better location, maybe with Java 8 in an own Interface with Multiple Inheritance
         switch (minMax) {
-        case MIN:
-            criteria.setProjection(Projections.min(property));
-            break;
-        case MAX:
-            criteria.setProjection(Projections.max(property));
-            break;
+            case MIN:
+                criteria.setProjection(Projections.min(property));
+                break;
+            case MAX:
+                criteria.setProjection(Projections.max(property));
+                break;
+            default:
+                throw new Error();
         }
     }
 }

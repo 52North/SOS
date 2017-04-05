@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,12 +30,13 @@ package org.n52.sos.ds.hibernate.util.procedure.generator;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.n52.janmayen.Producer;
 import org.n52.janmayen.component.AbstractComponentRepository;
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.janmayen.Producer;
 
 import com.google.common.collect.Maps;
 
@@ -47,48 +48,47 @@ import com.google.common.collect.Maps;
  *
  */
 public class HibernateProcedureDescriptionGeneratorFactoryRepository
-    extends AbstractComponentRepository<HibernateProcedureDescriptionGeneratorFactoryKey, HibernateProcedureDescriptionGeneratorFactory, HibernateProcedureDescriptionGeneratorFactoryFactory> implements Constructable {
+        extends AbstractComponentRepository<HibernateProcedureDescriptionGeneratorKey, HibernateProcedureDescriptionGenerator, HibernateProcedureDescriptionGeneratorFactory>
+        implements Constructable {
 
     @Deprecated
     private static HibernateProcedureDescriptionGeneratorFactoryRepository instance;
 
-    private final Map<HibernateProcedureDescriptionGeneratorFactoryKey, Producer<HibernateProcedureDescriptionGeneratorFactory>> factories = Maps.newHashMap();
+    private final Map<HibernateProcedureDescriptionGeneratorKey, Producer<HibernateProcedureDescriptionGenerator>> factories = Maps.newHashMap();
 
     @Autowired(required = false)
-    private Collection<HibernateProcedureDescriptionGeneratorFactory> components;
+    private Collection<HibernateProcedureDescriptionGenerator> components;
 
     @Autowired(required = false)
-    private Collection<HibernateProcedureDescriptionGeneratorFactoryFactory> componentFactories;
+    private Collection<HibernateProcedureDescriptionGeneratorFactory> componentFactories;
 
     @Override
     public void init() {
         HibernateProcedureDescriptionGeneratorFactoryRepository.instance = this;
-        Map<HibernateProcedureDescriptionGeneratorFactoryKey, Producer<HibernateProcedureDescriptionGeneratorFactory>> implementations
+        Map<HibernateProcedureDescriptionGeneratorKey, Producer<HibernateProcedureDescriptionGenerator>> implementations
                 = getUniqueProviders(this.components, this.componentFactories);
         this.factories.clear();
         this.factories.putAll(implementations);
     }
 
-    public HibernateProcedureDescriptionGeneratorFactory getFactory(final String descriptionFormat) {
-        return getFactory(new HibernateProcedureDescriptionGeneratorFactoryKey(descriptionFormat));
+    public HibernateProcedureDescriptionGenerator getFactory(String descriptionFormat) {
+        return getFactory(new HibernateProcedureDescriptionGeneratorKey(descriptionFormat));
     }
 
-    public HibernateProcedureDescriptionGeneratorFactory getFactory(final HibernateProcedureDescriptionGeneratorFactoryKey key) {
-        Producer<HibernateProcedureDescriptionGeneratorFactory> producer = factories.get(key);
-        return producer == null ? null : producer.get();
+    public HibernateProcedureDescriptionGenerator getFactory(HibernateProcedureDescriptionGeneratorKey key) {
+        return Optional.ofNullable(factories.get(key)).map(Producer::get).orElse(null);
     }
 
     /**
      * Checks if a factory is available to generate the description
      *
-     * @param descriptionFormat
-     *            Default format
+     * @param descriptionFormat Default format
+     *
      * @return If a factory is available
      */
-    public boolean hasHibernateProcedureDescriptionGeneratorFactory(final String descriptionFormat) {
-        return this.factories.containsKey(new HibernateProcedureDescriptionGeneratorFactoryKey(descriptionFormat));
+    public boolean hasHibernateProcedureDescriptionGeneratorFactory(String descriptionFormat) {
+        return this.factories.containsKey(new HibernateProcedureDescriptionGeneratorKey(descriptionFormat));
     }
-
 
     @Deprecated
     public static HibernateProcedureDescriptionGeneratorFactoryRepository getInstance() {

@@ -28,9 +28,9 @@
  */
 package org.n52.sos.coding.json;
 
-import org.n52.svalbard.encode.EncoderKey;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncodingException;
+import org.n52.svalbard.encode.EncoderKey;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

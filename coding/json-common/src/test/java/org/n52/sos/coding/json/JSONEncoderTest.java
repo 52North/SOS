@@ -41,9 +41,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import org.n52.janmayen.http.MediaTypes;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncoderKey;
+import org.n52.sos.encode.json.JSONEncodingException;
 import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 
@@ -92,8 +92,8 @@ public class JSONEncoderTest {
 
     @Test
     public void testThrowingEncoder() throws EncodingException {
-        thrown.expect(NoApplicableCodeException.class);
-        thrown.expectCause(hasMessage(is("message")));
+        thrown.expect(JSONEncodingException.class);
+        thrown.expect(hasMessage(is("message")));
         throwingEncoder.encode("test");
     }
 }

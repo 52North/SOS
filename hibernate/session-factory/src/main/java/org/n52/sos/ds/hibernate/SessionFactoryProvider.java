@@ -51,9 +51,9 @@ import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.UpdateableConnectionProvider;
-import org.n52.faroe.ConfigurationError;
 
 /**
  *

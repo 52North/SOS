@@ -50,7 +50,7 @@ import org.n52.janmayen.http.MediaType;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
-import org.n52.svalbard.OperationKey;
+import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 
 import com.google.common.base.Objects;
 
@@ -89,7 +89,7 @@ public class ClientController extends AbstractController {
             final String service = rokt.getServiceOperatorKey().getService();
             final String version = rokt.getServiceOperatorKey().getVersion();
             final String operation = rokt.getOperationName();
-            final OperationKey ok = new OperationKey(service, version, operation);
+            final OwsOperationKey ok = new OwsOperationKey(service, version, operation);
             for (Entry<String, Binding> b : this.bindingRepository.getBindingsByPath().entrySet()) {
                 try {
                     final Binding binding = b.getValue();

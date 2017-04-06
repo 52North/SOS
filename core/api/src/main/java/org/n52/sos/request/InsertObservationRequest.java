@@ -120,8 +120,9 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
      *            observations to insert
      * @throws OwsExceptionReport
      */
-    public void setObservation(List<OmObservation> observation) throws OwsExceptionReport {
-        this.observations = referenceChecker.checkObservationsForReferences(observation);
+    public InsertObservationRequest setObservation(List<OmObservation> observation) throws OwsExceptionReport {
+        observations = referenceChecker.checkObservationsForReferences(observation);
+        return this;
     }
 
     /**
@@ -144,8 +145,9 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
         return CollectionHelper.isNotEmpty(getObservations());
     }
 
-    public void setOfferings(List<String> offerings) {
+    public InsertObservationRequest setOfferings(List<String> offerings) {
         this.offerings = offerings;
+        return this;
     }
 
     public List<String> getOfferings() {

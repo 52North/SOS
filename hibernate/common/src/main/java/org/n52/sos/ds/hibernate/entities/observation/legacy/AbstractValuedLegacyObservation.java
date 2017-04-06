@@ -46,6 +46,7 @@ import org.n52.shetland.ogc.om.TimeValuePair;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.util.OMHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -55,7 +56,6 @@ import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.svalbard.util.OMHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 

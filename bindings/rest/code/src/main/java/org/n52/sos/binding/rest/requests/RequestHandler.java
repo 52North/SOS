@@ -56,7 +56,7 @@ import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.binding.rest.Constants;
-import org.n52.svalbard.OperationKey;
+import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.OperationResponseEncoderKey;
@@ -177,7 +177,7 @@ public abstract class RequestHandler {
     private XmlObject encodeResponse(OwsServiceResponse response)
             throws EncodingException {
         OperationResponseEncoderKey key = new OperationResponseEncoderKey(
-                new OperationKey(response), MediaTypes.TEXT_XML);
+                new OwsOperationKey(response), MediaTypes.TEXT_XML);
         Encoder<XmlObject, OwsServiceResponse> encoder =
                 encoderRepository.getEncoder(key);
         if (encoder == null) {

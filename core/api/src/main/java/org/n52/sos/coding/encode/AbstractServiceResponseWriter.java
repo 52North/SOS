@@ -43,7 +43,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.ows.service.ResponseFormat;
 import org.n52.shetland.ogc.sos.response.StreamingDataResponse;
-import org.n52.svalbard.OperationKey;
+import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.OperationResponseEncoderKey;
@@ -123,7 +123,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
      * @return {@link Encoder} for the {@link OwsServiceResponse}
      */
     private Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) {
-        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OperationKey(asr), getEncodedContentType(asr));
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OwsOperationKey(asr), getEncodedContentType(asr));
 
         Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {

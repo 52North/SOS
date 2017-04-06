@@ -46,6 +46,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.util.OMHelper;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
@@ -55,7 +56,6 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.util.SosHelper;
-import org.n52.svalbard.util.OMHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;

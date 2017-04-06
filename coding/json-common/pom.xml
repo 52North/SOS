@@ -47,9 +47,23 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>com.github.fge</groupId>
             <artifactId>jackson-coreutils</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -74,6 +88,25 @@
         <dependency>
             <groupId>com.github.fge</groupId>
             <artifactId>json-schema-validator</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>joda-time</groupId>
+                    <artifactId>joda-time</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.github.fge</groupId>
@@ -81,9 +114,22 @@
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code</groupId>
-                   <artifactId>findbugs</artifactId>
+                    <artifactId>findbugs</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <artifactId>jackson-core</artifactId>
@@ -101,11 +147,11 @@
                             <goal>test-jar</goal>
                         </goals>
                         <configuration>
-                        	<classifier>without</classifier>
-	                        <excludes>
-			                	<exclude>**/*Test.*</exclude>
-			                	<exclude>**/*$.*</exclude>
-			                </excludes>
+                            <classifier>without</classifier>
+                            <excludes>
+                                <exclude>**/*Test.*</exclude>
+                                <exclude>**/*$.*</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>

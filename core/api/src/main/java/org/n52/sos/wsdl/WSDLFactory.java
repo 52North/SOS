@@ -44,7 +44,7 @@ import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.Producer;
 import org.n52.sos.request.operator.WSDLAwareRequestOperator;
 import org.n52.sos.service.Configurator;
-import org.n52.svalbard.OperationKey;
+import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 
 /**
  *
@@ -127,8 +127,8 @@ public class WSDLFactory implements Producer<String> {
         return builder.build();
     }
 
-    private OperationKey toOperationKey(final RequestOperatorKey requestOperatorKeyType) {
-        return new OperationKey(requestOperatorKeyType.getServiceOperatorKey().getService(), requestOperatorKeyType
+    private OwsOperationKey toOperationKey(final RequestOperatorKey requestOperatorKeyType) {
+        return new OwsOperationKey(requestOperatorKeyType.getServiceOperatorKey().getService(), requestOperatorKeyType
                 .getServiceOperatorKey().getVersion(), requestOperatorKeyType.getOperationName());
     }
 

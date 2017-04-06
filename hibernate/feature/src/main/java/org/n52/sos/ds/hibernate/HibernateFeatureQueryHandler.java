@@ -69,6 +69,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.JTSHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.FeatureQueryHandler;
@@ -86,11 +87,6 @@ import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
-import org.n52.svalbard.Validation;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.n52.svalbard.util.JTSHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -100,6 +96,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.ParseException;
 
 @Configurable
 public class HibernateFeatureQueryHandler implements FeatureQueryHandler, HibernateSqlQueryConstants {
@@ -552,21 +549,21 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             return getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeom());
         } else if (feature.isSetLongLat()) {
             try {
-            int epsg = getStorageEPSG();
-            if (feature.isSetSrid()) {
-                epsg = feature.getSrid();
-            }
-            final String wktString =
-                    getGeometryHandler().getWktString(feature.getLongitude(), feature.getLatitude(), epsg);
-            Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
-            if (feature.isSetAltitude()) {
-                geom.getCoordinate().z = JavaHelper.asDouble(feature.getAltitude());
-                if (geom.getSRID() == getStorage3DEPSG()) {
-                    geom.setSRID(getStorage3DEPSG());
+                int epsg = getStorageEPSG();
+                if (feature.isSetSrid()) {
+                    epsg = feature.getSrid();
                 }
-            }
-            return geom;
-            } catch (DecodingException de) {
+                final String wktString =
+                        getGeometryHandler().getWktString(feature.getLongitude(), feature.getLatitude(), epsg);
+                Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
+                if (feature.isSetAltitude()) {
+                    geom.getCoordinate().z = JavaHelper.asDouble(feature.getAltitude());
+                    if (geom.getSRID() == getStorage3DEPSG()) {
+                        geom.setSRID(getStorage3DEPSG());
+                    }
+                }
+                return geom;
+            } catch (ParseException de) {
                 throw new NoApplicableCodeException().causedBy(de);
             }
             // return

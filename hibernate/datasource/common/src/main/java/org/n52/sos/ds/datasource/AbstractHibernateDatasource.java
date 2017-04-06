@@ -63,8 +63,6 @@ import org.n52.faroe.settings.ChoiceSettingDefinition;
 import org.n52.faroe.settings.IntegerSettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.faroe.ConfigurationError;
-import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;

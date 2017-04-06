@@ -33,7 +33,6 @@ import java.util.Map;
 
 import org.hibernate.Session;
 
-import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
@@ -57,6 +56,7 @@ import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterFactory;

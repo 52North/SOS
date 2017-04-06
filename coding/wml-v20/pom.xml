@@ -12,10 +12,6 @@
     <description>52°North WaterML 2.0 XML coding</description>
     <dependencies>
         <dependency>
-			<groupId>org.n52.svalbard</groupId>
-			<artifactId>svalbard</artifactId>
-		</dependency>
-        <dependency>
 			<groupId>org.n52.iceland</groupId>
 			<artifactId>iceland</artifactId>
 		</dependency>
@@ -30,32 +26,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-        	<groupId>${project.groupId}</groupId>
-        	<artifactId>sqlite-config</artifactId>
-        	<scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sqlite-config</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>  
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-        	<groupId>xmlunit</groupId>
-        	<artifactId>xmlunit</artifactId>
-        	<scope>test</scope>
         </dependency>
     </dependencies>
 </project>

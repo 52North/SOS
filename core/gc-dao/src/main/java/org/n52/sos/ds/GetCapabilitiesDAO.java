@@ -119,10 +119,10 @@ import org.n52.sos.util.I18NHelper;
 import org.n52.svalbard.ConformanceClass;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
-import org.n52.svalbard.util.OMHelper;
 import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
 import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.shetland.util.OMHelper;
 
 /**
  * Implementation of the interface AbstractGetCapabilitiesHandler

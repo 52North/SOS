@@ -9,11 +9,11 @@
     <artifactId>hibernate-h2</artifactId>
     <name>52°North SOS - Hibernate H2</name>
     <dependencies>
-         <dependency>
+        <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
-         </dependency>
-         <dependency>
+        </dependency>
+        <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
         </dependency>
@@ -25,7 +25,7 @@
             <groupId>org.n52.faroe</groupId>
             <artifactId>faroe-utils</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>

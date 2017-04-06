@@ -31,13 +31,13 @@ package org.n52.sos.binding.rest;
 import java.net.URI;
 
 import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.service.ServiceSettings;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
-import org.n52.svalbard.Validation;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

@@ -480,19 +480,11 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
 
     private final BiMap<String, String> featureOfInterestIdentifierHumanReadableName = newSynchronizedBiMap();
 
-//    private Map<String, String> featureOfInterestHumanReadableNameForIdentifier = newSynchronizedMap();
-
     private final BiMap<String, String> observablePropertyIdentifierHumanReadableName = newSynchronizedBiMap();
-
-//    private Map<String, String> observablePropertyHumanReadableNameForIdentifier = newSynchronizedMap();
 
     private final BiMap<String, String> procedureIdentifierHumanReadableName = newSynchronizedBiMap();
 
-//    private Map<String, String> procedureHumanReadableNameForIdentifier = newSynchronizedMap();
-
     private final BiMap<String, String> offeringIdentifierHumanReadableName = newSynchronizedBiMap();
-
-//    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
 
     private final Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
 

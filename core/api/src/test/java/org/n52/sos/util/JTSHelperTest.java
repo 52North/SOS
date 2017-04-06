@@ -35,6 +35,12 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.n52.shetland.util.JTSHelper.WKT_POINT;
+import static org.n52.shetland.util.JTSHelper.createGeometryFromWKT;
+import static org.n52.shetland.util.JTSHelper.createWKTPointFromCoordinateString;
+import static org.n52.shetland.util.JTSHelper.getGeometryFactory;
+import static org.n52.shetland.util.JTSHelper.getGeometryFactoryForSRID;
+import static org.n52.shetland.util.JTSHelper.switchCoordinateAxisOrder;
 import static org.n52.sos.util.JTSHelperForTesting.randomCoordinate;
 import static org.n52.sos.util.JTSHelperForTesting.randomCoordinateRing;
 import static org.n52.sos.util.JTSHelperForTesting.randomCoordinates;
@@ -43,8 +49,8 @@ import static org.n52.sos.util.ReverseOf.reverseOf;
 import org.junit.Test;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.JTSHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -52,6 +58,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.io.ParseException;
 
 /**
  * TODO JavaDoc
@@ -84,7 +91,7 @@ public class JTSHelperTest extends JTSHelper {
     }
 
     @Test
-    public void shouldPointWKTString() throws OwsExceptionReport, DecodingException {
+    public void shouldPointWKTString() throws OwsExceptionReport, DecodingException, ParseException {
         String coordinates = "52.0 7.0";
         StringBuilder builder = new StringBuilder();
         builder.append(WKT_POINT);

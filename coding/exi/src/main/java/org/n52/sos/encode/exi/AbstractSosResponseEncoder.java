@@ -44,7 +44,7 @@ import org.n52.shetland.ogc.ows.service.ResponseFormat;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.response.StreamingDataResponse;
 import org.n52.sos.exi.EXIObject;
-import org.n52.svalbard.OperationKey;
+import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.svalbard.encode.AbstractDelegatingEncoder;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
@@ -84,7 +84,7 @@ public class AbstractSosResponseEncoder<T extends OwsServiceResponse> extends Ab
      *            SOS version
      */
     public AbstractSosResponseEncoder(Class<T> type, String operation, String version) {
-        OperationKey key = new OperationKey(SosConstants.SOS, version, operation);
+        OwsOperationKey key = new OwsOperationKey(SosConstants.SOS, version, operation);
         this.encoderKeys = Sets.<EncoderKey>newHashSet(new OperationResponseEncoderKey(key, MediaTypes.APPLICATION_EXI));
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(encoderKeys));
     }
@@ -147,7 +147,7 @@ public class AbstractSosResponseEncoder<T extends OwsServiceResponse> extends Ab
      * @return {@link Encoder} for the {@link OwsServiceResponse}
      */
     protected Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) {
-        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OperationKey(asr), getEncodedContentType(asr));
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OwsOperationKey(asr), getEncodedContentType(asr));
         Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
             throw new RuntimeException(new NoEncoderForKeyException(key));

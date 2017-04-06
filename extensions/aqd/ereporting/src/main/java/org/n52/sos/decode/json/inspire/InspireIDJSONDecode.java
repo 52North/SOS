@@ -28,9 +28,9 @@
  */
 package org.n52.sos.decode.json.inspire;
 
+import org.n52.faroe.Validation;
 import org.n52.shetland.inspire.InspireID;
 import org.n52.sos.util.AQDJSONConstants;
-import org.n52.svalbard.Validation;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;

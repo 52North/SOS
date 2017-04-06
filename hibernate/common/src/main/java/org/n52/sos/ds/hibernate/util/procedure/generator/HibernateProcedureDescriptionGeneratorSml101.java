@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.hibernate.Session;
 
+import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
@@ -55,7 +56,6 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.svalbard.Validation;
 
 /**
  * TODO JavaDoc

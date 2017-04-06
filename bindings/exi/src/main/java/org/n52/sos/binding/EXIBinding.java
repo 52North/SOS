@@ -65,7 +65,7 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.utils.EXIUtils;
-import org.n52.svalbard.OperationKey;
+import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.CodingHelper;
@@ -119,7 +119,7 @@ public class EXIBinding extends SimpleBinding {
     }
 
     @Override
-    public boolean checkOperationHttpPostSupported(OperationKey k) throws HTTPException {
+    public boolean checkOperationHttpPostSupported(OwsOperationKey k) throws HTTPException {
         return hasDecoder(k, MediaTypes.TEXT_XML) || hasDecoder(k, MediaTypes.APPLICATION_XML);
     }
 

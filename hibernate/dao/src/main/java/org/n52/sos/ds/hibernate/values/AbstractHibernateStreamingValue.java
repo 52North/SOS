@@ -38,6 +38,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -67,9 +68,11 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayV
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.util.GmlHelper;
-import org.n52.svalbard.util.OMHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.util.OMHelper;
 
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;

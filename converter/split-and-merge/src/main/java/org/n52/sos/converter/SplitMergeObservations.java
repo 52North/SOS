@@ -77,13 +77,13 @@ import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.OMHelper;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.OperationResponseEncoderKey;
 import org.n52.svalbard.encode.XmlEncoderKey;
-import org.n52.svalbard.util.OMHelper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

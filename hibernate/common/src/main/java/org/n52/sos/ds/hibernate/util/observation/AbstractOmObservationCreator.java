@@ -36,7 +36,9 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import org.hibernate.Session;
+
 import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -77,7 +79,6 @@ import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.CodingSettings;
-import org.n52.svalbard.Validation;
 import org.n52.svalbard.encode.EncoderRepository;
 
 import com.google.common.base.Strings;

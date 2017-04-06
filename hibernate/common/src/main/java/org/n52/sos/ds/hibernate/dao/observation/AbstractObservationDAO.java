@@ -124,8 +124,8 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
-import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
+import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.util.GeometryHandler;
@@ -1431,6 +1431,31 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             */
             daos.observation().checkForDuplicatedObservations(sosObservation, session);
 
+        }
+
+         @Override
+        public Observation<?> visit(TLVTValue value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(ProfileValue value) throws OwsExceptionReport {
+            throw notSupported(value);
         }
 
         @Override

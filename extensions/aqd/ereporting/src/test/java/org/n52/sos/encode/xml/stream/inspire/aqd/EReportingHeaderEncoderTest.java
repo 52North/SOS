@@ -48,8 +48,7 @@ import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import org.n52.svalbard.encode.EReportingHeaderEncoder;
-import org.n52.svalbard.encode.exception.EncodingException;
+
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.EReportingChange;
 import org.n52.shetland.aqd.EReportingHeader;
@@ -66,6 +65,8 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.w3c.Nillable;
 import org.n52.shetland.w3c.xlink.Reference;
 import org.n52.shetland.w3c.xlink.Referenceable;
+import org.n52.svalbard.encode.EReportingHeaderEncoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 public class EReportingHeaderEncoderTest {
     @Test

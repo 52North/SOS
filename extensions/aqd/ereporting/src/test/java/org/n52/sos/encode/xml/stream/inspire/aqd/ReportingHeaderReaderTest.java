@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.xml.stream.inspire.aqd;
+package org.n52.sos.encode.xml.stream.inspire.aqd;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
@@ -39,6 +39,7 @@ import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+
 import org.n52.shetland.aqd.EReportingChange;
 import org.n52.shetland.aqd.EReportingHeader;
 import org.n52.shetland.inspire.Address;
@@ -53,6 +54,7 @@ import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.w3c.Nillable;
 import org.n52.shetland.w3c.xlink.Reference;
 import org.n52.shetland.w3c.xlink.Referenceable;
+import org.n52.sos.decode.xml.stream.inspire.aqd.ReportingHeaderReader;
 import org.n52.svalbard.encode.EReportingHeaderEncoder;
 
 /**

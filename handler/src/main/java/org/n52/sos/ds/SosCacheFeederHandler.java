@@ -40,6 +40,7 @@ import org.hibernate.Session;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
 import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.WritableContentCache;
@@ -55,7 +56,6 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.sos.ds.cache.InitialCacheUpdate;
 import org.n52.sos.ds.cache.base.OfferingCacheUpdate;
-import org.n52.svalbard.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -58,6 +58,7 @@ import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.OMHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
@@ -69,7 +70,6 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayV
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.util.GmlHelper;
-import org.n52.svalbard.util.OMHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

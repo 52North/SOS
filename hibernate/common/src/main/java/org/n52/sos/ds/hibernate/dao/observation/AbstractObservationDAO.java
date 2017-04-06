@@ -1434,31 +1434,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
 
          @Override
-        public Observation<?> visit(TLVTValue value) throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(ProfileValue value) throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
         public Observation<?> visit(BooleanValue value) throws OwsExceptionReport {
             return setUnitAndPersist(observationFactory.truth(), value);
         }

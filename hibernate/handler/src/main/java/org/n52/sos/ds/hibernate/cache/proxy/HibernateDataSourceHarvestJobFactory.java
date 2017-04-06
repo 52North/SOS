@@ -33,10 +33,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ctrl.ScheduledContentCacheControllerSettings;
-import org.n52.svalbard.Validation;
 import org.quartz.SchedulerException;
 
 @Configurable

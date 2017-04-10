@@ -43,18 +43,12 @@ import javax.xml.namespace.QName;
  */
 public class WSDLOperationBuilder {
     private String name;
-
     private String version;
-
     private URI requestAction;
-
     private URI responseAction;
-
     private QName request;
-
     private QName response;
-
-    private Collection<WSDLFault> faults;
+    private Collection<WSDLFault> faults = new LinkedList<>();
 
     public WSDLOperationBuilder setName(String name) {
         this.name = name;
@@ -95,15 +89,12 @@ public class WSDLOperationBuilder {
     }
 
     public WSDLOperationBuilder addFault(WSDLFault fault) {
-        if (this.faults == null) {
-            this.faults = new LinkedList<WSDLFault>();
-        }
         this.faults.add(fault);
         return this;
     }
 
     public WSDLOperationBuilder setFaults(Collection<WSDLFault> faults) {
-        this.faults = new LinkedList<WSDLFault>(faults);
+        this.faults = new LinkedList<>(faults);
         return this;
     }
 

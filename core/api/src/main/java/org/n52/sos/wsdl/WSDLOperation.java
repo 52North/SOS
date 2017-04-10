@@ -41,23 +41,13 @@ import javax.xml.namespace.QName;
  */
 public class WSDLOperation {
 
-    private String name;
-
-    private String version;
-
-    private URI requestAction;
-
-    private URI responseAction;
-
-    private QName request;
-
-    private QName response;
-
-    private Collection<WSDLFault> faults;
-
-    public static WSDLOperationBuilder newWSDLOperation() {
-        return new WSDLOperationBuilder();
-    }
+    private final String name;
+    private final String version;
+    private final URI requestAction;
+    private final URI responseAction;
+    private final QName request;
+    private final QName response;
+    private final Collection<WSDLFault> faults;
 
     public WSDLOperation(String name, String version, URI requestAction, URI responseAction, QName request,
             QName response, Collection<WSDLFault> faults) {
@@ -96,5 +86,9 @@ public class WSDLOperation {
 
     public Collection<WSDLFault> getFaults() {
         return Collections.unmodifiableCollection(faults);
+    }
+
+    public static WSDLOperationBuilder newWSDLOperation() {
+        return new WSDLOperationBuilder();
     }
 }

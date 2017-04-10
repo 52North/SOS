@@ -5,28 +5,28 @@
     xmlns:sml="http://www.opengis.net/sensorml/2.0"
     xmlns:swe="http://www.opengis.net/swe/2.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xlink="http://www.w3.org/1999/xlink" gml:id="ExampleHydrophone1" xsi:schemaLocation="http://www.opengis.net/sensorml/2.0 http://schemas.opengis.net/sensorML/2.0/sensorML.xsd http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd">
-    <!--Short textual description of the hydrophone-->
-    <gml:description>Exemplary description of a hydrophone</gml:description>
-    <!--Unique identifier -->
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    gml:id="ws2500"
+    xsi:schemaLocation="http://www.opengis.net/sensorml/2.0 http://schemas.opengis.net/sensorML/2.0/sensorML.xsd
+        http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd">
+    <gml:description>ELV WS 2500 Weather station maintained at 52N office.</gml:description>
     <gml:identifier codeSpace="uniqueID">ws2500</gml:identifier>
-    <!--Keywords describing the hydrophone-->
     <sml:keywords>
         <sml:KeywordList>
-		        <sml:keyword>AthmosphericPressure</sml:keyword>
-		        <sml:keyword>ws2500</sml:keyword>
-		        <sml:keyword>ELV-WS2500</sml:keyword>
-		        <sml:keyword>ELV_WS_2500</sml:keyword>
-		        <sml:keyword>Sunshine</sml:keyword>
-		        <sml:keyword>WindSpeed</sml:keyword>
-		        <sml:keyword>Dewpoint</sml:keyword>
-		        <sml:keyword>Windchill</sml:keyword>
-		        <sml:keyword>Luminance</sml:keyword>
-		        <sml:keyword>AirTemperature</sml:keyword>
-		        <sml:keyword>Humidity</sml:keyword>
-		        <sml:keyword>52n-elv-ws2500</sml:keyword>
-		        <sml:keyword>RainfallAccumulated</sml:keyword>
-		        <sml:keyword>WindDirection</sml:keyword>
+            <sml:keyword>AthmosphericPressure</sml:keyword>
+            <sml:keyword>ws2500</sml:keyword>
+            <sml:keyword>ELV-WS2500</sml:keyword>
+            <sml:keyword>ELV_WS_2500</sml:keyword>
+            <sml:keyword>Sunshine</sml:keyword>
+            <sml:keyword>WindSpeed</sml:keyword>
+            <sml:keyword>Dewpoint</sml:keyword>
+            <sml:keyword>Windchill</sml:keyword>
+            <sml:keyword>Luminance</sml:keyword>
+            <sml:keyword>AirTemperature</sml:keyword>
+            <sml:keyword>Humidity</sml:keyword>
+            <sml:keyword>52n-elv-ws2500</sml:keyword>
+            <sml:keyword>RainfallAccumulated</sml:keyword>
+            <sml:keyword>WindDirection</sml:keyword>
         </sml:KeywordList>
     </sml:keywords>
     <sml:identification>
@@ -89,7 +89,9 @@
                         </gmd:CI_Contact>
                     </gmd:contactInfo>
                     <gmd:role>
-                        <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/" codeListValue="CI_RoleCode_pointOfContact">Point of Contact</gmd:CI_RoleCode>
+                        <gmd:CI_RoleCode
+                            codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/"
+                            codeListValue="CI_RoleCode_pointOfContact">Point of Contact</gmd:CI_RoleCode>
                     </gmd:role>
                 </gmd:CI_ResponsibleParty>
             </sml:contact>
@@ -135,7 +137,9 @@
                         </gmd:CI_Contact>
                     </gmd:contactInfo>
                     <gmd:role>
-                        <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/" codeListValue="CI_RoleCode_owner">Owner</gmd:CI_RoleCode>
+                        <gmd:CI_RoleCode
+                            codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/"
+                            codeListValue="CI_RoleCode_owner">Owner</gmd:CI_RoleCode>
                     </gmd:role>
                 </gmd:CI_ResponsibleParty>
             </sml:contact>
@@ -181,7 +185,9 @@
                         </gmd:CI_Contact>
                     </gmd:contactInfo>
                     <gmd:role>
-                        <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/" codeListValue="CI_RoleCode_custodian">Operator</gmd:CI_RoleCode>
+                        <gmd:CI_RoleCode
+                            codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/"
+                            codeListValue="CI_RoleCode_custodian">Operator</gmd:CI_RoleCode>
                     </gmd:role>
                 </gmd:CI_ResponsibleParty>
             </sml:contact>
@@ -228,7 +234,9 @@
                         </gmd:CI_Contact>
                     </gmd:contactInfo>
                     <gmd:role>
-                        <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/" codeListValue="CI_RoleCode_principalInvestigator">Principal Investigator</gmd:CI_RoleCode>
+                        <gmd:CI_RoleCode
+                            codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/"
+                            codeListValue="CI_RoleCode_principalInvestigator">Principal Investigator</gmd:CI_RoleCode>
                     </gmd:role>
                 </gmd:CI_ResponsibleParty>
             </sml:contact>
@@ -322,7 +330,6 @@
             </sml:event>
         </sml:EventList>
     </sml:history>
-    <!--Reference to the description of the hydrophone type. The referenced URL links to a SensorML document describing all properties which are the same for all hydrophones of this type.-->
     <sml:typeOf xlink:href="http://www.example.com/systems/elv/ws2500.xml"/>
     <sml:parameters>
         <sml:ParameterList>

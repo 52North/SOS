@@ -8,11 +8,3 @@ before_install:
   - cat /etc/hosts # optionally check the content *after*
 install: true
 script: mvn clean install -DskipTests=true
-notifications:
-  irc:
-    channels:
-      - "chat.freenode.net#52north"
-    on_success: always
-    on_failure: change
-    use_notice: true
-    skip_join: false

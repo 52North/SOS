@@ -46,13 +46,13 @@
     <jsp:param name="leadParagraph" value="Here you can maintain the datasource." />
 </jsp:include>
 <div>
-  <h3>Maintenance</h3>
-    <ul class="inline">
-        <li><button data-target="#confirmDialogAddSampledata" data-toggle="modal" title="Insert sample data" class="btn ">Insert sample data</button></li>
-        <li><button data-target="#confirmDialogDelete" data-toggle="modal" title="Delete deleted Observations" class="btn btn-danger">Delete deleted Observations</button></li>
-        <li><button data-target="#confirmDialogClear" data-toggle="modal" title="Clear Datasource" class="btn btn-danger">Clear Datasource</button></li>
-        <li><a href="<c:url value="/admin/reset" />" title="Reset Datasource Configuration" class="btn btn-warning">Reset Datasource Configuration</a></li>
-    </ul>
+    <h3>Maintenance</h3>
+    <div class="btn-group">
+        <button data-target="#confirmDialogAddSampledata" data-toggle="modal" title="Insert sample data" class="btn ">Insert sample data</button>
+        <button data-target="#confirmDialogDelete" data-toggle="modal" title="Delete deleted Observations" class="btn btn-danger">Delete deleted Observations</button>
+        <button data-target="#confirmDialogClear" data-toggle="modal" title="Clear Datasource" class="btn btn-danger">Clear Datasource</button>
+        <a href="<c:url value="/admin/reset" />" title="Reset Datasource Configuration" class="btn btn-warning">Reset Datasource Configuration</a>
+    </div>
 </div>
 
 <form id="form" action="" method="POST">

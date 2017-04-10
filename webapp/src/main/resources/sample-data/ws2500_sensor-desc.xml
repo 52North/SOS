@@ -331,6 +331,60 @@
         </sml:EventList>
     </sml:history>
     <sml:typeOf xlink:href="http://www.example.com/systems/elv/ws2500.xml"/>
+    <sml:outputs>
+        <sml:OutputList>
+            <sml:output name="AirTemperature">
+               <swe:Quantity definition="AirTemperature">
+                  <swe:uom code="degC"/>
+               </swe:Quantity>
+            </sml:output>
+            <sml:output name="Humidity">
+               <swe:Quantity definition="Humidity">
+                  <swe:uom code="%"/>
+               </swe:Quantity>
+            </sml:output>
+            <sml:output name="AthmosphericPressure">
+               <swe:Quantity definition="AthmosphericPressure">
+                  <swe:uom code="hPa"/>
+               </swe:Quantity>
+            </sml:output>
+            <sml:output name="RainfallAccumulated">
+               <swe:Quantity definition="RainfallAccumulated">
+                  <swe:uom code="l_m^2"/>
+               </swe:Quantity>
+            </sml:output>
+            <sml:output name="WindSpeed">
+               <swe:Quantity definition="WindSpeed">
+                  <swe:uom code="km_h"/>
+               </swe:Quantity>
+            </sml:output>
+            <sml:output name="WindDirection">
+               <swe:Quantity definition="WindDirection">
+                  <swe:uom code="deg"/>
+               </swe:Quantity>
+            </sml:output>
+            <sml:output name="Luminance">
+               <swe:Quantity definition="Luminance">
+                  <swe:uom code="klux"/>
+               </swe:Quantity>
+            </sml:output>
+            <sml:output name="Dewpoint">
+               <swe:Quantity definition="Dewpoint">
+                  <swe:uom code="degC"/>
+               </swe:Quantity>
+            </sml:output>
+            <sml:output name="Windchill">
+               <swe:Quantity definition="Windchill">
+                  <swe:uom code="degC"/>
+               </swe:Quantity>
+            </sml:output>
+            <sml:output name="Sunshine">
+               <swe:Quantity definition="Sunshine">
+                  <swe:uom code="min"/>
+               </swe:Quantity>
+            </sml:output>
+        </sml:OutputList>
+    </sml:outputs>
     <sml:parameters>
         <sml:ParameterList>
             <sml:parameter name="isActive">

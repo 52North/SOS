@@ -33,27 +33,36 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.MissingServiceOperatorException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.SensorML;
+import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.sos.request.InsertFeatureOfInterestRequest;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.request.operator.RequestOperator;
 import org.n52.sos.request.operator.RequestOperatorRepository;
+import org.n52.sos.response.InsertFeatureOfInterestResponse;
 import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.service.operator.ServiceOperatorKey;
@@ -85,90 +94,130 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
 
     private RequestOperator insertObservationOperator;
 
+    private RequestOperator insertFeatureOperator;
+
     private File[] sensorDescriptionFiles;
 
     private File sampleDataFolder;
 
-    List<InsertSensorRequest> insertSensorRequests;
+    private List<InsertSensorRequest> insertSensorRequests;
 
     private Map<String, String> insertedSensors;
 
     private boolean insertedData;
 
-    public boolean insertSampleData() throws UnsupportedEncodingException, IOException, MissingServiceOperatorException, URISyntaxException, OwsExceptionReport, XmlException {
+    private List<Exception> insertSensorExceptions;
+
+    private List<Exception> insertObservationExceptions;
+
+    private static String currentYearAndMonth;
+
+    static {
+        final GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(new Date());
+        currentYearAndMonth =  String.format("%04d-%02d",
+                cal.get(GregorianCalendar.YEAR),
+                (cal.get(GregorianCalendar.MONTH)+1));
+    }
+
+    private final SwesExtension<?> extension = new SwesExtensionImpl<SweBoolean>()
+            .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name())
+            .setValue((SweBoolean) new SweBoolean()
+                    .setValue(true)
+                    .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name()));
+
+    private List<Exception> insertFeatureExceptions;
+
+    public synchronized boolean insertSampleData() throws UnsupportedEncodingException, IOException, 
+    MissingServiceOperatorException, URISyntaxException, OwsExceptionReport, XmlException {
         checkRequestOperators();
         sampleDataProperties.load(this.getClass().getResourceAsStream("/sample-data/sample-data.properties"));
         createInsertSensorRequests();
         insertSensors();
+        insertFeatures();
         insertObservations();
         return insertedData;
+    }
+
+    private void insertFeatures() throws CodedException {
+        final File[] featureFiles = getFilesBySuffix("_feature.xml");
+        insertFeatureExceptions = Lists.newArrayList();
+        ExecutorService threadPool = Executors.newFixedThreadPool(5);
+        for (File featureFile : featureFiles) {
+            threadPool.submit(new InsertFeatureTask(featureFile));
+        }
+        try {
+            threadPool.shutdown();
+            threadPool.awaitTermination(180, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {}
+        if (!insertFeatureExceptions.isEmpty()) {
+            throw new NoApplicableCodeException()
+            .causedBy(insertFeatureExceptions.get(0))
+            .withMessage("InsertFeature failed during sample data insertion! Showing first of {} exceptions.",
+                    insertFeatureExceptions.size());
+        }
     }
 
     private void insertObservations()
             throws UnsupportedEncodingException, IOException, XmlException, OwsExceptionReport {
         // send request to SosInsertObservationOperatorV20
-        SwesExtension<?> extension = new SwesExtensionImpl<SweBoolean>()
-                .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name())
-                .setValue((SweBoolean) new SweBoolean()
-                        .setValue(true)
-                        .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name()));
-        
-
         final File[] observationFiles = getFilesBySuffix("_obs.xml");
         
+        insertObservationExceptions = Lists.newArrayList();
+        ExecutorService threadPool = Executors.newFixedThreadPool(5);
         for (File observationFile : observationFiles) {
-            String xmlString = new String(Files.readAllBytes(Paths.get(observationFile.getAbsolutePath())),"UTF-8");
-            final String procedureId = observationFile.getName().replace("_obs.xml", "");
-            // TODO update date1 with last month and date2 with this month (problem with month length to consider)
-            GetObservationResponseDocument decodedXmlObject = (GetObservationResponseDocument) XmlObject.Factory.parse(xmlString);
-            ObservationData[] observations = decodedXmlObject.getGetObservationResponse().getObservationDataArray();
-            
-            List<OmObservation> observation = Lists.newLinkedList();
-            
-            for (ObservationData observationData : observations) {
-                observation.add((OmObservation)CodingHelper.decodeXmlElement(observationData.getOMObservation()));
-            }
-            
-            InsertObservationRequest insertObservationRequest = (InsertObservationRequest) new InsertObservationRequest()
-                    .setOfferings(Collections.singletonList(insertedSensors.get(procedureId)))
-                    .setObservation(observation)
-                    .addExtension(extension)
-                    .setService(SOS)
-                    .setVersion(SERVICEVERSION);
-            InsertObservationResponse insertObservationResponse = 
-                    (InsertObservationResponse) insertObservationOperator.receiveRequest(insertObservationRequest);
-            if (insertObservationResponse != null) {
-                insertedData = true;
-            }
+            threadPool.submit(new InsertObservationTask(observationFile));
+        }
+        try {
+            threadPool.shutdown();
+            threadPool.awaitTermination(180, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {}
+        if (!insertObservationExceptions.isEmpty()) {
+            throw new NoApplicableCodeException()
+            .causedBy(insertObservationExceptions.get(0))
+            .withMessage("InsertObservation failed during sample data insertion! Showing first of {} exceptions.",
+                    insertObservationExceptions.size());
         }
     }
 
     private void insertSensors() throws OwsExceptionReport {
         insertedSensors = Maps.newHashMap();
-        for (InsertSensorRequest request : insertSensorRequests) {
-            InsertSensorResponse response = (InsertSensorResponse) insertSensorOperator.receiveRequest(request);
-            insertedSensors.put(response.getAssignedProcedure(),response.getAssignedOffering());
+        insertSensorExceptions = Lists.newArrayList();
+        ExecutorService threadPool = Executors.newFixedThreadPool(5);
+        for (final InsertSensorRequest request : insertSensorRequests) {
+            threadPool.submit(new InsertSensorTask(request));
+        }
+        try {
+            threadPool.shutdown();
+            threadPool.awaitTermination(180, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {}
+        if (!insertSensorExceptions.isEmpty()) {
+            throw new NoApplicableCodeException()
+            .causedBy(insertSensorExceptions.get(0))
+            .withMessage("InsertSensor failed during sample data insertion! Showing first of {} exceptions.",
+                    insertSensorExceptions.size());
         }
     }
 
     private void createInsertSensorRequests()
-            throws URISyntaxException, UnsupportedEncodingException, IOException {
+            throws URISyntaxException, UnsupportedEncodingException, IOException, OwsExceptionReport, XmlException {
         /*
          * SENSOR DESCRIPTIONS
          */
         // create all required requests
         insertSensorRequests = Lists.newArrayList();
-        sampleDataFolder = Paths.get(new URI( this.getClass().getResource("/sample-data/").toString()).getPath()).toFile();
+        sampleDataFolder = Paths.get(
+                new URI( this.getClass().getResource("/sample-data/").toString()).getPath()).toFile();
         sensorDescriptionFiles = getFilesBySuffix("_sensor-desc.xml");
         for (File sensorDescriptionFile : sensorDescriptionFiles) {
-            String description = new String(Files.readAllBytes(Paths.get(sensorDescriptionFile.getAbsolutePath())),"UTF-8");
+            String description = new String(Files.readAllBytes(
+                    Paths.get(sensorDescriptionFile.getAbsolutePath())),"UTF-8");
             final String procedureId = sensorDescriptionFile.getName().replace("_sensor-desc.xml", "");
-            final SosProcedureDescription procedure = new SensorML()
-                    .setSensorDescriptionXmlString(description)
-                    .setIdentifier(procedureId);
+            PhysicalSystem physicalSystem =
+                    (PhysicalSystem) CodingHelper.decodeXmlElement(XmlObject.Factory.parse(description));
             InsertSensorRequest insertSensorRequest = (InsertSensorRequest) new InsertSensorRequest()
                     .setProcedureDescriptionFormat("http://www.opengis.net/sensorml/2.0")
-                    .setProcedureDescription(procedure)
+                    .setProcedureDescription(physicalSystem)
                     .setObservableProperty(getPropertyList(procedureId + "_observedProperties"))
                     .setMetadata(new SosInsertionMetadata()
                             .setObservationTypes(getPropertyList(procedureId + "_observationTypes"))
@@ -195,6 +244,12 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
         if (insertObservationOperator == null) {
             missingServiceOperator(SOS, SERVICEVERSION, insertObservation);
         }
+        final String insertFeature = "InsertFeatureOfInterest";
+        insertFeatureOperator = RequestOperatorRepository.getInstance()
+                .getRequestOperator(SERVICE_OPERATOR_KEY, insertFeature);
+        if (insertFeatureOperator == null) {
+            missingServiceOperator(SOS, SERVICEVERSION, insertFeature);
+        }
     }
 
     private File[] getFilesBySuffix(final String suffix) {
@@ -213,11 +268,129 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
         return Arrays.asList(sampleDataProperties.getProperty(properyId).split(","));
     }
 
-    private void missingServiceOperator(final String service, final String version, final String operation) throws MissingServiceOperatorException {
-        String msg = String.format("Could not load request operator for: %s, %s, %s. Please activate the according operation in the <a href=\"./operations\">settings</a>.", service, version,
+    private void missingServiceOperator(final String service, final String version, final String operation)
+            throws MissingServiceOperatorException {
+        String msg = String.format("Could not load request operator for: %s, %s, %s. Please activate the according "
+                + "operation in the <a href=\"./operations\">settings</a>.", service, version,
                 operation);
         LOG.error(msg);
         throw new MissingServiceOperatorException(msg);
     }
+
+    private class InsertSensorTask implements Runnable{
+
+        private final InsertSensorRequest request;
+
+        public InsertSensorTask(InsertSensorRequest request) {
+            this.request = request;
+        }
+
+        @Override
+        public void run() {
+            try {
+                InsertSensorResponse response = (InsertSensorResponse) insertSensorOperator.receiveRequest(request);
+                insertedSensors.put(response.getAssignedProcedure(),response.getAssignedOffering());
+            } catch (OwsExceptionReport e) {
+                insertSensorExceptions.add(e);
+            }
+        }
+
+    }
+
+    private class InsertFeatureTask implements Runnable, SosConstants, Sos2Constants {
+    
+        private File featureFile;
+
+        public InsertFeatureTask(File featureFile) {
+            this.featureFile = featureFile;
+        }
+
+        @Override
+        public void run() {
+            try {
+                if ((InsertFeatureOfInterestResponse) insertFeatureOperator
+                        .receiveRequest((InsertFeatureOfInterestRequest) new InsertFeatureOfInterestRequest()
+                                .addFeatureMember(
+                                        (AbstractFeature)CodingHelper.decodeXmlObject(
+                                                new String(Files.readAllBytes(
+                                                        Paths.get(featureFile.getAbsolutePath())),"UTF-8")))
+                                .setService(SOS)
+                                .setVersion(SERVICEVERSION)) == null) {
+                    insertFeatureExceptions.add(
+                            new NoApplicableCodeException().withMessage("Could not insert feature of interest."));
+                }
+            } catch (OwsExceptionReport|IOException e) {
+                insertFeatureExceptions.add(e);
+            }
+        }
+    
+    }
+
+    private class InsertObservationTask implements Runnable {
+
+        private final File observationFile;
+
+        public InsertObservationTask(File observationFile) {
+            this.observationFile = observationFile;
+        }
+
+        @Override
+        public void run() {
+            try {
+                String xmlString = new String(Files.readAllBytes(Paths.get(observationFile.getAbsolutePath())),"UTF-8");
+                xmlString = xmlString.replaceAll("2016-05", currentYearAndMonth);
+                final String procedureId = observationFile.getName().replace("_obs.xml", "");
+                // TODO update DATE with last month
+                GetObservationResponseDocument decodedXmlObject =
+                        (GetObservationResponseDocument) XmlObject.Factory.parse(xmlString);
+                ObservationData[] observations = decodedXmlObject.getGetObservationResponse().getObservationDataArray();
+
+                ExecutorService threadPool = Executors.newFixedThreadPool(10);
+                for (ObservationData observationData : observations) {
+                    threadPool.submit(new InsertObservationSubTask(procedureId, observationData));
+                }
+                try {
+                    threadPool.shutdown();
+                    threadPool.awaitTermination(180, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {}
+            } catch (IOException|XmlException e) {
+                insertObservationExceptions.add(e);
+            }
+        }
+
+    }
+
+    private class InsertObservationSubTask implements Runnable {
+
+        private ObservationData observationData;
+        private String procedureId;
+
+        public InsertObservationSubTask(String procedureId, ObservationData observationData) {
+            this.procedureId = procedureId;
+            this.observationData = observationData;
+        }
+
+        @Override
+        public void run() {
+            try {
+                InsertObservationRequest request = (InsertObservationRequest) new InsertObservationRequest()
+                        .setOfferings(Collections.singletonList(insertedSensors.get(procedureId)))
+                        .setObservation(Collections.singletonList(
+                                (OmObservation)CodingHelper.decodeXmlElement(observationData.getOMObservation())))
+                        .addExtension(extension)
+                        .setService(SOS)
+                        .setVersion(SERVICEVERSION);
+                InsertObservationResponse insertObservationResponse =
+                        (InsertObservationResponse) insertObservationOperator.receiveRequest(request);
+                if (insertObservationResponse != null) {
+                    insertedData = true;
+                }
+            } catch (OwsExceptionReport e) {
+                insertObservationExceptions.add(e);
+            }
+        }
+
+    }
+
 
 }

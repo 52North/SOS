@@ -1,10 +1,11 @@
 language: java
 jdk:
-    - oraclejdk8
+  - oraclejdk8
 before_install:
-  - cat /etc/hosts # optionally check the content *before*
   - sudo hostname "$(hostname | cut -c1-63)"
   - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo tee /etc/hosts
-  - cat /etc/hosts # optionally check the content *after*
 install: true
-script: mvn clean install -DskipTests=true
+script: mvn -fae -U -B clean install -DskipTests=true
+cache:
+  directories:
+    - $HOME/.m2

@@ -7,7 +7,7 @@
       <generator class="assigned"/>
     </id>
     <property column="identifier" insert="false" name="domainId" type="string" update="false"/>
-    <property column="name" name="name" type="string"/>
+    <property formula="concat(name, ', ', identifier)" name="name" type="string"/>
     <property column="description" name="description" type="string"/>
     <property name="geom" type="org.hibernate.spatial.GeometryType" formula="(select 
                         foi.geom from series s, samplingpoint sp, featureofinterest foi 

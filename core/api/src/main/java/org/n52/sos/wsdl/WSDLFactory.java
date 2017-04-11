@@ -42,9 +42,9 @@ import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.Producer;
+import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.sos.request.operator.WSDLAwareRequestOperator;
 import org.n52.sos.service.Configurator;
-import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 
 /**
  *
@@ -53,24 +53,25 @@ import org.n52.shetland.ogc.ows.service.OwsOperationKey;
  * @since 4.0.0
  */
 public class WSDLFactory implements Producer<String> {
+
     @Override
     public String get() throws ConfigurationError {
         try {
             return getWSDL();
-        } catch (final Exception ex) {
+        } catch (ConfigurationError ex) {
+            throw ex;
+        } catch (Exception ex) {
             throw new ConfigurationError(ex);
         }
     }
 
     private String getWSDL() throws Exception {
         final WSDLBuilder builder = new WSDLBuilder();
-        if (Configurator.getInstance() != null) {
-            final Map<String, Binding> bindings = BindingRepository.getInstance().getBindingsByPath();
-            final RequestOperatorRepository repo = RequestOperatorRepository.getInstance();
-
+        if (isConfigured()) {
+            final Map<String, Binding> bindings = getBindingRepository().getBindingsByPath();
+            final RequestOperatorRepository repo = getRequestOperatorRepository();
             final Set<RequestOperatorKey> requestOperators = repo.getActiveRequestOperatorKeys();
-
-            final String serviceUrl = ServiceConfiguration.getInstance().getServiceURL();
+            final String serviceUrl = getServiceURL();
 
             if (bindings.containsKey(BindingConstants.SOAP_BINDING_ENDPOINT)) {
                 builder.setSoapEndpoint(URI.create(serviceUrl + BindingConstants.SOAP_BINDING_ENDPOINT));
@@ -127,17 +128,16 @@ public class WSDLFactory implements Producer<String> {
         return builder.build();
     }
 
-    private OwsOperationKey toOperationKey(final RequestOperatorKey requestOperatorKeyType) {
-        return new OwsOperationKey(requestOperatorKeyType.getServiceOperatorKey().getService(), requestOperatorKeyType
-                .getServiceOperatorKey().getVersion(), requestOperatorKeyType.getOperationName());
+    private OwsOperationKey toOperationKey(RequestOperatorKey requestOperatorKeyType) {
+        return new OwsOperationKey(requestOperatorKeyType.getServiceOperatorKey().getService(),
+                                   requestOperatorKeyType.getServiceOperatorKey().getVersion(),
+                                   requestOperatorKeyType.getOperationName());
     }
 
     private void addAdditionalPrefixes(final WSDLAwareRequestOperator op, final WSDLBuilder builder) {
         final Map<String, String> additionalPrefixes = op.getAdditionalPrefixes();
         if (additionalPrefixes != null) {
-            for (final Map.Entry<String, String> ap : additionalPrefixes.entrySet()) {
-                builder.addNamespace(ap.getKey(), ap.getValue());
-            }
+            additionalPrefixes.forEach(builder::addNamespace);
         }
     }
 
@@ -145,17 +145,43 @@ public class WSDLFactory implements Producer<String> {
             throws Exception {
         final Map<String, String> additionalSchemaImports = op.getAdditionalSchemaImports();
         if (additionalSchemaImports != null) {
-            for (final Map.Entry<String, String> as : additionalSchemaImports.entrySet()) {
-                builder.addSchemaImport(as.getKey(), as.getValue());
-            }
+            additionalSchemaImports.forEach(builder::addSchemaImport);
         }
     }
 
     private boolean isHttpPostSupported(final Binding b, final RequestOperator ro) throws HTTPException {
-        return b.checkOperationHttpPostSupported(toOperationKey(ro.getRequestOperatorKeyType()));
+        return ro.getKeys().stream().map(this::toOperationKey).anyMatch(k -> {
+            try {
+                return b.checkOperationHttpPostSupported(k);
+            } catch (HTTPException ex) {
+                throw new ConfigurationError(ex);
+            }
+        });
     }
 
     private boolean isHttpGetSupported(final Binding b, final RequestOperator ro) throws HTTPException {
-        return b.checkOperationHttpGetSupported(toOperationKey(ro.getRequestOperatorKeyType()));
+        return ro.getKeys().stream().map(this::toOperationKey).anyMatch(k -> {
+            try {
+                return b.checkOperationHttpGetSupported(k);
+            } catch (HTTPException ex) {
+                throw new ConfigurationError(ex);
+            }
+        });
+    }
+
+    private RequestOperatorRepository getRequestOperatorRepository() {
+        return RequestOperatorRepository.getInstance();
+    }
+
+    private BindingRepository getBindingRepository() {
+        return BindingRepository.getInstance();
+    }
+
+    private String getServiceURL() {
+        return ServiceConfiguration.getInstance().getServiceURL();
+    }
+
+    private boolean isConfigured() {
+        return Configurator.getInstance() != null;
     }
 }

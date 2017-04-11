@@ -1,18 +1,16 @@
 language: java
 jdk:
-    - oraclejdk8
+  - oraclejdk8
 before_install:
-  - cat /etc/hosts # optionally check the content *before*
   - sudo hostname "$(hostname | cut -c1-63)"
   - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo tee /etc/hosts
-  - cat /etc/hosts # optionally check the content *after*
 install: true
-script: mvn clean install -DskipTests=true
+script: mvn -fae -U -B clean install -DskipTests=true
+cache:
+  directories:
+    - $HOME/.m2
 notifications:
-  irc:
-    channels:
-      - "chat.freenode.net#52north"
-    on_success: always
-    on_failure: change
-    use_notice: true
-    skip_join: false
+  slack:
+    rooms:
+      - secure: "f+40o8Uduiz7GUNSwqlxgkwdX7lwSy6ae+Wzx1t8EVONGczql56k8Juyz8yWEAr9cAjqe0Md81ZT73nHx2ty1quDpzwYRS1K+51gT9FTN6Pv460ceJCtllxuU4Mza0y6jPL7RptG3+AkcQAcL6SMfrx8qmcVR/PLK7eiIUkZRxg="
+      - secure: "fe/GY3VlJN+Fbq+6MEtjtANmv1FGyshc1vx1Nmd1qr0OsPuxnktlDh2zpA4JjzJgz3YblcbtvOmVZoAq4kOsLSxL/zgk/pc+jGzMer4emXOGe8GLPylitwhl2+xKYCbDtG2trLZQH8XfgKnKgBs3m8zQgKK92YU223ZJjO4yHck="

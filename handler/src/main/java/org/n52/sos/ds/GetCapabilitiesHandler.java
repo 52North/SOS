@@ -625,7 +625,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
             return sosOfferings;
         } catch (final HibernateException | DataAccessException e) {
             throw new NoApplicableCodeException().causedBy(e).withMessage(
-                    "Error while querying data for DescribeSensor document!");
+                    "Error while querying data for GetCapabilities document!");
         } finally {
             sessionStore.returnSession(session);
         }
@@ -1746,7 +1746,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //        return sosOfferings;
 //        } catch (final HibernateException | DataAccessException e) {
 //            throw new NoApplicableCodeException().causedBy(e).withMessage(
-//                    "Error while querying data for DescribeSensor document!");
+//                    "Error while querying data for GetCapabilities document!");
 //        } finally {
 //            sessionStore.returnSession(session);
 //        }

@@ -12,6 +12,7 @@
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
 		<timeseries.api.version>1.7.2</timeseries.api.version>
+        <helgoland.version>1.0.0</helgoland.version>
 	</properties>
 	<build>
 		<finalName>${conf.sos.name}##${project.version}</finalName>
@@ -41,6 +42,25 @@
 					</execution>
 				</executions>
 			</plugin>
+           <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.3.0</version>
+                <executions>
+        		<execution>
+        			<id>install-jbpm</id>
+        			<phase>pre-integration-test</phase>
+        			<goals>
+        				<goal>wget</goal>
+        			</goals>
+        			<configuration>
+        				<url>https://github.com/52North/helgoland/releases/download/v1.0.0/client.${helgoland.version}.war</url>
+        				<unpack>true</unpack>
+        				<outputDirectory>${project.build.directory}/${project.build.finalName}/static/client/helgoland</outputDirectory>
+        			</configuration>
+        		</execution>
+        	</executions>
+           </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>

@@ -10,8 +10,8 @@
         <many-to-one name="category" class="org.n52.series.api.v1.db.da.beans.CategoryEntity" column="observablepropertyid" insert="false" update="false" />
         <many-to-one name="procedure" class="org.n52.series.api.v1.db.da.beans.ProcedureEntity" column="procedureid" insert="false" update="false" />
         <many-to-one name="feature" class="org.n52.series.api.v1.db.da.beans.FeatureEntity" insert="false" update="false" 
-                     formula="(select s.stationid from station s, samplingpoint sp where s.stationid = sp.station 
-                                and sp.samplingpointid = samplingpointid)" />
+                     formula="(select distinct st.masterref from station_with_mergerole st, samplingpoint sp
+                      where st.stationid = sp.station and sp.samplingpointid = samplingpointid)" />
         <many-to-one name="offering" class="org.n52.series.api.v1.db.da.beans.OfferingEntity" column="procedureid" insert="false" update="false" />
         <properties name="mergeProperties">
             <property name="samplingPointId" column="samplingpointid" type="long" insert="false" update="false" />

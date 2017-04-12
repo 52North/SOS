@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.n52.series.api.v1.db.da.beans">
-  <class name="FeatureEntity" table="station">
+  <class name="FeatureEntity" table="station_with_mergerole">
     <id name="pkid" type="long">
-      <column name="stationid"/>
+      <column name="masterref"/>
       <generator class="assigned"/>
     </id>
+    
+    <discriminator force="true" column="merge_role" type="string" />
     <property column="identifier" insert="false" name="domainId" type="string" update="false"/>
     <property formula="concat(name, ', ', identifier)" name="name" type="string"/>
     <property column="description" name="description" type="string"/>
-    <property name="geom" type="org.hibernate.spatial.GeometryType" formula="(select 
-                        foi.geom from series s, samplingpoint sp, featureofinterest foi 
-                        where stationid = sp.station and sp.samplingpointid = s.samplingpointid 
-                        and s.featureofinterestid = foi.featureofinterestid limit 1)" />
-  </class>
+    <property column="geom" name="geom" type="org.hibernate.spatial.GeometryType" />
+    <property name="mergeRole" column="merge_role" type="string" insert="false" update="false" />
+
+    <set name="mergableFeatures" fetch="select" >
+        <key column="stationid" />
+        <one-to-many class="MergableFeatureEntity" />
+    </set>
+    
+    <subclass name="MergableFeatureEntity" discriminator-value="slave">
+    </subclass>
+    
+    <subclass name="MergableBaseFeatureEntity" discriminator-value="master">
+    </subclass>
+  </class>  
 </hibernate-mapping>

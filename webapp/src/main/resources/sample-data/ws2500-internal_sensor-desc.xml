@@ -30,7 +30,7 @@
             <sml:identifier>
                 <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
                     <sml:label>Short name</sml:label>
-                    <sml:value>52n-elv-ws2500-interla</sml:value>
+                    <sml:value>52n-elv-ws2500-internal</sml:value>
                 </sml:Term>
             </sml:identifier>
             <sml:identifier>

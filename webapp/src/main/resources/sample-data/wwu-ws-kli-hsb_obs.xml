@@ -243,7 +243,7 @@
         </gml:TimeInstant>
       </om:resultTime>
       <om:procedure xlink:href="wwu-ws-kli-hsb"/>
-      <om:observedProperty xlink:href="WeatherCode_text"/>
+      <om:observedProperty xlink:href="WeatherCodeText"/>
       <om:featureOfInterest xlink:href="wwu-ws-kli-hsb" />
       <om:result xmlns:ns="http://www.opengis.net/swe/2.0" xsi:type="ns:DataArrayPropertyType">
         <ns:DataArray>
@@ -259,8 +259,8 @@
                   <ns:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
                 </ns:Time>
               </ns:field>
-              <ns:field name="WeatherCode_text">
-                <ns:Text definition="WeatherCode_text"/>
+              <ns:field name="WeatherCodeText">
+                <ns:Text definition="WeatherCodeText"/>
               </ns:field>
             </ns:DataRecord>
           </ns:elementType>

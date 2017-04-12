@@ -14,7 +14,6 @@
     <sml:keywords>
         <sml:KeywordList>
             <sml:keyword>WeatherCodeText</sml:keyword>
-            <sml:keyword>WeatherCode_text</sml:keyword>
             <sml:keyword>AthmosphericPressure</sml:keyword>
             <sml:keyword>WS Heisenberg-Strasse</sml:keyword>
             <sml:keyword>WindDirectionText</sml:keyword>
@@ -346,7 +345,7 @@
                 <swe:Text definition="WeatherCode"/>
             </sml:output>
             <sml:output name="WeatherCodeText">
-                <swe:Text definition="WeatherCode_text"/>
+                <swe:Text definition="WeatherCodeText"/>
             </sml:output>
             <sml:output name="WindDirectionText">
                 <swe:Text definition="WindDirectionText"/>

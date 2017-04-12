@@ -27,9 +27,9 @@
                 <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
             </column>
         </many-to-one>
-        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="seriesOfferingFk">
-            <column index="seriesOfferingIdx" name="offeringId" not-null="false" unique-key="seriesIdentity">
-                <comment>Foreign Key (FK) to the related procedure. Contains "offering".offeringid</comment>
+        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="seriesProcedureFk" insert="false" update="false">
+            <column index="seriesProcedureIdx" name="procedureId" not-null="false" unique-key="seriesIdentity">
+                <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
             </column>
         </many-to-one>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
@@ -68,6 +68,6 @@
                 <comment>Foreign Key (FK) to the related unit of the first/last numeric values . Contains "unit".unitid</comment>
             </column>
         </many-to-one>
-        
+
     </class>
 </hibernate-mapping>

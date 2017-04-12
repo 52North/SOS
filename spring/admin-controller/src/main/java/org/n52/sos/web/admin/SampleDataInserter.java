@@ -84,6 +84,8 @@ import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
  */
 public class SampleDataInserter implements SosConstants, Sos2Constants {
 
+    private static final String PROPERTY_FILE = "/sample-data/sample-data.properties";
+
     private static final Logger LOG = LoggerFactory.getLogger(SampleDataInserter.class);
 
     private static final ServiceOperatorKey SERVICE_OPERATOR_KEY = new ServiceOperatorKey(SOS, SERVICEVERSION);
@@ -129,7 +131,7 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
     public synchronized boolean insertSampleData() throws UnsupportedEncodingException, IOException, 
             MissingServiceOperatorException, URISyntaxException, OwsExceptionReport, XmlException {
         checkRequestOperators();
-        sampleDataProperties.load(this.getClass().getResourceAsStream("/sample-data/sample-data.properties"));
+        sampleDataProperties.load(this.getClass().getResourceAsStream(PROPERTY_FILE));
         insertSensors();
         insertFeatures();
         insertObservations();
@@ -254,8 +256,19 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
         return files;
     }
 
-    private List<String> getPropertyList(final String properyId) {
-        return Arrays.asList(sampleDataProperties.getProperty(properyId).split(","));
+    private List<String> getPropertyList(final String propertyId) throws CodedException {
+        if (!sampleDataProperties.containsKey(propertyId) ||
+                !sampleDataProperties.get(propertyId).getClass().isAssignableFrom(String.class)) {
+            throw new NoApplicableCodeException().withMessage("Property '%s' not defined in %s. Please update!",
+                    propertyId,
+                    PROPERTY_FILE);
+        }
+        if (sampleDataProperties.get(propertyId).toString().isEmpty()) {
+            throw new NoApplicableCodeException().withMessage("Property '%s' MUST not be empty in %s. Please update!",
+                    propertyId,
+                    PROPERTY_FILE);
+        }
+        return Arrays.asList(sampleDataProperties.getProperty(propertyId).split(","));
     }
 
     private void missingServiceOperator(final String service, final String version, final String operation)

@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -67,6 +66,7 @@ import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.service.operator.ServiceOperatorKey;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.GroupedAndNamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,6 +85,8 @@ import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
 public class SampleDataInserter implements SosConstants, Sos2Constants {
 
     private static final String PROPERTY_FILE = "/sample-data/sample-data.properties";
+
+    private static final int THREADPOOL_SLEEP_BETWEEN_CHECKS = 1000;
 
     private static final Logger LOG = LoggerFactory.getLogger(SampleDataInserter.class);
 
@@ -141,13 +143,16 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
     private void insertFeatures() throws CodedException {
         final File[] featureFiles = getFilesBySuffix("_feature.xml");
         insertFeatureExceptions = Lists.newArrayList();
-        ExecutorService threadPool = Executors.newFixedThreadPool(5);
+        ExecutorService threadPool = Executors.newFixedThreadPool(5,
+                new GroupedAndNamedThreadFactory("52n-sample-data-insert-features"));
         for (File featureFile : featureFiles) {
             threadPool.submit(new InsertFeatureTask(featureFile));
         }
         try {
             threadPool.shutdown();
-            threadPool.awaitTermination(180, TimeUnit.SECONDS);
+            while (!threadPool.isTerminated()) {
+                Thread.sleep(THREADPOOL_SLEEP_BETWEEN_CHECKS);
+            }
         } catch (InterruptedException e) {}
         if (!insertFeatureExceptions.isEmpty()) {
             throw createException(insertFeatureExceptions.get(0), "InsertFeature", insertFeatureExceptions.size());
@@ -167,13 +172,16 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
             throws UnsupportedEncodingException, IOException, XmlException, OwsExceptionReport {
         // send request to SosInsertObservationOperatorV20
         insertObservationExceptions = Lists.newArrayList();
-        ExecutorService threadPool = Executors.newFixedThreadPool(5);
+        ExecutorService threadPool = Executors.newFixedThreadPool(5,
+                new GroupedAndNamedThreadFactory("52n-sample-data-insert-observations"));
         for (File observationFile : getFilesBySuffix("_obs.xml")) {
             threadPool.submit(new InsertObservationTask(observationFile));
         }
         try {
             threadPool.shutdown();
-            threadPool.awaitTermination(180, TimeUnit.SECONDS);
+            while (!threadPool.isTerminated()) {
+                Thread.sleep(THREADPOOL_SLEEP_BETWEEN_CHECKS);
+            }
         } catch (InterruptedException e) {}
         if (!insertObservationExceptions.isEmpty()) {
             throw createException(insertObservationExceptions.get(0), "InsertObservation",
@@ -186,13 +194,16 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
         createInsertSensorRequests();
         insertedSensors = Maps.newHashMap();
         insertSensorExceptions = Lists.newArrayList();
-        ExecutorService threadPool = Executors.newFixedThreadPool(5);
+        ExecutorService threadPool = Executors.newFixedThreadPool(5,
+                new GroupedAndNamedThreadFactory("52n-sample-data-insert-sensors"));
         for (final InsertSensorRequest request : insertSensorRequests) {
             threadPool.submit(new InsertSensorTask(request));
         }
         try {
             threadPool.shutdown();
-            threadPool.awaitTermination(180, TimeUnit.SECONDS);
+            while (!threadPool.isTerminated()) {
+                Thread.sleep(THREADPOOL_SLEEP_BETWEEN_CHECKS);
+            }
         } catch (InterruptedException e) {}
         if (!insertSensorExceptions.isEmpty()) {
             throw createException(insertSensorExceptions.get(0), "InsertSensor", insertSensorExceptions.size());
@@ -346,21 +357,25 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
             try {
                 String xmlString = new String(Files.readAllBytes(Paths.get(observationFile.getAbsolutePath())),"UTF-8");
                 xmlString = xmlString.replaceAll("2016-05", currentYearAndMonth);
+                LOG.trace(xmlString);
                 final String procedureId = observationFile.getName().replace("_obs.xml", "");
-                // TODO update DATE with last month
                 GetObservationResponseDocument decodedXmlObject =
                         (GetObservationResponseDocument) XmlObject.Factory.parse(xmlString);
                 ObservationData[] observations = decodedXmlObject.getGetObservationResponse().getObservationDataArray();
 
-                ExecutorService threadPool = Executors.newFixedThreadPool(10);
+                ExecutorService threadPool = Executors.newFixedThreadPool(5,
+                        new GroupedAndNamedThreadFactory(Thread.currentThread().getName() + "-sub"));
                 for (ObservationData observationData : observations) {
-                    threadPool.submit(new InsertObservationSubTask(procedureId, observationData));
+                    threadPool.submit(new InsertObservationSubTask(procedureId, 
+                            (OmObservation)CodingHelper.decodeXmlElement(observationData.getOMObservation())));
                 }
                 try {
                     threadPool.shutdown();
-                    threadPool.awaitTermination(180, TimeUnit.SECONDS);
+                    while (!threadPool.isTerminated()) {
+                        Thread.sleep(THREADPOOL_SLEEP_BETWEEN_CHECKS);
+                    }
                 } catch (InterruptedException e) {}
-            } catch (IOException|XmlException e) {
+            } catch (IOException|XmlException | OwsExceptionReport e) {
                 insertObservationExceptions.add(e);
             }
         }
@@ -368,10 +383,10 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
 
     private class InsertObservationSubTask implements Runnable {
 
-        private ObservationData observationData;
+        private OmObservation observationData;
         private String procedureId;
 
-        public InsertObservationSubTask(String procedureId, ObservationData observationData) {
+        public InsertObservationSubTask(String procedureId, OmObservation observationData) {
             this.procedureId = procedureId;
             this.observationData = observationData;
         }
@@ -384,8 +399,7 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
             try {
                 InsertObservationRequest request = (InsertObservationRequest) new InsertObservationRequest()
                         .setOfferings(Collections.singletonList(insertedSensors.get(procedureId)))
-                        .setObservation(Collections.singletonList(
-                                (OmObservation)CodingHelper.decodeXmlElement(observationData.getOMObservation())))
+                        .setObservation(Collections.singletonList(observationData))
                         .addExtension(extension)
                         .setService(SOS)
                         .setVersion(SERVICEVERSION);

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.series.Series" table="series_with_mergerole">
+    <class name="org.n52.sos.ds.hibernate.entities.series.Series" table="series">
     <comment>Table to store a (time-) series which consists of featureOfInterest, observableProperty, and procedure. Mapping file: mapping/series/Series.hbm.xml</comment>
         <id name="seriesId" type="long">
             <column name="seriesId">
@@ -27,9 +27,9 @@
                 <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
             </column>
         </many-to-one>
-        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="seriesProcedureFk" insert="false" update="false">
-            <column index="seriesProcedureIdx" name="procedureId" not-null="false" unique-key="seriesIdentity">
-                <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
+        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="serieOfferingFk">
+            <column index="seriesOfferingIdx" name="offeringId" not-null="false" unique-key="seriesIdentity">
+                <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
             </column>
         </many-to-one>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">

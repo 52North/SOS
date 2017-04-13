@@ -54,8 +54,10 @@ This project includes:
   52°North SOS - Hibernate Mappings under GPLv2
   52°North SOS - Hibernate Module under GPLv2
   52°North SOS - Hibernate MySQL Datasource under GPLv2
+  52°North SOS - Hibernate Oracle Datasource under GPLv2
   52°North SOS - Hibernate Postgres/PostGIS Datasource under GPLv2
   52°North SOS - Hibernate Session Factory under GPLv2
+  52°North SOS - Hibernate SQL Server Datasource under GPLv2
   52°North SOS - Identifier Modifier Modules under GPLv2
   52°North SOS - JSON Binding under GPLv2
   52°North SOS - JSON Coding under GPLv2
@@ -146,7 +148,7 @@ This project includes:
   Jackson-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
-  jai_core under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
+  Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Annotation Indexer under AL 2.0
   Java Excel API under GNU Lesser General Public License
   Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
@@ -207,8 +209,10 @@ This project includes:
   OGC WaterML DR schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC XML schemas under The Apache Software License, Version 2.0
+  ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   Postgis JDBC Driver under GNU Lesser General Public License
+  PostgreSQL JDBC Driver under BSD License
   PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
   Referencing services under Lesser General Public License (LGPL)
   Reflections under WTFPL
@@ -235,6 +239,7 @@ This project includes:
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
   SQLite JDBC under The Apache Software License, Version 2.0
+  sqljdbc4 under MICROSOFT SOFTWARE LICENSE TERMS, http://download.microsoft.com/download/0/2/A/02AAE597-3865-456C-AE7F-613F99F850A8/license.txt
   StAX API under The Apache Software License, Version 2.0
   vecmath under GPL 2.0 license w/ CPE
   W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0

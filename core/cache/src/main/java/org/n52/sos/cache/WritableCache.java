@@ -1510,11 +1510,11 @@ public class WritableCache extends ReadableCache implements WritableContentCache
             if (!map.containsKey(humanReadableName) && !map.containsValue(identifier)) {
                 map.put(humanReadableName, identifier);
             } else if (map.containsKey(humanReadableName) && !map.containsValue(identifier)) {
-                LOG.error("Duplicity of the {} humanReadableName '{}'", type, humanReadableName);
+                LOG.warn("Duplicity of the {} humanReadableName '{}'", type, humanReadableName);
             } else if (!map.containsKey(humanReadableName) && map.containsValue(identifier)) {
-                LOG.error("Duplicity of the {} identifier '{}'", type, identifier);
+                LOG.warn("Duplicity of the {} identifier '{}'", type, identifier);
             } else if (!identifier.equals(map.get(humanReadableName))) {
-                LOG.error("Duplicity of the {} humanReadableName '{}' and identifier '{}'", type, humanReadableName,
+                LOG.warn("Duplicity of the {} humanReadableName '{}' and identifier '{}'", type, humanReadableName,
                         identifier);
             }
         }

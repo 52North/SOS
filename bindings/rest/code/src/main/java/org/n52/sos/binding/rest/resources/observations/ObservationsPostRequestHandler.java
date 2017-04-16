@@ -63,6 +63,22 @@ public class ObservationsPostRequestHandler extends RequestHandler {
                         ((ObservationsPostRequest) req).getXb_OMObservation());
             } 
         }
+        if (req != null && req instanceof ObservationsCollectionPostRequest) {
+            InsertObservationRequest ioReq = ((ObservationsCollectionPostRequest) req).getInsertObservationRequest();
+            
+            // 2 handle core response
+            XmlObject xb_InsertObservationResponse = executeSosRequest(ioReq);
+            
+            if (xb_InsertObservationResponse instanceof InsertObservationResponseDocument) {
+                // 3 return response
+                // no interesting content, just check the class to be sure that the insertion was successful
+                // the restful response requires the link to the newly created observation
+                // FIXME we are always using only the first observation in the list without checking
+                return new ObservationsCollectionPostResponse(
+                        ioReq.getObservations().get(0).getIdentifierCodeWithAuthority().getValue(),
+                        ((ObservationsCollectionPostRequest) req).getXb_OMObservationCollection());
+            } 
+        }
         throw logRequestTypeNotSupportedByThisHandlerAndCreateException(req,this.getClass().getName());
     }
 

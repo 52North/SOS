@@ -37,7 +37,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.opengis.gml.x32.CodeWithAuthorityType;
 import net.opengis.om.x20.OMObservationType;
+import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
 import net.opengis.sosREST.x10.LinkType;
+import net.opengis.sosREST.x10.ObservationCollectionDocument;
+import net.opengis.sosREST.x10.ObservationCollectionType;
 import net.opengis.sosREST.x10.ObservationDocument;
 import net.opengis.sosREST.x10.ObservationType;
 
@@ -186,6 +189,56 @@ public class ObservationsDecoder extends ResourceDecoder {
                 insertObservationRequest.addObservation(sosObs);
                 
                 return new ObservationsPostRequest(insertObservationRequest,xb_OMObservation);
+            } else if (requestDoc instanceof ObservationCollectionDocument) {
+                ObservationCollectionDocument xb_ObservationCollectionRestDoc = (ObservationCollectionDocument) requestDoc;
+                ObservationCollectionType xb_ObservationCollectionRest = xb_ObservationCollectionRestDoc.getObservationCollection();
+                ObservationType[] xb_ObservationArrayRest = new ObservationType[xb_ObservationCollectionRest.sizeOfObservationArray()];
+                for (int i = 0; i < xb_ObservationCollectionRest.sizeOfObservationArray(); i++) {
+                    xb_ObservationArrayRest[i] = xb_ObservationCollectionRest.getObservationArray(i);
+                }
+                InsertObservationRequest insertObservationRequest = new InsertObservationRequest();
+                insertObservationRequest.setService(bindingConstants.getSosService());
+                insertObservationRequest.setVersion(bindingConstants.getSosVersion());
+                List<String> offeringIds = new ArrayList<String>();
+                OMObservationType[] xb_OMObservationCollection = new OMObservationType[xb_ObservationArrayRest.length];
+                for (int j = 0; j < xb_ObservationArrayRest.length; j++) {
+                    xb_OMObservationCollection[j] = xb_ObservationArrayRest[j].getOMObservation();
+                    // 1 check for gml:identifier
+                    if (!xb_OMObservationCollection[j].isSetIdentifier()) {
+                        // 1.1 if not available set to newly generated UUID 
+                        CodeWithAuthorityType xb_gmlIdentifier = CodeWithAuthorityType.Factory.newInstance();
+                        xb_gmlIdentifier.setCodeSpace(UUID.class.getName());
+                        xb_gmlIdentifier.setStringValue(UUID.randomUUID().toString());
+                        xb_OMObservationCollection[j].setIdentifier(xb_gmlIdentifier);
+                    }
+                    
+                    // 2 get offering link
+                    LinkType[] xb_links = xb_ObservationArrayRest[j].getLinkArray();
+                    for (LinkType xb_Link : xb_links) {
+                        if (isOfferingLink(xb_Link)) {
+                            String href = xb_Link.getHref();
+                            int lastSlashIndex = href.lastIndexOf("/");
+                            String offeringId = href.substring(lastSlashIndex+1);
+                            offeringIds.add(offeringId);
+                        }
+                    }
+                    
+                    // 2.1 clean links to resources like procedure and feature
+                    if (isProcedureReferenced(xb_OMObservationCollection[j]) && 
+                            isProcedureReferencePoitingToMe(xb_OMObservationCollection[j])) {
+                        resetProcedureReference(xb_OMObservationCollection[j]);
+                    }
+                    if (isFeatureReferenced(xb_OMObservationCollection[j]) &&
+                            isFeatureReferencePointingToMe(xb_OMObservationCollection[j])) {
+                        resetFeatureOfInterstReference(xb_OMObservationCollection[j]);
+                    }
+                    
+                    // 3 build insert observation request
+                    insertObservationRequest.setOfferings(offeringIds);
+                    OmObservation sosObs = createSosObservationFromOMObservation(xb_OMObservationCollection[j]);
+                    insertObservationRequest.addObservation(sosObs);
+                }
+                return new ObservationsCollectionPostRequest(insertObservationRequest, xb_OMObservationCollection);
             }
         }
         String errorMsg = String.format(bindingConstants.getErrorMessageHttpMethodNotAllowedForResource(),

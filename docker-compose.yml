@@ -1,0 +1,12 @@
+postgres:
+  image: "postgres:9.4"
+  environment:
+    - POSTGRESQL_DB=sosdb
+    - POSTGRESQL_USER=gonephishing
+    - POSTGRESQL_PASSWORD=password
+  ports:
+    - "5432:5432"
+sos:
+  build: .
+  links:
+    - postgres

@@ -83,7 +83,7 @@
         <property name="service" value="SOS"/>
         <property name="version" value="1.0.0"/>
         <property name="operation" value="GetObservation"/>
-    </bean>    
+    </bean>
     <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
         <property name="service" value="SOS"/>
         <property name="version" value="1.0.0"/>
@@ -105,4 +105,4 @@
         <property name="operation" value="GetObservationById"/>
     </bean>
 </beans>
- 
+

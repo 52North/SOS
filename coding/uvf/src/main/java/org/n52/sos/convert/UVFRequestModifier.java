@@ -70,7 +70,7 @@ public class UVFRequestModifier implements RequestResponseModifier<AbstractObser
             .setDefaultValue("31466")
             .setTitle("The default CRS EPSG code used in UVF response")
             .setDescription(String.format("The default CRS EPSG code that is used if no swe extension is present in "
-                    + "the request that specifies one. Allowed values are: %s", UVFConstants.ALLOWED_CRS)));
+                    + "the request that specifies one. Allowed values are: <tt>%s</tt>.", UVFConstants.ALLOWED_CRS)));
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = Sets.newHashSet(
             new RequestResponseModifierKeyType(

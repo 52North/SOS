@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.encode.exi;
 
 import javax.inject.Inject;
 
@@ -53,8 +53,7 @@ public class EXIResponseWriterFactory
         implements ResponseWriterFactory,
                    SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>> {
 
-    private static final ResponseWriterKey RESPONSE_WRITER_KEY
-            = new ResponseWriterKey(EXIObject.class);
+    private static final ResponseWriterKey RESPONSE_WRITER_KEY = new ResponseWriterKey(EXIObject.class);
 
     private Producer<EXIFactory> exiFactoryProducer;
     private Producer<XmlOptions> xmlOptionsProducer;

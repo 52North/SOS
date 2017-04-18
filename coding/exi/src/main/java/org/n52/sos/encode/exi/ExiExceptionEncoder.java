@@ -26,26 +26,35 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.exi.impl;
+package org.n52.sos.encode.exi;
 
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.sos.encode.exi.AbstractSosV2ResponseEncoder;
-import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
+import java.util.Collections;
+import java.util.Set;
+
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.exi.EXIObject;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.ExceptionEncoderKey;
 
 /**
- * Response encoder for {@link DeleteSensorResponse}
+ * Response encoder for {@link EXIObject} and {@link OwsExceptionReport}
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
-public class DeleteSensorResponseEncoder extends AbstractSosV2ResponseEncoder<DeleteSensorResponse> {
+public class ExiExceptionEncoder extends ExiEncoder<OwsExceptionReport> {
+    private static final EncoderKey KEY = new ExceptionEncoderKey(MediaTypes.APPLICATION_XML);
 
-    /**
-     * Constructor
-     */
-    public DeleteSensorResponseEncoder() {
-        super(DeleteSensorResponse.class, Sos2Constants.Operations.DeleteSensor);
+    @Override
+    public Set<EncoderKey> getKeys() {
+        return Collections.singleton(KEY);
+    }
+
+    @Override
+    protected EncoderKey getKey(OwsExceptionReport object) {
+        return KEY;
     }
 
 }

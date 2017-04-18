@@ -31,8 +31,7 @@ package org.n52.sos.exi;
 /**
  * Configuration settings for {@link EXIBinding}.
  *
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- * J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  * @since 4.2.0
  *
@@ -44,8 +43,7 @@ public interface EXISettings {
     String EXI_FIDELITY_DEFAULT = "exi.fidelity.default";
     String EXI_FIDELITY_SPECIFIC = "exi.fidelity.specific";
     String EXI_FIDELITY_COMMENTS = "exi.fidelity.comments";
-    String EXI_FIDELITY_PROCESSING_INSTRUCTIONS
-            = "exi.fidelity.processing.instructions";
+    String EXI_FIDELITY_PROCESSING_INSTRUCTIONS = "exi.fidelity.processing.instructions";
     String EXI_FIDELITY_DTD = "exi.fidelity.dtd";
     String EXI_FIDELITY_PREFIXES = "exi.fidelity.prefixes";
     String EXI_FIDELITY_LEXICAL_VALUE = "exi.fidelity.lexical.value";
@@ -56,5 +54,4 @@ public interface EXISettings {
     String EXI_GRAMMAR_SCHEMA = "exi.grammar.schema";
     String EXI_GRAMMAR_SCHEMA_SOS_10 = "exi.grammar.schema.sos.10";
     String EXI_GRAMMAR_SCHEMA_SOS_20 = "exi.grammar.schema.sos.20";
-
 }

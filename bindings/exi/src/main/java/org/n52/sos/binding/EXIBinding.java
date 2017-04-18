@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.OutputKeys;
@@ -55,17 +56,17 @@ import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.binding.SimpleBinding;
 import org.n52.iceland.coding.decode.OwsDecodingException;
 import org.n52.iceland.exception.HTTPException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.utils.EXIUtils;
 import org.n52.shetland.ogc.ows.service.OwsOperationKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.utils.EXIUtils;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.CodingHelper;
@@ -86,8 +87,6 @@ import com.siemens.ct.exi.exceptions.EXIException;
  */
 public class EXIBinding extends SimpleBinding {
 
-    private static final EXIUtils EXI_UTILS = EXIUtils.getInstance();
-
     private static final String URL_PATTERN = "/exi";
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
@@ -99,6 +98,13 @@ public class EXIBinding extends SimpleBinding {
             .add(new PathBindingKey(URL_PATTERN))
             .add(new MediaTypeBindingKey(MediaTypes.APPLICATION_EXI))
             .build();
+
+    private final EXIUtils exiUtils;
+
+    @Inject
+    public EXIBinding(EXIUtils exiUtils) {
+        this.exiUtils = exiUtils;
+    }
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
@@ -178,7 +184,7 @@ public class EXIBinding extends SimpleBinding {
     protected XmlObject decode(HttpServletRequest request) throws OwsExceptionReport {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 
-            EXIFactory ef = EXI_UTILS.newEXIFactory();
+            EXIFactory ef = this.exiUtils.newEXIFactory();
 
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();

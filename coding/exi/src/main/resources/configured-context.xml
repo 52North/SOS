@@ -4,31 +4,105 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
     <!-- ResponseWriterFactory implementations from coding/exi -->
-    <bean class="org.n52.sos.encode.EXIResponseWriterFactory"/>
-
-    <!-- Encoder implementations from coding/exi -->
-    <bean class="org.n52.sos.encode.exi.impl.OwsExceptionReportEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.GetObservationResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.GetFeatureOfInterestResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.DescribeSensorResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.GetCapabilitiesResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.GetDataAvailabilityResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.GetObservationByIdResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.GetResultTemplateResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.GetResultResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.DeleteSensorResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.UpdateSensorResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.InsertSensorResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.InsertObservationResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.InsertResultTemplateResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.InsertResultTemplateResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.InsertResultResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.v1.GetObservationResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.v1.GetFeatureOfInterestResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.v1.DescribeSensorResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.v1.GetCapabilitiesResponseEncoder"/>
-    <bean class="org.n52.sos.encode.exi.impl.v1.GetObservationByIdResponseEncoder"/>
-
+    <bean class="org.n52.sos.encode.exi.EXIResponseWriterFactory"/>
     <bean class="org.n52.sos.utils.EXIUtils" />
 
+    <bean class="org.n52.sos.encode.exi.ExiExceptionEncoder"/>
+
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="GetCapabilities"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="GetObservation"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="GetFeatureOfInterest"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="DescribeSensor"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="GetDataAvailability"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="GetObservationById"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="GetResultTemplate"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="GetResult"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="DeleteSensor"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="UpdateSensor"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="InsertSensor"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="InsertObservation"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="InsertResultTemplate"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="2.0.0"/>
+        <property name="operation" value="InsertResult"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="1.0.0"/>
+        <property name="operation" value="GetObservation"/>
+    </bean>    
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="1.0.0"/>
+        <property name="operation" value="GetFeatureOfInterest"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="1.0.0"/>
+        <property name="operation" value="DescribeSensor"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="1.0.0"/>
+        <property name="operation" value="GetCapabilities"/>
+    </bean>
+    <bean class="org.n52.sos.encode.exi.ExiResponseEncoder">
+        <property name="service" value="SOS"/>
+        <property name="version" value="1.0.0"/>
+        <property name="operation" value="GetObservationById"/>
+    </bean>
 </beans>
+ 

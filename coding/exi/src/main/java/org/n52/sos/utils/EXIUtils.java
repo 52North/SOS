@@ -56,19 +56,13 @@ import com.siemens.ct.exi.helpers.DefaultEXIFactory;
  * @since 4.2.0
  */
 @Configurable
-public class EXIUtils implements Constructable, Producer<EXIFactory>{
+public class EXIUtils implements Constructable, Producer<EXIFactory> {
     private static final Logger LOGGER = LoggerFactory.getLogger(EXIUtils.class);
-    @Deprecated
-    private static EXIUtils instance = null;
-
-    private Grammars grammarSos20 = null;
-    private Grammars grammarSos10 = null;
-    private Grammars grammarBaseTypes = null;
     private boolean isSchemaLessGrammar;
     private boolean isXSBaseTypeGrammar;
     private boolean isSOS20Schema;
     private boolean isSOS10Schema;
-    private CodingMode alignment;
+    private CodingMode alignment = CodingMode.BIT_PACKED;
     private boolean isStrict;
     private boolean isDefault;
     private boolean preserveComments;
@@ -76,19 +70,15 @@ public class EXIUtils implements Constructable, Producer<EXIFactory>{
     private boolean preserveDTD;
     private boolean preservePrefixes;
     private boolean preserveLexicalValue;
-    private final Grammars grammarSchemaLess;
-    private final GrammarFactory grammarFactory;
-
-    public EXIUtils() {
-        this.alignment = CodingMode.BIT_PACKED;
-        this.grammarFactory = GrammarFactory.newInstance();
-        this.grammarSchemaLess = this.grammarFactory.createSchemaLessGrammars();
-    }
+    private final GrammarFactory grammarFactory = GrammarFactory.newInstance();
+    private final Grammars grammarSchemaLess = grammarFactory.createSchemaLessGrammars();
+    private Grammars grammarSos20;
+    private Grammars grammarSos10;
+    private Grammars grammarBaseTypes;
 
     @Override
     public void init() {
-        EXIUtils.instance = this;
-
+        // FIXME isSchemaLessGrammar can be set during runtime. if that's the case the SOS1/2 grammes won't be loaded
         try {
             // Pre-load Grammars from URL to save time
             // TODO does this result in any race conditions?
@@ -103,8 +93,8 @@ public class EXIUtils implements Constructable, Producer<EXIFactory>{
             }
 
         } catch (EXIException e) {
-            LOGGER.error("Could not load XSD schema for EXI binding. "
-                    + "Using default schema less grammar. Please update your settings.", e);
+            LOGGER.error("Could not load XSD schema for EXI binding. " +
+                         "Using default schema less grammar. Please update your settings.", e);
         }
     }
 
@@ -179,10 +169,9 @@ public class EXIUtils implements Constructable, Producer<EXIFactory>{
     }
 
     /**
-     * @return An {@link EXIFactory} instance configured according the service
-     *         configuration.
-     * @throws UnsupportedOption
-     *             if one of the fidelity options is not supported.
+     * @return An {@link EXIFactory} instance configured according the service configuration.
+     *
+     * @throws UnsupportedOption if one of the fidelity options is not supported.
      */
     public EXIFactory newEXIFactory() throws UnsupportedOption {
         EXIFactory factory = DefaultEXIFactory.newInstance();
@@ -224,18 +213,16 @@ public class EXIUtils implements Constructable, Producer<EXIFactory>{
         // WPS ...
         if (isSchemaLessGrammar()) {
             return grammarSchemaLess;
-        }
-        if (isXSBaseTypeGrammar()) {
+        } else if (isXSBaseTypeGrammar()) {
             return grammarBaseTypes;
-        }
-        if (isSOS20Schema()) {
+        } else if (isSOS20Schema()) {
             return grammarSos20;
-        }
-        if (isSOS10Schema()) {
+        } else if (isSOS10Schema()) {
             return grammarSos10;
+        } else {
+            // default to schema less grammar
+            return grammarSchemaLess;
         }
-        // default to schema less grammar
-        return grammarSchemaLess;
     }
 
     /**
@@ -293,10 +280,4 @@ public class EXIUtils implements Constructable, Producer<EXIFactory>{
     public void setSOS10Schema(boolean isSOS10Schema) {
         this.isSOS10Schema = isSOS10Schema;
     }
-
-    @Deprecated
-    public static EXIUtils getInstance() {
-        return instance;
-    }
-
 }

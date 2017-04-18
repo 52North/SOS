@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.encode.exi;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -62,6 +62,7 @@ import com.siemens.ct.exi.exceptions.EXIException;
  * Writer class for {@link EXIObject}
  *
  * Converts XML documents via EXI encoding using {@link EXISettings}.
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -88,7 +89,8 @@ public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
     }
 
     @Override
-    public void write(EXIObject exiObject, OutputStream out, ResponseProxy responseProxy) throws IOException, EncodingException {
+    public void write(EXIObject exiObject, OutputStream out, ResponseProxy responseProxy)
+            throws IOException, EncodingException {
         byte[] bytes = getBytes(exiObject);
         try (InputStream is = new ByteArrayInputStream(bytes)) {
             EXIResult result = new EXIResult(this.exiFactory.get());

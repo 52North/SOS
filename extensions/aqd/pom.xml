@@ -12,9 +12,9 @@
     <description>52°North Sensor Observation Service Air Quality Data service module</description>
     <modules>
         <module>operation</module>
-        <module>coding</module>
         <module>ereporting</module>
         <module>split-and-merge</module>
         <module>ereporting-identifier</module>
+        <module>coding-aqd-v10</module>
     </modules>
 </project>

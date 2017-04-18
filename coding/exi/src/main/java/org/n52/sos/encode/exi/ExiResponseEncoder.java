@@ -90,4 +90,9 @@ public class ExiResponseEncoder extends ExiEncoder<OwsServiceResponse> implement
         return new OperationResponseEncoderKey(new OwsOperationKey(response), getEncodedContentType(response));
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s{key=%s}", ExiResponseEncoder.class.getName(), key);
+    }
+
 }

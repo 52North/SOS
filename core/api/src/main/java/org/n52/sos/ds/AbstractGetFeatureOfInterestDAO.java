@@ -59,7 +59,7 @@ public abstract class AbstractGetFeatureOfInterestDAO extends AbstractOperationD
         final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
 
         addPublishedProcedureParameter(opsMeta);
-        addFeatureOfInterestParameter(opsMeta, version);
+        addPublishedFeatureOfInterestParameter(opsMeta, version);
         addPublishedObservablePropertyParameter(opsMeta);
 
         // TODO constraint srid

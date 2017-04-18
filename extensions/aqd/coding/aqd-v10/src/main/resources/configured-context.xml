@@ -5,6 +5,7 @@
 
     <!-- Encoder implementations from svalbard -->
     <bean class="org.n52.svalbard.encode.AqdEncoder"/>
+    <bean class="org.n52.shetland.util.AqdHelper"/>
     <bean class="org.n52.svalbard.encode.AqdGetObservationResponseEncoder"/>
     <bean class="org.n52.svalbard.encode.AqdGetCapabilitiesResponseEncoder"/>
     <bean class="org.n52.svalbard.encode.AqdDescribeSensorResponseEncoder"/>

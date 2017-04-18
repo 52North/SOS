@@ -32,6 +32,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +92,7 @@ public class RestEncoder implements Constructable, SchemaAwareEncoder<ServiceRes
     private final XmlOptionsHelper xmlOptionsHelper;
     private Set<EncoderKey> encoderKeys;
 
+    @Inject
     public RestEncoder(Constants constants, XmlOptionsHelper xmlOptionsHelper) {
         this.constants = constants;
         this.xmlOptionsHelper = xmlOptionsHelper;

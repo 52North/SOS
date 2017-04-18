@@ -26,6 +26,6 @@
     <bean class="org.n52.sos.ds.hibernate.InsertResultTemplateDAO"/>
     -->
     <bean class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
-
+    <bean class="org.n52.sos.ds.hibernate.entities.EntitiyHelper" />
 
 </beans>

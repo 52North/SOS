@@ -92,21 +92,17 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
             .getLogger(AbstractProcedureDescriptionGeneratorSml.class);
 
     protected static final String POSITION_NAME = "sensorPosition";
-
-    private String srsNamePrefixUrl;
     private GeometryHandler geometryHandler;
-
-    @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
-    public void setSrsNamePrefixUrl(String srsNamePrefixUrl) {
-        this.srsNamePrefixUrl = srsNamePrefixUrl;
-    }
+    private String srsNamePrefix;
 
     public AbstractProcedureDescriptionGeneratorSml(ProfileHandler profileHandler,
             GeometryHandler geometryHandler,
             I18NDAORepository i18NDAORepository,
-            ContentCacheController cacheController) {
+            ContentCacheController cacheController,
+            String srsNamePrefix) {
         super(i18NDAORepository, cacheController);
         this.geometryHandler = geometryHandler;
+        this.srsNamePrefix = srsNamePrefix;
     }
 
     /**
@@ -293,7 +289,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
                     position.setPosition(createCoordinatesForPosition(c.y, c.x, c.z));
                 }
             }
-            position.setReferenceFrame(srsNamePrefixUrl  + srid);
+            position.setReferenceFrame(srsNamePrefix  + srid);
             return position;
         } catch (Exception e) {
             throw new NoApplicableCodeException().causedBy(e).withMessage(

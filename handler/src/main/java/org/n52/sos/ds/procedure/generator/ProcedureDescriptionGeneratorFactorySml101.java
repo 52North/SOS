@@ -34,10 +34,15 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.n52.faroe.SettingsService;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.svalbard.CodingSettings;
+import org.springframework.beans.factory.annotation.Configurable;
+
+import com.google.common.base.Strings;
 
 /**
  * Generator class for SensorML 1.0.1 procedure descriptions
@@ -45,6 +50,7 @@ import org.n52.sos.util.GeometryHandler;
  * @since 4.2.0
  *
  */
+@Configurable
 public class ProcedureDescriptionGeneratorFactorySml101 implements ProcedureDescriptionGeneratorFactory {
 
     private final SettingsService settingsService;
@@ -52,6 +58,14 @@ public class ProcedureDescriptionGeneratorFactorySml101 implements ProcedureDesc
     private final I18NDAORepository i18NDAORepository;
     private final ContentCacheController cacheController;
     private final ProfileHandler profileHandler;
+    private String srsNamePrefixUrn = "";
+
+    @Setting(CodingSettings.SRS_NAME_PREFIX_URN)
+    public void setSrsNamePrefixUrn(String srsNamePrefixUrn) {
+        if (!Strings.isNullOrEmpty(srsNamePrefixUrn)) {
+            this.srsNamePrefixUrn = srsNamePrefixUrn;
+        }
+    }
 
     @Inject
     public ProcedureDescriptionGeneratorFactorySml101(SettingsService settingsService,
@@ -77,7 +91,8 @@ public class ProcedureDescriptionGeneratorFactorySml101 implements ProcedureDesc
                 = new ProcedureDescriptionGeneratorSml101(getProfileHandler(),
                                                                    getGeometryHandler(),
                                                                    getI18NDAORepository(),
-                                                                   getCacheController());
+                                                                   getCacheController(),
+                                                                   getSrsNamePrefixUrn());
         getSettingsService().configureOnce(key);
         return generator;
     }
@@ -100,5 +115,9 @@ public class ProcedureDescriptionGeneratorFactorySml101 implements ProcedureDesc
 
     public ProfileHandler getProfileHandler() {
         return profileHandler;
+    }
+
+    public String getSrsNamePrefixUrn() {
+        return srsNamePrefixUrn;
     }
 }

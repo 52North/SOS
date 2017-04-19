@@ -54,7 +54,6 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 
-@Configurable
 class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGeneratorSml {
 
     public static final Set<ProcedureDescriptionGeneratorKey> GENERATOR_KEY_TYPES = CollectionHelper
@@ -62,8 +61,8 @@ class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGe
                  new ProcedureDescriptionGeneratorKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL));
 
     public ProcedureDescriptionGeneratorSml101(ProfileHandler profileHandler, GeometryHandler geometryHandler,
-            I18NDAORepository i18ndaoRepository, ContentCacheController cacheController) {
-        super(profileHandler, geometryHandler, i18ndaoRepository, cacheController);
+            I18NDAORepository i18ndaoRepository, ContentCacheController cacheController, String srsNamePrefixUrl) {
+        super(profileHandler, geometryHandler, i18ndaoRepository, cacheController, srsNamePrefixUrl);
     }
 
     @Override

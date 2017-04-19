@@ -127,6 +127,11 @@
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard</artifactId>
         </dependency>
+         <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard-xmlbeans</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
@@ -277,42 +282,7 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>coding-ows-v110</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sensorML</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sensorML-v101</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sensorML-v20</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sos-v20</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sos-v100</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>coding-json</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-wml-v20</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

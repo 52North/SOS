@@ -64,5 +64,9 @@
             <artifactId>xercesImpl</artifactId>
             <scope>runtime</scope>
         </dependency> 
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
     </dependencies>
 </project>

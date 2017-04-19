@@ -1,0 +1,10 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <bean class="org.n52.sos.convert.SensorML20SensorML101Converter"/>
+    <bean class="org.n52.sos.convert.SensorML1UrlMimeTypeConverter"/>
+    <bean class="org.n52.sos.convert.WaterMLv20SensorMLv101Converter"/>
+    <bean class="org.n52.sos.convert.WaterMLv20SensorMLv20Converter"/>
+</beans>

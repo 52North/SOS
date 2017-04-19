@@ -26,32 +26,35 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.exi;
+package org.n52.sos.encode.exi;
+
+import java.util.Collections;
+import java.util.Set;
+
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.exi.EXIObject;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.ExceptionEncoderKey;
 
 /**
- * Configuration settings for {@link EXIBinding}.
+ * Response encoder for {@link EXIObject} and {@link OwsExceptionReport}
  *
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
-public interface EXISettings {
-    String EXI_ALIGNMENT = "exi.alignment";
-    String EXI_FIDELITY = "exi.fidelity";
-    String EXI_FIDELITY_STRICT = "exi.fidelity.strict";
-    String EXI_FIDELITY_DEFAULT = "exi.fidelity.default";
-    String EXI_FIDELITY_SPECIFIC = "exi.fidelity.specific";
-    String EXI_FIDELITY_COMMENTS = "exi.fidelity.comments";
-    String EXI_FIDELITY_PROCESSING_INSTRUCTIONS = "exi.fidelity.processing.instructions";
-    String EXI_FIDELITY_DTD = "exi.fidelity.dtd";
-    String EXI_FIDELITY_PREFIXES = "exi.fidelity.prefixes";
-    String EXI_FIDELITY_LEXICAL_VALUE = "exi.fidelity.lexical.value";
-    String EXI_GRAMMAR = "exi.grammar";
-    String EXI_GRAMMAR_SCHEMALESS = "exi.grammar.schemaless";
-    String EXI_GRAMMAR_BASETYPES = "exi.grammar.basetypes";
-    String EXI_GRAMMAR_SCHEMABASED = "exi.grammar.schemabased";
-    String EXI_GRAMMAR_SCHEMA = "exi.grammar.schema";
-    String EXI_GRAMMAR_SCHEMA_SOS_10 = "exi.grammar.schema.sos.10";
-    String EXI_GRAMMAR_SCHEMA_SOS_20 = "exi.grammar.schema.sos.20";
+public class ExiExceptionEncoder extends ExiEncoder<OwsExceptionReport> {
+    private static final EncoderKey KEY = new ExceptionEncoderKey(MediaTypes.APPLICATION_XML);
+
+    @Override
+    public Set<EncoderKey> getKeys() {
+        return Collections.singleton(KEY);
+    }
+
+    @Override
+    protected EncoderKey getKey(OwsExceptionReport object) {
+        return KEY;
+    }
+
 }

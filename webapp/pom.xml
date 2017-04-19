@@ -344,8 +344,17 @@
             <artifactId>hibernate-datasource-h2</artifactId>
             <scope>runtime</scope>
         </dependency>
+        
+        <!-- CONVERTER -->
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>procedure-description-converter</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
         <!-- BINDINGS -->
+        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>binding-exi</artifactId>

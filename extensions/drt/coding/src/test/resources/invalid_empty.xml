@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<drt:DeleteResultTemplate version="" service="" xmlns:drt="http://www.opengis.net/drt/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/drt/1.0 file://tsclient/RemminaDisk/home/eike/Code/git/common-xml/52n-xml-drt-v10/src/main/xsd/drt/1.0/DeleteResultTemplate.xsd">
+</drt:DeleteResultTemplate>

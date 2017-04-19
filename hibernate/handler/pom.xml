@@ -119,11 +119,6 @@
             <artifactId>hibernate-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sos-v20</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>org.opengeo</groupId>
             <artifactId>geodb</artifactId>
             <scope>runtime</scope>
@@ -154,11 +149,6 @@
 			<artifactId>javax.servlet-api</artifactId>
             <scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sensorML-v101</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>transactional-v20</artifactId>

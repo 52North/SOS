@@ -64,7 +64,7 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.postgis</groupId>
+            <groupId>net.postgis</groupId>
             <artifactId>postgis-jdbc</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -79,8 +79,6 @@
                         <usedDependency>${project.groupId}:api</usedDependency>
                         <usedDependency>${project.groupId}:hibernate-common</usedDependency>
                         <usedDependency>${project.groupId}:hibernate-session-factory</usedDependency>
-                        <usedDependency>org.postgresql:postgresql</usedDependency>
-                        <usedDependency>org.postgis:postgis-jdbc</usedDependency>
                     </usedDependencies>
                 </configuration>
             </plugin>

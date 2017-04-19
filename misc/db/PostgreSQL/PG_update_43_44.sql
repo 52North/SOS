@@ -54,3 +54,26 @@ create index samplingGeomIdx on public.observation USING GIST (samplingGeometry)
 CREATE TABLE public.xmlparametervalue (parameterid bigint PRIMARY KEY, value text);
 ALTER TABLE public.xmlparametervalue ADD CONSTRAINT parameterxmlvaluefk FOREIGN KEY (parameterid) REFERENCES public.parameter (parameterid);
 CREATE INDEX xmlparamidx ON public.xmlparametervalue USING btree (value);
+
+-- Offering relations
+CREATE TABLE offeringrelation
+(
+  parentofferingid bigint NOT NULL, -- Foreign Key (FK) to the related parent offering. Contains "offering".offeringid
+  childofferingid bigint NOT NULL, -- Foreign Key (FK) to the related child offering. Contains "offering".offeringid
+  CONSTRAINT offeringrelation_pkey PRIMARY KEY (childofferingid, parentofferingid),
+  CONSTRAINT offeringchildfk FOREIGN KEY (childofferingid)
+      REFERENCES offering (offeringid) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT offeringparenffk FOREIGN KEY (parentofferingid)
+      REFERENCES offering (offeringid) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE offeringrelation
+  OWNER TO postgres;
+COMMENT ON TABLE offeringrelation
+  IS 'Relation table to store offering hierarchies. E.g. define a parent in a query and all childs are also contained in the response. Mapping file: mapping/core/Offering.hbm.xml';
+COMMENT ON COLUMN offeringrelation.parentofferingid IS 'Foreign Key (FK) to the related parent offering. Contains "offering".offeringid';
+COMMENT ON COLUMN offeringrelation.childofferingid IS 'Foreign Key (FK) to the related child offering. Contains "offering".offeringid';

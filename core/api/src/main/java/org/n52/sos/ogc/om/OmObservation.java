@@ -43,7 +43,6 @@ import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
@@ -151,12 +150,14 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
 
     /**
      * Set the observation constellation
-     * 
+     *
      * @param observationConstellation
      *            the observationConstellation to set
+     * @return 
      */
-    public void setObservationConstellation(final OmObservationConstellation observationConstellation) {
+    public OmObservation setObservationConstellation(final OmObservationConstellation observationConstellation) {
         this.observationConstellation = observationConstellation;
+        return this;
     }
 
     /**

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.n52.sensorweb.sos</groupId>
+        <artifactId>52n-sos</artifactId>
+        <version>4.4.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <artifactId>Common</artifactId>
+    <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.google-collections</groupId>
+            <artifactId>google-collect</artifactId>
+            <version>snapshot-20080530</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.swe.oxframework</groupId>
+            <artifactId>oxf-core</artifactId>
+            <version>20080307</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.9</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb.sos</groupId>
+            <artifactId>52n-sos-api</artifactId>
+            <version>4.0.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb.sos</groupId>
+            <artifactId>api</artifactId>
+            <version>4.4.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.opendap</groupId>
+            <artifactId>opendapapi</artifactId>
+            <version>1.0.0 </version>
+            <type>jar </type>
+        </dependency>
+    </dependencies>
+</project>

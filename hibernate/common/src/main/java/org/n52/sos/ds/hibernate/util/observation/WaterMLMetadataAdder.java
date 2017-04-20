@@ -85,7 +85,7 @@ public class WaterMLMetadataAdder {
         InterpolationType interpolationType = WaterMLConstants.InterpolationType.Continuous;
         if (interpolationTypeTitle.isPresent()) {
             try {
-                interpolationType = InterpolationType.valueOf(interpolationTypeTitle.get());
+                interpolationType = InterpolationType.from(interpolationTypeTitle.get());
             } catch (IllegalArgumentException iae) {
                 throw createMetadataInvalidException(WaterMLConstants.INTERPOLATION_TYPE,
                         interpolationType.getTitle(), iae);

@@ -212,7 +212,7 @@ public class UVFEncoderTest {
             obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
             obsPropIdentifier.length()) +
             " " + unit + "     " + 
-            "1970 1970";
+            "1900 1900";
 
         Assert.assertThat(actual, Is.is(expected));
     }
@@ -231,7 +231,7 @@ public class UVFEncoderTest {
             obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
             obsPropIdentifier.length()) +
             " " + unit + "     " + 
-            "1970 1970";
+            "1900 1900";
 
         Assert.assertThat(actual, Is.is(expected));
     }
@@ -252,7 +252,7 @@ public class UVFEncoderTest {
     public void shouldEncodeMeasurementLocationIdAndCoordinates() throws UnsupportedEncoderInputException,
             OwsExceptionReport {
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[7];
-        final String expected = "1              51.93503827.6521225 0.000     ";
+        final String expected = "1              51.93503827.6521225";
         
         Assert.assertThat(actual, Is.is(expected));
     }

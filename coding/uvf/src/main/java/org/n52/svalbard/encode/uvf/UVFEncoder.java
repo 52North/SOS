@@ -8,10 +8,14 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.schetland.uvf.UVFConstants;
+import org.n52.schetland.uvf.UVFConstants.LineEnding;
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.convert.UVFRequestModifier;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.ObservationEncoder;
@@ -36,9 +40,7 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.MultiValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
@@ -57,11 +59,13 @@ import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.http.MediaType;
+import org.n52.sos.uvf.UVFSettings;
 import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -144,10 +148,15 @@ import com.google.common.io.Files;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
+@Configurable
 public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, Object> {
 
     private final Logger LOGGER = LoggerFactory.getLogger(UVFEncoder.class);
-    private final Set<String> MEDIA_TYPES = Sets.newHashSet(UVFConstants.CONTENT_TYPE_UVF.toString());
+    private final Set<String> MEDIA_TYPES = Sets.newHashSet(
+            UVFConstants.CONTENT_TYPE_UVF.toString(),
+            UVFConstants.CONTENT_TYPE_UVF_MAC.toString(),
+            UVFConstants.CONTENT_TYPE_UVF_UNIX.toString(),
+            UVFConstants.CONTENT_TYPE_UVF_WINDOWS.toString());
 
     private final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS, (Map<String, Set<String>>) new ImmutableMap.Builder<String, Set<String>>()
@@ -155,15 +164,8 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             .put(Sos2Constants.SERVICEVERSION, MEDIA_TYPES)
             .build());
 
-    private final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
-          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
-                  SosConstants.Operations.GetObservation, UVFConstants.CONTENT_TYPE_UVF),
-          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-                  SosConstants.Operations.GetObservation, UVFConstants.CONTENT_TYPE_UVF),
-          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
-                  SosConstants.Operations.GetObservationById, UVFConstants.CONTENT_TYPE_UVF),
-          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-                  SosConstants.Operations.GetObservationById, UVFConstants.CONTENT_TYPE_UVF));
+    private final Set<EncoderKey> ENCODER_KEYS = createEncoderKeys();
+            
     
     private final Set<String> CONFORMANCE_CLASSES = ImmutableSet
             .of("http://www.opengis.net/spec/OMXML/2.0/conf/measurement");
@@ -173,6 +175,8 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             SupportedTypeKey.ObservationType, Collections.singleton(OmConstants.OBS_TYPE_MEASUREMENT));
     
     private ObservationMerger merger = new ObservationMerger();
+    private DateTimeZone timeZone = null;
+    private LineEnding lineEnding = LineEnding.Unix;
     
     public UVFEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
@@ -196,7 +200,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         if (objectToEncode instanceof AbstractObservationResponse) {
             AbstractObservationResponse aor = (AbstractObservationResponse) objectToEncode;
             if (!aor.getObservationCollection().isEmpty()) {
-                return encodeGetObsResponse(aor.getObservationCollection());
+                return encodeGetObsResponse(aor);
             } else {
                 return createEmptyFile();
             }
@@ -204,16 +208,48 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         throw new UnsupportedEncoderInputException(this, objectToEncode);
 
     }
+    
+    @Setting(UVFSettings.UVF_TIME_ZONE_SETTING_KEY)
+    public void setTimeZone(String timeZone) {
+        if (!Strings.isNullOrEmpty(timeZone)) {
+            this.timeZone  = DateTimeZone.forTimeZone(TimeZone.getTimeZone(timeZone.trim()));
+        }
+        this.timeZone = null;
+    }
+    
+    @Setting(UVFSettings.UVF_LINE_ENDING_KEY)
+    public void setLineEnding(String lineEnding) {
+        if (!Strings.isNullOrEmpty(lineEnding)) {
+            this.lineEnding  = UVFConstants.LineEnding.valueOf(lineEnding.trim());
+        }
+        this.lineEnding = UVFConstants.LineEnding.Unix;
+    }
+
+    private Set<EncoderKey> createEncoderKeys() {
+        Set<EncoderKey> keys = Sets.newHashSet();
+        for (String s : MEDIA_TYPES) {
+            MediaType mediaType = MediaType.parse(s);
+            keys.add((EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
+                    SosConstants.Operations.GetObservation, mediaType));
+            keys.add((EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                    SosConstants.Operations.GetObservation, mediaType));
+            keys.add((EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
+                    SosConstants.Operations.GetObservationById, mediaType));
+            keys.add((EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                    SosConstants.Operations.GetObservationById, mediaType));
+        }
+        return keys;
+    }
 
     private BinaryAttachmentResponse createEmptyFile() {
         return new BinaryAttachmentResponse(null, null, null);
     }
 
-    private BinaryAttachmentResponse encodeGetObsResponse(List<OmObservation> observationCollection) throws CodedException {
+    private BinaryAttachmentResponse encodeGetObsResponse(AbstractObservationResponse aor) throws CodedException {
         File tempDir = Files.createTempDir();
         BinaryAttachmentResponse response = null;
         try {
-            File uvfFile = encodeToUvf(observationCollection, tempDir);
+            File uvfFile = encodeToUvf(aor.getObservationCollection(), tempDir, aor.getContentType());
             response = new BinaryAttachmentResponse(Files.toByteArray(uvfFile), getContentType(),
                     String.format(uvfFile.getName(), makeDateSafe(new DateTime(DateTimeZone.UTC))));
         } catch (IOException e) {
@@ -226,7 +262,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
 
     }
 
-    private File encodeToUvf(List<OmObservation> observationCollection, File tempDir) throws IOException, CodedException {
+    private File encodeToUvf(List<OmObservation> observationCollection, File tempDir, MediaType contentType) throws IOException, CodedException {
         String filename = getFilename(observationCollection);
         File uvfFile = new File(tempDir, filename);
         FileWriter fw = new FileWriter(uvfFile);
@@ -242,27 +278,27 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                 /*
                  * HEADER: Metadata
                  */
-                writeFunktionInterpretation(fw);
-                writeIndex(fw);
-                writeMessGroesse(fw, o);
+                writeFunktionInterpretation(fw, contentType);
+                writeIndex(fw, contentType);
+                writeMessGroesse(fw, o, contentType);
                 if (o.getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_MEASUREMENT) ||
                         o.getValue().getValue() instanceof SweAbstractUomType<?>) {
-                    writeMessEinheit(fw, o.getObservationConstellation().getObservableProperty());
+                    writeMessEinheit(fw, o.getObservationConstellation().getObservableProperty(), contentType);
                 }
-                writeMessStellennummer(fw, o);
-                writeMessStellenname(fw, o);
+                writeMessStellennummer(fw, o, contentType);
+                writeMessStellenname(fw, o, contentType);
                 /*
                  * HEADER: Lines 1 - 4
                  */
-                writeLine1(fw);
+                writeLine1(fw, contentType);
                 TimePeriod temporalBBox = getTemporalBBoxFromObservations(observationCollection);
-                writeLine2(fw, o.getObservationConstellation().getObservableProperty(), temporalBBox);
-                writeLine3(fw, o);
-                writeLine4(fw, temporalBBox);
+                writeLine2(fw, o.getObservationConstellation().getObservableProperty(), temporalBBox, contentType);
+                writeLine3(fw, o, contentType);
+                writeLine4(fw, temporalBBox, contentType);
                 /*
                  * Observation Data
                  */
-                writeObservationValue(fw, o);
+                writeObservationValue(fw, o, contentType);
         }
         return uvfFile;
     }
@@ -279,22 +315,22 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                         || ((TVPValue)value.getValue()).getValue().get(0).getValue() instanceof QuantityValue);
     }
 
-    private void writeFunktionInterpretation(FileWriter fw) throws IOException {
-        writeToFile(fw, "$ib Funktion-Interpretation: Linie");
+    private void writeFunktionInterpretation(FileWriter fw, MediaType contentType) throws IOException {
+        writeToFile(fw, "$ib Funktion-Interpretation: Linie", contentType);
     }
 
-    private void writeIndex(FileWriter fw) throws IOException {
-        writeToFile(fw, "$sb Index-Einheit: *** Zeit ***");
+    private void writeIndex(FileWriter fw, MediaType contentType) throws IOException {
+        writeToFile(fw, "$sb Index-Einheit: *** Zeit ***", contentType);
     }
 
-    private void writeMessGroesse(FileWriter fw, OmObservation o) throws IOException {
+    private void writeMessGroesse(FileWriter fw, OmObservation o, MediaType contentType) throws IOException {
         String observablePropertyIdentifier = o.getObservationConstellation().getObservablePropertyIdentifier();
         observablePropertyIdentifier = ensureIdentifierLength(observablePropertyIdentifier,
                 UVFConstants.MAX_IDENTIFIER_LENGTH);
-        writeToFile(fw, String.format("$sb Mess-Groesse: %s", observablePropertyIdentifier));
+        writeToFile(fw, String.format("$sb Mess-Groesse: %s", observablePropertyIdentifier), contentType);
     }
 
-    private void writeMessEinheit(FileWriter fw, AbstractPhenomenon observableProperty) throws IOException {
+    private void writeMessEinheit(FileWriter fw, AbstractPhenomenon observableProperty, MediaType contentType) throws IOException {
         // $sb Mess-Einheit: m3/s
         // Unit (optional)
         String unit = "";
@@ -304,32 +340,32 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                 unit = ensureIdentifierLength(unit, UVFConstants.MAX_IDENTIFIER_LENGTH);
             }
         }
-        writeToFile(fw, String.format("$sb Mess-Einheit: %s", unit));
+        writeToFile(fw, String.format("$sb Mess-Einheit: %s", unit), contentType);
     }
 
-    private void writeMessStellennummer(FileWriter fw, OmObservation o) throws IOException {
+    private void writeMessStellennummer(FileWriter fw, OmObservation o, MediaType contentType) throws IOException {
         String featureOfInterestIdentifier = o.getObservationConstellation().getFeatureOfInterestIdentifier();
         if (featureOfInterestIdentifier != null && !featureOfInterestIdentifier.isEmpty()) {
             featureOfInterestIdentifier = ensureIdentifierLength(featureOfInterestIdentifier,
                 UVFConstants.MAX_IDENTIFIER_LENGTH);
         }
-        writeToFile(fw, String.format("$sb Mess-Stellennummer: %s", featureOfInterestIdentifier));
+        writeToFile(fw, String.format("$sb Mess-Stellennummer: %s", featureOfInterestIdentifier), contentType);
     }
 
-    private void writeMessStellenname(FileWriter fw, OmObservation o) throws IOException {
+    private void writeMessStellenname(FileWriter fw, OmObservation o, MediaType contentType) throws IOException {
         if (o.getObservationConstellation().getFeatureOfInterest().isSetName()) {
             final CodeType firstName = o.getObservationConstellation().getFeatureOfInterest().getFirstName();
             String name = ensureIdentifierLength(firstName.isSetValue()?firstName.getValue():"", UVFConstants.MAX_IDENTIFIER_LENGTH);
             writeToFile(fw, String.format("$sb Mess-Stellenname: %s",
-                    name));
+                    name), contentType);
         }
     }
 
-    private void writeLine1(FileWriter fw) throws IOException {
-        writeToFile(fw, "*Z");
+    private void writeLine1(FileWriter fw, MediaType contentType) throws IOException {
+        writeToFile(fw, "*Z", contentType);
     }
 
-    private void writeLine2(FileWriter fw, AbstractPhenomenon observableProperty, TimePeriod centuries) throws IOException {
+    private void writeLine2(FileWriter fw, AbstractPhenomenon observableProperty, TimePeriod centuries, MediaType contentType) throws IOException {
         // 2.Zeile ABFLUSS m3/s 1900 1900
         StringBuilder sb = new StringBuilder(39);
         // Identifier
@@ -352,27 +388,32 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         }
         fillWithSpaces(sb, 30);
         // Centuries
-        sb.append(centuries.getStart().getYear() + " " + centuries.getEnd().getYear());
-        writeToFile(fw, sb.toString());
+        sb.append(centuries.getStart().getCenturyOfEra() + "00 " + centuries.getEnd().getCenturyOfEra() + "00");
+        writeToFile(fw, sb.toString(), contentType);
     }
 
-    private void writeLine3(FileWriter fw, OmObservation o) throws IOException {
+    private void writeLine3(FileWriter fw, OmObservation o, MediaType contentType) throws IOException {
         // 3.Zeile 88888 0 0 0.000
         StringBuilder sb = new StringBuilder(45);
-        if (!o.isSetObservationID()) {
-            o.setObservationID(JavaHelper.generateID(o.toString()));
+        if (o.isSetIdentifier()) {
+            sb.append(ensureIdentifierLength(o.getIdentifier(), UVFConstants.MAX_IDENTIFIER_LENGTH));
+        } else {
+            if (!o.isSetObservationID()) {
+                o.setObservationID(JavaHelper.generateID(o.toString()));
+            }
+            sb.append(ensureIdentifierLength(o.getObservationID(), UVFConstants.MAX_IDENTIFIER_LENGTH));
         }
-        String identifier = ensureIdentifierLength(o.getObservationID(), UVFConstants.MAX_IDENTIFIER_LENGTH);
-        sb.append(identifier);
         fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
         AbstractFeature f = o.getObservationConstellation().getFeatureOfInterest();
-        if (o.getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
+        if (o.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature
+                && ((AbstractSamplingFeature) o.getObservationConstellation().getFeatureOfInterest())
+                        .isSetGeometry()) {
             AbstractSamplingFeature sf = (AbstractSamplingFeature)f;
-            String xString = sf.isSetGeometry() ? Double.toString(sf.getGeometry().getCoordinate().x) : "0.0";
+            String xString = sf.isSetGeometry() ? Double.toString(sf.getGeometry().getCoordinate().x) : "";
             xString = ensureValueLength(xString, 10);
             sb.append(xString);
             fillWithSpaces(sb, 25);
-            String yString = sf.isSetGeometry() ? Double.toString(sf.getGeometry().getCoordinate().y) : "0.0";
+            String yString = sf.isSetGeometry() ? Double.toString(sf.getGeometry().getCoordinate().y) : "";
             yString = ensureValueLength(yString, 10);
             sb.append(yString);
             fillWithSpaces(sb, 35);
@@ -380,41 +421,31 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                 String zString = Double.toString(sf.getGeometry().getCoordinate().z);
                 zString = ensureValueLength(zString, 10);
                 sb.append(zString);
-            } else {
-                sb.append("0.000");
             }
-            fillWithSpaces(sb, 45);
-        } else {
-            sb.append("0");
-            fillWithSpaces(sb, 25);
-            sb.append("0");
-            fillWithSpaces(sb, 35);
-            sb.append("0.000");
-            fillWithSpaces(sb, 45);
         }
-        writeToFile(fw, sb.toString());
+        writeToFile(fw, sb.toString().trim(), contentType);
     }
 
-    private void writeLine4(FileWriter fw, TimePeriod temporalBBox) throws IOException, DateTimeFormatException {
+    private void writeLine4(FileWriter fw, TimePeriod temporalBBox, MediaType contentType) throws IOException, DateTimeFormatException {
         StringBuilder sb = new StringBuilder(28);
-        sb.append(DateTimeHelper.formatDateTime2FormattedString(temporalBBox.getStart(), UVFConstants.TIME_FORMAT));
-        sb.append(DateTimeHelper.formatDateTime2FormattedString(temporalBBox.getEnd(), UVFConstants.TIME_FORMAT));
+        sb.append(DateTimeHelper.formatDateTime2FormattedString(checkTimeZone(temporalBBox.getStart()), UVFConstants.TIME_FORMAT));
+        sb.append(DateTimeHelper.formatDateTime2FormattedString(checkTimeZone(temporalBBox.getEnd()), UVFConstants.TIME_FORMAT));
         fillWithSpaces(sb, 20);
         sb.append("Zeit");
         fillWithSpaces(sb, 28);
-        writeToFile(fw, sb.toString());
+        writeToFile(fw, sb.toString(), contentType);
     }
 
-    private void writeObservationValue(FileWriter fw, OmObservation omObservation) throws IOException,
+    private void writeObservationValue(FileWriter fw, OmObservation omObservation, MediaType contentType) throws IOException,
             CodedException {
         // yymmddhhmmvvvvvvvvvv
         // ^ date with ten chars
         //           ^ observed/measured value with 10 chars
         if (omObservation.getValue() instanceof SingleObservationValue<?>) {
             writeSingleObservationValue(fw, omObservation.getPhenomenonTime(),
-                    ((SingleObservationValue<?>)omObservation.getValue()).getValue());
+                    ((SingleObservationValue<?>)omObservation.getValue()).getValue(), contentType);
         } else if (omObservation.getValue() instanceof MultiObservationValues) {
-            writeMultiObservationValues(fw, omObservation);
+            writeMultiObservationValues(fw, omObservation, contentType);
         } else {
             throw new NoApplicableCodeException().withMessage("Support for '%s' not yet implemented.",
                     omObservation.getValue().getClass().getName());
@@ -427,23 +458,23 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
      *
      * ***********************************************************************/
 
-    private void writeSingleObservationValue(FileWriter fw, Time phenomenonTime, Value<?> value) throws IOException,
+    private void writeSingleObservationValue(FileWriter fw, Time phenomenonTime, Value<?> value, MediaType contentType) throws IOException,
             CodedException {
         StringBuilder sb = new StringBuilder(20);
         if (phenomenonTime instanceof TimeInstant) {
-            sb.append(DateTimeHelper.formatDateTime2FormattedString(((TimeInstant)phenomenonTime).getValue(),
+            sb.append(DateTimeHelper.formatDateTime2FormattedString(checkTimeZone(((TimeInstant)phenomenonTime).getValue()),
                     UVFConstants.TIME_FORMAT));
         } else {
-            sb.append(DateTimeHelper.formatDateTime2FormattedString(((TimePeriod)phenomenonTime).getEnd(),
+            sb.append(DateTimeHelper.formatDateTime2FormattedString(checkTimeZone(((TimePeriod)phenomenonTime).getEnd()),
                     UVFConstants.TIME_FORMAT));
         }
         sb.append(encodeObservationValue(value));
         
         fillWithSpaces(sb, 20);
-        writeToFile(fw, sb.toString());
+        writeToFile(fw, sb.toString(), contentType);
     }
 
-    private void writeMultiObservationValues(FileWriter fw, OmObservation omObservation)
+    private void writeMultiObservationValues(FileWriter fw, OmObservation omObservation, MediaType contentType)
             throws IOException, CodedException {
         MultiValue<?> values = ((MultiObservationValues<?>)omObservation.getValue()).getValue();
         /*
@@ -459,7 +490,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                 @SuppressWarnings("unchecked")
                 List<TimeValuePair> valuesList = (List<TimeValuePair>) values.getValue();
                 for (TimeValuePair timeValuePair : valuesList) {
-                    writeSingleObservationValue(fw, timeValuePair.getTime(), timeValuePair.getValue());
+                    writeSingleObservationValue(fw, timeValuePair.getTime(), timeValuePair.getValue(), contentType);
                 }
            } else {
                throw new NoApplicableCodeException().withMessage("Support for '%s' not yet implemented.",
@@ -546,9 +577,35 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         sb.trimToSize();
     }
 
-    private void writeToFile(FileWriter fw, String string) throws IOException {
-        fw.write(string + "\n");
+    private void writeToFile(FileWriter fw, String string, MediaType contentType) throws IOException {
+        fw.write(string + getLineEnding(contentType));
         fw.flush();
+    }
+
+    private String getLineEnding(MediaType contentType) {
+        if (contentType != null) {
+            if (contentType.equals(UVFConstants.CONTENT_TYPE_UVF_WINDOWS)) {
+                return UVFConstants.LINE_ENDING_WINDOWS;
+            } else if (contentType.equals(UVFConstants.CONTENT_TYPE_UVF_WINDOWS)) {
+                return UVFConstants.LINE_ENDING_WINDOWS;
+            } else if (contentType.equals(UVFConstants.CONTENT_TYPE_UVF_WINDOWS)) {
+                return UVFConstants.LINE_ENDING_WINDOWS;
+            }
+        }
+        return getDefaultLineEnding();
+    }
+
+    private String getDefaultLineEnding() {
+        switch (lineEnding) {
+        case Unix:
+            return UVFConstants.LINE_ENDING_UNIX;
+        case Windows:
+            return UVFConstants.LINE_ENDING_WINDOWS;
+        case Mac:
+            return UVFConstants.LINE_ENDING_MAC;
+        default:
+            return UVFConstants.LINE_ENDING_UNIX;
+        }
     }
 
     private String getFilename(List<OmObservation> observationCollection) {
@@ -570,6 +627,13 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
 
     private String makeDateSafe(DateTime dt) {
         return dt.toString().replace(":", "");
+    }
+    
+    private DateTime checkTimeZone(DateTime time) {
+        if (timeZone != null) {
+            return time.toDateTime(timeZone);
+        }
+        return time;
     }
 
     @Override

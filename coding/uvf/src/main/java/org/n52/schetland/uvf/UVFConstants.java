@@ -2,13 +2,25 @@ package org.n52.schetland.uvf;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
+import org.joda.time.DateTimeZone;
+import org.n52.sos.config.SettingDefinition;
+import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaType;
+
+import com.google.common.collect.ImmutableSet;
 
 public interface UVFConstants {
 
     MediaType CONTENT_TYPE_UVF = new MediaType("application", "uvf");
+    
+    MediaType CONTENT_TYPE_UVF_WINDOWS = new MediaType("application", "uvf", "lineEnding", "Windows");
+    
+    MediaType CONTENT_TYPE_UVF_UNIX = new MediaType("application", "uvf", "lineEnding", "Unix");
+    
+    MediaType CONTENT_TYPE_UVF_MAC = new MediaType("application", "uvf", "lineEnding", "Mac");
 
     /**
      * Time format to be used in UVF encoded data: <code>yyMMddHHmm</code>,
@@ -48,5 +60,14 @@ public interface UVFConstants {
 
     int MAXIMUM_EPSG_CODE = 31469;
     
+    String LINE_ENDING_UNIX = "\n";
+    
+    String LINE_ENDING_WINDOWS = "\r\n";
+    
+    String LINE_ENDING_MAC = "\r";
+    
+    enum LineEnding{
+        Windows, Unix, Mac;
+    }
 }
  

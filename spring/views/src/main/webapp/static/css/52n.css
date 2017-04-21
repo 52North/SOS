@@ -325,3 +325,22 @@ div#contentBox .source pre {
     color: #909090;
 }
 
+div#wait {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background: #ffffff;
+  z-index: 2048;
+  opacity: 0.75;
+}
+
+div#wait > div#wait-loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* the next two values depend on the size of the image */
+  margin-left: -33px;
+  margin-top: -33px;
+}

@@ -31,7 +31,6 @@ package org.n52.sos.request;
 import java.util.Collections;
 import java.util.List;
 
-import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.sos.ogc.ows.OWSConstants;

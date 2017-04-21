@@ -59,7 +59,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
 
     public static final String STRICT_SPATIAL_FILTERING_PROFILE = "service.strictSpatialFilteringProfile";
 
-    public static final String  VALIDATE_RESPONSE = "service.response.validate";
+    public static final String VALIDATE_RESPONSE = "service.response.validate";
 
     public static final String EXPOSE_CHILD_OBSERVABLE_PROPERTIES = "service.exposeChildObservableProperties";
     
@@ -86,14 +86,14 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     "The endpoint URL of this sos which will be shown in the GetCapabilities response "
                             + "(e.g. <code>http://localhost:8080/52nSOS/sos</code> or <code>http://localhost:8080/52nSOS/service</code>)."
                             + " The path to a specific binding (like <code>/soap</code>) will appended to this URL."
-                            + " For detailed information, please read the <a href=\"https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation\">documentation</a>");
+                            + " For detailed information, please read the <a href=\"https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation\">documentation</a>.");
 
     public static final StringSettingDefinition SENSOR_DIRECTORY_DEFINITION =
             new StringSettingDefinition()
                     .setGroup(GROUP)
                     .setOrder(ORDER_7)
                     .setKey(SENSOR_DIRECTORY)
-                    .setDefaultValue("/sensors")
+                    .setDefaultValue("WEB-INF/classes/sensors")
                     .setOptional(true)
                     .setTitle("Sensor Directory")
                     .setDescription(
@@ -107,9 +107,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     .setOrder(ORDER_13)
                     .setKey(DEREGISTER_JDBC_DRIVER)
                     .setDefaultValue(true)
-                    .setTitle("Deregister JDBC driver")
-                    .setDescription(
-                            "Should the service deregister all used JDBC driver (SQLite, PostgreSQL or H2) during shutdown process.");
+                    .setTitle("Should the service deregister all used JDBC driver during shutdown?")
+                    .setDescription("The service will deregister all used JDBC driver (SQLite, PostgreSQL or H2), hence they will not be available for other webapps in the application server.");
 
 
     public static final BooleanSettingDefinition STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION =
@@ -120,7 +119,9 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     .setDefaultValue(false)
                     .setTitle("Should this SOS support strict Spatial Filtering Profile?")
                     .setDescription(
-                            "Whether the SOS should support strict SOS 2.0 Spatial Filtering Profile. That means each observation should contain a om:parameter with sampling geometry. Else the SOS allows observations without om:parameter with sampling geometry!");
+                            "Whether the SOS should support strict SOS 2.0 Spatial Filtering Profile. That means each "
+                            + "observation should contain a <tt>om:parameter</tt> with sampling geometry. Else the SOS"
+                            + " allows observations without <tt>om:parameter</tt> with sampling geometry!");
 
     public static final BooleanSettingDefinition VALIDATE_RESPONSE_DEFINITION =
             new BooleanSettingDefinition()
@@ -148,9 +149,10 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setOrder(ORDER_18)
                      .setKey(LIST_ONLY_PARENT_OFFERINGS)
                      .setDefaultValue(false)
-                     .setTitle("List only parent offerings in Capabilities")
+                     .setTitle("Should the service list only parent offerings in service capabilities?")
                      .setDescription(
-                             "Should the service list only parent offerings in Capabilities. Lower level offerings would be referenced in extension element of related ObservationOffering.");
+                             "The service would list only parent offerings in the serivce capabilites. Lower level "
+                             + "offerings would be referenced in extension elements of related ObservationOfferings.");
      
      public static final FileSettingDefinition CACHE_FILE_FOLDER_DEFILINION = new FileSettingDefinition()
              .setGroup(GROUP)
@@ -158,8 +160,10 @@ public class ServiceSettings implements SettingDefinitionProvider {
              .setKey(CACHE_FILE_FOLDER)
              .setTitle("Cache file folder")
              .setOptional(true)
-             .setDescription(
-                     "The path to a folder where the cache file should be stored. Default is the webapp folder. If you define a path, then grant the necessary rights to write to the tomcat user!!!");
+             .setDescription("The path to a folder where the cache file should be stored. Default is the webapp "
+                     + "folder. <span class='text-warning'>If you define a path, then grant the necessary rights "
+                     + "(<strong>write and read permission</strong>) to the <strong>application server user</strong>"
+                     + "!");
 
      public static final BooleanSettingDefinition CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS_DEFINITION =
              new BooleanSettingDefinition()

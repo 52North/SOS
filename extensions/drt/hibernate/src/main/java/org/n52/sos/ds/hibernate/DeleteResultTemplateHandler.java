@@ -29,15 +29,21 @@
 package org.n52.sos.ds.hibernate;
 
 import com.google.common.collect.Lists;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateConstants;
 import org.n52.sos.ds.AbstractDeleteResultTemplateHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
+import org.n52.sos.exception.ows.DeleteResultTemplateInvalidParameterValueException;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.DeleteResultTemplateRequest;
@@ -91,26 +97,50 @@ public class DeleteResultTemplateHandler extends AbstractDeleteResultTemplateHan
         HTTPStatus status = HTTPStatus.INTERNAL_SERVER_ERROR;
         throw new NoApplicableCodeException()
                 .causedBy(he)
-                .withMessage("Error while inserting new featureOfInterest!")
+                .withMessage("Error while deleting result templates!")
                 .setStatus(status);
     }
 
-    private void deleteByTemplateId(Session session, List<String> resultTemplates) {
+    private void deleteByTemplateId(Session session,
+            List<String> resultTemplates)
+            throws InvalidParameterValueException {
         deletedResultTemplates = Lists.newArrayList();
         for (String resultTemplate : resultTemplates) {
-            session.delete(resultTemplateDAO.getResultTemplateObject(resultTemplate, session));
+            final ResultTemplate templateObject =
+                    resultTemplateDAO.getResultTemplateObject(
+                            resultTemplate,
+                            session);
+            if (templateObject == null) {
+                throw new InvalidParameterValueException(
+                        DeleteResultTemplateConstants.PARAMETERS.resultTemplate,
+                        resultTemplate);
+            }
+            session.delete(templateObject);
             deletedResultTemplates.add(resultTemplate);
         }
     }
 
-    private void deleteByObservedPropertyOfferingPair(Session session, Map<String, String> observedPropertyOfferingPairs) {
+    private void deleteByObservedPropertyOfferingPair(Session session,
+            List<AbstractMap.SimpleEntry<String, String>> observedPropertyOfferingPairs)
+            throws CompositeOwsException {
         deletedResultTemplates = Lists.newArrayList();
-        for (Map.Entry<String,String> observedPropertyOfferingPair : observedPropertyOfferingPairs.entrySet()) {
-            session.delete(resultTemplateDAO.getResultTemplateObject(
-                    observedPropertyOfferingPair.getValue(),
-                    observedPropertyOfferingPair.getKey(),
-                    session));
+        CompositeOwsException exceptions = new CompositeOwsException();
+        for (Map.Entry<String,String> observedPropertyOfferingPair : observedPropertyOfferingPairs) {
+            final String offering = observedPropertyOfferingPair.getValue();
+            final String observedProperty = observedPropertyOfferingPair.getKey();
+            final ResultTemplate resultTemplateObject =
+                    resultTemplateDAO.getResultTemplateObject(
+                            offering,
+                            observedProperty,
+                            session);
+            if (resultTemplateObject == null) {
+                exceptions.add(new DeleteResultTemplateInvalidParameterValueException(offering, observedProperty));
+            }
+            final String resultTemplateId = resultTemplateObject.getIdentifier();
+            session.delete(resultTemplateObject);
+            deletedResultTemplates.add(resultTemplateId);
         }
+        exceptions.throwIfNotEmpty();
     }
 
 }

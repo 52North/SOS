@@ -84,8 +84,10 @@ public class DeleteResultTemplateEncoder extends AbstractResponseEncoder<DeleteR
         DeleteResultTemplateResponseDocument drtrd =
                 DeleteResultTemplateResponseDocument.Factory.newInstance(getXmlOptions());
         DeleteResultTemplateResponseType drtrt = drtrd.addNewDeleteResultTemplateResponse();
-        for (String resultTemplate : drtr.getResultTemplates()) {
-            drtrt.addDeletedTemplate(resultTemplate);
+        if (drtr.isSetResultTemplates()) {
+            for (String resultTemplate : drtr.getResultTemplates()) {
+                drtrt.addDeletedTemplate(resultTemplate);
+            }
         }
         return drtrd;
     }

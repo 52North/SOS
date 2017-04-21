@@ -28,24 +28,22 @@
  */
 package org.n52.sos.request.operator;
 
+import com.google.common.collect.Sets;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
 import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateConstants;
 import org.n52.sos.ds.AbstractDeleteResultTemplateHandler;
+import org.n52.sos.event.SosEventBus;
+import org.n52.sos.event.events.ResultTemplatesDeletion;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.DeleteResultTemplateRequest;
 import org.n52.sos.response.DeleteResultTemplateResponse;
-import org.n52.sos.wsdl.WSDLOperation;
-
-import com.google.common.collect.Sets;
-import org.n52.sos.event.SosEventBus;
-import org.n52.sos.event.events.ResultTemplatesDeletion;
-import org.n52.sos.exception.ows.MissingParameterValueException;
 
 /**
  * {@code IRequestOperator} to handle {@link DeleteResultTemplateRequest}s.
@@ -54,11 +52,11 @@ import org.n52.sos.exception.ows.MissingParameterValueException;
  *
  * @since 4.0.0
  */
-public class DeleteResultTemplateOperator 
+public class DeleteResultTemplateOperator
         extends 
         AbstractTransactionalRequestOperator<AbstractDeleteResultTemplateHandler, DeleteResultTemplateRequest,
         DeleteResultTemplateResponse>
-        implements WSDLAwareRequestOperator {
+        implements RequestOperator {
 
     private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet(
             DeleteResultTemplateConstants.CONFORMANCE_CLASS_INSERTION,
@@ -68,7 +66,8 @@ public class DeleteResultTemplateOperator
      * Constructs a new {@code DeleteResultTemplateOperator}.
      */
     public DeleteResultTemplateOperator() {
-        super(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+        super(SosConstants.SOS,
+                Sos2Constants.SERVICEVERSION,
                 DeleteResultTemplateConstants.OPERATION_NAME,
                 DeleteResultTemplateRequest.class);
     }
@@ -102,19 +101,50 @@ public class DeleteResultTemplateOperator
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        
+
         checkAnyParameter(request, exceptions);
         checkInvalidAllParameters(request, exceptions);
-
+        checkResultTemplates(request, exceptions);
+        checkObservedPropertyOfferingPairs(request, exceptions);
+        
         exceptions.throwIfNotEmpty();
     }
 
-    public void checkAnyParameter(DeleteResultTemplateRequest request,
+    private void checkObservedPropertyOfferingPairs(DeleteResultTemplateRequest request, CompositeOwsException exceptions) {
+        if (request.isSetObservedPropertyOfferingPairs()) {
+            for (Map.Entry<String, String> propertyOfferingPair : request.getObservedPropertyOfferingPairs()) {
+                if (!getCache().hasOffering(propertyOfferingPair.getValue())) {
+                    exceptions.add(new InvalidParameterValueException(
+                            DeleteResultTemplateConstants.PARAMETERS.offering,
+                            propertyOfferingPair.getValue()));
+                }
+                if (!getCache().hasObservableProperty(propertyOfferingPair.getKey())) {
+                    exceptions.add(new InvalidParameterValueException(
+                            DeleteResultTemplateConstants.PARAMETERS.observableProperty,
+                            propertyOfferingPair.getKey()));
+                }
+            }
+        }
+    }
+
+    private void checkResultTemplates(DeleteResultTemplateRequest request, CompositeOwsException exceptions) {
+        if (request.isSetResultTemplates()) {
+            for (String resultTemplate : request.getResultTemplates()) {
+                if (!getCache().hasResultTemplate(resultTemplate)) {
+                    exceptions.add(new InvalidParameterValueException(
+                            DeleteResultTemplateConstants.PARAMETERS.resultTemplate,
+                            resultTemplate));
+                }
+            }
+        }
+    }
+
+    private void checkAnyParameter(DeleteResultTemplateRequest request,
             CompositeOwsException exceptions) {
         if (!request.isSetResultTemplates() &&
                 !request.isSetObservedPropertyOfferingPairs()) {
             exceptions.add(new MissingParameterValueException(
-                    "resultTemplate XOR offering and observed property."));
+                    "resultTemplate XOR offering and observedProperty."));
         }
     }
     
@@ -123,22 +153,8 @@ public class DeleteResultTemplateOperator
         if (request.isSetResultTemplates() &&
                 request.isSetObservedPropertyOfferingPairs()) {
             exceptions.add(new MissingParameterValueException(
-                    "only resultTemplate XOR offering and observed property."));
+                    "only resultTemplate XOR offering and observedProperty."));
         }
     }
 
-    @Override
-    public WSDLOperation getSosOperationDefinition() {
-        return null;
-    }
-
-    @Override
-    public Map<String, String> getAdditionalSchemaImports() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public Map<String, String> getAdditionalPrefixes() {
-        return Collections.emptyMap();
-    }
 }

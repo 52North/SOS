@@ -32,7 +32,11 @@ import org.n52.sos.util.XmlHelper;
 
 public interface DeleteResultTemplateConstants {
     
-    public interface DeleteResultTemplateConstantsParams {}
+    enum PARAMETERS {
+        offering,
+        observableProperty,
+        resultTemplate
+    }
 
     String OPERATION_NAME = "DeleteResultTemplate";
     

@@ -30,7 +30,7 @@ package org.n52.sos.request;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +41,7 @@ import org.n52.sos.util.CollectionHelper;
 public class DeleteResultTemplateRequest extends AbstractServiceRequest<DeleteResultTemplateResponse> {
 
     private List<String> resultTemplates;
-    private Map<String,String> observedPropertyOfferingPairs;
+    private List<AbstractMap.SimpleEntry<String,String>> observedPropertyOfferingPairs;
 
     @Override
     public DeleteResultTemplateResponse getResponse() throws OwsExceptionReport {
@@ -77,21 +77,21 @@ public class DeleteResultTemplateRequest extends AbstractServiceRequest<DeleteRe
 
     public DeleteResultTemplateRequest addObservedPropertyOfferingPair(String observedProperty, String offering) {
         if (!isSetObservedPropertyOfferingPairs()) {
-            observedPropertyOfferingPairs = Maps.newHashMap();
+            observedPropertyOfferingPairs = Lists.newArrayList();
         }
-        observedPropertyOfferingPairs.put(observedProperty, offering);
+        observedPropertyOfferingPairs.add(new AbstractMap.SimpleEntry<>(observedProperty, offering));
         return this;
     }
 
     public boolean isSetObservedPropertyOfferingPairs() {
-        return CollectionHelper.isEmpty(observedPropertyOfferingPairs);
+        return observedPropertyOfferingPairs != null && !observedPropertyOfferingPairs.isEmpty();
     }
     
-    public Map<String, String> getObservedPropertyOfferingPairs() {
+    public List<AbstractMap.SimpleEntry<String, String>> getObservedPropertyOfferingPairs() {
         if (isSetObservedPropertyOfferingPairs()) {
             return observedPropertyOfferingPairs;
         } else {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
     }
 

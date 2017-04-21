@@ -43,9 +43,9 @@ public class DeleteResultTemplateResponse extends AbstractServiceResponse {
 
     public List<String> getResultTemplates() {
         if (isSetResultTemplates()) {
-            return Collections.emptyList();
-        } else {
             return resultTemplates;
+        } else {
+            return Collections.emptyList();
         }
     }
 

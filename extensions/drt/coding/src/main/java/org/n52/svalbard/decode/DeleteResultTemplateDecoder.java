@@ -39,7 +39,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateConstants;
 import org.n52.sos.decode.Decoder;
 import org.n52.sos.decode.DecoderKey;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -48,6 +47,7 @@ import org.n52.sos.request.DeleteResultTemplateRequest;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,10 +78,10 @@ public class DeleteResultTemplateDecoder implements Decoder<DeleteResultTemplate
     @Override
     public DeleteResultTemplateRequest decode(XmlObject xmlObject) throws OwsExceptionReport {
         LOGGER.debug(String.format("REQUESTTYPE: %s", xmlObject != null ? xmlObject.getClass() : "null recevied"));
-        // XmlHelper.validateDocument(xmlObject);
+        XmlHelper.validateDocument(xmlObject);
         if (xmlObject instanceof DeleteResultTemplateDocument) {
             DeleteResultTemplateDocument drtd = (DeleteResultTemplateDocument) xmlObject;
-            DeleteResultTemplateRequest decodedRequest = parseInsertFeatureOfInterest(drtd);
+            DeleteResultTemplateRequest decodedRequest = parseDeleteResultTemplate(drtd);
             LOGGER.debug(String.format("Decoded request: %s", decodedRequest));
             return decodedRequest;
         } else {
@@ -89,32 +89,28 @@ public class DeleteResultTemplateDecoder implements Decoder<DeleteResultTemplate
         }
     }
 
-    private DeleteResultTemplateRequest parseInsertFeatureOfInterest(DeleteResultTemplateDocument drtd)
+    private DeleteResultTemplateRequest parseDeleteResultTemplate(DeleteResultTemplateDocument drtd)
             throws OwsExceptionReport {
         DeleteResultTemplateRequest request = null;
 
         DeleteResultTemplateType drtt = drtd.getDeleteResultTemplate();
 
-        if (drtt != null) {
-            request = new DeleteResultTemplateRequest();
-            request.setVersion(drtt.getVersion());
-            request.setService(drtt.getService());
-            if (drtt.sizeOfResultTemplateArray() > 0) {
-                parseResultTemplates(drtt.getResultTemplateArray(), request);
-            }
-            if (drtt.sizeOfOfferingArray() > 0 && drtt.sizeOfObservedPropertyArray() > 0 &&
-                    drtt.sizeOfOfferingArray() == drtt.sizeOfObservedPropertyArray()) {
-                parseObservedPropertyOfferingPairs(drtt.getObservedPropertyArray(), drtt.getOfferingArray(), request);
-            }
-        } else {
-            throw new NoApplicableCodeException()
-                    .withMessage("Received XML document is not valid. Set log level to debug to get more details");
+        request = new DeleteResultTemplateRequest();
+        request.setVersion(drtt.getVersion());
+        request.setService(drtt.getService());
+        if (drtt.sizeOfResultTemplateArray() > 0) {
+            parseResultTemplates(drtt.getResultTemplateArray(), request);
+        }
+        if (drtt.sizeOfOfferingArray() > 0 && drtt.sizeOfObservedPropertyArray() > 0 &&
+                drtt.sizeOfOfferingArray() == drtt.sizeOfObservedPropertyArray()) {
+            parseObservedPropertyOfferingPairs(drtt.getObservedPropertyArray(), drtt.getOfferingArray(), request);
         }
 
         return request;
     }
 
-    private void parseResultTemplates(String[] resultTemplateArray, DeleteResultTemplateRequest request) {
+    private void parseResultTemplates(String[] resultTemplateArray,
+            DeleteResultTemplateRequest request) {
         for (String resultTemplateId : resultTemplateArray) {
             request.addResultTemplate(resultTemplateId);
         }
@@ -137,9 +133,14 @@ public class DeleteResultTemplateDecoder implements Decoder<DeleteResultTemplate
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 
-    private void parseObservedPropertyOfferingPairs(String[] observedPropertyArray, String[] offeringArray, DeleteResultTemplateRequest request) {
+    private void parseObservedPropertyOfferingPairs(
+            String[] observedPropertyArray,
+            String[] offeringArray,
+            DeleteResultTemplateRequest request) {
         for (int i = 0; i < offeringArray.length; i++) {
-            request.addObservedPropertyOfferingPair(observedPropertyArray[i], offeringArray[i]);
+            request.addObservedPropertyOfferingPair(
+                    observedPropertyArray[i],
+                    offeringArray[i]);
         }
     }
     

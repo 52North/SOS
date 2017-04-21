@@ -43,7 +43,7 @@ import org.n52.sos.response.DeleteResultTemplateResponse;
  * @since 4.4.0
  */
 @Configurable
-public abstract class AbstractDeleteResultTemplateHandler extends AbstractOperationDAO{
+public abstract class AbstractDeleteResultTemplateHandler extends AbstractOperationDAO {
     
     public AbstractDeleteResultTemplateHandler(String service) {
         super(service, DeleteResultTemplateConstants.OPERATION_NAME);
@@ -52,6 +52,7 @@ public abstract class AbstractDeleteResultTemplateHandler extends AbstractOperat
     @Override
     protected void setOperationsMetadata(OwsOperation operation, String service, String version)
             throws OwsExceptionReport {
+        // Do nothing
     }
 
     public abstract DeleteResultTemplateResponse deleteResultTemplates(DeleteResultTemplateRequest request)

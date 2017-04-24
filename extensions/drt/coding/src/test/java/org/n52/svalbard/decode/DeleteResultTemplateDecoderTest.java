@@ -19,6 +19,7 @@ package org.n52.svalbard.decode;
 
 import net.opengis.drt.x10.DeleteResultTemplateDocument;
 import net.opengis.drt.x10.DeleteResultTemplateType;
+import net.opengis.drt.x10.DeleteResultTemplateType.Tuple;
 import org.apache.xmlbeans.XmlObject;
 import org.hamcrest.core.Is;
 import org.junit.Assert;
@@ -85,8 +86,8 @@ public class DeleteResultTemplateDecoderTest {
     }
     
     @Test
-    public void shouldDecodeObservedPropertyOfferingPairs() throws OwsExceptionReport {
-        addObservedPropertyOfferingPair();
+    public void shouldDecodeObservedPropertyOfferingTuples() throws OwsExceptionReport {
+        addObservedPropertyOfferingTuple();
         
         DeleteResultTemplateRequest decodedRequest = decoder.decode(encodedRequest);
         
@@ -96,9 +97,10 @@ public class DeleteResultTemplateDecoderTest {
         Assert.assertThat(decodedRequest.getObservedPropertyOfferingPairs().get(0).getValue(), Is.is("test-offering"));
     }
 
-    private void addObservedPropertyOfferingPair() {
-        drtt.addNewOffering().setStringValue("test-offering");
-        drtt.addNewObservedProperty().setStringValue("test-property");
+    private void addObservedPropertyOfferingTuple() {
+        Tuple t = drtt.addNewTuple();
+        t.setOffering("test-offering");
+        t.setObservedProperty("test-property");
     }
     
     private void addResultTemplate() {

@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import net.opengis.drt.x10.DeleteResultTemplateDocument;
 import net.opengis.drt.x10.DeleteResultTemplateType;
+import net.opengis.drt.x10.DeleteResultTemplateType.Tuple;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateConstants;
 import org.n52.sos.decode.Decoder;
@@ -101,9 +102,8 @@ public class DeleteResultTemplateDecoder implements Decoder<DeleteResultTemplate
         if (drtt.sizeOfResultTemplateArray() > 0) {
             parseResultTemplates(drtt.getResultTemplateArray(), request);
         }
-        if (drtt.sizeOfOfferingArray() > 0 && drtt.sizeOfObservedPropertyArray() > 0 &&
-                drtt.sizeOfOfferingArray() == drtt.sizeOfObservedPropertyArray()) {
-            parseObservedPropertyOfferingPairs(drtt.getObservedPropertyArray(), drtt.getOfferingArray(), request);
+        if (drtt.sizeOfTupleArray() > 0) {
+            parseObservedPropertyOfferingPairs(drtt.getTupleArray(), request);
         }
 
         return request;
@@ -134,13 +134,11 @@ public class DeleteResultTemplateDecoder implements Decoder<DeleteResultTemplate
     }
 
     private void parseObservedPropertyOfferingPairs(
-            String[] observedPropertyArray,
-            String[] offeringArray,
-            DeleteResultTemplateRequest request) {
-        for (int i = 0; i < offeringArray.length; i++) {
+            Tuple[] tuples, DeleteResultTemplateRequest request) {
+        for (Tuple tuple : tuples) {
             request.addObservedPropertyOfferingPair(
-                    observedPropertyArray[i],
-                    offeringArray[i]);
+                    tuple.getObservedProperty(),
+                    tuple.getOffering());
         }
     }
     

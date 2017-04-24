@@ -213,16 +213,18 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     public void setTimeZone(String timeZone) {
         if (!Strings.isNullOrEmpty(timeZone)) {
             this.timeZone  = DateTimeZone.forTimeZone(TimeZone.getTimeZone(timeZone.trim()));
+        } else {
+            this.timeZone = null;
         }
-        this.timeZone = null;
     }
     
     @Setting(UVFSettings.UVF_LINE_ENDING_KEY)
     public void setLineEnding(String lineEnding) {
         if (!Strings.isNullOrEmpty(lineEnding)) {
             this.lineEnding  = UVFConstants.LineEnding.valueOf(lineEnding.trim());
+        } else {
+            this.lineEnding = UVFConstants.LineEnding.Unix;
         }
-        this.lineEnding = UVFConstants.LineEnding.Unix;
     }
 
     private Set<EncoderKey> createEncoderKeys() {
@@ -283,7 +285,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                 writeMessGroesse(fw, o, contentType);
                 if (o.getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_MEASUREMENT) ||
                         o.getValue().getValue() instanceof SweAbstractUomType<?>) {
-                    writeMessEinheit(fw, o.getObservationConstellation().getObservableProperty(), contentType);
+                    writeMessEinheit(fw, o, contentType);
                 }
                 writeMessStellennummer(fw, o, contentType);
                 writeMessStellenname(fw, o, contentType);
@@ -292,7 +294,7 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                  */
                 writeLine1(fw, contentType);
                 TimePeriod temporalBBox = getTemporalBBoxFromObservations(observationCollection);
-                writeLine2(fw, o.getObservationConstellation().getObservableProperty(), temporalBBox, contentType);
+                writeLine2(fw, o, temporalBBox, contentType);
                 writeLine3(fw, o, contentType);
                 writeLine4(fw, temporalBBox, contentType);
                 /*
@@ -330,15 +332,12 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         writeToFile(fw, String.format("$sb Mess-Groesse: %s", observablePropertyIdentifier), contentType);
     }
 
-    private void writeMessEinheit(FileWriter fw, AbstractPhenomenon observableProperty, MediaType contentType) throws IOException {
+    private void writeMessEinheit(FileWriter fw, OmObservation o, MediaType contentType) throws IOException {
         // $sb Mess-Einheit: m3/s
         // Unit (optional)
-        String unit = "";
-        if (observableProperty instanceof OmObservableProperty) {
-            unit = ((OmObservableProperty)observableProperty).getUnit();
-            if (unit != null  && !unit.isEmpty()) {
-                unit = ensureIdentifierLength(unit, UVFConstants.MAX_IDENTIFIER_LENGTH);
-            }
+        String unit = getUnit(o);
+        if (unit != null  && !unit.isEmpty()) {
+            unit = ensureIdentifierLength(unit, UVFConstants.MAX_IDENTIFIER_LENGTH);
         }
         writeToFile(fw, String.format("$sb Mess-Einheit: %s", unit), contentType);
     }
@@ -365,10 +364,11 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         writeToFile(fw, "*Z", contentType);
     }
 
-    private void writeLine2(FileWriter fw, AbstractPhenomenon observableProperty, TimePeriod centuries, MediaType contentType) throws IOException {
+    private void writeLine2(FileWriter fw, OmObservation o, TimePeriod centuries, MediaType contentType) throws IOException {
         // 2.Zeile ABFLUSS m3/s 1900 1900
         StringBuilder sb = new StringBuilder(39);
         // Identifier
+        AbstractPhenomenon observableProperty = o.getObservationConstellation().getObservableProperty();
         String observablePropertyIdentifier = observableProperty.getIdentifier();
         if (observablePropertyIdentifier != null && !observablePropertyIdentifier.isEmpty()) {
             observablePropertyIdentifier = ensureIdentifierLength(observablePropertyIdentifier,
@@ -377,14 +377,12 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         sb.append(observablePropertyIdentifier);
         fillWithSpaces(sb, UVFConstants.MAX_IDENTIFIER_LENGTH);
         // Unit (optional)
-        if (observableProperty instanceof OmObservableProperty) {
-            String unit = ((OmObservableProperty)observableProperty).getUnit();
-            if (unit != null && !unit.isEmpty()) {
-                unit = ensureIdentifierLength(unit,
-                    UVFConstants.MAX_IDENTIFIER_LENGTH);
-                sb.append(" ");
-                sb.append(unit);
-            }
+        String unit = getUnit(o);
+        if (unit != null && !unit.isEmpty()) {
+            unit = ensureIdentifierLength(unit,
+                UVFConstants.MAX_IDENTIFIER_LENGTH);
+            sb.append(" ");
+            sb.append(unit);
         }
         fillWithSpaces(sb, 30);
         // Centuries
@@ -395,7 +393,9 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     private void writeLine3(FileWriter fw, OmObservation o, MediaType contentType) throws IOException {
         // 3.Zeile 88888 0 0 0.000
         StringBuilder sb = new StringBuilder(45);
-        if (o.isSetIdentifier()) {
+        if( o.getObservationConstellation().isSetIdentifier()) {
+            sb.append(ensureIdentifierLength(o.getObservationConstellation().getIdentifier(), UVFConstants.MAX_IDENTIFIER_LENGTH));
+        } else if (o.isSetIdentifier()) {
             sb.append(ensureIdentifierLength(o.getIdentifier(), UVFConstants.MAX_IDENTIFIER_LENGTH));
         } else {
             if (!o.isSetObservationID()) {
@@ -409,11 +409,13 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                 && ((AbstractSamplingFeature) o.getObservationConstellation().getFeatureOfInterest())
                         .isSetGeometry()) {
             AbstractSamplingFeature sf = (AbstractSamplingFeature)f;
-            String xString = sf.isSetGeometry() ? Double.toString(sf.getGeometry().getCoordinate().x) : "";
+            // Rechtswert
+            String xString = sf.isSetGeometry() ? Double.toString(sf.getGeometry().getCoordinate().y) : "";
             xString = ensureValueLength(xString, 10);
             sb.append(xString);
             fillWithSpaces(sb, 25);
-            String yString = sf.isSetGeometry() ? Double.toString(sf.getGeometry().getCoordinate().y) : "";
+            // Hochwert
+            String yString = sf.isSetGeometry() ? Double.toString(sf.getGeometry().getCoordinate().x) : "";
             yString = ensureValueLength(yString, 10);
             sb.append(yString);
             fillWithSpaces(sb, 35);
@@ -423,7 +425,8 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                 sb.append(zString);
             }
         }
-        writeToFile(fw, sb.toString().trim(), contentType);
+        fillWithSpaces(sb, 45);
+        writeToFile(fw, sb.toString(), contentType);
     }
 
     private void writeLine4(FileWriter fw, TimePeriod temporalBBox, MediaType contentType) throws IOException, DateTimeFormatException {
@@ -450,6 +453,16 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             throw new NoApplicableCodeException().withMessage("Support for '%s' not yet implemented.",
                     omObservation.getValue().getClass().getName());
         }
+    }
+
+    private String getUnit(OmObservation o) {
+        if (o.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty
+                && ((OmObservableProperty)o.getObservationConstellation().getObservableProperty()).isSetUnit()) {
+            return ((OmObservableProperty)o.getObservationConstellation().getObservableProperty()).getUnit();
+        } else if (o.getValue().isSetValue() && o.getValue().getValue().isSetUnit()) {
+                return o.getValue().getValue().getUnit();
+        }
+        return null;
     }
 
     /* ***********************************************************************

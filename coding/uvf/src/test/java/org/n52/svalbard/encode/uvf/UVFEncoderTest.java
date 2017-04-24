@@ -38,7 +38,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.n52.schetland.uvf.UVFConstants;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
@@ -54,7 +53,6 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.CountValue;
@@ -252,7 +250,7 @@ public class UVFEncoderTest {
     public void shouldEncodeMeasurementLocationIdAndCoordinates() throws UnsupportedEncoderInputException,
             OwsExceptionReport {
         final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[7];
-        final String expected = "1              51.93503827.6521225";
+        final String expected = "1              7.6521225 51.9350382          ";
         
         Assert.assertThat(actual, Is.is(expected));
     }

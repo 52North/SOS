@@ -43,6 +43,7 @@ import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
 import org.hibernate.type.descriptor.sql.BasicBinder;
 import org.hibernate.type.descriptor.sql.BasicExtractor;
 import org.hibernate.type.descriptor.sql.TimestampTypeDescriptor;
+import org.joda.time.DateTimeZone;
 
 /**
  * Hibernate TypeDescriptor which forces all Timestamps queried from/inserted to
@@ -73,7 +74,7 @@ public class ConfigurableTimestampTypeDescriptor extends TimestampTypeDescriptor
      */
     public ConfigurableTimestampTypeDescriptor(String timeZone) {
         if (!Strings.isNullOrEmpty(timeZone)) {
-            this.timeZone = TimeZone.getTimeZone(timeZone.trim());
+            this.timeZone = DateTimeZone.forID(timeZone.trim()).toTimeZone();
         }
     }
 

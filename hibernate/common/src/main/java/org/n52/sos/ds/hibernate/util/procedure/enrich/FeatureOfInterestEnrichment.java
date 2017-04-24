@@ -85,7 +85,11 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
             // don't include features for offerings which this procedure is a
             // hidden child of
             if (!getCache().getHiddenChildProceduresForOffering(offering).contains(getIdentifier())) {
-                features.addAll(getCache().getFeaturesOfInterestForOffering(offering));
+                for (String feature : getCache().getFeaturesOfInterestForOffering(offering)) {
+                    if (getCache().getPublishedFeatureOfInterest().contains(feature)) {
+                        features.add(feature);
+                    }
+                }
             }
         }
         return SosHelper.getFeatureIDs(features, getVersion());

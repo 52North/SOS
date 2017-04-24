@@ -324,7 +324,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                                 sosIndeterminateTime, session));
                         
                     }
-                    seriesObservations = checkObservationsForDuplicity(observationDAO.getSeriesObservationsFor(request, features, session), request);
+                    seriesObservations = checkObservationsForDuplicity(seriesObservations, request);
                 }
             }
         }
@@ -332,7 +332,6 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         else {
             seriesObservations = checkObservationsForDuplicity(observationDAO.getSeriesObservationsFor(request, features, session), request);
         }
-        
 
         // if active profile demands observation metadata for series without
         // matching observations,

@@ -45,7 +45,7 @@ import com.google.common.base.Objects;
 /**
  * @since 4.0.0
  */
-public class OmObservationConstellation implements Serializable, Cloneable {
+public class OmObservationConstellation extends AbstractFeature implements Serializable, Cloneable {
     private static final long serialVersionUID = 8758412729768944974L;
 
     /** Identifier of the procedure by which the observation is made */
@@ -392,6 +392,9 @@ public class OmObservationConstellation implements Serializable, Cloneable {
         clone.setObservationType(this.getObservationType());
         clone.setOfferings(new HashSet<String>(this.getOfferings()));
         clone.setProcedure(this.getProcedure());
+        clone.setIdentifier(this.getIdentifier());
+        clone.setName(this.getName());
+        clone.setDescription(this.getDescription());
         return clone;
     }
 

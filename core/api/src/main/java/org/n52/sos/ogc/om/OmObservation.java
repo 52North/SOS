@@ -433,7 +433,11 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
         final MultiObservationValues<List<TimeValuePair>> multiValue =
                 new MultiObservationValues<List<TimeValuePair>>();
         final TVPValue tvpValue = new TVPValue();
-        tvpValue.setUnit(singleValue.getValue().getUnit());
+        if (singleValue.isSetUnit()) {
+            tvpValue.setUnit(singleValue.getUnit());
+        } else if (singleValue.getValue().isSetUnit()) {
+            tvpValue.setUnit(singleValue.getValue().getUnit());
+        }
         final TimeValuePair timeValuePair = new TimeValuePair(singleValue.getPhenomenonTime(), singleValue.getValue());
         tvpValue.addValue(timeValuePair);
         multiValue.setValue(tvpValue);
@@ -743,10 +747,15 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     public OmObservation cloneTemplate(boolean withIdentifierNameDesription) {
         OmObservation clonedTemplate = cloneTemplate(new OmObservation());
         if (withIdentifierNameDesription) {
-            clonedTemplate.setIdentifier(this.getIdentifier());
-            clonedTemplate.setName(this.getName());
-            clonedTemplate.setDescription(this.getDescription());
-            
+            if (this.getObservationConstellation().isSetIdentifier()) {
+                clonedTemplate.setIdentifier(this.getObservationConstellation().getIdentifier());
+                clonedTemplate.setName(this.getObservationConstellation().getName());
+                clonedTemplate.setDescription(this.getObservationConstellation().getDescription());
+            } else {
+                clonedTemplate.setIdentifier(this.getIdentifier());
+                clonedTemplate.setName(this.getName());
+                clonedTemplate.setDescription(this.getDescription());
+            }
         }
         return clonedTemplate;
      }

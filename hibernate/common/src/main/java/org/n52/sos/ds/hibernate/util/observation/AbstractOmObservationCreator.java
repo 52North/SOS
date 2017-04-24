@@ -45,6 +45,7 @@ import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.iso.gmd.CiOnlineResource;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GenericMetaData;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
@@ -201,6 +202,17 @@ public abstract class AbstractOmObservationCreator {
             }
             return sosProcedure;
         }
+    }
+    
+    /**
+     * @param abstractFeature
+     * @param hAbstractFeature
+     */
+    protected void addIdentifier(AbstractFeature abstractFeature, AbstractIdentifierNameDescriptionEntity hAbstractFeature) {
+        if (hAbstractFeature.isSetCodespace()) {
+            abstractFeature.setIdentifier(new CodeWithAuthority(hAbstractFeature.getIdentifier(), hAbstractFeature.getCodespace().getCodespace()));
+        }
+        abstractFeature.setIdentifier(new CodeWithAuthority(hAbstractFeature.getIdentifier()));
     }
 
     /**

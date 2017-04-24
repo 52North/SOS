@@ -184,6 +184,15 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
 //                        obsConst.getProcedure().getIdentifier())));
             }
         }
+        if (getSeries().isSetIdentifier()) {
+            addIdentifier(obsConst, getSeries());
+        }
+        if (getSeries().isSetName()) {
+            addName(obsConst, getSeries());
+        }
+        if (getSeries().isSetDescription()) {
+            obsConst.setDescription(getSeries().getDescription());
+        }
         return obsConst;
     }
 

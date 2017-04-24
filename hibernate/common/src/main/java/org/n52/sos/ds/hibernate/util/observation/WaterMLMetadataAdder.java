@@ -29,6 +29,7 @@ import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.dao.metadata.SeriesMetadataDAO;
 import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
@@ -60,73 +61,75 @@ public class WaterMLMetadataAdder {
     }
 
     public WaterMLMetadataAdder add() throws CodedException {
-        List<SeriesMetadata> seriesMetadata = seriesMetadataDAO.getDomainMetadata(series.getSeriesId(), 
-                WaterMLConstants.NS_WML_20, session);
-        OmObservationConstellation observationConstellation = omObservation.getObservationConstellation();
-        /*
-         * Add interpolation type
-         */
-        if (!observationConstellation.isSetDefaultPointMetadata()) {
-            observationConstellation.setDefaultPointMetadata(new DefaultPointMetadata());
-        }
-        if (!observationConstellation.getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata()) {
-            observationConstellation.getDefaultPointMetadata().setDefaultTVPMeasurementMetadata(
-                    new DefaultTVPMeasurementMetadata());
-        }
-        /*
-         * Get interpolation type from database
-         */
-        Optional<String> interpolationTypeTitle = seriesMetadataDAO.getMetadataElement(seriesMetadata,
-                WaterMLConstants.NS_WML_20,
-                WaterMLConstants.INTERPOLATION_TYPE);
-        /*
-         * Default Value
-         */
-        InterpolationType interpolationType = WaterMLConstants.InterpolationType.Continuous;
-        if (interpolationTypeTitle.isPresent()) {
-            try {
-                interpolationType = InterpolationType.from(interpolationTypeTitle.get());
-            } catch (IllegalArgumentException iae) {
-                throw createMetadataInvalidException(WaterMLConstants.INTERPOLATION_TYPE,
-                        interpolationType.getTitle(), iae);
+        if (HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
+            List<SeriesMetadata> seriesMetadata = seriesMetadataDAO.getDomainMetadata(series.getSeriesId(), 
+                    WaterMLConstants.NS_WML_20, session);
+            OmObservationConstellation observationConstellation = omObservation.getObservationConstellation();
+            /*
+             * Add interpolation type
+             */
+            if (!observationConstellation.isSetDefaultPointMetadata()) {
+                observationConstellation.setDefaultPointMetadata(new DefaultPointMetadata());
             }
-        }
-        observationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata()
-        .setInterpolationtype(interpolationType);
-        /*
-         * Add cumulative
-         */
-        if (!observationConstellation.isSetMetadata()) {
-            observationConstellation.setMetadata(new Metadata());
-        }
-        if (!observationConstellation.getMetadata().isSetTimeseriesMetadata()) {
-            observationConstellation.getMetadata().setTimeseriesmetadata(new MeasurementTimeseriesMetadata());
-        }
-        Optional<String> cumulativeMetadata = seriesMetadataDAO.getMetadataElement(seriesMetadata,
-                WaterMLConstants.NS_WML_20,
-                WaterMLConstants.SERIES_METADATA_CUMULATIVE);
-        /*
-         * Default Value
-         */
-        boolean cumulative = false;
-        if (cumulativeMetadata.isPresent()) {
-            if (!cumulativeMetadata.get().isEmpty() && (
-                        cumulativeMetadata.get().equalsIgnoreCase("true") || 
-                        cumulativeMetadata.get().equalsIgnoreCase("false") ||
-                        cumulativeMetadata.get().equalsIgnoreCase("1") ||
-                        cumulativeMetadata.get().equalsIgnoreCase("0"))) {
-                if (cumulativeMetadata.get().equals("1")) {
-                    cumulative = true;
-                } else {
-                    cumulative = Boolean.parseBoolean(cumulativeMetadata.get());
+            if (!observationConstellation.getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata()) {
+                observationConstellation.getDefaultPointMetadata().setDefaultTVPMeasurementMetadata(
+                        new DefaultTVPMeasurementMetadata());
+            }
+            /*
+             * Get interpolation type from database
+             */
+            Optional<String> interpolationTypeTitle = seriesMetadataDAO.getMetadataElement(seriesMetadata,
+                    WaterMLConstants.NS_WML_20,
+                    WaterMLConstants.INTERPOLATION_TYPE);
+            /*
+             * Default Value
+             */
+            InterpolationType interpolationType = WaterMLConstants.InterpolationType.Continuous;
+            if (interpolationTypeTitle.isPresent()) {
+                try {
+                    interpolationType = InterpolationType.from(interpolationTypeTitle.get());
+                } catch (IllegalArgumentException iae) {
+                    throw createMetadataInvalidException(WaterMLConstants.INTERPOLATION_TYPE,
+                            interpolationType.getTitle(), iae);
                 }
-            } else {
-                throw createMetadataInvalidException(WaterMLConstants.SERIES_METADATA_CUMULATIVE,
-                        cumulativeMetadata.get(), null);
             }
+            observationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata()
+            .setInterpolationtype(interpolationType);
+            /*
+             * Add cumulative
+             */
+            if (!observationConstellation.isSetMetadata()) {
+                observationConstellation.setMetadata(new Metadata());
+            }
+            if (!observationConstellation.getMetadata().isSetTimeseriesMetadata()) {
+                observationConstellation.getMetadata().setTimeseriesmetadata(new MeasurementTimeseriesMetadata());
+            }
+            Optional<String> cumulativeMetadata = seriesMetadataDAO.getMetadataElement(seriesMetadata,
+                    WaterMLConstants.NS_WML_20,
+                    WaterMLConstants.SERIES_METADATA_CUMULATIVE);
+            /*
+             * Default Value
+             */
+            boolean cumulative = false;
+            if (cumulativeMetadata.isPresent()) {
+                if (!cumulativeMetadata.get().isEmpty() && (
+                            cumulativeMetadata.get().equalsIgnoreCase("true") || 
+                            cumulativeMetadata.get().equalsIgnoreCase("false") ||
+                            cumulativeMetadata.get().equalsIgnoreCase("1") ||
+                            cumulativeMetadata.get().equalsIgnoreCase("0"))) {
+                    if (cumulativeMetadata.get().equals("1")) {
+                        cumulative = true;
+                    } else {
+                        cumulative = Boolean.parseBoolean(cumulativeMetadata.get());
+                    }
+                } else {
+                    throw createMetadataInvalidException(WaterMLConstants.SERIES_METADATA_CUMULATIVE,
+                            cumulativeMetadata.get(), null);
+                }
+            }
+            ((MeasurementTimeseriesMetadata)observationConstellation.getMetadata().getTimeseriesmetadata())
+                .setCumulative(cumulative);
         }
-        ((MeasurementTimeseriesMetadata)observationConstellation.getMetadata().getTimeseriesmetadata())
-            .setCumulative(cumulative);
         return this;
     }
 

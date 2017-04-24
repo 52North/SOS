@@ -39,6 +39,7 @@ import net.opengis.sos.x20.GetObservationByIdResponseType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.ObservationEncoder;
+import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.OmObservation;
@@ -62,7 +63,8 @@ import com.google.common.collect.Sets;
  * 
  * @since 4.0.0
  */
-public class GetObservationByIdResponseEncoder extends AbstractObservationResponseEncoder<GetObservationByIdResponse> {
+public class GetObservationByIdResponseEncoder extends AbstractObservationResponseEncoder<GetObservationByIdResponse>
+        implements StreamingDataEncoder {
     public static final String GML_ID = "sf_1";
 
     public GetObservationByIdResponseEncoder() {
@@ -78,21 +80,19 @@ public class GetObservationByIdResponseEncoder extends AbstractObservationRespon
         List<OmObservation> oc = getObservationsAndCheckForStreaming(response, encoder);
         HashMap<CodeWithAuthority, String> gmlID4sfIdentifier = new HashMap<CodeWithAuthority, String>(oc.size());
         for (OmObservation observation : oc) {
-            if (checkObservationHasValue(observation)) {
-                Map<HelperValues, String> foiHelper = new EnumMap<HelperValues, String>(HelperValues.class);
-                final String gmlId;
-                CodeWithAuthority foiId = observation.getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority();
-                if (gmlID4sfIdentifier.containsKey(foiId)) {
-                    gmlId = gmlID4sfIdentifier.get(foiId);
-                    foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(true));
-                } else {
-                    gmlId = GML_ID;
-                    gmlID4sfIdentifier.put(foiId, gmlId);
-                    foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(false));
-                }
-                foiHelper.put(HelperValues.GMLID, gmlId);
-                xbResponse.addNewObservation().addNewOMObservation().set(encoder.encode(observation, foiHelper));
+            Map<HelperValues, String> foiHelper = new EnumMap<HelperValues, String>(HelperValues.class);
+            final String gmlId;
+            CodeWithAuthority foiId = observation.getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority();
+            if (gmlID4sfIdentifier.containsKey(foiId)) {
+                gmlId = gmlID4sfIdentifier.get(foiId);
+                foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(true));
+            } else {
+                gmlId = GML_ID;
+                gmlID4sfIdentifier.put(foiId, gmlId);
+                foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(false));
             }
+            foiHelper.put(HelperValues.GMLID, gmlId);
+            xbResponse.addNewObservation().addNewOMObservation().set(encoder.encode(observation, foiHelper));
         }
         XmlHelper.makeGmlIdsUnique(xbResponse.getDomNode());
         return doc;

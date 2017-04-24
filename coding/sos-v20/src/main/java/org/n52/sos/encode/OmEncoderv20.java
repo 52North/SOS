@@ -391,12 +391,9 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                     additionalValue.put(HelperValues.GMLID, SosConstants.OBS_ID_PREFIX + this.observationId);
                     additionalValue.put(HelperValues.PROPERTY_TYPE, null);
                     return encodeGML(value.getValue(), additionalValue);
-                } else {
-                    return null;
                 }
-            } else {
-                return null;
             }
+                return null;
         }
 
         @Override
@@ -417,10 +414,11 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
             if (observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT)
                     || observationType.equals(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP)
                     || observationType.equals(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR)) {
-                return encodeGML(value);
-            } else {
-                return null;
+                if (value.isSetValue()) {
+                    return encodeGML(value);
+                }
             }
+            return null;
         }
 
         @Override

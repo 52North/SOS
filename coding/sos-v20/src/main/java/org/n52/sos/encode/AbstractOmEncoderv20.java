@@ -325,7 +325,7 @@ public abstract class AbstractOmEncoderv20
         if (result != null) {
              xb.addNewResult().set(result);
         } else {
-            xb.addNewResult().setNil();
+            xb.addNewResult();
         }
     }
 

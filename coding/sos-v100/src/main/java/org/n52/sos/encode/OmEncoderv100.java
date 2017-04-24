@@ -296,15 +296,11 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
                         StreamingValue streamingValue = (StreamingValue) sosObservation.getValue();
                         while (streamingValue.hasNextValue()) {
                             OmObservation o = streamingValue.nextSingleObservation();
-                            if (checkObservationHasValue(o)) {
-                                xbObservationCollection.addNewMember().set(
+                            xbObservationCollection.addNewMember().set(
                                         createObservation(o, null));
-                            }
                         }
                     } else {
-                        if (checkObservationHasValue(sosObservation)) {
-                            xbObservationCollection.addNewMember().set(createObservation(sosObservation, null));
-                        }
+                        xbObservationCollection.addNewMember().set(createObservation(sosObservation, null));
                     }
                 } else {
                     throw new InvalidParameterValueException().at(Sos1Constants.GetObservationParams.resultModel)
@@ -590,9 +586,5 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
                 Boolean.toString(activeProfile.isEncodeFeatureOfInterestInObservations()));
         XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, feature, additionalValues);
         observation.addNewFeatureOfInterest().set(encodeObjectToXml);
-    }
-    
-    protected boolean checkObservationHasValue(OmObservation o) {
-        return o != null && o.isSetValue() && o.getValue().isSetValue() && o.getValue().getValue().isSetValue();
     }
 }

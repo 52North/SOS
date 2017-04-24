@@ -372,8 +372,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         ArrayList<Object> values = new ArrayList<Object>(timeValuePairs.size());
         for (TimeValuePair timeValuePair : timeValuePairs) {
             if (timeValuePair.getValue() != null
-                    && (timeValuePair.getValue() instanceof CountValue || timeValuePair.getValue() instanceof QuantityValue)
-                    && timeValuePair.getValue().isSetValue()) {
+                    && (timeValuePair.getValue() instanceof CountValue || timeValuePair.getValue() instanceof QuantityValue)) {
                 values.add(timeValuePair.getValue().getValue());
             }
         }

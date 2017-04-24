@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
@@ -40,7 +41,7 @@ import org.n52.sos.ogc.series.wml.WaterMLConstants;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
-public class WaterMLObservationCreator implements AdditionalObservationCreator<Series> {
+public class WaterMLObservationCreator extends AbstractAdditionalObservationCreator<Series> {
 
     private static final Set<AdditionalObservationCreatorKey> KEYS =
             AdditionalObservationCreatorRepository.encoderKeysForElements(WaterMLConstants.NS_WML_20,
@@ -55,26 +56,6 @@ public class WaterMLObservationCreator implements AdditionalObservationCreator<S
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, Series series) {
-        return omObservation;
-    }
-
-    @Override
-    public OmObservation create(OmObservation omObservation, Series series, Session session) throws CodedException {
-        return addWaterMLMetadata(omObservation, series, session);
-    }
-
-    @Override
-    public OmObservation create(OmObservation omObservation, Observation<?> observation) {
-        return omObservation;
-    }
-
-    @Override
-    public OmObservation add(OmObservation omObservation, Observation<?> observation) {
-        return omObservation;
-    }
-
-    @Override
     public OmObservation create(OmObservation omObservation, Observation<?> observation, Session session)
             throws CodedException {
         create(omObservation, observation);
@@ -82,6 +63,12 @@ public class WaterMLObservationCreator implements AdditionalObservationCreator<S
             return addWaterMLMetadata(omObservation, ((AbstractSeriesObservation<?>)observation).getSeries(), session);
         }
         return omObservation;
+    }
+
+    @Override
+    public OmObservation create(OmObservation omObservation, Series series, Session session) throws CodedException {
+        create(omObservation, series);
+        return addWaterMLMetadata(omObservation, series, session);
     }
 
     @Override

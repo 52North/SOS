@@ -66,9 +66,7 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
     protected void encodeResponse(ObjectNode json, T t) throws OwsExceptionReport {
         ArrayNode obs = json.putArray(JSONConstants.OBSERVATIONS);
         for (OmObservation o : t.getObservationCollection()) {
-            if (checkObservationHasValue(o)) {
-                obs.add(encodeObjectToJson(o));
-            }
+            obs.add(encodeObjectToJson(o));
         }
     }
 
@@ -99,9 +97,5 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
                         OmConstants.OBS_TYPE_COUNT_OBSERVATION, OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
                         OmConstants.OBS_TYPE_MEASUREMENT, OmConstants.OBS_TYPE_TEXT_OBSERVATION,
                         OmConstants.OBS_TYPE_TRUTH_OBSERVATION, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION));
-    }
-    
-    protected boolean checkObservationHasValue(OmObservation o) {
-        return o != null && o.isSetValue() && o.getValue().isSetValue() && o.getValue().getValue().isSetValue();
     }
 }

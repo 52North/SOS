@@ -31,9 +31,10 @@ package org.n52.sos.encode.streaming;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
-import org.apache.commons.lang.StringEscapeUtils;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.n52.sos.encode.EncodingValues;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.ObservationValue;
@@ -49,7 +50,6 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
 import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
 import org.n52.sos.ogc.series.wml.WaterMLConstants;
 import org.n52.sos.ogc.series.wml.WaterMLConstants.InterpolationType;
@@ -111,7 +111,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             TVPValue tvpValue = (TVPValue) observationValue.getValue();
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
             for (TimeValuePair timeValuePair : timeValuePairs) {
-                if (timeValuePair != null && timeValuePair.getValue() != null && timeValuePair.getValue().isSetValue()) {
+                if (timeValuePair != null) {
                     writePoint(getTimeString(timeValuePair.getTime()), getValue(timeValuePair.getValue()));
                     writeNewLine();
                 }
@@ -124,7 +124,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             writeNewLine();
             while (observationValue.hasNextValue()) {
                 TimeValuePair timeValuePair = observationValue.nextValue();
-                if (timeValuePair != null && timeValuePair.getValue() != null && timeValuePair.getValue().isSetValue()) {
+                if (timeValuePair != null) {
                     writePoint(getTimeString(timeValuePair.getTime()), getValue(timeValuePair.getValue()));
                     writeNewLine();
                 }
@@ -138,6 +138,38 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     @Override
     protected void writeAddtitionalNamespaces() throws XMLStreamException {
         namespace(WaterMLConstants.NS_WML_20_PREFIX, WaterMLConstants.NS_WML_20);
+    }
+    
+    @Override
+    protected void checkAndWriteIdentifier() throws OwsExceptionReport, XMLStreamException {
+        if (getObservation().getObservationConstellation().isSetIdentifier()) {
+            writeIdentifier(getObservation().getObservationConstellation().getIdentifierCodeWithAuthority());
+            writeNewLine();
+        } else {
+            super.checkAndWriteIdentifier();
+        }
+    }
+    
+    @Override
+    protected void checkAndWriteName() throws OwsExceptionReport, XMLStreamException {
+        if (getObservation().getObservationConstellation().isSetName()) {
+            for (CodeType name : getObservation().getObservationConstellation().getName()) {
+                writeName(name);
+                writeNewLine();   
+            }
+        } else {
+            super.checkAndWriteName();
+        }
+    }
+    
+    @Override
+    protected void checkAndWriteDescription() throws XMLStreamException {
+        if (getObservation().getObservationConstellation().isSetDescription()) {
+            writeDescription(getObservation().getObservationConstellation().getDescription());
+            writeNewLine();
+        } else {
+            super.checkAndWriteDescription();
+        }
     }
 
     /**
@@ -250,21 +282,23 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
      * @return {@link String} representation of {@link Value}
      */
     private String getValue(Value<?> value) {
-        if (value instanceof QuantityValue) {
-            QuantityValue quantityValue = (QuantityValue) value;
-            return Double.toString(quantityValue.getValue().doubleValue());
-        } else if (value instanceof ProfileValue) {
-            ProfileValue gwglcValue = (ProfileValue)value;
-            if (gwglcValue.isSetValue()) {
-                return getValue(gwglcValue.getValue().iterator().next().getSimpleValue());
-            }       
-        } else if (value instanceof CountValue) {
-            CountValue countValue = (CountValue) value;
-            return Integer.toString(countValue.getValue().intValue());
-        } else if (value instanceof TextValue) {
-            TextValue textValue = (TextValue) value;
-            String nonXmlEscapedText = textValue.getValue();
-            return StringEscapeUtils.escapeXml(nonXmlEscapedText);
+        if (value != null && value.isSetValue()) {
+            if (value instanceof QuantityValue) {
+                QuantityValue quantityValue = (QuantityValue) value;
+                return Double.toString(quantityValue.getValue().doubleValue());
+            } else if (value instanceof ProfileValue) {
+                ProfileValue gwglcValue = (ProfileValue)value;
+                if (gwglcValue.isSetValue()) {
+                    return getValue(gwglcValue.getValue().iterator().next().getSimpleValue());
+                }       
+            } else if (value instanceof CountValue) {
+                CountValue countValue = (CountValue) value;
+                return Integer.toString(countValue.getValue().intValue());
+            } else if (value instanceof TextValue) {
+                TextValue textValue = (TextValue) value;
+                String nonXmlEscapedText = textValue.getValue();
+                return StringEscapeUtils.escapeXml(nonXmlEscapedText);
+            }
         }
         return null;
     }

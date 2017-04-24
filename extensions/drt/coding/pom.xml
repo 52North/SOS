@@ -44,6 +44,10 @@
             <scope>test</scope>
             <classifier>tests</classifier>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>binding-kvp</artifactId>
+        </dependency>
     </dependencies>
     <repositories>
 		<repository>

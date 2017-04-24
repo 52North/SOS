@@ -59,8 +59,10 @@ import org.slf4j.LoggerFactory;
 public class DeleteResultTemplateDecoder implements Decoder<DeleteResultTemplateRequest, XmlObject> {
 
     private static final Set<DecoderKey> DECODER_KEYS =
-            CollectionHelper.union(CodingHelper.decoderKeysForElements(DeleteResultTemplateConstants.NS,
-                    DeleteResultTemplateDocument.class),
+            CollectionHelper.union(
+                    CodingHelper.decoderKeysForElements(
+                            DeleteResultTemplateConstants.NS,
+                            DeleteResultTemplateDocument.class),
                     CodingHelper.xmlDecoderKeysForOperation(
                             SosConstants.SOS,
                             Sos2Constants.SERVICEVERSION,
@@ -89,7 +91,7 @@ public class DeleteResultTemplateDecoder implements Decoder<DeleteResultTemplate
             throw new UnsupportedDecoderInputException(this, xmlObject);
         }
     }
-
+    
     private DeleteResultTemplateRequest parseDeleteResultTemplate(DeleteResultTemplateDocument drtd)
             throws OwsExceptionReport {
         DeleteResultTemplateRequest request = null;

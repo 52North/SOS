@@ -10,6 +10,9 @@ RELEASE NOTES
 ==================================
  
   --- New features ---
+
+      * Issue #530: Add DeleteResultTemplate operation
+         * https://github.com/52North/SOS/pull/536
   
   
   --- Changes ---

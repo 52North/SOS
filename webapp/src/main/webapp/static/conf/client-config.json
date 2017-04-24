@@ -307,7 +307,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"DescribeSensor",
 			"title":"language ger",
 			"headers":{
@@ -326,7 +326,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"DescribeSensor",
 			"title":"crs = EPSG::4258",
 			"headers":{
@@ -357,7 +357,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"language ger",
 			"headers":{
@@ -373,7 +373,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"crs = 4258",
 			"headers":{
@@ -389,7 +389,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"crs = EPSG:4258",
 			"headers":{
@@ -405,7 +405,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"crs = EPSG::4258",
 			"headers":{
@@ -421,7 +421,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"crs = http://www.opengis.net/def/crs/EPSG/0/4258",
 			"headers":{
@@ -437,7 +437,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"crs = urn:ogc:def:crs:EPSG::4258",
 			"headers":{
@@ -618,7 +618,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"language=ger",
 			"headers":{
@@ -635,7 +635,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"crs=EPSG::4258",
 			"headers":{
@@ -910,7 +910,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservation",
 			"title":"offering, language=ger",
 			"headers":{
@@ -928,7 +928,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservation",
 			"title":"offering, crs=EPSG::4258",
 			"headers":{
@@ -1154,7 +1154,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservationById",
 			"headers":{
 				"Accept":"application/xml"
@@ -1171,7 +1171,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservationById",
 			"title":"crs=EPSG::4258",
 			"headers":{
@@ -1189,7 +1189,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservationById",
 			"title":"language=ger",
 			"headers":{
@@ -1208,7 +1208,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservationById",
 			"title":"crs=EPSG::4258,lanuage=get",
 			"headers":{
@@ -2661,6 +2661,82 @@
 				"Content-Type":"application/soap+xml"
 			},
 			"method":"POST"
+		},
+                {
+                        "request":"static/examples/sos_v20/requests_xml/Transactional/DeleteResultTemplate.xml",
+                        "service":"SOS",
+                        "version":"2.0.0",
+                        "binding":"application/xml",
+                        "operation":"DeleteResultTemplate",
+                        "headers":{
+                                "Accept":"application/xml",
+                                "Content-Type":"application/xml"
+                        },
+                        "method":"POST"
+                },
+                {
+                        "request":"static/examples/sos_v20/requests_soap/Transactional/DeleteResultTemplate.xml",
+                        "service":"SOS",
+                        "version":"2.0.0",
+                        "binding":"application/soap+xml",
+                        "operation":"DeleteResultTemplate",
+                        "headers":{
+                                "Accept":"application/soap+xml",
+                                "Content-Type":"application/soap+xml"
+                        },
+                        "method":"POST"
+                },
+                {
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"DeleteResultTemplate",
+				"resultTemplate":"http://www.52north.org/test/procedure/9/template/1"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"application/x-kvp",
+                        "title":"with result template",
+			"operation":"DeleteResultTemplate",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+                {
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"DeleteResultTemplate",
+				"resultTemplate":"http://www.52north.org/test/procedure/9/template/1,http://www.52north.org/test/procedure/9/template/1"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"application/x-kvp",
+                        "title":"with result templates",
+			"operation":"DeleteResultTemplate",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+                                {
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"DeleteResultTemplate",
+				"offering":"http://www.52north.org/test/procedure/9/template/1",
+                                "observedProperty":"http://www.52north.org/test/observableProperty/9_3"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"application/x-kvp",
+                        "title":"with offering and observed property",
+			"operation":"DeleteResultTemplate",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
 		},
 		{
 			"service":"SOS",

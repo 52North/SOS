@@ -11,6 +11,9 @@ RELEASE NOTES
  
   --- New features ---
 
+      * Issue #532: Add UpdateResultTemplate operation
+         * https://github.com/52North/SOS/pull/537
+
       * Issue #530: Add DeleteResultTemplate operation
          * https://github.com/52North/SOS/pull/536
   

@@ -46,7 +46,7 @@ public interface DeleteResultTemplateConstants {
     
     String XPATH_PREFIXES_DRT = XmlHelper.getXPathPrefix(NS_PREFIX, NS);
     
-    String SCHEMA_LOCATION_URL =  "http://52north.org/schema/drt/1.0/DeleteResultTemplate.xsd";
+    String SCHEMA_LOCATION_URL =  "http://52north.org/schema/sosdrt/1.0/sosdrt.xsd";
 
     String CONFORMANCE_CLASS_INSERTION = "http://www.opengis.net/spec/SOS/2.0/conf/resultInsertion";
     

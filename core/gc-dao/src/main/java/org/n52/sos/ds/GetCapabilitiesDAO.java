@@ -889,11 +889,13 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         final Collection<String> observablePropertiesForOffering =
                 getCache().getObservablePropertiesForOffering(offering);
         for (final String observableProperty : observablePropertiesForOffering) {
-            final Set<String> proceduresForObservableProperty =
-                    getCache().getProceduresForObservableProperty(observableProperty);
-            if (proceduresForObservableProperty.contains(procedure)
-                    || isHiddenChildProcedureObservableProperty(offering, proceduresForObservableProperty)) {
-                phenomenons.add(observableProperty);
+            if (getCache().getPublishedObservableProperties().contains(observableProperty)) {
+                final Set<String> proceduresForObservableProperty =
+                        getCache().getProceduresForObservableProperty(observableProperty);
+                if (proceduresForObservableProperty.contains(procedure)
+                        || isHiddenChildProcedureObservableProperty(offering, proceduresForObservableProperty)) {
+                    phenomenons.add(observableProperty);
+                }
             }
         }
         sosOffering.setObservableProperties(phenomenons);

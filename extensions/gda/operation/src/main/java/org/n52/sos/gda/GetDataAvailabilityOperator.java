@@ -96,7 +96,7 @@ public class GetDataAvailabilityOperator
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(sosRequest.getProcedures(), GetDataAvailabilityParams.procedure.name());
+            checkProcedures(sosRequest.getProcedures(), GetDataAvailabilityParams.procedure.name());
             if (sosRequest.isSetProcedures()) {
                 sosRequest.setProcedure(addChildProcedures(sosRequest.getProcedures()));
             }

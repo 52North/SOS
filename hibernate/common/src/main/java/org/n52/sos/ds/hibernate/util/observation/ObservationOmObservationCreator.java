@@ -190,6 +190,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         if (value != null) {
             if (hObservation.getUnit() != null) {
                 value.setUnit(hObservation.getUnit().getUnit());
+            } else if (hObservation instanceof SeriesObservation && ((SeriesObservation)hObservation).getSeries().isSetUnit()) {
+                value.setUnit(((SeriesObservation)hObservation).getSeries().getUnit().getUnit());
             }
             checkOrSetObservablePropertyUnit(getObservedProperty(phenomenonId), value.getUnit());
             OmObservationConstellation obsConst =

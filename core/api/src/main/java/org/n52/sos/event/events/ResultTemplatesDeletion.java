@@ -37,7 +37,7 @@ import org.n52.sos.response.DeleteResultTemplateResponse;
  * @since 4.4.0
  *
  */
-public class ResultTemplatesDeletion extends SosInsertionEvent<DeleteResultTemplateRequest, DeleteResultTemplateResponse> {
+public class ResultTemplatesDeletion extends SosDeletionEvent<DeleteResultTemplateRequest, DeleteResultTemplateResponse> {
 
     public ResultTemplatesDeletion(DeleteResultTemplateRequest request, DeleteResultTemplateResponse response) {
         super(request, response);

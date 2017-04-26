@@ -66,6 +66,7 @@ import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.request.ProcedureRequestSettings;
@@ -233,6 +234,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
                     // TODO implement SWEArrayObservation
                     logTypeNotSupported(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
                 }
+                return new SmlIo<String>(new SweObservableProperty().setDefinition(observableProperty));
             }
         }
         return null;

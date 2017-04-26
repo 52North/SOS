@@ -105,7 +105,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         //perform single threaded updates here
-        Map<String, Collection<String>> procedureMap = offeringDAO.getOfferingIdentifiers(getSession());
+        Map<String, Collection<String>> offeringMap = offeringDAO.getOfferingIdentifiers(getSession());
         for (Offering offering : getOfferingsToUpdate()) {
             String offeringId = offering.getIdentifier();
             if (shouldOfferingBeProcessed(offeringId)) {
@@ -126,7 +126,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                     getCache().setAllowedFeatureOfInterestTypeForOffering(offeringId,
                             getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
                 }
-                Collection<String> parentOfferings = procedureMap.get(offeringId);
+                Collection<String> parentOfferings = offeringMap.get(offeringId);
                 if (!CollectionHelper.isEmpty(parentOfferings)) {
                     getCache().addParentOfferings(offeringId, parentOfferings);
                 }

@@ -237,12 +237,15 @@ public class SamplingDecoderv20 extends AbstractOmDecoderv20 {
     }
 
     private Geometry getGeometry(final ShapeType shape) throws OwsExceptionReport {
-        final Object decodedObject = CodingHelper.decodeXmlElement(shape.getAbstractGeometry());
-        if (decodedObject instanceof Geometry) {
-            return (Geometry) decodedObject;
+        if (shape.isSetAbstractGeometry()) {
+            final Object decodedObject = CodingHelper.decodeXmlElement(shape.getAbstractGeometry());
+            if (decodedObject instanceof Geometry) {
+                return (Geometry) decodedObject;
+            }
+            throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation).withMessage(
+                    "The requested geometry type of featureOfInterest is not supported by this service!");
         }
-        throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation).withMessage(
-                "The requested geometry type of featureOfInterest is not supported by this service!");
+        return null;
     }
 
     private void checkTypeAndGeometry(final SamplingFeature sosFeat) throws OwsExceptionReport {

@@ -1757,6 +1757,19 @@
 			"method":"POST"
 		},
 		{
+            "request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResult_ComplexObservation_SamplingGeometry_FlexibleFeature.xml",
+            "service":"SOS",
+            "version":"2.0.0",
+            "binding": "application/xml",
+            "operation":"InsertResult",
+            "title":"for ComplexObservation with SamplingGeometry and flexible featureOfInterest",
+            "headers":{
+                "Accept":"application/xml",
+                "Content-Type":"application/xml"
+            },
+            "method":"POST"
+        },
+		{
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1807,6 +1820,19 @@
 			},
 			"method":"POST"
 		},
+		{
+            "request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplate_ComplexObservation_SamplingGeometry_FlexibleFeature.xml",
+            "service":"SOS",
+            "version":"2.0.0",
+            "binding": "application/xml",
+            "operation":"InsertResultTemplate",
+            "title":"for ComplexObservation with SamplingGeometry and flexible featureOfInterest",
+            "headers":{
+                "Accept":"application/xml",
+                "Content-Type":"application/xml"
+            },
+            "method":"POST"
+        },
 		{
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultWithResultTime.xml",
 			"service":"SOS",
@@ -2458,6 +2484,19 @@
 			"method":"POST"
 		},
 		{
+            "request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResult_ComplexObservation_SamplingGeometry_FlexibleFeature.xml",
+            "service":"SOS",
+            "version":"2.0.0",
+            "binding": "application/soap+xml",
+            "operation":"InsertResult",
+            "title":"with ComplexObservation and SamplingGeometry and flexible featureOfInterest",
+            "headers":{
+                "Accept":"application/soap+xml",
+                "Content-Type":"application/soap+xml"
+            },
+            "method":"POST"
+        },
+		{
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -2508,6 +2547,19 @@
 			},
 			"method":"POST"
 		},
+		{
+            "request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplate_ComplexObservation_SamplingGeometry_FlexibleFeature.xml",
+            "service":"SOS",
+            "version":"2.0.0",
+            "binding": "application/soap+xml",
+            "operation":"InsertResultTemplate",
+            "title":"with ComplexObservation and SamplingGeometry and flexible featureOfInterest",
+            "headers":{
+                "Accept":"application/soap+xml",
+                "Content-Type":"application/soap+xml"
+            },
+            "method":"POST"
+        },
 		{
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultWithResultTime.xml",
 			"service":"SOS",

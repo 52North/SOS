@@ -1481,7 +1481,7 @@
                     <strictCheck>true</strictCheck>
                     <properties>
                         <inceptionYear>2012</inceptionYear>
-                        <latestYearOfContribution>2016</latestYearOfContribution>
+                        <latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>
                     </properties>
                 </configuration>
                 <!-- 

@@ -1752,7 +1752,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
             @Override
             public String visit(NumericObservation o) throws OwsExceptionReport {
-                return "measurement";
+                return "quantity";
             }
 
             @Override

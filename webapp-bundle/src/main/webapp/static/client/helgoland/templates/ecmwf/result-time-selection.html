@@ -1,0 +1,4 @@
+<div class="form-group">
+    <label>Select a result time</label>
+    <select class="form-control" ng-model="$ctrl.selection" ng-options="item as (item | date : 'medium') for item in $ctrl.items" ng-change="$ctrl.onChange(item)"></select>
+</div>

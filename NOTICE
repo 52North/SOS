@@ -263,6 +263,7 @@ This project includes:
   PostgreSQL JDBC Driver under BSD License
   PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
   Protocol Buffer Java API under New BSD license
+  quartz under The Apache Software License, Version 2.0
   Quartz Enterprise Job Scheduler under Apache 2.0
   Referencing services under GNU Lesser General Public License (LGPL) version 2.1
   Reflections under WTFPL
@@ -271,7 +272,7 @@ This project includes:
   Series REST API - DAO module under GNU General Public License, Version 2.0
   Series REST API - IO module under GNU General Public License, Version 2.0
   Series REST API - REST module under GNU General Public License, Version 2.0
-  Series REST API - SOS DAO module under GNU General Public License, Version 2.0
+  Series REST API - SPI module under GNU General Public License, Version 2.0
   servlet-api under CDDL 1.1 or GPL2 w/ CPE
   SLF4J API Module under MIT License
   Spring AOP under The Apache Software License, Version 2.0
@@ -282,6 +283,7 @@ This project includes:
   Spring Core under The Apache Software License, Version 2.0
   Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
   Spring JDBC under The Apache Software License, Version 2.0
+  Spring Object/Relational Mapping under The Apache Software License, Version 2.0
   Spring Object/XML Marshalling under The Apache Software License, Version 2.0
   Spring TestContext Framework under The Apache Software License, Version 2.0
   Spring Transaction under The Apache Software License, Version 2.0

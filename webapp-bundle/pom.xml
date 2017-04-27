@@ -11,7 +11,8 @@
 	<name>52°North SOS - Webapp with Sensor Web REST API</name>
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
-		<series.api.version>2.0.0-alpha.2</series.api.version>
+    <series.api.version>2.0.0-rc.2-SNAPSHOT</series.api.version>
+    <series.db.version>2.0.0-SNAPSHOT</series.db.version>
     <helgoland.version>1.0.0</helgoland.version>
 	</properties>
 	<build>
@@ -37,8 +38,8 @@
 									<overWrite>false</overWrite>
 								</artifactItem>
                 <artifactItem> 
-                 <groupId>org.n52.series-api</groupId> 
-                 <artifactId>series-mappings</artifactId> 
+                 <groupId>org.n52.series-api.db</groupId> 
+                 <artifactId>mappings</artifactId> 
                  <includes>hbm/sos/v44/*.hbm.xml</includes>
                  <outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly/</outputDirectory> 
                  <overWrite>true</overWrite>
@@ -121,9 +122,9 @@
 
 		<!-- REST API Dependencies -->
 		<dependency>
-			<groupId>org.n52.series-api</groupId>
-			<artifactId>series-dao-sos</artifactId>
-			<version>${series.api.version}</version>
+			<groupId>org.n52.series-api.db</groupId>
+			<artifactId>dao</artifactId>
+			<version>${series.db.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.geotools</groupId>
@@ -175,9 +176,9 @@
       </exclusions>
     </dependency>
      <dependency>
-      <groupId>org.n52.series-api</groupId>
-      <artifactId>series-mappings</artifactId>
-      <version>${series.api.version}</version>
+      <groupId>org.n52.series-api.db</groupId>
+      <artifactId>mappings</artifactId>
+      <version>${series.db.version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>

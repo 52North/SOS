@@ -234,6 +234,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     private void getParents(Set<String> parents, Procedure procedure) {
         if (procedure instanceof TProcedure && ((TProcedure)procedure).getParents() != null) {
             for (Procedure parent : ((TProcedure)procedure).getParents()) {
+                parents.add(parent.getIdentifier());
                 getParents(parents, parent);
             }
         }

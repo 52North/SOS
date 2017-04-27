@@ -16,7 +16,7 @@
 
     <bean id="timeseriesRepository" class="org.n52.series.db.da.TimeseriesRepository" />
     <bean id="stationRepository" class="org.n52.series.db.da.StationRepository">
-        <property name="databaseSrid" value="EPSG:4326" />
+        <property name="databaseSrid" value="${database.srid}" />
     </bean>
 
     <bean id="stationParameterService" class="org.n52.series.srv.AccessService">

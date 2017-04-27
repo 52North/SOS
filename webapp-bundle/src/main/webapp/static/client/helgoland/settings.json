@@ -5,11 +5,11 @@
   "aggregateServices": true,
   "saveStatus": true,
   "restApiUrls": {
-        "http://localhost:8080/52n-sos-webapp/api/v1/": "localhost"
+        "http://localhost:8080/52n-sos-webapp/api/": "localhost"
     },
     "defaultProvider": {
         "serviceID": "1",
-        "apiUrl": "http://localhost:8080/52n-sos-webapp/api/v1/"
+        "apiUrl": "http://localhost:8080/52n-sos-webapp/api/"
     },
   "chartOptions": {
     "yaxis": {

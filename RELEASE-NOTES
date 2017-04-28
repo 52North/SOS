@@ -12,12 +12,18 @@ RELEASE NOTES
   --- New features ---
 
     * Make timezones configurable to handle time w/o zone information properly (instead of expecting UTC only)
+    * Add named query for samplingGeometry check in offering cache update
+    * Get unit from series table
     
   --- Changes ---
     
+    * Set overall time extrema flag to false
+    * Enhancements for not publiched objects (series concept)
+    * Update REST-aPI to 1.10.0
   
   --- Fixed issues ---
 
+    * some minor fixes
  
     Release 52n-sensorweb-sos-4.3.11
 =====================================

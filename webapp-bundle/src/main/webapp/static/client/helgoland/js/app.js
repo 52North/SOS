@@ -70,89 +70,55 @@ var mainApp = angular.module('jsClient', [
     'n52.client.map'
 ]);
 
-mainApp.config(['$routeProvider', function($routeProvider) {
-    $routeProvider
-        .when('/', {
-            templateUrl: 'templates/views/diagramView.html',
-            reloadOnSearch: false,
-            resolve: {
-                templates: 'templates'
-            }
-        })
-        .when('/diagram', {
-            templateUrl: 'templates/views/diagramView.html',
-            name: 'navigation.diagram',
-            reloadOnSearch: false,
-            resolve: {
-                templates: 'templates'
-            }
-        })
-        .when('/map', {
-            templateUrl: 'templates/views/mapView.html',
-            name: 'navigation.map',
-            reloadOnSearch: false,
-            resolve: {
-                templates: 'templates'
-            }
-        })
-        // .when('/favorite', {
-        //     templateUrl: 'templates/views/favoriteView.html',
-        //     name: 'navigation.favorite',
-        //     reloadOnSearch: false,
-        //     resolve: {
-        //         templates: 'templates'
-        //     }
-        // })
-        // .when('/map/provider', {
-        //     name: 'navigation.provider',
-        //     modal: {
-        //         controller: 'SwcProviderListModalCtrl',
-        //         templateUrl: 'templates/map/provider-list-modal.html'
-        //     },
-        //     reloadOnSearch: false,
-        //     resolve: {
-        //         templates: 'templates'
-        //     }
-        // })
-        // .when('/diagram/listSelection', {
-        //     name: 'navigation.listSelection',
-        //     modal: {
-        //         controller: 'ModalWindowCtrl',
-        //         templateUrl: 'templates/listSelection/modal-list-selection.html'
-        //     },
-        //     reloadOnSearch: false,
-        //     resolve: {
-        //         templates: 'templates'
-        //     }
-        // })
-        .when('/diagram/settings', {
-            name: 'navigation.settings',
-            modal: {
-                controller: 'SwcUserSettingsWindowCtrl',
-                templateUrl: 'templates/settings/user-settings-modal.html'
-            },
-            reloadOnSearch: false,
-            resolve: {
-                templates: 'templates'
-            }
-        })
-        .otherwise({
-            redirectTo: '/'
-        });
-}]);
-
-mainApp.service('templates', ['$templateCache', '$http', '$q',
-    function($templateCache, $http, $q) {
-        var promises = [];
-        promises.push($http.get("templates/templates.json").then(response => {
-            return $q.all(response.data.map(template => {
-                return $http.get(template.url).then((response) => {
-                    $templateCache.put(template.id, response.data);
-                });
-            }));
-        }));
-
-        return $q.all(promises);
+mainApp.config(['$routeProvider',
+    function($routeProvider) {
+        $routeProvider
+            .when('/', {
+                templateUrl: 'templates/views/diagramView.html',
+                reloadOnSearch: false
+            })
+            .when('/diagram', {
+                templateUrl: 'templates/views/diagramView.html',
+                name: 'navigation.diagram',
+                reloadOnSearch: false
+            })
+            .when('/map', {
+                templateUrl: 'templates/views/mapView.html',
+                name: 'navigation.map',
+                reloadOnSearch: false
+            })
+            // .when('/favorite', {
+            //     templateUrl: 'templates/views/favoriteView.html',
+            //     name: 'navigation.favorite',
+            //     reloadOnSearch: false
+            // })
+            // .when('/map/provider', {
+            //     name: 'navigation.provider',
+            //     modal: {
+            //         controller: 'SwcProviderListModalCtrl',
+            //         templateUrl: 'templates/map/provider-list-modal.html'
+            //     },
+            //     reloadOnSearch: false
+            // })
+            // .when('/diagram/listSelection', {
+            //     name: 'navigation.listSelection',
+            //     modal: {
+            //         controller: 'ModalWindowCtrl',
+            //         templateUrl: 'templates/listSelection/modal-list-selection.html'
+            //     },
+            //     reloadOnSearch: false
+            // })
+            .when('/diagram/settings', {
+                name: 'navigation.settings',
+                modal: {
+                    controller: 'SwcUserSettingsWindowCtrl',
+                    templateUrl: 'templates/settings/user-settings-modal.html'
+                },
+                reloadOnSearch: false
+            })
+            .otherwise({
+                redirectTo: '/'
+            });
     }
 ]);
 
@@ -211,13 +177,17 @@ mainApp.config(["$provide", function($provide) {
 }]);
 
 // start the app after loading the settings.json
-fetchData().then(bootstrapApp);
+angular.injector(["ng"]).get("$q").all([fetchConfig(), fetchTemplates()]).then(bootstrapApp);
 
-function fetchData() {
-    var initInjector = angular.injector(["ng"]);
-    var $http = initInjector.get("$http");
-    return $http.get("settings.json").then(function(response) {
+function fetchConfig() {
+    return angular.injector(["ng"]).get("$http").get("settings.json").then(function(response) {
         mainApp.constant("config", response.data);
+    });
+}
+
+function fetchTemplates() {
+    return angular.injector(["ng"]).get("$http").get('templates/templates.json').then(response => {
+        mainApp.constant("templatesMapping", response.data);
     });
 }
 

@@ -1,139 +1,47 @@
-[{
-    "url": "templates/diagram/reload-button.html",
-    "id": "n52.core.diagram.reload-button"
-}, {
-    "url": "templates/diagram/refresh-time.html",
-    "id": "n52.core.diagram.refresh-time"
-}, {
-    "url": "templates/diagram/y-axis-hide-button.html",
-    "id": "n52.core.diagram.y-axis-hide-button"
-}, {
-    "url": "templates/favorite/favorite-edit-label-modal.html",
-    "id": "n52.core.favoriteUi.favorite-edit-label-modal"
-}, {
-    "url": "templates/favorite/favorite-star.html",
-    "id": "n52.core.favoriteUi.favorite-star"
-}, {
-    "url": "templates/favorite/favorite-add-group.html",
-    "id": "n52.core.favoriteUi.favorite-add-group"
-}, {
-    "url": "templates/favorite/favorite-import-button.html",
-    "id": "n52.core.favoriteUi.favorite-import-button"
-}, {
-    "url": "templates/favorite/favorite-export-button.html",
-    "id": "n52.core.favoriteUi.favorite-export-button"
-}, {
-    "url": "templates/favorite/favorite-list.html",
-    "id": "n52.core.favoriteUi.favorite-list"
-}, {
-    "url": "templates/ie9/import-export.html",
-    "id": "n52.core.ie9.import-export"
-}, {
-    "url": "templates/legend/legend.html",
-    "id": "n52.core.legend.legend"
-}, {
-    "url": "templates/legend/legend-entry.html",
-    "id": "n52.core.legend.legend-entry"
-}, {
-    "url": "templates/legend/label-mapper.html",
-    "id": "n52.core.legend.label-mapper"
-}, {
-    "url": "templates/listSelection/list-selection.html",
-    "id": "n52.core.listSelection.list-selection"
-}, {
-    "url": "templates/listSelection/modal-list-selection.html",
-    "id": "n52.core.listSelection.modal-list-selection"
-}, {
-    "url": "templates/listSelection/tabbed-list-selection.html",
-    "id": "n52.core.listSelection.tabbed-list-selection"
-}, {
-    "url": "templates/legend/legend-entry.html",
-    "id": "n52.core.legend.legend-entry"
-}, {
-    "url": "templates/loading/data-loading.html",
-    "id": "n52.core.dataLoading.data-loading"
-}, {
-    "url": "templates/map/station-loading.html",
-    "id": "n52.core.map.station-loading"
-}, {
-    "url": "templates/map/selectable-station-entry.html",
-    "id": "n52.core.map.selectable-station-entry"
-}, {
-    "url": "templates/map/station.html",
-    "id": "n52.core.map.station"
-}, {
-    "url": "templates/map/locateStation.html",
-    "id": "n52.core.map.locate-station"
-}, {
-    "url": "templates/map/stationary-insitu.html",
-    "id": "n52.core.map.stationary-insitu"
-}, {
-    "url": "templates/metadata/timeseries-rawdata.html",
-    "id": "n52.core.metadata.timeseries-rawdata"
-}, {
-    "url": "templates/metadata/sos-url.html",
-    "id": "n52.core.metadata.sos-url"
-}, {
-    "url": "templates/metadata/procedure/rawdata.html",
-    "id": "n52.core.metadata.procedure-rawdata"
-}, {
-    "url": "templates/metadata/procedure/button.html",
-    "id": "n52.core.metadata.procedure-button"
-}, {
-    "url": "templates/metadata/procedure/modal.html",
-    "id": "n52.core.metadata.procedure-modal"
-}, {
-    "url": "templates/provider/add-provider.html",
-    "id": "n52.core.provider.add-provider"
-}, {
-    "url": "templates/settings/settings-toggle-button.html",
-    "id": "n52.core.userSettings.settings-toggle-button"
-}, {
-    "url": "templates/settings/qr-code-button.html",
-    "id": "n52.core.userSettings.qr-code-button"
-}, {
-    "url": "templates/settings/user-settings-modal.html",
-    "id": "n52.core.userSettings.user-settings-modal"
-}, {
-    "url": "templates/language/language-selector.html",
-    "id": "n52.core.translate.language-selector"
-}, {
-    "url": "templates/styling/modal-style-editor.html",
-    "id": "n52.core.style.modal-style-editor"
-}, {
-    "url": "templates/styling/zero-based-axis-toggler.html",
-    "id": "n52.core.style.zero-based-axis-toggler"
-}, {
-    "url": "templates/styling/group-axis-toggler.html",
-    "id": "n52.core.style.group-axis-toggler"
-}, {
-    "url": "templates/styling/bar-toggler.html",
-    "id": "n52.core.style.bar-toggler"
-}, {
-    "url": "templates/styling/color-chooser.html",
-    "id": "n52.core.style.color-chooser"
-}, {
-    "url": "templates/time/time-selector-buttons.html",
-    "id": "n52.core.timeUi.time-selector-buttons"
-}, {
-    "url": "templates/time/time-range-modal.html",
-    "id": "n52.core.timeUi.time-range-modal"
-}, {
-    "url": "templates/time/predefined-time-range-button.html",
-    "id": "n52.core.timeUi.predefined-time-range-button"
-}, {
-    "url": "templates/time/custom-time-range-selection.html",
-    "id": "n52.core.timeUi.custom-time-range-selection"
-}, {
-    "url": "templates/ecmwf/procedure-selection.html",
-    "id": "n52.ecmwf.map.procedure-selection"
-}, {
-    "url": "templates/ecmwf/result-time-selection.html",
-    "id": "n52.ecmwf.map.result-time-selection"
-}, {
-    "url": "templates/ecmwf/legend.html",
-    "id": "n52.ecmwf.legend"
-}, {
-    "url": "templates/ecmwf/legend-entry.html",
-    "id": "n52.ecmwf.legend-entry"
-}]
+{
+  "n52.core.diagram.reload-button": "templates/diagram/reload-button.html",
+  "n52.core.diagram.refresh-time": "templates/diagram/refresh-time.html",
+  "n52.core.diagram.y-axis-hide-button": "templates/diagram/y-axis-hide-button.html",
+  "n52.core.favoriteUi.favorite-edit-label-modal": "templates/favorite/favorite-edit-label-modal.html",
+  "n52.core.favoriteUi.favorite-star": "templates/favorite/favorite-star.html",
+  "n52.core.favoriteUi.favorite-add-group": "templates/favorite/favorite-add-group.html",
+  "n52.core.favoriteUi.favorite-import-button": "templates/favorite/favorite-import-button.html",
+  "n52.core.favoriteUi.favorite-export-button": "templates/favorite/favorite-export-button.html",
+  "n52.core.favoriteUi.favorite-list": "templates/favorite/favorite-list.html",
+  "n52.core.ie9.import-export": "templates/ie9/import-export.html",
+  "n52.core.legend.legend": "templates/legend/legend.html",
+  "n52.core.legend.legend-entry": "templates/legend/legend-entry.html",
+  "n52.core.legend.label-mapper": "templates/legend/label-mapper.html",
+  "n52.core.listSelection.list-selection": "templates/listSelection/list-selection.html",
+  "n52.core.listSelection.modal-list-selection": "templates/listSelection/modal-list-selection.html",
+  "n52.core.listSelection.tabbed-list-selection": "templates/listSelection/tabbed-list-selection.html",
+  "n52.core.dataLoading.data-loading": "templates/loading/data-loading.html",
+  "n52.core.map.station-loading": "templates/map/station-loading.html",
+  "n52.core.map.selectable-station-entry": "templates/map/selectable-station-entry.html",
+  "n52.core.map.station": "templates/map/station.html",
+  "n52.core.map.locate-station": "templates/map/locateStation.html",
+  "n52.core.map.stationary-insitu": "templates/map/stationary-insitu.html",
+  "n52.core.metadata.timeseries-rawdata": "templates/metadata/timeseries-rawdata.html",
+  "n52.core.metadata.sos-url": "templates/metadata/sos-url.html",
+  "n52.core.metadata.procedure-rawdata": "templates/metadata/procedure/rawdata.html",
+  "n52.core.metadata.procedure-button": "templates/metadata/procedure/button.html",
+  "n52.core.metadata.procedure-modal": "templates/metadata/procedure/modal.html",
+  "n52.core.provider.add-provider": "templates/provider/add-provider.html",
+  "n52.core.userSettings.settings-toggle-button": "templates/settings/settings-toggle-button.html",
+  "n52.core.userSettings.qr-code-button": "templates/settings/qr-code-button.html",
+  "n52.core.userSettings.user-settings-modal": "templates/settings/user-settings-modal.html",
+  "n52.core.translate.language-selector": "templates/language/language-selector.html",
+  "n52.core.style.modal-style-editor": "templates/styling/modal-style-editor.html",
+  "n52.core.style.zero-based-axis-toggler": "templates/styling/zero-based-axis-toggler.html",
+  "n52.core.style.group-axis-toggler": "templates/styling/group-axis-toggler.html",
+  "n52.core.style.bar-toggler": "templates/styling/bar-toggler.html",
+  "n52.core.style.color-chooser": "templates/styling/color-chooser.html",
+  "n52.core.timeUi.time-selector-buttons": "templates/time/time-selector-buttons.html",
+  "n52.core.timeUi.time-range-modal": "templates/time/time-range-modal.html",
+  "n52.core.timeUi.predefined-time-range-button": "templates/time/predefined-time-range-button.html",
+  "n52.core.timeUi.custom-time-range-selection": "templates/time/custom-time-range-selection.html",
+  "n52.ecmwf.map.procedure-selection": "templates/ecmwf/procedure-selection.html",
+  "n52.ecmwf.map.result-time-selection": "templates/ecmwf/result-time-selection.html",
+  "n52.ecmwf.legend": "templates/ecmwf/legend.html",
+  "n52.ecmwf.legend-entry": "templates/ecmwf/legend-entry.html"
+}

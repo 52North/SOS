@@ -75484,7 +75484,9 @@ angular.module('n52.core.map', [])
                         }
                         angular.forEach(data, function(elem) {
                             var geom = getCoordinates(elem);
-                            if (!isNaN(geom[0]) || !isNaN(geom[1])) {
+                            if (!geom) {
+                              console.error(elem.id + ' has no geometry');
+                            } else if (!isNaN(geom[0]) || !isNaN(geom[1])) {
                                 if (geom[0] > bounds.rightmost) {
                                     bounds.rightmost = geom[0];
                                 }
@@ -75591,6 +75593,16 @@ angular.module('n52.core.map')
         controller: ['seriesApiInterface', 'utils',
             function(seriesApiInterface, utils) {
                 this.$onInit = function() {
+                    this.fetchTimeseries();
+                };
+
+                this.$onChanges = function(changeObj) {
+                    if (changeObj.timeseriesId || changeObj.timeseries) {
+                        this.fetchTimeseries();
+                    }
+                };
+
+                this.fetchTimeseries = function() {
                     if (this.timeseriesId && this.timeseries) {
                         seriesApiInterface.getTimeseries(this.timeseriesId, this.serviceUrl).then((ts) => {
                             ts.internalId = utils.createInternalId(ts);
@@ -75750,7 +75762,7 @@ angular.module('n52.core.map')
                 angular.forEach($scope.platform.datasets, function(dataset) {
                     if (dataset.selected && (!selection.phenomenonId || dataset.seriesParameters.phenomenon.id === selection.phenomenonId)) {
                         serviceFinder
-                            .getDatasetPresenter(dataset.datasetType, dataset.seriesParameters.platform.platformType, selection.url)
+                            .getDatasetPresenter(dataset.datasetType || dataset.valueType, dataset.seriesParameters.platform.platformType, selection.url)
                             .presentDataset(dataset, selection.url);
                     }
                 });
@@ -76724,7 +76736,7 @@ angular.module('n52.core.exportTs', [])
                 kvp = kvp + '&locale=' + $translate.preferredLanguage();
                 kvp = kvp + '&zip=true';
                 kvp = kvp + '&bom=true';
-                if (ts.datasetType) {
+                if (ts.datasetType || ts.valueType) {
                     return apiUrl + 'datasets/' + tsId + '/data.zip' + kvp;
                 } else {
                     return apiUrl + 'timeseries/' + tsId + '/getData.zip' + kvp;
@@ -79378,12 +79390,12 @@ angular.module('n52.core.table')
                     visible: true
                 });
                 angular.forEach(timeseriesService.getAllTimeseries(), function(ts) {
-                    var phenomenonLabel = ts.parameters.phenomenon.label;
+                    var phenomenonLabel = timeseriesService.getPhenomenonLabel(ts);
                     if (ts.uom) {
                         phenomenonLabel += ' (' + ts.uom + ')';
                     }
                     columns.push({
-                        station: ts.parameters.feature.label,
+                        station: timeseriesService.getFeatureLabel(ts),
                         phenomenon: phenomenonLabel,
                         field: ts.internalId,
                         color: ts.styles.color,
@@ -79743,8 +79755,8 @@ angular.module('n52.core.listSelection')
             };
         }
     ])
-    .controller('SwcListSelectionCtrl', ['$scope', 'seriesApiInterface', 'listSelectionCache',
-        function($scope, seriesApiInterface, listSelectionCache) {
+    .controller('SwcListSelectionCtrl', ['$scope', 'seriesApiInterface', 'listSelectionCache', 'seriesApiMappingService',
+        function($scope, seriesApiInterface, listSelectionCache, seriesApiMappingService) {
             angular.forEach($scope.parameters, function(param, openedIdx) {
                 $scope.$watch('parameters[' + openedIdx + '].isOpen', function(newVal) {
                     if (newVal) {
@@ -79931,11 +79943,25 @@ angular.module('n52.core.listSelection')
             };
 
             $scope.processSelection = function(params, url) {
-                seriesApiInterface.getTimeseries(null, url, params).then(result => {
-                    $scope.datasetSelection({
-                        dataset: result
-                    });
-                });
+                seriesApiMappingService.getApiVersion(url).then(
+                    function(apiVersionId) {
+                        if (apiVersionId === seriesApiMappingService.apiVersion.n52SeriesApiV2) {
+                          seriesApiInterface.getDatasets(null, url, params).then(result => {
+                              $scope.datasetSelection({
+                                  dataset: result,
+                                  url: url
+                              });
+                          });
+                        } else if (apiVersionId === seriesApiMappingService.apiVersion.n52SeriesApiV1) {
+                          seriesApiInterface.getTimeseries(null, url, params).then(result => {
+                              $scope.datasetSelection({
+                                  dataset: result,
+                                  url: url
+                              });
+                          });
+                        }
+                    }
+                );
             };
 
             if ($scope.listselectionid) {
@@ -79950,8 +79976,8 @@ angular.module('n52.core.listSelection')
             }
         }
     ])
-    .service('listSelectionCache', [
-        function() {
+    .service('listSelectionCache', ['$rootScope',
+        function($rootScope) {
             var entries = {};
             var localProvider = [];
             var providerListEqual = function(providerList) {
@@ -79965,6 +79991,10 @@ angular.module('n52.core.listSelection')
                 }
                 return true;
             };
+
+            $rootScope.$on('newProviderSelected', () => {
+                this.clear();
+            });
 
             this.getEntry = function(id) {
                 return entries[id];
@@ -79992,15 +80022,17 @@ angular.module('n52.core.listSelection')
             onSelectionFinished: '&'
         },
         templateUrl: 'n52.core.listSelection.tabbed-list-selection',
-        controller: ['timeseriesService', 'serviceFinder', '$location', 'providerService',
-            function(timeseriesService, serviceFinder, $location, providerService) {
+        controller: ['timeseriesService', 'serviceFinder', '$location', 'providerService', 'seriesApiInterface',
+            function(timeseriesService, serviceFinder, $location, providerService, seriesApiInterface) {
 
                 this.providerList = providerService.selectedProviderList;
 
-                this.datasetSelected = function(dataset) {
+                this.datasetSelected = function(dataset, url) {
                     // TODO iterate over results
-                    if (dataset[0].datasetType) {
-                        // serviceFinder.getDatasetPresenter(dataset[0].datasetType, dataset[0].seriesParameters.platform.platformType, url).presentDataset(dataset[0], url);
+                    if (dataset[0].datasetType || dataset[0].valueType) {
+                        seriesApiInterface.getDatasets(dataset[0].id, url).then(result => {
+                            serviceFinder.getDatasetPresenter(result.datasetType || result.valueType, result.seriesParameters.platform.platformType, url).presentDataset(result, url);
+                        });
                     } else {
                         timeseriesService.addTimeseries(dataset[0]);
                         $location.url('/diagram');
@@ -80290,9 +80322,14 @@ angular.module('n52.core.metadata')
                         } else {
                             angular.extend(params, settingsService.additionalParameters);
                         }
+                        var cache = true;
+                        if (typeof(params.cache) === "boolean") {
+                          cache = params.cache;
+                          delete params.cache;
+                        }
                         return {
                             params: params,
-                            cache: true
+                            cache: cache
                         };
                     };
 
@@ -80453,7 +80490,9 @@ angular.module('n52.core.metadata')
         '$q',
         function($http, $q) {
 
-            var serviceRootUrlToVersionMap = {},
+            var serviceRootUrlToVersionMap = {
+              'data/api/v1/': 2
+            },
                 apiVersion = {
                     n52SeriesApiV1: 1,
                     n52SeriesApiV2: 2
@@ -81176,7 +81215,7 @@ angular.module('n52.core.base')
                 var ids = [];
                 if (angular.isUndefined(timeseriesId)) {
                     angular.forEach(timeseriesService.getAllTimeseries(), function(elem) {
-                        if (elem.datasetType) {
+                        if (elem.datasetType || elem.valueType) {
                             ids.push(elem.apiUrl + 'datasets/' + elem.id);
                         } else {
                             ids.push(elem.apiUrl + 'timeseries/' + elem.id);
@@ -81446,12 +81485,12 @@ angular.module('n52.core.base')
     .service('serviceFinder', ['settingsService', '$injector',
         function(settingsService, $injector) {
 
-            this.getDatasetPresenter = function(datasetType, platformType, providerUrl) {
+            this.getDatasetPresenter = function(valueType, platformType, providerUrl) {
                 var datasetPresenterConfig = settingsService.datasetPresenter;
                 if (datasetPresenterConfig) {
-                    if (datasetType in datasetPresenterConfig && datasetPresenterConfig[datasetType].length) {
+                    if (valueType in datasetPresenterConfig && datasetPresenterConfig[valueType].length) {
                         var serviceString;
-                        datasetPresenterConfig[datasetType].some(entry => {
+                        datasetPresenterConfig[valueType].some(entry => {
                             if (entry &&
                                 (!entry.url || entry.url === providerUrl) &&
                                 (!entry.platformType || entry.platformType === platformType)
@@ -81464,11 +81503,11 @@ angular.module('n52.core.base')
                             return $injector.get(serviceString);
                     }
                 }
-                switch (datasetType) {
+                switch (valueType) {
                     case 'measurement':
                         return $injector.get('measurementPresentDataset');
                     default:
-                        console.error('Doesn\'t find a service for the datasetType \'' + datasetType + '\' with platformType \'' + platformType + '\'. Please check the settings of the client.');
+                        console.error('Doesn\'t find a service for the valueType \'' + valueType + '\' with platformType \'' + platformType + '\'. Please check the settings of the client.');
                         return null;
                 }
             };
@@ -81745,6 +81784,31 @@ angular.module('n52.core.base')
     ]);
 
 angular.module('n52.core.base')
+    .service('templatesLoader', ['templatesMapping',
+        function(templatesMapping) {
+            this.getTemplateForId = function(id) {
+                if (templatesMapping && templatesMapping.hasOwnProperty(id)) {
+                    return templatesMapping[id];
+                }
+                return id;
+            };
+        }
+    ])
+    .config(['$provide',
+        function($provide) {
+            $provide.decorator('$templateRequest', ['$delegate', 'templatesLoader',
+                function($delegate, templatesLoader) {
+                    templatesLoader.oldRequest = $delegate;
+                    $delegate = function(id, ignoreRequestError) {
+                        return templatesLoader.oldRequest(templatesLoader.getTemplateForId(id), ignoreRequestError);
+                    };
+                    return $delegate;
+                }
+            ]);
+        }
+    ]);
+
+angular.module('n52.core.base')
     .service('timeService', ['$rootScope', 'statusService',
         function($rootScope, statusService) {
             var fireNewTimeExtent = function(time) {
@@ -81941,6 +82005,20 @@ angular.module('n52.core.base')
 
             this.isTimeseriesVisible = function(internalId) {
                 return this.hasTimeseries(internalId) && this.timeseries[internalId].styles.visible;
+            };
+
+            this.getPhenomenonLabel = function(ts) {
+              if (ts.parameters && ts.parameters.phenomenon && ts.parameters.phenomenon.label)
+                return ts.parameters.phenomenon.label;
+              if (ts.seriesParameters && ts.seriesParameters.phenomenon && ts.seriesParameters.phenomenon.label)
+                return ts.seriesParameters.phenomenon.label;
+            };
+
+            this.getFeatureLabel = function(ts) {
+                if (ts.parameters && ts.parameters.feature && ts.parameters.feature.label)
+                  return ts.parameters.feature.label;
+                if (ts.seriesParameters && ts.seriesParameters.feature && ts.seriesParameters.feature.label)
+                  return ts.seriesParameters.feature.label;
             };
         }
     ]);
@@ -82189,7 +82267,7 @@ angular.module('n52.core.startup')
                 var hasTsParam = permalinkEvaluationService.hasParam('ts');
                 if (!hasTsParam) {
                     angular.forEach(statusService.getTimeseries(), function(ts) {
-                        if (ts.datasetType) {
+                        if (ts.datasetType || ts.valueType) {
                             seriesApiInterface.getDatasets(ts.id, ts.apiUrl)
                                 .then((dataset) => {
                                     setSeries(ts, dataset);

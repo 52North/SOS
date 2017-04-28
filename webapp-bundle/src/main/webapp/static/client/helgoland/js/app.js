@@ -319,7 +319,7 @@ angular.module('n52.core.map')
                     };
                     if (dataset.selected && (!selection.phenomenonId || dataset.seriesParameters.phenomenon.id === selection.phenomenonId)) {
                         serviceFinder
-                            .getDatasetPresenter(dataset.datasetType, dataset.seriesParameters.platform.platformType, selection.url)
+                            .getDatasetPresenter(dataset.valueType, dataset.seriesParameters.platform.platformType, selection.url)
                             .presentDataset(dataset, selection.url);
                     }
                 });
@@ -380,13 +380,13 @@ angular.module('n52.core.map')
                     this.entries = [];
                     for (var key in this.items) {
                         if (this.items.hasOwnProperty(key)) {
-                            if (this.items[key].apiUrl.startsWith('http://colabis.dev.52north.org/ecmwf-webapp/api/v1/')) {
+                            // if (this.items[key].apiUrl.startsWith('http://192.168.52.128:8080/52n-sos-webapp/api/')) {
                                 var platformID = this.items[key].seriesParameters.platform.id;
                                 var resultTime = this.items[key].filter.resultTime;
                                 this.addToEntries(this.items[key], platformID, resultTime);
-                            } else {
-                                this.entries.push(this.items[key]);
-                            }
+                            // } else {
+                            //     this.entries.push(this.items[key]);
+                            // }
                         }
                     }
                 };

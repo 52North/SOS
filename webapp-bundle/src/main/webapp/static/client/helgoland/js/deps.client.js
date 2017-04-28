@@ -81505,6 +81505,7 @@ angular.module('n52.core.base')
                 }
                 switch (valueType) {
                     case 'measurement':
+                    case 'quantity': // new valueType for measurements
                         return $injector.get('measurementPresentDataset');
                     default:
                         console.error('Doesn\'t find a service for the valueType \'' + valueType + '\' with platformType \'' + platformType + '\'. Please check the settings of the client.');

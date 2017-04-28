@@ -277,6 +277,9 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameter(final GetFeatureOfInterestRequest req,
             final Session session) throws OwsExceptionReport {
+        if (req.hasNoParameter()) {
+            return new FeatureOfInterestDAO().getPublishedFeatureOfInterestIdentifiers(session);
+        }
         if (req.containsOnlyFeatureParameter() && req.isSetFeatureOfInterestIdentifiers()) {
             final Criteria c =
                     session.createCriteria(FeatureOfInterest.class).setProjection(
@@ -366,7 +369,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      */
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameterForSeries(GetFeatureOfInterestRequest req, Session session) throws CodedException {
-        final Criteria c = session.createCriteria(FeatureOfInterest.class);
+        final Criteria c = new FeatureOfInterestDAO().getPublishedFeatureOfInterestCriteria(session);
         if (req.isSetFeatureOfInterestIdentifiers()) {
             c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeatureIdentifiers()));
         }

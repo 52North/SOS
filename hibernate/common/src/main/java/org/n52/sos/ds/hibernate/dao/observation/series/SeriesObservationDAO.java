@@ -208,7 +208,6 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     public List<SeriesObservation<?>> getSeriesObservationsFor(Series series, GetObservationRequest request,
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getSeriesObservationCriteriaFor(series, request, sosIndeterminateTime, session).list();
-
     }
 
     @Override

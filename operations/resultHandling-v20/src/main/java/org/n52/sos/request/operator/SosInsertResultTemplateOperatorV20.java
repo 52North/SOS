@@ -137,7 +137,7 @@ public class SosInsertResultTemplateOperatorV20
                     exceptions.add(new MissingParameterValueException(
                             Sos2Constants.InsertResultTemplateParams.proposedTemplate + ".procedure"));
                 }
-                checkTransactionalProcedureID(request.getObservationTemplate().getProcedureIdentifier(),
+                checkTransactionalProcedure(request.getObservationTemplate().getProcedureIdentifier(),
                         Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
             }
         } catch (OwsExceptionReport owse) {

@@ -78,7 +78,7 @@ public class AqdDescribeSensorOperatorV10
 			exceptions.add(owse);
 		}
 		try {
-			checkProcedureID(request.getProcedure(),
+			checkProcedure(request.getProcedure(),
 					SosConstants.DescribeSensorParams.procedure.name());
 		} catch (OwsExceptionReport owse) {
 			exceptions.add(owse);

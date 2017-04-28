@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -222,7 +223,13 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
 
     @VisibleForTesting
     String[] getObservablePropertiesForProcedure(String identifier) {
-        Set<String> props = getCache().getObservablePropertiesForProcedure(identifier);
+        Set<String> props = new HashSet<>();
+        Set<String> obsProps = getCache().getObservablePropertiesForProcedure(identifier);
+        for (String obsProp : obsProps) {
+            if (getCache().getPublishedObservableProperties().contains(obsProps)) {
+                props.add(obsProp);
+            }
+        }
         return props.toArray(new String[props.size()]);
     }
 

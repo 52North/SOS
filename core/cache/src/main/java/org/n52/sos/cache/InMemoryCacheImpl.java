@@ -2659,7 +2659,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
 
     @Override
     public Set<String> getQueryableProcedures() {
-        Set<String> procedures = getProcedures();
+        Set<String> procedures = getPublishedProcedures();
         // allowQueryingForInstancesOnly
         if (ProcedureRequestSettings.getInstance().isAllowQueryingForInstancesOnly()) {
             procedures = CollectionHelper.conjunctCollectionsToSet(procedures, getTypeInstanceProcedure(TypeInstance.INSTANCE));

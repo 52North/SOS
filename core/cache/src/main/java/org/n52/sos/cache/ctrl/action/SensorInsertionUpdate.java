@@ -90,8 +90,12 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
 
         // procedure relations
         cache.addProcedure(procedure);
+        cache.addPublishedProcedure(procedure);
         if (request.getProcedureDescription().isSetParentProcedures()) {
             cache.addParentProcedures(procedure, request.getProcedureDescription().getParentProcedures());
+            for (String parent : request.getProcedureDescription().getParentProcedures()) {
+                cache.addPublishedProcedure(parent);
+            }
         }
         
         // Update procedureDescriptionFormats
@@ -112,6 +116,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addHiddenChildProcedureForOffering(sosOffering.getIdentifier(), procedure);
                 } else {
                     cache.addOffering(sosOffering.getIdentifier());
+                    cache.addPublishedOffering(sosOffering.getIdentifier());
                     cache.addProcedureForOffering(sosOffering.getIdentifier(), procedure);
                     if (sosOffering.isSetName()) {
                         cache.setNameForOffering(sosOffering.getIdentifier(), sosOffering.getOfferingName());
@@ -152,6 +157,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addOfferingForObservableProperty(observableProperty, sosOffering.getIdentifier());
                     cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
                 }
+                cache.addPublishedObservableProperty(observableProperty);
             }
         }
         // procedure type/instance metadata

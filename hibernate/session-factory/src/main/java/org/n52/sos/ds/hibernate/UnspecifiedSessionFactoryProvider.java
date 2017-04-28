@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

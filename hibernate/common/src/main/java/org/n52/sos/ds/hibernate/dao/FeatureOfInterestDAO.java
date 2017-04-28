@@ -258,9 +258,13 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      */
     @SuppressWarnings("unchecked")
     public List<FeatureOfInterest> getFeatureOfInterestObjects(final Session session) {
-        Criteria criteria = session.createCriteria(FeatureOfInterest.class);
+        Criteria criteria = getDefaultCriteria(session);
         LOGGER.debug("QUERY getFeatureOfInterestObjects(identifier): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
+    }
+    
+    protected Criteria getDefaultCriteria(final Session session) {
+        return session.createCriteria(FeatureOfInterest.class);
     }
 
     /**
@@ -561,18 +565,33 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
 
     @SuppressWarnings("unchecked")
     public List<FeatureOfInterest> getPublishedFeatureOfInterest(Session session) throws CodedException {
-       if (HibernateHelper.isEntitySupported(Series.class)) {
-           Criteria c = session.createCriteria(FeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-           c.add(Subqueries.propertyIn(FeatureOfInterest.ID, getDetachedCriteriaSeries(session)));
-           return c.list();
-       } 
-       return getFeatureOfInterestObjects(session);
+        Criteria c = getPublishedFeatureOfInterestCriteria(session);
+        LOGGER.debug("QUERY getPublishedFeatureOfInterest(): {}", HibernateHelper.getSqlString(c));
+        return c.list();
     }
-    
+
+    public Criteria getPublishedFeatureOfInterestCriteria(Session session) throws CodedException {
+        Criteria c = getDefaultCriteria(session);
+        if (HibernateHelper.isEntitySupported(Series.class)) {
+            c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            c.add(Subqueries.propertyIn(FeatureOfInterest.ID, getDetachedCriteriaSeries(session)));
+        }
+        return c;
+    }
+
     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
+        final DetachedCriteria detachedCriteria =
+                DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.FEATURE_OF_INTEREST)));
         return detachedCriteria;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getPublishedFeatureOfInterestIdentifiers(Session session) throws CodedException {
+        Criteria c = getPublishedFeatureOfInterestCriteria(session);
+        c.setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
+        LOGGER.debug("QUERY getPublishedFeatureOfInterestIdentifiers(): {}", HibernateHelper.getSqlString(c));
+        return c.list();
     }
 }

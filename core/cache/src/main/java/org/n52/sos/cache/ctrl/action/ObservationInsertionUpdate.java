@@ -123,6 +123,7 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
                     for (AbstractFeature parentFeature : sosSamplingFeature.getSampledFeatures()) {
                         getCache().addParentFeature(sosSamplingFeature.getIdentifierCodeWithAuthority().getValue(),
                                 parentFeature.getIdentifierCodeWithAuthority().getValue());
+                        cache.addPublishedFeatureOfInterest(parentFeature.getIdentifierCodeWithAuthority().getValue());
                     }
                 }
                 for (String offering : request.getOfferings()) {

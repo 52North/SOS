@@ -189,16 +189,16 @@ public abstract class AbstractOperationDAO implements OperationDAO {
         addProcedureParameter(opsMeta, getCache().getQueryableProcedures());
     }
 
+    protected void addPublishedProcedureParameter(OwsOperation opsMeta) {
+        addProcedureParameter(opsMeta, getCache().getPublishedProcedures());
+    }
+
     protected void addProcedureParameter(OwsOperation opsMeta, Collection<String> procedures) {
         if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
             opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.procedure, procedures);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.procedure);
         }
-    }
-
-    protected void addPublishedProcedureParameter(OwsOperation opsMeta) {
-        addProcedureParameter(opsMeta, getCache().getPublishedProcedures());
     }
 
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, String version) {

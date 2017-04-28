@@ -172,10 +172,11 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         final Value<?> value = hObservation.accept(new ObservationValueCreator());
         OmObservation sosObservation = null;
         if (value != null) {
-            // TODO delete, set in ObservationValueCreator
-//            if (hObservation.getUnit() != null) {
-//                value.setUnit(hObservation.getUnit().getUnit());
-//            }
+            if (hObservation.getUnit() != null) {
+                value.setUnit(hObservation.getUnit().getUnit());
+            } else if (hObservation instanceof SeriesObservation && ((SeriesObservation)hObservation).getSeries().isSetUnit()) {
+                value.setUnit(((SeriesObservation)hObservation).getSeries().getUnit().getUnit());
+            }
             checkOrSetObservablePropertyUnit(getObservedProperty(phenomenonId), value.getUnit());
             OmObservationConstellation obsConst =
                     createObservationConstellation(hObservation, procedureId, phenomenonId, featureId, offerings);

@@ -59,6 +59,7 @@ public class FeatureInsertionUpdate extends InMemoryCacheUpdate {
                 samplingFeatures.add((SamplingFeature)abstractFeature);
             }
             cache.addFeatureOfInterest(abstractFeature.getIdentifier());
+            cache.addPublishedFeatureOfInterest(abstractFeature.getIdentifier());
             if (abstractFeature.isSetName()) {
                     cache.addFeatureOfInterestIdentifierHumanReadableName(abstractFeature.getIdentifier(), abstractFeature.getFirstName().getValue());
             }

@@ -19,15 +19,15 @@
     <build>
         <finalName>${conf.sos.name}</finalName>
         <plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>**/*Suite*.java</include>
-					</includes>
-				</configuration>
-			</plugin>
+            <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                            <includes>
+                                    <include>**/*Suite*.java</include>
+                            </includes>
+                    </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -373,6 +373,25 @@
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-ifoi-v10</artifactId>
+        </dependency>
+
+        <!-- DELETE RESULT TEMPLATE -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-operation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-coding</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-hibernate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-drt-v100</artifactId>
         </dependency>
 
         <!-- DELETE OBSERVATION -->

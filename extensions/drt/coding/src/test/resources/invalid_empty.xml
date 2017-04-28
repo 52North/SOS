@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<drt:DeleteResultTemplate
+        service="SOS"
+        version="2.0.0"
+        xmlns:drt="http://www.opengis.net/drt/1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.opengis.net/drt/1.0
+            https://52north.org/schema/sosdrt/1.0/sosdrt.xsd">
+</drt:DeleteResultTemplate>

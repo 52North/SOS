@@ -143,6 +143,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
     private void getParents(Set<String> parents, ObservableProperty observableProperty) {
         if (observableProperty instanceof TObservableProperty && ((TObservableProperty)observableProperty).getParents() != null) {
             for (ObservableProperty parent : ((TObservableProperty)observableProperty).getParents()) {
+                parents.add(parent.getIdentifier());
                 getParents(parents, parent);
             }
         }

@@ -345,8 +345,11 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                         || ((TVPValue)value.getValue()).getValue().get(0).getValue() instanceof QuantityValue);
     }
 
-    private void writeFunktionInterpretation(FileWriter fw, MediaType contentType) throws IOException {
-        writeToFile(fw, "$ib Funktion-Interpretation: Linie", contentType);
+    private void writeFunktionInterpretation(FileWriter fw, OmObservation o, MediaType contentType) throws IOException {
+        String function = getFunction(o);
+        if (!Strings.isNullOrEmpty(function)) {
+            writeToFile(fw, String.format("$ib Funktion-Interpretation: %s", function), contentType);
+        }
     }
 
     private void writeIndex(FileWriter fw, MediaType contentType) throws IOException {
@@ -481,6 +484,54 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             throw new NoApplicableCodeException().withMessage("Support for '%s' not yet implemented.",
                     omObservation.getValue().getClass().getName());
         }
+    }
+
+    private String getFunction(OmObservation o) {
+        if (o.isSetValue()) {
+            if (o.getValue().isSetMetadata()
+                    && o.getValue().getMetadata().isSetTimeseriesMetadata()
+                    && o.getValue().getMetadata().getTimeseriesmetadata() instanceof MeasurementTimeseriesMetadata
+                    && ((MeasurementTimeseriesMetadata)o.getValue().getMetadata().getTimeseriesmetadata()).isCumulative()) {
+                return UVFConstants.FunktionInterpretation.Summenlinie.name();
+            }
+            if (o.getValue().isSetDefaultPointMetadata()
+                    && o.getValue().getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata()
+                    && o.getValue().getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().isSetInterpolationType()) {
+                switch (o.getValue().getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().getInterpolationtype()) {
+                case Continuous:
+                    return UVFConstants.FunktionInterpretation.Linie.name();
+                case AveragePrec:
+                    return UVFConstants.FunktionInterpretation.Blockanfang.name();
+                case MaxPrec:
+                    return UVFConstants.FunktionInterpretation.Blockanfang.name();
+                case MinPrec:
+                    return UVFConstants.FunktionInterpretation.Blockanfang.name();
+                case TotalPrec:
+                    return UVFConstants.FunktionInterpretation.Blockanfang.name();
+                case ConstPrec:
+                    return UVFConstants.FunktionInterpretation.Blockanfang.name();
+                case AverageSucc:
+                    return UVFConstants.FunktionInterpretation.Blockende.name();
+                case MaxSucc:
+                    return UVFConstants.FunktionInterpretation.Blockende.name();
+                case MinSucc:
+                    return UVFConstants.FunktionInterpretation.Blockende.name();
+                case TotalSucc:
+                    return UVFConstants.FunktionInterpretation.Blockende.name();
+                case ConstSucc:
+                    return UVFConstants.FunktionInterpretation.Blockende.name();
+                case Discontinuous:
+                    break;
+                case InstantTotal:
+                    break;
+                case Statistical:
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+        return null;
     }
 
     private String getUnit(OmObservation o) {

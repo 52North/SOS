@@ -36,7 +36,6 @@ import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
-import org.n52.sos.iso.CodeList.CiRoleCodes;
 
 import com.google.common.collect.ImmutableSet;
 

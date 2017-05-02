@@ -30,15 +30,10 @@ package org.n52.schetland.uvf;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
-import org.joda.time.DateTimeZone;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaType;
 
-import com.google.common.collect.ImmutableSet;
 
 public interface UVFConstants {
 

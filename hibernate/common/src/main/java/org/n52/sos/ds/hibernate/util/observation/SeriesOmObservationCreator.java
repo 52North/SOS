@@ -51,6 +51,7 @@ import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.AbstractObservationRequest;
+import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -209,9 +210,17 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
         if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
             AdditionalObservationCreator<Series> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
             creator.create(sosObservation, series, getSession());
+        } else if (checkAcceptType()) {
+            for (MediaType acceptType : getAcceptType()) {
+                AdditionalObservationCreatorKey acceptKey = new AdditionalObservationCreatorKey(acceptType.withoutParameters().toString(), series.getClass());
+                if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(acceptKey)) {
+                    AdditionalObservationCreator<Series> creator = AdditionalObservationCreatorRepository.getInstance().get(acceptKey);
+                    creator.create(sosObservation, series, getSession());
+                }
+            }
         }
     }
-    
+
     private void addParameter(OmObservation observation, Series series) throws OwsExceptionReport {
         new SeriesParameterAdder(observation, new SeriesParameterDAO().getSeriesParameter(series, getSession())).add();
     }

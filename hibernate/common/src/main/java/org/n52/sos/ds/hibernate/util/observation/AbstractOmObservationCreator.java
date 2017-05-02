@@ -61,6 +61,7 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.http.MediaType;
 
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Geometry;
@@ -143,6 +144,15 @@ public abstract class AbstractOmObservationCreator {
             return request.getResponseFormat();
         }
         return Configurator.getInstance().getProfileHandler().getActiveProfile().getObservationResponseFormat();
+    }
+    
+    
+    public List<MediaType> getAcceptType() {
+        return request.getRequestContext().getAcceptType().get();
+    }
+
+    public boolean checkAcceptType() {
+        return request.getRequestContext() != null && request.getRequestContext().getAcceptType().isPresent();
     }
 
     public Session getSession() {
@@ -251,6 +261,15 @@ public abstract class AbstractOmObservationCreator {
                 break;
             } 
         }
+        if (checkAcceptType()) {
+            for (AdditionalObservationCreatorKey key : getAdditionalObservationCreatorKeys(getAcceptType(), hObservation)) {
+                if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
+                    AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
+                    creator.create(sosObservation, hObservation, getSession());
+                    break;
+                } 
+            }
+        }
     }
     
     private List<AdditionalObservationCreatorKey> getAdditionalObservationCreatorKeys(Observation<?> hObservation) {
@@ -259,6 +278,17 @@ public abstract class AbstractOmObservationCreator {
         keys.add(new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass().getSuperclass()));
         keys.add(new AdditionalObservationCreatorKey(null, hObservation.getClass()));
         keys.add(new AdditionalObservationCreatorKey(null, hObservation.getClass().getSuperclass()));
+        return keys;
+    }
+
+    private List<AdditionalObservationCreatorKey> getAdditionalObservationCreatorKeys(List<MediaType> acceptType, Observation<?> hObservation) {
+        List<AdditionalObservationCreatorKey> keys = Lists.newArrayList();
+        for (MediaType mediaType : acceptType) {
+            keys.add(new AdditionalObservationCreatorKey(mediaType.withoutParameters().toString(),
+                    hObservation.getClass()));
+            keys.add(new AdditionalObservationCreatorKey(mediaType.withoutParameters().toString(),
+                    hObservation.getClass().getSuperclass()));
+        }
         return keys;
     }
 

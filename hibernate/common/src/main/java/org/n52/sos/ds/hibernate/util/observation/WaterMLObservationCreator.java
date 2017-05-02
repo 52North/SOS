@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
@@ -42,18 +41,25 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.series.wml.WaterMLConstants;
 
+import com.google.common.collect.Sets;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class WaterMLObservationCreator extends AbstractAdditionalObservationCreator<Series> {
 
-    private static final Set<AdditionalObservationCreatorKey> KEYS =
+    private static final Set<AdditionalObservationCreatorKey> KEYS =  Sets.union(
             AdditionalObservationCreatorRepository.encoderKeysForElements(WaterMLConstants.NS_WML_20,
                     AbstractSeriesObservation.class,
                     AbstractEReportingObservation.class,
                     Series.class,
-                    EReportingSeries.class);
+                    EReportingSeries.class), 
+            AdditionalObservationCreatorRepository.encoderKeysForElements("application/uvf",
+                    AbstractSeriesObservation.class,
+                    AbstractEReportingObservation.class,
+                    Series.class,
+                    EReportingSeries.class));
 
     @Override
     public Set<AdditionalObservationCreatorKey> getKeys() {

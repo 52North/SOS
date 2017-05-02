@@ -33,6 +33,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,6 +76,7 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.series.wml.WaterMLConstants.InterpolationType;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -293,10 +295,11 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     }
 
     private File encodeToUvf(List<OmObservation> observationCollection, File tempDir, MediaType contentType) throws IOException, CodedException {
-        String filename = getFilename(observationCollection);
+        List<OmObservation> mergeObservations = merger.mergeObservations(observationCollection, ObservationMergeIndicator.defaultObservationMergerIndicator());
+        String filename = getFilename(mergeObservations);
         File uvfFile = new File(tempDir, filename);
         FileWriter fw = new FileWriter(uvfFile);
-        for (OmObservation o : merger.mergeObservations(observationCollection, ObservationMergeIndicator.defaultObservationMergerIndicator())) {
+        for (OmObservation o : mergeObservations) {
                 if (o.isSetValue() && !checkForSingleObservationValue(o.getValue()) && !checkForMultiObservationValue(o.getValue())) {
                     String errorMessage = String.format(
                             "The resulting values are not of numeric type which is only supported by this encoder '%s'.",
@@ -484,7 +487,20 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
     }
 
     private String getFunction(OmObservation o) {
-        if (o.isSetValue()) {
+        if (o.getObservationConstellation().isSetDefaultPointMetadata() || o.getObservationConstellation().isSetMetadata()) {
+            if (o.getObservationConstellation().isSetMetadata()
+                    && o.getObservationConstellation().getMetadata().isSetTimeseriesMetadata()
+                    && o.getObservationConstellation().getMetadata().getTimeseriesmetadata() instanceof MeasurementTimeseriesMetadata
+                    && ((MeasurementTimeseriesMetadata)o.getObservationConstellation().getMetadata().getTimeseriesmetadata()).isCumulative()) {
+                return UVFConstants.FunktionInterpretation.Summenlinie.name();
+            }
+            if (o.getObservationConstellation().isSetDefaultPointMetadata()
+                    && o.getObservationConstellation().getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata()
+                    && o.getObservationConstellation().getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().isSetInterpolationType()) {
+                return getFunctionFor(o.getObservationConstellation().getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().getInterpolationtype());
+                
+            }
+        } else if (o.isSetValue() && (o.getValue().isSetMetadata() || o.getValue().isSetDefaultPointMetadata())) {
             if (o.getValue().isSetMetadata()
                     && o.getValue().getMetadata().isSetTimeseriesMetadata()
                     && o.getValue().getMetadata().getTimeseriesmetadata() instanceof MeasurementTimeseriesMetadata
@@ -494,41 +510,45 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
             if (o.getValue().isSetDefaultPointMetadata()
                     && o.getValue().getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata()
                     && o.getValue().getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().isSetInterpolationType()) {
-                switch (o.getValue().getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().getInterpolationtype()) {
-                case Continuous:
-                    return UVFConstants.FunktionInterpretation.Linie.name();
-                case AveragePrec:
-                    return UVFConstants.FunktionInterpretation.Blockanfang.name();
-                case MaxPrec:
-                    return UVFConstants.FunktionInterpretation.Blockanfang.name();
-                case MinPrec:
-                    return UVFConstants.FunktionInterpretation.Blockanfang.name();
-                case TotalPrec:
-                    return UVFConstants.FunktionInterpretation.Blockanfang.name();
-                case ConstPrec:
-                    return UVFConstants.FunktionInterpretation.Blockanfang.name();
-                case AverageSucc:
-                    return UVFConstants.FunktionInterpretation.Blockende.name();
-                case MaxSucc:
-                    return UVFConstants.FunktionInterpretation.Blockende.name();
-                case MinSucc:
-                    return UVFConstants.FunktionInterpretation.Blockende.name();
-                case TotalSucc:
-                    return UVFConstants.FunktionInterpretation.Blockende.name();
-                case ConstSucc:
-                    return UVFConstants.FunktionInterpretation.Blockende.name();
-                case Discontinuous:
-                    break;
-                case InstantTotal:
-                    break;
-                case Statistical:
-                    break;
-                default:
-                    break;
-                }
+                return getFunctionFor(o.getValue().getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().getInterpolationtype());
             }
         }
         return null;
+    }
+
+    private String getFunctionFor(InterpolationType interpolationtype) {
+        switch (interpolationtype) {
+        case Continuous:
+            return UVFConstants.FunktionInterpretation.Linie.name();
+        case AveragePrec:
+            return UVFConstants.FunktionInterpretation.Blockanfang.name();
+        case MaxPrec:
+            return UVFConstants.FunktionInterpretation.Blockanfang.name();
+        case MinPrec:
+            return UVFConstants.FunktionInterpretation.Blockanfang.name();
+        case TotalPrec:
+            return UVFConstants.FunktionInterpretation.Blockanfang.name();
+        case ConstPrec:
+            return UVFConstants.FunktionInterpretation.Blockanfang.name();
+        case AverageSucc:
+            return UVFConstants.FunktionInterpretation.Blockende.name();
+        case MaxSucc:
+            return UVFConstants.FunktionInterpretation.Blockende.name();
+        case MinSucc:
+            return UVFConstants.FunktionInterpretation.Blockende.name();
+        case TotalSucc:
+            return UVFConstants.FunktionInterpretation.Blockende.name();
+        case ConstSucc:
+            return UVFConstants.FunktionInterpretation.Blockende.name();
+        case Discontinuous:
+            return null;
+        case InstantTotal:
+            return null;
+        case Statistical:
+            return null;
+        default:
+            return null;
+        }
     }
 
     private String getUnit(OmObservation o) {
@@ -697,20 +717,23 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         }
     }
 
-    private String getFilename(List<OmObservation> observationCollection) {
-//        List<Time> times = Lists.newArrayList(sensorDataset.getTimes());
-//        Collections.sort(times);
-//        DateTime firstTime = getDateTime(times.get(0));
-//        DateTime lastTime = getDateTime(times.get(times.size() - 1));
-//
+    private String getFilename(List<OmObservation> observations) {
+        Set<String> identifiers = new HashSet<>();
+        for (OmObservation o : observations) {
+            if (o.getObservationConstellation().isSetIdentifier()) {
+                identifiers.add(o.getObservationConstellation().getIdentifier());
+            }
+        }
         StringBuffer pathBuffer = new StringBuffer();
-//        pathBuffer.append(sensorDataset.getSensorIdentifier().replaceAll("http://", "").replaceAll("/", "_"));
-//        pathBuffer.append("_" + sensorDataset.getFeatureType().name().toLowerCase());
-//        pathBuffer.append("_" + makeDateSafe(firstTime));
-//        // if (!(sensorDataset instanceof IStaticTimeDataset)) {
-//        pathBuffer.append("_" + makeDateSafe(lastTime));
-//        // }
-        pathBuffer.append("_" + Long.toString(java.lang.System.nanoTime()) + ".uvf");
+        if (!identifiers.isEmpty()) {
+            for (String identifier : identifiers) {
+                pathBuffer.append(identifier).append("_");
+            }
+            pathBuffer.replace(pathBuffer.lastIndexOf("_"), pathBuffer.length(), "");
+        } else {
+            pathBuffer.append("_").append(Long.toString(java.lang.System.nanoTime()));
+        }
+        pathBuffer.append(".uvf");
         return pathBuffer.toString();
     }
 

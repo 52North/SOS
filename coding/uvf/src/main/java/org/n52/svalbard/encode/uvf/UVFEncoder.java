@@ -74,6 +74,8 @@ import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.series.wml.TimeseriesMetadata;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -308,13 +310,10 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
                 /*
                  * HEADER: Metadata
                  */
-                writeFunktionInterpretation(fw, contentType);
+                writeFunktionInterpretation(fw, o, contentType);
                 writeIndex(fw, contentType);
                 writeMessGroesse(fw, o, contentType);
-                if (o.getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_MEASUREMENT) ||
-                        o.getValue().getValue() instanceof SweAbstractUomType<?>) {
-                    writeMessEinheit(fw, o, contentType);
-                }
+                writeMessEinheit(fw, o, contentType);
                 writeMessStellennummer(fw, o, contentType);
                 writeMessStellenname(fw, o, contentType);
                 /*
@@ -369,8 +368,8 @@ public class UVFEncoder implements ObservationEncoder<BinaryAttachmentResponse, 
         String unit = getUnit(o);
         if (unit != null  && !unit.isEmpty()) {
             unit = ensureIdentifierLength(unit, UVFConstants.MAX_IDENTIFIER_LENGTH);
+            writeToFile(fw, String.format("$sb Mess-Einheit: %s", unit), contentType);
         }
-        writeToFile(fw, String.format("$sb Mess-Einheit: %s", unit), contentType);
     }
 
     private void writeMessStellennummer(FileWriter fw, OmObservation o, MediaType contentType) throws IOException {

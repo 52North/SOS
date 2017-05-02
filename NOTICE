@@ -35,6 +35,9 @@ This project includes:
   52°North SOS - Extension Delete Observation - JSON under GPLv2
   52°North SOS - Extension Delete Observation - KVP under GPLv2
   52°North SOS - Extension Delete Observation - Operation under GPLv2
+  52°North SOS - Extension DeleteResultTemplate under GPLv2
+  52°North SOS - Extension DeleteResultTemplate - Hibernate DAO under GPLv2
+  52°North SOS - Extension DeleteResultTemplate - SOS 2.0 Operation under GPLv2
   52°North SOS - Extension for AQD under GPLv2
   52°North SOS - Extension for AQD coding under GPLv2
   52°North SOS - Extension for Inspire - Code Module under GPLv2
@@ -108,6 +111,7 @@ This project includes:
   52°North SOS - Webapp under GPLv2
   52°North SOS - Webapp with Sensor Web REST API under GPLv2
   52°North Svalbard - CV for GML 3.2.1 XML Request Coding under GPLv2
+  52°North Svalbard - Extension DeleteResultTemplate coding under GPLv2
   52°North Svalbard - Extension GetDataAvailability - SOS 2.0 coding under GPLv2
   52°North Svalbard - Extension InsertFeatureOfInterest coding under GPLv2
   52°North Svalbard - GML XML Request Coding under GPLv2
@@ -165,7 +169,7 @@ This project includes:
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   H2 Database Engine under The H2 License, Version 1.0
   Hamcrest All under New BSD License
-  Hamcrest Core under BSD style
+  Hamcrest Core under New BSD License
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
   Hibernate Commons Annotations under GNU Lesser General Public License
   hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
@@ -214,7 +218,7 @@ This project includes:
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JTS Topology Suite under Lesser General Public License (LGPL)
   JUL to SLF4J bridge under MIT License
-  JUnit under Common Public License Version 1.0
+  JUnit under Eclipse Public License 1.0
   libphonenumber under The Apache Software License, Version 2.0
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
@@ -246,6 +250,7 @@ This project includes:
   OGC SensorML schema (spec. v2.0.0) under The Apache Software License, Version 2.0
   OGC SOS DeleteObservation schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS DeleteObservation schema 2.0 under The Apache Software License, Version 2.0
+  OGC SOS DeleteResultTemplate schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS GetDataAvailability schema 1.0 (OGC Best Practice 14-004r1) under The Apache Software License, Version 2.0
   OGC SOS RelatedOfferings schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v1.0.0) under The Apache Software License, Version 2.0

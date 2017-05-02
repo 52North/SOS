@@ -97,5 +97,9 @@ public interface UVFConstants {
     enum LineEnding{
         Windows, Unix, Mac;
     }
+    
+    enum FunktionInterpretation {
+        Linie, Blockanfang, Blockende, Summenlinie;
+    }
 }
  

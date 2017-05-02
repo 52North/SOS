@@ -109,14 +109,14 @@ public class SosInsertResultTemplateOperatorV20
         // check procedure
         try {
             checkProcedure(request.getObservationTemplate().getProcedure().getIdentifier(),
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
+                    Sos2Constants.InsertResultTemplateParams.proposedTemplate.name(), true);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         // check observedProperty
         try {
             checkObservedProperty(request.getObservationTemplate().getObservableProperty().getIdentifier(),
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
+                    Sos2Constants.InsertResultTemplateParams.proposedTemplate.name(), true);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

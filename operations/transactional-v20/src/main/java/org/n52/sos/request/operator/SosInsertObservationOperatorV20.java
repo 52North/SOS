@@ -384,7 +384,7 @@ public class SosInsertObservationOperatorV20 extends
         checkProcedure(obsConstallation.getProcedure().getIdentifier(),
                 Sos2Constants.InsertObservationParams.procedure.name(), true);
         checkObservedProperty(obsConstallation.getObservableProperty().getIdentifier(),
-                Sos2Constants.InsertObservationParams.observedProperty.name());
+                Sos2Constants.InsertObservationParams.observedProperty.name(), true);
     }
 
     private void checkOrSetObservationType(final OmObservation sosObservation, final boolean isSplitObservations)

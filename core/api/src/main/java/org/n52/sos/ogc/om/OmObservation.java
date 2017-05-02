@@ -438,6 +438,12 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
         } else if (singleValue.getValue().isSetUnit()) {
             tvpValue.setUnit(singleValue.getValue().getUnit());
         }
+        if (singleValue.isSetMetadata()) {
+            multiValue.setMetadata(singleValue.getMetadata());
+        }
+        if (singleValue.isSetDefaultPointMetadata()) {
+            multiValue.setDefaultPointMetadata(singleValue.getDefaultPointMetadata());
+        }
         final TimeValuePair timeValuePair = new TimeValuePair(singleValue.getPhenomenonTime(), singleValue.getValue());
         tvpValue.addValue(timeValuePair);
         multiValue.setValue(tvpValue);

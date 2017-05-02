@@ -37,6 +37,7 @@ import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.sos.exception.ows.concrete.ParameterNotSupportedException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -78,6 +79,8 @@ public class GetObservationByIdKvpDecoderv20 extends AbstractObservationKvpDecod
                         request.setObservationIdentifier(KvpHelper.checkParameterMultipleValues(parameterValues,
                                 parameterName));
                     }
+                } else {
+                    exceptions.add(new ParameterNotSupportedException(parameterName));
                 }
             } catch (final OwsExceptionReport owse) {
                 exceptions.add(owse);

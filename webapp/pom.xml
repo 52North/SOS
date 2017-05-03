@@ -401,6 +401,24 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>do-kvp</artifactId>
         </dependency>
+        
+        <!-- UPDATE RESULT TEMPLATE -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>urt-operation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>urt-coding</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>urt-hibernate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-urt-v100</artifactId>
+        </dependency>
 
 		<!-- Related offering encoding -->
         <dependency>

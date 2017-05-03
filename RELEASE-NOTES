@@ -19,7 +19,7 @@ RELEASE NOTES
     
     * Set overall time extrema flag to false
     * Enhancements for not publiched objects (series concept)
-    * Update REST-aPI to 1.10.0
+    * Update REST-API to 1.10.0
   
   --- Fixed issues ---
 

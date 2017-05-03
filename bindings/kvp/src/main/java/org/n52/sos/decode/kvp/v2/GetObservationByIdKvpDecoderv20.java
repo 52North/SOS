@@ -78,9 +78,9 @@ public class GetObservationByIdKvpDecoderv20 extends AbstractObservationKvpDecod
                     if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationByIdParams.observation.name())) {
                         request.setObservationIdentifier(KvpHelper.checkParameterMultipleValues(parameterValues,
                                 parameterName));
+                    } else {
+                        exceptions.add(new ParameterNotSupportedException(parameterName));
                     }
-                } else {
-                    exceptions.add(new ParameterNotSupportedException(parameterName));
                 }
             } catch (final OwsExceptionReport owse) {
                 exceptions.add(owse);

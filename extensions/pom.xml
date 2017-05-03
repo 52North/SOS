@@ -17,5 +17,6 @@
         <module>inspire</module>
         <module>related-offering</module>
         <module>ifoi</module>
+        <module>urt</module>
     </modules>
 </project>

@@ -28,12 +28,9 @@
  */
 package org.n52.sos.cache.ctrl;
 
+import com.google.common.collect.Sets;
 import java.util.Collections;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.cache.ContentCacheUpdate;
 import org.n52.sos.cache.ctrl.action.FeatureInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
@@ -51,8 +48,8 @@ import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
-
-import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

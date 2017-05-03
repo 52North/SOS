@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urt:UpdateResultTemplate
+		service="SOS"
+		version="2.0.0"
+	    xmlns:swe="http://www.opengis.net/swe/2.0"
+		xmlns:urt="http://www.opengis.net/urt/1.0"
+		xmlns:xlink="http://www.w3.org/1999/xlink"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.opengis.net/urt/1.0 file://tsclient/media/Code/git/common-xml/52n-xml-urt-v100/src/main/xsd/urt/1.0/UpdateResultTemplate.xsd">
+	<urt:resultTemplate>http://www.52north.org/test/procedure/9/template/1</urt:resultTemplate>
+	<urt:resultStructure>
+		<swe:DataRecord>
+                    <swe:field name="phenomenonTime">
+                        <swe:Time definition="http://www.opengis.net/def/property/OGC/0/PhenomenonTime">
+                            <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"/>
+                        </swe:Time>
+                    </swe:field>
+                    <swe:field name="test_observable_property_9">
+                        <swe:Quantity definition="http://www.52north.org/test/observableProperty/9_3">
+                            <swe:uom code="test_unit_9"/>
+                        </swe:Quantity>
+                    </swe:field>
+                </swe:DataRecord>
+	</urt:resultStructure>
+   <urt:resultEncoding>
+		<swe:TextEncoding tokenSeparator="#" blockSeparator="@"/>
+	</urt:resultEncoding>
+</urt:UpdateResultTemplate>

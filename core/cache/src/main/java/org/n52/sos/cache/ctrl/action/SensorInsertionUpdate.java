@@ -160,6 +160,18 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                 cache.addPublishedObservableProperty(observableProperty);
             }
         }
+
+        // observable property relations
+        cache.addPublishedObservableProperties(request.getObservableProperty());
+        for (String observableProperty : request.getObservableProperty()) {
+            cache.addProcedureForObservableProperty(observableProperty, procedure);
+            cache.addObservablePropertyForProcedure(procedure, observableProperty);
+            for (SosOffering sosOffering : request.getAssignedOfferings()) {
+                cache.addOfferingForObservableProperty(observableProperty, sosOffering.getIdentifier());
+                cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
+            }
+        }
+        
         // procedure type/instance metadata
         if (request.isType()) {
             cache.addTypeInstanceProcedure(ContentCache.TypeInstance.TYPE, response.getAssignedProcedure());

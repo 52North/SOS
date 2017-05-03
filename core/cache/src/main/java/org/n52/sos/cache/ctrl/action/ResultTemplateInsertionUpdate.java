@@ -83,7 +83,9 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
         }
         AbstractFeature featureOfInterest = request.getObservationTemplate().getFeatureOfInterest();
         if (featureOfInterest != null && featureOfInterest.isSetName()) {
-        	cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
+            cache.addFeatureOfInterest(featureOfInterest.getIdentifier());
+            cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
+            cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
         	cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
         	cache.addFeatureOfInterest(featureOfInterest.getIdentifier());
         }

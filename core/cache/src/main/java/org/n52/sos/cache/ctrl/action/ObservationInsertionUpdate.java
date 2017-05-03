@@ -115,6 +115,7 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
 
                 cache.addFeatureOfInterest(featureOfInterest);
                 cache.addPublishedFeatureOfInterest(featureOfInterest);
+                cache.addPublishedFeatureOfInterest(featureOfInterest);
                 if (sosSamplingFeature.isSetName()) {
                 	cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest, sosSamplingFeature.getFirstName().getValue());
                 }

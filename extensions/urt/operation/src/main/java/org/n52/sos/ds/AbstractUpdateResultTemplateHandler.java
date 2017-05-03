@@ -55,7 +55,7 @@ public abstract class AbstractUpdateResultTemplateHandler extends AbstractOperat
         // Do nothing
     }
 
-    public abstract UpdateResultTemplateResponse deleteResultTemplates(UpdateResultTemplateRequest request)
+    public abstract UpdateResultTemplateResponse updateResultTemplate(UpdateResultTemplateRequest request)
             throws OwsExceptionReport;
 
 }

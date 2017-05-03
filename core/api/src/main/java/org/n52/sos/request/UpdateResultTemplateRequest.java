@@ -44,15 +44,15 @@ public class UpdateResultTemplateRequest extends AbstractServiceRequest<UpdateRe
     }
 
     public boolean isSetResultTemplate() {
-        return Strings.isNullOrEmpty(resultTemplate);
+        return !Strings.isNullOrEmpty(resultTemplate);
     }
 
     public boolean isSetResultStructure() {
-        return Strings.isNullOrEmpty(resultStructure);
+        return !Strings.isNullOrEmpty(resultStructure);
     }
 
     public boolean isSetResultEncoding() {
-        return Strings.isNullOrEmpty(resultEncoding);
+        return !Strings.isNullOrEmpty(resultEncoding);
     }
 
     public String getResultEncoding() {
@@ -69,6 +69,26 @@ public class UpdateResultTemplateRequest extends AbstractServiceRequest<UpdateRe
         } else {
             return "";
         }
+    }
+    
+    public String getResultStructure() {
+        if (isSetResultStructure()) {
+            return resultStructure;
+        } else {
+            return "";
+        }
+    }
+
+    public void setResultTemplate(String resultTemplate) {
+        this.resultTemplate = resultTemplate;
+    }
+
+    public void setResultEncoding(String resultEncoding) {
+        this.resultEncoding = resultEncoding;
+    }
+    
+    public void setResultStructure(String resultStructure) {
+        this.resultStructure = resultStructure;
     }
     
 }

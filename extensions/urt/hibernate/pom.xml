@@ -6,7 +6,7 @@
         <version>4.4.0-SNAPSHOT</version>
         <artifactId>urt</artifactId>
     </parent>
-    <artifactId>drt-hibernate</artifactId>
+    <artifactId>urt-hibernate</artifactId>
     <name>52°North SOS - Extension UpdateResultTemplate - Hibernate DAO</name>
     <description>52°North Sensor Observation Service UpdateResultTemplate operation module</description>
     <dependencies>

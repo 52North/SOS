@@ -49,7 +49,7 @@ import org.n52.sos.response.UpdateResultTemplateResponse;
  *
  * @author Eike Hinderk Jürrens
  *
- * @since 4.0.0
+ * @since 4.4.0
  */
 public class UpdateResultTemplateOperator
         extends 
@@ -82,7 +82,7 @@ public class UpdateResultTemplateOperator
     public UpdateResultTemplateResponse receive(
             UpdateResultTemplateRequest request) throws OwsExceptionReport {
         UpdateResultTemplateResponse response = 
-                getDao().deleteResultTemplates(request);
+                getDao().updateResultTemplate(request);
         SosEventBus.fire(new ResultTemplateUpdate(request, response));
         return response;
     }
@@ -121,6 +121,19 @@ public class UpdateResultTemplateOperator
                     new InvalidParameterValueException(
                             UpdateResultTemplateConstants.PARAMS.resultTemplate,
                             request.getResultTemplate()));
+        }
+        // only offerings with one result template are supported
+        for (String offering : getCache().getOfferingsWithResultTemplate()) {
+            Set<String> resultTemplatesForOffering = getCache().getResultTemplatesForOffering(offering);
+            if (resultTemplatesForOffering.contains(request.getResultTemplate()) &&
+                    resultTemplatesForOffering.size() > 1) {
+                exceptions.add(
+                        new InvalidParameterValueException(
+                            UpdateResultTemplateConstants.PARAMS.resultTemplate,
+                            request.getResultTemplate())
+                        .withMessage("This operation supports only ResultTemplates, which are the only ones for their offering.")
+                );
+            } 
         }
     }
 

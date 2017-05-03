@@ -17,6 +17,8 @@
  */
 package org.n52.sos.response;
 
+import com.google.common.base.Strings;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  * J&uuml;rrens</a>
@@ -25,9 +27,28 @@ package org.n52.sos.response;
  */
 public class UpdateResultTemplateResponse extends AbstractServiceResponse {
 
+    private String updatedResultTemplate;
+
     @Override
     public String getOperationName() {
         return "UpdateResultTemplate";
+    }
+
+    public UpdateResultTemplateResponse setUpdatedResultTemplate(String updatedResultTemplate) {
+        this.updatedResultTemplate = updatedResultTemplate;
+        return this;
+    }
+
+    public boolean isSetResultTemplate() {
+        return !Strings.isNullOrEmpty(updatedResultTemplate);
+    }
+
+    public String getResultTemplate() {
+        if (isSetResultTemplate()) {
+            return updatedResultTemplate;
+        } else {
+            return "";
+        }
     }
     
 }

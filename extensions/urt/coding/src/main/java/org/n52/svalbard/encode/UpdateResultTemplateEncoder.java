@@ -28,48 +28,68 @@
  */
 package org.n52.svalbard.encode;
 
+import com.google.common.collect.Sets;
+import java.util.Collections;
+import java.util.Set;
+import net.opengis.urt.x10.UpdateResultTemplateResponseDocument;
+import net.opengis.urt.x10.UpdateResultTemplateResponseType;
+import org.apache.xmlbeans.XmlObject;
+import org.n52.shetland.ogc.sos.urt.UpdateResultTemplateConstants;
+import org.n52.sos.encode.AbstractResponseEncoder;
+import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
+import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.ows.CompositeOwsException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.response.UpdateResultTemplateResponse;
+import org.n52.sos.w3c.SchemaLocation;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @since 4.4.0
  */
-public class UpdateResultTemplateEncoder /*extends AbstractResponseEncoder<DeleteResultTemplateResponse> */ {/*
-    public static final SchemaLocation SCHEMA_LOCATION = new SchemaLocation(DeleteResultTemplateConstants.NS,
-            DeleteResultTemplateConstants.SCHEMA_LOCATION_URL);
+public class UpdateResultTemplateEncoder extends AbstractResponseEncoder<UpdateResultTemplateResponse> {
+
+    public static final SchemaLocation SCHEMA_LOCATION = new SchemaLocation(UpdateResultTemplateConstants.NS,
+            UpdateResultTemplateConstants.SCHEMA_LOCATION_URL);
 
     public UpdateResultTemplateEncoder() {
-        super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, DeleteResultTemplateConstants.OPERATION_NAME,
-                DeleteResultTemplateConstants.NS, DeleteResultTemplateConstants.NS_PREFIX,
-                DeleteResultTemplateResponse.class);
+        super(SosConstants.SOS,
+                Sos2Constants.SERVICEVERSION,
+                UpdateResultTemplateConstants.OPERATION_NAME,
+                UpdateResultTemplateConstants.NS,
+                UpdateResultTemplateConstants.NS_PREFIX,
+                UpdateResultTemplateResponse.class);
     }
 
     @Override
     public Set<String> getConformanceClasses() {
         return Collections.unmodifiableSet(Sets.newHashSet(
-                DeleteResultTemplateConstants.CONFORMANCE_CLASS_INSERTION,
-                DeleteResultTemplateConstants.CONFORMANCE_CLASS_RETRIEVAL));
+                UpdateResultTemplateConstants.CONFORMANCE_CLASS_INSERTION,
+                UpdateResultTemplateConstants.CONFORMANCE_CLASS_RETRIEVAL));
     }
 
     @Override
-    protected XmlObject create(DeleteResultTemplateResponse drtr) throws OwsExceptionReport {
-        if (drtr == null) {
-            throw new UnsupportedEncoderInputException(this, drtr);
+    protected XmlObject create(UpdateResultTemplateResponse urtr) throws OwsExceptionReport {
+        if (urtr == null) {
+            throw new UnsupportedEncoderInputException(this, urtr);
         }
         final CompositeOwsException exceptions = new CompositeOwsException();
-        if (drtr.getService() == null) {
+        if (urtr.getService() == null) {
             exceptions.add(new MissingServiceParameterException());
         }
-        if (drtr.getVersion() == null) {
+        if (urtr.getVersion() == null) {
             exceptions.add(new MissingVersionParameterException());
         }
         exceptions.throwIfNotEmpty();
         
-        DeleteResultTemplateResponseDocument drtrd =
-                DeleteResultTemplateResponseDocument.Factory.newInstance(getXmlOptions());
-        DeleteResultTemplateResponseType drtrt = drtrd.addNewDeleteResultTemplateResponse();
-        if (drtr.isSetResultTemplates()) {
-            for (String resultTemplate : drtr.getResultTemplates()) {
-                drtrt.addDeletedTemplate(resultTemplate);
-            }
+        UpdateResultTemplateResponseDocument drtrd =
+                UpdateResultTemplateResponseDocument.Factory.newInstance(getXmlOptions());
+        UpdateResultTemplateResponseType drtrt = drtrd.addNewUpdateResultTemplateResponse();
+        if (urtr.isSetResultTemplate()) {
+            drtrt.setResultTemplate(urtr.getResultTemplate());
         }
         return drtrd;
     }
@@ -83,5 +103,4 @@ public class UpdateResultTemplateEncoder /*extends AbstractResponseEncoder<Delet
     protected Set<SchemaLocation> getConcreteSchemaLocations() {
         return Sets.newHashSet();
     }
-*/    
 }

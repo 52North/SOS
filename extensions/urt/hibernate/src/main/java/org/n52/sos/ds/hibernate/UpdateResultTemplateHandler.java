@@ -28,38 +28,47 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.util.List;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.n52.sos.ds.AbstractUpdateResultTemplateHandler;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.request.UpdateResultTemplateRequest;
+import org.n52.sos.response.UpdateResultTemplateResponse;
+import org.n52.sos.util.http.HTTPStatus;
 
-public class UpdateResultTemplateHandler /*extends AbstractUpdateResultTemplateHandler */{
+public class UpdateResultTemplateHandler extends AbstractUpdateResultTemplateHandler {
 
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
     private final ResultTemplateDAO resultTemplateDAO = new ResultTemplateDAO();
-    private List<String> deletedResultTemplates;
+    private String deletedResultTemplate;
 
     public UpdateResultTemplateHandler() {
-        /*super(SosConstants.SOS);*/
+        super(SosConstants.SOS);
     }
-/*
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override
-    public UpdateResultTemplateResponse deleteResultTemplates(DeleteResultTemplateRequest request)
+    public UpdateResultTemplateResponse updateResultTemplate(UpdateResultTemplateRequest request)
             throws OwsExceptionReport {
         Session session = null;
         Transaction transaction = null;
         try {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
-            if (request.isSetResultTemplates()) {
-                deleteByTemplateId(session, request.getResultTemplates());
-            } else {
-                deleteByObservedPropertyOfferingPair(session,
-                        request.getObservedPropertyOfferingPairs());
+            if (request.isSetResultStructure()) {
+                updateResultStructure(request.getResultStructure(), session);
+            }
+            if (request.isSetResultEncoding()) {
+                updateResultEncoding(request.getResultEncoding(), session);
             }
             session.flush();
             transaction.commit();
@@ -71,57 +80,24 @@ public class UpdateResultTemplateHandler /*extends AbstractUpdateResultTemplateH
         } finally {
             sessionHolder.returnSession(session);
         }
-        return request.getResponse().addDeletedResultTemplates(deletedResultTemplates);
+        return request.getResponse().setUpdatedResultTemplate(deletedResultTemplate);
     }
 
     protected void handleHibernateException(HibernateException he) throws OwsExceptionReport {
         HTTPStatus status = HTTPStatus.INTERNAL_SERVER_ERROR;
         throw new NoApplicableCodeException()
                 .causedBy(he)
-                .withMessage("Error while deleting result templates!")
+                .withMessage("Error while updating result template!")
                 .setStatus(status);
     }
 
-    private void deleteByTemplateId(Session session,
-            List<String> resultTemplates)
-            throws InvalidParameterValueException {
-        deletedResultTemplates = Lists.newArrayList();
-        for (String resultTemplate : resultTemplates) {
-            final ResultTemplate templateObject =
-                    resultTemplateDAO.getResultTemplateObject(
-                            resultTemplate,
-                            session);
-            if (templateObject == null) {
-                throw new InvalidParameterValueException(
-                        DeleteResultTemplateConstants.PARAMETERS.resultTemplate,
-                        resultTemplate);
-            }
-            session.delete(templateObject);
-            deletedResultTemplates.add(resultTemplate);
-        }
+    private void updateResultStructure(String resultStructure, Session session) {
+        // TODO implement updateResultStructure()
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private void deleteByObservedPropertyOfferingPair(Session session,
-            List<AbstractMap.SimpleEntry<String, String>> observedPropertyOfferingPairs)
-            throws CompositeOwsException {
-        deletedResultTemplates = Lists.newArrayList();
-        CompositeOwsException exceptions = new CompositeOwsException();
-        for (Map.Entry<String,String> observedPropertyOfferingPair : observedPropertyOfferingPairs) {
-            final String offering = observedPropertyOfferingPair.getValue();
-            final String observedProperty = observedPropertyOfferingPair.getKey();
-            final ResultTemplate resultTemplateObject =
-                    resultTemplateDAO.getResultTemplateObject(
-                            offering,
-                            observedProperty,
-                            session);
-            if (resultTemplateObject == null) {
-                exceptions.add(new DeleteResultTemplateInvalidParameterValueException(offering, observedProperty));
-            }
-            final String resultTemplateId = resultTemplateObject.getIdentifier();
-            session.delete(resultTemplateObject);
-            deletedResultTemplates.add(resultTemplateId);
-        }
-        exceptions.throwIfNotEmpty();
+    private void updateResultEncoding(String resultEncoding, Session session) {
+        // TODO implement updateResultEncoding(...)
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-*/
 }

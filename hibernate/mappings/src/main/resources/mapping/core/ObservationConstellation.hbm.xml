@@ -42,5 +42,10 @@
                 <comment>Flag to indicate that this observationConstellations procedure is a child procedure of another procedure. If true, the related procedure is not contained in OGC SOS 2.0 Capabilities but in OGC SOS 1.0.0 Capabilities.</comment>
             </column>
         </property>
+        <property name="disabled" type="org.hibernate.type.TrueFalseType">
+            <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')">
+                <comment>Flag to indicate that this observationConstellations is disabled for insertion of observations. If false, new observation could be added to the SOS.</comment>
+            </column>
+        </property>
     </class>
 </hibernate-mapping>

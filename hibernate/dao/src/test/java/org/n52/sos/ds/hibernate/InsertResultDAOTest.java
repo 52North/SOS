@@ -28,9 +28,9 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import com.google.common.collect.Sets;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.Test;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmConstants;
@@ -38,8 +38,6 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
-
-import com.google.common.collect.Sets;
 
 public class InsertResultDAOTest extends HibernateTestCase {
 

@@ -28,13 +28,15 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -93,10 +95,6 @@ import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.response.InsertResultResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Implementation of the abstract class AbstractInsertResultDAO
@@ -523,7 +521,14 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
      * @return Separated values as array
      */
     private String[] separateValues(final String values, final String separator) {
-        return values.split(separator);
+        return values.split(checkForSpecialChars(separator));
+    }
+    
+    private String checkForSpecialChars(String separator) {
+        if (separator.indexOf("|") >= 0) {
+            separator = separator.replaceAll("\\|", "\\\\|");
+        }
+        return separator;
     }
 
     @Override

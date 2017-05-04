@@ -48,6 +48,7 @@ import org.n52.sos.ds.hibernate.entities.interfaces.GeometryValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextValue;
+import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
@@ -55,6 +56,7 @@ import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.QuantityValue;
@@ -144,6 +146,13 @@ public abstract class AbstractValue extends AbstractObservationTime implements H
             observation.setDescription(getDescription());
         }
         Value<?> value = getValueFrom(this);
+        if (!value.isSetUnit()
+                && observation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty
+                && ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
+                        .isSetUnit()) {
+            value.setUnit( ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
+                        .getUnit());
+        }
         if (!observation.getObservationConstellation().isSetObservationType()) {
             observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));
         }
@@ -228,6 +237,8 @@ public abstract class AbstractValue extends AbstractObservationTime implements H
         }
         if (value != null && abstractValue.isSetUnit()) {
             value.setUnit(abstractValue.getUnit().getUnit());
+        } else if (abstractValue instanceof SeriesValue && ((SeriesValue)abstractValue).getSeries().isSetUnit()) {
+            value.setUnit(((SeriesValue)abstractValue).getSeries().getUnit().getUnit());
         }
         return value;
     }

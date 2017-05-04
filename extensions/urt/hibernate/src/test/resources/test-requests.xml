@@ -359,6 +359,26 @@
 
 
 
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sos:GetResult
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SOS" version="2.0.0" xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
+    <sos:offering>http://www.52north.org/test/offering/9</sos:offering>
+    <sos:observedProperty>http://www.52north.org/test/observableProperty/9_3</sos:observedProperty>
+</sos:GetResult>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sos:GetResultResponse xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosGetResult.xsd">
+  <sos:resultValues xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">15-||-2012-11-19T11:30:00.000Z|159.15-||-2012-11-19T11:31:00.000Z|159.15-||-2012-11-19T11:32:00.000Z|159.85-||-2012-11-19T11:33:00.000Z|160.5-||-2012-11-19T11:34:00.000Z|160.9-||-2012-11-19T11:35:00.000Z|160.7-||-2012-11-19T11:36:00.000Z|160.5-||-2012-11-19T11:37:00.000Z|160.6-||-2012-11-19T11:38:00.000Z|160.5-||-2012-11-19T11:39:00.000Z|160.4-||-2012-11-19T11:40:00.000Z|160.34-||-2012-11-19T11:41:00.000Z|160.25-||-2012-11-19T11:42:00.000Z|159.79-||-2012-11-19T11:43:00.000Z|159.56-||-2012-11-19T11:44:00.000Z|159.25</sos:resultValues>
+</sos:GetResultResponse>
+
+
+
+
+
+
 <?xml version="1.0" encoding="UTF-8"?>
 <sos:InsertResult
     xmlns:sos="http://www.opengis.net/sos/2.0"

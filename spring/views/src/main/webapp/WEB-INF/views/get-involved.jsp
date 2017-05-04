@@ -81,7 +81,15 @@
         });
 	if ($.queryParam["install"] === "finished")  {
             window.setTimeout(function() {
-                showSuccess("Installation completed!<c:if test="${sos:hasClient()}"> <a href='<c:url value="/client"/>'>Test it.</a></c:if>");
+                showMessage(
+                        "<center><strong>Installation completed!</strong></center>" +
+                        "Potential next steps:" +
+                        "<ul>" +
+                        "<li>Insert up-to-date <a href='<c:url value="/admin/datasource/"/>'>sample data</a></li>" +
+                        "<c:if test="${sos:hasClient()}"><li>Use the <a href='<c:url value="/client"/>'>test client</a> with the provided example requests</li></c:if>" +
+                        "</ul>",
+                        "success",
+                        false);
             }, 1000);
 	}	
     });

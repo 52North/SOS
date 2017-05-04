@@ -28,6 +28,8 @@
  */
 package org.n52.sos.web.admin;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -45,7 +47,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+import net.opengis.sos.x20.GetObservationResponseDocument;
+import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.CodedException;
@@ -74,12 +77,6 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GroupedAndNamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import net.opengis.sos.x20.GetObservationResponseDocument;
-import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -290,7 +287,7 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
     private void missingServiceOperator(final String service, final String version, final String operation)
             throws MissingServiceOperatorException {
         String msg = String.format("Could not load request operator for: %s, %s, %s. Please activate the according "
-                + "operation in the <a href=\"./operations\">settings</a>.", service, version,
+                + "operation in the <a href=\"../operations\">settings</a>.", service, version,
                 operation);
         LOG.error(msg);
         throw new MissingServiceOperatorException(msg);

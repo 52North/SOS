@@ -68,7 +68,7 @@
 <br/>
 
 <script type="text/javascript">
-	$(function() {
+    $(function() {
         var serviceUrl = "${serviceUrl}" ? "${serviceUrl}" 
                 : document.location.protocol + "//" 
                 + document.location.host + "<c:url value="/sos" />",
@@ -79,11 +79,11 @@
                 + "?subject=" + encodeURIComponent(subject) 
                 + "&body=" + encodeURIComponent(body));
         });
-		if ($.queryParam["install"] === "finished")  {
-			window.setTimeout(function() {
-				showSuccess("Installation completed!<c:if test="${sos:hasClient()}"> <a href='<c:url value="/client"/>'>Test it.</a></c:if>");
-			}, 1000);
-		}	
+	if ($.queryParam["install"] === "finished")  {
+            window.setTimeout(function() {
+                showSuccess("Installation completed!<c:if test="${sos:hasClient()}"> <a href='<c:url value="/client"/>'>Test it.</a></c:if>");
+            }, 1000);
+	}	
     });
 </script>
 

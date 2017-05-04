@@ -401,7 +401,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final String procedureID : procedureIDs) {
                 try {
-                    checkProcedure(procedureID, parameterName);
+                    checkProcedure(procedureID, parameterName, all);
                 } catch (final OwsExceptionReport owse) {
                     exceptions.add(owse);
                 }
@@ -528,13 +528,17 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         checkObservedProperty(observedProperty, parameterName.name(), all);
     }
 
-    protected void checkOfferings(final Collection<String> offerings, final String parameterName)
+    protected void checkOfferings(final Collection<String> offerings, final String parameterName) throws OwsExceptionReport {
+        checkOfferings(offerings, parameterName, false);
+    }
+    
+    protected void checkOfferings(final Collection<String> offerings, final String parameterName, boolean all)
             throws OwsExceptionReport {
         if (offerings != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final String offering : offerings) {
                 try {
-                    checkOffering(offering, parameterName);
+                    checkOffering(offering, parameterName, all);
                 } catch (final OwsExceptionReport e) {
                     exceptions.add(e);
                 }
@@ -546,18 +550,29 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     protected void checkOfferings(Collection<String> offerings, Enum<?> parameterName) throws OwsExceptionReport {
         checkOfferings(offerings, parameterName.name());
     }
-
-    protected void checkOffering(final String offering, final String parameterName) throws OwsExceptionReport {
-        if (offering == null || offering.isEmpty()) {
-            throw new MissingParameterValueException(parameterName);
-        }
-        if (!getCache().getPublishedOfferings().contains(offering)) {
-            throw new InvalidParameterValueException(parameterName, offering);
-        }
+    
+    protected void checkOfferings(Collection<String> offerings, Enum<?> parameterName, boolean all) throws OwsExceptionReport {
+        checkOfferings(offerings, parameterName.name(), all);
     }
 
     protected void checkOffering(final String offering, final Enum<?> parameterName) throws OwsExceptionReport {
-        checkOffering(offering, parameterName.name());
+        checkOffering(offering, parameterName.name(), false);
+    }
+
+    protected void checkOffering(final String offering, final String parameterName, boolean all) throws OwsExceptionReport {
+        if (offering == null || offering.isEmpty()) {
+            throw new MissingParameterValueException(parameterName);
+        }
+        if (all) {
+            if (!getCache().getOfferings().contains(offering)) {
+                throw new InvalidParameterValueException(parameterName, offering);
+            }
+        } else {
+            if (!getCache().getPublishedOfferings().contains(offering)) {
+                throw new InvalidParameterValueException(parameterName, offering);
+            }
+        }
+        
     }
 
     protected void checkSpatialFilters(final List<SpatialFilter> spatialFilters, final String name)

@@ -40,7 +40,6 @@ import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.DuplicateIdentifierException;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -48,7 +47,6 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
@@ -97,7 +95,7 @@ public class SosInsertResultTemplateOperatorV20
         // check offering
         try {
             checkOfferings(request.getObservationTemplate().getOfferings(),
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate);
+                    Sos2Constants.InsertResultTemplateParams.proposedTemplate, true);
             try {
                 checkObservationType(request);
             } catch (OwsExceptionReport owse) {

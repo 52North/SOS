@@ -6,7 +6,23 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
 
-     Release 52n-sensorweb-sos-4.3.12
+    Release 52n-sensorweb-sos-4.3.13
+=====================================
+
+  --- New features ---
+
+    * 
+    
+  --- Changes ---
+    
+    * Update PostgreSQL JDBC to current which works with PG 9.6
+
+  
+  --- Fixed issues ---
+
+    * some minor fixes (getting unit from series)
+
+    Release 52n-sensorweb-sos-4.3.12
 =====================================
 
   --- New features ---

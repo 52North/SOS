@@ -184,7 +184,7 @@ public class AqdGetObservationOperatorV10 extends
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(request.getProcedures(), SosConstants.GetObservationParams.procedure.name());
+            checkProcedures(request.getProcedures(), SosConstants.GetObservationParams.procedure.name());
             // add child procedures to request
             if (request.isSetProcedure()) {
                 request.setProcedures(addChildProcedures(request.getProcedures()));

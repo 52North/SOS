@@ -124,16 +124,22 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     public Criteria getObservationCriteriaForProcedure(String procedure, Session session) throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(SeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
         return criteria;
+    }
+
+    private Criteria getDefaultSeriesObservationCriteria(Criteria criteria) {
+        Criteria seriesCriteria = criteria.createCriteria(SeriesObservation.SERIES);
+        seriesCriteria.add(Restrictions.eq(Series.PUBLISHED, true));
+        return seriesCriteria;
     }
 
     @Override
     public Criteria getObservationCriteriaForObservableProperty(String observableProperty, Session session) throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(SeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
         return criteria;
     }
@@ -142,7 +148,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     public Criteria getObservationCriteriaForFeatureOfInterest(String featureOfInterest, Session session) throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(SeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
         return criteria;
     }
@@ -151,7 +157,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     public Criteria getObservationCriteriaFor(String procedure, String observableProperty, Session session) throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(SeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
         return criteria;
@@ -162,7 +168,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             Session session) throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(SeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
@@ -177,7 +183,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                         .setProjection(Projections.distinct(Projections.property(SeriesObservationInfo.IDENTIFIER)))
                         .add(Restrictions.isNotNull(SeriesObservationInfo.IDENTIFIER))
                         .add(Restrictions.eq(SeriesObservationInfo.DELETED, false));
-        Criteria seriesCriteria = criteria.createCriteria(SeriesObservationInfo.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesCriteria.createCriteria(Series.PROCEDURE)
                 .add(Restrictions.eq(Procedure.IDENTIFIER, procedureIdentifier));
         LOGGER.debug("QUERY getObservationIdentifiers(procedureIdentifier): {}",
@@ -303,7 +309,9 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      */
     protected Criteria createCriteriaFor(Class<?> clazz, Series series, Session session) {
         final Criteria criteria = getDefaultObservationCriteria(session);
-        criteria.createCriteria(SeriesObservation.SERIES).add(Restrictions.eq(Series.ID, series.getSeriesId()));
+        criteria.createCriteria(SeriesObservation.SERIES)
+                .add(Restrictions.eq(Series.ID, series.getSeriesId()))
+                .add(Restrictions.eq(Series.PUBLISHED, true));
         return criteria;
     }
     
@@ -685,7 +693,13 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         }
         String logArgs = "request, features, offerings";
         logArgs += ", sosIndeterminateTime";
-        addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+        if (series.isSetFirstTimeStamp() && sosIndeterminateTime.equals(SosIndeterminateTime.first)) {
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime, series.getFirstTimeStamp());
+        } else if (series.isSetLastTimeStamp() && sosIndeterminateTime.equals(SosIndeterminateTime.latest)) {
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime, series.getLastTimeStamp());
+        } else {
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+        }
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
         

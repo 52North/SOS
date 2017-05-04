@@ -125,6 +125,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
 
         getCache().addOffering(offeringId);
+        getCache().addPublishedOffering(offeringId);
         addOfferingNamesAndDescriptionsToCache(offeringId, session);
         // only check once, check flag in other methods
         obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);

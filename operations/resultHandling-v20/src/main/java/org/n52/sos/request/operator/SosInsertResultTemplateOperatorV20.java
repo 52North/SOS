@@ -108,7 +108,7 @@ public class SosInsertResultTemplateOperatorV20
         // check offering
         try {
             checkOfferings(request.getObservationTemplate().getOfferings(),
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate);
+                    Sos2Constants.InsertResultTemplateParams.proposedTemplate, true);
             try {
                 checkObservationType(request);
             } catch (OwsExceptionReport owse) {

@@ -39,6 +39,7 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
@@ -120,7 +121,16 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
         } else if (observation.getValue() instanceof StreamingValue) {
             // Database streaming + XML streaming to client
             StreamingValue observationValue = (StreamingValue) observation.getValue();
-            writeDefaultPointMetadata(observationValue, observationValue.getUnit());
+            if (observationValue.isSetUnit()) {
+                writeDefaultPointMetadata(observationValue, observationValue.getUnit());
+            } else if (observation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty
+                && ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
+                        .isSetUnit()) {
+                writeDefaultPointMetadata(observationValue, ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
+                        .getUnit());
+            } else {
+                writeDefaultPointMetadata(observationValue, null);
+            }
             writeNewLine();
             while (observationValue.hasNextValue()) {
                 TimeValuePair timeValuePair = observationValue.nextValue();

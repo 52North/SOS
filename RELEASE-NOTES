@@ -95,6 +95,35 @@ RELEASE NOTES
       * Issue #439: quality tag how metadata of output list
 
 
+    Release 52n-sensorweb-sos-4.3.14
+=====================================
+
+  --- New features ---
+
+    
+  --- Changes ---
+    
+  
+  --- Fixed issues ---
+
+    * some fixes for the rest api (bundle)
+
+
+    Release 52n-sensorweb-sos-4.3.13
+=====================================
+
+  --- New features ---
+
+    
+  --- Changes ---
+    
+    * Update PostgreSQL JDBC to current which works with PG 9.6
+
+  
+  --- Fixed issues ---
+
+    * some minor fixes (getting unit from series)
+
     Release 52n-sensorweb-sos-4.3.12
 =====================================
 

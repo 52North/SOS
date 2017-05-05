@@ -1738,6 +1738,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <!-- 
         <repository>
             <id>Refractions</id>
             <name>Refractions repository</name>
@@ -1746,6 +1747,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+         -->
         <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>

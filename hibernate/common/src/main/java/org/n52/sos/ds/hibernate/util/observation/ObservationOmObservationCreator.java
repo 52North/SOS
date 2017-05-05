@@ -81,7 +81,7 @@ import com.google.common.collect.Sets;
 
 public class ObservationOmObservationCreator extends AbstractOmObservationCreator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationOmObservationCreator.class);
-
+    
     private final Collection<? extends Observation<?>> observations;
     private final AbstractObservationRequest request;
     private final Map<String, AbstractFeature> features = Maps.newHashMap();
@@ -175,7 +175,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             if (hObservation.getUnit() != null) {
                 value.setUnit(hObservation.getUnit().getUnit());
             } else if (hObservation instanceof SeriesObservation && ((SeriesObservation)hObservation).getSeries().isSetUnit()) {
-                value.setUnit(((SeriesObservation)hObservation).getSeries().getUnit().getUnit());
+                value.setUnit(queryUnit(((SeriesObservation)hObservation).getSeries()));
             }
             checkOrSetObservablePropertyUnit(getObservedProperty(phenomenonId), value.getUnit());
             OmObservationConstellation obsConst =

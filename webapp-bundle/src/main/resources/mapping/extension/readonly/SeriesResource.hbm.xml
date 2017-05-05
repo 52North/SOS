@@ -7,22 +7,15 @@
             <generator class="assigned" />
         </id>
         <many-to-one name="category" class="org.n52.series.api.v1.db.da.beans.CategoryEntity" column="observablepropertyid" insert="false" update="false" />
-        <many-to-one name="procedure" class="org.n52.series.api.v1.db.da.beans.ProcedureEntity" column="procedureid" insert="false" update="false"/>
+        <many-to-one name="procedure" class="org.n52.series.api.v1.db.da.beans.ProcedureEntity" column="procedureid" insert="false" update="false" />
         <many-to-one name="phenomenon" class="org.n52.series.api.v1.db.da.beans.PhenomenonEntity" column="observablepropertyid" insert="false" update="false"  />
-        <many-to-one name="feature" class="org.n52.series.api.v1.db.da.beans.FeatureEntity" column="featureofinterestid" insert="false" update="false"/>
-        <!-- 
-          If your database has full support for offerings (series.offeringid != null),
-          replace the following line with the uncommented version with 'column="offeringid"'!
-    -   -->
-        <many-to-one name="offering" class="org.n52.series.api.v1.db.da.beans.OfferingEntity" column="procedureid" insert="false" update="false"/>
-        <!-- 
-        <many-to-one name="offering" class="org.n52.series.api.v1.db.da.beans.OfferingEntity" column="offeringid" insert="false" update="false"/>
-        -->
+        <many-to-one name="feature" class="org.n52.series.api.v1.db.da.beans.FeatureEntity" column="featureofinterestid" insert="false" update="false" />
+         <many-to-one name="offering" class="org.n52.series.api.v1.db.da.beans.OfferingEntity" column="procedureid" insert="false" update="false" />
         <many-to-one name="unit" class="org.n52.series.api.v1.db.da.beans.UnitEntity" column="unitid" />
         <property name="numberOfDecimals" formula="3" type="int" />
         <property name="published" column="published" type="org.hibernate.type.TrueFalseType" />
         <property name="deleted" column="deleted" type="org.hibernate.type.TrueFalseType" />
-        
+
         <component name="firstValue" class="org.n52.series.api.v1.db.da.beans.ObservationEntity">
             <property name="timestamp" column="firsttimestamp" type="timestamp" />
             <property name="value" column="firstnumericvalue" type="double" />

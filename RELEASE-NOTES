@@ -6,12 +6,26 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
 
+
+    Release 52n-sensorweb-sos-4.3.14
+=====================================
+
+  --- New features ---
+
+    
+  --- Changes ---
+    
+  
+  --- Fixed issues ---
+
+    * some fixes for the rest api (bundle)
+
+
     Release 52n-sensorweb-sos-4.3.13
 =====================================
 
   --- New features ---
 
-    * 
     
   --- Changes ---
     

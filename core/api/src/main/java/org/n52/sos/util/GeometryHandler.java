@@ -61,6 +61,7 @@ import org.n52.iceland.util.Range;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
 import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -399,6 +400,20 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         return !isNorthingFirstEpsgCode(epsgCode);
     }
 
+
+    /**
+     * Switch the coordinate axis of geometry from or for datasource
+     *
+     * @param geom
+     *            Geometry to switch coordinate axis
+     * @return Geometry with switched coordinate axis if needed
+     * @throws OwsExceptionReport
+     *             If coordinate axis switching fails
+     */
+    public Geometry switchCoordinateAxisFromToDatasourceIfNeeded(EnvelopeOrGeometry geom) throws OwsExceptionReport {
+        return switchCoordinateAxisFromToDatasourceIfNeeded(geom.toGeometry());
+    }
+
     /**
      * Switch the coordinate axis of geometry from or for datasource
      *
@@ -509,6 +524,18 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         return geometry != null && !geometry.isEmpty() && envelopes.stream().anyMatch(e -> e.contains(geometry));
     }
 
+    /**
+     * Transforms the geometry to the storage EPSG code
+     *
+     * @param geometry
+     *            Geometry to transform
+     * @return Transformed geometry
+     * @throws OwsExceptionReport
+     */
+    public Geometry transformToStorageEpsg(EnvelopeOrGeometry geometry) throws OwsExceptionReport {
+        return transformToStorageEpsg(geometry.toGeometry());
+    }
+    
     /**
      * Transforms the geometry to the storage EPSG code
      *

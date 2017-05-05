@@ -45,6 +45,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.service.ServiceConfiguration;
@@ -75,13 +77,12 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
-import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
+import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
@@ -90,9 +91,6 @@ import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
 import org.n52.svalbard.util.XmlHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -111,6 +109,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
     private final EntitiyHelper entitiyHelper = new EntitiyHelper();
     private DecoderRepository decoderRepository;
     private DaoFactory daoFactory;
+    private GeometryHandler geometryHandler;
 
     public GetResultDAO() {
         super(SosConstants.SOS);
@@ -134,6 +133,11 @@ public class GetResultDAO extends AbstractGetResultHandler {
     @Inject
     public void setDecoderRepository(DecoderRepository decoderRepository) {
         this.decoderRepository = decoderRepository;
+    }
+
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
     }
 
     protected DecoderRepository getDecoderRepository() {
@@ -383,7 +387,9 @@ public class GetResultDAO extends AbstractGetResultHandler {
                 criteria.add(SpatialRestrictions.filter(
                         AbstractObservation.SAMPLING_GEOMETRY,
                         request.getSpatialFilter().getOperator(),
-                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter().getGeometry())));
+                        geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter().getGeometry())));
         }
     }
+
+
 }

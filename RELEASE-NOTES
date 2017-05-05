@@ -48,6 +48,8 @@ RELEASE NOTES
       * Register binding
         * Allows the insertion of the raw sensor description via HTTP POST
         * https://wiki.52north.org/SensorWeb/RegisterBinding
+      * Insertion of "up-to-date" example data that can be used by the Helgoland Client
+        * The SOS example requests are still for the test data!
   
   --- Changes ---
   

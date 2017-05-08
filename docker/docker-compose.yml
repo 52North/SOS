@@ -31,7 +31,7 @@ services:
     # change to 7- or 9- to change the tomcat version
     image: tomcat:8-jre8-alpine
     ports:
-      - 80:8080
+      - 8080:8080
       - 8000:8000
     links:
       - db:postgres

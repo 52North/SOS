@@ -50,6 +50,7 @@ RELEASE NOTES
         * https://wiki.52north.org/SensorWeb/RegisterBinding
       * Insertion of "up-to-date" example data that can be used by the Helgoland Client
         * The SOS example requests are still for the test data!
+      * Show client IP during installation for transactional security settings
   
   --- Changes ---
   
@@ -93,6 +94,8 @@ RELEASE NOTES
       * Issue #395: Creating database schema fails for MySQL
       * Issue #422: Failed conversion between SML 2.0 and SML 1.0.1
       * Issue #439: quality tag how metadata of output list
+      * Issue #???: Hidden NPE cause by not set request context while inserting new sample data
+                    https://github.com/52North/SOS/pull/543
 
 
     Release 52n-sensorweb-sos-4.3.14

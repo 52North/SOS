@@ -37,6 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,6 +57,7 @@ import org.n52.sos.exception.MissingServiceOperatorException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -75,6 +77,7 @@ import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.service.operator.ServiceOperatorKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GroupedAndNamedThreadFactory;
+import org.n52.sos.util.http.HTTPStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,130 +113,36 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
 
     private boolean insertedData;
 
-    private List<Exception> insertSensorExceptions;
-
-    private List<Exception> insertObservationExceptions;
-
-    private static String currentYearAndMonth;
+    private static final String CURRENT_YEAR_AND_MONTH;
 
     static {
         final GregorianCalendar cal = new GregorianCalendar();
         cal.setTime(new Date());
-        currentYearAndMonth =  String.format("%04d-%02d",
+        CURRENT_YEAR_AND_MONTH =  String.format("%04d-%02d",
                 cal.get(GregorianCalendar.YEAR),
                 (cal.get(GregorianCalendar.MONTH)+1));
     }
 
-    private final SwesExtension<?> extension = new SwesExtensionImpl<SweBoolean>()
-            .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name())
-            .setValue((SweBoolean) new SweBoolean()
-                    .setValue(true)
-                    .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name()));
+    private final SwesExtension<?> extension;
+    private final CompositeOwsException exceptions;
 
-    private List<Exception> insertFeatureExceptions;
+    public SampleDataInserter() throws IOException {
+        extension = new SwesExtensionImpl<>()
+                .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name())
+                .setValue((SweBoolean) new SweBoolean()
+                        .setValue(true)
+                        .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name()));
+        sampleDataProperties.load(this.getClass().getResourceAsStream(PROPERTY_FILE));
+        exceptions = new CompositeOwsException();
+    }
 
     public synchronized boolean insertSampleData() throws UnsupportedEncodingException, IOException, 
             MissingServiceOperatorException, URISyntaxException, OwsExceptionReport, XmlException {
         checkRequestOperators();
-        sampleDataProperties.load(this.getClass().getResourceAsStream(PROPERTY_FILE));
         insertSensors();
         insertFeatures();
         insertObservations();
         return insertedData;
-    }
-
-    private void insertFeatures() throws CodedException {
-        final File[] featureFiles = getFilesBySuffix("_feature.xml");
-        insertFeatureExceptions = Lists.newArrayList();
-        ExecutorService threadPool = Executors.newFixedThreadPool(5,
-                new GroupedAndNamedThreadFactory("52n-sample-data-insert-features"));
-        for (File featureFile : featureFiles) {
-            threadPool.submit(new InsertFeatureTask(featureFile));
-        }
-        try {
-            threadPool.shutdown();
-            while (!threadPool.isTerminated()) {
-                Thread.sleep(THREADPOOL_SLEEP_BETWEEN_CHECKS);
-            }
-        } catch (InterruptedException e) {}
-        if (!insertFeatureExceptions.isEmpty()) {
-            throw createException(insertFeatureExceptions.get(0), "InsertFeature", insertFeatureExceptions.size());
-        }
-    }
-
-    private CodedException createException(Exception e, String operation, int count) {
-        return new NoApplicableCodeException()
-        .causedBy(e)
-        .withMessage("%s failed during sample data insertion! Showing 1. of %s exceptions: %s",
-                operation,
-                count,
-                e.getMessage());
-    }
-
-    private void insertObservations()
-            throws UnsupportedEncodingException, IOException, XmlException, OwsExceptionReport {
-        // send request to SosInsertObservationOperatorV20
-        insertObservationExceptions = Lists.newArrayList();
-        ExecutorService threadPool = Executors.newFixedThreadPool(5,
-                new GroupedAndNamedThreadFactory("52n-sample-data-insert-observations"));
-        for (File observationFile : getFilesBySuffix("_obs.xml")) {
-            threadPool.submit(new InsertObservationTask(observationFile));
-        }
-        try {
-            threadPool.shutdown();
-            while (!threadPool.isTerminated()) {
-                Thread.sleep(THREADPOOL_SLEEP_BETWEEN_CHECKS);
-            }
-        } catch (InterruptedException e) {}
-        if (!insertObservationExceptions.isEmpty()) {
-            throw createException(insertObservationExceptions.get(0), "InsertObservation",
-                    insertObservationExceptions.size());
-        }
-    }
-
-    private void insertSensors() throws OwsExceptionReport, UnsupportedEncodingException, URISyntaxException,
-            IOException, XmlException {
-        createInsertSensorRequests();
-        insertedSensors = Maps.newHashMap();
-        insertSensorExceptions = Lists.newArrayList();
-        ExecutorService threadPool = Executors.newFixedThreadPool(5,
-                new GroupedAndNamedThreadFactory("52n-sample-data-insert-sensors"));
-        for (final InsertSensorRequest request : insertSensorRequests) {
-            threadPool.submit(new InsertSensorTask(request));
-        }
-        try {
-            threadPool.shutdown();
-            while (!threadPool.isTerminated()) {
-                Thread.sleep(THREADPOOL_SLEEP_BETWEEN_CHECKS);
-            }
-        } catch (InterruptedException e) {}
-        if (!insertSensorExceptions.isEmpty()) {
-            throw createException(insertSensorExceptions.get(0), "InsertSensor", insertSensorExceptions.size());
-        }
-    }
-
-    private void createInsertSensorRequests()
-            throws URISyntaxException, UnsupportedEncodingException, IOException, OwsExceptionReport, XmlException {
-        insertSensorRequests = Lists.newArrayList();
-        sampleDataFolder = Paths.get(
-                new URI( this.getClass().getResource("/sample-data/").toString()).getPath()).toFile();
-        for (File sensorDescriptionFile : getFilesBySuffix("_sensor-desc.xml")) {
-            String description = new String(Files.readAllBytes(
-                    Paths.get(sensorDescriptionFile.getAbsolutePath())),"UTF-8");
-            final String procedureId = sensorDescriptionFile.getName().replace("_sensor-desc.xml", "");
-            PhysicalSystem physicalSystem =
-                    (PhysicalSystem) CodingHelper.decodeXmlElement(XmlObject.Factory.parse(description));
-            InsertSensorRequest insertSensorRequest = (InsertSensorRequest) new InsertSensorRequest()
-                    .setProcedureDescriptionFormat("http://www.opengis.net/sensorml/2.0")
-                    .setProcedureDescription(physicalSystem)
-                    .setObservableProperty(getPropertyList(procedureId + "_observedProperties"))
-                    .setMetadata(new SosInsertionMetadata()
-                            .setObservationTypes(getPropertyList(procedureId + "_observationTypes"))
-                            .setFeatureOfInterestTypes(getPropertyList(procedureId + "_featureTypes")))
-                    .setService(SOS)
-                    .setVersion(SERVICEVERSION);
-            insertSensorRequests.add(insertSensorRequest);
-        }
     }
 
     private void checkRequestOperators() throws MissingServiceOperatorException {
@@ -254,6 +163,81 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
                 .getRequestOperator(SERVICE_OPERATOR_KEY, insertFeature);
         if (insertFeatureOperator == null) {
             missingServiceOperator(SOS, SERVICEVERSION, insertFeature);
+        }
+    }
+
+    private void insertSensors() throws OwsExceptionReport,
+            UnsupportedEncodingException, URISyntaxException, IOException,
+            XmlException {
+        createInsertSensorRequests();
+        insertedSensors = Maps.newHashMap();
+        ExecutorService threadPool = Executors.newFixedThreadPool(5,
+                new GroupedAndNamedThreadFactory("52n-sample-data-insert-sensors"));
+        for (final InsertSensorRequest request : insertSensorRequests) {
+            threadPool.submit(new InsertSensorTask(request));
+        }
+        try {
+            threadPool.shutdown();
+            while (!threadPool.isTerminated()) {
+                Thread.sleep(THREADPOOL_SLEEP_BETWEEN_CHECKS);
+            }
+        } catch (InterruptedException e) {}
+        exceptions.throwIfNotEmpty();
+    }
+
+    private void insertFeatures() throws CompositeOwsException {
+        final File[] featureFiles = getFilesBySuffix("_feature.xml");
+        ExecutorService threadPool = Executors.newFixedThreadPool(5,
+                new GroupedAndNamedThreadFactory("52n-sample-data-insert-features"));
+        for (File featureFile : featureFiles) {
+            threadPool.submit(new InsertFeatureTask(featureFile));
+        }
+        try {
+            threadPool.shutdown();
+            while (!threadPool.isTerminated()) {
+                Thread.sleep(THREADPOOL_SLEEP_BETWEEN_CHECKS);
+            }
+        } catch (InterruptedException e) {}
+        exceptions.throwIfNotEmpty();
+    }
+
+    private void insertObservations()
+            throws UnsupportedEncodingException, IOException, XmlException, OwsExceptionReport {
+        // send request to SosInsertObservationOperatorV20
+        ExecutorService threadPool = Executors.newFixedThreadPool(5,
+                new GroupedAndNamedThreadFactory("52n-sample-data-insert-observations"));
+        for (File observationFile : getFilesBySuffix("_obs.xml")) {
+            threadPool.submit(new InsertObservationTask(observationFile));
+        }
+        try {
+            threadPool.shutdown();
+            while (!threadPool.isTerminated()) {
+                Thread.sleep(THREADPOOL_SLEEP_BETWEEN_CHECKS);
+            }
+        } catch (InterruptedException e) {}
+        exceptions.throwIfNotEmpty();
+    }
+
+    private void createInsertSensorRequests()
+            throws URISyntaxException, UnsupportedEncodingException, IOException, OwsExceptionReport, XmlException {
+        insertSensorRequests = Lists.newArrayList();
+        sampleDataFolder = Paths.get(getUri(new File(new URI(this.getClass().getResource("/sample-data/").toString()).getPath()))).toFile();
+        for (File sensorDescriptionFile : getFilesBySuffix("_sensor-desc.xml")) {
+            String description = new String(Files.readAllBytes(
+                    Paths.get(getUri(sensorDescriptionFile))),"UTF-8");
+            final String procedureId = sensorDescriptionFile.getName().replace("_sensor-desc.xml", "");
+            PhysicalSystem physicalSystem =
+                    (PhysicalSystem) CodingHelper.decodeXmlElement(XmlObject.Factory.parse(description));
+            InsertSensorRequest insertSensorRequest = (InsertSensorRequest) new InsertSensorRequest()
+                    .setProcedureDescriptionFormat("http://www.opengis.net/sensorml/2.0")
+                    .setProcedureDescription(physicalSystem)
+                    .setObservableProperty(getPropertyList(procedureId + "_observedProperties"))
+                    .setMetadata(new SosInsertionMetadata()
+                            .setObservationTypes(getPropertyList(procedureId + "_observationTypes"))
+                            .setFeatureOfInterestTypes(getPropertyList(procedureId + "_featureTypes")))
+                    .setService(SOS)
+                    .setVersion(SERVICEVERSION);
+            insertSensorRequests.add(insertSensorRequest);
         }
     }
 
@@ -293,6 +277,32 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
         throw new MissingServiceOperatorException(msg);
     }
 
+    private URI getUri(File file) {
+        URI uri;
+        try {
+            uri = file.toPath().toUri();
+        } catch (InvalidPathException ipe) {
+            uri = file.toURI();
+            LOG.debug("Cannot convert '{}'. Falling back to '{}'.", file, uri);
+            LOG.trace("Expected exception catched.", ipe);
+        }
+        if (uri.toString().startsWith("file:///")) {
+            try {
+                uri =  new URI(uri.getScheme(),
+                        uri.getUserInfo(),
+                        uri.getHost(),
+                        uri.getPort(),
+                        uri.getPath(),
+                        uri.getQuery(),uri.getFragment()
+                );
+            } catch (URISyntaxException use) {
+                LOG.debug("Could not convert '{}' to URI.", file);
+                LOG.trace("Expected exception catched.", use);
+            }
+        }
+        return uri;
+    }
+
     private class InsertSensorTask implements Runnable{
 
         private final InsertSensorRequest request;
@@ -303,14 +313,14 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
 
         @Override
         public void run() {
-            if (!insertSensorExceptions.isEmpty()) {
+            if (exceptions.hasExceptions()) {
                 return;
             }
             try {
                 InsertSensorResponse response = (InsertSensorResponse) insertSensorOperator.receiveRequest(request);
                 insertedSensors.put(response.getAssignedProcedure(),response.getAssignedOffering());
             } catch (OwsExceptionReport e) {
-                insertSensorExceptions.add(e);
+                exceptions.add(e);
             }
         }
     }
@@ -331,14 +341,19 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
                                 .addFeatureMember(
                                         (AbstractFeature)CodingHelper.decodeXmlObject(
                                                 new String(Files.readAllBytes(
-                                                        Paths.get(featureFile.getAbsolutePath())),"UTF-8")))
+                                                        Paths.get(getUri(featureFile))),"UTF-8")))
                                 .setService(SOS)
                                 .setVersion(SERVICEVERSION)) == null) {
-                    insertFeatureExceptions.add(
+                    exceptions.add(
                             new NoApplicableCodeException().withMessage("Could not insert feature of interest."));
                 }
-            } catch (OwsExceptionReport|IOException e) {
-                insertFeatureExceptions.add(e);
+            } catch (OwsExceptionReport e) {
+                exceptions.add(e);
+            } catch (IOException e) {
+                exceptions.add(new NoApplicableCodeException()
+                .causedBy(e)
+                .withMessage("Could not read file '{}' containing feature of interest.", featureFile)
+                .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR));
             }
         }
     }
@@ -353,12 +368,12 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
 
         @Override
         public void run() {
-            if (!insertObservationExceptions.isEmpty()) {
+            if (exceptions.hasExceptions()) {
                 return;
             }
             try {
-                String xmlString = new String(Files.readAllBytes(Paths.get(observationFile.getAbsolutePath())),"UTF-8");
-                xmlString = xmlString.replaceAll("2016-05", currentYearAndMonth);
+                String xmlString = new String(Files.readAllBytes(Paths.get(getUri(observationFile))),"UTF-8");
+                xmlString = xmlString.replaceAll("2016-05", CURRENT_YEAR_AND_MONTH);
                 LOG.trace(xmlString);
                 final String procedureId = observationFile.getName().replace("_obs.xml", "");
                 GetObservationResponseDocument decodedXmlObject =
@@ -377,16 +392,28 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
                         Thread.sleep(THREADPOOL_SLEEP_BETWEEN_CHECKS);
                     }
                 } catch (InterruptedException e) {}
-            } catch (IOException|XmlException | OwsExceptionReport e) {
-                insertObservationExceptions.add(e);
+            } catch (OwsExceptionReport e) {
+                exceptions.add(e);
+            } catch (XmlException e) {
+                exceptions.add(new NoApplicableCodeException()
+                .causedBy(e)
+                .withMessage("Could not parse content of file '{}' to valid XML.",
+                        observationFile)
+                .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR));
+            } catch (IOException e) {
+                exceptions.add(new NoApplicableCodeException()
+                .causedBy(e)
+                .withMessage("Could not read file '{}' containing observations.",
+                        observationFile)
+                .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR));
             }
         }
     }
 
     private class InsertObservationSubTask implements Runnable {
 
-        private OmObservation observationData;
-        private String procedureId;
+        private final OmObservation observationData;
+        private final String procedureId;
 
         public InsertObservationSubTask(String procedureId, OmObservation observationData) {
             this.procedureId = procedureId;
@@ -395,7 +422,7 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
 
         @Override
         public void run() {
-            if (!insertObservationExceptions.isEmpty()) {
+            if (exceptions.hasExceptions()) {
                 return;
             }
             try {
@@ -411,7 +438,7 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
                     insertedData = true;
                 }
             } catch (OwsExceptionReport e) {
-                insertObservationExceptions.add(e);
+                exceptions.add(e);
             }
         }
     }

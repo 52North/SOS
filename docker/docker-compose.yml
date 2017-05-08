@@ -36,6 +36,8 @@ services:
       - "../webapp-bundle/target/52n-sos-webapp.war:/usr/local/tomcat/webapps/52n-sos-webapp.war"
       - "../webapp-bundle/target/52n-sos-webapp:/usr/local/tomcat/webapps/52n-sos-webapp"
       - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
+      - "./configuration.db:/usr/local/tomcat/webapps/52n-sos-webapp/configuration.db"
+      - "./datasource.properties:/usr/local/tomcat/webapps/52n-sos-webapp/WEB-INF/datasource.properties"
     depends_on:
       - db
     environment:

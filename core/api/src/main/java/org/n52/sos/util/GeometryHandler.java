@@ -535,7 +535,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     public Geometry transformToStorageEpsg(EnvelopeOrGeometry geometry) throws OwsExceptionReport {
         return transformToStorageEpsg(geometry.toGeometry());
     }
-    
+
     /**
      * Transforms the geometry to the storage EPSG code
      *

@@ -62,6 +62,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
+import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.sos.ds.dao.GetFeatureOfInterestDao;
 import org.n52.sos.util.GeometryHandler;
 
@@ -204,10 +205,13 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             Envelope envelope = null;
             for (SpatialFilter spatialFilter : req.getSpatialFilters()) {
                 if (SpatialOperator.BBOX.equals(spatialFilter.getOperator())) {
-                    if (envelope == null) {
-                        envelope = spatialFilter.getGeometry().getEnvelopeInternal();
-                    } else {
-                        envelope.expandToInclude(spatialFilter.getGeometry().getEnvelopeInternal());
+                    Envelope toAdd = getEnvelope(spatialFilter.getGeometry());
+                    if (toAdd != null) {
+                        if (envelope == null) {
+                            envelope = toAdd;
+                        } else {
+                            envelope.expandToInclude(toAdd);
+                        }
                     }
                 }
             }
@@ -224,6 +228,15 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         }
         rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
         return new DbQuery(IoParameters.createFromQuery(rsps));
+    }
+
+    private Envelope getEnvelope(EnvelopeOrGeometry geometry) {
+        if (geometry.isGeometry() && geometry.getGeometry().isPresent()) {
+            return geometry.getGeometry().get().getEnvelopeInternal();
+        } else if (geometry.isEnvelope() && geometry.getEnvelope().isPresent()) {
+            return geometry.getEnvelope().get().getEnvelope();
+        }
+        return null;
     }
 
     private Double[] toArray(double x, double y) {

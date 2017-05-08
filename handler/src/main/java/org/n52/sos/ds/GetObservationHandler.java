@@ -107,17 +107,32 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
         }
         if (request.isSetSpatialFilter() && !request.hasSpatialFilteringProfileSpatialFilter()) {
             if (SpatialOperator.BBOX.equals(request.getSpatialFilter().getOperator())) {
-                Envelope envelope = request.getSpatialFilter().getGeometry().getEnvelopeInternal();
-                if (envelope != null) {
-                    BBox bbox = new BBox();
-                    GeojsonPoint ll = new GeojsonPoint();
-                    ll.setCoordinates(toArray(envelope.getMinX(), envelope.getMinY()));
-                    bbox.setLl(ll);
-                    GeojsonPoint ur = new GeojsonPoint();
-                    ur.setCoordinates(toArray(envelope.getMaxX(), envelope.getMaxY()));
-                    bbox.setUr(ur);
-                    rsps.setParameter(IoParameters.BBOX, IoParameters.getJsonNodeFrom(bbox));
+                if (request.getSpatialFilter().getGeometry().isGeometry() && request.getSpatialFilter().getGeometry().getGeometry().isPresent()) {
+                    Envelope envelope = request.getSpatialFilter().getGeometry().getGeometry().get().getEnvelopeInternal();
+                    if (envelope != null) {
+                        BBox bbox = new BBox();
+                        GeojsonPoint ll = new GeojsonPoint();
+                        ll.setCoordinates(toArray(envelope.getMinX(), envelope.getMinY()));
+                        bbox.setLl(ll);
+                        GeojsonPoint ur = new GeojsonPoint();
+                        ur.setCoordinates(toArray(envelope.getMaxX(), envelope.getMaxY()));
+                        bbox.setUr(ur);
+                        rsps.setParameter(IoParameters.BBOX, IoParameters.getJsonNodeFrom(bbox));
+                    }
+                } else if (request.getSpatialFilter().getGeometry().isEnvelope() && request.getSpatialFilter().getGeometry().getEnvelope().isPresent()){
+                    Envelope envelope = request.getSpatialFilter().getGeometry().getEnvelope().get().getEnvelope();
+                    if (envelope != null) {
+                        BBox bbox = new BBox();
+                        GeojsonPoint ll = new GeojsonPoint();
+                        ll.setCoordinates(toArray(envelope.getMinX(), envelope.getMinY()));
+                        bbox.setLl(ll);
+                        GeojsonPoint ur = new GeojsonPoint();
+                        ur.setCoordinates(toArray(envelope.getMaxX(), envelope.getMaxY()));
+                        bbox.setUr(ur);
+                        rsps.setParameter(IoParameters.BBOX, IoParameters.getJsonNodeFrom(bbox));
+                    }
                 }
+
             }
         }
         rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));

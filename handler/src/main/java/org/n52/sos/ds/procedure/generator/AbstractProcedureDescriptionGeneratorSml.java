@@ -199,7 +199,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
         }
         DatasetEntity dataset = allInstances.iterator().next();
         SweAbstractSimpleType simpleType = null;
-        switch (dataset.getDatasetType()) {
+        switch (dataset.getValueType()) {
         case "measurement":
             final SweQuantity quantity = new SweQuantity();
             if (dataset.getUnit() != null) {
@@ -224,7 +224,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
             simpleType = category;
             break;
         default:
-            logTypeNotSupported(dataset.getDatasetType());
+            logTypeNotSupported(dataset.getValueType());
             break;
         }
         if (simpleType != null) {

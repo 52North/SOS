@@ -42,10 +42,10 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.DescribableEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.GeometryEntity;
-import org.n52.series.db.beans.MeasurementDatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.QuantityDatasetEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.series.db.beans.TextDatasetEntity;
 import org.n52.series.db.beans.UnitEntity;
@@ -211,7 +211,7 @@ public class EntityBuilder {
         }
         switch (seriesType.toLowerCase(Locale.ROOT)) {
         case "measurement":
-            return new MeasurementDatasetEntity();
+            return new QuantityDatasetEntity();
         case "text":
             return new TextDatasetEntity();
         case "count":

@@ -19,6 +19,8 @@ package org.n52.sos.request;
 
 import com.google.common.base.Strings;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosResultEncoding;
+import org.n52.sos.ogc.sos.SosResultStructure;
 import org.n52.sos.response.UpdateResultTemplateResponse;
 
 /**
@@ -30,8 +32,8 @@ import org.n52.sos.response.UpdateResultTemplateResponse;
 public class UpdateResultTemplateRequest extends AbstractServiceRequest<UpdateResultTemplateResponse>{
 
     private String resultTemplate;
-    private String resultStructure;
-    private String resultEncoding;
+    private SosResultStructure resultStructure;
+    private SosResultEncoding resultEncoding;
 
     @Override
     public UpdateResultTemplateResponse getResponse() throws OwsExceptionReport {
@@ -47,20 +49,8 @@ public class UpdateResultTemplateRequest extends AbstractServiceRequest<UpdateRe
         return !Strings.isNullOrEmpty(resultTemplate);
     }
 
-    public boolean isSetResultStructure() {
-        return !Strings.isNullOrEmpty(resultStructure);
-    }
-
-    public boolean isSetResultEncoding() {
-        return !Strings.isNullOrEmpty(resultEncoding);
-    }
-
-    public String getResultEncoding() {
-        if (isSetResultEncoding()) {
-            return resultEncoding;
-        } else {
-            return "";
-        }
+    public void setResultTemplate(String resultTemplate) {
+        this.resultTemplate = resultTemplate;
     }
 
     public String getResultTemplate() {
@@ -70,25 +60,37 @@ public class UpdateResultTemplateRequest extends AbstractServiceRequest<UpdateRe
             return "";
         }
     }
+
+    public boolean isSetResultEncoding() {
+        return !resultEncoding.isEmpty();
+    }
+
+    public void setResultEncoding(SosResultEncoding resultEncoding) {
+        this.resultEncoding = resultEncoding;
+    }
+
+    public SosResultEncoding getResultEncoding() {
+        if (isSetResultEncoding()) {
+            return resultEncoding;
+        } else {
+            return new SosResultEncoding();
+        }
+    }
     
-    public String getResultStructure() {
+    public boolean isSetResultStructure() {
+        return !resultStructure.isEmpty();
+    }
+
+    public void setResultStructure(SosResultStructure resultStructure) {
+        this.resultStructure = resultStructure;
+    }
+
+    public SosResultStructure getResultStructure() {
         if (isSetResultStructure()) {
             return resultStructure;
         } else {
-            return "";
+            return new SosResultStructure();
         }
-    }
-
-    public void setResultTemplate(String resultTemplate) {
-        this.resultTemplate = resultTemplate;
-    }
-
-    public void setResultEncoding(String resultEncoding) {
-        this.resultEncoding = resultEncoding;
-    }
-    
-    public void setResultStructure(String resultStructure) {
-        this.resultStructure = resultStructure;
     }
     
 }

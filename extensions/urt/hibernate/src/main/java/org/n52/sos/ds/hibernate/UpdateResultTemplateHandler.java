@@ -78,11 +78,13 @@ public class UpdateResultTemplateHandler
             transaction = session.beginTransaction();
             checkAndGetResultTemplate(request, session);
             if (request.isSetResultStructure()) {
-                resultTemplate.setResultStructure(request.getResultStructure());
+                resultTemplate.setResultStructure(
+                        request.getResultStructure().getXml());
                 updated = true;
             }
             if (request.isSetResultEncoding()) {
-                resultTemplate.setResultEncoding(request.getResultEncoding());
+                resultTemplate.setResultEncoding(
+                        request.getResultEncoding().getXml());
                 updated = true;
             }
             if (updated) {

@@ -43,6 +43,8 @@ import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.sos.SosResultEncoding;
+import org.n52.sos.ogc.sos.SosResultStructure;
 import org.n52.sos.request.UpdateResultTemplateRequest;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
@@ -55,7 +57,8 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @since 4.4.0
  */
-public class UpdateResultTemplateDecoder implements Decoder<UpdateResultTemplateRequest, XmlObject> {
+public class UpdateResultTemplateDecoder implements
+        Decoder<UpdateResultTemplateRequest, XmlObject> {
     private static final Set<DecoderKey> DECODER_KEYS =
             CollectionHelper.union(
                     CodingHelper.decoderKeysForElements(
@@ -72,17 +75,22 @@ public class UpdateResultTemplateDecoder implements Decoder<UpdateResultTemplate
             LoggerFactory.getLogger(UpdateResultTemplateDecoder.class);
 
     public UpdateResultTemplateDecoder() {
-        LOGGER.info("Decoder for the following keys initialized successfully: {}!",
+        LOGGER.info("Decoder for the following keys initialized successfully:" +
+                " {}!",
                 Joiner.on(", ").join(DECODER_KEYS));
     }
 
     @Override
-    public UpdateResultTemplateRequest decode(XmlObject xmlObject) throws OwsExceptionReport {
-        LOGGER.debug(String.format("REQUESTTYPE: %s", xmlObject != null ? xmlObject.getClass() : "null recevied"));
+    public UpdateResultTemplateRequest decode(XmlObject xmlObject)
+            throws OwsExceptionReport {
+        LOGGER.debug(String.format("REQUESTTYPE: %s",
+                xmlObject != null ? xmlObject.getClass() : "null recevied"));
         XmlHelper.validateDocument(xmlObject);
         if (xmlObject instanceof UpdateResultTemplateDocument) {
-            UpdateResultTemplateDocument drtd = (UpdateResultTemplateDocument) xmlObject;
-            UpdateResultTemplateRequest decodedRequest = parseUpdateResultTemplate(drtd);
+            UpdateResultTemplateDocument drtd =
+                    (UpdateResultTemplateDocument) xmlObject;
+            UpdateResultTemplateRequest decodedRequest =
+                    parseUpdateResultTemplate(drtd);
             LOGGER.debug(String.format("Decoded request: %s", decodedRequest));
             return decodedRequest;
         } else {
@@ -107,22 +115,27 @@ public class UpdateResultTemplateDecoder implements Decoder<UpdateResultTemplate
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 
-    private UpdateResultTemplateRequest parseUpdateResultTemplate(UpdateResultTemplateDocument drtd) throws UnsupportedDecoderInputException {
+    private UpdateResultTemplateRequest parseUpdateResultTemplate(
+            UpdateResultTemplateDocument drtd)
+            throws UnsupportedDecoderInputException, OwsExceptionReport {
         if (drtd.getUpdateResultTemplate().isNil()) {
             throw new UnsupportedDecoderInputException(this, drtd);
         }
-        UpdateResultTemplateType incomingRequest = drtd.getUpdateResultTemplate();
-        UpdateResultTemplateRequest parsedRequest = new UpdateResultTemplateRequest();
+        UpdateResultTemplateType incomingRequest =
+                drtd.getUpdateResultTemplate();
+        UpdateResultTemplateRequest parsedRequest =
+                new UpdateResultTemplateRequest();
         parsedRequest.setService(incomingRequest.getService());
         parsedRequest.setVersion(incomingRequest.getVersion());
         parsedRequest.setResultTemplate(incomingRequest.getResultTemplate());
         if (incomingRequest.isSetResultEncoding()) {
-            parsedRequest.setResultEncoding(incomingRequest.getResultEncoding().xmlText().trim());
+            parsedRequest.setResultEncoding(new SosResultEncoding(
+                    incomingRequest.getResultEncoding().xmlText().trim()));
         }
         if (incomingRequest.isSetResultStructure()) {
-            parsedRequest.setResultStructure(incomingRequest.getResultStructure().xmlText().trim());
+            parsedRequest.setResultStructure(new SosResultStructure(
+                    incomingRequest.getResultStructure().xmlText().trim()));
         }
         return parsedRequest;
     }
-
 }

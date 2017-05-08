@@ -37,12 +37,17 @@ import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.ResultTemplateUpdate;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.request.UpdateResultTemplateRequest;
 import org.n52.sos.response.UpdateResultTemplateResponse;
+import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * {@code IRequestOperator} to handle {@link UpdateResultTemplateRequest}s.
@@ -105,6 +110,7 @@ public class UpdateResultTemplateOperator
 
         checkResultTemplate(request, exceptions);
         checkAdditionalParameter(request, exceptions);
+        checkResultStructure(request, exceptions);
         
         exceptions.throwIfNotEmpty();
     }
@@ -145,6 +151,37 @@ public class UpdateResultTemplateOperator
                             UpdateResultTemplateConstants.PARAMS.resultStructure
                             ,UpdateResultTemplateConstants.PARAMS.resultEncoding
                     )));
+        }
+    }
+
+    private void checkResultStructure(UpdateResultTemplateRequest request, CompositeOwsException exceptions) throws OwsExceptionReport {
+        if (!request.isSetResultStructure()) {
+            // nothing to do
+            return;
+        }
+        if (!((SweDataRecord)request.getResultStructure().getResultStructure()).isSetFields()) {
+            exceptions.add(new NoApplicableCodeException()
+                    .withMessage("No fields found in resultStructure object!")
+                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR));
+            return;
+        }
+        boolean hasValidObservableProperty = false;
+        findObsProp:
+        for (SweField field : ((SweDataRecord)request.getResultStructure().getResultStructure()).getFields()) {
+            if (SweAbstractSimpleType.class.isAssignableFrom(field.getElement().getClass())) {
+            SweAbstractSimpleType<?> element =
+                    (SweAbstractSimpleType<?>) field.getElement();
+                if (getCache().hasObservableProperty(element.getDefinition())) {
+                    hasValidObservableProperty = true;
+                    break findObsProp;
+                }
+            }
+        }
+        if (!hasValidObservableProperty) {
+            exceptions.add(new NoApplicableCodeException()
+                    .withMessage("No matching observable property found.")
+                    .setStatus(HTTPStatus.BAD_REQUEST));
+            return;
         }
     }
 }

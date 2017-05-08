@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.sos;
 
+import com.google.common.base.Strings;
 import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
@@ -40,7 +41,6 @@ import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,11 +144,11 @@ public class SosResultEncoding {
     }
 
     public boolean isEmpty() {
-        return StringHelper.isNotEmpty(xml);
+        return Strings.isNullOrEmpty(xml);
     }
 
     public boolean isSetXml() {
-        return StringHelper.isNotEmpty(this.xml);
+        return !isEmpty();
     }
 
 }

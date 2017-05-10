@@ -19,10 +19,10 @@
 	-->
 	<!-- 
 	<swes:extension xsi:type="swe:CountPropertyType">
-		<swe:Text>
+		<swe:Count>
 			<swe:identifier>crs</swe:identifier>
 			<swe:value>4326</swe:value>
-		</swe:Text>
+		</swe:Count>
 	</swes:extension>
 	 -->
 	 <!-- 

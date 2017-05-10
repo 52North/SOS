@@ -1210,7 +1210,7 @@
 			"version":"2.0.0",
 			"binding":"application/x-kvp",
 			"operation":"GetObservationById",
-			"title":"crs=EPSG::4258,lanuage=get",
+			"title":"crs=EPSG::4258,language=ger",
 			"headers":{
 				"Accept":"application/xml"
 			},
@@ -4040,7 +4040,9 @@
 								"http://www.52north.org/test/observableProperty/1"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+								"http://inspire.ec.europa.eu/featureconcept/PointObservation",
+								"http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -4233,7 +4235,9 @@
 								"http://www.52north.org/test/observableProperty/2"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -4378,7 +4382,9 @@
 								"http://www.52north.org/test/observableProperty/3"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -4523,7 +4529,9 @@
 								"http://www.52north.org/test/observableProperty/4"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -4708,7 +4716,9 @@
 								"http://www.52north.org/test/observableProperty/5"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -4853,7 +4863,9 @@
 								"http://www.52north.org/test/observableProperty/6"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -5114,7 +5126,9 @@
 								"http://www.52north.org/test/observableProperty/7"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -5299,7 +5313,9 @@
 								"http://www.52north.org/test/observableProperty/8"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -5514,7 +5530,9 @@
 								"http://www.52north.org/test/observableProperty/developer"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},

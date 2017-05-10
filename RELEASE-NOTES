@@ -13,15 +13,15 @@ RELEASE NOTES
 
       * INSPIRE support for
         * Technical Guidance for implementing download services using the OGC Sensor Observation Service 
-          and ISO 19143 Filter Encoding (http://inspire.ec.europa.eu/id/document/tg/download-sos)
+            and ISO 19143 Filter Encoding (http://inspire.ec.europa.eu/id/document/tg/download-sos) (Since 4.3.0)
           * https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#INSPIRE_Download_Service_extension
         * Guidelines for the use of Observations & Measurements and Sensor Web Enablement-related 
-          standards in INSPIRE (D2.9) (http://inspire.ec.europa.eu/id/document/tg/d2.9-o%26m-swe)
+            standards in INSPIRE (D2.9) (http://inspire.ec.europa.eu/id/document/tg/d2.9-o%26m-swe)
           * https://wiki.52north.org/SensorWeb/InspireSpecialisedObservations
-      * GetDataAvailability 2.0
-        * Result contains the offering, procedure description formats and responseFormat/observationTypes.
-      * Hierarchical offering (similar to hierarchical procedure)
-        * allows to display only the parent offerings in the Capabilities
+          * GetDataAvailability 2.0
+            * Result contains the offering, procedure description formats and responseFormat/observationTypes.
+          * Hierarchical offering (similar to hierarchical procedure)
+            * allows to display only the parent offerings in the Capabilities
       * InsertFeatureOfInterest operation
         * Allows the insertion of featureOfInterest 
       * Support for insertion of procedure types
@@ -38,7 +38,7 @@ RELEASE NOTES
         * Support insertion of samplingGeometry
         * Support for insertion of related featureOfInterest and procedure identifier in result values
       * Enhanced DeleteObservation to allow deletion for featureOfInterest, procedure, observedProperty,
-        offering and temporalFilter
+          offering and temporalFilter
       * Support for stored ISO strings as time in database (Hibernate datatype)
       * Get name of observedProperty from procedure description if available
         * Would be inserted into the observedProperty table.
@@ -48,7 +48,7 @@ RELEASE NOTES
       * Register binding
         * Allows the insertion of the raw sensor description via HTTP POST
         * https://wiki.52north.org/SensorWeb/RegisterBinding
-      * Insertion of "up-to-date" example data that can be used by the Helgoland Client
+      * Insertion of "up-to-date" sample data that can be simply used by the Helgoland Client
         * The SOS example requests are still for the test data!
   
   --- Changes ---

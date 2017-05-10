@@ -43,10 +43,17 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.AbstractStreaming;
+import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.PointValuePair;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
+import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
+import org.n52.sos.ogc.om.values.MultiPointCoverage;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractComponent;
@@ -852,8 +859,35 @@ public class CoordinateTransformator extends
                 if (omObservation.getValue() instanceof AbstractStreaming) {
                     ((AbstractStreaming) omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs,
                             targetCRS);
+                } else if (omObservation.getValue() instanceof MultiObservationValues) {
+                    if (((MultiObservationValues)omObservation.getValue()).getValue() instanceof TLVTValue) {
+                        checkTLVTValueForGeometry((TLVTValue)((MultiObservationValues)omObservation.getValue()).getValue(), targetCRS);
+                    }
+                } else if (omObservation.getValue() instanceof SingleObservationValue) {
+                    SingleObservationValue singleValue = (SingleObservationValue)omObservation.getValue();
+                    if (singleValue.getValue() instanceof CvDiscretePointCoverage) {
+                        checkCvDiscretePointCoverageForGeometry((CvDiscretePointCoverage)singleValue.getValue(),targetCRS);
+                    } else if (((SingleObservationValue)omObservation.getValue()).getValue() instanceof MultiPointCoverage) {
+                        checkMultiPointCoverageForGeometry((MultiPointCoverage)singleValue.getValue(),targetCRS);
+                    }
                 }
             }
+        }
+    }
+
+    private void checkMultiPointCoverageForGeometry(MultiPointCoverage value, int targetCRS) throws OwsExceptionReport {
+        for (PointValuePair pvp : value.getValue()) {
+            pvp.setPoint((Point)getGeomtryHandler().transform(pvp.getPoint(), targetCRS));
+        }
+    }
+
+    private void checkCvDiscretePointCoverageForGeometry(CvDiscretePointCoverage value, int targetCRS) throws OwsExceptionReport {
+        value.getValue().setPoint((Point)getGeomtryHandler().transform(value.getValue().getPoint(), targetCRS));
+    }
+
+    private void checkTLVTValueForGeometry(TLVTValue value, int targetCRS) throws OwsExceptionReport {
+        for (TimeLocationValueTriple tlvt : value.getValue()) {
+            tlvt.setLocation(getGeomtryHandler().transform(tlvt.getLocation(), targetCRS));
         }
     }
 

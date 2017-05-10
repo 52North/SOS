@@ -69,6 +69,7 @@ import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.request.InsertFeatureOfInterestRequest;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.request.InsertSensorRequest;
+import org.n52.sos.request.RequestContext;
 import org.n52.sos.request.operator.RequestOperator;
 import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.response.InsertFeatureOfInterestResponse;
@@ -125,8 +126,9 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
 
     private final SwesExtension<?> extension;
     private final CompositeOwsException exceptions;
+    private final RequestContext requestContext;
 
-    public SampleDataInserter() throws IOException {
+    public SampleDataInserter(RequestContext requestContext) throws IOException {
         extension = new SwesExtensionImpl<>()
                 .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name())
                 .setValue((SweBoolean) new SweBoolean()
@@ -134,6 +136,7 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
                         .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name()));
         sampleDataProperties.load(this.getClass().getResourceAsStream(PROPERTY_FILE));
         exceptions = new CompositeOwsException();
+        this.requestContext = requestContext;
     }
 
     public synchronized boolean insertSampleData() throws UnsupportedEncodingException, IOException, 
@@ -235,6 +238,7 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
                     .setMetadata(new SosInsertionMetadata()
                             .setObservationTypes(getPropertyList(procedureId + "_observationTypes"))
                             .setFeatureOfInterestTypes(getPropertyList(procedureId + "_featureTypes")))
+                    .setRequestContext(requestContext)
                     .setService(SOS)
                     .setVersion(SERVICEVERSION);
             insertSensorRequests.add(insertSensorRequest);
@@ -318,7 +322,7 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
             }
             try {
                 InsertSensorResponse response = (InsertSensorResponse) insertSensorOperator.receiveRequest(request);
-                insertedSensors.put(response.getAssignedProcedure(),response.getAssignedOffering());
+                insertedSensors.put(response.getAssignedProcedure(), response.getAssignedOffering());
             } catch (OwsExceptionReport e) {
                 exceptions.add(e);
             }
@@ -342,6 +346,7 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
                                         (AbstractFeature)CodingHelper.decodeXmlObject(
                                                 new String(Files.readAllBytes(
                                                         Paths.get(getUri(featureFile))),"UTF-8")))
+                                .setRequestContext(requestContext)
                                 .setService(SOS)
                                 .setVersion(SERVICEVERSION)) == null) {
                     exceptions.add(
@@ -430,6 +435,7 @@ public class SampleDataInserter implements SosConstants, Sos2Constants {
                         .setOfferings(Collections.singletonList(insertedSensors.get(procedureId)))
                         .setObservation(Collections.singletonList(observationData))
                         .addExtension(extension)
+                        .setRequestContext(requestContext)
                         .setService(SOS)
                         .setVersion(SERVICEVERSION);
                 InsertObservationResponse insertObservationResponse =

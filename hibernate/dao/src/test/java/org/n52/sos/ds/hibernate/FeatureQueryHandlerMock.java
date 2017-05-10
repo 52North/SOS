@@ -40,6 +40,7 @@ import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -64,7 +65,7 @@ public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
     }
 
     @Override
-    public String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
+    public String insertFeature(AbstractSamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
         if (samplingFeature.isSetIdentifier()) {
             return samplingFeature.getIdentifier();
         }

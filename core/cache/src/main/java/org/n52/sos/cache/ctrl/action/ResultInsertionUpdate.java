@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.util.Action;
 
 import com.google.common.collect.Lists;
@@ -107,14 +107,14 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
             cache.addObservablePropertyForResultTemplate(templateIdentifier, observableProperty);
             cache.addObservablePropertyForProcedure(procedure, observableProperty);
     
-            List<SamplingFeature> observedFeatures =
+            List<AbstractSamplingFeature> observedFeatures =
                     sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
     
             final Envelope envelope = createEnvelopeFrom(observedFeatures);
     
             cache.updateGlobalEnvelope(envelope);
     
-            for (SamplingFeature sosSamplingFeature : observedFeatures) {
+            for (AbstractSamplingFeature sosSamplingFeature : observedFeatures) {
                 final String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
                 cache.addFeatureOfInterest(featureOfInterest);
             cache.addPublishedFeatureOfInterest(featureOfInterest);

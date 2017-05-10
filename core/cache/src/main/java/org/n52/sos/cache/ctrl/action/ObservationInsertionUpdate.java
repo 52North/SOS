@@ -41,7 +41,7 @@ import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.util.Action;
@@ -104,13 +104,13 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
             cache.updatePhenomenonTimeForProcedure(procedure, phenomenonTime);
 
             // update features
-            List<SamplingFeature> observedFeatures =
+            List<AbstractSamplingFeature> observedFeatures =
                     sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
 
             final Envelope envelope = createEnvelopeFrom(observedFeatures);
             cache.updateGlobalEnvelope(envelope);
 
-            for (SamplingFeature sosSamplingFeature : observedFeatures) {
+            for (AbstractSamplingFeature sosSamplingFeature : observedFeatures) {
                 String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
 
                 cache.addFeatureOfInterest(featureOfInterest);

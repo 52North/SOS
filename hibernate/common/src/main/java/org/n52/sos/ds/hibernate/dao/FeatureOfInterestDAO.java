@@ -406,10 +406,10 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      */
     public AbstractFeatureOfInterest checkOrInsertFeatureOfInterest(final AbstractFeature featureOfInterest,
             final Session session) throws OwsExceptionReport {
-        if (featureOfInterest instanceof SamplingFeature) {
+        if (featureOfInterest instanceof AbstractSamplingFeature) {
             final String featureIdentifier = Configurator.getInstance().getFeatureQueryHandler()
-                    .insertFeature((SamplingFeature) featureOfInterest, session);
-            return getOrInsertFeatureOfInterest(featureIdentifier, ((SamplingFeature) featureOfInterest).getUrl(),
+                    .insertFeature((AbstractSamplingFeature) featureOfInterest, session);
+            return getOrInsertFeatureOfInterest(featureIdentifier, ((AbstractSamplingFeature) featureOfInterest).getUrl(),
                     session);
         } else {
             throw new NoApplicableCodeException()
@@ -494,15 +494,15 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                     feature.setFeatureOfInterestType(new FeatureOfInterestTypeDAO().getOrInsertFeatureOfInterestType(
                             ((FeatureWithFeatureType) abstractFeature).getFeatureType(), session));
                 }
-                if (abstractFeature instanceof SamplingFeature) {
-                    SamplingFeature samplingFeature = (SamplingFeature) abstractFeature;
+                if (abstractFeature instanceof AbstractSamplingFeature) {
+                    AbstractSamplingFeature samplingFeature = (AbstractSamplingFeature) abstractFeature;
                     if (samplingFeature.isSetSampledFeatures()) {
                         Set<AbstractFeatureOfInterest> parents =
                                 Sets.newHashSetWithExpectedSize(samplingFeature.getSampledFeatures().size());
                         for (AbstractFeature sampledFeature : samplingFeature.getSampledFeatures()) {
                             if (!OGCConstants.UNKNOWN.equals(sampledFeature.getIdentifierCodeWithAuthority().getValue())) {
-                                if (sampledFeature instanceof SamplingFeature) {
-                                    parents.add(dao.insertFeature((SamplingFeature) sampledFeature, session));
+                                if (sampledFeature instanceof AbstractSamplingFeature) {
+                                    parents.add(dao.insertFeature((AbstractSamplingFeature) sampledFeature, session));
                                 } else {
                                     parents.add(dao.insertFeature(
                                             new SamplingFeature(sampledFeature.getIdentifierCodeWithAuthority()),
@@ -517,9 +517,9 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                 session.flush();
                 session.refresh(feature);
             }
-            if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetParameter()) {
+            if (abstractFeature instanceof AbstractSamplingFeature && ((AbstractSamplingFeature) abstractFeature).isSetParameter()) {
                 Map<UoM, Unit> unitCache = Maps.newHashMap();
-                new FeatureParameterDAO().insertParameter(((SamplingFeature) abstractFeature).getParameters(),
+                new FeatureParameterDAO().insertParameter(((AbstractSamplingFeature) abstractFeature).getParameters(),
                         feature.getFeatureOfInterestId(), unitCache, session);
             }
             return feature;

@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.entities.parameter.feature;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class FeatureParameterAdder {

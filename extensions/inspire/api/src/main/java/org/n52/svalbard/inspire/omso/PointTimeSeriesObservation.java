@@ -31,7 +31,7 @@ package org.n52.svalbard.inspire.omso;
 import org.n52.sos.exception.ows.concrete.InvalidSridException;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 
 import com.google.common.collect.Sets;
 
@@ -56,7 +56,7 @@ public class PointTimeSeriesObservation extends AbstractInspireObservation {
         super(observation);
         if (!checkForFeatureGeometry(observation) && observation.isSetSpatialFilteringProfileParameter()) {
             try {
-                ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setGeometry(getGeometryFromSamplingGeometry(observation));
+                ((AbstractSamplingFeature)getObservationConstellation().getFeatureOfInterest()).setGeometry(getGeometryFromSamplingGeometry(observation));
             } catch (InvalidSridException e) {
                 // TODO
             }
@@ -67,8 +67,8 @@ public class PointTimeSeriesObservation extends AbstractInspireObservation {
     
     @Override
     public OmObservation cloneTemplate() {
-        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
-            ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+        if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature){
+            ((AbstractSamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
         }
         return cloneTemplate(new PointTimeSeriesObservation());
     }

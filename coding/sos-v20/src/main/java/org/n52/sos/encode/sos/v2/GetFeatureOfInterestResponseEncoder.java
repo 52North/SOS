@@ -44,7 +44,7 @@ import org.n52.sos.encode.streaming.sos.v2.GetFeatureOfInterestXmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -78,7 +78,7 @@ public class GetFeatureOfInterestResponseEncoder extends AbstractSosResponseEnco
             for (AbstractFeature f : (FeatureCollection) feature) {
                 addFeatureOfInterest(f, xbGetFoiResponse);
             }
-        } else if (feature instanceof SamplingFeature) {
+        } else if (feature instanceof AbstractSamplingFeature) {
             addFeatureOfInterest(feature, xbGetFoiResponse);
         }
         XmlHelper.makeGmlIdsUnique(document.getDomNode());

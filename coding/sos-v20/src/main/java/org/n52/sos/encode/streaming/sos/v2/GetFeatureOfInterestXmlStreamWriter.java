@@ -45,7 +45,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.Sos2StreamingConstants;
@@ -153,7 +153,7 @@ public class GetFeatureOfInterestXmlStreamWriter extends XmlStreamWriter<GetFeat
                 writeFeatureMember(f, encodingValues);
                 writeNewLine();
             }
-        } else if (feature instanceof SamplingFeature) {
+        } else if (feature instanceof AbstractSamplingFeature) {
             writeFeatureMember(feature, encodingValues);
             writeNewLine();
         }

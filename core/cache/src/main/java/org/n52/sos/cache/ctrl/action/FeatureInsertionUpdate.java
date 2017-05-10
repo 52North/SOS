@@ -35,7 +35,7 @@ import java.util.List;
 
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.request.InsertFeatureOfInterestRequest;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -53,10 +53,10 @@ public class FeatureInsertionUpdate extends InMemoryCacheUpdate {
     @Override
     public void execute() {
         final WritableContentCache cache = getCache();
-        List<SamplingFeature> samplingFeatures = new ArrayList<SamplingFeature>();
+        List<AbstractSamplingFeature> samplingFeatures = new ArrayList<AbstractSamplingFeature>();
         for (AbstractFeature abstractFeature : request.getFeatureMembers()) {
-            if (abstractFeature instanceof SamplingFeature) {
-                samplingFeatures.add((SamplingFeature)abstractFeature);
+            if (abstractFeature instanceof AbstractSamplingFeature) {
+                samplingFeatures.add((AbstractSamplingFeature)abstractFeature);
             }
             cache.addFeatureOfInterest(abstractFeature.getIdentifier());
             cache.addPublishedFeatureOfInterest(abstractFeature.getIdentifier());

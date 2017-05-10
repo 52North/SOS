@@ -46,6 +46,7 @@ import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -180,7 +181,7 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
     }
 
     private Object parseFeaturePropertyType(FeaturePropertyType featurePropertyType) throws OwsExceptionReport {
-        SamplingFeature feature = null;
+        AbstractSamplingFeature feature = null;
         if (featurePropertyType.isNil() || featurePropertyType.isSetNilReason()) {
             if (featurePropertyType.isSetNilReason()) {
                 return Nillable.nil(featurePropertyType.getNilReason().toString());
@@ -217,8 +218,8 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
             }
             if (abstractFeature != null) {
                 Object decodedObject = CodingHelper.decodeXmlObject(abstractFeature);
-                if (decodedObject instanceof SamplingFeature) {
-                    feature = (SamplingFeature) decodedObject;
+                if (decodedObject instanceof AbstractSamplingFeature) {
+                    feature = (AbstractSamplingFeature) decodedObject;
                 } else {
                     throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
                             .withMessage("The requested featurePropertyType type is not supported by this service!");

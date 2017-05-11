@@ -30,13 +30,6 @@
 						</goals>
 						<configuration>
 							<artifactItems>
-								<artifactItem>
-									<groupId>org.n52.series-api</groupId>
-									<artifactId>rest</artifactId>
-									<includes>api-doc/**</includes>
-									<outputDirectory>${project.build.directory}/${project.build.finalName}/static/doc</outputDirectory>
-									<overWrite>false</overWrite>
-								</artifactItem>
                 <artifactItem> 
                  <groupId>org.n52.series-api.db</groupId> 
                  <artifactId>mappings</artifactId> 

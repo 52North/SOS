@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -324,7 +324,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                                 sosIndeterminateTime, session));
                         
                     }
-                    seriesObservations = checkObservationsForDuplicity(observationDAO.getSeriesObservationsFor(request, features, session), request);
+                    seriesObservations = checkObservationsForDuplicity(seriesObservations, request);
                 }
             }
         }
@@ -332,7 +332,6 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         else {
             seriesObservations = checkObservationsForDuplicity(observationDAO.getSeriesObservationsFor(request, features, session), request);
         }
-        
 
         // if active profile demands observation metadata for series without
         // matching observations,
@@ -570,6 +569,8 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                 if (!serieses.contains(seriesObservation.getSeries()) && !duplicated.contains(seriesObservation)
                         && isDuplicatedSeries(seriesObservation.getSeries(), serieses)) {
                     duplicated.add(seriesObservation.getSeries());
+                } else {
+                    serieses.add(seriesObservation.getSeries());
                 }
             }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,19 +36,14 @@ import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.request.GetCapabilitiesRequest;
 import org.n52.sos.response.GetCapabilitiesResponse;
-import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
-import com.vividsolutions.jts.geom.Envelope;
-
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosGetCapabilitiesOperatorV20 extends
         AbstractV2RequestOperator<AbstractGetCapabilitiesDAO, GetCapabilitiesRequest, GetCapabilitiesResponse> {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,16 +45,14 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.OMHelper;
-import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.SchemaLocation;
@@ -140,8 +138,8 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
     }
 
     protected XmlObject createFeature(final AbstractFeature absFeature) throws OwsExceptionReport {
-        if (absFeature instanceof SamplingFeature) {
-            final SamplingFeature sampFeat = (SamplingFeature) absFeature;
+        if (absFeature instanceof AbstractSamplingFeature) {
+            final AbstractSamplingFeature sampFeat = (AbstractSamplingFeature) absFeature;
             final SFSpatialSamplingFeatureDocument xbSampFeatDoc = SFSpatialSamplingFeatureDocument.Factory
                     .newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             if (sampFeat.getXmlDescription() != null) {
@@ -193,7 +191,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         throw new UnsupportedEncoderInputException(this, absFeature);
     }
 
-    protected void addSampledFeatures(SFSamplingFeatureType sfsft, SamplingFeature sampFeat) throws OwsExceptionReport {
+    protected void addSampledFeatures(SFSamplingFeatureType sfsft, AbstractSamplingFeature sampFeat) throws OwsExceptionReport {
         if (sampFeat.isSetSampledFeatures()) {
             Map<HelperValues, String> additionalValues = Maps.newHashMap();
             additionalValues.put(HelperValues.REFERENCED, null);
@@ -207,7 +205,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         }
     }
 
-    protected void addFeatureType(SFSamplingFeatureType sfsft, SamplingFeature sampFeat) {
+    protected void addFeatureType(SFSamplingFeatureType sfsft, AbstractSamplingFeature sampFeat) {
         if (sampFeat.isSetFeatureType() && !OGCConstants.UNKNOWN.equals(sampFeat.getFeatureType())) {
             sfsft.addNewType().setHref(sampFeat.getFeatureType());
         } else {
@@ -227,7 +225,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         }
     }
 
-    private void encodeShape(final ShapeType xbShape, final SamplingFeature sampFeat) throws OwsExceptionReport {
+    private void encodeShape(final ShapeType xbShape, final AbstractSamplingFeature sampFeat) throws OwsExceptionReport {
         final Encoder<XmlObject, Geometry> encoder = CodingRepository.getInstance()
                 .getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sampFeat.getGeometry()));
         if (encoder != null) {
@@ -247,7 +245,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         }
     }
 
-    protected void addParameter(final SFSamplingFeatureType xbSampFeature, final SamplingFeature sampFeat)
+    protected void addParameter(final SFSamplingFeatureType xbSampFeature, final AbstractSamplingFeature sampFeat)
             throws OwsExceptionReport {
         if (sampFeat.isSetParameter()) {
             for (final NamedValue<?> namedValuePair : sampFeat.getParameters()) {
@@ -259,7 +257,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         }
     }
 
-    private void addNameDescription(SFSamplingFeatureType xbSamplingFeature, SamplingFeature samplingFeature)
+    private void addNameDescription(SFSamplingFeatureType xbSamplingFeature, AbstractSamplingFeature samplingFeature)
             throws OwsExceptionReport {
         addName(xbSamplingFeature, samplingFeature);
         addDescription(xbSamplingFeature, samplingFeature);
@@ -268,8 +266,8 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
     @Override
     protected XmlObject createFeature(FeaturePropertyType featurePropertyType, AbstractFeature abstractFeature,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        if (abstractFeature instanceof SamplingFeature) {
-            final SamplingFeature samplingFeature = (SamplingFeature) abstractFeature;
+        if (abstractFeature instanceof AbstractSamplingFeature) {
+            final AbstractSamplingFeature samplingFeature = (AbstractSamplingFeature) abstractFeature;
             String namespace;
             if (additionalValues.containsKey(HelperValues.ENCODE_NAMESPACE)) {
                 namespace = additionalValues.get(HelperValues.ENCODE_NAMESPACE);
@@ -302,7 +300,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
         return featurePropertyType;
     }
 
-    private void setMetaDataProperty(SFSpatialSamplingFeatureType sfssft, SamplingFeature sampFeat) throws OwsExceptionReport {
+    private void setMetaDataProperty(SFSpatialSamplingFeatureType sfssft, AbstractSamplingFeature sampFeat) throws OwsExceptionReport {
         if (sampFeat.isSetMetaDataProperty()) {
             for (AbstractMetaData abstractMetaData : sampFeat.getMetaDataProperty()) {
                 XmlObject encodeObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, abstractMetaData);

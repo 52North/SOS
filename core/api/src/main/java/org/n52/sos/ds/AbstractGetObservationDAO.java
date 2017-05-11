@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -70,10 +70,11 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
         final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
         addOfferingParameter(opsMeta);
         addQueryableProcedureParameter(opsMeta);
+        //addPublishedProcedureParameter(opsMeta);
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat, CodingRepository
                 .getInstance().getSupportedResponseFormats(SosConstants.SOS, version));
 
-        addObservablePropertyParameter(opsMeta);
+        addPublishedObservablePropertyParameter(opsMeta);
         addFeatureOfInterestParameter(opsMeta, featureIDs);
 
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
@@ -98,6 +99,15 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
                     SosConstants.RESPONSE_MODES);
         }
     }
+
+//    private Collection<String> getPublishedOfferings() {
+//        Set<String> procedures = getCache().getPublishedProcedures();
+//        Set<String> offerings = new HashSet<>();
+//        for (String procedure : procedures) {
+//            offerings.addAll(getCache().getOfferingsForProcedure(procedure));
+//        }
+//        return offerings;
+//    }
 
     /**
      * Get the min/max phenomenon time of contained observations
@@ -140,7 +150,7 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
         }
         return resultModelsList;
     }
-
+    
     /**
      * process the GetObservation query
      * 

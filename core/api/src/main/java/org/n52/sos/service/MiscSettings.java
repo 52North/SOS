@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -90,7 +90,8 @@ public class MiscSettings implements SettingDefinitionProvider {
 		            .setKey(TOKEN_SEPARATOR)
 		            .setDefaultValue(",")
 		            .setTitle("Token separator")
-		            .setDescription("Token separator in result element (a character)");
+		            .setDescription("Token separator in result element (a character). <strong>MUST</strong> not be "
+		                    + "part of the data.");
 
     public static final StringSettingDefinition TUPLE_SEPERATOR_DEFINITION = 
     		new StringSettingDefinition()
@@ -99,7 +100,8 @@ public class MiscSettings implements SettingDefinitionProvider {
 		            .setKey(TUPLE_SEPARATOR)
 		            .setDefaultValue("@@")
 		            .setTitle("Tuple separator")
-		            .setDescription("Tuple separator in result element (a character)");
+		            .setDescription("Tuple separator in result element (a character). <strong>MUST</strong> not be "
+                            + "part of the data.");
     
     public static final StringSettingDefinition DECIMAL_SEPERATOR_DEFINITION = 
     		new StringSettingDefinition()
@@ -108,7 +110,8 @@ public class MiscSettings implements SettingDefinitionProvider {
 				    .setKey(DECIMAL_SEPARATOR)
 				    .setDefaultValue(".")
 				    .setTitle("Decimal separator")
-				    .setDescription("Decimal separator in result element (a character)");
+				    .setDescription("Decimal separator in result element (a character). When your data contains values"
+				            + " like <tt>2,5</tt> enter <tt>,</tt>.");
 
     public static final StringSettingDefinition SRS_NAME_PREFIX_SOS_V1_DEFINITION = 
     		new StringSettingDefinition()
@@ -200,9 +203,11 @@ public class MiscSettings implements SettingDefinitionProvider {
                     .setOrder(ORDER_16)
                     .setKey(RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST)
                     .setDefaultValue(false)
-                    .setTitle("Should the SOS return overall extrema?")
+                    .setTitle("Should the SOS return overall extrema for time series?")
                     .setDescription(
-                            "Should the SOS return overall extrema for first/latest observation queries (<code>true</code>) or for each time series(<code>false</code>)");
+                            "The service will return <strong>overall extrema</strong> for first/latest observation "
+                            + "queries when this option is <strong>activated</strong>. When disabled, only for "
+                            + "each time series");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
             TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION,DECIMAL_SEPERATOR_DEFINITION,
@@ -210,9 +215,7 @@ public class MiscSettings implements SettingDefinitionProvider {
             DEFAULT_PROCEDURE_PREFIX_DEFINITION, CHARACTER_ENCODING_DEFINITION,
             HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING_DEFINITION, HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION,
             HYDRO_MAX_NUMBER_OF_RETURNED_VALUES_DEFINITION, RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST_DEFINITION
-    /*
-     * , RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES_DEFINITION
-     */);
+            /*, RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES_DEFINITION */);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

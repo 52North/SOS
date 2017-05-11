@@ -307,7 +307,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"DescribeSensor",
 			"title":"language ger",
 			"headers":{
@@ -326,7 +326,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"DescribeSensor",
 			"title":"crs = EPSG::4258",
 			"headers":{
@@ -357,7 +357,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"language ger",
 			"headers":{
@@ -373,7 +373,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"crs = 4258",
 			"headers":{
@@ -389,7 +389,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"crs = EPSG:4258",
 			"headers":{
@@ -405,7 +405,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"crs = EPSG::4258",
 			"headers":{
@@ -421,7 +421,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"crs = http://www.opengis.net/def/crs/EPSG/0/4258",
 			"headers":{
@@ -437,7 +437,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetCapabilities",
 			"title":"crs = urn:ogc:def:crs:EPSG::4258",
 			"headers":{
@@ -618,7 +618,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"language=ger",
 			"headers":{
@@ -635,7 +635,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetFeatureOfInterest",
 			"title":"crs=EPSG::4258",
 			"headers":{
@@ -910,7 +910,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservation",
 			"title":"offering, language=ger",
 			"headers":{
@@ -928,7 +928,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservation",
 			"title":"offering, crs=EPSG::4258",
 			"headers":{
@@ -1154,7 +1154,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservationById",
 			"headers":{
 				"Accept":"application/xml"
@@ -1171,7 +1171,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservationById",
 			"title":"crs=EPSG::4258",
 			"headers":{
@@ -1189,7 +1189,7 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservationById",
 			"title":"language=ger",
 			"headers":{
@@ -1208,9 +1208,9 @@
 			},
 			"service":"SOS",
 			"version":"2.0.0",
-			"binding":"/kvp",
+			"binding":"application/x-kvp",
 			"operation":"GetObservationById",
-			"title":"crs=EPSG::4258,lanuage=get",
+			"title":"crs=EPSG::4258,language=ger",
 			"headers":{
 				"Accept":"application/xml"
 			},
@@ -1499,6 +1499,18 @@
 			"method":"POST"
 		},
 		{
+            "request":"static/examples/sos_v20/requests_xml/Transactional/InsertFeatureOfInterest.xml",
+            "service":"SOS",
+            "version":"2.0.0",
+            "binding": "application/xml",
+            "operation":"InsertFeatureOfInterest",
+            "headers":{
+                "Accept":"application/xml",
+                "Content-Type":"application/xml"
+            },
+            "method":"POST"
+        },
+		{
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Category.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1745,6 +1757,19 @@
 			"method":"POST"
 		},
 		{
+            "request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResult_ComplexObservation_SamplingGeometry_FlexibleFeature.xml",
+            "service":"SOS",
+            "version":"2.0.0",
+            "binding": "application/xml",
+            "operation":"InsertResult",
+            "title":"for ComplexObservation with SamplingGeometry and flexible featureOfInterest",
+            "headers":{
+                "Accept":"application/xml",
+                "Content-Type":"application/xml"
+            },
+            "method":"POST"
+        },
+		{
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1795,6 +1820,19 @@
 			},
 			"method":"POST"
 		},
+		{
+            "request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplate_ComplexObservation_SamplingGeometry_FlexibleFeature.xml",
+            "service":"SOS",
+            "version":"2.0.0",
+            "binding": "application/xml",
+            "operation":"InsertResultTemplate",
+            "title":"for ComplexObservation with SamplingGeometry and flexible featureOfInterest",
+            "headers":{
+                "Accept":"application/xml",
+                "Content-Type":"application/xml"
+            },
+            "method":"POST"
+        },
 		{
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultWithResultTime.xml",
 			"service":"SOS",
@@ -2446,6 +2484,19 @@
 			"method":"POST"
 		},
 		{
+            "request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResult_ComplexObservation_SamplingGeometry_FlexibleFeature.xml",
+            "service":"SOS",
+            "version":"2.0.0",
+            "binding": "application/soap+xml",
+            "operation":"InsertResult",
+            "title":"with ComplexObservation and SamplingGeometry and flexible featureOfInterest",
+            "headers":{
+                "Accept":"application/soap+xml",
+                "Content-Type":"application/soap+xml"
+            },
+            "method":"POST"
+        },
+		{
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -2496,6 +2547,19 @@
 			},
 			"method":"POST"
 		},
+		{
+            "request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplate_ComplexObservation_SamplingGeometry_FlexibleFeature.xml",
+            "service":"SOS",
+            "version":"2.0.0",
+            "binding": "application/soap+xml",
+            "operation":"InsertResultTemplate",
+            "title":"with ComplexObservation and SamplingGeometry and flexible featureOfInterest",
+            "headers":{
+                "Accept":"application/soap+xml",
+                "Content-Type":"application/soap+xml"
+            },
+            "method":"POST"
+        },
 		{
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultWithResultTime.xml",
 			"service":"SOS",
@@ -2649,6 +2713,82 @@
 				"Content-Type":"application/soap+xml"
 			},
 			"method":"POST"
+		},
+                {
+                        "request":"static/examples/sos_v20/requests_xml/Transactional/DeleteResultTemplate.xml",
+                        "service":"SOS",
+                        "version":"2.0.0",
+                        "binding":"application/xml",
+                        "operation":"DeleteResultTemplate",
+                        "headers":{
+                                "Accept":"application/xml",
+                                "Content-Type":"application/xml"
+                        },
+                        "method":"POST"
+                },
+                {
+                        "request":"static/examples/sos_v20/requests_soap/Transactional/DeleteResultTemplate.xml",
+                        "service":"SOS",
+                        "version":"2.0.0",
+                        "binding":"application/soap+xml",
+                        "operation":"DeleteResultTemplate",
+                        "headers":{
+                                "Accept":"application/soap+xml",
+                                "Content-Type":"application/soap+xml"
+                        },
+                        "method":"POST"
+                },
+                {
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"DeleteResultTemplate",
+				"resultTemplate":"http://www.52north.org/test/procedure/9/template/1"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"application/x-kvp",
+                        "title":"with result template",
+			"operation":"DeleteResultTemplate",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+                {
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"DeleteResultTemplate",
+				"resultTemplate":"http://www.52north.org/test/procedure/9/template/1,http://www.52north.org/test/procedure/9/template/1"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"application/x-kvp",
+                        "title":"with result templates",
+			"operation":"DeleteResultTemplate",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+                                {
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
+				"request":"DeleteResultTemplate",
+				"offering":"http://www.52north.org/test/procedure/9/template/1",
+                                "observedProperty":"http://www.52north.org/test/observableProperty/9_3"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding":"application/x-kvp",
+                        "title":"with offering and observed property",
+			"operation":"DeleteResultTemplate",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
 		},
 		{
 			"service":"SOS",
@@ -3900,7 +4040,9 @@
 								"http://www.52north.org/test/observableProperty/1"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+								"http://inspire.ec.europa.eu/featureconcept/PointObservation",
+								"http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -4093,7 +4235,9 @@
 								"http://www.52north.org/test/observableProperty/2"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -4238,7 +4382,9 @@
 								"http://www.52north.org/test/observableProperty/3"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -4383,7 +4529,9 @@
 								"http://www.52north.org/test/observableProperty/4"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -4568,7 +4716,9 @@
 								"http://www.52north.org/test/observableProperty/5"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -4713,7 +4863,9 @@
 								"http://www.52north.org/test/observableProperty/6"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -4974,7 +5126,9 @@
 								"http://www.52north.org/test/observableProperty/7"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -5159,7 +5313,9 @@
 								"http://www.52north.org/test/observableProperty/8"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},
@@ -5374,7 +5530,9 @@
 								"http://www.52north.org/test/observableProperty/developer"
 							],
 							"observationType":[
-								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation"
+								"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointObservation",
+                                "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation"
 							],
 							"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 						},

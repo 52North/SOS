@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -122,7 +122,11 @@ public class GetResultDAO extends AbstractGetResultDAO {
                 final SosResultStructure sosResultStructure =
                         new SosResultStructure(resultTemplates.get(0).getResultStructure());
                 final List<Observation<?>> observations;
-                String procedure = resultTemplates.get(0).getProcedure().getIdentifier();
+                ResultTemplate resultTemplate = resultTemplates.get(0);
+                String procedure = null;
+                if (resultTemplate.isSetProcedure()) {
+                    procedure = resultTemplates.get(0).getProcedure().getIdentifier();
+                }
                 if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
                     observations = querySeriesObservation(request, featureIdentifier, procedure, session);
                 } else {

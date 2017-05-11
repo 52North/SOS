@@ -22,7 +22,6 @@
         <property name="serializationInclusion" value="NON_NULL" />
     </bean>
 
-    <!--<bean class="org.n52.web.ctrl.RootController" />-->
     <bean class="org.n52.web.ctrl.ParameterController" id="parameterController" abstract="true">
         <property name="externalUrl" value="${external.url}" />
         <property name="metadataExtensions">

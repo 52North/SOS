@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -68,7 +68,7 @@
 <br/>
 
 <script type="text/javascript">
-	$(function() {
+    $(function() {
         var serviceUrl = "${serviceUrl}" ? "${serviceUrl}" 
                 : document.location.protocol + "//" 
                 + document.location.host + "<c:url value="/sos" />",
@@ -79,11 +79,19 @@
                 + "?subject=" + encodeURIComponent(subject) 
                 + "&body=" + encodeURIComponent(body));
         });
-		if ($.queryParam["install"] === "finished")  {
-			window.setTimeout(function() {
-				showSuccess("Installation completed!<c:if test="${sos:hasClient()}"> <a href='<c:url value="/client"/>'>Test it.</a></c:if>");
-			}, 1000);
-		}	
+	if ($.queryParam["install"] === "finished")  {
+            window.setTimeout(function() {
+                showMessage(
+                        "<center><strong>Installation completed!</strong></center>" +
+                        "Potential next steps:" +
+                        "<ul>" +
+                        "<li>Insert up-to-date <a href='<c:url value="/admin/datasource/"/>'>sample data</a></li>" +
+                        "<c:if test="${sos:hasClient()}"><li>Use the <a href='<c:url value="/client"/>'>test client</a> with the provided example requests</li></c:if>" +
+                        "</ul>",
+                        "success",
+                        false);
+            }, 1000);
+	}	
     });
 </script>
 

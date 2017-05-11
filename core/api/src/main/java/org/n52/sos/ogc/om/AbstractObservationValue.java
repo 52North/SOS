@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,8 @@
 package org.n52.sos.ogc.om;
 
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
 import org.n52.sos.util.StringHelper;
 
 public abstract class AbstractObservationValue<T extends Value<?>> implements ObservationValue<T> {
@@ -48,6 +50,10 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     private String decimalSeparator;
     
     private String unit;
+
+    private DefaultPointMetadata defaultPointMetadata;
+
+    private Metadata metadata;
     
     public void setValuesForResultEncoding(OmObservation observation) {
         setObservationID(observation.getObservationID());
@@ -189,9 +195,32 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     public void setUnit(String unit) {
         this.unit = unit;
     }
-    
+
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
     }
 
+    public boolean isSetDefaultPointMetadata() {
+        return defaultPointMetadata != null;
+    }
+
+    public DefaultPointMetadata getDefaultPointMetadata() {
+        return defaultPointMetadata;
+    }
+
+    public void setDefaultPointMetadata(DefaultPointMetadata defaultPointMetadata) {
+        this.defaultPointMetadata = defaultPointMetadata;
+    }
+
+    public boolean isSetMetadata() {
+        return metadata != null;
+    }
+
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
 }

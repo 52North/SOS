@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.I18NDAO;
@@ -50,7 +51,7 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
                     getInstance().getDAO(I18NObservablePropertyMetadata.class);
             if (dao != null) {
                 Set<String> ids = getCache().getObservablePropertiesForProcedure(getIdentifier());
-                Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(ids);
+                Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(checkForPublished(ids));
                 for (I18NObservablePropertyMetadata i18n : metadata) {
                     OmObservableProperty observableProperty = new OmObservableProperty(i18n.getIdentifier());
                     Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(getLocale());
@@ -61,5 +62,15 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
                 }
             }
         }
+    }
+
+    private Set<String> checkForPublished(Set<String> ids) {
+        Set<String> obsProps = new HashSet<>();
+        for (String id : ids) {
+            if (getCache().getPublishedObservableProperties().contains(id)) {
+                obsProps.add(id);
+            }
+        }
+        return obsProps;
     }
 }

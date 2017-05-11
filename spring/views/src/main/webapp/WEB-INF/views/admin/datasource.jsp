@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -42,19 +42,21 @@
 <script type="text/javascript" src="<c:url value="/static/lib/vkbeautify-0.99.00.beta.js" />"></script>
 
 <jsp:include page="../common/logotitle.jsp">
-    <jsp:param name="title" value="Datasource Panel" />
-    <jsp:param name="leadParagraph" value="Here you can query the datasource directly." />
+    <jsp:param name="title" value="Datasource Maintenance" />
+    <jsp:param name="leadParagraph" value="Here you can maintain the datasource." />
 </jsp:include>
-
-<div class="pull-right">
-    <ul class="inline">
-        <li><button data-target="#confirmDialogClear" data-toggle="modal" title="Clear Datasource" class="btn btn-danger">Clear Datasource</button></li>
-        <li><button data-target="#confirmDialogDelete" data-toggle="modal" title="Delete deleted Observations" class="btn btn-danger">Delete deleted Observations</button></li>
-    </ul>
+<div>
+    <h3>Maintenance</h3>
+    <div class="btn-group">
+        <button data-target="#confirmDialogAddSampledata" data-toggle="modal" title="Insert sample data" class="btn ">Insert sample data</button>
+        <button data-target="#confirmDialogDelete" data-toggle="modal" title="Delete deleted Observations" class="btn btn-danger">Delete deleted Observations</button>
+        <button data-target="#confirmDialogClear" data-toggle="modal" title="Clear Datasource" class="btn btn-danger">Clear Datasource</button>
+        <a href="<c:url value="/admin/reset" />" title="Reset Datasource Configuration" class="btn btn-warning">Reset Datasource Configuration</a>
+    </div>
 </div>
 
 <form id="form" action="" method="POST">
-    <h3>Query</h3>
+    <h3>Query Examples</h3>
     <p>Here are some raw SQL query examples which can be copied and executed in the appropriate database tool, e.g. pgAdmin.</p>
     <p>The MySQL examples use 'sos' as schema. If you use another schema, please change the 'sos' definition to your schema. This can be easily done with a text editor by search for 'sos.' and replace with 'your_schema.'.</p>
     <div class="controls-row">
@@ -74,6 +76,23 @@
 </form>
 <div id="result"></div>
 
+<div class="modal hide fade in" id="confirmDialogAddSampledata">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Insert sample data?</h3>
+    </div>
+    <div class="modal-body">
+        <p>
+            This process might take some time. Depending on the performance of your server/machine. For better 
+            monitoring, you can change the logging level to debug for <code>org.n52</code> in the 
+            <a href="<c:url value="/admin/logging" />">logging configuration</a> and follow the output of the process.
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button type="button" id="addSampledata" class="btn btn-primary">Insert sample data!</button>
+    </div>
+</div>
 
 <div class="modal hide fade in" id="confirmDialogClear">
     <div class="modal-header">
@@ -103,16 +122,31 @@
     </div>
 </div>
 
+<div id="wait" class="hide">
+    <div id="wait-loader">
+        <img src="<c:url value="/static/images/loader.gif"/>">
+    </div>
+</div>
+
+
 <script type="text/javascript">
     $(function() {
         var $clearDialog = $("#confirmDialogClear");
-        var $deleteDeletedDialog = $("#confirmDialogDelete");        
+        var $deleteDeletedDialog = $("#confirmDialogDelete");
+        var $addSampledataDialog = $("#confirmDialogAddSampledata")
         var supportsClear = ${supportsClear};
         var supportsDeleteDeleted = ${supportsDeleteDeleted};
+        /*var supportsAddSampledata = ${supportsAddSampledata};*/
+
+        $('#wait').ajaxStart(function() {
+            $(this).show();
+        }).ajaxComplete(function() {
+            $(this).hide();
+        });
 
         if (supportsClear) {
             $("#clear").click(function() {
-                $clearDialog.find("button")/*.add($button)*/.attr("disabled", true);
+                $clearDialog.find("button").attr("disabled", true);
                 $.ajax({
                     "url": "<c:url value="/admin/datasource/clear" />",
                     "type": "POST"
@@ -130,9 +164,32 @@
             $("button[data-target=#confirmDialogClear]").attr("disabled", true);
         }
 
+        /*if (supportsAddSampledata) {*/
+            $("#addSampledata").click(function() {
+                $addSampledataDialog.find("button").attr("disabled", true);
+                $.ajax({
+                    "url": "<c:url value="/admin/datasource/addSampledata" />",
+                    "type": "POST"
+                }).fail(function(xhr, status, error) {
+                    showError("Inserting sample data failed: " + xhr.status + " " + xhr.statusText + "\n" + xhr.responseText);
+                    $addSampledataDialog.find("button").removeAttr("disabled");
+                    $addSampledataDialog.modal("hide");
+                }).done(function() {
+                    showSuccess("The sample data was inserted.");
+                    $addSampledataDialog.find("button").removeAttr("disabled");
+                    $addSampledataDialog.modal("hide");
+                })
+            });
+            $("#addSampledata").ajaxStart(function() {
+                $addSampledataDialog.modal("hide");
+            });
+        /*} else {
+            $("button[data-target=#confirmDialogAddTestdata]").attr("disabled", true);
+        }*/
+
         if (supportsDeleteDeleted) {
             $("#delete").click(function() {
-                $deleteDeletedDialog.find("button")/*.add($button)*/.attr("disabled", true);
+                $deleteDeletedDialog.find("button").attr("disabled", true);
                 $.ajax({
                     "url": "<c:url value="/admin/datasource/deleteDeletedObservations" />",
                     "type": "POST"

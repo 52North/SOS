@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -69,6 +69,17 @@ public class GetDataAvailabilityStreamWriter extends AbstractGetDataAvailability
         }
         end(GetDataAvailabilityConstants.GDA_GET_DATA_AVAILABILITY_20_RESPONSE);
     }
+    
+    protected void writeOffering(DataAvailability da, QName element) throws XMLStreamException {
+        start(element);
+        attr(GetDataAvailabilityConstants.XLINK_HREF, da.getOffering().getHref());
+        if (da.getOffering().isSetTitle()) {
+            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getOffering().getTitle());
+        } else {
+            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getOffering().getTitleFromHref());
+        }
+        end(element);
+    }
 
     protected void wirteDataAvailabilityMember(DataAvailability da) throws XMLStreamException, OwsExceptionReport {
         start(GetDataAvailabilityConstants.GDA_DATA_AVAILABILITY_20_MEMBER);
@@ -84,7 +95,7 @@ public class GetDataAvailabilityStreamWriter extends AbstractGetDataAvailability
             writeResultTimes(da.getResultTimes(), GetDataAvailabilityConstants.GDA_20_EXTENSION);
         }
         if (da.isSetOffering()) {
-            writeElementWithStringValue(da.getOffering().getHref(), GetDataAvailabilityConstants.GDA_20_OFFERING);
+            writeOffering(da, GetDataAvailabilityConstants.GDA_20_OFFERING);
         }
         if (da.isSetFormatDescriptors()) {
            writeFormatDescriptor(da.getFormatDescriptor(), GetDataAvailabilityConstants.GDA_20_FORMAT_DESCRIPTOR);

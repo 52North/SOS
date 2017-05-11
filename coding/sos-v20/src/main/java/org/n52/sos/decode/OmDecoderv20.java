@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -77,6 +77,7 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Constants;
+import org.n52.sos.w3c.Nillable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,20 +165,15 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
         OmObservation sosObservation = new OmObservation();
         // parse identifier, description
         parseAbstractFeatureType(omObservation, sosObservation);
-        OmObservationConstellation observationConstallation = getObservationConstellation(omObservation);
+        OmObservationConstellation observationConstallation = getObservationConstellation(omObservation, featureMap);
         sosObservation.setObservationConstellation(observationConstallation);
         sosObservation.setResultTime(getResultTime(omObservation));
         sosObservation.setValidTime(getValidTime(omObservation));
         if (omObservation.getParameterArray() != null) {
             sosObservation.setParameter(parseNamedValueTypeArray(omObservation.getParameterArray()));
         }
-        sosObservation.setValue(getObservationValue(omObservation));
         try {
-            Object decodeXmlElement = CodingHelper.decodeXmlElement(omObservation.getFeatureOfInterest());
-            if (decodeXmlElement instanceof AbstractFeature) {
-                AbstractFeature featureOfInterest = (AbstractFeature) decodeXmlElement;
-                observationConstallation.setFeatureOfInterest(checkFeatureWithMap(featureOfInterest, featureMap));
-            }
+            sosObservation.setValue(getObservationValue(omObservation));
         } catch (OwsExceptionReport e) {
             if (sosObservation.getValue() != null && sosObservation.getValue().getPhenomenonTime() != null
                     && sosObservation.getPhenomenonTime().isSetNilReason()
@@ -193,31 +189,22 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
             }
             throw e;
         }
-        // TODO: later for spatial filtering profile
-        // omObservation.getParameterArray();
-
         return sosObservation;
     }
 
-    private OmObservationConstellation getObservationConstellation(OMObservationType omObservation)
+    private OmObservationConstellation getObservationConstellation(OMObservationType omObservation, Map<String, AbstractFeature> featureMap)
             throws OwsExceptionReport {
         OmObservationConstellation observationConstellation = new OmObservationConstellation();
         observationConstellation.setObservationType(getObservationType(omObservation));
-        observationConstellation.setProcedure(createProcedure(getProcedure(omObservation)));
+        observationConstellation.setProcedure(createProcedure(omObservation));
         observationConstellation.setObservableProperty(getObservableProperty(omObservation));
+        observationConstellation.setFeatureOfInterest(createFeatureOfInterest(omObservation, featureMap));
         return observationConstellation;
     }
 
     private String getObservationType(OMObservationType omObservation) {
         if (omObservation.getType() != null) {
             return omObservation.getType().getHref();
-        }
-        return null;
-    }
-
-    private String getProcedure(OMObservationType omObservation) {
-        if (omObservation.getProcedure() != null) {
-            return omObservation.getProcedure().getHref();
         }
         return null;
     }
@@ -385,10 +372,32 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
         return featureOfInterest;
     }
 
-    private SosProcedureDescription createProcedure(String procedureIdentifier) {
-        SensorML procedure = new SensorML();
-        procedure.setIdentifier(procedureIdentifier);
-        return procedure;
+    private Nillable<SosProcedureDescription> createProcedure(OMObservationType omObservation) {
+        if (omObservation.getProcedure().isNil() || omObservation.getProcedure().isSetNilReason()) {
+            if (omObservation.getProcedure().isSetNilReason()) {
+                return Nillable.<SosProcedureDescription>nil(omObservation.getProcedure().getNilReason().toString());
+            }
+        } else if (omObservation.getProcedure().isSetHref()){
+            SensorML procedure = new SensorML();
+            procedure.setIdentifier(omObservation.getProcedure().getHref());
+            return Nillable.<SosProcedureDescription>of(procedure);
+        }
+        return Nillable.<SosProcedureDescription>nil();
+    }
+
+    private Nillable<AbstractFeature> createFeatureOfInterest(OMObservationType omObservation, Map<String, AbstractFeature> featureMap) throws OwsExceptionReport {
+        if (omObservation.getFeatureOfInterest().isNil() || omObservation.getFeatureOfInterest().isSetNilReason()) {
+            if (omObservation.getFeatureOfInterest().isSetNilReason()) {
+                return Nillable.<AbstractFeature>nil(omObservation.getFeatureOfInterest().getNilReason().toString());
+            }
+        } else {
+            Object decodeXmlElement = CodingHelper.decodeXmlElement(omObservation.getFeatureOfInterest());
+            if (decodeXmlElement instanceof AbstractFeature) {
+                AbstractFeature featureOfInterest = (AbstractFeature) decodeXmlElement;
+                return Nillable.of(checkFeatureWithMap(featureOfInterest, featureMap));
+            }
+        }
+        return Nillable.<AbstractFeature>nil();
     }
 
 }

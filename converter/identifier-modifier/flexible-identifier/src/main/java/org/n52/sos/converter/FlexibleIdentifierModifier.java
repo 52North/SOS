@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,7 +40,7 @@ import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -497,8 +497,8 @@ public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
                     .getIdentifier()));
         }
         abstractFeature.setHumanReadableIdentifierAsIdentifier();
-        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXmlDescription()) {
-            ((SamplingFeature) abstractFeature).setXmlDescription(null);
+        if (abstractFeature instanceof AbstractSamplingFeature && ((AbstractSamplingFeature) abstractFeature).isSetXmlDescription()) {
+            ((AbstractSamplingFeature) abstractFeature).setXmlDescription(null);
         }
 
     }

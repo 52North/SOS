@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,12 +30,15 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -45,6 +48,7 @@ import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
@@ -54,6 +58,8 @@ import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sensorML.SensorML;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweDataRecord;
@@ -76,6 +82,7 @@ import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.SweHelper;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
@@ -99,6 +106,8 @@ public class ObservationUnfolder {
             return Collections.singletonList(multiObservation);
         } else {
             final List<OmObservation> observationCollection = new ArrayList<OmObservation>();
+            Map<String, AbstractFeature> features = new HashMap<>();
+            Map<String, SosProcedureDescription> procedures = new HashMap<>();
             if (((MultiObservationValues<?>) multiObservation.getValue()).getValue() instanceof SweDataArrayValue) {
                 final SweDataArrayValue arrayValue =
                         (SweDataArrayValue) ((MultiObservationValues<?>) multiObservation.getValue()).getValue();
@@ -121,6 +130,8 @@ public class ObservationUnfolder {
                     final Map<Value<?>, String> definitionsForObservedValues = Maps.newHashMap();
                     Value<?> observedValue = null;
                     GeometryHolder samplingGeometry = new GeometryHolder();
+                    String featureOfInterest = null;
+                    String procedure = null;
 
                     for (SweField field : elementType.getFields()) {
                         final SweAbstractDataComponent dataComponent = field.getElement();
@@ -169,7 +180,15 @@ public class ObservationUnfolder {
                          * observation values
                          */
                         else if (dataComponent instanceof SweAbstractSimpleType) {
-                            observedValue = parseSweAbstractSimpleType(dataComponent, token);
+                            if (dataComponent instanceof SweText
+                                    && dataComponent.getDefinition().contains("om:featureOfInterest")) {
+                                featureOfInterest = token;
+                            } else if (dataComponent instanceof SweText
+                                    && dataComponent.getDefinition().contains("om:procedure")) {
+                                procedure = token;
+                            } else {
+                                observedValue = parseSweAbstractSimpleType(dataComponent, token);
+                            }
                         } else if (dataComponent instanceof SweDataRecord) {
                             try {
                                 observedValue =
@@ -203,8 +222,23 @@ public class ObservationUnfolder {
                         if (samplingGeometry != null && samplingGeometry.hasGeometry()) {
                             newObservation.addSpatialFilteringProfileParameter(samplingGeometry.getGeometry());
                         }
+                        if (!Strings.isNullOrEmpty(featureOfInterest)) {
+                            if (!features.containsKey(featureOfInterest)) {
+                                features.put(featureOfInterest, new SamplingFeature(new CodeWithAuthority(featureOfInterest)));
+                            }
+                            newObservation.getObservationConstellation()
+                                    .setFeatureOfInterest(features.get(featureOfInterest));
+                        }
+                        if (!Strings.isNullOrEmpty(procedure)) {
+                            if (!procedures.containsKey(procedure)) {
+                                procedures.put(procedure, new SensorML().setIdentifier(procedure));
+                            }
+                            newObservation.getObservationConstellation().setProcedure(procedures.get(procedure));
+                        }
                         observationCollection.add(newObservation);
                     }
+                    featureOfInterest = null;
+                    procedure = null;
                 }
             }
             return observationCollection;
@@ -264,7 +298,7 @@ public class ObservationUnfolder {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private OmObservation createSingleValueObservation(final OmObservation multiObservation, final Time phenomenonTime,
-            TimeInstant resultTime, final Value<?> iValue) {
+            TimeInstant resultTime, final Value<?> iValue) throws CodedException {
         final ObservationValue<?> value = new SingleObservationValue(phenomenonTime, iValue);
         final OmObservation newObservation = new OmObservation();
         newObservation.setNoDataValue(multiObservation.getNoDataValue());
@@ -272,7 +306,15 @@ public class ObservationUnfolder {
          * TODO create new ObservationConstellation only with the specified
          * observed property and observation type
          */
-        final OmObservationConstellation obsConst = multiObservation.getObservationConstellation();
+        OmObservationConstellation obsConst = multiObservation.getObservationConstellation();
+        try {
+            obsConst = multiObservation.getObservationConstellation().clone();
+        } catch (CloneNotSupportedException e) {
+            throw new NoApplicableCodeException()
+                .causedBy(e)
+                .withMessage("Error while cloning %s!", OmObservationConstellation.class.getName());
+        }
+        
         /*
          * createObservationConstellationForSubObservation ( multiObservation .
          * getObservationConstellation ( ) , iValue ,

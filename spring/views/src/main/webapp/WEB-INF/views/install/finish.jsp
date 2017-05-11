@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -79,33 +79,33 @@
 	</div>
 	<br/>
 	<script type="text/javascript">
-		$(function(){
-            var $pwFacade = $("input#password"),
-                $pwHidden = $("input[name=admin_password]"),
-                $submit = $('button[type=submit]'),
-                $inputs = $("input[type=text]");
+            $(function(){
+                var $pwFacade = $("input#password"),
+                    $pwHidden = $("input[name=admin_password]"),
+                    $submit = $('button[type=submit]'),
+                    $inputs = $("input[type=text]");
 			
-            $inputs.bind("keyup input", function() {
-				var empty = false;
-				$inputs.each(function() {
-					if ($(this).val() === "") { 
-                        empty = true;
-                    }
-				});
-				$submit.attr("disabled", empty);	
-			}).trigger("input");
-            $pwFacade.bind('focus', function() {
-                $pwFacade.val($pwHidden.val());
-            }).bind('blur', function() {
-                $pwFacade.val($pwFacade.val().replace(/./g, String.fromCharCode(8226)));
-            }).bind("keyup input", function() {
-                $pwHidden.val($pwFacade.val());
-            }).trigger("blur");
-			$submit.click(function() {
-				$submit.attr("disabled", true);
-				$submit.parents("form").submit();
-			});
-		});
+                $inputs.bind("keyup input", function() {
+                    var empty = false;
+                    $inputs.each(function() {
+                        if ($(this).val() === "") { 
+                            empty = true;
+                        }
+                    });
+                    $submit.attr("disabled", empty);	
+		}).trigger("input");
+                $pwFacade.bind('focus', function() {
+                    $pwFacade.val($pwHidden.val());
+                }).bind('blur', function() {
+                    $pwFacade.val($pwFacade.val().replace(/./g, String.fromCharCode(8226)));
+                }).bind("keyup input", function() {
+                    $pwHidden.val($pwFacade.val());
+                }).trigger("blur");
+                $submit.click(function() {
+                    $submit.attr("disabled", true);
+                    $submit.parents("form").submit();
+                });
+            });
 	</script>
 </form>
 <jsp:include page="../common/footer.jsp" />

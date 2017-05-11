@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,29 +31,40 @@ package org.n52.sos.encode;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.isotc211.x2005.gmd.EXExtentType;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.OGCConstants;
+import org.n52.sos.ogc.gml.AbstractCRS;
+import org.n52.sos.ogc.gml.AbstractCoordinateSystem;
+import org.n52.sos.ogc.gml.AbstractDatum;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.CoordinateSystemAxis;
 import org.n52.sos.ogc.gml.DefaultEncoding;
+import org.n52.sos.ogc.gml.Definition;
+import org.n52.sos.ogc.gml.DomainOfValidity;
 import org.n52.sos.ogc.gml.GenericMetaData;
 import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.sos.ogc.gml.VerticalCRS;
+import org.n52.sos.ogc.gml.VerticalCS;
+import org.n52.sos.ogc.gml.VerticalDatum;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.gml.time.TimePosition;
 import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -69,9 +80,15 @@ import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.Nillable;
 import org.n52.sos.w3c.SchemaLocation;
+import org.n52.sos.w3c.xlink.Reference;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3.x1999.xlink.ActuateType;
+import org.w3.x1999.xlink.ShowType;
+import org.w3.x1999.xlink.TypeType;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -83,11 +100,19 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.PolygonExtracter;
 
+import net.opengis.gml.x32.AbstractCRSType;
+import net.opengis.gml.x32.AbstractCoordinateSystemType;
+import net.opengis.gml.x32.AbstractDatumType;
 import net.opengis.gml.x32.AbstractGeometryType;
 import net.opengis.gml.x32.AbstractRingPropertyType;
 import net.opengis.gml.x32.AbstractRingType;
+import net.opengis.gml.x32.AggregationType;
 import net.opengis.gml.x32.CodeType;
 import net.opengis.gml.x32.CodeWithAuthorityType;
+import net.opengis.gml.x32.CoordinateSystemAxisDocument;
+import net.opengis.gml.x32.CoordinateSystemAxisPropertyType;
+import net.opengis.gml.x32.CoordinateSystemAxisType;
+import net.opengis.gml.x32.DefinitionType;
 import net.opengis.gml.x32.DirectPositionListType;
 import net.opengis.gml.x32.DirectPositionType;
 import net.opengis.gml.x32.EnvelopeDocument;
@@ -117,6 +142,14 @@ import net.opengis.gml.x32.TimePeriodDocument;
 import net.opengis.gml.x32.TimePeriodPropertyType;
 import net.opengis.gml.x32.TimePeriodType;
 import net.opengis.gml.x32.TimePositionType;
+import net.opengis.gml.x32.VerticalCRSPropertyType;
+import net.opengis.gml.x32.VerticalCRSType;
+import net.opengis.gml.x32.VerticalCSDocument;
+import net.opengis.gml.x32.VerticalCSPropertyType;
+import net.opengis.gml.x32.VerticalCSType;
+import net.opengis.gml.x32.VerticalDatumDocument;
+import net.opengis.gml.x32.VerticalDatumPropertyType;
+import net.opengis.gml.x32.VerticalDatumType;
 
 /**
  * @since 4.0.0
@@ -130,8 +163,9 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
             GmlConstants.NS_GML_32, org.n52.sos.ogc.gml.time.Time.class, com.vividsolutions.jts.geom.Geometry.class,
             org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.sos.ogc.gml.ReferenceType.class,
             org.n52.sos.ogc.om.values.QuantityValue.class, org.n52.sos.ogc.gml.CodeWithAuthority.class,
-            org.n52.sos.ogc.gml.CodeType.class, SamplingFeature.class, SosEnvelope.class, FeatureCollection.class,
-            AbstractGeometry.class, GenericMetaData.class);
+            org.n52.sos.ogc.gml.CodeType.class, AbstractSamplingFeature.class, SosEnvelope.class, FeatureCollection.class,
+            AbstractGeometry.class, GenericMetaData.class, VerticalDatum.class, AbstractFeature.class,
+            VerticalCRS.class, VerticalCS.class, CoordinateSystemAxis.class, DomainOfValidity.class);
 
     public GmlEncoderv321() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
@@ -179,6 +213,16 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
             encodedObject = createEnvelope((SosEnvelope) element, additionalValues);
         } else if (element instanceof GenericMetaData) {
             encodedObject = createGenericMetaData((GenericMetaData) element, additionalValues);
+        } else if (element instanceof VerticalDatum) {
+            encodedObject = createVerticalDatum((VerticalDatum) element, additionalValues);
+        } else if (element instanceof DomainOfValidity) {
+            encodedObject = createDomainOfValidity((DomainOfValidity) element, additionalValues);
+        } else if (element instanceof VerticalCRS) {
+            encodedObject = createVerticalCRS((VerticalCRS) element, additionalValues);
+        } else if (element instanceof VerticalCS) {
+            encodedObject = createVerticalCS((VerticalCS) element, additionalValues);
+        } else if (element instanceof CoordinateSystemAxis) {
+            encodedObject = createCoordinateSystemAxis((CoordinateSystemAxis) element, additionalValues);
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
@@ -192,7 +236,7 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
             final Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         if (feature instanceof FeatureCollection) {
             return createFeatureCollection((FeatureCollection) feature, additionalValues);
-        } else if (feature instanceof SamplingFeature) {
+        } else if (feature instanceof AbstractSamplingFeature) {
             return createFeature(feature, additionalValues);
         } else if (feature instanceof AbstractFeature && feature.isSetDefaultElementEncoding()) {
             return CodingHelper.encodeObjectToXml(feature.getDefaultElementEncoding(), feature);
@@ -245,33 +289,33 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
             featurePropertyType.setHref(feature.getIdentifierCodeWithAuthority().getValue());
             return featurePropertyType;
         } else {
-            final SamplingFeature samplingFeature = (SamplingFeature) feature;
+            final AbstractSamplingFeature abstractSamplingFeature = (AbstractSamplingFeature) feature;
             if (feature.isSetGmlID()) {
                 featurePropertyType.setHref("#" + feature.getGmlId());
                 return featurePropertyType;
             } else {
                 if (additionalValues.containsKey(HelperValues.ENCODE)
-                        && additionalValues.get(HelperValues.ENCODE).equals("false") || !samplingFeature.isEncode()) {
+                        && additionalValues.get(HelperValues.ENCODE).equals("false") || !abstractSamplingFeature.isEncode()) {
                     featurePropertyType.setHref(feature.getIdentifierCodeWithAuthority().getValue());
-                    if (feature instanceof SamplingFeature && samplingFeature.isSetName()) {
-                        featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                    if (feature instanceof AbstractSamplingFeature && abstractSamplingFeature.isSetName()) {
+                        featurePropertyType.setTitle(abstractSamplingFeature.getFirstName().getValue());
                     }
                     return featurePropertyType;
                 }
-                if (!samplingFeature.isSetGeometry()) {
-                    featurePropertyType.setHref(samplingFeature.getIdentifierCodeWithAuthority().getValue());
-                    if (samplingFeature.isSetName()) {
-                        featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                if (!abstractSamplingFeature.isSetGeometry()) {
+                    featurePropertyType.setHref(abstractSamplingFeature.getIdentifierCodeWithAuthority().getValue());
+                    if (abstractSamplingFeature.isSetName()) {
+                        featurePropertyType.setTitle(abstractSamplingFeature.getFirstName().getValue());
                     }
                     return featurePropertyType;
                 }
-                if (samplingFeature.isSetUrl()) {
-                    featurePropertyType.setHref(samplingFeature.getUrl());
-                    if (samplingFeature.isSetIdentifier()) {
-                        featurePropertyType.setTitle(samplingFeature.getIdentifierCodeWithAuthority().getValue());
+                if (abstractSamplingFeature.isSetUrl()) {
+                    featurePropertyType.setHref(abstractSamplingFeature.getUrl());
+                    if (abstractSamplingFeature.isSetIdentifier()) {
+                        featurePropertyType.setTitle(abstractSamplingFeature.getIdentifierCodeWithAuthority().getValue());
                     } else {
-                        if (samplingFeature.isSetName()) {
-                            featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                        if (abstractSamplingFeature.isSetName()) {
+                            featurePropertyType.setTitle(abstractSamplingFeature.getFirstName().getValue());
                         }
                     }
                     return featurePropertyType;
@@ -279,29 +323,29 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
                     String namespace;
                     if (additionalValues.containsKey(HelperValues.ENCODE_NAMESPACE)) {
                         namespace = additionalValues.get(HelperValues.ENCODE_NAMESPACE);
-                    } else if (samplingFeature.isSetDefaultElementEncoding()) {
-                        namespace = samplingFeature.getDefaultElementEncoding();
+                    } else if (abstractSamplingFeature.isSetDefaultElementEncoding()) {
+                        namespace = abstractSamplingFeature.getDefaultElementEncoding();
                     } else {
-                        namespace = OMHelper.getNamespaceForFeatureType(samplingFeature.getFeatureType());
+                        namespace = OMHelper.getNamespaceForFeatureType(abstractSamplingFeature.getFeatureType());
                     }
-                    final XmlObject encodedXmlObject = CodingHelper.encodeObjectToXml(namespace, samplingFeature);
+                    final XmlObject encodedXmlObject = CodingHelper.encodeObjectToXml(namespace, abstractSamplingFeature);
 
                     if (encodedXmlObject != null) {
                         return encodedXmlObject;
                     } else {
-                        if (samplingFeature.getXmlDescription() != null) {
+                        if (abstractSamplingFeature.getXmlDescription() != null) {
                             try {
                                 // TODO how set gml:id in already existing
                                 // XmlDescription? <-- XmlCursor
-                                return XmlObject.Factory.parse(samplingFeature.getXmlDescription());
+                                return XmlObject.Factory.parse(abstractSamplingFeature.getXmlDescription());
                             } catch (final XmlException xmle) {
                                 throw new NoApplicableCodeException().causedBy(xmle).withMessage(
                                         "Error while encoding featurePropertyType!");
                             }
                         } else {
-                            featurePropertyType.setHref(samplingFeature.getIdentifierCodeWithAuthority().getValue());
-                            if (samplingFeature.isSetName()) {
-                                featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                            featurePropertyType.setHref(abstractSamplingFeature.getIdentifierCodeWithAuthority().getValue());
+                            if (abstractSamplingFeature.isSetName()) {
+                                featurePropertyType.setTitle(abstractSamplingFeature.getFirstName().getValue());
                             }
                             return featurePropertyType;
                         }
@@ -318,7 +362,7 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
     }
 
     private boolean isNotSamplingFeature(final AbstractFeature feature) {
-        return !(feature instanceof SamplingFeature);
+        return !(feature instanceof AbstractSamplingFeature);
     }
 
     private XmlObject createEnvelope(final SosEnvelope sosEnvelope, Map<HelperValues, String> additionalValues) {
@@ -819,8 +863,376 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
         } else {
             measureType.setUom(OGCConstants.UNKNOWN);
         }
-
+    
         return measureType;
+    }
+
+    private XmlObject createVerticalDatum(VerticalDatum verticalDatum, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        VerticalDatumType vdt = VerticalDatumType.Factory.newInstance();
+        addAbstractDatumValues(vdt, verticalDatum, additionalValues);
+        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            VerticalDatumDocument vdd = VerticalDatumDocument.Factory.newInstance();
+            VerticalDatumPropertyType vdpt = VerticalDatumPropertyType.Factory.newInstance();
+            vdpt.setVerticalDatum(vdt);
+            vdd.setVerticalDatum(vdpt);
+            return vdd;
+        } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            VerticalDatumPropertyType vdpt = VerticalDatumPropertyType.Factory.newInstance();
+            vdpt.setVerticalDatum(vdt);
+            return vdpt;
+        }
+        return vdt;
+    }
+    
+    private void addAbstractDatumValues(AbstractDatumType adt, AbstractDatum abstractDatum, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        addDefinitonValues(adt, abstractDatum);
+        if (abstractDatum.hasAnchorDefinition()) {
+            adt.setAnchorDefinition(createCodeType(abstractDatum.getAnchorDefinition()));
+        } 
+        if (abstractDatum.hasDomainOfValidity()) {
+            net.opengis.gml.x32.DomainOfValidityDocument.DomainOfValidity dov = adt.addNewDomainOfValidity();
+            Referenceable<DomainOfValidity> domainOfValidity = abstractDatum.getDomainOfValidity();
+            if (domainOfValidity.isReference()) {
+                Reference reference = domainOfValidity.getReference();
+                if (reference.getActuate().isPresent()) {
+                    dov.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+                }
+                if (reference.getArcrole().isPresent()) {
+                    dov.setHref(reference.getArcrole().get());
+                }
+                if (reference.getHref().isPresent()) {
+                    dov.setHref(reference.getHref().get().toString());
+                }
+                if (reference.getRole().isPresent()) {
+                    dov.setRole(reference.getRole().get());
+                }
+                if (reference.getShow().isPresent()) {
+                    dov.setShow(ShowType.Enum.forString(reference.getShow().get()));
+                }
+                if (reference.getTitle().isPresent()) {
+                    dov.setTitle(reference.getTitle().get());
+                }
+                if (reference.getType().isPresent()) {
+                    dov.setType(TypeType.Enum.forString(reference.getType().get()));
+                }
+            } else { 
+                if (domainOfValidity.isInstance()) {
+                    Nillable<DomainOfValidity> nillable = domainOfValidity.getInstance();
+                    if (nillable.isPresent()) {
+                        net.opengis.gml.x32.DomainOfValidityDocument.DomainOfValidity xml = createDomainOfValidity(
+                                nillable.get(), new EnumMap<HelperValues, String>(HelperValues.class));
+                        if (xml != null) {
+                            dov.set(xml);
+                        } else {
+                            dov.setNil();
+                            dov.setNilReason(Nillable.missing().get());
+                        }
+                    } else {
+                        dov.setNil();
+                        if (nillable.hasReason()) {
+                            dov.setNilReason(nillable.getNilReason().get());
+                        } else {
+                            dov.setNilReason(Nillable.missing().get());
+                        }
+                    }
+                }
+            }
+        } 
+        if (abstractDatum.hasRealizationEpoch()) {
+            abstractDatum.getRealizationEpoch();
+            adt.setRealizationEpoch(abstractDatum.getRealizationEpoch().toCalendar(Locale.ROOT));
+        } 
+        for (String scope : abstractDatum.getScope()) {
+            adt.addNewScope().setStringValue(scope);
+        }
+    }
+
+    private net.opengis.gml.x32.DomainOfValidityDocument.DomainOfValidity createDomainOfValidity(DomainOfValidity domainOfValidity, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        net.opengis.gml.x32.DomainOfValidityDocument.DomainOfValidity dov = net.opengis.gml.x32.DomainOfValidityDocument.DomainOfValidity.Factory.newInstance();
+        if (domainOfValidity.hasExExtent()) {
+            EXExtentType exet = dov.addNewEXExtent();
+            XmlObject xml = CodingHelper.encodeObjectToXml(domainOfValidity.getExExtent().getDefaultElementEncoding(), domainOfValidity.getExExtent());
+            if (xml != null) {
+                exet.set(xml);
+            }
+        }
+        return dov;
+    }
+
+    private XmlObject createVerticalCRS(VerticalCRS verticalCRS, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        VerticalCRSType vcrst = VerticalCRSType.Factory.newInstance();
+        addAbstractCRSValues(vcrst, verticalCRS);
+        // verticalCS
+        Referenceable<VerticalCS> verticalCS = verticalCRS.getVerticalCS();
+        VerticalCSPropertyType vcspt = vcrst.addNewVerticalCS();
+        if (verticalCS.isReference()) {
+            Reference reference = verticalCS.getReference();
+            if (reference.getActuate().isPresent()) {
+                vcspt.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+            }
+            if (reference.getArcrole().isPresent()) {
+                vcspt.setHref(reference.getArcrole().get());
+            }
+            if (reference.getHref().isPresent()) {
+                vcspt.setHref(reference.getHref().get().toString());
+            }
+            if (reference.getRole().isPresent()) {
+                vcspt.setRole(reference.getRole().get());
+            }
+            if (reference.getShow().isPresent()) {
+                vcspt.setShow(ShowType.Enum.forString(reference.getShow().get()));
+            }
+            if (reference.getTitle().isPresent()) {
+                vcspt.setTitle(reference.getTitle().get());
+            }
+            if (reference.getType().isPresent()) {
+                vcspt.setType(TypeType.Enum.forString(reference.getType().get()));
+            }
+        } else {
+            if (verticalCS.isInstance()) {
+                Nillable<VerticalCS> nillable = verticalCS.getInstance();
+                if (nillable.isPresent()) {
+                    XmlObject xml = createVerticalCS(nillable.get(), new EnumMap<HelperValues, String>(HelperValues.class));
+                    if (xml != null && xml instanceof VerticalCSType) {
+                        vcspt.set((VerticalCSType) xml);
+                    } else {
+                        vcspt.setNil();
+                        vcspt.setNilReason(Nillable.missing().get());
+                    }
+                } else {
+                    vcspt.setNil();
+                    if (nillable.hasReason()) {
+                        vcspt.setNilReason(nillable.getNilReason().get());
+                    } else {
+                        vcspt.setNilReason(Nillable.missing().get());
+                    }
+                }
+            }
+        }
+        // verticalDatum
+        Referenceable<VerticalDatum> verticalDatum = verticalCRS.getVerticalDatum();
+        VerticalDatumPropertyType vdpt = vcrst.addNewVerticalDatum();
+        if (verticalDatum.isReference()) {
+            Reference reference = verticalDatum.getReference();
+            if (reference.getActuate().isPresent()) {
+                vdpt.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+            }
+            if (reference.getArcrole().isPresent()) {
+                vdpt.setHref(reference.getArcrole().get());
+            }
+            if (reference.getHref().isPresent()) {
+                vdpt.setHref(reference.getHref().get().toString());
+            }
+            if (reference.getRole().isPresent()) {
+                vdpt.setRole(reference.getRole().get());
+            }
+            if (reference.getShow().isPresent()) {
+                vdpt.setShow(ShowType.Enum.forString(reference.getShow().get()));
+            }
+            if (reference.getTitle().isPresent()) {
+                vdpt.setTitle(reference.getTitle().get());
+            }
+            if (reference.getType().isPresent()) {
+                vdpt.setType(TypeType.Enum.forString(reference.getType().get()));
+            }
+        } else {
+            if (verticalDatum.isInstance()) {
+                Nillable<VerticalDatum> nillable = verticalDatum.getInstance();
+                if (nillable.isPresent()) {
+                    XmlObject xml = createVerticalDatum(nillable.get(), new EnumMap<HelperValues, String>(HelperValues.class));
+                    if (xml != null && xml instanceof VerticalDatumType) {
+                        vdpt.setVerticalDatum((VerticalDatumType) xml);
+                    } else {
+                        vdpt.setNil();
+                        vdpt.setNilReason(Nillable.missing().get());
+                    }
+                } else {
+                    vdpt.setNil();
+                    if (nillable.hasReason()) {
+                        vdpt.setNilReason(nillable.getNilReason().get());
+                    } else {
+                        vdpt.setNilReason(Nillable.missing().get());
+                    }
+                }
+            }
+        }
+        if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            VerticalCRSPropertyType vcrspt = VerticalCRSPropertyType.Factory.newInstance();
+            vcrspt.setVerticalCRS(vcrst);
+            return vcrspt;
+        }
+        return vcrst;
+    }
+    
+    private void addDefinitonValues(DefinitionType dt, Definition definition) throws OwsExceptionReport {
+        if (!definition.isSetGmlID()) {
+            definition.setGmlId("id_" + JavaHelper.generateID(definition.getGmlId()));
+        }
+        dt.setId(definition.getGmlId());
+        if (!addIdentifier(dt, definition)) {
+            dt.setIdentifier(createCodeWithAuthorityType(new CodeWithAuthority(JavaHelper.generateID(definition.toString()))));
+        }
+        addName(dt, definition);
+        addDescription(dt, definition);
+        if (definition.hasRemarks()) {
+            dt.setRemarks(definition.getRemarks());
+        } 
+    }
+
+    private void addAbstractCRSValues(AbstractCRSType acrst, AbstractCRS abstractCRS) throws OwsExceptionReport {
+        addDefinitonValues(acrst, abstractCRS);
+        if (abstractCRS.hasDomainOfValidity()) {
+            for (Referenceable<DomainOfValidity> domainOfValidity : abstractCRS.getDomainOfValidity()) {
+                net.opengis.gml.x32.DomainOfValidityDocument.DomainOfValidity dov = acrst.addNewDomainOfValidity();
+                if (domainOfValidity.isReference()) {
+                    Reference reference = domainOfValidity.getReference();
+                    if (reference.getActuate().isPresent()) {
+                        dov.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+                    }
+                    if (reference.getArcrole().isPresent()) {
+                        dov.setHref(reference.getArcrole().get());
+                    }
+                    if (reference.getHref().isPresent()) {
+                        dov.setHref(reference.getHref().get().toString());
+                    }
+                    if (reference.getRole().isPresent()) {
+                        dov.setRole(reference.getRole().get());
+                    }
+                    if (reference.getShow().isPresent()) {
+                        dov.setShow(ShowType.Enum.forString(reference.getShow().get()));
+                    }
+                    if (reference.getTitle().isPresent()) {
+                        dov.setTitle(reference.getTitle().get());
+                    }
+                    if (reference.getType().isPresent()) {
+                        dov.setType(TypeType.Enum.forString(reference.getType().get()));
+                    }
+                } else {
+                    if (domainOfValidity.isInstance()) {
+                        Nillable<DomainOfValidity> nillable = domainOfValidity.getInstance();
+                        if (nillable.isPresent()) {
+                            net.opengis.gml.x32.DomainOfValidityDocument.DomainOfValidity xml = createDomainOfValidity(
+                                    nillable.get(), new EnumMap<HelperValues, String>(HelperValues.class));
+                            if (xml != null) {
+                                dov.set(xml);
+                            } else {
+                                dov.setNil();
+                                dov.setNilReason(Nillable.missing().get());
+                            }
+                        } else {
+                            dov.setNil();
+                            if (nillable.hasReason()) {
+                                dov.setNilReason(nillable.getNilReason().get());
+                            } else {
+                                dov.setNilReason(Nillable.missing().get());
+                            }
+                        }
+                    }
+                }
+            }
+        } 
+        if (abstractCRS.hasScope()) {
+            for (String scope : abstractCRS.getScope()) {
+                acrst.addNewScope().setStringValue(scope);
+            }
+        }
+    }
+
+    private XmlObject createVerticalCS(VerticalCS verticalCS, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        VerticalCSType vcst = VerticalCSType.Factory.newInstance();
+        addAbstractCoordincateSystemValues(vcst, verticalCS);
+        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            VerticalCSDocument vcsd = VerticalCSDocument.Factory.newInstance();
+            VerticalCSPropertyType vcdpt = VerticalCSPropertyType.Factory.newInstance();
+            vcdpt.setVerticalCS(vcst);
+            vcsd.setVerticalCS(vcdpt);
+            return vcsd;
+        } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            VerticalCSPropertyType vcdpt = VerticalCSPropertyType.Factory.newInstance();
+            vcdpt.setVerticalCS(vcst);
+            return vcdpt;
+        }
+        return vcst;
+    }
+
+    private void addAbstractCoordincateSystemValues(AbstractCoordinateSystemType acst, AbstractCoordinateSystem abstractCoordinateSystem) throws OwsExceptionReport {
+        addDefinitonValues(acst, abstractCoordinateSystem);
+        acst.setAggregationType(AggregationType.Enum.forString(abstractCoordinateSystem.getAggregation().name()));
+        for (Referenceable<CoordinateSystemAxis> coordinateSystemAxis : abstractCoordinateSystem.getCoordinateSystemAxis()) {
+            CoordinateSystemAxisPropertyType csapt = acst.addNewAxis();
+            if (coordinateSystemAxis.isReference()) {
+                Reference reference = coordinateSystemAxis.getReference();
+                if (reference.getActuate().isPresent()) {
+                    csapt.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+                }
+                if (reference.getArcrole().isPresent()) {
+                    csapt.setHref(reference.getArcrole().get());
+                }
+                if (reference.getHref().isPresent()) {
+                    csapt.setHref(reference.getHref().get().toString());
+                }
+                if (reference.getRole().isPresent()) {
+                    csapt.setRole(reference.getRole().get());
+                }
+                if (reference.getShow().isPresent()) {
+                    csapt.setShow(ShowType.Enum.forString(reference.getShow().get()));
+                }
+                if (reference.getTitle().isPresent()) {
+                    csapt.setTitle(reference.getTitle().get());
+                }
+                if (reference.getType().isPresent()) {
+                    csapt.setType(TypeType.Enum.forString(reference.getType().get()));
+                }
+            } else {
+                if (coordinateSystemAxis.isInstance()) {
+                    Nillable<CoordinateSystemAxis> nillable = coordinateSystemAxis.getInstance();
+                    if (nillable.isPresent()) {
+                        XmlObject xml = createCoordinateSystemAxis(nillable.get(), new EnumMap<HelperValues, String>(HelperValues.class));
+                        if (xml != null && xml instanceof CoordinateSystemAxisType) {
+                            csapt.addNewCoordinateSystemAxis().set(xml);
+                        } else {
+                            csapt.setNil();
+                            csapt.setNilReason(Nillable.missing().get());
+                        }
+                    } else {
+                        csapt.setNil();
+                        if (nillable.hasReason()) {
+                            csapt.setNilReason(nillable.getNilReason().get());
+                        } else {
+                            csapt.setNilReason(Nillable.missing().get());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private XmlObject createCoordinateSystemAxis(CoordinateSystemAxis coordinateSystemAxis,
+            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        CoordinateSystemAxisType csat = CoordinateSystemAxisType.Factory.newInstance();
+        addDefinitonValues(csat, coordinateSystemAxis);
+        csat.setAxisAbbrev(createCodeType(coordinateSystemAxis.getAxisAbbrev()));
+        csat.setAxisDirection(createCodeWithAuthorityType(coordinateSystemAxis.getAxisDirection()));
+        if (coordinateSystemAxis.isSetMinimumValue()) {
+            csat.setMinimumValue(coordinateSystemAxis.getMinimumValue());
+        }
+        if (coordinateSystemAxis.isSetMaximumValue()) {
+            csat.setMaximumValue(coordinateSystemAxis.getMaximumValue());
+        }
+        if (coordinateSystemAxis.isSetRangeMeaning()) {
+            csat.setRangeMeaning(createCodeWithAuthorityType(coordinateSystemAxis.getRangeMeaning()));
+        }
+        csat.setUom(coordinateSystemAxis.getUom());
+        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            CoordinateSystemAxisDocument csad = CoordinateSystemAxisDocument.Factory.newInstance();
+            csad.setCoordinateSystemAxis(csat);
+            return csad;
+        } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            CoordinateSystemAxisPropertyType csapt = CoordinateSystemAxisPropertyType.Factory.newInstance();
+            csapt.setCoordinateSystemAxis(csat);
+            return csapt;
+        }
+        return csat;
     }
 
     protected String getSrsName(final Geometry geom) {

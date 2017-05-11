@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,9 +35,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.cache.ContentCache;
-import org.n52.sos.convert.RequestResponseModifier;
-import org.n52.sos.convert.RequestResponseModifierFacilitator;
-import org.n52.sos.convert.RequestResponseModifierKeyType;
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.ogc.om.ObservationMergeIndicator;
@@ -58,6 +57,7 @@ import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.GetObservationByIdResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceSettings;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 import org.n52.svalbard.inspire.omso.MultiPointObservation;
@@ -65,8 +65,6 @@ import org.n52.svalbard.inspire.omso.PointObservation;
 import org.n52.svalbard.inspire.omso.PointTimeSeriesObservation;
 import org.n52.svalbard.inspire.omso.ProfileObservation;
 import org.n52.svalbard.inspire.omso.TrajectoryObservation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -80,18 +78,19 @@ import com.google.common.collect.Sets;
  * @since 4.4.0
  *
  */
+@Configurable
 public class InspireObservationResponseConverter
-        implements RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(InspireObservationResponseConverter.class);
+        extends AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    
+    private boolean includeResultTimeForMerging = false; 
+    
+    @Setting(ServiceSettings.INCLUDE_RESULT_TIME_FOR_MERGING)
+    public void setIncludeResultTimeForMerging(boolean includeResultTimeForMerging) {
+        this.includeResultTimeForMerging = includeResultTimeForMerging;
+    }
 
-    /**
-     * Get the keys
-     * 
-     * @return Set of keys
-     */
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
@@ -271,7 +270,7 @@ public class InspireObservationResponseConverter
      */
     private Collection<? extends OmObservation> mergePointTimeSeriesObservation(List<OmObservation> observations) {
         return new ObservationMerger().mergeObservations(observations,
-                ObservationMergeIndicator.defaultObservationMergerIndicator());
+                ObservationMergeIndicator.defaultObservationMergerIndicator().setResultTime(includeResultTimeForMerging));
     }
 
     /**
@@ -530,7 +529,7 @@ public class InspireObservationResponseConverter
 
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
-        return new RequestResponseModifierFacilitator().setMerger(true);
+        return super.getFacilitator().setMerger(true);
     }
 
 }

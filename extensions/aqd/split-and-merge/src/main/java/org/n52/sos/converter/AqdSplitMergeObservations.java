@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,9 +34,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.convert.RequestResponseModifier;
+import org.n52.sos.convert.AbstractRequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
+import org.n52.sos.ogc.om.ObservationMergeIndicator;
+import org.n52.sos.ogc.om.ObservationMerger;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataArray;
@@ -48,16 +50,11 @@ import org.n52.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Sets;
 
-public class AqdSplitMergeObservations implements
-        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+public class AqdSplitMergeObservations extends
+        AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
-    /**
-     * Get the keys
-     * 
-     * @return Set of keys
-     */
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
         Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
         keys.add(new RequestResponseModifierKeyType(AqdConstants.AQD, AqdConstants.VERSION,
@@ -98,31 +95,34 @@ public class AqdSplitMergeObservations implements
     }
 
     private List<OmObservation> mergeObservations(List<OmObservation> observationCollection) {
-        if (observationCollection != null) {
-            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
-            int obsIdCounter = 1;
-            for (final OmObservation sosObservation : observationCollection) {
-                if (mergedObservations.isEmpty()) {
-                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
-                    mergedObservations.add(sosObservation);
-                } else {
-                    boolean combined = false;
-                    for (final OmObservation combinedSosObs : mergedObservations) {
-                        if (combinedSosObs.checkForMerge(sosObservation)) {
-                            combinedSosObs.setResultTime(null);
-                            mergeObservationValues(combinedSosObs, sosObservation);
-                            combined = true;
-                            break;
-                        }
-                    }
-                    if (!combined) {
-                        mergedObservations.add(sosObservation);
-                    }
-                }
-            }
-            return mergedObservations;
-        }
-        return observationCollection;
+        return new ObservationMerger()
+        .mergeObservations(observationCollection, ObservationMergeIndicator
+                .defaultObservationMergerIndicator());
+//        if (observationCollection != null) {
+//            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
+//            int obsIdCounter = 1;
+//            for (final OmObservation sosObservation : observationCollection) {
+//                if (mergedObservations.isEmpty()) {
+//                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
+//                    mergedObservations.add(sosObservation);
+//                } else {
+//                    boolean combined = false;
+//                    for (final OmObservation combinedSosObs : mergedObservations) {
+//                        if (combinedSosObs.checkForMerge(sosObservation)) {
+//                            combinedSosObs.setResultTime(null);
+//                            mergeObservationValues(combinedSosObs, sosObservation);
+//                            combined = true;
+//                            break;
+//                        }
+//                    }
+//                    if (!combined) {
+//                        mergedObservations.add(sosObservation);
+//                    }
+//                }
+//            }
+//            return mergedObservations;
+//        }
+//        return observationCollection;
     }
 
     private void mergeObservationValues(OmObservation combinedSosObs, OmObservation sosObservation) {
@@ -157,7 +157,7 @@ public class AqdSplitMergeObservations implements
     
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
-        return new RequestResponseModifierFacilitator().setMerger(true).setSplitter(true);
+        return super.getFacilitator().setMerger(true).setSplitter(true);
     }
 
 }

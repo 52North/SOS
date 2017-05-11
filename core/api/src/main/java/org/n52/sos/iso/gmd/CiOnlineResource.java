@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,10 +30,18 @@ package org.n52.sos.iso.gmd;
 
 import java.net.URI;
 
-import org.n52.sos.iso.gco.AbtractGmd;
 import org.n52.sos.w3c.Nillable;
 
-public class CiOnlineResource extends AbtractGmd {
+import com.google.common.base.Strings;
+
+/**
+ * Internal representation of the ISO GMD OnlineResource.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
+public class CiOnlineResource extends AbstractObject {
     
     /* 1..1 */
     private Nillable<URI> linkage;
@@ -105,6 +113,78 @@ public class CiOnlineResource extends AbtractGmd {
     
     public boolean isSetProtocol() {
         return getProtocol() != null;
+    }
+
+    /**
+     * @return the applicationProfile
+     */
+    public String getApplicationProfile() {
+        return applicationProfile;
+    }
+
+    /**
+     * @param applicationProfile the applicationProfile to set
+     */
+    public void setApplicationProfile(String applicationProfile) {
+        this.applicationProfile = applicationProfile;
+    }
+    
+    public boolean isSetApplicationProfile() {
+        return !Strings.isNullOrEmpty(getApplicationProfile());
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public boolean isSetName() {
+        return !Strings.isNullOrEmpty(getName());
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public boolean isSetDescription() {
+        return !Strings.isNullOrEmpty(getDescription());
+    }
+
+    /**
+     * @return the function
+     */
+    public String getFunction() {
+        return function;
+    }
+
+    /**
+     * @param function the function to set
+     */
+    public void setFunction(String function) {
+        this.function = function;
+    }
+    
+    public boolean isSetFunction() {
+        return !Strings.isNullOrEmpty(getFunction());
     }
 
 }

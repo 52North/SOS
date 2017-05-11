@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -47,6 +47,7 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterAdder;
 import org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameterAdder;
@@ -80,7 +81,7 @@ import com.google.common.collect.Sets;
 
 public class ObservationOmObservationCreator extends AbstractOmObservationCreator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationOmObservationCreator.class);
-
+    
     private final Collection<? extends Observation<?>> observations;
     private final AbstractObservationRequest request;
     private final Map<String, AbstractFeature> features = Maps.newHashMap();
@@ -171,10 +172,11 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         final Value<?> value = hObservation.accept(new ObservationValueCreator());
         OmObservation sosObservation = null;
         if (value != null) {
-            // TODO delete, set in ObservationValueCreator
-//            if (hObservation.getUnit() != null) {
-//                value.setUnit(hObservation.getUnit().getUnit());
-//            }
+            if (hObservation.getUnit() != null) {
+                value.setUnit(hObservation.getUnit().getUnit());
+            } else if (hObservation instanceof SeriesObservation && ((SeriesObservation)hObservation).getSeries().isSetUnit()) {
+                value.setUnit(queryUnit(((SeriesObservation)hObservation).getSeries()));
+            }
             checkOrSetObservablePropertyUnit(getObservedProperty(phenomenonId), value.getUnit());
             OmObservationConstellation obsConst =
                     createObservationConstellation(hObservation, procedureId, phenomenonId, featureId, offerings);
@@ -335,22 +337,31 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
                         getFeature(featureId), offerings);
         if (observationConstellations.containsKey(obsConst.hashCode())) {
             return observationConstellations.get(obsConst.hashCode());
-        } else {
-            int hashCode = obsConst.hashCode();
-            if (StringHelper.isNotEmpty(getResultModel())) {
-                obsConst.setObservationType(getResultModel());
-            }
-            final ObservationConstellationDAO dao = new ObservationConstellationDAO();
-            final ObservationConstellation hoc =
-                    dao.getFirstObservationConstellationForOfferings(hObservation.getProcedure(),
-                            hObservation.getObservableProperty(), hObservation.getOfferings(), getSession());
-            if (hoc != null && hoc.getObservationType() != null) {
-                obsConst.setObservationType(hoc.getObservationType().getObservationType());
-            }
-            observationConstellations.put(hashCode, obsConst);
-            return obsConst;
         }
+        int hashCode = obsConst.hashCode();
+        if (StringHelper.isNotEmpty(getResultModel())) {
+            obsConst.setObservationType(getResultModel());
+        }
+        final ObservationConstellationDAO dao = new ObservationConstellationDAO();
+        final ObservationConstellation hoc =
+                dao.getFirstObservationConstellationForOfferings(hObservation.getProcedure(),
+                        hObservation.getObservableProperty(), hObservation.getOfferings(), getSession());
+        if (hoc != null && hoc.getObservationType() != null) {
+            obsConst.setObservationType(hoc.getObservationType().getObservationType());
+        }
+        observationConstellations.put(hashCode, obsConst);
+        if (hObservation instanceof SeriesObservation<?>) {
+            Series series = ((SeriesObservation<?>) hObservation).getSeries();
+            if (series.isSetIdentifier()) {
+                addIdentifier(obsConst, series);
+            }
+            if (series.isSetName()) {
+                addName(obsConst, series);
+            }
+            if (series.isSetDescription()) {
+                obsConst.setDescription(series.getDescription());
+            }
+        }
+        return obsConst;
     }
-
-
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,7 +30,13 @@ package org.n52.sos.ogc.om;
 
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.DefaultTVPMeasurementMetadata;
+import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.JTSHelper;
 
@@ -38,6 +44,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.Is;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -49,7 +58,7 @@ import com.vividsolutions.jts.geom.Geometry;
 public class OmObservationTest {
 
     @Test
-    public final void should_have_SpatialFilteringProfileParameter() throws OwsExceptionReport {
+    public final void shouldHaveSpatialFilteringProfileParameter() throws OwsExceptionReport {
         OmObservation omObservation = new OmObservation();
         NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
         namedValue.setName(new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY));

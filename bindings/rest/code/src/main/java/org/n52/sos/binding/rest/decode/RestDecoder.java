@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,7 +37,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.sos.binding.rest.Constants;
+import org.n52.sos.binding.rest.RestConstants;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.ServiceEndpointDecoder;
 import org.n52.sos.binding.rest.resources.capabilities.CapabilitiesDecoder;
@@ -73,9 +73,9 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
 
     @SuppressWarnings("unchecked")
 	private final Set<DecoderKey> DECODER_KEYS = decoderKeysForElements(
-            Constants.getInstance().getEncodingNamespace(), HttpServletRequest.class);
+            RestConstants.getInstance().getEncodingNamespace(), HttpServletRequest.class);
 //            union(
-//    		decoderKeysForElements(Constants.getInstance().getEncodingNamespace(), HttpServletRequest.class),
+//    		decoderKeysForElements(RestConstants.getInstance().getEncodingNamespace(), HttpServletRequest.class),
 //    		CodingHelper.xmlDecoderKeysForOperation(SOS, Sos2Constants.SERVICEVERSION,
 //    				Sos2Constants.Operations.DeleteSensor,
 //    				Sos2Constants.Operations.InsertSensor,
@@ -178,7 +178,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
 
     private boolean isServiceDefaultEndpoint(final String pathInfo) {
         return ((pathInfo != null) && pathInfo.isEmpty()) || ("/" + pathInfo)
-                .startsWith(Constants.getInstance().getUrlPattern());
+                .startsWith(RestConstants.getInstance().getUrlPattern());
     }
 
     private boolean isOfferingsRequest(final String pathInfo) {
@@ -221,8 +221,8 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest> {
         return Collections.emptySet();
     }
 
-    private Constants bindingConstants() {
-        return Constants.getInstance();
+    private RestConstants bindingConstants() {
+        return RestConstants.getInstance();
     }
 
 }

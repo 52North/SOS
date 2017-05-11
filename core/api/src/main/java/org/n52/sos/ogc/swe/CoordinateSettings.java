@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -61,9 +61,10 @@ public class CoordinateSettings implements SettingDefinitionProvider {
 				    .setKey(NORTHING_COORDINATE_NAME)
 				    .setDefaultValue("")
 				    .setOptional(true)
-				    .setTitle("SweCoordinate names for northing/latitude")
-				    .setDescription("Comma separated definitions for northing/latitude. "
-				    		+ "By default, support northing, latitude, southing"),
+				    .setTitle("SweCoordinate names <tt>northing/latitude</tt>")
+				    .setDescription("Provide a comma separated list of allowed names for <tt>northing/latitude</tt> "
+				            + "that will <strong>replace</strong> the default values: "
+				    		+ "<tt>northing</tt>, <tt>latitude</tt>, <tt>southing</tt>."),
 	
 			new StringSettingDefinition()
 				    .setGroup(MiscSettings.GROUP)
@@ -71,9 +72,10 @@ public class CoordinateSettings implements SettingDefinitionProvider {
 				    .setKey(EASTING_COORDINATE_NAME)
 				    .setDefaultValue("")
 				    .setOptional(true)
-				    .setTitle("SweCoordinate names for easting/longitude")
-				    .setDescription("Comma separated definitions for easting/longitude. "
-				    		+ "By default, support easting, longitude, westing"),
+				    .setTitle("SweCoordinate names <tt>easting/longitude</tt>")
+				    .setDescription("Provide a comma separated list of allowed names for <tt>easting/longitude</tt> "
+                            + "that will <strong>replace</strong> the default values: "
+                            + "<tt>easting</tt>, <tt>longitude</tt>, <tt>westing</tt>."),
 		    
 			new StringSettingDefinition()
 				    .setGroup(MiscSettings.GROUP)
@@ -81,9 +83,10 @@ public class CoordinateSettings implements SettingDefinitionProvider {
 				    .setKey(ALTITUDE_COORDINATE_NAME)
 				    .setDefaultValue("")
 				    .setOptional(true)
-				    .setTitle("SweCoordinate names for altitude")
-				    .setDescription("Comma separated definitions for altitude. "
-				    		+ "By default, support altitude, height, depth")
+				    .setTitle("SweCoordinate names <tt>altitude<tt>")
+				    .setDescription("Provide a comma separated list of allowed names for <tt>altitude</tt> "
+                            + "that will <strong>replace</strong> the default values: "
+                            + "<tt>altitude</tt>, <tt>height</tt>, <tt>depth</tt>.")
 	);
 					    
 

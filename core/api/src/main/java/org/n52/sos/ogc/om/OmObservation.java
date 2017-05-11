@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,7 +43,6 @@ import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
@@ -151,12 +150,14 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
 
     /**
      * Set the observation constellation
-     * 
+     *
      * @param observationConstellation
      *            the observationConstellation to set
+     * @return 
      */
-    public void setObservationConstellation(final OmObservationConstellation observationConstellation) {
+    public OmObservation setObservationConstellation(final OmObservationConstellation observationConstellation) {
         this.observationConstellation = observationConstellation;
+        return this;
     }
 
     /**
@@ -371,13 +372,13 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
 //        setObservationTypeToSweArrayObservation();
     }
 
-    /**
-     * Set the observation type to
-     * {@link OmConstants#OBS_TYPE_SWE_ARRAY_OBSERVATION}
-     */
-    private void setObservationTypeToSweArrayObservation() {
-        observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
-    }
+//    /**
+//     * Set the observation type to
+//     * {@link OmConstants#OBS_TYPE_SWE_ARRAY_OBSERVATION}
+//     */
+//    private void setObservationTypeToSweArrayObservation() {
+//        observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+//    }
 
     /**
      * Merge result time with passed observation result time
@@ -422,17 +423,27 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     }
 
     /**
-     * Convert {@link SingleObservationValue} to {@link TVPValue}
+     * Converts {@link SingleObservationValue} to {@link TVPValue} and updates the value of this observation.
      * 
      * @param singleValue
      *            Single observation value
      * @return Converted TVPValue value
      */
-    private TVPValue convertSingleValueToMultiValue(final SingleObservationValue<?> singleValue) {
+    public TVPValue convertSingleValueToMultiValue(final SingleObservationValue<?> singleValue) {
         final MultiObservationValues<List<TimeValuePair>> multiValue =
                 new MultiObservationValues<List<TimeValuePair>>();
         final TVPValue tvpValue = new TVPValue();
-        tvpValue.setUnit(singleValue.getValue().getUnit());
+        if (singleValue.isSetUnit()) {
+            tvpValue.setUnit(singleValue.getUnit());
+        } else if (singleValue.getValue().isSetUnit()) {
+            tvpValue.setUnit(singleValue.getValue().getUnit());
+        }
+        if (singleValue.isSetMetadata()) {
+            multiValue.setMetadata(singleValue.getMetadata());
+        }
+        if (singleValue.isSetDefaultPointMetadata()) {
+            multiValue.setDefaultPointMetadata(singleValue.getDefaultPointMetadata());
+        }
         final TimeValuePair timeValuePair = new TimeValuePair(singleValue.getPhenomenonTime(), singleValue.getValue());
         tvpValue.addValue(timeValuePair);
         multiValue.setValue(tvpValue);
@@ -742,10 +753,15 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     public OmObservation cloneTemplate(boolean withIdentifierNameDesription) {
         OmObservation clonedTemplate = cloneTemplate(new OmObservation());
         if (withIdentifierNameDesription) {
-            clonedTemplate.setIdentifier(this.getIdentifier());
-            clonedTemplate.setName(this.getName());
-            clonedTemplate.setDescription(this.getDescription());
-            
+            if (this.getObservationConstellation().isSetIdentifier()) {
+                clonedTemplate.setIdentifier(this.getObservationConstellation().getIdentifier());
+                clonedTemplate.setName(this.getObservationConstellation().getName());
+                clonedTemplate.setDescription(this.getObservationConstellation().getDescription());
+            } else {
+                clonedTemplate.setIdentifier(this.getIdentifier());
+                clonedTemplate.setName(this.getName());
+                clonedTemplate.setDescription(this.getDescription());
+            }
         }
         return clonedTemplate;
      }

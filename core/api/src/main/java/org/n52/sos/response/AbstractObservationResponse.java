@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.n52.sos.ogc.om.AbstractStreaming;
+import org.n52.sos.ogc.om.ObservationMergeIndicator;
 import org.n52.sos.ogc.om.ObservationMerger;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -60,6 +61,8 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     private boolean mergeObservation = false;
     
     private ObservationMerger observationMerger;
+    
+    private ObservationMergeIndicator observationMergeIndicator;
 
     private GlobalGetObservationValues globalValues;
 
@@ -139,6 +142,17 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     public void setObservationMerger(ObservationMerger observationMerger) {
         this.observationMerger = observationMerger;
         setMergeObservations(true);
+    }
+    
+    public void setObservationMergeIndicator(ObservationMergeIndicator indicator) {
+        this.observationMergeIndicator = indicator;
+    }
+
+    public ObservationMergeIndicator getObservationMergeIndicator() {
+        if (this.observationMergeIndicator == null) {
+            setObservationMergeIndicator(new ObservationMergeIndicator());
+        }
+        return this.observationMergeIndicator;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,22 +28,30 @@
  */
 package org.n52.sos.response;
 
+import java.util.List;
+
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.sos.Sos2Constants;
+
+import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
  * 
  */
 public class InsertResultResponse extends AbstractServiceResponse {
-    private OmObservation observation;
+    private List<OmObservation> observations;
 
-    public OmObservation getObservation() {
-        return observation;
+    public List<OmObservation> getObservations() {
+        return observations;
     }
 
     public void setObservation(OmObservation observation) {
-        this.observation = observation;
+        this.observations = Lists.newArrayList(observation);
+    }
+    
+    public void setObservations(List<OmObservation> observation) {
+        this.observations = observation;
     }
 
     @Override

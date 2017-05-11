@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.sos.cache.ContentCacheUpdate;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -63,11 +63,11 @@ public abstract class InMemoryCacheUpdate extends ContentCacheUpdate {
      *
      * @return a list of all sampling features
      */
-    protected List<SamplingFeature> sosFeaturesToList(AbstractFeature abstractFeature) {
+    protected List<AbstractSamplingFeature> sosFeaturesToList(AbstractFeature abstractFeature) {
         if (abstractFeature instanceof FeatureCollection) {
             return getAllFeaturesFrom((FeatureCollection) abstractFeature);
-        } else if (abstractFeature instanceof SamplingFeature) {
-            return Collections.singletonList((SamplingFeature) abstractFeature);
+        } else if (abstractFeature instanceof AbstractSamplingFeature) {
+            return Collections.singletonList((AbstractSamplingFeature) abstractFeature);
         } else {
             String errorMessage =
                     String.format("Feature Type \"%s\" not supported.", abstractFeature != null ? abstractFeature
@@ -80,11 +80,11 @@ public abstract class InMemoryCacheUpdate extends ContentCacheUpdate {
         }
     }
 
-    private List<SamplingFeature> getAllFeaturesFrom(FeatureCollection featureCollection) {
-        List<SamplingFeature> features = new ArrayList<SamplingFeature>(featureCollection.getMembers().size());
+    private List<AbstractSamplingFeature> getAllFeaturesFrom(FeatureCollection featureCollection) {
+        List<AbstractSamplingFeature> features = new ArrayList<AbstractSamplingFeature>(featureCollection.getMembers().size());
         for (AbstractFeature abstractFeature : featureCollection.getMembers().values()) {
-            if (abstractFeature instanceof SamplingFeature) {
-                features.add((SamplingFeature) abstractFeature);
+            if (abstractFeature instanceof AbstractSamplingFeature) {
+                features.add((AbstractSamplingFeature) abstractFeature);
             } else if (abstractFeature instanceof FeatureCollection) {
                 features.addAll(getAllFeaturesFrom((FeatureCollection) abstractFeature));
             }
@@ -100,9 +100,9 @@ public abstract class InMemoryCacheUpdate extends ContentCacheUpdate {
      *
      * @return the envelope for all features
      */
-    protected Envelope createEnvelopeFrom(List<SamplingFeature> samplingFeatures) {
+    protected Envelope createEnvelopeFrom(List<AbstractSamplingFeature> samplingFeatures) {
         Envelope featureEnvelope = new Envelope();
-        for (SamplingFeature samplingFeature : samplingFeatures) {
+        for (AbstractSamplingFeature samplingFeature : samplingFeatures) {
             if (samplingFeature.isSetGeometry()) {
                     featureEnvelope.expandToInclude(samplingFeature.getGeometry().getEnvelopeInternal());
             }

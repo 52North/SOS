@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -153,6 +153,8 @@ import com.vividsolutions.jts.geom.Geometry;
 public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDAO.class);
+    
+    private static final String SQL_QUERY_CHECK_SAMPLING_GEOMETRIES = "checkSamplingGeometries";
 
     private static final String SQL_QUERY_OBSERVATION_TIME_EXTREMA = "getObservationTimeExtrema";
 
@@ -1193,9 +1195,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             c.add(SpatialRestrictions.filter(Observation.SAMPLING_GEOMETRY, request.getSpatialFilter().getOperator(),
                     GeometryHandler.getInstance()
                             .switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter().getGeometry())));
-        } else {
-            // TODO add filter with lat/lon
-            LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
+//        } else {
+//            // TODO add filter with lat/lon
+//            LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
         }
 
     }
@@ -1752,7 +1754,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
             @Override
             public String visit(NumericObservation o) throws OwsExceptionReport {
-                return "measurement";
+                return "quantity";
             }
 
             @Override
@@ -1813,7 +1815,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public boolean containsSamplingGeometries(Session session) {
         Criteria criteria = getDefaultObservationInfoCriteria(session);
         criteria.setProjection(Projections.rowCount());
-        if (HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), AbstractObservation.SAMPLING_GEOMETRY)) {
+        if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_CHECK_SAMPLING_GEOMETRIES, session)) {
+            Query namedQuery = session.getNamedQuery(SQL_QUERY_CHECK_SAMPLING_GEOMETRIES);
+            LOGGER.debug("QUERY containsSamplingGeometries() with NamedQuery: {}",
+                    SQL_QUERY_CHECK_SAMPLING_GEOMETRIES);
+            return (boolean) namedQuery.uniqueResult();
+        } else if (HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), AbstractObservation.SAMPLING_GEOMETRY)) {
             criteria.add(Restrictions.isNotNull(AbstractObservation.SAMPLING_GEOMETRY));
             LOGGER.debug("QUERY containsSamplingGeometries(): {}", HibernateHelper.getSqlString(criteria));
             return (Long) criteria.uniqueResult() > 0;
@@ -1826,6 +1833,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
         return false;
     }
+    
+    
 
     public TimeExtrema getObservationTimeExtrema(Session session) throws CodedException {
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_OBSERVATION_TIME_EXTREMA, session)) {

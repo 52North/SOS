@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,15 +28,23 @@
  */
 package org.n52.sos.ogc.om;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertThat;
+
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.Is;
+import org.junit.Assert;
 import org.junit.Test;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sensorML.SensorML;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.DefaultTVPMeasurementMetadata;
+import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 
 public class OmObservationConstellationTest {
 
@@ -96,6 +104,36 @@ public class OmObservationConstellationTest {
         ooc.setObservationType(OmConstants.OBS_TYPE_UNKNOWN);
         assertThat(ooc.checkObservationTypeForMerging(), is(false));
 
+    }
+    
+    
+    @Test
+    public void shouldSetInterpolationType() {
+        DefaultPointMetadata defaultPointMetadata = new DefaultPointMetadata();
+        DefaultTVPMeasurementMetadata defaultTVPMeasurementMetadata = new DefaultTVPMeasurementMetadata();
+        defaultTVPMeasurementMetadata.setInterpolationtype(WaterMLConstants.InterpolationType.Continuous);
+        defaultPointMetadata.setDefaultTVPMeasurementMetadata(defaultTVPMeasurementMetadata);
+        final OmObservationConstellation omObservationConstellation = new OmObservationConstellation();
+        omObservationConstellation.setDefaultPointMetadata(defaultPointMetadata);
+        Assert.assertThat(omObservationConstellation.isSetDefaultPointMetadata(), Is.is(true));
+        Assert.assertThat(omObservationConstellation.getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata(), Is.is(true));
+        Assert.assertThat(omObservationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().isSetInterpolationType(), Is.is(true));
+        Assert.assertThat(omObservationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().getInterpolationtype(), Is.is(WaterMLConstants.InterpolationType.Continuous));
+    }
+
+    @Test
+    public void shouldSetPropertyCumulative() {
+        final OmObservationConstellation omObservationConstellation = new OmObservationConstellation();
+        Metadata metadata = new Metadata();
+        MeasurementTimeseriesMetadata timeseriesMetadata = new MeasurementTimeseriesMetadata();
+        timeseriesMetadata.setCumulative(true);
+        metadata.setTimeseriesmetadata(timeseriesMetadata);
+        omObservationConstellation.setMetadata(metadata);
+
+        Assert.assertThat(omObservationConstellation.isSetMetadata(), Is.is(true));
+        Assert.assertThat(omObservationConstellation.getMetadata().isSetTimeseriesMetadata(), Is.is(true));
+        Assert.assertThat(omObservationConstellation.getMetadata().getTimeseriesmetadata(), CoreMatchers.instanceOf(MeasurementTimeseriesMetadata.class));
+        Assert.assertThat(((MeasurementTimeseriesMetadata)omObservationConstellation.getMetadata().getTimeseriesmetadata()).isCumulative(), Is.is(true));
     }
 
 }

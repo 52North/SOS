@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -47,10 +47,10 @@ public class MetaDataSettings implements SettingDefinitionProvider {
                     .setGroup(MiscSettings.GROUP)
                     .setOrder(ORDER_0)
                     .setKey(OBSERVATION_ONLINE_RESOURCE)
-                    .setTitle("Should the SOS encode CI_OnlineResource in observations")
+                    .setTitle("Should the SOS encode CI_OnlineResource in observations?")
                     .setOptional(true)
-                    .setDescription(
-                            "Activate/Deactivate whether the service should encode CI_OnlineResource in observations.")
+                    .setDescription("Activate/Deactivate whether the service should encode "
+                            + "<tt>CI_OnlineResource</tt> in observations.")
                     .setDefaultValue(false);
 
     

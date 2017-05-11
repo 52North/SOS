@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -50,6 +50,7 @@ import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -142,7 +143,7 @@ public class SamplingDecoderv20 extends AbstractOmDecoderv20 {
 
     private AbstractFeature parseSpatialSamplingFeature(final SFSpatialSamplingFeatureType spatialSamplingFeature)
             throws OwsExceptionReport {
-        final SamplingFeature sosFeat = new SamplingFeature(null, spatialSamplingFeature.getId());
+        final AbstractSamplingFeature sosFeat = new SamplingFeature(null, spatialSamplingFeature.getId());
         // parse identifier, names, description
         parseAbstractFeatureType(spatialSamplingFeature, sosFeat);
         sosFeat.setFeatureType(getFeatureType(spatialSamplingFeature.getType()));
@@ -237,15 +238,18 @@ public class SamplingDecoderv20 extends AbstractOmDecoderv20 {
     }
 
     private Geometry getGeometry(final ShapeType shape) throws OwsExceptionReport {
-        final Object decodedObject = CodingHelper.decodeXmlElement(shape.getAbstractGeometry());
-        if (decodedObject instanceof Geometry) {
-            return (Geometry) decodedObject;
+        if (shape.isSetAbstractGeometry()) {
+            final Object decodedObject = CodingHelper.decodeXmlElement(shape.getAbstractGeometry());
+            if (decodedObject instanceof Geometry) {
+                return (Geometry) decodedObject;
+            }
+            throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation).withMessage(
+                    "The requested geometry type of featureOfInterest is not supported by this service!");
         }
-        throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation).withMessage(
-                "The requested geometry type of featureOfInterest is not supported by this service!");
+        return null;
     }
 
-    private void checkTypeAndGeometry(final SamplingFeature sosFeat) throws OwsExceptionReport {
+    private void checkTypeAndGeometry(final AbstractSamplingFeature sosFeat) throws OwsExceptionReport {
         final String featTypeForGeometry = getFeatTypeForGeometry(sosFeat.getGeometry());
         if (sosFeat.getFeatureType() == null) {
             sosFeat.setFeatureType(featTypeForGeometry);

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -126,9 +126,15 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     public Criteria getObservationCriteriaForProcedure(String procedure, Session session) throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
         return criteria;
+    }
+
+    private Criteria getDefaultSeriesObservationCriteria(Criteria criteria) {
+        Criteria seriesCriteria = criteria.createCriteria(SeriesObservation.SERIES);
+        seriesCriteria.add(Restrictions.eq(Series.PUBLISHED, true));
+        return seriesCriteria;
     }
 
     @Override
@@ -136,7 +142,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
         return criteria;
     }
@@ -146,7 +152,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
         return criteria;
     }
@@ -156,7 +162,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
         return criteria;
@@ -200,7 +206,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     private Criteria addRestrictionsToCriteria(Criteria criteria, String procedure, String observableProperty,
             String featureOfInterest) throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
-        Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
@@ -226,7 +232,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                         .setProjection(Projections.distinct(Projections.property(ContextualReferencedSeriesObservation.IDENTIFIER)))
                         .add(Restrictions.isNotNull(ContextualReferencedSeriesObservation.IDENTIFIER))
                         .add(Restrictions.eq(ContextualReferencedSeriesObservation.DELETED, false));
-        Criteria seriesCriteria = criteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesCriteria.createCriteria(Series.PROCEDURE)
                 .add(Restrictions.eq(Procedure.IDENTIFIER, procedureIdentifier));
         LOGGER.debug("QUERY getObservationIdentifiers(procedureIdentifier): {}",
@@ -383,7 +389,9 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      */
     protected Criteria createCriteriaFor(Class<?> clazz, Series series, Session session) {
         final Criteria criteria = getDefaultObservationCriteria(session);
-        criteria.createCriteria(AbstractSeriesObservation.SERIES).add(Restrictions.eq(Series.ID, series.getSeriesId()));
+        criteria.createCriteria(AbstractSeriesObservation.SERIES)
+                .add(Restrictions.eq(Series.ID, series.getSeriesId()))
+                .add(Restrictions.eq(Series.PUBLISHED, true));
         return criteria;
     }
 
@@ -809,7 +817,13 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         }
         String logArgs = "request, features, offerings";
         logArgs += ", sosIndeterminateTime";
-        addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+        if (series.isSetFirstTimeStamp() && sosIndeterminateTime.equals(SosIndeterminateTime.first)) {
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime, series.getFirstTimeStamp());
+        } else if (series.isSetLastTimeStamp() && sosIndeterminateTime.equals(SosIndeterminateTime.latest)) {
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime, series.getLastTimeStamp());
+        } else {
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+        }
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
 

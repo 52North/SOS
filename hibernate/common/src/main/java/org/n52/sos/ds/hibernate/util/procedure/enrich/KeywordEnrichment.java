@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -98,7 +98,12 @@ public class KeywordEnrichment extends SensorMLEnrichment {
 
     private void addOfferings(Set<String> keywords) {
         if (procedureSettings().isEnrichWithOfferings()) {
-            keywords.addAll(getCache().getOfferingsForProcedure(getIdentifier()));
+            for (String offering : getCache()
+                    .getOfferingsForProcedure(getIdentifier())) {
+                if (getCache().getPublishedOfferings().contains(offering)) {
+                    keywords.add(offering);
+                }
+            }
         }
     }
 
@@ -117,8 +122,12 @@ public class KeywordEnrichment extends SensorMLEnrichment {
     }
 
     private void addObservableProperties(Set<String> keywords) {
-        keywords.addAll(getCache()
-                .getObservablePropertiesForProcedure(getIdentifier()));
+        for (String obsProp : getCache()
+                .getObservablePropertiesForProcedure(getIdentifier())) {
+            if (getCache().getPublishedObservableProperties().contains(obsProp)) {
+                keywords.add(obsProp);
+            }
+        }
     }
 
     private void addExisting(AbstractSensorML description,Set<String> keywords) {

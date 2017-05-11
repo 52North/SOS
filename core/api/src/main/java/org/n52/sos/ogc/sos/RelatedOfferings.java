@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,8 +37,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 public class RelatedOfferings implements SwesExtension<Set<OfferingContext>> {
-    // TODO define correct namespace
-    private String namespace = "http://52north.org/RelatedOffering/1.0";
     private String identifier;
     private String definition;
     private Set<OfferingContext> offeringRelations = Sets.newHashSet();
@@ -46,7 +44,7 @@ public class RelatedOfferings implements SwesExtension<Set<OfferingContext>> {
     
     @Override
     public String getNamespace() {
-        return namespace;
+        return RelatedOfferingConstants.NS_RO;
     }
 
     @Override

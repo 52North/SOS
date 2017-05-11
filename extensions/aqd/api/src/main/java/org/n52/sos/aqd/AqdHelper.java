@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -49,6 +49,7 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
+import org.omg.CORBA.portable.StreamableValue;
 
 @Configurable
 public class AqdHelper {
@@ -202,5 +203,4 @@ public class AqdHelper {
     public boolean isSetVerificationFlags() {
         return CollectionHelper.isNotEmpty(getVerificationFlags());
     }
-    
 }

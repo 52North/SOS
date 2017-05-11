@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -164,10 +164,8 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                     } else {
                         do {
                             OmObservation observation = streamingObservation.nextSingleObservation();
-                            if (observation != null) {
                                 writeObservationData(observation, encoder, encodingValues);
                                 writeNewLine();
-                            }
                         } while (streamingObservation.hasNextValue());
                     }
                 } else if (streamingObservation.getValue() != null) {
@@ -178,31 +176,31 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                 StreamingValue<?> streamingValue = (StreamingValue<?>) o.getValue();
                 if (streamingValue.hasNextValue()) {
                     if (response.isSetMergeObservation()) {
-                        if (encoder.supportsResultStreamingForMergedValues()) {
+                        if (encoder.supportsResultStreamingForMergedValues() && !response.getObservationMergeIndicator().isSetResultTime()) {
                             writeObservationData(o, encoder, encodingValues);
                             writeNewLine();
                         } else {
                             for (OmObservation obs : streamingValue.mergeObservation()) {
-                                writeObservationData(obs, encoder, encodingValues);
-                                writeNewLine();
+                                    writeObservationData(obs, encoder, encodingValues);
+                                    writeNewLine();
                             }
                         }
                     } else {
                         do {
                             OmObservation obs = streamingValue.nextSingleObservation();
                             if (obs != null) {
-                                writeObservationData(obs, encoder, encodingValues);
-                                writeNewLine();
+                                    writeObservationData(obs, encoder, encodingValues);
+                                    writeNewLine();
                             }
                         } while (streamingValue.hasNextValue());
                     }
                 } else if (streamingValue.getValue() != null) {
-                    writeObservationData(streamingValue.getValue().getValue(), encoder, encodingValues);
-                    writeNewLine();
+                        writeObservationData(streamingValue.getValue().getValue(), encoder, encodingValues);
+                        writeNewLine();
                 }
             } else {
-                writeObservationData(o, encoder, encodingValues);
-                writeNewLine();
+                    writeObservationData(o, encoder, encodingValues);
+                    writeNewLine();
             }
         }
         indent--;
@@ -267,5 +265,4 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                     .withMessage("Error while encoding response, encoder is not of type ObservationEncoder!");
         }
     }
-
 }

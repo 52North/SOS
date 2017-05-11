@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,17 +33,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.opengis.sensorML.x101.AbstractProcessType;
-import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
-import net.opengis.sensorML.x101.IoComponentPropertyType;
-import net.opengis.sensorML.x101.SystemType;
-import net.opengis.sosREST.x10.SensorDocument;
-import net.opengis.sosREST.x10.SensorType;
-import net.opengis.swe.x101.AnyScalarPropertyType;
-import net.opengis.swe.x101.SimpleDataRecordType;
-
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.binding.rest.Constants;
+import org.n52.sos.binding.rest.RestConstants;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
@@ -64,6 +55,15 @@ import org.n52.sos.request.UpdateSensorRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 
+import net.opengis.sensorML.x101.AbstractProcessType;
+import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
+import net.opengis.sensorML.x101.IoComponentPropertyType;
+import net.opengis.sensorML.x101.SystemType;
+import net.opengis.sosREST.x10.SensorDocument;
+import net.opengis.sosREST.x10.SensorType;
+import net.opengis.swe.x101.AnyScalarPropertyType;
+import net.opengis.swe.x101.SimpleDataRecordType;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
@@ -72,7 +72,7 @@ import org.n52.sos.util.XmlHelper;
 public class SensorsDecoder extends ResourceDecoder {
 
     public SensorsDecoder() {
-        bindingConstants = Constants.getInstance();
+        bindingConstants = RestConstants.getInstance();
     }
 
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
@@ -155,9 +155,10 @@ public class SensorsDecoder extends ResourceDecoder {
         SosInsertionMetadata insertionMetadata = new SosInsertionMetadata();
         Capabilities xb_insertionMetadata = null;
         
+        final String insertionMetadataTagName = "InsertionMetadata";
         if (xb_system.getCapabilitiesArray().length > 0) {
             for (Capabilities xb_Capability : xb_system.getCapabilitiesArray()) { 
-                if (xb_Capability.isSetName() && xb_Capability.getName().equalsIgnoreCase(bindingConstants.getSmlCapabilityInsertMetadataName())) {
+                if (xb_Capability.isSetName() && xb_Capability.getName().equalsIgnoreCase(insertionMetadataTagName)) {
                     xb_insertionMetadata = xb_Capability;
                     break;
                 }
@@ -165,7 +166,7 @@ public class SensorsDecoder extends ResourceDecoder {
         }
         
         if (xb_insertionMetadata == null) {
-        	throw new MissingParameterValueException(bindingConstants.getSmlCapabilityInsertMetadataName());
+        	throw new MissingParameterValueException(insertionMetadataTagName);
         }
         setAdditionalMetadata(insertionMetadata,xb_insertionMetadata);
         
@@ -185,9 +186,9 @@ public class SensorsDecoder extends ResourceDecoder {
                     if (xb_fieldElement.isSetText()) {
                         String name = xb_fieldElement.getName();
                         if (!xb_fieldElement.getText().getValue().isEmpty() && name != null) {
-                            if (name.equalsIgnoreCase(bindingConstants.getSmlCapabilityObservationTypeName())) {
+                            if (name.equalsIgnoreCase("sos:ObservationType")) {
                                 observationTypes.add(xb_fieldElement.getText().getValue());
-                            } else if (name.equalsIgnoreCase(bindingConstants.getSmlCapabilityFeatureOfInterestTypeName())) {
+                            } else if (name.equalsIgnoreCase("sos:FeatureOfInterestType")) {
                                 featureTypes.add(xb_fieldElement.getText().getValue());
                             }
                         }

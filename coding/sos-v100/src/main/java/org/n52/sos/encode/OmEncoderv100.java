@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -60,7 +60,7 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.CountValue;
@@ -294,8 +294,9 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
                     if (sosObservation.getValue() instanceof StreamingValue) {
                         StreamingValue streamingValue = (StreamingValue) sosObservation.getValue();
                         while (streamingValue.hasNextValue()) {
+                            OmObservation o = streamingValue.nextSingleObservation();
                             xbObservationCollection.addNewMember().set(
-                                    createObservation(streamingValue.nextSingleObservation(), null));
+                                        createObservation(o, null));
                         }
                     } else {
                         xbObservationCollection.addNewMember().set(createObservation(sosObservation, null));
@@ -321,10 +322,12 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
         SosEnvelope sosEnvelope = new SosEnvelope();
         for (OmObservation sosObservation : sosObservationCollection) {
             sosObservation.getObservationConstellation().getFeatureOfInterest();
-            SamplingFeature samplingFeature =
-                    (SamplingFeature) sosObservation.getObservationConstellation().getFeatureOfInterest();
-            sosEnvelope.setSrid(samplingFeature.getGeometry().getSRID());
-            sosEnvelope.expandToInclude(samplingFeature.getGeometry().getEnvelopeInternal());
+            if (sosObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+                AbstractSamplingFeature samplingFeature =
+                        (AbstractSamplingFeature) sosObservation.getObservationConstellation().getFeatureOfInterest();
+                sosEnvelope.setSrid(samplingFeature.getGeometry().getSRID());
+                sosEnvelope.expandToInclude(samplingFeature.getGeometry().getEnvelopeInternal());
+            }
         }
         return sosEnvelope;
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -179,13 +179,13 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         Value<?> value = o.getValue().getValue();
         String type = getObservationType(o);
         if (value instanceof TVPValue) {
-            if (type.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
+//            if (type.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
                 return encodeTVPValue(o);
-            }
+//            }
         } else {
             return encodeValue(value);
         }
-        throw new UnsupportedEncoderInputException(this, value);
+//        throw new UnsupportedEncoderInputException(this, value);
     }
 
     private JsonNode encodeValue(Value<?> value)
@@ -419,7 +419,9 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
             ArrayNode jvalues = result.putArray(JSONConstants.VALUES);
 
             for (TimeValuePair tvp : values) {
-                jvalues.addArray().add(encodeObjectToJson(tvp.getTime())).add(getTokenForValue(tvp.getValue()));
+                if (tvp != null && tvp.getValue() != null && tvp.getValue().isSetValue()) {
+                    jvalues.addArray().add(encodeObjectToJson(tvp.getTime())).add(getTokenForValue(tvp.getValue()));
+                }
             }
         }
         return result;

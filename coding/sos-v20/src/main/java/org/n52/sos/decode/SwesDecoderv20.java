@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -62,6 +62,7 @@ import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -338,7 +339,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
             final FeaturePropertyType fpt = relatedFeature.getFeatureRelationship().getTarget();
             if (fpt.getHref() != null && !fpt.getHref().isEmpty()) {
                 final String identifier = fpt.getHref();
-                final SamplingFeature feature = new SamplingFeature(new CodeWithAuthority(identifier));
+                final AbstractSamplingFeature feature = new SamplingFeature(new CodeWithAuthority(identifier));
                 if (fpt.getTitle() != null && !fpt.getTitle().isEmpty()) {
                     feature.setName(Lists.newArrayList(new CodeType(fpt.getTitle())));
                 }
@@ -349,8 +350,8 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
                 sosFeatureRelationship.setFeature(feature);
             } else {
                 final Object decodedObject = CodingHelper.decodeXmlElement(fpt);
-                if (decodedObject instanceof SamplingFeature) {
-                    sosFeatureRelationship.setFeature((SamplingFeature) decodedObject);
+                if (decodedObject instanceof AbstractSamplingFeature) {
+                    sosFeatureRelationship.setFeature((AbstractSamplingFeature) decodedObject);
                 } else {
                     throw new DecoderResponseUnsupportedException(fpt.xmlText(), decodedObject);
                 }

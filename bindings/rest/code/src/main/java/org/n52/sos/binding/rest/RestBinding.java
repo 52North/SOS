@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -94,10 +94,10 @@ public class RestBinding extends Binding {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestBinding.class);
     private final Set<String> conformanceClasses;
-    private final Constants bindingConstants;
+    private final RestConstants bindingConstants;
 
     public RestBinding() {
-        bindingConstants = Constants.getInstance();
+        bindingConstants = RestConstants.getInstance();
         conformanceClasses = new HashSet<String>(0);
         conformanceClasses.add(bindingConstants.getConformanceClass());
     }
@@ -327,7 +327,7 @@ public class RestBinding extends Binding {
                 return new ServiceEndpointRequestHandler();
             }
         }
-        throw new MissingParameterValueException(bindingConstants.getResourceType());
+        throw new MissingParameterValueException("resource type");
     }
 
 	private RestDecoder getDecoder() throws OwsExceptionReport {

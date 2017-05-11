@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,226 +28,363 @@
  */
 package org.n52.sos.iso.gmd;
 
-import java.util.ArrayList;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
-import org.n52.sos.iso.gco.AbtractGmd;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.w3c.Nillable;
+import org.n52.sos.w3c.xlink.Reference;
+import org.n52.sos.w3c.xlink.Referenceable;
 
-public class CiContact extends AbtractGmd {
+import com.google.common.collect.Lists;
 
-    private List<String> phoneVoice;
-
-    private List<String> phoneFax;
-
-    private List<String> deliveryPoints;
-
-    private String city;
-
-    private String administrativeArea;
-
-    private String postalCode;
-
-    private String country;
-
-    private String email;
-
-    private String onlineResource;
-
-    private String hoursOfService;
-
-    private String contactInstructions;
+/**
+ * Internal representation of the ISO GMD Contact.
+ * 
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since 4.4.0
+ *
+ */
+public class CiContact extends AbstractObject {
     
+    private Referenceable<CiTelephone> phone;
+    private Referenceable<CiAddress> address;
+    private Referenceable<CiOnlineResource> onlineResource;
+    private Nillable<String> hoursOfService;
+    private Nillable<String> contactInstructions;
+    
+    /**
+     * @return the phone
+     */
+    public Referenceable<CiTelephone> getPhone() {
+        return phone;
+    }
+
+    /**
+     * @param phone the phone to set
+     */
+    public void setPhone(Referenceable<CiTelephone> phone) {
+        this.phone = phone;
+    }
+
+    public boolean isSetPhone() {
+        return getPhone() != null;
+    }
+    
+    private boolean isSetPhoneInstance() {
+        return getPhone() != null 
+                && getPhone().isInstance() 
+                && getPhone().getInstance().isPresent();
+    }
+    
+    private CiTelephone getPhoneInstance() {
+        return getPhone().getInstance().get();
+    }
+
     public boolean isSetPhoneVoice() {
-        return !CollectionHelper.nullEmptyOrContainsOnlyNulls(phoneVoice);
+        return isSetPhoneInstance()
+                && getPhoneInstance().isSetVoice();
     }
 
     public List<String> getPhoneVoice() {
-        return phoneVoice;
+        if (isSetPhoneVoice()) {
+            return getPhoneInstance().getVoice();
+        }
+        return null;
     }
 
     public CiContact setPhoneVoice(final List<String> phoneVoice) {
-        if (isSetPhoneVoice()) {
-            this.phoneVoice.addAll(phoneVoice);
+        if (isSetPhoneInstance()) {
+            getPhoneInstance().setVoice(phoneVoice);
         } else {
-            this.phoneVoice = phoneVoice;
+            setPhone(Referenceable.of(new CiTelephone().setVoice(phoneVoice)));
         }
         return this;
     }
 
     public CiContact addPhoneVoice(final String phoneVoice) {
-        if (!isSetPhoneVoice()) {
-            this.phoneVoice = new ArrayList<String>();
+        if (isSetPhoneInstance()) {
+            getPhoneInstance().addVoice(phoneVoice);
+        } else {
+            setPhone(Referenceable.of(new CiTelephone().addVoice(phoneVoice)));
         }
-        this.phoneVoice.add(phoneVoice);
         return this;
     }
 
     public boolean isSetPhoneFax() {
-        return !CollectionHelper.nullEmptyOrContainsOnlyNulls(phoneFax);
+        return isSetPhoneInstance()
+                && getPhoneInstance().isSetFacsimile();
     }
 
     public List<String> getPhoneFax() {
-        return phoneFax;
+        if (isSetPhoneFax()) {
+            return getPhoneInstance().getFacsimile();
+        }
+        return null;
     }
 
     public CiContact addPhoneFax(final String phoneFax) {
-        if (!isSetPhoneFax()) {
-            this.phoneFax = new ArrayList<String>();
+        if (isSetPhoneInstance()) {
+            getPhoneInstance().addFacsimile(phoneFax);
+        } else {
+            setPhone(Referenceable.of(new CiTelephone().addFacsimile(phoneFax)));
         }
-        this.phoneFax.add(phoneFax);
         return this;
     }
 
     public CiContact setPhoneFax(final List<String> phoneFax) {
-        if (isSetPhoneFax()) {
-            this.phoneFax.addAll(phoneFax);
+        if (isSetPhoneInstance()) {
+            getPhoneInstance().setFacsimile(phoneFax);
         } else {
-            this.phoneFax = phoneFax;
+            setPhone(Referenceable.of(new CiTelephone().setFacsimile(phoneFax)));
         }
         return this;
     }
 
+    /**
+     * @return the address
+     */
+    public Referenceable<CiAddress> getAddress() {
+        return address;
+    }
+
+    /**
+     * @param address the address to set
+     */
+    public void setAddress(Referenceable<CiAddress> address) {
+        this.address = address;
+    }
+
+    public boolean isSetAddress() {
+        return getAddress() != null;
+    }
+    
+    private boolean isSetAddressInstance() {
+        return getAddress() != null 
+                && getAddress().isInstance() 
+                && getAddress().getInstance().isPresent();
+    }
+    
+    private CiAddress getAddressInstance() {
+        return getAddress().getInstance().get();
+    }
+
     public boolean isSetDeliveryPoint() {
-        return !CollectionHelper.nullEmptyOrContainsOnlyNulls(deliveryPoints);
+        return isSetAddressInstance()
+                && getAddressInstance().hasDeliveryPoints();
     }
 
     public List<String> getDeliveryPoint() {
-        return deliveryPoints;
+        if (isSetDeliveryPoint()) {
+            return getAddressInstance().getDeliveryPoints();
+        }
+        return null;
     }
 
     public CiContact setDeliveryPoint(final List<String> deliveryPoints) {
-        if (isSetDeliveryPoint()) {
-            this.deliveryPoints.addAll(deliveryPoints);
+        if (isSetAddressInstance()) {
+            getAddressInstance().setDeliveryPoints(deliveryPoints);
         } else {
-            this.deliveryPoints = deliveryPoints;
+            setAddress(Referenceable.of(new CiAddress().setDeliveryPoints(deliveryPoints)));
         }
         return this;
     }
 
     public CiContact addDeliveryPoint(final String deliveryPoint) {
-        if (!isSetDeliveryPoint()) {
-            deliveryPoints = new ArrayList<String>();
+        if (isSetAddressInstance()) {
+            getAddressInstance().addDeliveryPoints(deliveryPoint);
+        } else {
+            setAddress(Referenceable.of(new CiAddress().addDeliveryPoints(deliveryPoint)));
         }
-        deliveryPoints.add(deliveryPoint);
         return this;
     }
 
     public boolean isSetCity() {
-        return city != null && !city.isEmpty();
+        return isSetAddressInstance() && !getAddressInstance().isSetCity();
     }
 
     public String getCity() {
-        return city;
+        if (isSetCity()) {
+            return getAddressInstance().getCity();
+        }
+        return null;
     }
 
     public CiContact setCity(final String city) {
-        this.city = city;
+        if (isSetAddressInstance()) {
+            getAddressInstance().setCity(city);
+        } else {
+            setAddress(Referenceable.of(new CiAddress().setCity(city)));
+        }
         return this;
     }
 
     public boolean isSetAdministrativeArea() {
-        return administrativeArea != null && !administrativeArea.isEmpty();
+        return isSetAddressInstance() && !getAddressInstance().isSetAdministrativeArea();
     }
 
     public String getAdministrativeArea() {
-        return administrativeArea;
+        if (isSetAdministrativeArea()) {
+            return getAddressInstance().getAdministrativeArea();
+        }
+        return null;
     }
 
     public CiContact setAdministrativeArea(final String administrativeArea) {
-        this.administrativeArea = administrativeArea;
+        if (isSetAddressInstance()) {
+            getAddressInstance().setAdministrativeArea(administrativeArea);
+        } else {
+            setAddress(Referenceable.of(new CiAddress().setAdministrativeArea(administrativeArea)));
+        }
         return this;
     }
 
     public boolean isSetPostalCode() {
-        return postalCode != null && !postalCode.isEmpty();
+        return isSetAddressInstance() && !getAddressInstance().isSetPostalCode();
     }
 
     public String getPostalCode() {
-        return postalCode;
+        if (isSetAdministrativeArea()) {
+            return getAddressInstance().getPostalCode();
+        }
+        return null;
     }
 
     public CiContact setPostalCode(final String postalCode) {
-        this.postalCode = postalCode;
+        if (isSetAddressInstance()) {
+            getAddressInstance().setPostalCode(postalCode);
+        } else {
+            setAddress(Referenceable.of(new CiAddress().setPostalCode(postalCode)));
+        }
         return this;
     }
 
     public boolean isSetCountry() {
-        return country != null && !country.isEmpty();
+        return isSetAddressInstance() && !getAddressInstance().isSetCountry();
     }
 
     public String getCountry() {
-        return country;
+        if (isSetAdministrativeArea()) {
+            return getAddressInstance().getCountry();
+        }
+        return null;
     }
 
     public CiContact setCountry(final String country) {
-        this.country = country;
+        if (isSetAddressInstance()) {
+            getAddressInstance().setCountry(country);
+        } else {
+            setAddress(Referenceable.of(new CiAddress().setCountry(country)));
+        }
         return this;
     }
 
     public boolean isSetEmail() {
-        return email != null && !email.isEmpty();
+        return isSetAddressInstance() && !getAddressInstance().hasElectronicMailAddresses();
     }
 
     public String getEmail() {
-        return email;
+        if (isSetAdministrativeArea()) {
+            return getAddressInstance().getElectronicMailAddresses().iterator().next();
+        }
+        return null;
     }
 
     public CiContact setEmail(final String email) {
-        this.email = email;
+        if (isSetAddressInstance()) {
+            getAddressInstance().setElectronicMailAddresses(Lists.newArrayList(email));
+        } else {
+            setAddress(Referenceable.of(new CiAddress().setElectronicMailAddresses(Lists.newArrayList(email))));
+        }
         return this;
     }
 
     public boolean isSetOnlineResource() {
-        return onlineResource != null && !onlineResource.isEmpty();
+        return onlineResource != null
+                && ((onlineResource.isReference() && onlineResource.getReference().getHref().isPresent())
+                        || onlineResource.isInstance());
     }
-
-    public String getOnlineResource() {
+    
+    public Referenceable<CiOnlineResource>  getOnlineResourceReferenceable() {
         return onlineResource;
     }
 
-    public CiContact setOnlineResource(final String onlineResource) {
+    public String getOnlineResource() {
+        if (onlineResource.isReference() && onlineResource.getReference().getHref().isPresent()) {
+            return onlineResource.getReference().getHref().get().toString();
+        } else if (onlineResource.isInstance() && onlineResource.getInstance().isPresent()
+                && onlineResource.getInstance().get().getLinkage().isPresent()) {
+            return onlineResource.getInstance().get().getLinkage().get().toString();
+        }
+        return null;
+    }
+    
+    public CiContact setOnlineResource(final Referenceable<CiOnlineResource> onlineResource) {
         this.onlineResource = onlineResource;
         return this;
     }
 
+    public CiContact setOnlineResource(final String onlineResource) {
+        try {
+            this.onlineResource = Referenceable.of(new Reference().setHref(new URI(onlineResource)));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+
     public boolean isSetHoursOfService() {
-        return hoursOfService != null && !hoursOfService.isEmpty();
+        return hoursOfService != null && !hoursOfService.isNull();
     }
 
     public String getHoursOfService() {
+        if (hoursOfService.isPresent()) {
+            return hoursOfService.get();
+        }
+        return null;
+    }
+    
+    public Nillable<String> getHoursOfServiceNillable() {
         return hoursOfService;
     }
-
-    public CiContact setHoursOfService(final String hoursOfService) {
+    
+    public CiContact setHoursOfService(final Nillable<String> hoursOfService) {
         this.hoursOfService = hoursOfService;
         return this;
     }
 
+    public CiContact setHoursOfService(final String hoursOfService) {
+        this.hoursOfService = Nillable.of(hoursOfService);
+        return this;
+    }
+
     public boolean isSetContactInstructions() {
-        return contactInstructions != null && !contactInstructions.isEmpty();
+        return contactInstructions != null && !contactInstructions.isNull();
     }
 
     public String getContactInstructions() {
+        if (contactInstructions.isPresent()) {
+            return contactInstructions.get();
+        }
+        return null;
+    }
+    
+    public Nillable<String> getContactInstructionsNillable() {
         return contactInstructions;
     }
 
-    public CiContact setContactInstructions(final String contactInstructions) {
+    public CiContact setContactInstructions(final Nillable<String> contactInstructions) {
         this.contactInstructions = contactInstructions;
+        return this;
+    }
+    
+    public CiContact setContactInstructions(final String contactInstructions) {
+        this.contactInstructions = Nillable.of(contactInstructions);
         return this;
     }
 
     public boolean isSetContactInfo() {
         return isSetPhone() || isSetAddress() || isSetOnlineResource() || isSetHoursOfService()
                 || isSetContactInstructions();
-    }
-
-    public boolean isSetAddress() {
-        return isSetDeliveryPoint() || isSetCity() || isSetAdministrativeArea() || isSetPostalCode() || isSetCountry()
-                || isSetEmail();
-    }
-
-    public boolean isSetPhone() {
-        return isSetPhoneFax() || isSetPhoneVoice();
     }
 }

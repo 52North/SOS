@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -78,8 +78,9 @@ public class FeatureQuerySettingsProvider implements SettingDefinitionProvider {
 
     public static final BooleanSettingDefinition DATASOURCE_NORTHING_FIRST_DEFINITION = new BooleanSettingDefinition()
             .setGroup(GROUP).setOrder(ORDER_1).setKey(DATASOURCE_NORTHING_FIRST).setDefaultValue(false)
-            .setTitle("Are the geometries stored in datasource with northing first")
-            .setDescription("Indicates if the geometries stored in the datasource with northing first axis order");
+            .setTitle("Are the geometries stored in datasource with northing first?")
+            .setDescription("Indicates if the geometries stored in the datasource with northing first axis order "
+                    + "(e.g. <tt>y,x,z</tt>).");
 
     public static final BooleanSettingDefinition SPATIAL_DATASOURCE_DEFINITION =
     new BooleanSettingDefinition()
@@ -87,9 +88,10 @@ public class FeatureQuerySettingsProvider implements SettingDefinitionProvider {
             .setOrder(ORDER_2)
             .setKey(SPATIAL_DATASOURCE)
             .setDefaultValue(true)
-            .setTitle("Is datasource spatial enabled")
-            .setDescription(
-                    "The underlying datasource supports spatial queries and geometry data types. If not, the SOS only supports Get... operations and only BBOX spatial filtering.");
+            .setTitle("Is datasource spatially enabled?")
+            .setDescription("The underlying datasource supports spatial queries and geometry data types. If "
+                    + "<strong>not</strong>, the SOS only supports <tt>Get...</tt> operations and BBOX based "
+                    + "spatial filtering.");
 
     public static final StringSettingDefinition AUTHORITY_DEFINITION = new StringSettingDefinition()
             .setGroup(GROUP)
@@ -97,7 +99,7 @@ public class FeatureQuerySettingsProvider implements SettingDefinitionProvider {
             .setKey(AUTHORITY)
             .setDefaultValue("EPSG")
             .setTitle("CRS authority")
-            .setDescription("Set the CRS authority for this service, e.g. EPSG!");
+            .setDescription("Set the CRS authority for this service, e.g. <tt>EPSG</tt>.");
     
     public static final IntegerSettingDefinition STORAGE_EPSG_DEFINITION = new IntegerSettingDefinition()
             .setGroup(GROUP)
@@ -137,7 +139,8 @@ public class FeatureQuerySettingsProvider implements SettingDefinitionProvider {
             .setKey(SUPPORTED_CRS_KEY)
             .setDefaultValue("4326,31466,31467,4258")
             .setTitle("Supported crs")
-            .setDescription("Set the supported crs for this service as ',' separated list! If empty, this tool supported CRS are used!");
+            .setDescription("Set the supported crs for this service as comma separated list! The default "
+                    + "EPSG codes are used if the provided list is empty.");
 
     public static final StringSettingDefinition EPSG_CODES_WITH_REVERSED_AXIS_ORDER_DEFINITION =
             new StringSettingDefinition()
@@ -154,8 +157,9 @@ public class FeatureQuerySettingsProvider implements SettingDefinitionProvider {
                                     + "28402-28432;28462-28492;30161-30179;30800;31251-31259;31275-31279;31281-31290;31466-31700")
                     .setTitle("EPSG Codes with Switched Coordinates")
                     .setDescription(
-                            "A list of all EPSG codes with northing first coordinate axis order. The SOS transforms the axis order if the underlying datasource uses a differnent order"
-                                    + "for example from lat/lon to lon/lat, or from x/y to y/x.");
+                            "A list of all EPSG codes with northing first coordinate axis order. The SOS transforms the"
+                            + " axis order if the underlying datasource uses a different order, e.g. <code>lat,lon</code> &rarr; "
+                            + "<code>lon,lat</code>, or <code>x,y</code> &rarr; <code>y,x</code>.");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
             DATASOURCE_NORTHING_FIRST_DEFINITION, EPSG_CODES_WITH_REVERSED_AXIS_ORDER_DEFINITION,

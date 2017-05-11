@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -63,6 +63,7 @@ import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
@@ -84,6 +85,8 @@ public class ResultHandlingHelper {
 
     private final String RESULT_TIME = OmConstants.RESULT_TIME;
     private final String PHENOMENON_TIME = OmConstants.PHENOMENON_TIME;
+    public final String OM_PROCEDURE = "om:procedure";
+    public final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
     private final SweHelper helper = new SweHelper();
     
     public ResultHandlingHelper() {
@@ -153,6 +156,20 @@ public class ResultHandlingHelper {
                             break;
                         case OmConstants.PARAM_NAME_SAMPLING_GEOMETRY:
                             builder.append(getSamplingGeometry(observation, tokenSeparator, sosResultStructure.getResultStructure()));
+                            break;
+                        case OM_PROCEDURE:
+                            if (observation.getProcedure() != null && observation.getProcedure().isSetIdentifier()) {
+                                builder.append(observation.getProcedure().getIdentifier());
+                            } else {
+                                builder.append("");
+                            }
+                            break;
+                        case OM_FEATURE_OF_INTEREST:
+                            if (observation.getFeatureOfInterest() != null && observation.getFeatureOfInterest().isSetIdentifier()) {
+                                builder.append(observation.getFeatureOfInterest().getIdentifier());
+                            } else {
+                                builder.append("");
+                            }
                             break;
                         default:
                             builder.append(getValueAsStringForObservedProperty(observation, definition));
@@ -453,6 +470,30 @@ public class ResultHandlingHelper {
         }
         return true;
     }
+    
+    public boolean checkForFeatureOfInterest(SweField swefield) throws CodedException {
+        if (isText(swefield) && !checkDefinition(swefield, OM_FEATURE_OF_INTEREST)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+            .withMessage(
+                    "The featureOfInterest is not defined in the observationTemplate and the swe:DataRecord does not contain a featureOfInterest definition with '%s'!",
+                    OM_FEATURE_OF_INTEREST);
+        }
+        return true;
+    }
+    
+    public boolean checkForProcedure(SweField swefield) throws CodedException {
+        if (isText(swefield) && !checkDefinition(swefield, OM_PROCEDURE)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+            .withMessage(
+                    "The procedure is not defined in the observationTemplate and the swe:DataRecord does not contain a procedure definition with '%s'!",
+                    OM_PROCEDURE);
+        }
+        return true;
+    }
+
+    public boolean isText(SweField swefield) {
+        return swefield != null && swefield.getElement() != null && swefield.getElement() instanceof SweText;
+    }
 
     public boolean checkVectorForSamplingGeometry(SweField swefield) throws CodedException {
         if (isVector(swefield) && !checkDefinition(swefield, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)) {
@@ -463,8 +504,6 @@ public class ResultHandlingHelper {
         }
         return true;
     }
-    
-    
     
     public boolean checkDefinition(SweField sweField, String definition) {
         if (sweField != null && sweField.getElement().isSetDefinition()) {

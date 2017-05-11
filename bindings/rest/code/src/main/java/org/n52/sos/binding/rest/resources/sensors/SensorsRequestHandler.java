@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,7 +31,7 @@ package org.n52.sos.binding.rest.resources.sensors;
 import java.io.IOException;
 
 import org.apache.xmlbeans.XmlException;
-import org.n52.sos.binding.rest.Constants;
+import org.n52.sos.binding.rest.RestConstants;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
@@ -44,7 +44,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  */
 public class SensorsRequestHandler extends RequestHandler {
     
-    Constants bindingConstants = Constants.getInstance();
+    RestConstants bindingConstants = RestConstants.getInstance();
     
     @Override
     public RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException

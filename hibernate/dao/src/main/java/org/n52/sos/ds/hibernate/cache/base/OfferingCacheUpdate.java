@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -105,7 +105,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         //perform single threaded updates here
-        Map<String, Collection<String>> procedureMap = offeringDAO.getOfferingIdentifiers(getSession());
+        Map<String, Collection<String>> offeringMap = offeringDAO.getOfferingIdentifiers(getSession());
         for (Offering offering : getOfferingsToUpdate()) {
             String offeringId = offering.getIdentifier();
             if (shouldOfferingBeProcessed(offeringId)) {
@@ -126,7 +126,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                     getCache().setAllowedFeatureOfInterestTypeForOffering(offeringId,
                             getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
                 }
-                Collection<String> parentOfferings = procedureMap.get(offeringId);
+                Collection<String> parentOfferings = offeringMap.get(offeringId);
                 if (!CollectionHelper.isEmpty(parentOfferings)) {
                     getCache().addParentOfferings(offeringId, parentOfferings);
                 }
@@ -154,6 +154,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                 getCache().setMaxResultTimeForOffering(offeringId, ote.getMaxResultTime());
             }
         }
+        
         LOGGER.debug("Finished executing OfferingCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
         //execute multi-threaded updates
@@ -162,6 +163,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         super.execute();
         LOGGER.debug("Finished executing OfferingCacheUpdate (Multi-Threaded Tasks) ({})", getStopwatchResult());
     }
+    
 
     @Override
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {

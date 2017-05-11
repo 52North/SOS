@@ -17,15 +17,16 @@
         <module>sensorML-v20</module>
         <module>sos-v100</module>
         <module>sos-v20</module>
-		<module>wml-v20</module>
-		<module>json</module>
-		<module>json-common</module>
-		<module>exi</module>
-		<module>netcdf</module>
-		<module>cv-gml</module>
-		<module>gml</module>
-		<module>gml-cov</module>
-		<module>inspire</module>
-		<module>gwml</module>
+    		<module>wml-v20</module>
+    		<module>json</module>
+    		<module>json-common</module>
+    		<module>exi</module>
+    		<module>netcdf</module>
+    		<module>cv-gml</module>
+    		<module>gml</module>
+    		<module>gml-cov</module>
+    		<module>inspire</module>
+    		<module>gwml</module>
+        <module>uvf</module>
     </modules>
 </project>

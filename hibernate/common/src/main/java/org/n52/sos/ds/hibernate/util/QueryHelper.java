@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -247,6 +248,36 @@ public class QueryHelper {
         } else {
             return Restrictions.in(propertyName, identifiers);
         }
+    }
+    
+    /**
+     * Creates a list of lists from identifiers, considers if size is > 1000
+     * (Oracle expression limit).
+     * 
+     * @param identifiers
+     *            Identifiers list
+     * @return The splitted identifiers
+     */
+    public static List<List<String>> getListsForIdentifiers(Collection<String> identifiers) {
+        List<List<String>> list = new ArrayList<>();
+        List<String> identifiersList = Lists.newArrayList(identifiers);
+        if (identifiers.size() >= LIMIT_EXPRESSION_DEPTH) {
+            List<String> ids = null;
+            for (int i = 0; i < identifiersList.size(); i++) {
+                if (i == 0 || i % (LIMIT_EXPRESSION_DEPTH - 1) == 0) {
+                    if (i != 0) {
+                        list.add(ids);
+                    }
+                    ids = Lists.newArrayList();
+                    ids.add(identifiersList.get(i));
+                } else {
+                    ids.add(identifiersList.get(i));
+                }
+            }
+        } else {
+            list.add(identifiersList);
+        }
+        return list;
     }
     
     /**

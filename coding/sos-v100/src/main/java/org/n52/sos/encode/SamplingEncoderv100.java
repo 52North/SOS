@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -57,7 +57,7 @@ import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos1Constants;
@@ -144,8 +144,8 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
     }
 
     private XmlObject createFeature(AbstractFeature absFeature) throws OwsExceptionReport {
-        if (absFeature instanceof SamplingFeature) {
-            SamplingFeature sampFeat = (SamplingFeature) absFeature;
+        if (absFeature instanceof AbstractSamplingFeature) {
+            AbstractSamplingFeature sampFeat = (AbstractSamplingFeature) absFeature;
             if (sampFeat.getFeatureType().equals(SfConstants.FT_SAMPLINGPOINT)
                     || sampFeat.getFeatureType().equals(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT)
                     || sampFeat.getGeometry() instanceof Point) {
@@ -200,12 +200,13 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
         }
     }
 
-    private void addValuesToFeature(SamplingFeatureType xbSamplingFeature, SamplingFeature sampFeat)
+    private void addValuesToFeature(SamplingFeatureType xbSamplingFeature, AbstractSamplingFeature sampFeat)
             throws OwsExceptionReport {
         xbSamplingFeature.setId(sampFeat.getGmlId());
         if (sampFeat.isSetIdentifier()
                 && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifierCodeWithAuthority().getValue(),
                         Sos1Constants.SERVICEVERSION)) {
+            sampFeat.getIdentifierCodeWithAuthority().setCodeSpace("uniquID");
             xbSamplingFeature.addNewName().set(
                     CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, sampFeat.getIdentifierCodeWithAuthority()));
         }
@@ -235,7 +236,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
         setMetaDataProperty(xbSamplingFeature, sampFeat);
     }
     
-    private void setMetaDataProperty(SamplingFeatureType sft, SamplingFeature sampFeat) throws OwsExceptionReport {
+    private void setMetaDataProperty(SamplingFeatureType sft, AbstractSamplingFeature sampFeat) throws OwsExceptionReport {
         if (sampFeat.isSetMetaDataProperty()) {
             for (AbstractMetaData abstractMetaData : sampFeat.getMetaDataProperty()) {
                 XmlObject encodeObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, abstractMetaData);

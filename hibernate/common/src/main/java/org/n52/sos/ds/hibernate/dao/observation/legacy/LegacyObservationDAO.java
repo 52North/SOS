@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.dao.observation.legacy;
 
 import static org.hibernate.criterion.Restrictions.eq;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -65,6 +66,7 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.LegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
 import org.n52.sos.exception.CodedException;
@@ -276,44 +278,15 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     private List<Observation<?>> getObservationsFor(GetObservationRequest request, Collection<String> features,
             Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
-        // final Criteria c = getDefaultObservationCriteria(Observation.class,
-        // session);
-        //
-        // checkAndAddSpatialFilteringProfileCriterion(c, request, session);
-        //
-        // if (CollectionHelper.isNotEmpty(request.getProcedures())) {
-        // c.createCriteria(
-        // Observation.PROCEDURE).add(Restrictions.in(Procedure.IDENTIFIER,
-        // request.getProcedures()));
-        // }
-        //
-        // if (CollectionHelper.isNotEmpty(request.getObservedProperties())) {
-        // c.createCriteria(Observation.OBSERVABLE_PROPERTY).add(Restrictions.in(ObservableProperty.IDENTIFIER,
-        // request.getObservedProperties()));
-        // }
-        //
-        // if (CollectionHelper.isNotEmpty(features)) {
-        // c.createCriteria(Observation.FEATURE_OF_INTEREST).add(Restrictions.in(FeatureOfInterest.IDENTIFIER,
-        // features));
-        // }
-        //
-        // if (CollectionHelper.isNotEmpty(request.getOfferings())) {
-        // c.createCriteria(Observation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER,
-        // request.getOfferings()));
-        // }
-        //
-        // String logArgs = "request, features, offerings";
-        // if (filterCriterion != null) {
-        // logArgs += ", filterCriterion";
-        // c.add(filterCriterion);
-        // }
-        // if (sosIndeterminateTime != null) {
-        // logArgs += ", sosIndeterminateTime";
-        // addIndeterminateTimeRestriction(c, sosIndeterminateTime);
-        // }
-        // LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs,
-        // HibernateHelper.getSqlString(c));
-        return getObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
+        if (CollectionHelper.isNotEmpty(features)) {
+            List<Observation<?>> observations = new ArrayList<>();
+            for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
+                observations.addAll(getObservationCriteriaFor(request, ids, filterCriterion, sosIndeterminateTime, session).list());
+            }
+            return observations;
+        } else {
+            return getObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();  
+        }
     }
 
     protected Criteria getObservationCriteriaFor(GetObservationRequest request, Collection<String> features,

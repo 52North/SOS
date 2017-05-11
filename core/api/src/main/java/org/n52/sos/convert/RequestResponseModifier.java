@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,13 +35,13 @@ import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.response.AbstractServiceResponse;
 
 public interface RequestResponseModifier<T extends AbstractServiceRequest<?>,S extends AbstractServiceResponse> {
-    
+
     Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes();
-    
+
     T modifyRequest(T request) throws OwsExceptionReport;
 
     S modifyResponse(T request, S response) throws OwsExceptionReport;
-    
+
     RequestResponseModifierFacilitator getFacilitator();
-    
+
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -90,8 +90,12 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
 
         // procedure relations
         cache.addProcedure(procedure);
+        cache.addPublishedProcedure(procedure);
         if (request.getProcedureDescription().isSetParentProcedures()) {
             cache.addParentProcedures(procedure, request.getProcedureDescription().getParentProcedures());
+            for (String parent : request.getProcedureDescription().getParentProcedures()) {
+                cache.addPublishedProcedure(parent);
+            }
         }
         
         // Update procedureDescriptionFormats
@@ -112,6 +116,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addHiddenChildProcedureForOffering(sosOffering.getIdentifier(), procedure);
                 } else {
                     cache.addOffering(sosOffering.getIdentifier());
+                    cache.addPublishedOffering(sosOffering.getIdentifier());
                     cache.addProcedureForOffering(sosOffering.getIdentifier(), procedure);
                     if (sosOffering.isSetName()) {
                         cache.setNameForOffering(sosOffering.getIdentifier(), sosOffering.getOfferingName());
@@ -152,8 +157,21 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addOfferingForObservableProperty(observableProperty, sosOffering.getIdentifier());
                     cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
                 }
+                cache.addPublishedObservableProperty(observableProperty);
             }
         }
+
+        // observable property relations
+        cache.addPublishedObservableProperties(request.getObservableProperty());
+        for (String observableProperty : request.getObservableProperty()) {
+            cache.addProcedureForObservableProperty(observableProperty, procedure);
+            cache.addObservablePropertyForProcedure(procedure, observableProperty);
+            for (SosOffering sosOffering : request.getAssignedOfferings()) {
+                cache.addOfferingForObservableProperty(observableProperty, sosOffering.getIdentifier());
+                cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
+            }
+        }
+        
         // procedure type/instance metadata
         if (request.isType()) {
             cache.addTypeInstanceProcedure(ContentCache.TypeInstance.TYPE, response.getAssignedProcedure());

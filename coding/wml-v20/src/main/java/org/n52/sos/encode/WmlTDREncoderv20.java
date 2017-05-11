@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -65,6 +65,7 @@ import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
@@ -72,7 +73,6 @@ import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
@@ -350,7 +350,11 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         List<TimeValuePair> timeValuePairs = tvpValue.getValue();
         List<String> toList = Lists.newArrayListWithCapacity(timeValuePairs.size());
         for (TimeValuePair timeValuePair : timeValuePairs) {
-            toList.add(getTimeString(timeValuePair.getTime()));
+            if (timeValuePair.getValue() != null
+                    && (timeValuePair.getValue() instanceof CountValue || timeValuePair.getValue() instanceof QuantityValue)
+                    && timeValuePair.getValue().isSetValue()) {
+                toList.add(getTimeString(timeValuePair.getTime()));
+            }
         }
         return toList;
     }
@@ -370,8 +374,6 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
             if (timeValuePair.getValue() != null
                     && (timeValuePair.getValue() instanceof CountValue || timeValuePair.getValue() instanceof QuantityValue)) {
                 values.add(timeValuePair.getValue().getValue());
-            } else {
-                values.add("");
             }
         }
         return values;

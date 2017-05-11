@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,6 +46,7 @@ import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -58,6 +59,7 @@ import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.sos.w3c.Nillable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,9 +181,14 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
     }
 
     private Object parseFeaturePropertyType(FeaturePropertyType featurePropertyType) throws OwsExceptionReport {
-        SamplingFeature feature = null;
-        // if xlink:href is set
-        if (featurePropertyType.getHref() != null) {
+        AbstractSamplingFeature feature = null;
+        if (featurePropertyType.isNil() || featurePropertyType.isSetNilReason()) {
+            if (featurePropertyType.isSetNilReason()) {
+                return Nillable.nil(featurePropertyType.getNilReason().toString());
+            }
+            return Nillable.nil();
+        } else if (featurePropertyType.getHref() != null) {
+            // if xlink:href is set
             if (featurePropertyType.getHref().startsWith(Constants.NUMBER_SIGN_STRING)) {
                 feature =
                         new SamplingFeature(null, featurePropertyType.getHref().replace(Constants.NUMBER_SIGN_STRING,
@@ -193,9 +200,8 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
                 }
             }
             feature.setGmlId(featurePropertyType.getHref());
-        }
-        // if feature is encoded
-        else {
+        } else {
+            // if feature is encoded
             XmlObject abstractFeature = null;
             if (featurePropertyType.getAbstractFeature() != null) {
                 abstractFeature = featurePropertyType.getAbstractFeature();
@@ -212,8 +218,8 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
             }
             if (abstractFeature != null) {
                 Object decodedObject = CodingHelper.decodeXmlObject(abstractFeature);
-                if (decodedObject instanceof SamplingFeature) {
-                    feature = (SamplingFeature) decodedObject;
+                if (decodedObject instanceof AbstractSamplingFeature) {
+                    feature = (AbstractSamplingFeature) decodedObject;
                 } else {
                     throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
                             .withMessage("The requested featurePropertyType type is not supported by this service!");

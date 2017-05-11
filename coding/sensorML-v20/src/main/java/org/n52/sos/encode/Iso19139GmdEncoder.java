@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,6 +32,7 @@ import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 import static org.n52.sos.util.CollectionHelper.union;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,11 +43,14 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gco.CharacterStringPropertyType;
 import org.isotc211.x2005.gco.CodeListValueType;
+import org.isotc211.x2005.gco.RealPropertyType;
 import org.isotc211.x2005.gco.UnitOfMeasurePropertyType;
 import org.isotc211.x2005.gmd.AbstractMDIdentificationType;
+import org.isotc211.x2005.gmd.CIAddressPropertyType;
 import org.isotc211.x2005.gmd.CIAddressType;
 import org.isotc211.x2005.gmd.CICitationPropertyType;
 import org.isotc211.x2005.gmd.CICitationType;
+import org.isotc211.x2005.gmd.CIContactPropertyType;
 import org.isotc211.x2005.gmd.CIContactType;
 import org.isotc211.x2005.gmd.CIDateType;
 import org.isotc211.x2005.gmd.CIOnlineResourceDocument;
@@ -56,6 +60,7 @@ import org.isotc211.x2005.gmd.CIResponsiblePartyDocument;
 import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
 import org.isotc211.x2005.gmd.CIResponsiblePartyType;
 import org.isotc211.x2005.gmd.CIRoleCodePropertyType;
+import org.isotc211.x2005.gmd.CITelephonePropertyType;
 import org.isotc211.x2005.gmd.CITelephoneType;
 import org.isotc211.x2005.gmd.DQConformanceResultType;
 import org.isotc211.x2005.gmd.DQDomainConsistencyDocument;
@@ -63,6 +68,12 @@ import org.isotc211.x2005.gmd.DQDomainConsistencyPropertyType;
 import org.isotc211.x2005.gmd.DQDomainConsistencyType;
 import org.isotc211.x2005.gmd.DQQuantitativeResultType;
 import org.isotc211.x2005.gmd.DQResultPropertyType;
+import org.isotc211.x2005.gmd.EXExtentDocument;
+import org.isotc211.x2005.gmd.EXExtentPropertyType;
+import org.isotc211.x2005.gmd.EXExtentType;
+import org.isotc211.x2005.gmd.EXVerticalExtentDocument;
+import org.isotc211.x2005.gmd.EXVerticalExtentPropertyType;
+import org.isotc211.x2005.gmd.EXVerticalExtentType;
 import org.isotc211.x2005.gmd.LocalisedCharacterStringPropertyType;
 import org.isotc211.x2005.gmd.LocalisedCharacterStringType;
 import org.isotc211.x2005.gmd.MDDataIdentificationDocument;
@@ -73,14 +84,19 @@ import org.isotc211.x2005.gmd.MDMetadataDocument;
 import org.isotc211.x2005.gmd.MDMetadataPropertyType;
 import org.isotc211.x2005.gmd.MDMetadataType;
 import org.isotc211.x2005.gmd.PTFreeTextType;
-import org.isotc211.x2005.gmd.URLPropertyType;
+import org.isotc211.x2005.gsr.SCCRSPropertyType;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.iso.gco.AbstractRole;
+import org.n52.sos.iso.gco.Role;
 import org.n52.sos.iso.gmd.AbstractMDIdentification;
+import org.n52.sos.iso.gmd.CiAddress;
 import org.n52.sos.iso.gmd.CiContact;
 import org.n52.sos.iso.gmd.CiOnlineResource;
 import org.n52.sos.iso.gmd.CiResponsibleParty;
+import org.n52.sos.iso.gmd.CiTelephone;
+import org.n52.sos.iso.gmd.EXExtent;
+import org.n52.sos.iso.gmd.EXVerticalExtent;
 import org.n52.sos.iso.gmd.GmdCitation;
 import org.n52.sos.iso.gmd.GmdCitationDate;
 import org.n52.sos.iso.gmd.GmdConformanceResult;
@@ -93,6 +109,7 @@ import org.n52.sos.iso.gmd.LocalisedCharacterString;
 import org.n52.sos.iso.gmd.MDDataIdentification;
 import org.n52.sos.iso.gmd.MDMetadata;
 import org.n52.sos.iso.gmd.PT_FreeText;
+import org.n52.sos.iso.gmd.ScCRS;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
@@ -101,15 +118,22 @@ import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.Nillable;
 import org.n52.sos.w3c.SchemaLocation;
+import org.n52.sos.w3c.xlink.Reference;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3.x1999.xlink.ActuateType;
+import org.w3.x1999.xlink.ShowType;
+import org.w3.x1999.xlink.TypeType;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import net.opengis.gml.x32.AbstractCRSType;
 import net.opengis.gml.x32.BaseUnitType;
 import net.opengis.gml.x32.CodeType;
 
@@ -139,7 +163,8 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
             encoderKeysForElements(GmdConstants.NS_GMD, SmlResponsibleParty.class, GmdQuantitativeResult.class,
-                    GmdConformanceResult.class, CiResponsibleParty.class, MDMetadata.class, PT_FreeText.class, CiOnlineResource.class), 
+                    GmdConformanceResult.class, CiResponsibleParty.class, MDMetadata.class, PT_FreeText.class, CiOnlineResource.class
+                    , EXExtent.class, EXVerticalExtent.class), 
             encoderKeysForElements(null, GmdQuantitativeResult.class, GmdConformanceResult.class));
 
     public Iso19139GmdEncoder() {
@@ -184,6 +209,10 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
             encodedObject = encodePTFreeText((PT_FreeText) element, additionalValues);
         } else if (element instanceof CiOnlineResource) {
             encodedObject = encodeCiOnlineResource((CiOnlineResource) element, additionalValues);
+        } else if (element instanceof EXExtent) {
+            encodedObject = encodeEXExtent((EXExtent) element, additionalValues);
+        } else if (element instanceof EXVerticalExtent) {
+            encodedObject = encodeEXVerticalExtent((EXVerticalExtent) element, additionalValues);
         } else {
             if (element instanceof GmdDomainConsistency) {
                 encodedObject = encodeGmdDomainConsistency((GmdDomainConsistency)element, additionalValues);
@@ -354,10 +383,16 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
         }
         // set contact
         if (responsibleParty.isSetContactInfo()) {
-            encodeContact(cirpt.addNewContactInfo().addNewCIContact(), responsibleParty.getContactInfo());
+            encodeContact(cirpt.addNewContactInfo(), responsibleParty.getContactInfo());
         }
         // set role
-        encodeRole(cirpt.addNewRole(), responsibleParty.getRole());
+        encodeRole(cirpt.addNewRole(), responsibleParty.getRoleNillable());
+        if (responsibleParty.isSetId()) {
+            cirpt.setId(responsibleParty.getId());
+        }
+        if (responsibleParty.isSetUuid()) {
+            cirpt.setUuid(responsibleParty.getUuid());
+        }
         if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
             CIResponsiblePartyPropertyType cirppt =
                     CIResponsiblePartyPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
@@ -415,21 +450,65 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
         return cirpt;
     }
 
-    private void encodeContact(CIContactType cic, CiContact contact) {
-        if (contact.isSetAddress()) {
-            encodeCiAddress(cic.addNewAddress().addNewCIAddress(), contact);
-        }
-        if (contact.isSetContactInstructions()) {
-            cic.addNewContactInstructions().setCharacterString(contact.getContactInstructions());
-        }
-        if (contact.isSetHoursOfService()) {
-            cic.addNewHoursOfService().setCharacterString(contact.getHoursOfService());
-        }
-        if (contact.isSetOnlineResource()) {
-            cic.addNewOnlineResource().setHref(contact.getOnlineResource());
-        }
-        if (contact.isSetPhone()) {
-            encodePhone(cic.addNewPhone().addNewCITelephone(), contact);
+    private void encodeContact(CIContactPropertyType cicpt, Referenceable<CiContact> referenceable) {
+        if (referenceable.isReference()) {
+            Reference reference = referenceable.getReference();
+            if (reference.getActuate().isPresent()) {
+                cicpt.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+            }
+            if (reference.getArcrole().isPresent()) {
+                cicpt.setHref(reference.getArcrole().get());
+            }
+            if (reference.getHref().isPresent()) {
+                cicpt.setHref(reference.getHref().get().toString());
+            }
+            if (reference.getRole().isPresent()) {
+                cicpt.setRole(reference.getRole().get());
+            }
+            if (reference.getShow().isPresent()) {
+                cicpt.setShow(ShowType.Enum.forString(reference.getShow().get()));
+            }
+            if (reference.getTitle().isPresent()) {
+                cicpt.setTitle(reference.getTitle().get());
+            }
+            if (reference.getType().isPresent()) {
+                cicpt.setType(TypeType.Enum.forString(reference.getType().get()));
+            }
+        } else { 
+            if (referenceable.isInstance()) {
+                Nillable<CiContact> nillable = referenceable.getInstance();
+                if (nillable.isPresent()) {
+                    CiContact ciContact = referenceable.getInstance().get();
+                    CIContactType cict = cicpt.addNewCIContact();
+                    if (ciContact.getAddress() != null) {
+                        encodeCiAddress(cict.addNewAddress(), ciContact.getAddress());
+                    }
+                    if (ciContact.getContactInstructionsNillable() != null) {
+                        if (ciContact.getContactInstructionsNillable().isPresent()) {
+                            cict.addNewContactInstructions().setCharacterString(ciContact.getContactInstructions());
+                        } else if (ciContact.getContactInstructionsNillable().hasReason()) {
+                            cict.addNewContactInstructions().setNilReason(ciContact.getContactInstructionsNillable().getNilReason().get());
+                        }
+                    }
+                    if (ciContact.isSetHoursOfService()) {
+                        if (ciContact.getHoursOfServiceNillable().isPresent()) {
+                            cict.addNewHoursOfService().setCharacterString(ciContact.getHoursOfService());
+                        } else if (ciContact.getHoursOfServiceNillable().hasReason()) {
+                            cict.addNewHoursOfService().setNilReason(ciContact.getHoursOfServiceNillable().getNilReason().get());
+                        }
+                    }
+                    if (ciContact.getOnlineResourceReferenceable() != null) {
+                        encodeOnlineResource(cict.addNewOnlineResource(), ciContact.getOnlineResourceReferenceable());
+                    }
+                    if (ciContact.isSetPhone()) {
+                        encodePhone(cict.addNewPhone(), ciContact.getPhone());
+                    }
+                } else {
+                    if (nillable.hasReason()) {
+                        cicpt.setNilReason(nillable.getNilReason().get());
+                    }
+                }
+            }
         }
     }
 
@@ -452,28 +531,69 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
 
     }
 
-    private void encodeCiAddress(CIAddressType ciat, CiContact contact) {
-        if (contact.isSetAdministrativeArea()) {
-            ciat.addNewAdministrativeArea().setCharacterString(contact.getAdministrativeArea());
+    private void encodeCiAddress(CIAddressPropertyType ciapt, Referenceable<CiAddress> referenceable) {
+        if (referenceable.isReference()) {
+            Reference reference = referenceable.getReference();
+            if (reference.getActuate().isPresent()) {
+                ciapt.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+            }
+            if (reference.getArcrole().isPresent()) {
+                ciapt.setHref(reference.getArcrole().get());
+            }
+            if (reference.getHref().isPresent()) {
+                ciapt.setHref(reference.getHref().get().toString());
+            }
+            if (reference.getRole().isPresent()) {
+                ciapt.setRole(reference.getRole().get());
+            }
+            if (reference.getShow().isPresent()) {
+                ciapt.setShow(ShowType.Enum.forString(reference.getShow().get()));
+            }
+            if (reference.getTitle().isPresent()) {
+                ciapt.setTitle(reference.getTitle().get());
+            }
+            if (reference.getType().isPresent()) {
+                ciapt.setType(TypeType.Enum.forString(reference.getType().get()));
+            }
+        } else {
+            if (referenceable.isInstance()) {
+                Nillable<CiAddress> nillable = referenceable.getInstance();
+                if (nillable.isPresent()) {
+                    CiAddress ciAddress = referenceable.getInstance().get();
+                    CIAddressType ciat = ciapt.addNewCIAddress();
+                    if (ciAddress.isSetAdministrativeArea()) {
+                        ciat.addNewAdministrativeArea().setCharacterString(ciAddress.getAdministrativeArea());
+                    }
+                    if (ciAddress.isSetCity()) {
+                        ciat.addNewCity().setCharacterString(ciAddress.getCity());
+                    }
+                    if (ciAddress.isSetCountry()) {
+                        ciat.addNewCountry().setCharacterString(ciAddress.getCountry());
+                    }
+                    if (ciAddress.isSetPostalCode()) {
+                        ciat.addNewPostalCode().setCharacterString(ciAddress.getPostalCode());
+                    }
+                    if (ciAddress.hasDeliveryPoints()) {
+                        ciat.setDeliveryPointArray(listToCharacterStringPropertyTypeArray(ciAddress.getDeliveryPoints()));
+    
+                    }
+                    if (ciAddress.hasElectronicMailAddresses()) {
+                        ciat.setElectronicMailAddressArray(listToCharacterStringPropertyTypeArray(Lists
+                                .newArrayList(ciAddress.getElectronicMailAddresses())));
+                    }
+                    if (ciAddress.isSetId()) {
+                        ciat.setId(ciAddress.getId());
+                    }
+                    if (ciAddress.isSetUuid()) {
+                        ciat.setUuid(ciAddress.getUuid());
+                    }
+                } else {
+                    if (nillable.hasReason()) {
+                        ciapt.setNilReason(nillable.getNilReason().get());
+                    }
+                }
+            }
         }
-        if (contact.isSetCity()) {
-            ciat.addNewCity().setCharacterString(contact.getCity());
-        }
-        if (contact.isSetCountry()) {
-            ciat.addNewCountry().setCharacterString(contact.getCountry());
-        }
-        if (contact.isSetPostalCode()) {
-            ciat.addNewPostalCode().setCharacterString(contact.getPostalCode());
-        }
-        if (contact.isSetDeliveryPoint()) {
-            ciat.setDeliveryPointArray(listToCharacterStringPropertyTypeArray(contact.getDeliveryPoint()));
-
-        }
-        if (contact.isSetEmail()) {
-            ciat.setElectronicMailAddressArray(listToCharacterStringPropertyTypeArray(Lists
-                    .newArrayList(contact.getEmail())));
-        }
-        
     }
 
     private void encodeCiAddress(CIAddressType ciat, SmlResponsibleParty responsibleParty) {
@@ -499,21 +619,76 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
         }
     }
 
-    private void encodePhone(CITelephoneType citt, CiContact contact) {
-        if (contact.isSetPhoneVoice()) {
-            citt.setVoiceArray(listToCharacterStringPropertyTypeArray(contact.getPhoneVoice()));
-        }
-        if (contact.isSetPhoneFax()) {
-            citt.setFacsimileArray(listToCharacterStringPropertyTypeArray(contact.getPhoneFax()));
+    private void encodePhone(CITelephonePropertyType citpt, Referenceable<CiTelephone> referenceable) {
+        if (referenceable.isReference()) {
+            Reference reference = referenceable.getReference();
+            if (reference.getActuate().isPresent()) {
+                citpt.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+            }
+            if (reference.getArcrole().isPresent()) {
+                citpt.setHref(reference.getArcrole().get());
+            }
+            if (reference.getHref().isPresent()) {
+                citpt.setHref(reference.getHref().get().toString());
+            }
+            if (reference.getRole().isPresent()) {
+                citpt.setRole(reference.getRole().get());
+            }
+            if (reference.getShow().isPresent()) {
+                citpt.setShow(ShowType.Enum.forString(reference.getShow().get()));
+            }
+            if (reference.getTitle().isPresent()) {
+                citpt.setTitle(reference.getTitle().get());
+            }
+            if (reference.getType().isPresent()) {
+                citpt.setType(TypeType.Enum.forString(reference.getType().get()));
+            }
+        } else {
+            if (referenceable.isInstance()) {
+                Nillable<CiTelephone> nillable = referenceable.getInstance();
+                if (nillable.isPresent()) {
+                    CiTelephone ciTelephone = referenceable.getInstance().get();
+                    CITelephoneType citt = citpt.addNewCITelephone();
+                    if (ciTelephone.isSetVoice()) {
+                        citt.setVoiceArray(listToCharacterStringPropertyTypeArray(ciTelephone.getVoice()));
+                    }
+                    if (ciTelephone.isSetFacsimile()) {
+                        citt.setFacsimileArray(listToCharacterStringPropertyTypeArray(ciTelephone.getFacsimile()));
+                    }
+                    if (ciTelephone.isSetId()) {
+                        citt.setId(ciTelephone.getId());
+                    }
+                    if (ciTelephone.isSetUuid()) {
+                        citt.setUuid(ciTelephone.getUuid());
+                    }
+                } else {
+                    if (nillable.hasReason()) {
+                        citpt.setNilReason(nillable.getNilReason().get());
+                    }
+                }
+            }
         }
     }
-
+    
     private void encodePhone(CITelephoneType citt, SmlResponsibleParty responsibleParty) {
         if (responsibleParty.isSetPhoneVoice()) {
             citt.setVoiceArray(listToCharacterStringPropertyTypeArray(responsibleParty.getPhoneVoice()));
         }
         if (responsibleParty.isSetPhoneFax()) {
             citt.setFacsimileArray(listToCharacterStringPropertyTypeArray(responsibleParty.getPhoneFax()));
+        }
+    }
+
+    private void encodeRole(CIRoleCodePropertyType circpt, Nillable<Role> nillable) throws OwsExceptionReport {
+        if (nillable.isPresent()) {
+            XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(GcoConstants.NS_GCO, nillable.get());
+            if (encodeObjectToXml != null) {
+                circpt.addNewCIRoleCode().set(encodeObjectToXml);
+            }
+        } else {
+            if (nillable.hasReason()) {
+                circpt.setNilReason(nillable.getNilReason().get());
+            }
         }
     }
 
@@ -645,32 +820,88 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
         return values.toArray(new CharacterStringPropertyType[0]);
     }
 
-    private XmlObject encodeCiOnlineResource(CiOnlineResource element, Map<HelperValues, String> additionalValues) {
-        CIOnlineResourceType ciort = CIOnlineResourceType.Factory.newInstance(getXmlOptions());
-        if (element.getLinkage().isPresent()) {
-            ciort.addNewLinkage().setURL(element.getLinkage().get().toString());
-        } else {
-            URLPropertyType urlpt = ciort.addNewLinkage();
-            urlpt.setNil();
-            if (element.getLinkage().getNilReason().isPresent()) {
-                urlpt.setNilReason(element.getLinkage().getNilReason().get());
+    private void encodeOnlineResource(CIOnlineResourcePropertyType ciorpt, Referenceable<CiOnlineResource> referenceable) {
+        if (referenceable.isReference()) {
+            Reference reference = referenceable.getReference();
+            if (reference.getActuate().isPresent()) {
+                ciorpt.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
             }
-        }
-        
-        // protocol
-        if (element.isSetProtocol()) {
-            if (element.getProtocol().isPresent()) {
-                ciort.addNewProtocol().setCharacterString(element.getProtocol().get().toString());
-            } else {
-                CharacterStringPropertyType cspt = ciort.addNewProtocol();
-                cspt.setNil();
-                if (element.getProtocol().getNilReason().isPresent()) {
-                    cspt.setNilReason(element.getProtocol().getNilReason().get());
+            if (reference.getArcrole().isPresent()) {
+                ciorpt.setHref(reference.getArcrole().get());
+            }
+            if (reference.getHref().isPresent()) {
+                ciorpt.setHref(reference.getHref().get().toString());
+            }
+            if (reference.getRole().isPresent()) {
+                ciorpt.setRole(reference.getRole().get());
+            }
+            if (reference.getShow().isPresent()) {
+                ciorpt.setShow(ShowType.Enum.forString(reference.getShow().get()));
+            }
+            if (reference.getTitle().isPresent()) {
+                ciorpt.setTitle(reference.getTitle().get());
+            }
+            if (reference.getType().isPresent()) {
+                ciorpt.setType(TypeType.Enum.forString(reference.getType().get()));
+            }
+        } else {
+            if (referenceable.isInstance()) {
+                Nillable<CiOnlineResource> nillable = referenceable.getInstance();
+                if (nillable.isPresent()) {
+                    CIOnlineResourceType ciort = ciorpt.addNewCIOnlineResource();
+                    encodeOnlineResource(ciort, referenceable.getInstance().get());
+                } else {
+                    if (nillable.hasReason()) {
+                        ciorpt.setNilReason(nillable.getNilReason().get());
+                    }
                 }
             }
         }
-        // ...
         
+    }
+
+    private void encodeOnlineResource(CIOnlineResourceType ciort, CiOnlineResource onlineResource) {
+        // linkage
+        if (onlineResource.getLinkage().isPresent()) {
+            ciort.addNewLinkage().setURL(onlineResource.getLinkage().get().toString());
+        } else {
+            if (onlineResource.getLinkage().hasReason()) {
+                ciort.addNewLinkage().setNilReason(onlineResource.getLinkage().getNilReason().get());
+            }
+        }
+        // protocol
+        if (onlineResource.isSetProtocol()) {
+            if (onlineResource.getProtocol().isPresent()) {
+                ciort.addNewProtocol().setCharacterString(onlineResource.getProtocol().get().toString());
+            } else {
+                if (onlineResource.getProtocol().getNilReason().isPresent()) {
+                    ciort.addNewProtocol().setNilReason(onlineResource.getProtocol().getNilReason().get());
+                }
+            }
+        }
+        if (onlineResource.isSetApplicationProfile()) {
+            ciort.addNewApplicationProfile().setCharacterString(onlineResource.getApplicationProfile());
+        }
+        if (onlineResource.isSetDescription()) {
+            ciort.addNewDescription().setCharacterString(onlineResource.getDescription());
+        }
+        if (onlineResource.isSetName()) {
+            ciort.addNewName().setCharacterString(onlineResource.getName());
+        }
+        if (onlineResource.isSetFunction()) {
+            ciort.addNewFunction().addNewCIOnLineFunctionCode().setStringValue(onlineResource.getFunction());
+        }
+        if (onlineResource.isSetId()) {
+            ciort.setId(onlineResource.getId());
+        }
+        if (onlineResource.isSetUuid()) {
+            ciort.setUuid(onlineResource.getUuid());
+        }
+    }
+
+    private XmlObject encodeCiOnlineResource(CiOnlineResource element, Map<HelperValues, String> additionalValues) {
+        CIOnlineResourceType ciort = CIOnlineResourceType.Factory.newInstance(getXmlOptions());
+        encodeOnlineResource(ciort, element);
         if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
             CIOnlineResourcePropertyType ciorpt = CIOnlineResourcePropertyType.Factory.newInstance(getXmlOptions());
             ciorpt.setCIOnlineResource(ciort);
@@ -681,6 +912,168 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
             return ciord;
         }
         return ciort;
+    }
+
+    private XmlObject encodeEXExtent(EXExtent exExtent, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        EXExtentType exet = EXExtentType.Factory.newInstance();
+        if (exExtent.hasDescription()) {
+            exet.addNewDescription().setCharacterString(exExtent.getDescription());
+        }
+        if (exExtent.hasVerticalExtent()) {
+            for (Referenceable<EXVerticalExtent> verticalExtent : exExtent.getExVerticalExtent()) {
+                EXVerticalExtentPropertyType exvept = exet.addNewVerticalElement();
+                if (verticalExtent.isReference()) {
+                    Reference reference = verticalExtent.getReference();
+                    if (reference.getActuate().isPresent()) {
+                        exvept.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+                    }
+                    if (reference.getArcrole().isPresent()) {
+                        exvept.setHref(reference.getArcrole().get());
+                    }
+                    if (reference.getHref().isPresent()) {
+                        exvept.setHref(reference.getHref().get().toString());
+                    }
+                    if (reference.getRole().isPresent()) {
+                        exvept.setRole(reference.getRole().get());
+                    }
+                    if (reference.getShow().isPresent()) {
+                        exvept.setShow(ShowType.Enum.forString(reference.getShow().get()));
+                    }
+                    if (reference.getTitle().isPresent()) {
+                        exvept.setTitle(reference.getTitle().get());
+                    }
+                    if (reference.getType().isPresent()) {
+                        exvept.setType(TypeType.Enum.forString(reference.getType().get()));
+                    }
+                } else { 
+                    if (verticalExtent.isInstance()) {
+                        Nillable<EXVerticalExtent> nillable = verticalExtent.getInstance();
+                        if (nillable.isPresent()) {
+                            XmlObject xml = encodeEXVerticalExtent(nillable.get(), new EnumMap<HelperValues, String>(HelperValues.class));
+                            if (xml != null && xml instanceof EXVerticalExtentType) {
+                                exvept.setEXVerticalExtent((EXVerticalExtentType) xml);
+                            } else {
+                                exvept.setNil();
+                                exvept.setNilReason(Nillable.missing().get());
+                            }
+                        } else {
+                            exvept.setNil();
+                            if (nillable.hasReason()) {
+                                exvept.setNilReason(nillable.getNilReason().get());
+                            } else {
+                                exvept.setNilReason(Nillable.missing().get());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            EXExtentPropertyType exept = EXExtentPropertyType.Factory.newInstance(getXmlOptions());
+            exept.setEXExtent(exet);
+            return exept;
+        } else if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            EXExtentDocument exed = EXExtentDocument.Factory.newInstance(getXmlOptions());
+            exed.setEXExtent(exet);
+            return exed;
+        }
+        return exet;
+    }
+
+    private XmlObject encodeEXVerticalExtent(EXVerticalExtent exVerticalExtent,
+            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        EXVerticalExtentType exvet = EXVerticalExtentType.Factory.newInstance();
+        if (exVerticalExtent.isSetId()) {
+            exvet.setId(exVerticalExtent.getId());
+        }
+        if (exVerticalExtent.isSetUuid()) {
+            exvet.setUuid(exVerticalExtent.getUuid());
+        }
+        // min value
+        Nillable<Double> minNillable = exVerticalExtent.getMinimumValue();
+        RealPropertyType rptMinValue = exvet.addNewMinimumValue();
+        if (minNillable.isPresent()) {
+            rptMinValue.setReal(minNillable.get());
+        } else {
+            rptMinValue.setNil();
+            if (minNillable.hasReason()) {
+                rptMinValue.setNilReason(minNillable.getNilReason().get());
+            } else {
+                rptMinValue.setNilReason(Nillable.missing().get());
+            }
+        }
+        // max value
+        Nillable<Double> maxNillable = exVerticalExtent.getMaximumValue();
+        RealPropertyType rptMinMaxValue = exvet.addNewMaximumValue();
+        if (maxNillable.isPresent()) {
+            rptMinMaxValue.setReal(maxNillable.get());
+        } else {
+            rptMinMaxValue.setNil();
+            if (maxNillable.hasReason()) {
+                rptMinMaxValue.setNilReason(maxNillable.getNilReason().get());
+            } else {
+                rptMinMaxValue.setNilReason(Nillable.missing().get());
+            }
+        }
+        // verticalCRS
+        SCCRSPropertyType sccrspt = exvet.addNewVerticalCRS();
+        Referenceable<ScCRS> verticalCRS = exVerticalExtent.getVerticalCRS();
+        if (verticalCRS.isReference()) {
+            Reference reference = verticalCRS.getReference();
+            if (reference.getActuate().isPresent()) {
+                sccrspt.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+            }
+            if (reference.getArcrole().isPresent()) {
+                sccrspt.setHref(reference.getArcrole().get());
+            }
+            if (reference.getHref().isPresent()) {
+                sccrspt.setHref(reference.getHref().get().toString());
+            }
+            if (reference.getRole().isPresent()) {
+                sccrspt.setRole(reference.getRole().get());
+            }
+            if (reference.getShow().isPresent()) {
+                sccrspt.setShow(ShowType.Enum.forString(reference.getShow().get()));
+            }
+            if (reference.getTitle().isPresent()) {
+                sccrspt.setTitle(reference.getTitle().get());
+            }
+            if (reference.getType().isPresent()) {
+                sccrspt.setType(TypeType.Enum.forString(reference.getType().get()));
+            }
+        } else { 
+            if (verticalCRS.isInstance()) {
+                Nillable<ScCRS> nillable = verticalCRS.getInstance();
+                if (nillable.isPresent()) {
+                    XmlObject xml = encodeGML32(nillable.get().getAbstractCrs());
+                    if (xml != null && xml instanceof AbstractCRSType) {
+                        final XmlObject substituteElement =
+                        XmlHelper.substituteElement(sccrspt.addNewAbstractCRS(), xml);
+                        substituteElement.set(xml);
+                    } else {
+                        sccrspt.setNil();
+                        sccrspt.setNilReason(Nillable.missing().get());
+                    }
+                } else {
+                    sccrspt.setNil();
+                    if (nillable.hasReason()) {
+                        sccrspt.setNilReason(nillable.getNilReason().get());
+                    } else {
+                        sccrspt.setNilReason(Nillable.missing().get());
+                    }
+                }
+            }
+        }
+        if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            EXVerticalExtentPropertyType exvept = EXVerticalExtentPropertyType.Factory.newInstance(getXmlOptions());
+            exvept.setEXVerticalExtent(exvet);
+            return exvept;
+        } else if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            EXVerticalExtentDocument exved = EXVerticalExtentDocument.Factory.newInstance(getXmlOptions());
+            exved.setEXVerticalExtent(exvet);
+            return exved;
+        }
+        return exvet;
     }
 
 }

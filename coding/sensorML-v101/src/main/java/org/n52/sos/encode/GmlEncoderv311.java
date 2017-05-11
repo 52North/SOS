@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -55,7 +55,7 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.gml.time.TimePosition;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -467,8 +467,8 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
     }
 
     private XmlObject createFeature(AbstractFeature sosAbstractFeature) throws OwsExceptionReport {
-        if (sosAbstractFeature instanceof SamplingFeature) {
-            SamplingFeature sampFeat = (SamplingFeature) sosAbstractFeature;
+        if (sosAbstractFeature instanceof AbstractSamplingFeature) {
+            AbstractSamplingFeature sampFeat = (AbstractSamplingFeature) sosAbstractFeature;
             if (sosAbstractFeature.isSetGmlID()) {
                 FeaturePropertyType featureProperty =
                         FeaturePropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
@@ -484,7 +484,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
                     }
                     return featureProperty;
                 }
-                Encoder<XmlObject, SamplingFeature> encoder = CodingHelper.getEncoder(SfConstants.NS_SA, sampFeat);
+                Encoder<XmlObject, AbstractSamplingFeature> encoder = CodingHelper.getEncoder(SfConstants.NS_SA, sampFeat);
                 if (encoder != null) {
                     return encoder.encode(sampFeat);
                 } else {
@@ -509,8 +509,8 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
         if (sosFeatureCollection.isSetMembers()) {
             if (members.size() == 1) {
                 for (String member : members.keySet()) {
-                    if (members.get(member) instanceof SamplingFeature) {
-                        return createFeature((SamplingFeature) members.get(member));
+                    if (members.get(member) instanceof AbstractSamplingFeature) {
+                        return createFeature(members.get(member));
                     } else {
                         throw new NoApplicableCodeException().withMessage("No encoder found for featuretype");
                     }
@@ -524,8 +524,8 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
                 builder.append(JavaHelper.generateID(Long.toString(System.currentTimeMillis())));
                 xbFeatCol.setId(builder.toString());
                 for (String member : members.keySet()) {
-                    if (members.get(member) instanceof SamplingFeature) {
-                        XmlObject xmlFeature = createFeature((SamplingFeature) members.get(member));
+                    if (members.get(member) instanceof AbstractSamplingFeature) {
+                        XmlObject xmlFeature = createFeature(members.get(member));
                         xbFeatCol.addNewFeatureMember().set(xmlFeature);
                     } else {
                         throw new NoApplicableCodeException().withMessage("No encoder found for featuretype");

@@ -1,0 +1,370 @@
+<sml:PhysicalSystem
+    xmlns:gco="http://www.isotc211.org/2005/gco"
+    xmlns:gmd="http://www.isotc211.org/2005/gmd"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:sml="http://www.opengis.net/sensorml/2.0"
+    xmlns:swe="http://www.opengis.net/swe/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    gml:id="ws2500-internal"
+    xsi:schemaLocation="http://www.opengis.net/sensorml/2.0 http://schemas.opengis.net/sensorML/2.0/sensorML.xsd
+        http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd">
+    <gml:description>ELV WS 2500 Weather station maintained at 52N office (internal sensors).</gml:description>
+    <gml:identifier codeSpace="uniqueID">ws2500-internal</gml:identifier>
+    <sml:keywords>
+        <sml:KeywordList>
+            <sml:keyword>ws2500-internal</sml:keyword>
+            <sml:keyword>AirTemperature</sml:keyword>
+            <sml:keyword>Humidity</sml:keyword>
+            <sml:keyword>52n-serverroom</sml:keyword>
+        </sml:KeywordList>
+    </sml:keywords>
+    <sml:identification>
+        <sml:IdentifierList>
+            <sml:identifier>
+                <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:uniqueID">
+                    <sml:label>uniqueID</sml:label>
+                    <sml:value>ws2500-internal</sml:value>
+                </sml:Term>
+            </sml:identifier>
+            <sml:identifier>
+                <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                    <sml:label>Short name</sml:label>
+                    <sml:value>52n-elv-ws2500-internal</sml:value>
+                </sml:Term>
+            </sml:identifier>
+            <sml:identifier>
+                <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+                    <sml:label>Long name</sml:label>
+                    <sml:value>52North Weatherstation ELV WS2500 (internal sensors)</sml:value>
+                </sml:Term>
+            </sml:identifier>
+        </sml:IdentifierList>
+    </sml:identification>
+    <sml:validTime>
+        <gml:TimePeriod gml:id="validityPeriod">
+            <gml:beginPosition>2015-05-18T13:42:42.393Z</gml:beginPosition>
+            <gml:endPosition indeterminatePosition="unknown"/>
+        </gml:TimePeriod>
+    </sml:validTime>
+    <sml:capabilities name="offerings">
+        <sml:CapabilityList>
+            <sml:capability name="offeringID">
+                <swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
+                    <swe:label>offeringID</swe:label>
+                    <swe:value>ws2500-internal</swe:value>
+                </swe:Text>
+            </sml:capability>
+        </sml:CapabilityList>
+    </sml:capabilities>
+    <sml:contacts>
+        <sml:ContactList>
+            <sml:contact xlink:title="pointOfContact">
+                <gmd:CI_ResponsibleParty>
+                    <gmd:organisationName>
+                        <gco:CharacterString>52°North GmbH</gco:CharacterString>
+                    </gmd:organisationName>
+                    <gmd:contactInfo>
+                        <gmd:CI_Contact>
+                            <gmd:address>
+                                <gmd:CI_Address>
+                                    <gmd:city>
+                                        <gco:CharacterString>Münster</gco:CharacterString>
+                                    </gmd:city>
+                                    <gmd:country>
+                                        <gco:CharacterString>Germany</gco:CharacterString>
+                                    </gmd:country>
+                                </gmd:CI_Address>
+                            </gmd:address>
+                        </gmd:CI_Contact>
+                    </gmd:contactInfo>
+                    <gmd:role>
+                        <gmd:CI_RoleCode
+                            codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/"
+                            codeListValue="CI_RoleCode_pointOfContact">Point of Contact</gmd:CI_RoleCode>
+                    </gmd:role>
+                </gmd:CI_ResponsibleParty>
+            </sml:contact>
+            <sml:contact xlink:title="owner">
+                <gmd:CI_ResponsibleParty>
+                    <gmd:organisationName>
+                        <gco:CharacterString>52°North GmbH</gco:CharacterString>
+                    </gmd:organisationName>
+                    <gmd:contactInfo>
+                        <gmd:CI_Contact>
+                            <gmd:phone>
+                                <gmd:CI_Telephone>
+                                    <gmd:voice>
+                                        <gco:CharacterString>+49-(0)-251-396371-0</gco:CharacterString>
+                                    </gmd:voice>
+                                    <gmd:facsimile>
+                                        <gco:CharacterString>+49-(0)-251-396371-11</gco:CharacterString>
+                                    </gmd:facsimile>
+                                </gmd:CI_Telephone>
+                            </gmd:phone>
+                            <gmd:address>
+                                <gmd:CI_Address>
+                                    <gmd:deliveryPoint>
+                                        <gco:CharacterString>Martin-Luther-King-Weg 24</gco:CharacterString>
+                                    </gmd:deliveryPoint>
+                                    <gmd:city>
+                                        <gco:CharacterString>Münster</gco:CharacterString>
+                                    </gmd:city>
+                                    <gmd:administrativeArea>
+                                        <gco:CharacterString>North Rhine-Westphalia</gco:CharacterString>
+                                    </gmd:administrativeArea>
+                                    <gmd:postalCode>
+                                        <gco:CharacterString>48155</gco:CharacterString>
+                                    </gmd:postalCode>
+                                    <gmd:country>
+                                        <gco:CharacterString>Germany</gco:CharacterString>
+                                    </gmd:country>
+                                    <gmd:electronicMailAddress>
+                                        <gco:CharacterString>info@52north.org</gco:CharacterString>
+                                    </gmd:electronicMailAddress>
+                                </gmd:CI_Address>
+                            </gmd:address>
+                        </gmd:CI_Contact>
+                    </gmd:contactInfo>
+                    <gmd:role>
+                        <gmd:CI_RoleCode
+                            codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/"
+                            codeListValue="CI_RoleCode_owner">Owner</gmd:CI_RoleCode>
+                    </gmd:role>
+                </gmd:CI_ResponsibleParty>
+            </sml:contact>
+            <sml:contact xlink:title="operator">
+                <gmd:CI_ResponsibleParty>
+                    <gmd:organisationName>
+                        <gco:CharacterString>Test Operator</gco:CharacterString>
+                    </gmd:organisationName>
+                    <gmd:contactInfo>
+                        <gmd:CI_Contact>
+                            <gmd:phone>
+                                <gmd:CI_Telephone>
+                                    <gmd:voice>
+                                        <gco:CharacterString>+49-(0)-251-396371-0</gco:CharacterString>
+                                    </gmd:voice>
+                                    <gmd:facsimile>
+                                        <gco:CharacterString>+49-(0)-251-396371-11</gco:CharacterString>
+                                    </gmd:facsimile>
+                                </gmd:CI_Telephone>
+                            </gmd:phone>
+                            <gmd:address>
+                                <gmd:CI_Address>
+                                    <gmd:deliveryPoint>
+                                        <gco:CharacterString>Martin-Luther-King-Weg 24</gco:CharacterString>
+                                    </gmd:deliveryPoint>
+                                    <gmd:city>
+                                        <gco:CharacterString>Münster</gco:CharacterString>
+                                    </gmd:city>
+                                    <gmd:administrativeArea>
+                                        <gco:CharacterString>North Rhine-Westphalia</gco:CharacterString>
+                                    </gmd:administrativeArea>
+                                    <gmd:postalCode>
+                                        <gco:CharacterString>48155</gco:CharacterString>
+                                    </gmd:postalCode>
+                                    <gmd:country>
+                                        <gco:CharacterString>Germany</gco:CharacterString>
+                                    </gmd:country>
+                                    <gmd:electronicMailAddress>
+                                        <gco:CharacterString>info@52north.org</gco:CharacterString>
+                                    </gmd:electronicMailAddress>
+                                </gmd:CI_Address>
+                            </gmd:address>
+                        </gmd:CI_Contact>
+                    </gmd:contactInfo>
+                    <gmd:role>
+                        <gmd:CI_RoleCode
+                            codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/"
+                            codeListValue="CI_RoleCode_custodian">Operator</gmd:CI_RoleCode>
+                    </gmd:role>
+                </gmd:CI_ResponsibleParty>
+            </sml:contact>
+            <sml:contact xlink:title="principalInvestigator">
+                <gmd:CI_ResponsibleParty>
+                    <gmd:individualName>
+                        <gco:CharacterString>Dr. Simon Jirka</gco:CharacterString>
+                    </gmd:individualName>
+                    <gmd:organisationName>
+                        <gco:CharacterString>52°North GmbH</gco:CharacterString>
+                    </gmd:organisationName>
+                    <gmd:positionName>
+                        <gco:CharacterString>Project Manager</gco:CharacterString>
+                    </gmd:positionName>
+                    <gmd:contactInfo>
+                        <gmd:CI_Contact>
+                            <gmd:phone>
+                                <gmd:CI_Telephone>
+                                    <gmd:voice>
+                                        <gco:CharacterString>+49-(0)-251-396371-31</gco:CharacterString>
+                                    </gmd:voice>
+                                </gmd:CI_Telephone>
+                            </gmd:phone>
+                            <gmd:address>
+                                <gmd:CI_Address>
+                                    <gmd:city>
+                                        <gco:CharacterString>Münster</gco:CharacterString>
+                                    </gmd:city>
+                                    <gmd:country>
+                                        <gco:CharacterString>Germany</gco:CharacterString>
+                                    </gmd:country>
+                                    <gmd:electronicMailAddress>
+                                        <gco:CharacterString>s.jirka@52north.org</gco:CharacterString>
+                                    </gmd:electronicMailAddress>
+                                </gmd:CI_Address>
+                            </gmd:address>
+                            <gmd:onlineResource>
+                                <gmd:CI_OnlineResource>
+                                    <gmd:linkage>
+                                        <gmd:URL>http://52north.org/</gmd:URL>
+                                    </gmd:linkage>
+                                </gmd:CI_OnlineResource>
+                            </gmd:onlineResource>
+                        </gmd:CI_Contact>
+                    </gmd:contactInfo>
+                    <gmd:role>
+                        <gmd:CI_RoleCode
+                            codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/"
+                            codeListValue="CI_RoleCode_principalInvestigator">Principal Investigator</gmd:CI_RoleCode>
+                    </gmd:role>
+                </gmd:CI_ResponsibleParty>
+            </sml:contact>
+        </sml:ContactList>
+    </sml:contacts>
+    <sml:history>
+        <sml:EventList>
+            <sml:event>
+                <sml:Event>
+                    <swe:label>Installation</swe:label>
+                    <sml:documentation>
+                        <sml:DocumentList>
+                            <sml:document>
+                                <gmd:CI_OnlineResource>
+                                    <gmd:linkage>
+                                        <gmd:URL>http://52north.org/ws2500-internal_installation.log</gmd:URL>
+                                    </gmd:linkage>
+                                </gmd:CI_OnlineResource>
+                            </sml:document>
+                        </sml:DocumentList>
+                    </sml:documentation>
+                    <sml:time>
+                        <gml:TimeInstant gml:id="installationDate">
+                            <gml:timePosition>2015-05-18T14:00:00Z</gml:timePosition>
+                        </gml:TimeInstant>
+                    </sml:time>
+                </sml:Event>
+            </sml:event>
+            <sml:event>
+                <sml:Event>
+                    <swe:label>Deployment</swe:label>
+                    <sml:documentation>
+                        <sml:DocumentList>
+                            <sml:document>
+                                <gmd:CI_OnlineResource>
+                                    <gmd:linkage>
+                                        <gmd:URL>http://52north.org/ws2500-internal_initialization.log</gmd:URL>
+                                    </gmd:linkage>
+                                </gmd:CI_OnlineResource>
+                            </sml:document>
+                        </sml:DocumentList>
+                    </sml:documentation>
+                    <sml:time>
+                        <gml:TimeInstant gml:id="deploymentDate">
+                            <gml:timePosition>2015-05-18T14:05:00Z</gml:timePosition>
+                        </gml:TimeInstant>
+                    </sml:time>
+                </sml:Event>
+            </sml:event>
+            <sml:event>
+                <sml:Event>
+                    <swe:label>Start of data collection</swe:label>
+                    <sml:time>
+                        <gml:TimeInstant gml:id="dataCollectionStartDate">
+                            <gml:timePosition>2015-05-18T14:10:00Z</gml:timePosition>
+                        </gml:TimeInstant>
+                    </sml:time>
+                </sml:Event>
+            </sml:event>
+            <sml:event>
+                <sml:Event>
+                    <swe:label>Calibration</swe:label>
+                    <sml:identification>
+                        <sml:IdentifierList>
+                            <sml:identifier>
+                                <sml:Term>
+                                    <sml:label>Calibration ID</sml:label>
+                                    <sml:value>cal000001</sml:value>
+                                </sml:Term>
+                            </sml:identifier>
+                        </sml:IdentifierList>
+                    </sml:identification>
+                    <sml:documentation>
+                        <sml:DocumentList>
+                            <sml:document>
+                                <gmd:CI_OnlineResource>
+                                    <gmd:linkage>
+                                        <gmd:URL>http://52north.org/ws2500-internal_cal000001.log</gmd:URL>
+                                    </gmd:linkage>
+                                </gmd:CI_OnlineResource>
+                            </sml:document>
+                        </sml:DocumentList>
+                    </sml:documentation>
+                    <sml:time>
+                        <gml:TimeInstant gml:id="cal000001Date">
+                            <gml:timePosition>2015-07-18T13:52:52Z</gml:timePosition>
+                        </gml:TimeInstant>
+                    </sml:time>
+                </sml:Event>
+            </sml:event>
+        </sml:EventList>
+    </sml:history>
+    <sml:typeOf xlink:href="http://www.example.com/systems/elv/ws2500.xml"/>
+    <sml:outputs>
+        <sml:OutputList>
+            <sml:output name="AirTemperature">
+               <swe:Quantity definition="AirTemperature">
+                  <swe:uom code="degC"/>
+               </swe:Quantity>
+            </sml:output>
+            <sml:output name="Humidity">
+               <swe:Quantity definition="Humidity">
+                  <swe:uom code="%"/>
+               </swe:Quantity>
+            </sml:output>
+        </sml:OutputList>
+    </sml:outputs>
+    <sml:parameters>
+        <sml:ParameterList>
+            <sml:parameter name="isActive">
+                <swe:Boolean definition="urn:ogc:def:classifier:OGC:1.0:collectingStatus">
+                    <swe:label>Sensor Status</swe:label>
+                    <swe:description>true = active, false = not active</swe:description>
+                    <swe:value>true</swe:value>
+                </swe:Boolean>
+            </sml:parameter>
+        </sml:ParameterList>
+    </sml:parameters>
+    <sml:position>
+        <swe:DataRecord>
+            <swe:field name="longitude">
+                <swe:Quantity referenceFrame="urn:ogc:crs:EPSG:4326" axisID="Lon">
+                    <swe:uom code="deg"/>
+                    <swe:value>7.652428150177002</swe:value>
+                </swe:Quantity>
+            </swe:field>
+            <swe:field name="latitude">
+                <swe:Quantity referenceFrame="urn:ogc:crs:EPSG:4326" axisID="Lat">
+                    <swe:uom code="deg"/>
+                    <swe:value>51.934814453125</swe:value>
+                </swe:Quantity>
+            </swe:field>
+            <swe:field name="trueHeading">
+                <swe:Quantity>
+                    <swe:uom code="deg"/>
+                    <swe:value>130.5</swe:value>
+                </swe:Quantity>
+            </swe:field>
+        </swe:DataRecord>
+    </sml:position>
+</sml:PhysicalSystem>

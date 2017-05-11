@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,7 +33,7 @@ import javax.xml.stream.XMLStreamException;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 
 /**
  * Implementation of {@link AbstractOmV20XmlStreamWriter} to write WaterML 2.0
@@ -65,7 +65,6 @@ public class WmlTDREncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     @Override
     protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException,
             OwsExceptionReport {
-        // TODO Auto-generated method stub
         super.writeResult(observation, encodingValues);
     }
 

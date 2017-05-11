@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,11 +53,14 @@ import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.series.wml.TimeseriesMetadata;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.wml.ConformanceClassesWML2;
-import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.sos.ogc.series.wml.ConformanceClassesWML2;
+import org.n52.sos.ogc.series.wml.WaterMLConstants.InterpolationType;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
@@ -68,6 +71,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 import net.opengis.om.x20.OMObservationType;
@@ -102,7 +106,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES =
             Collections.singletonMap(SupportedTypeKey.ObservationType,
-                    Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP));;
+                    Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -226,10 +230,20 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
      *             If an error occurs
      */
     private XmlObject createMeasurementTimeseries(OmObservation sosObservation) throws OwsExceptionReport {
+        // FIXME duplicate code see createMeasurementTimeseries(AbstractObservationValue)
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();
         measurementTimeseries.setId("timeseries." + sosObservation.getObservationID());
-        addTimeseriesMetadata(measurementTimeseries, sosObservation.getPhenomenonTime().getGmlId());
+        // Default value
+        TimeseriesMetadata timeseriesMetadata = new MeasurementTimeseriesMetadata().setCumulative(false);
+        if (sosObservation.isSetValue() &&
+                sosObservation.getValue().isSetValue() &&
+                sosObservation.getValue().getValue().getClass().isAssignableFrom(TVPValue.class) &&
+                sosObservation.getObservationConstellation().isSetMetadata() &&
+                sosObservation.getObservationConstellation().getMetadata().isSetTimeseriesMetadata()) {
+            timeseriesMetadata = sosObservation.getObservationConstellation().getMetadata().getTimeseriesmetadata();
+        }
+        addTimeseriesMetadata(measurementTimeseries, sosObservation.getPhenomenonTime().getGmlId(), timeseriesMetadata);
 
         TVPDefaultMetadataPropertyType xbMetaComponent = measurementTimeseries.addNewDefaultPointMetadata();
 
@@ -237,54 +251,64 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                 DefaultTVPMeasurementMetadataDocument.Factory.newInstance();
         TVPMeasurementMetadataType defaultTVPMeasurementMetadata =
                 xbDefMeasureMetaComponent.addNewDefaultTVPMeasurementMetadata();
-        defaultTVPMeasurementMetadata.addNewInterpolationType()
-                .setHref("http://www.opengis.net/def/timeseriesType/WaterML/2.0/continuous");
 
-        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle("Instantaneous");
+        // Default value
+        InterpolationType interpolationType = InterpolationType.Continuous;
+        if (sosObservation.isSetValue() &&
+                sosObservation.getValue().isSetValue() &&
+                sosObservation.getValue().getValue().getClass().isAssignableFrom(TVPValue.class) &&
+                sosObservation.getObservationConstellation().isSetDefaultPointMetadata() &&
+                sosObservation.getObservationConstellation().getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata() &&
+                sosObservation.getObservationConstellation().getDefaultPointMetadata()
+                    .getDefaultTVPMeasurementMetadata().isSetInterpolationType()) {
+            interpolationType = sosObservation.getObservationConstellation().getDefaultPointMetadata()
+                    .getDefaultTVPMeasurementMetadata().getInterpolationtype();
+        }
+
+        defaultTVPMeasurementMetadata.addNewInterpolationType().setHref(interpolationType.getIdentifier());
+        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType()
+            .setTitle(interpolationType.getTitle());
         String unit = null;
         if (sosObservation.getValue() instanceof SingleObservationValue) {
             SingleObservationValue<?> singleObservationValue =
                     (SingleObservationValue<?>) sosObservation.getValue();
             String time = getTimeString(singleObservationValue.getPhenomenonTime());
             unit = singleObservationValue.getValue().getUnit();
+            String value = null;
             if (sosObservation.getValue().getValue() instanceof QuantityValue) {
                 QuantityValue quantityValue = (QuantityValue) singleObservationValue.getValue();
-                if (!quantityValue.getValue().equals(Double.NaN)) {
-                    String value = Double.toString(quantityValue.getValue().doubleValue());
-                    addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                            value);
+                if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
+                    value = Double.toString(quantityValue.getValue().doubleValue());
                 }
             } else if (sosObservation.getValue().getValue() instanceof CountValue) {
                 CountValue countValue = (CountValue) singleObservationValue.getValue();
                 if (countValue.getValue() != null) {
-                    String value = Integer.toString(countValue.getValue().intValue());
-                    addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                            value);
+                    value = Integer.toString(countValue.getValue().intValue());
                 }
             }
+            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
+                    value);
         } else if (sosObservation.getValue() instanceof MultiObservationValues) {
             MultiObservationValues<?> observationValue = (MultiObservationValues<?>) sosObservation.getValue();
             TVPValue tvpValue = (TVPValue) observationValue.getValue();
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
             unit = tvpValue.getUnit();
             for (TimeValuePair timeValuePair : timeValuePairs) {
+                String time = getTimeString(timeValuePair.getTime());
+                String value = null;
                 if (timeValuePair.getValue() instanceof QuantityValue) {
                     QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
-                    if (!quantityValue.getValue().equals(Double.NaN)) {
-                        String time = getTimeString(timeValuePair.getTime());
-                        String value = Double.toString(quantityValue.getValue().doubleValue());
-                        addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                                value);
+                    if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
+                        value = Double.toString(quantityValue.getValue().doubleValue());
                     }
                 } else if (timeValuePair.getValue() instanceof CountValue) {
                     CountValue countValue = (CountValue) timeValuePair.getValue();
-                    if (countValue.getValue() != null) {
-                        String time = getTimeString(timeValuePair.getTime());
-                        String value = Integer.toString(countValue.getValue().intValue());
-                        addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                                value);
+                    if (countValue.isSetValue()) {
+                        value = Integer.toString(countValue.getValue().intValue());
                     }
                 }
+                addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
+                        value);
             }
         } else if (sosObservation.getValue() instanceof MultiObservationValues) {
             MultiObservationValues<?> observationValue = (MultiObservationValues<?>) sosObservation.getValue();
@@ -292,38 +316,32 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             List<TimeValuePair> timeValuePairs = tvpValue.getValue();
             unit = tvpValue.getUnit();
             for (TimeValuePair timeValuePair : timeValuePairs) {
+                String time = getTimeString(timeValuePair.getTime());
+                String value = null;
                 if (timeValuePair.getValue() instanceof QuantityValue) {
                     QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
-                    if (!quantityValue.getValue().equals(Double.NaN)) {
-                        timeValuePair.getTime();
-                        String time = getTimeString(timeValuePair.getTime());
-                        String value = Double.toString(quantityValue.getValue().doubleValue());
-                        addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                                value);
+                    if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
+                        value = Double.toString(quantityValue.getValue().doubleValue());
+                        
                     }
                 } else if (timeValuePair.getValue() instanceof ProfileValue) {
                     ProfileValue profileValue = (ProfileValue)timeValuePair.getValue();
                     if (profileValue.isSetValue()) {
                         if (profileValue.getValue().iterator().next().getSimpleValue() instanceof QuantityValue) {
                             QuantityValue quantityValue = (QuantityValue)profileValue.getValue().iterator().next().getSimpleValue();
-                            if (!quantityValue.getValue().equals(Double.NaN)) {
-                                timeValuePair.getTime();
-                                String time = getTimeString(timeValuePair.getTime());
-                                String value = Double.toString(quantityValue.getValue().doubleValue());
-                                addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                                        value);
+                            if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
+                                value = Double.toString(quantityValue.getValue().doubleValue());
                             }
                         }
                     } 
                 } else if (timeValuePair.getValue() instanceof CountValue) {
                     CountValue countValue = (CountValue) timeValuePair.getValue();
-                    if (countValue.getValue() != null) {
-                        String time = getTimeString(timeValuePair.getTime());
-                        String value = Integer.toString(countValue.getValue().intValue());
-                        addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                                value);
+                    if (countValue.isSetValue()) {
+                        value = Integer.toString(countValue.getValue().intValue());
                     }
                 }
+                addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
+                        value);
             }
         }
         // set uom
@@ -353,20 +371,30 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
      */
     private void addValuesToMeasurementTVP(MeasureTVPType measurementTVP, String time, String value) {
         measurementTVP.addNewTime().setStringValue(time);
-        if (value != null && !value.isEmpty()) {
-            measurementTVP.addNewValue().setStringValue(value);
-        } else {
+        if (Strings.isNullOrEmpty(value)) {
             measurementTVP.addNewValue().setNil();
             measurementTVP.addNewMetadata().addNewTVPMeasurementMetadata().addNewNilReason().setNilReason("missing");
+        } else {
+            measurementTVP.addNewValue().setStringValue(value);
         }
     }
 
     private XmlObject createMeasurementTimeseries(AbstractObservationValue<?> observationValue)
             throws OwsExceptionReport {
+        // FIXME duplicate code see createMeasurementTimeseries(OmObservation)
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();
         measurementTimeseries.setId("timeseries." + observationValue.getObservationID());
-        addTimeseriesMetadata(measurementTimeseries, observationValue.getPhenomenonTime().getGmlId());
+        // Default value
+        TimeseriesMetadata timeseriesMetadata = new MeasurementTimeseriesMetadata().setCumulative(false);
+        if (observationValue.isSetValue() &&
+                observationValue.isSetMetadata() &&
+                observationValue.getMetadata().isSetTimeseriesMetadata()
+                ) {
+            timeseriesMetadata = observationValue.getMetadata().getTimeseriesmetadata();
+        }
+        addTimeseriesMetadata(measurementTimeseries, observationValue.getPhenomenonTime().getGmlId(),
+                timeseriesMetadata);
 
         TVPDefaultMetadataPropertyType xbMetaComponent = measurementTimeseries.addNewDefaultPointMetadata();
 
@@ -374,28 +402,39 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                 DefaultTVPMeasurementMetadataDocument.Factory.newInstance();
         TVPMeasurementMetadataType defaultTVPMeasurementMetadata =
                 xbDefMeasureMetaComponent.addNewDefaultTVPMeasurementMetadata();
-        defaultTVPMeasurementMetadata.addNewInterpolationType()
-                .setHref("http://www.opengis.net/def/timeseriesType/WaterML/2.0/continuous");
+        // Default value
+        InterpolationType interpolationType = InterpolationType.Continuous;
+        if (observationValue.isSetValue() &&
+                observationValue.isSetDefaultPointMetadata() &&
+                observationValue.getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata() &&
+                observationValue.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().isSetInterpolationType()
+                ) {
+            interpolationType = observationValue.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata()
+                    .getInterpolationtype();
+        }
 
-        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle("Instantaneous");
+        defaultTVPMeasurementMetadata.addNewInterpolationType().setHref(interpolationType.getIdentifier());
+        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle(
+                interpolationType.getTitle());
+
         String unit = null;
         if (observationValue instanceof SingleObservationValue) {
             SingleObservationValue<?> singleObservationValue = (SingleObservationValue<?>) observationValue;
             String time = getTimeString(singleObservationValue.getPhenomenonTime());
             unit = singleObservationValue.getValue().getUnit();
+            String value = null;
             if (observationValue.getValue() instanceof QuantityValue) {
                 QuantityValue quantityValue = (QuantityValue) singleObservationValue.getValue();
                 if (!quantityValue.getValue().equals(Double.NaN)) {
-                    String value = Double.toString(quantityValue.getValue().doubleValue());
-                    addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
+                    value = Double.toString(quantityValue.getValue().doubleValue());
                 }
             } else if (observationValue.getValue() instanceof CountValue) {
                 CountValue countValue = (CountValue) singleObservationValue.getValue();
-                if (countValue.getValue() != null) {
-                    String value = Integer.toString(countValue.getValue().intValue());
-                    addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
+                if (countValue.isSetValue()) {
+                   value = Integer.toString(countValue.getValue().intValue());
                 }
             }
+            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
         } else if (observationValue instanceof MultiObservationValues) {
             MultiObservationValues<?> multiObservationValue = (MultiObservationValues<?>) observationValue;
             if (multiObservationValue.getValue() instanceof TVPValue) {
@@ -403,24 +442,21 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                 List<TimeValuePair> timeValuePairs = tvpValue.getValue();
                 unit = tvpValue.getUnit();
                 for (TimeValuePair timeValuePair : timeValuePairs) {
+                    String time = getTimeString(timeValuePair.getTime());
+                    String value = null;
                     if (timeValuePair.getValue() instanceof QuantityValue) {
                         QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
-                        if (!quantityValue.getValue().equals(Double.NaN)) {
+                        if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
                             timeValuePair.getTime();
-                            String time = getTimeString(timeValuePair.getTime());
-                            String value = Double.toString(quantityValue.getValue().doubleValue());
-                            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                                    value);
                         }
                     } else if (timeValuePair.getValue() instanceof CountValue) {
                         CountValue countValue = (CountValue) timeValuePair.getValue();
-                        if (countValue.getValue() != null) {
-                            String time = getTimeString(timeValuePair.getTime());
-                            String value = Integer.toString(countValue.getValue().intValue());
-                            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                                    value);
+                        if (countValue.isSetValue()) {
+                            value = Integer.toString(countValue.getValue().intValue());
                         }
                     }
+                    addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
+                            value);
                 }
 //            } else if (multiObservationValue.getValue() instanceof TLVTValue) {
 //                TLVTValue tlvpValue = (TLVTValue) multiObservationValue.getValue();
@@ -449,11 +485,15 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         return measurementTimeseriesDoc;
     }
 
-    private void addTimeseriesMetadata(MeasurementTimeseriesType mtt, String gmlId) {
+    private void addTimeseriesMetadata(MeasurementTimeseriesType mtt, String gmlId, TimeseriesMetadata timeseriesMetadata) {
         MeasurementTimeseriesMetadataType mtmt =
                 (MeasurementTimeseriesMetadataType) mtt.addNewMetadata().addNewTimeseriesMetadata().substitute(
                         WaterMLConstants.QN_MEASUREMENT_TIMESERIES_METADATA, MeasurementTimeseriesMetadataType.type);
         createMeasurementTimeseriesMetadataType(mtmt, gmlId);
+        if (timeseriesMetadata != null &&
+                timeseriesMetadata.getClass().isAssignableFrom(MeasurementTimeseriesMetadata.class)) {
+            mtmt.setCumulative(((MeasurementTimeseriesMetadata)timeseriesMetadata).isCumulative());
+        }
     }
 
     private MeasurementTimeseriesMetadataType createMeasurementTimeseriesMetadataType(

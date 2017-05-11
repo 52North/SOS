@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.request.operator;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +39,9 @@ import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractGetObservationDAO;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
+import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
+import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
@@ -131,7 +134,7 @@ public class SosGetObservationOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkQueryableProcedureIDs(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
+            checkQueryableProcedures(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
             // add instance and child procedures to request
             if (sosRequest.isSetProcedure()) {
                 sosRequest.setProcedures(addChildProcedures(addInstanceProcedures(sosRequest.getProcedures())));
@@ -229,6 +232,34 @@ public class SosGetObservationOperatorV20 extends
     public void setBlockRequestsWithoutRestriction(boolean flag) {
         this.blockRequestsWithoutRestriction = flag;
     }
+
+//    /**
+//     * checks if mandatory parameter observed property is correct
+//     * 
+//     * @param observedProperties
+//     *            list containing the observed properties of the request
+//     * 
+//     * @throws OwsExceptionReport
+//     *             if the parameter does not containing any matching
+//     *             observedProperty for the requested offering
+//     */
+//    private void checkObservedProperties(final List<String> observedProperties) throws OwsExceptionReport {
+//        if (observedProperties != null) {
+//            final CompositeOwsException exceptions = new CompositeOwsException();
+//            final Collection<String> validObservedProperties =
+//                    Configurator.getInstance().getCache().getPublishedObservableProperties();
+//            for (final String obsProp : observedProperties) {
+//                if (obsProp.isEmpty()) {
+//                    exceptions.add(new MissingObservedPropertyParameterException());
+//                } else {
+//                    if (!validObservedProperties.contains(obsProp)) {
+//                        exceptions.add(new InvalidObservedPropertyParameterException(obsProp));
+//                    }
+//                }
+//            }
+//            exceptions.throwIfNotEmpty();
+//        }
+//    }
 
     /**
      * checks if the passed offeringId is supported

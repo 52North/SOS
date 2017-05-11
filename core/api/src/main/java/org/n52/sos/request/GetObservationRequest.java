@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -105,8 +105,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     private Filter resultFilter;
 
     private Map<String, String> namespaces = Maps.newHashMap();
-
-    private boolean mergeObservationValues = false;
 
     /*
      * (non-Javadoc)
@@ -457,13 +455,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
         return (GetObservationResponse) new GetObservationResponse().set(this);
     }
 
-    public void setMergeObservationValues(boolean mergeObservationValues) {
-        this.mergeObservationValues = mergeObservationValues;
-    }
-
-    public boolean isSetMergeObservationValues() {
-        return mergeObservationValues;
-    }
 
     /**
      * Check if the {@link SwesExtensions} contains {@link Filter}

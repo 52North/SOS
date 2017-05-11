@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,11 +28,19 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import net.opengis.sensorML.x101.SystemDocument;
+import net.opengis.swe.x20.DataRecordDocument;
+import net.opengis.swe.x20.TextEncodingDocument;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -101,6 +109,7 @@ import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.request.InsertSensorRequest;
+import org.n52.sos.request.RequestContext;
 import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
 import org.n52.sos.response.DeleteSensorResponse;
 import org.n52.sos.response.GetObservationResponse;
@@ -111,17 +120,6 @@ import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-
-import net.opengis.sensorML.x101.SystemDocument;
-import net.opengis.swe.x20.DataRecordDocument;
-import net.opengis.swe.x20.TextEncodingDocument;
 
 /**
  * Test various Insert*DAOs using a common set of test data with hierarchical
@@ -611,7 +609,8 @@ public class InsertDAOTest extends HibernateTestCase {
         obsVal.setPhenomenonTime(new TimeInstant(null, TimeIndeterminateValue.template));
         obsVal.setValue(sweDataArrayValue);
         obs.setValue(obsVal);
-        req.setObservation(Lists.newArrayList(obs));
+        req.setObservation(Lists.newArrayList(obs))
+            .setRequestContext(new RequestContext());
         insertObservationOperatorv2.receiveRequest(req);
         assertInsertionAftermathBeforeAndAfterCacheReload();
 

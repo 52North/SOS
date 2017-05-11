@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -618,8 +618,10 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                                     } else if (o instanceof SweAbstractSimpleType<?>) {
                                         abstractProcess.addParentProcedures(from((SweAbstractSimpleType<?>) o));
                                     }
-//                                    abstractProcess.addParentProcedures(parseCapabilitiesMetadata(caps,  xbcaps).keySet());
-//                                        capabilities.addCapability(capability);
+                                    // abstractProcess.addParentProcedures(parseCapabilitiesMetadata(caps,  xbcaps).keySet());
+                                } else {
+                                    // this is not insertion metadata, hence must be added
+                                    capabilities.addCapability(capability);
                                 }
                             } else {
                                 throw new InvalidParameterValueException().at(XmlHelper.getLocalName(cs))
@@ -632,11 +634,14 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                             if (c.isSetTitle()) {
                                 capability.setTitle(c.getTitle());
                             }
+                            capabilities.addCapability(capability);
                         }
                     }
                 }
             }
-            abstractProcess.addCapabilities(capabilities);
+            if (capabilities.isSetCapabilities()) {
+                abstractProcess.addCapabilities(capabilities);
+            }
         }
     }
 

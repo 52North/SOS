@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,6 +45,7 @@ import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ds.AbstractDescribeSensorDAO;
 import org.n52.sos.ds.OperationDAO;
 import org.n52.sos.ds.OperationDAORepository;
+import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;

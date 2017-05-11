@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,10 +46,16 @@ public class CoreProfileOperatorSettings implements SettingDefinitionProvider {
             "service.blockGetObservationRequestsWithoutRestriction";
 
     private static final BooleanSettingDefinition BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION_DEFINITION =
-            new BooleanSettingDefinition().setGroup(ServiceSettings.GROUP).setDefaultValue(Boolean.FALSE)
-                    .setDescription("Should GetObservation requests without any restriction be blocked")
-                    .setTitle("Block restrictionless requests")
-                    .setKey(BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION).setOrder(12);
+            new BooleanSettingDefinition()
+                .setGroup(ServiceSettings.GROUP)
+                .setDefaultValue(Boolean.FALSE)
+                .setTitle("Should GetObservation requests without any restriction be blocked?")
+                .setDescription("The service will block <code>GetObservation</code> requests when this option is "
+                        + "enabled that do not contain any filter, e.g. a procedure, phenomenon,... This is useful "
+                        + "because such a request might result in an out of memory error because all observations from "
+                        + "the database will be requested at once.")
+                .setKey(BLOCK_GET_OBSERVATION_REQUESTS_WITHOUT_RESTRICTION)
+                .setOrder(12);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

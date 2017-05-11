@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,6 +37,8 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropert
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
 
 /**
  * @since 4.0.0
@@ -170,7 +172,8 @@ public class ObservationConstellation
     @Override
     public String toString() {
         return String
-                .format("ObservationConstellation [observationConstellationId=%s, observableProperty=%s, procedure=%s, observationType=%s, offering=%s, deleted=%s, hiddenChild=%s]",
+                .format("ObservationConstellation [observationConstellationId=%s, observableProperty=%s, procedure=%s, "
+                        + "observationType=%s, offering=%s, deleted=%s, hiddenChild=%s",
                         observationConstellationId, observableProperty, procedure, observationType, offering, deleted,
                         hiddenChild);
     }

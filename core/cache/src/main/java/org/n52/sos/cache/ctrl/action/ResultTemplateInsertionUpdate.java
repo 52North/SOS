@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -78,11 +78,16 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
         cache.addResultTemplate(resultTemplate);
         for (String offering : request.getObservationTemplate().getOfferings()) {
             cache.addOffering(offering);
+            cache.addPublishedOffering(offering);
             cache.addResultTemplateForOffering(offering, resultTemplate);
         }
         AbstractFeature featureOfInterest = request.getObservationTemplate().getFeatureOfInterest();
         if (featureOfInterest != null && featureOfInterest.isSetName()) {
-        	cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
+            cache.addFeatureOfInterest(featureOfInterest.getIdentifier());
+            cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
+            cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
+        	cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
+        	cache.addFeatureOfInterest(featureOfInterest.getIdentifier());
         }
         
         AbstractPhenomenon observableProperty = request.getObservationTemplate().getObservableProperty();

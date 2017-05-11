@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -78,7 +78,7 @@ public class AqdDescribeSensorOperatorV10
 			exceptions.add(owse);
 		}
 		try {
-			checkProcedureID(request.getProcedure(),
+			checkProcedure(request.getProcedure(),
 					SosConstants.DescribeSensorParams.procedure.name());
 		} catch (OwsExceptionReport owse) {
 			exceptions.add(owse);

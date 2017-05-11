@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -74,6 +74,7 @@ import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -390,12 +391,9 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                     additionalValue.put(HelperValues.GMLID, SosConstants.OBS_ID_PREFIX + this.observationId);
                     additionalValue.put(HelperValues.PROPERTY_TYPE, null);
                     return encodeGML(value.getValue(), additionalValue);
-                } else {
-                    return null;
                 }
-            } else {
-                return null;
             }
+                return null;
         }
 
         @Override
@@ -413,11 +411,14 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         @Override
         public XmlObject visit(QuantityValue value)
                 throws OwsExceptionReport {
-            if (observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT)) {
-                return encodeGML(value);
-            } else {
-                return null;
+            if (observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT)
+                    || observationType.equals(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP)
+                    || observationType.equals(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR)) {
+                if (value.isSetValue()) {
+                    return encodeGML(value);
+                }
             }
+            return null;
         }
 
         @Override

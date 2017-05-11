@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.binding.rest.Constants;
+import org.n52.sos.binding.rest.RestConstants;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestResponse;
 import org.n52.sos.binding.rest.resources.OptionsRestEncoder;
@@ -85,7 +85,7 @@ import com.google.common.collect.Sets;
  */
 public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
     
-    protected Constants bindingConstants = Constants.getInstance();
+    protected RestConstants bindingConstants = RestConstants.getInstance();
     
     private static final Logger LOGGER = LoggerFactory.getLogger(RestEncoder.class);
     
@@ -224,7 +224,7 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse> {
     @Override
 	public MediaType getContentType()
     {
-        return Constants.getInstance().getContentTypeDefault();
+        return RestConstants.getInstance().getContentTypeDefault();
     }
 
     @Override

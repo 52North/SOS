@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.feature.gmd.OnlineResourceEntity"
+           table="onlineresource">
+        <id name="pkid"
+            type="long">
+            <column name="pkid">
+                <comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">onlineResourceId_seq</param>
+            </generator>
+        </id>
+        <property name="nilReason" column="nilReason" type="string" />
+        <property name="href" column="href" type="string" />
+        <property name="type" column="type" type="string" />
+        <property name="role" column="role" type="string" />
+        <property name="arcrole" column="arcrole" type="string" />
+        <property name="title" column="title" type="string" />
+        <property name="show" column="show" type="string" />
+        <property name="actuate" column="actuate" type="string" />
+        <property name="id" column="id" type="string" />
+        <property name="uuid" column="uuid" type="string" />
+        <property name="linkage" column="linkage" type="string" />
+        <property name="protocol" column="protocol" type="string" />
+        <property name="applicationProfile" column="applicationProfile" type="string" />
+        <property name="name" column="name" type="string" />
+        <property name="description" column="description" type="string" />
+        <property name="function" column="function" type="string" />
+    </class>
+</hibernate-mapping>

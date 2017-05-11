@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -51,6 +51,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public class SosServiceIdentificationFactorySettings implements SettingDefinitionProvider {
+
     public static final String SERVICE_TYPE = "serviceIdentification.serviceType";
 
     public static final String SERVICE_TYPE_CODE_SPACE = "serviceIdentification.serviceTypeCodeSpace";
@@ -67,36 +68,72 @@ public class SosServiceIdentificationFactorySettings implements SettingDefinitio
 
     public static final String FEES = "serviceIdentification.fees";
 
-    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service Identification")
+    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup()
+            .setTitle("Service Identification")
             .setOrder(1);
 
-    public static final MultilingualStringSettingDefinition TITLE_DEFINITION = new MultilingualStringSettingDefinition().setGroup(GROUP)
-            .setOrder(ORDER_1).setKey(TITLE).setTitle("Title").setDescription("SOS Service Title.")
-            .setDefaultValue(new MultilingualString().addLocalization(Locale.ENGLISH, "52N SOS"));
+    public static final MultilingualStringSettingDefinition TITLE_DEFINITION = new MultilingualStringSettingDefinition()
+            .setGroup(GROUP)
+            .setOrder(ORDER_1)
+            .setKey(TITLE)
+            .setTitle("Title")
+            .setDescription("SOS Service Title.")
+            .setDefaultValue(new MultilingualString().addLocalization(Locale.ENGLISH, "52N SOS"))
+            .setOptional(false);
 
-    public static final StringSettingDefinition KEYWORDS_DEFINITION = new StringSettingDefinition().setGroup(GROUP)
-            .setOrder(ORDER_2).setKey(KEYWORDS).setTitle("Keywords")
-            .setDescription("Comma separated SOS service keywords.").setOptional(true);
+    public static final StringSettingDefinition KEYWORDS_DEFINITION = new StringSettingDefinition()
+            .setGroup(GROUP)
+            .setOrder(ORDER_2)
+            .setKey(KEYWORDS)
+            .setTitle("Keywords")
+            .setDescription("Comma separated SOS service keywords.")
+            .setOptional(true);
 
-    public static final MultilingualStringSettingDefinition ABSTRACT_DEFINITION = new MultilingualStringSettingDefinition().setGroup(GROUP)
-            .setOrder(ORDER_3).setKey(ABSTRACT).setTitle("SOS Abstract").setDescription("SOS service abstract.")
-            .setDefaultValue(new MultilingualString().addLocalization(Locale.ENGLISH, "52North Sensor Observation Service - Data Access for the Sensor Web"));
+    public static final MultilingualStringSettingDefinition ABSTRACT_DEFINITION = 
+            new MultilingualStringSettingDefinition()
+            .setGroup(GROUP)
+            .setOrder(ORDER_3)
+            .setKey(ABSTRACT)
+            .setTitle("SOS Abstract")
+            .setDescription("SOS service abstract.")
+            .setDefaultValue(new MultilingualString()
+                    .addLocalization(Locale.ENGLISH,
+                            "52North Sensor Observation Service - Data Access for the Sensor Web"))
+            .setOptional(false);
 
     public static final StringSettingDefinition ACCESS_CONSTRAINTS_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_4).setKey(ACCESS_CONSTRAINTS).setTitle("Access Constraints")
-            .setDescription("Service access constraints.").setDefaultValue("NONE").setOptional(true);
+            .setGroup(GROUP)
+            .setOrder(ORDER_4)
+            .setKey(ACCESS_CONSTRAINTS)
+            .setTitle("Access Constraints")
+            .setDescription("Service access constraints.")
+            .setDefaultValue("NONE")
+            .setOptional(true);
 
-    public static final StringSettingDefinition FEES_DEFINITION = new StringSettingDefinition().setGroup(GROUP)
-            .setOrder(ORDER_5).setKey(FEES).setTitle("Fees").setDescription("SOS Service Fees.")
-            .setDefaultValue("NONE").setOptional(true);
+    public static final StringSettingDefinition FEES_DEFINITION = new StringSettingDefinition()
+            .setGroup(GROUP)
+            .setOrder(ORDER_5)
+            .setKey(FEES)
+            .setTitle("Fees")
+            .setDescription("SOS Service Fees.")
+            .setDefaultValue("NONE")
+            .setOptional(true);
 
     public static final StringSettingDefinition SERVICE_TYPE_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_6).setKey(SERVICE_TYPE).setTitle("Service Type")
-            .setDescription("SOS Service Type.").setDefaultValue("OGC:SOS");
+            .setGroup(GROUP)
+            .setOrder(ORDER_6)
+            .setKey(SERVICE_TYPE)
+            .setTitle("Service Type")
+            .setDescription("SOS Service Type.")
+            .setDefaultValue("OGC:SOS");
 
     public static final StringSettingDefinition SERVICE_TYPE_CODE_SPACE_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_7).setKey(SERVICE_TYPE_CODE_SPACE).setTitle("Service Type Code Space")
-            .setDescription("SOS Service Type Code Space.").setOptional(true);
+            .setGroup(GROUP)
+            .setOrder(ORDER_7)
+            .setKey(SERVICE_TYPE_CODE_SPACE)
+            .setTitle("Service Type Code Space")
+            .setDescription("SOS Service Type Code Space.")
+            .setOptional(true);
 
     public static final FileSettingDefinition FILE_DEFINITION = new FileSettingDefinition()
             .setGroup(GROUP)

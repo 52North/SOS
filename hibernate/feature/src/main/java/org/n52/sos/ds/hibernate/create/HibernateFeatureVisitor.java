@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,6 +35,7 @@ import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureVisitor;
 import org.n52.sos.ds.hibernate.entities.feature.Specimen;
 import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
+import org.n52.sos.ds.hibernate.entities.feature.wml.MonitoringPoint;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -54,12 +55,13 @@ public class HibernateFeatureVisitor implements FeatureVisitor<AbstractFeature> 
         this.storage3DEPSG = storage3DEPSG;
     }
     
-    
     public AbstractFeature visit(FeatureOfInterest f) throws OwsExceptionReport {
         if (f instanceof Specimen) {
             return visit((Specimen)f);
         } else if (f instanceof EnvironmentalMonitoringFacility) {
             return visit((EnvironmentalMonitoringFacility)f);
+        } else if (f instanceof MonitoringPoint) {
+            return visit((MonitoringPoint)f);
         }
         return new FeatureOfInterestCreator(storageEPSG, storage3DEPSG).create(f, i18n, version, session);
     }
@@ -70,5 +72,10 @@ public class HibernateFeatureVisitor implements FeatureVisitor<AbstractFeature> 
 
     public AbstractFeature visit(EnvironmentalMonitoringFacility f) throws OwsExceptionReport {
         return new EnvironmentalMonitoringFacilityCreator(storageEPSG, storage3DEPSG).create(f, i18n, version, session);
+    }
+
+    @Override
+    public AbstractFeature visit(MonitoringPoint f) throws OwsExceptionReport {
+        return new MonitoringPointCreator(storageEPSG, storage3DEPSG).create(f, i18n, version, session);
     }
 }

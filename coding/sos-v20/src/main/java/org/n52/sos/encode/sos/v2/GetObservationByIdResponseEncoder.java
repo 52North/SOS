@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,6 +39,7 @@ import net.opengis.sos.x20.GetObservationByIdResponseType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.ObservationEncoder;
+import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.OmObservation;
@@ -62,7 +63,8 @@ import com.google.common.collect.Sets;
  * 
  * @since 4.0.0
  */
-public class GetObservationByIdResponseEncoder extends AbstractObservationResponseEncoder<GetObservationByIdResponse> {
+public class GetObservationByIdResponseEncoder extends AbstractObservationResponseEncoder<GetObservationByIdResponse>
+        implements StreamingDataEncoder {
     public static final String GML_ID = "sf_1";
 
     public GetObservationByIdResponseEncoder() {

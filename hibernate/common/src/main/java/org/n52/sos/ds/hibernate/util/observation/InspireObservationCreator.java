@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,46 +45,20 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmObservation;
 
-public class InspireObservationCreator implements AdditionalObservationCreator<Series> {
+public class InspireObservationCreator extends AbstractAdditionalObservationCreator<Series> {
 
     private final static String NS_OMSO_30 = "http://inspire.ec.europa.eu/schemas/omso/3.0";
 
     private static final Set<AdditionalObservationCreatorKey> KEYS =
-            AdditionalObservationCreatorRepository.encoderKeysForElements(NS_OMSO_30, 
-                    AbstractSeriesObservation.class, 
+            AdditionalObservationCreatorRepository.encoderKeysForElements(NS_OMSO_30,
+                    AbstractSeriesObservation.class,
                     AbstractEReportingObservation.class,
-                    Series.class, 
+                    Series.class,
                     EReportingSeries.class);
 
     @Override
     public Set<AdditionalObservationCreatorKey> getKeys() {
         return Collections.unmodifiableSet(KEYS);
-    }
-
-    @Override
-    public OmObservation create(OmObservation omObservation, Series series) {
-        SeriesDAO seriesDAO = new SeriesDAO();
-        // TODO remove from PointObservation, profile, multipoint
-        if (series.isSetIdentifier() && !omObservation.isSetIdentifier()) {
-            omObservation.setIdentifier(seriesDAO.getIdentifier(series));
-        }
-        if (series.isSetName() && !omObservation.isSetName()) {
-            omObservation.setName(seriesDAO.getName(series));
-        }
-        if (series.isSetDescription() && !omObservation.isSetDescription()) {
-            omObservation.setDescription(series.getDescription());
-        }
-        return omObservation;
-    }
-
-    @Override
-    public OmObservation create(OmObservation omObservation, Observation<?> observation) {
-        return omObservation;
-    }
-
-    @Override
-    public OmObservation add(OmObservation sosObservation, Observation<?> observation) {
-        return sosObservation;
     }
 
     @Override
@@ -100,13 +74,9 @@ public class InspireObservationCreator implements AdditionalObservationCreator<S
         create(omObservation, observation);
         if (observation instanceof AbstractSeriesObservation) {
             addRelatedSeries(omObservation, new RelatedSeriesDAO()
-                    .getRelatedSeries(((AbstractSeriesObservation) observation).getSeries(), session));
+                    .getRelatedSeries(((AbstractSeriesObservation<?>) observation).getSeries(), session));
         }
         return omObservation;
-    }
-
-    private void addRelatedSeries(OmObservation omObservation, List<RelatedSeries> relatedSeries) throws CodedException {
-        new RelatedSeriesAdder(omObservation, relatedSeries).add();
     }
 
     @Override
@@ -114,9 +84,12 @@ public class InspireObservationCreator implements AdditionalObservationCreator<S
         add(omObservation, observation);
         if (observation instanceof AbstractSeriesObservation) {
             addRelatedSeries(omObservation, new RelatedSeriesDAO()
-                    .getRelatedSeries(((AbstractSeriesObservation) observation).getSeries(), session));
+                    .getRelatedSeries(((AbstractSeriesObservation<?>) observation).getSeries(), session));
         }
         return omObservation;
     }
 
+    private void addRelatedSeries(OmObservation omObservation, List<RelatedSeries> relatedSeries) throws CodedException {
+        new RelatedSeriesAdder(omObservation, relatedSeries).add();
+    }
 }

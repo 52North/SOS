@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,25 +37,22 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import net.opengis.om.x20.OMObservationType;
-
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
-
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.encode.AbstractOmEncoderv20;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.EncodingValues;
-import org.n52.sos.encode.ObservationEncoder;
 import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractMetaData;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
@@ -81,6 +78,8 @@ import org.n52.sos.w3c.W3CConstants;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+
+import net.opengis.om.x20.OMObservationType;
 
 /**
  * Abstract implementation of {@link XmlStreamWriter} for writing
@@ -162,14 +161,9 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         writeAddtitionalNamespaces();
         String observationID = addGmlId(observation);
         writeNewLine();
-        if (observation.isSetIdentifier()) {
-            writeIdentifier(observation.getIdentifierCodeWithAuthority());
-            writeNewLine();
-        }
-        if (observation.isSetDescription()) {
-            writeDescription(observation.getDescription());
-            writeNewLine();
-        }
+        checkAndWriteIdentifier();
+        checkAndWriteName();
+        checkAndWriteDescription();
         if (observation.getObservationConstellation().isSetObservationType()) {
             writeObservationType(observation.getObservationConstellation().getObservationType());
             writeNewLine();
@@ -206,6 +200,29 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         indent++;
     }
 
+    protected void checkAndWriteIdentifier() throws OwsExceptionReport, XMLStreamException {
+        if (observation.isSetIdentifier()) {
+            writeIdentifier(observation.getIdentifierCodeWithAuthority());
+            writeNewLine();
+        }        
+    }
+
+    protected void checkAndWriteName() throws OwsExceptionReport, XMLStreamException {
+        if (observation.isSetName()) {
+            for (CodeType name : observation.getName()) {
+                writeName(name);
+                writeNewLine();   
+            }
+        }
+    }
+
+    protected void checkAndWriteDescription() throws XMLStreamException {
+        if (observation.isSetDescription()) {
+            writeDescription(observation.getDescription());
+            writeNewLine();
+        }
+    }
+
     /**
      * Write {@link CodeWithAuthority} as gml:identifier to stream
      *
@@ -222,6 +239,18 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
                         CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, identifier));
         if (encoder != null) {
             writeXmlObject((XmlObject) encoder.encode(identifier), GmlConstants.QN_IDENTIFIER_32);
+        } else {
+            throw new NoApplicableCodeException()
+                    .withMessage("Error while encoding geometry value, needed encoder is missing!");
+        }
+    }
+    
+    protected void writeName(CodeType name) throws OwsExceptionReport, XMLStreamException {
+        Encoder<?, CodeType> encoder =
+                CodingRepository.getInstance().getEncoder(
+                        CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, name));
+        if (encoder != null) {
+            writeXmlObject((XmlObject) encoder.encode(name), GmlConstants.QN_NAME_32);
         } else {
             throw new NoApplicableCodeException()
                     .withMessage("Error while encoding geometry value, needed encoder is missing!");
@@ -581,6 +610,10 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         return OmConstants.QN_OM_20_OBSERVATION;
     }
 
+    protected OmObservation getObservation() {
+        return observation;
+    }
+    
     /**
      * Check the encoded om:result content for ...PropertyType
      *

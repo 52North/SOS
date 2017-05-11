@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,10 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -79,11 +78,25 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         return c.list();
     }
 
-    public Geometry getFeatureExtent(Set<String> identifiers, Session session) {
-        return (Geometry) getDefaultCriteria(session)
-                .add(QueryHelper.getCriterionForIdentifiers(FeatureOfInterest.IDENTIFIER, identifiers))
-                .setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY))
-                .uniqueResult();
+    @SuppressWarnings("unchecked")
+    public Geometry getFeatureExtent(Collection<String> identifiers, Session session) {
+        Geometry geom = null;
+        if (identifiers != null && !identifiers.isEmpty()) {
+            int count = 1;
+            for (List<String> ids : QueryHelper.getListsForIdentifiers(identifiers)) {
+                Criteria c = getDefaultCriteria(session);
+                addIdentifierRestriction(c, ids);
+                c.setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY));
+                LOGGER.debug("QUERY getFeatureExtent(identifiers)({}): {}", count++, HibernateHelper.getSqlString(c));
+                mergeGeometries(geom, c.list());
+            }
+        } else {
+            Criteria c = getDefaultCriteria(session);
+            c.setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY));
+            LOGGER.debug("QUERY getFeatureExtent(identifiers): {}", HibernateHelper.getSqlString(c));
+            mergeGeometries(geom, c.list());
+        }
+        return geom;
     }
 
     /**
@@ -99,12 +112,20 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
     public List<AbstractFeatureOfInterest> getFeatureOfInterestObjects(final Collection<String> identifiers,
             final Session session) {
         if (identifiers != null && !identifiers.isEmpty()) {
-            Criteria criteria = getDefaultCriteria(session)
-                    .add(QueryHelper.getCriterionForIdentifiers(FeatureOfInterest.IDENTIFIER, identifiers));
-            LOGGER.debug("QUERY getFeatureOfInterestObjects(identifiers): {}", HibernateHelper.getSqlString(criteria));
-            return criteria.list();
+            List<AbstractFeatureOfInterest> features = new ArrayList<>();
+            int count = 1;
+            for (List<String> ids : QueryHelper.getListsForIdentifiers(identifiers)) {
+                Criteria c = getDefaultCriteria(session);
+                addIdentifierRestriction(c, ids);
+                LOGGER.debug("QUERY getFeatureOfInterestObjects(identifiers)({}): {}", count++, HibernateHelper.getSqlString(c));
+                features.addAll(c.list());
+            }
+            return features;
+        } else {
+            Criteria c = getDefaultCriteria(session);
+            LOGGER.debug("QUERY getFeatureOfInterestObjects(identifiers): {}", HibernateHelper.getSqlString(c));
+            return c.list();
         }
-        return Collections.emptyList();
     }
     
     protected AbstractFeatureOfInterest getFeatureOfInterest(final String identifier, final Geometry geometry,
@@ -125,14 +146,41 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
     }
 
     @SuppressWarnings("unchecked")
-    public List<AbstractFeatureOfInterest> getFeatures(Set<String> identifiers, List<SpatialFilter> filters,
+    public List<AbstractFeatureOfInterest> getFeatures(Collection<String> identifiers, Collection<SpatialFilter> filters,
             Session session) throws OwsExceptionReport {
-        final Criteria c = getDefaultCriteria(session);
-        boolean filtered = false;
         if (CollectionHelper.isNotEmpty(identifiers)) {
-            c.add(QueryHelper.getCriterionForIdentifiers(FeatureOfInterest.IDENTIFIER, identifiers));
-            filtered = true;
+            return getFeaturesChunks(identifiers, filters, session);
+        } else {
+            final Criteria c = getDefaultCriteria(session);
+            addSpatialFilters(c, filters);
+            LOGGER.debug("QUERY getFeatures(identifiers)): {}", HibernateHelper.getSqlString(c));
+            return c.list();
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private List<AbstractFeatureOfInterest> getFeaturesChunks(Collection<String> identifiers,
+            Collection<SpatialFilter> filters, Session session) throws OwsExceptionReport {
+        List<AbstractFeatureOfInterest> features = new ArrayList<>();
+        int count = 1;
+        for (List<String> ids : QueryHelper.getListsForIdentifiers(identifiers)) {
+            Criteria c = getDefaultCriteria(session);
+            addIdentifierRestriction(c, ids);
+            addSpatialFilters(c, filters);
+            LOGGER.debug("QUERY getFeatures(identifiers)({}): {}", count++, HibernateHelper.getSqlString(c));
+            features.addAll(c.list());
+        }
+        return features;
+    }
+    
+    private Criteria addIdentifierRestriction(Criteria c, Collection<String> identifiers) {
+        if (CollectionHelper.isNotEmpty(identifiers)) {
+            c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, identifiers));
+        }
+        return c;
+    }
+    
+    private void addSpatialFilters(Criteria c, Collection<SpatialFilter> filters) throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(filters)) {
             final Disjunction disjunction = Restrictions.disjunction();
             for (final SpatialFilter filter : filters) {
@@ -140,15 +188,21 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
                         filter.getGeometry()));
             }
             c.add(disjunction);
-            filtered = true;
-        }
-        if (filtered) {
-            return c.list();
-        } else {
-            return null;
         }
     }
     
+    private void mergeGeometries(Geometry geom, List<Object> list) {
+        for (Object extent : list) {
+            if (extent != null) {
+                if (geom == null) {
+                    geom =  (Geometry) extent;
+                } else {
+                    geom.union((Geometry) extent);
+                }
+            }
+        }
+    }
+
     public void updateFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest, AbstractFeature abstractFeature, Session session) {
         addName(abstractFeature, featureOfInterest, session);
         session.saveOrUpdate(featureOfInterest);

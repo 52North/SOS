@@ -40,7 +40,7 @@
         <property name="timeseriesMetadataService" ref="timeseriesService" />
         <property name="timeseriesDataService" ref="timeseriesService" />
         <!--<property name="preRenderingTask" ref="preRenderingJobV1" />-->
-        <property name="requestIntervalRestriction" value="P1Y1D" />
+        <property name="requestIntervalRestriction" value="${request.interval.restriction}" />
     </bean>
 
 </beans>

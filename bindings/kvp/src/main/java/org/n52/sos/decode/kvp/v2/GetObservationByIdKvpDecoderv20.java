@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,14 +34,17 @@ import java.util.Set;
 
 import org.n52.sos.decode.DecoderKey;
 import org.n52.sos.decode.OperationDecoderKey;
+import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.sos.exception.ows.concrete.ParameterNotSupportedException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.KvpHelper;
 import org.n52.sos.util.http.MediaTypes;
 
@@ -75,6 +78,8 @@ public class GetObservationByIdKvpDecoderv20 extends AbstractObservationKvpDecod
                     if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationByIdParams.observation.name())) {
                         request.setObservationIdentifier(KvpHelper.checkParameterMultipleValues(parameterValues,
                                 parameterName));
+                    } else {
+                        exceptions.add(new ParameterNotSupportedException(parameterName));
                     }
                 }
             } catch (final OwsExceptionReport owse) {
@@ -89,7 +94,10 @@ public class GetObservationByIdKvpDecoderv20 extends AbstractObservationKvpDecod
         if (!request.isSetVersion()) {
             exceptions.add(new MissingVersionParameterException());
         }
-
+        
+        if (!CollectionHelper.isNotEmpty(request.getObservationIdentifier())) {
+            exceptions.add(new MissingParameterValueException(Sos2Constants.GetObservationByIdParams.observation));
+        }
         exceptions.throwIfNotEmpty();
 
         return request;

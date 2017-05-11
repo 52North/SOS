@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -63,7 +63,8 @@ import com.google.common.collect.Sets;
  * 
  * @since 4.0.0
  */
-public class GetObservationResponseEncoder extends AbstractObservationResponseEncoder<GetObservationResponse> implements StreamingDataEncoder {
+public class GetObservationResponseEncoder extends AbstractObservationResponseEncoder<GetObservationResponse>
+        implements StreamingDataEncoder {
     public GetObservationResponseEncoder() {
         super(SosConstants.Operations.GetObservation.name(), GetObservationResponse.class);
     }
@@ -84,16 +85,16 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
         // TODO iterate over observation collection and remove processed
         // observation
         for (OmObservation o : response.getObservationCollection()) {
-             if (encoder instanceof StreamingDataEncoder) {
-                 xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(o));
-             } else {
-                 if (o.getValue() instanceof AbstractStreaming) {
-                     processAbstractStreaming(xbResponse, (AbstractStreaming) o.getValue(), encoder,
-                             response.isSetMergeObservation());
-                 } else {
-                     xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(o));
-                 }
-             }
+            if (encoder instanceof StreamingDataEncoder) {
+                xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(o));
+            } else {
+                if (o.getValue() instanceof AbstractStreaming) {
+                    processAbstractStreaming(xbResponse, (AbstractStreaming) o.getValue(), encoder,
+                            response.isSetMergeObservation());
+                } else {
+                    xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(o));
+                }
+            }
         }
         // in a single observation the gml:ids must be unique
         if (response.getObservationCollection().size() > 1) {
@@ -103,13 +104,12 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
     }
 
     private void processAbstractStreaming(GetObservationResponseType xbResponse, AbstractStreaming value,
-            ObservationEncoder<XmlObject, OmObservation> encoder, boolean merge) throws UnsupportedEncoderInputException, OwsExceptionReport {
+            ObservationEncoder<XmlObject, OmObservation> encoder, boolean merge)
+            throws UnsupportedEncoderInputException, OwsExceptionReport {
         if (value instanceof StreamingObservation) {
-            processStreamingObservation(xbResponse, (StreamingObservation) value, encoder,
-                    merge);
+            processStreamingObservation(xbResponse, (StreamingObservation) value, encoder, merge);
         } else if (value instanceof StreamingValue) {
-            processStreamingValue(xbResponse, (StreamingValue<?>) value, encoder,
-                    merge);
+            processStreamingValue(xbResponse, (StreamingValue<?>) value, encoder, merge);
         } else {
             throw new UnsupportedEncoderInputException(this, value);
         }
@@ -126,15 +126,12 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
             } else {
                 do {
                     OmObservation obs = streamingValue.nextSingleObservation();
-                    if (obs != null) {
-                        xbResponse.addNewObservationData().addNewOMObservation()
-                                .set(encoder.encode(obs));
-                    }
+                    xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
                 } while (streamingValue.hasNextValue());
             }
         } else if (streamingValue.getValue() != null) {
-            xbResponse.addNewObservationData().addNewOMObservation()
-                    .set(encoder.encode(streamingValue.getValue().getValue()));
+            OmObservation obs = streamingValue.getValue().getValue();
+            xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
         }
     }
 
@@ -148,16 +145,13 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
                 }
             } else {
                 do {
-                    OmObservation observation = streamingObservation.nextSingleObservation();
-                    if (observation != null) {
-                        xbResponse.addNewObservationData().addNewOMObservation()
-                                .set(encoder.encode(observation));
-                    }
+                    OmObservation obs = streamingObservation.nextSingleObservation();
+                    xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
                 } while (streamingObservation.hasNextValue());
             }
         } else if (streamingObservation.getValue() != null) {
-            xbResponse.addNewObservationData().addNewOMObservation()
-                    .set(encoder.encode(streamingObservation.getValue().getValue()));
+            OmObservation obs = streamingObservation.getValue().getValue();
+            xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
         }
     }
 

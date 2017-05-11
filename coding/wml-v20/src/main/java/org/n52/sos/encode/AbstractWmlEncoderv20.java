@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,30 +38,35 @@ import java.util.Set;
 import org.apache.xmlbeans.GDuration;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
+import org.isotc211.x2005.gmd.CIResponsiblePartyType;
 import org.joda.time.DateTime;
 
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.iso.gmd.CiResponsibleParty;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.gml.VerticalDatum;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
+import org.n52.sos.ogc.series.wml.WmlMonitoringPoint;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.wml.ObservationProcess;
-import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.sos.ogc.series.wml.ObservationProcess;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
@@ -71,14 +76,22 @@ import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.MediaType;
+import org.n52.sos.w3c.Nillable;
+import org.n52.sos.w3c.xlink.Reference;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3.x1999.xlink.ActuateType;
+import org.w3.x1999.xlink.ShowType;
+import org.w3.x1999.xlink.TypeType;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
 
+import net.opengis.gml.x32.VerticalDatumPropertyType;
+import net.opengis.gml.x32.VerticalDatumType;
 import net.opengis.om.x20.OMObservationDocument;
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.samplingSpatial.x20.ShapeType;
@@ -101,7 +114,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     @SuppressWarnings("unchecked")
     protected static final Set<EncoderKey> DEFAULT_ENCODER_KEYS = CollectionHelper
-            .union(CodingHelper.encoderKeysForElements(WaterMLConstants.NS_WML_20, AbstractFeature.class), CodingHelper
+            .union(CodingHelper.encoderKeysForElements(WaterMLConstants.NS_WML_20, AbstractFeature.class, WmlMonitoringPoint.class), CodingHelper
                     .encoderKeysForElements(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, ObservationProcess.class));
 
     private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS =
@@ -202,13 +215,14 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             && !getObservationResonse.getObservationCollection().isEmpty()) {
             Collection<OmObservation> sosObservations = getObservationResonse.getObservationCollection();
             if (sosObservations.size() == 1) {
+               
                 OMObservationDocument omObservationDoc =
                         OMObservationDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
                 for (OmObservation sosObservation : sosObservations) {
-                    Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
-                    String gmlId = "sf_" + sfIdCounter;
-                    foiHelper.put(HelperValues.GMLID, gmlId);
-                    omObservationDoc.setOMObservation((OMObservationType) encodeOmObservation(sosObservation, foiHelper));
+                        Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
+                        String gmlId = "sf_" + sfIdCounter;
+                        foiHelper.put(HelperValues.GMLID, gmlId);
+                        omObservationDoc.setOMObservation((OMObservationType) encodeOmObservation(sosObservation, foiHelper));
                 }
                 return omObservationDoc;
             } else {
@@ -216,23 +230,23 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                         CollectionDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
                 CollectionType wmlCollection = xmlCollectionDoc.addNewCollection();
                 for (OmObservation sosObservation : sosObservations) {
-                    Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
-                    String gmlId;
-                    // FIXME CodeWithAuthority VS. String keys
-                    if (gmlID4sfIdentifier.containsKey(sosObservation.getObservationConstellation()
-                            .getFeatureOfInterest().getIdentifierCodeWithAuthority())) {
-                        gmlId = gmlID4sfIdentifier.get(sosObservation.getObservationConstellation()
-                                .getFeatureOfInterest().getIdentifierCodeWithAuthority());
-                        foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(true));
-                    } else {
-                        gmlId = "sf_" + sfIdCounter;
-                        gmlID4sfIdentifier.put(sosObservation.getObservationConstellation().getFeatureOfInterest()
-                                .getIdentifierCodeWithAuthority(), gmlId);
-                        foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(false));
-                    }
-                    foiHelper.put(HelperValues.GMLID, gmlId);
-                    wmlCollection.addNewObservationMember().setOMObservation(
-                            (OMObservationType) encodeOmObservation(sosObservation, foiHelper));
+                        Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
+                        String gmlId;
+                        // FIXME CodeWithAuthority VS. String keys
+                        if (gmlID4sfIdentifier.containsKey(sosObservation.getObservationConstellation()
+                                .getFeatureOfInterest().getIdentifierCodeWithAuthority())) {
+                            gmlId = gmlID4sfIdentifier.get(sosObservation.getObservationConstellation()
+                                    .getFeatureOfInterest().getIdentifierCodeWithAuthority());
+                            foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(true));
+                        } else {
+                            gmlId = "sf_" + sfIdCounter;
+                            gmlID4sfIdentifier.put(sosObservation.getObservationConstellation().getFeatureOfInterest()
+                                    .getIdentifierCodeWithAuthority(), gmlId);
+                            foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(false));
+                        }
+                        foiHelper.put(HelperValues.GMLID, gmlId);
+                        wmlCollection.addNewObservationMember().setOMObservation(
+                                (OMObservationType) encodeOmObservation(sosObservation, foiHelper));
                 }
                 return xmlCollectionDoc;
             }
@@ -254,8 +268,8 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      */
     protected XmlObject createMonitoringPoint(AbstractFeature absFeature)
             throws OwsExceptionReport {
-        if (absFeature instanceof SamplingFeature) {
-            SamplingFeature sampFeat = (SamplingFeature) absFeature;
+        if (absFeature instanceof AbstractSamplingFeature) {
+            AbstractSamplingFeature sampFeat = (AbstractSamplingFeature) absFeature;
             StringBuilder builder = new StringBuilder();
             builder.append("mp_");
             builder.append(JavaHelper.generateID(absFeature.getIdentifierCodeWithAuthority().getValue()));
@@ -280,22 +294,22 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                             "Error while encoding GetFeatureOfInterest response, invalid samplingFeature description!");
                 }
             }
-            MonitoringPointType monitoringPoint = monitoringPointDoc.addNewMonitoringPoint();
+            MonitoringPointType mpt = monitoringPointDoc.addNewMonitoringPoint();
             // set gml:id
-            monitoringPoint.setId(absFeature.getGmlId());
+            mpt.setId(absFeature.getGmlId());
 
             if (sampFeat.isSetIdentifier()
                 && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifierCodeWithAuthority().getValue(),
                                                                           Sos2Constants.SERVICEVERSION)) {
                 XmlObject xmlObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sampFeat.getIdentifierCodeWithAuthority());
                 if (xmlObject != null) {
-                    monitoringPoint.addNewIdentifier().set(xmlObject);
+                    mpt.addNewIdentifier().set(xmlObject);
                 }
             }
 
             if (sampFeat.isSetName()) {
                 for (CodeType sosName : sampFeat.getName()) {
-                    monitoringPoint.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sosName));
+                    mpt.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sosName));
                 }
             }
 
@@ -309,7 +323,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                 if (sampFeat.getSampledFeatures().size() == 1) {
                     XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32,
                             sampFeat.getSampledFeatures().get(0));
-                    monitoringPoint.addNewSampledFeature().set(encodeObjectToXml);
+                    mpt.addNewSampledFeature().set(encodeObjectToXml);
                 } else {
                     FeatureCollection featureCollection = new FeatureCollection();
                     featureCollection.setGmlId("sampledFeatures_" + absFeature.getGmlId());
@@ -318,18 +332,18 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                     }
                     XmlObject encodeObjectToXml =
                             CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection);
-                    monitoringPoint.addNewSampledFeature().set(encodeObjectToXml);
+                    mpt.addNewSampledFeature().set(encodeObjectToXml);
                 }
             } else {
-                monitoringPoint.addNewSampledFeature().setHref(GmlConstants.NIL_UNKNOWN);
+                mpt.addNewSampledFeature().setHref(GmlConstants.NIL_UNKNOWN);
             }
 
             if (sampFeat.isSetParameter()) {
-                addParameter(monitoringPoint, sampFeat);
+                addParameter(mpt, sampFeat);
             }
 
             // set position
-            ShapeType xbShape = monitoringPoint.addNewShape();
+            ShapeType xbShape = mpt.addNewShape();
             Encoder<XmlObject, Geometry> encoder = CodingRepository.getInstance()
                     .getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sampFeat.getGeometry()));
             if (encoder != null) {
@@ -341,6 +355,9 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             } else {
                 throw new NoApplicableCodeException()
                         .withMessage("Error while encoding geometry for feature, needed encoder is missing!");
+            }
+            if (absFeature instanceof WmlMonitoringPoint) {
+                addMonitoringPointValues(mpt, (WmlMonitoringPoint)absFeature);
             }
             sampFeat.wasEncoded();
             return monitoringPointDoc;
@@ -605,7 +622,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private void addParameter(MonitoringPointType monitoringPoint, SamplingFeature sampFeat)
+    private void addParameter(MonitoringPointType monitoringPoint, AbstractSamplingFeature sampFeat)
             throws OwsExceptionReport {
         for (NamedValue<?> namedValue : sampFeat.getParameters()) {
             XmlObject encodeObjectToXml = createNamedValue(namedValue);
@@ -650,4 +667,132 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
         return new DateTime().minusYears(1000);
     }
 
+    private void addMonitoringPointValues(MonitoringPointType mpt, WmlMonitoringPoint monitoringPoint) throws OwsExceptionReport {
+        if (monitoringPoint.hasRelatedParty()) {
+            addRelatedParty(mpt, monitoringPoint.getRelatedParty());
+        }
+        if (monitoringPoint.hasMonitoringType()) {
+            addMonitoringType(mpt, monitoringPoint.getMonitoringType());
+        }
+        if (monitoringPoint.hasDescriptionReference()){
+            addDescriptionReference(mpt, monitoringPoint.getDescriptionReference());
+        }
+        if (monitoringPoint.hasVerticalDatum()) {
+            addVerticalDatum(mpt, monitoringPoint.getVerticalDatum());
+        }
+    }
+
+    private void addRelatedParty(MonitoringPointType mpt, List<Referenceable<CiResponsibleParty>> relatedParties)
+            throws OwsExceptionReport {
+        for (Referenceable<CiResponsibleParty> relatedParty : relatedParties) {
+            CIResponsiblePartyPropertyType citppt = mpt.addNewRelatedParty();
+            if (relatedParty.isReference()) {
+                Reference reference = relatedParty.getReference();
+                if (reference.getActuate().isPresent()) {
+                    citppt.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+                }
+                if (reference.getArcrole().isPresent()) {
+                    citppt.setHref(reference.getArcrole().get());
+                }
+                if (reference.getHref().isPresent()) {
+                    citppt.setHref(reference.getHref().get().toString());
+                }
+                if (reference.getRole().isPresent()) {
+                    citppt.setRole(reference.getRole().get());
+                }
+                if (reference.getShow().isPresent()) {
+                    citppt.setShow(ShowType.Enum.forString(reference.getShow().get()));
+                }
+                if (reference.getTitle().isPresent()) {
+                    citppt.setTitle(reference.getTitle().get());
+                }
+                if (reference.getType().isPresent()) {
+                    citppt.setType(TypeType.Enum.forString(reference.getType().get()));
+                }
+            } else {
+                if (relatedParty.isInstance()) {
+                    Nillable<CiResponsibleParty> nillable = relatedParty.getInstance();
+                    if (nillable.isPresent()) {
+                        XmlObject xml = CodingHelper.encodeObjectToXml(nillable.get().getDefaultElementEncoding(),
+                                nillable.get());
+                        if (xml != null && xml instanceof CIResponsiblePartyType) {
+                            citppt.setCIResponsibleParty((CIResponsiblePartyType) xml);
+                        } else {
+                            citppt.setNil();
+                            citppt.setNilReason(Nillable.missing().get());
+                        }
+                    } else {
+                        citppt.setNil();
+                        if (nillable.hasReason()) {
+                            citppt.setNilReason(nillable.getNilReason().get());
+                        } else {
+                            citppt.setNilReason(Nillable.missing().get());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void addMonitoringType(MonitoringPointType mpt, List<ReferenceType> monitoringType) throws OwsExceptionReport {
+        for (ReferenceType referenceType : monitoringType) {
+            mpt.addNewMonitoringType().set(encodeGML32(referenceType));
+        }
+    }
+
+    private void addDescriptionReference(MonitoringPointType mpt, List<ReferenceType> descriptionReference) throws OwsExceptionReport {
+        for (ReferenceType referenceType : descriptionReference) {
+            mpt.addNewDescriptionReference2().set(encodeGML32(referenceType));
+        }
+    }
+
+    private void addVerticalDatum(MonitoringPointType mpt, List<Referenceable<VerticalDatum>> verticalDatums) throws OwsExceptionReport {
+        for (Referenceable<VerticalDatum> verticalDatum : verticalDatums) {
+            VerticalDatumPropertyType vdpt = mpt.addNewVerticalDatum();
+            if (verticalDatum.isReference()) {
+                Reference reference = verticalDatum.getReference();
+                if (reference.getActuate().isPresent()) {
+                    vdpt.setActuate(ActuateType.Enum.forString(reference.getActuate().get()));
+                }
+                if (reference.getArcrole().isPresent()) {
+                    vdpt.setHref(reference.getArcrole().get());
+                }
+                if (reference.getHref().isPresent()) {
+                    vdpt.setHref(reference.getHref().get().toString());
+                }
+                if (reference.getRole().isPresent()) {
+                    vdpt.setRole(reference.getRole().get());
+                }
+                if (reference.getShow().isPresent()) {
+                    vdpt.setShow(ShowType.Enum.forString(reference.getShow().get()));
+                }
+                if (reference.getTitle().isPresent()) {
+                    vdpt.setTitle(reference.getTitle().get());
+                }
+                if (reference.getType().isPresent()) {
+                    vdpt.setType(TypeType.Enum.forString(reference.getType().get()));
+                }
+            } else { 
+                if (verticalDatum.isInstance()) {
+                    Nillable<VerticalDatum> nillable = verticalDatum.getInstance();
+                    if (nillable.isPresent()) {
+                        XmlObject xml = encodeGML32(nillable.get());
+                        if (xml != null && xml instanceof VerticalDatumType) {
+                            vdpt.setVerticalDatum((VerticalDatumType) xml);
+                        } else {
+                            vdpt.setNil();
+                            vdpt.setNilReason(Nillable.missing().get());
+                        }
+                    } else {
+                        vdpt.setNil();
+                        if (nillable.hasReason()) {
+                            vdpt.setNilReason(nillable.getNilReason().get());
+                        } else {
+                            vdpt.setNilReason(Nillable.missing().get());
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

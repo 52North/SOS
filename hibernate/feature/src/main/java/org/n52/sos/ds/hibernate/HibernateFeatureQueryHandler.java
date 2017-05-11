@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -51,7 +51,6 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
@@ -61,7 +60,7 @@ import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -238,7 +237,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
      * documentation in the super class
      */
     @Override
-    public String insertFeature(final SamplingFeature samplingFeature, final Object connection)
+    public String insertFeature(final AbstractSamplingFeature samplingFeature, final Object connection)
             throws OwsExceptionReport {
         if (StringHelper.isNotEmpty(samplingFeature.getUrl())) {
             if (samplingFeature.isSetIdentifier()) {
@@ -340,7 +339,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         return feature.accept(new HibernateFeatureVisitor(queryObject.getI18N(), queryObject.getVersion(), getStorageEPSG(), getStorage3DEPSG(), session));
     }
 
-    protected AbstractFeatureOfInterest insertFeatureOfInterest(final SamplingFeature samplingFeature, final Session session)
+    protected AbstractFeatureOfInterest insertFeatureOfInterest(final AbstractSamplingFeature samplingFeature, final Session session)
             throws OwsExceptionReport {
         if (!getGeometryHandler().isSpatialDatasource()) {
             throw new NotYetSupportedException("Insertion of full encoded features for non spatial datasources");
@@ -349,11 +348,11 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         return getFeatureDAO().insertFeature(samplingFeature, session);
     }
 
-    private void checkForSwitchCoordinateAxis(SamplingFeature samplingFeature) throws InvalidSridException, OwsExceptionReport {
+    private void checkForSwitchCoordinateAxis(AbstractSamplingFeature samplingFeature) throws InvalidSridException, OwsExceptionReport {
         samplingFeature.setGeometry(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(samplingFeature.getGeometry()));
         for (AbstractFeature sampledFeature : samplingFeature.getSampledFeatures()) {
-            if (sampledFeature instanceof SamplingFeature) {
-                checkForSwitchCoordinateAxis((SamplingFeature)sampledFeature);
+            if (sampledFeature instanceof AbstractSamplingFeature) {
+                checkForSwitchCoordinateAxis((AbstractSamplingFeature)sampledFeature);
             }
         }
     }
@@ -374,8 +373,8 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         final List<AbstractFeatureOfInterest> featuresOfInterest =
                 new FeatureOfInterestDAO().getFeatureOfInterestObjects(queryObject.getFeatureIdentifiers(), session);
         for (final AbstractFeatureOfInterest feature : featuresOfInterest) {
-            final SamplingFeature sosAbstractFeature =
-                    (SamplingFeature) createSosAbstractFeature(feature, queryObject);
+            final AbstractSamplingFeature sosAbstractFeature =
+                    (AbstractSamplingFeature) createSosAbstractFeature(feature, queryObject);
             if (!hasSpatialFilter) {
                 featureMap.put(sosAbstractFeature.getIdentifierCodeWithAuthority().getValue(), sosAbstractFeature);
             } else {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,7 @@ import java.util.Map;
 
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosEnvelope;
 
@@ -183,7 +183,7 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
      * @return Identifier of the inserted feature
      * @throws OwsExceptionReport
      */
-    String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport;
+    String insertFeature(AbstractSamplingFeature samplingFeature, Object connection) throws OwsExceptionReport;
 
     @Deprecated
     int getDefaultEPSG();

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -152,6 +152,8 @@ public interface ControllerConstants {
 
         String ADMIN_DATABASE_SETTINGS = "/admin/datasource/settings";
 
+        String ADMIN_DATABASE_ADD_SAMPLEDATA = "/admin/datasource/addSampledata";
+
         String ADMIN_CACHE = "/admin/cache";
 
         String ADMIN_CACHE_SUMMARY = "/admin/cache/summary";
@@ -164,7 +166,7 @@ public interface ControllerConstants {
 
         String ADMIN_DATABASE_UPDATE_SCRIPT = "/admin/datasource/updatescript";
 
-        String ADMIN_DATABASE_REMOVE_TEST_DATA
+        String ADMIN_DATABASE_REMOVE_TEST_DATA 
                 = "/admin/datasource/testdata/remove";
 
         String ADMIN_DATABASE_CREATE_TEST_DATA

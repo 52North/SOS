@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,7 +42,7 @@ import org.n52.sos.w3c.xlink.Referenceable;
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Geometry;
 
-public class SfSpecimen extends SamplingFeature {
+public class SfSpecimen extends AbstractSamplingFeature {
     
     private static final long serialVersionUID = -2500483279808128025L;
     /*
@@ -247,5 +247,13 @@ public class SfSpecimen extends SamplingFeature {
     @Override
     public <X> X accept(FeatureOfInterestVisitor<X> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
+    }
+    
+    @Override
+    public String toString() {
+        return String
+                .format("SfSpecimen [name=%s, description=%s, xmlDescription=%s, geometry=%s, featureType=%s, url=%s, sampledFeatures=%s, parameters=%s, encode=%b, relatedSamplingFeatures=%s]",
+                        getName(), getDescription(), getXmlDescription(), getGeometry(), getFeatureType(), getUrl(),
+                        getSampledFeatures(), getParameters(), isEncode(), getRelatedSamplingFeatures());
     }
 }

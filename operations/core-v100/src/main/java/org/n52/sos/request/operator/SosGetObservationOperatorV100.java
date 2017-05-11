@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -138,7 +138,7 @@ public class SosGetObservationOperatorV100 extends
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
+            checkProcedures(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
             // add child procedures to request
             if (sosRequest.isSetProcedure()) {
                 sosRequest.setProcedures(addChildProcedures(sosRequest.getProcedures()));

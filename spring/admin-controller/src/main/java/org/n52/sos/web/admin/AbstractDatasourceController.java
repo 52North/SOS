@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,13 +53,7 @@ public class AbstractDatasourceController extends AbstractAdminController {
                     throw new RuntimeException("Missing Datasource Property!");
                 }
                 datasource = (Datasource) Class.forName(className).newInstance();
-            } catch (ClassNotFoundException ex) {
-                LOG.error("Can not instantiate Datasource!", ex);
-                throw new RuntimeException(ex);
-            } catch (InstantiationException ex) {
-                LOG.error("Can not instantiate Datasource!", ex);
-                throw new RuntimeException(ex);
-            } catch (IllegalAccessException ex) {
+            } catch (ClassNotFoundException|InstantiationException|IllegalAccessException ex) {
                 LOG.error("Can not instantiate Datasource!", ex);
                 throw new RuntimeException(ex);
             }

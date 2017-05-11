@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,7 +29,7 @@
 package org.n52.svalbard.inspire.omso;
 
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.values.GeometryValue;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -60,8 +60,8 @@ public abstract class AbstractInspireObservation extends OmObservation {
     public AbstractInspireObservation(OmObservation observation) {
         this();
         observation.copyTo(this);
-        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
-            SamplingFeature sf = (SamplingFeature) getObservationConstellation().getFeatureOfInterest();
+        if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+            AbstractSamplingFeature sf = (AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest();
             sf.setEncode(true);
         }
     }
@@ -76,8 +76,8 @@ public abstract class AbstractInspireObservation extends OmObservation {
      *         featureOfInterest with geometry value
      */
     protected boolean checkForFeatureGeometry(OmObservation observation) {
-        if (observation.getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
-            return ((SamplingFeature) observation.getObservationConstellation().getFeatureOfInterest())
+        if (observation.getObservationConstellation().isSetFeatureOfInterest() && observation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+            return ((AbstractSamplingFeature) observation.getObservationConstellation().getFeatureOfInterest())
                     .isSetGeometry();
         }
         return false;
@@ -92,7 +92,7 @@ public abstract class AbstractInspireObservation extends OmObservation {
      * @return The geometry
      */
     protected Geometry getGeometryFromFeature(OmObservation observation) {
-        return ((SamplingFeature) observation.getObservationConstellation().getFeatureOfInterest()).getGeometry();
+        return ((AbstractSamplingFeature) observation.getObservationConstellation().getFeatureOfInterest()).getGeometry();
     }
 
     /**

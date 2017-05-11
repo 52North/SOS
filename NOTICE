@@ -35,6 +35,9 @@ This project includes:
   52°North SOS - Extension Delete Observation - JSON under GPLv2
   52°North SOS - Extension Delete Observation - KVP under GPLv2
   52°North SOS - Extension Delete Observation - Operation under GPLv2
+  52°North SOS - Extension DeleteResultTemplate under GPLv2
+  52°North SOS - Extension DeleteResultTemplate - Hibernate DAO under GPLv2
+  52°North SOS - Extension DeleteResultTemplate - SOS 2.0 Operation under GPLv2
   52°North SOS - Extension for AQD under GPLv2
   52°North SOS - Extension for AQD coding under GPLv2
   52°North SOS - Extension for Inspire - Code Module under GPLv2
@@ -42,6 +45,9 @@ This project includes:
   52°North SOS - Extension GetDataAvailability under GPLv2
   52°North SOS - Extension GetDataAvailability - Hibernate DAO under GPLv2
   52°North SOS - Extension GetDataAvailability - SOS 2.0 Operation under GPLv2
+  52°North SOS - Extension InsertFeatureOfInterest under GPLv2
+  52°North SOS - Extension InsertFeatureOfInterest - Hibernate DAO under GPLv2
+  52°North SOS - Extension InsertFeatureOfInterest - SOS 2.0 Operation under GPLv2
   52°North SOS - Extension Modules under GPLv2
   52°North SOS - Extension register Binding under GPLv2
   52°North SOS - Extension REST Binding under GPLv2
@@ -94,6 +100,7 @@ This project includes:
   52°North SOS - Split and Merge observations module under GPLv2
   52°North SOS - SQLite Configuration under GPLv2
   52°North SOS - Test Module under GPLv2
+  52°North SOS - UVF under GPLv2
   52°North SOS - WaterML 2.0 XML Coding under GPLv2
   52°North SOS - Web Admin Controller under GPLv2
   52°North SOS - Web Client Controller under GPLv2
@@ -104,7 +111,9 @@ This project includes:
   52°North SOS - Webapp under GPLv2
   52°North SOS - Webapp with Sensor Web REST API under GPLv2
   52°North Svalbard - CV for GML 3.2.1 XML Request Coding under GPLv2
+  52°North Svalbard - Extension DeleteResultTemplate coding under GPLv2
   52°North Svalbard - Extension GetDataAvailability - SOS 2.0 coding under GPLv2
+  52°North Svalbard - Extension InsertFeatureOfInterest coding under GPLv2
   52°North Svalbard - GML XML Request Coding under GPLv2
   52°North Svalbard - GWML 2.2 XML Coding under GPLv2
   52°North Svalbard - INSPIRE XML OMPR Coding under GPLv2
@@ -139,7 +148,6 @@ This project includes:
   Batik XML utility library under The Apache Software License, Version 2.0
   Berkeley DB Java Edition under Sleepycat License
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
-  c3p0:JDBC DataSources/Resource Pools under GNU LESSER GENERAL PUBLIC LICENSE
   cf4j under GNU Lesser General Public License
   ClassLoader leak prevention under Apache 2
   Codec under The Apache Software License, Version 1.1
@@ -161,7 +169,7 @@ This project includes:
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   H2 Database Engine under The H2 License, Version 1.0
   Hamcrest All under New BSD License
-  Hamcrest Core under BSD style
+  Hamcrest Core under New BSD License
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
   Hibernate Commons Annotations under GNU Lesser General Public License
   hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
@@ -194,7 +202,6 @@ This project includes:
   Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
-  JavaScript SOS Client under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging I18n Annotations under Public Domain
@@ -211,7 +218,7 @@ This project includes:
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JTS Topology Suite under Lesser General Public License (LGPL)
   JUL to SLF4J bridge under MIT License
-  JUnit under Common Public License Version 1.0
+  JUnit under Eclipse Public License 1.0
   libphonenumber under The Apache Software License, Version 2.0
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
@@ -233,6 +240,7 @@ This project includes:
   OGC GML schema (spec. v3.2.1) under The Apache Software License, Version 2.0
   OGC GML schema (spec. v3.3) under The Apache Software License, Version 2.0
   OGC GWML 2.0 schema (spec. v2.2) under The Apache Software License, Version 2.0
+  OGC InsertFeatureOfInterest schema 1.0 under The Apache Software License, Version 2.0
   OGC O&M schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC O&M schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
@@ -242,7 +250,9 @@ This project includes:
   OGC SensorML schema (spec. v2.0.0) under The Apache Software License, Version 2.0
   OGC SOS DeleteObservation schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS DeleteObservation schema 2.0 under The Apache Software License, Version 2.0
+  OGC SOS DeleteResultTemplate schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS GetDataAvailability schema 1.0 (OGC Best Practice 14-004r1) under The Apache Software License, Version 2.0
+  OGC SOS RelatedOfferings schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SWECommon schema (spec. v1.0.1) under The Apache Software License, Version 2.0
@@ -254,17 +264,19 @@ This project includes:
   Open GIS Interfaces under GNU Lesser General Public License (LGPL) version 2.1
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   Postgis JDBC Driver under GNU Lesser General Public License
-  PostgreSQL JDBC Driver under BSD License
   PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
   Protocol Buffer Java API under New BSD license
+  quartz under The Apache Software License, Version 2.0
   Quartz Enterprise Job Scheduler under Apache 2.0
   Referencing services under GNU Lesser General Public License (LGPL) version 2.1
   Reflections under WTFPL
   SaxonB under Mozilla Public License Version 1.0
+  Series REST API - DAO Mappings module under GNU General Public License, Version 2.0
   Series REST API - DAO module under GNU General Public License, Version 2.0
   Series REST API - IO module under GNU General Public License, Version 2.0
   Series REST API - REST module under GNU General Public License, Version 2.0
   Series REST API - SOS DAO module under GNU General Public License, Version 2.0
+  Series REST API - SPI module under GNU General Public License, Version 2.0
   servlet-api under CDDL 1.1 or GPL2 w/ CPE
   SLF4J API Module under MIT License
   Spring AOP under The Apache Software License, Version 2.0
@@ -275,6 +287,7 @@ This project includes:
   Spring Core under The Apache Software License, Version 2.0
   Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
   Spring JDBC under The Apache Software License, Version 2.0
+  Spring Object/Relational Mapping under The Apache Software License, Version 2.0
   Spring Object/XML Marshalling under The Apache Software License, Version 2.0
   Spring TestContext Framework under The Apache Software License, Version 2.0
   Spring Transaction under The Apache Software License, Version 2.0

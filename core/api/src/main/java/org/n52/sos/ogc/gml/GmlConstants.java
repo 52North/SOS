@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -147,6 +147,8 @@ public interface GmlConstants extends Constants {
 
     String EN_IDENTIFIER = "identifier";
     
+    String EN_NAME = "name";
+    
     String EN_META_DATA_PROPERTY = "metaDataProperty";
 
     /* attribute names in GML */
@@ -249,6 +251,8 @@ public interface GmlConstants extends Constants {
      * The {@code QName} for {@code gml:identifier}.
      */
     QName QN_IDENTIFIER_32 = new QName(NS_GML_32, EN_IDENTIFIER, NS_GML_PREFIX);
+    
+    QName QN_NAME_32 = new QName(NS_GML_32, EN_NAME, NS_GML_PREFIX);
 
     QName QN_INDETERMINATE_POSITION_32 = new QName(NS_GML_32, AN_INDETERMINATE_POSITION, NS_GML_PREFIX);
     

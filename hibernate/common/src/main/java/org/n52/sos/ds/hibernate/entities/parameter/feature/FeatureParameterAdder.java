@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,23 +30,23 @@ package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class FeatureParameterAdder {
     
-    private SamplingFeature samplingFeature;
+    private AbstractSamplingFeature abstractSamplingFeature;
     private FeatureOfInterest featureOfInterest;
 
-    public FeatureParameterAdder(SamplingFeature samplingFeature, FeatureOfInterest featureOfInterest) {
-        this.samplingFeature = samplingFeature;
+    public FeatureParameterAdder(AbstractSamplingFeature abstractSamplingFeature, FeatureOfInterest featureOfInterest) {
+        this.abstractSamplingFeature = abstractSamplingFeature;
         this.featureOfInterest = featureOfInterest;
     }
 
     public void add() throws OwsExceptionReport {
         if (featureOfInterest.hasParameters()) {
             for (org.n52.sos.ds.hibernate.entities.parameter.Parameter parameter : featureOfInterest.getParameters()) {
-                samplingFeature.addParameter(parameter.accept(new ValuedParameterVisitor()));
+                abstractSamplingFeature.addParameter(parameter.accept(new ValuedParameterVisitor()));
             }
         }
     }

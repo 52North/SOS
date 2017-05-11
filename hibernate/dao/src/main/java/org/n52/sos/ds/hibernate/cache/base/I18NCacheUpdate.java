@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -58,7 +58,7 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
 
     @Override
     public void execute() {
-        LOGGER.info("Executing I18NCacheUpdate");
+        LOGGER.debug("Executing I18NCacheUpdate");
         startStopwatch();
         try {
             getCache().addSupportedLanguage(Configurator.getInstance().getServiceIdentificationFactory().getAvailableLocales());
@@ -69,7 +69,7 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
         } catch (OwsExceptionReport ce) {
             getErrors().add(ce);
         }
-        LOGGER.info("Finished executing I18NCacheUpdate ({})", getStopwatchResult());
+        LOGGER.debug("Finished executing I18NCacheUpdate ({})", getStopwatchResult());
     }
 
     private Collection<Locale> getEntityLocales(Class<? extends AbstractI18NMetadata> type)

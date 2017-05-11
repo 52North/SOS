@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,7 @@ import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -57,15 +57,15 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
     public JsonNode encodeJSON(AbstractFeature t) throws OwsExceptionReport {
         if (t instanceof FeatureCollection) {
             return encodeFeatureCollection(t);
-        } else if (t instanceof SamplingFeature) {
-            return encodeSamplingFeature(t);
+        } else if (t instanceof AbstractSamplingFeature) {
+            return encodeAbstractSamplingFeature(t);
         } else {
             throw new UnsupportedEncoderInputException(this, t);
         }
     }
 
-    private JsonNode encodeSamplingFeature(AbstractFeature t) throws OwsExceptionReport {
-        SamplingFeature sf = (SamplingFeature) t;
+    private JsonNode encodeAbstractSamplingFeature(AbstractFeature t) throws OwsExceptionReport {
+        AbstractSamplingFeature sf = (AbstractSamplingFeature) t;
         if (sf.isSetUrl()) {
             return nodeFactory().textNode(sf.getUrl());
         } else if (!sf.isSetGeometry()) {
@@ -89,14 +89,14 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
         return a;
     }
 
-    private void encodeIdentifier(SamplingFeature sf, ObjectNode json) {
+    private void encodeIdentifier(AbstractSamplingFeature sf, ObjectNode json) {
         if (sf.isSetIdentifier()) {
             json.put(JSONConstants.IDENTIFIER, encodeCodeWithAuthority(sf.getIdentifierCodeWithAuthority()));
         }
 
     }
 
-    private void encodeNames(SamplingFeature samplingFeature, ObjectNode json) {
+    private void encodeNames(AbstractSamplingFeature samplingFeature, ObjectNode json) {
         if (samplingFeature.isSetName()) {
             if (samplingFeature.getName().size() == 1) {
                 json.put(JSONConstants.NAME, encodeCodeType(samplingFeature.getName().iterator().next()));
@@ -109,7 +109,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
         }
     }
 
-    private void encodeSampledFeatures(SamplingFeature sf, ObjectNode json) throws OwsExceptionReport {
+    private void encodeSampledFeatures(AbstractSamplingFeature sf, ObjectNode json) throws OwsExceptionReport {
         if (sf.isSetSampledFeatures()) {
             if (sf.getSampledFeatures().size() == 1) {
                 json.put(JSONConstants.SAMPLED_FEATURE, encodeObjectToJson(sf.getSampledFeatures().iterator().next()));
@@ -122,7 +122,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
         }
     }
 
-    private void encodeGeometry(SamplingFeature sf, ObjectNode json) throws OwsExceptionReport {
+    private void encodeGeometry(AbstractSamplingFeature sf, ObjectNode json) throws OwsExceptionReport {
         if (sf.isSetGeometry()) {
             json.put(JSONConstants.GEOMETRY, encodeObjectToJson(sf.getGeometry()));
         }

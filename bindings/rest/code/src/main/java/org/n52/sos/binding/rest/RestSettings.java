@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -65,7 +65,7 @@ public class RestSettings implements SettingDefinitionProvider {
 	public static final String REST_ERROR_MSG_BAD_GET_REQUEST_GLOBAL_RESOURCE = "rest.errorMsg.badGetRequest.globalResource";
 	public static final String REST_ERROR_MSG_BAD_GET_REQUEST_NO_VALID_KVP_PARAMETER = "rest.errorMsg.badGetRequest.noValidKvpParameter";
 	public static final String REST_ERROR_MSG_BAD_GET_REQUEST_SEARCH = "rest.errorMsg.badGetRequest.search";
-	public static final String REST_ERROR_MSG_HTTP_METHOD_NOT_ALLOWED_FOR_RESOURCE = "rest.errorMsg.HttpMethodNotAllowedForResource";
+	public static final String REST_ERROR_MSG_HTTP_METHOD_NOT_ALLOWED_FOR_RESOURCE = "rest.errorMsg.HTTPMethodNotAllowedForResource";
 	public static final String REST_ERROR_MSG_WRONG_CONTENT_TYPE = "rest.errorMsg.wrongContentType";
 	public static final String REST_ERROR_MSG_WRONG_CONTENT_TYPE_IN_ACCEPT_HEADER = "rest.errorMSg.wrongContentType.inAcceptHeader";
 	public static final String REST_HTTP_GET_PARAMETERNAME_FOI = "rest.http.get.parametername.foi";
@@ -99,11 +99,6 @@ public class RestSettings implements SettingDefinitionProvider {
 	public static final String REST_RESOURCE_RELATION_SENSORS_GET = "rest.resource.relation.sensors.get";
 	public static final String REST_RESOURCE_RELATION_SENSOR_UPDATE = "rest.resource.relation.sensor.update";
 	public static final String REST_RESOURCE_SENSORS = "rest.resource.sensors";
-	public static final String REST_RESOURCE_TYPE = "rest.resource.type";
-	public static final String REST_SML_CAPABILITY_FEATUREOFINTERESTTYPE_NAME = "rest.sml.capability.featureofinteresttype.name";
-	public static final String REST_SML_CAPABILITY_INSERTIONMETADATA_NAME = "rest.sml.capability.insertionmetadata.name";
-	public static final String REST_SML_CAPABILITY_OBSERVATIONTYPE_NAME = "rest.sml.capability.observationtype.name";
-	public static final String REST_SOS_CAPABILITIES_SECTION_NAME_CONTENTS = "rest.sos.capabilities.section.name.contents";
 	public static final String REST_SOS_ERRORMESSAGE_OPERATIONNOTSUPPORTED_END = "rest.sos.errormessage.operationNotSupported.end";
 	public static final String REST_SOS_ERRORMESSAGE_OPERATIONNOTSUPPORTED_START = "rest.sos.errormessage.operationNotSupported.start";
 	public static final String REST_SOS_SERVICE = "rest.sos.service";
@@ -119,7 +114,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setTitle("Conformance Class").
 			setDefaultValue("http://www.opengis.net/spec/SOS/2.0/conf/rest").
 			setDescription("The conformance class for the RESTful binding.").
-			setOptional(false).
 			setOrder(0),
 			
 			new StringSettingDefinition().
@@ -128,7 +122,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("application/gml+xml").
 			setTitle("Content type - default").
 			setDescription("Default content type returned by this binding").
-			setOptional(false).
 			setOrder(1),
 			
 			new StringSettingDefinition().
@@ -137,7 +130,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("unknown/unknown").
 			setTitle("Content type - undefined").
 			setDescription("Content type used in the case of not knowing the content type of a externally linked resource.").
-			setOptional(false).
 			setOrder(2),
 			
 			new StringSettingDefinition().
@@ -146,7 +138,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("capabilities").
 			setTitle("Binding Endpoint Resource").
 			setDescription("The resource any client is redirected to when accessing the binding endpoint.").
-			setOptional(false).
 			setOrder(3),
 			
 			new IntegerSettingDefinition().
@@ -155,7 +146,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue(4326).
 			setTitle("EPSG Code - default").
 			setDescription("The default value of the EPSG code.").
-			setOptional(false).
 			setOrder(4),
 			
 			new StringSettingDefinition().
@@ -164,7 +154,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("UTF-8").
 			setTitle("URL encoding - default").
 			setDescription("The default value fo the URL encoding.").
-			setOptional(false).
 			setOrder(5),
 			
 			new UriSettingDefinition().
@@ -182,7 +171,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("sosREST").
 			setTitle("RESTful encoding - prefix").
 			setDescription("The prefix of the RESTful encoding used within XML documents.").
-			setOptional(false).
 			setOrder(7),
 			
 			new StringSettingDefinition().
@@ -191,7 +179,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("Received GET request invalid for resource type \"%s\". Try ").
 			setTitle("Error Message - Bad GET request").
 			setDescription("The start of the bad GET request error message.").
-			setOptional(false).
 			setOrder(8),
 
 			new StringSettingDefinition().
@@ -200,7 +187,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("\"../%s/$RESOURCE_ID\"").
 			setTitle("Error Message - Bad GET request by id").
 			setDescription("The bad GET request by id error message").
-			setOptional(false).
 			setOrder(9),
 			
 			new StringSettingDefinition().
@@ -209,7 +195,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("\"..%s\"").
 			setTitle("Error Message - Bad GET request global resource").
 			setDescription("The bad GET request global resource error message").
-			setOptional(false).
 			setOrder(10),
 			
 			new StringSettingDefinition().
@@ -218,7 +203,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("No valid parameter at all.").
 			setTitle("Error Message - No valid KVP parameter").
 			setDescription("The bad GET request error message when no valid KVP paramter is found.").
-			setOptional(false).
 			setOrder(11),
 			
 			new StringSettingDefinition().
@@ -227,7 +211,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("\"../%s?$SEARCH_REQUEST\". Please refer to the documentation regarding allowed parameters").
 			setTitle("Error Message - Bad search request").
 			setDescription("The bad GET request error message when the search request is not valid").
-			setOptional(false).
 			setOrder(12),
 			
 			new StringSettingDefinition().
@@ -236,7 +219,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("HTTP method \"%s\" not allowed for \"%s\" resources.").
 			setTitle("Error Message - HTTP method not allowed for resource").
 			setDescription("The error message when the used HTTP method is not allowed for the requested resource type.").
-			setOptional(false).
 			setOrder(13),
 			
 			new StringSettingDefinition().
@@ -245,7 +227,6 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("request with wrong content type received.").
 			setTitle("Error Message - wrong content type").
 			setDescription("The error message when using the wrong content type in the request body.").
-			setOptional(false).
 			setOrder(14),
 			
 			new StringSettingDefinition().
@@ -254,385 +235,318 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue("Requested content type as specified in Accept header not supported.").
 			setTitle("Error Message - not supported content type in accept header").
 			setDescription("The content type requested could not be supported.").
-			setOptional(false).
 			setOrder(15),
 			
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_HTTP_GET_PARAMETERNAME_FOI).
 			setDefaultValue("feature").
-			setTitle("Http Get Parametername Foi").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("HTTP GET Parametername <tt>Foi</tt>").
+			setDescription("The parameter name for <i>features of interest</i> in HTTP GET requests.").
 			setOrder(18),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_HTTP_GET_PARAMETERNAME_NAMESPACES).
 			setDefaultValue("namespaces").
-			setTitle("Http Get Parametername Namespaces").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("HTTP GET Parametername <tt>Namespaces</tt>").
+			setDescription("The parameter name for <i>namespaces</i> in HTTP GET requests.").
 			setOrder(19),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_HTTP_GET_PARAMETERNAME_OBSERVEDPROPERTY).
 			setDefaultValue("observedproperties").
-			setTitle("Http Get Parametername Observedproperty").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("HTTP GET Parametername <tt>Observedproperty</tt>").
+			setDescription("The parameter name for <i>observed properties</i> in HTTP GET requests.").
 			setOrder(20),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_HTTP_GET_PARAMETERNAME_OFFERING).
 			setDefaultValue("offering").
-			setTitle("Http Get Parametername Offering").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("HTTP GET Parametername <tt>Offering</tt>").
+			setDescription("The parameter name for <i>offerings</i> in HTTP GET requests.").
 			setOrder(21),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_HTTP_GET_PARAMETERNAME_PROCEDURES).
 			setDefaultValue("procedures").
-			setTitle("Http Get Parametername Procedures").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("HTTP GET Parametername <tt>Procedures</tt>").
+			setDescription("The parameter name for <i>procedures</i> in HTTP GET requests.").
 			setOrder(22),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_HTTP_GET_PARAMETERNAME_SPATIALFILTER).
 			setDefaultValue("spatialfilter").
-			setTitle("Http Get Parametername Spatialfilter").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("HTTP GET Parametername <tt>Spatialfilter</tt>").
+			setDescription("The parameter name for <i>spatial filters</i> in HTTP GET requests.").
 			setOrder(23),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_HTTP_GET_PARAMETERNAME_TEMPORALFILTER).
 			setDefaultValue("temporalfilter").
-			setTitle("Http Get Parametername Temporalfilter").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("HTTP GET Parametername <tt>Temporalfilter</tt>").
+			setDescription("The parameter name for <i>temporal filter</i> in HTTP GET requests.").
 			setOrder(24),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_HTTP_HEADER_IDENTIFIER_XDELETEDRESOURCEID).
 			setDefaultValue("X-Deleted-Resource-Id").
-			setTitle("Http Header Identifier XDeletedResourceId").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("HTTP Header Identifier <tt>XDeletedResourceId</tt>").
+			setDescription("The identifier for the <i>deleted resource id</i>.").
 			setOrder(29),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_HTTP_OPERATIONNOTALLOWEDFORRESOURCETYPE_MESSAGE_START).
 			setDefaultValue("operation is not allowed for the resource type").
-			setTitle("Http OperationNotAllowedForResourceType Message Start").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("HTTP <tt>OperationNotAllowedForResourceType</tt> Message Start").
+			setDescription("Identifier for HTTP method not allowed errors (<tt>HTTP error 405</tt>).").
 			setOrder(30),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_KVP_ENCODING_VALUESPLITTER).
 			setDefaultValue(",").
-			setTitle("Kvp Encoding Valuesplitter").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("KVP Encoding Valuesplitter").
+			setDescription("Specify the character used for splitting KVP encoded values, e.g. <code>,</code>.").
 			setOrder(34),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_CAPABILITIES).
 			setDefaultValue("capabilities").
-			setTitle("Resource Capabilities").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource <tt>Capabilities</tt>").
+			setDescription("The name of the root resource, service endpoint. Default is: <code>capabilities</code>.").
 			setOrder(35),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_FEATURES).
 			setDefaultValue("features").
-			setTitle("Resource Features").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource <tt>Features</tt>").
+			setDescription("The name of the <tt>features</tt> resource. Default is: <code>features</code>.").
 			setOrder(36),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_OBSERVABLEPROPERTIES).
 			setDefaultValue("properties").
-			setTitle("Resource Observableproperties").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource <tt>Observableproperties</tt>").
+			setDescription("The name of the <tt>observable properties</tt> resource. Default is <code>properties</code>.").
 			setOrder(37),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_OBSERVATIONS).
 			setDefaultValue("observations").
-			setTitle("Resource Observations").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource <tt>Observations</tt>").
+			setDescription("The name of the <tt>observations</tt> resource. Default is <code>observations</code>.").
 			setOrder(38),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_OFFERINGS).
 			setDefaultValue("offerings").
-			setTitle("Resource Offerings").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource <tt>Offerings</tt>").
+			setDescription("The name of the <tt>offerings</tt> resource. Default is <code>offerings</code>.").
 			setOrder(39),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_FEATURE_GET).
 			setDefaultValue("feature-get").
-			setTitle("Resource Relation Feature Get").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Feature Get</tt>").
+			setDescription("The name of the relation between any resource instance and the related <tt>feature</tt>. "
+			        + "Default is <code>feature-get</code>.").
 			setOrder(40),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_FEATURES_GET).
 			setDefaultValue("features-get").
-			setTitle("Resource Relation Features Get").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Features Get</tt>").
+			setDescription("The name of the relation between any resource instance and the related "
+			        + "<tt>feature<strong>s</strong></tt>. Default is <code>feature<strong>s</strong>-get</code>.").
 			setOrder(41),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_OBSERVABLEPROPERTY_GET).
 			setDefaultValue("property-get").
-			setTitle("Resource Relation Observableproperty Get").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Observableproperty Get</tt>").
+			setDescription("The name of the relation between any resource instance and the related <tt>observable "
+			        + "property</tt>. Default is <code>property-get</code>.").
 			setOrder(42),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_OBSERVATION_CREATE).
 			setDefaultValue("observation-create").
-			setTitle("Resource Relation Observation Create").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Link <tt>Observation Create</tt>").
+			setDescription("The name of the link to the resource for creating new <tt>observations</tt>. Default is "
+			        + "<code>observation-create</code>.").
 			setOrder(43),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_OBSERVATION_DELETE).
 			setDefaultValue("observation-delete").
-			setTitle("Resource Relation Observation Delete").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Link <tt>Observation Delete</tt>").
+			setDescription("The name of the link to the resource for deleting existing <tt>observations</tt>. Default "
+			        + "is <code>observation-delete</code>.").
 			setOrder(44),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_OBSERVATION_GET).
 			setDefaultValue("observation-get").
-			setTitle("Resource Relation Observation Get").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Observation Get</tt>").
+			setDescription("The name of the relation between any resource instance and the related "
+			        + "<tt>observations</tt>. Default is <code>observation-get</code>.").
 			setOrder(45),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_OBSERVATIONS_GET).
 			setDefaultValue("observations-get").
-			setTitle("Resource Relation Observations Get").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Observations Get</tt>").
+			setDescription("The name of the relation between any resource instance and the related "
+			        + "<tt>observation<strong>s</strong></tt>. Default is "
+			        + "<code>observation<strong>s</strong>-get</code>.").
 			setOrder(46),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_OFFERING_GET).
 			setDefaultValue("offering-get").
-			setTitle("Resource Relation Offering Get").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Offering Get</tt>").
+			setDescription("The name of the relation between any resource instance and the related <tt>offering</tt>. "
+			        + "Default is <code>offering-get</code>.").
 			setOrder(47),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_OFFERINGS_GET).
 			setDefaultValue("offerings-get").
-			setTitle("Resource Relation Offerings Get").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Offerings Get</tt>").
+			setDescription("The name of the relation between any resource instance and the related "
+			        + "<tt>offering<strong>s</strong></tt>. Default is <code>offering<strong>s</strong>-get</code>.").
 			setOrder(48),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_SELF).
 			setDefaultValue("self").
-			setTitle("Resource Relation Self").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Self</tt>").
+			setDescription("The name of the relation between any resource instance and the <tt>resource itself</tt>. "
+			        + "Default is <code>self</code>.").
 			setOrder(49),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_SENSOR_CREATE).
 			setDefaultValue("sensor-create").
-			setTitle("Resource Relation Sensor Create").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Sensor Create</tt>").
+			setDescription("The name of the link to the resource for creating new <tt>sensors</tt>. Default "
+                    + "is <code>sensor-create</code>.").
 			setOrder(50),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_SENSOR_DELETE).
 			setDefaultValue("sensor-delete").
-			setTitle("Resource Relation Sensor Delete").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Sensor Delete</tt>").
+			setDescription("The name of the link to the resource for deleting existing <tt>sensors</tt>. Default "
+                    + "is <code>sensor-delete</code>.").
 			setOrder(51),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_SENSOR_GET).
 			setDefaultValue("sensor-get").
-			setTitle("Resource Relation Sensor Get").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Sensor Get</tt>").
+			setDescription("The name of the relation between any resource instance and the related <tt>sensor</tt>. "
+                    + "Default is <code>sensor-get</code>.").
 			setOrder(52),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_SENSORS_GET).
 			setDefaultValue("sensors-get").
-			setTitle("Resource Relation Sensors Get").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Sensors Get</tt>").
+			setDescription("The name of the relation between any resource instance and the related <tt>sensor<strong>s</strong></tt>. "
+                    + "Default is <code>sensor<strong>s</strong>-get</code>.").
 			setOrder(53),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_RELATION_SENSOR_UPDATE).
 			setDefaultValue("sensor-update").
-			setTitle("Resource Relation Sensor Update").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource Relation <tt>Sensor Update</tt>").
+			setDescription("The name of the link to the resource for updating existing <tt>sensors</tt>. Default "
+                    + "is <code>sensor-update</code>.").
 			setOrder(54),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_RESOURCE_SENSORS).
 			setDefaultValue("sensors").
-			setTitle("Resource Sensors").
-			setDescription("TODO: Add description.").
-			setOptional(false).
+			setTitle("Resource <tt>Sensors</tt>").
+			setDescription("The name of the <tt>sensors</tt> resource. Default is <code>sensors</code>.").
 			setOrder(55),
-
-			new StringSettingDefinition().
-			setGroup(SETTINGS_GROUP).
-			setKey(REST_RESOURCE_TYPE).
-			setDefaultValue("resource type").
-			setTitle("Resource Type").
-			setDescription("TODO: Add description.").
-			setOptional(false).
-			setOrder(56),
-
-			new StringSettingDefinition().
-			setGroup(SETTINGS_GROUP).
-			setKey(REST_SML_CAPABILITY_FEATUREOFINTERESTTYPE_NAME).
-			setDefaultValue("sos:FeatureOfInterestType").
-			setTitle("Sml Capability Featureofinteresttype Name").
-			setDescription("TODO: Add description.").
-			setOptional(false).
-			setOrder(57),
-
-			new StringSettingDefinition().
-			setGroup(SETTINGS_GROUP).
-			setKey(REST_SML_CAPABILITY_INSERTIONMETADATA_NAME).
-			setDefaultValue("InsertionMetadata").
-			setTitle("Sml Capability Insertionmetadata Name").
-			setDescription("TODO: Add description.").
-			setOptional(false).
-			setOrder(58),
-
-			new StringSettingDefinition().
-			setGroup(SETTINGS_GROUP).
-			setKey(REST_SML_CAPABILITY_OBSERVATIONTYPE_NAME).
-			setDefaultValue("sos:ObservationType").
-			setTitle("Sml Capability Observationtype Name").
-			setDescription("TODO: Add description.").
-			setOptional(false).
-			setOrder(59),
-
-			new StringSettingDefinition().
-			setGroup(SETTINGS_GROUP).
-			setKey(REST_SOS_CAPABILITIES_SECTION_NAME_CONTENTS).
-			setDefaultValue("Contents").
-			setTitle("Sos Capabilities Section Name Contents").
-			setDescription("TODO: Add description.").
-			setOptional(false).
-			setOrder(60),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_SOS_ERRORMESSAGE_OPERATIONNOTSUPPORTED_END).
 			setDefaultValue(" is not supported by this service!").
-			setTitle("Sos Errormessage OperationNotSupported End").
+			setTitle("Service Errormessage <tt>OperationNotSupported</tt> End").
 			setDescription("TODO: Add description.").
-			setOptional(false).
 			setOrder(61),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_SOS_ERRORMESSAGE_OPERATIONNOTSUPPORTED_START).
 			setDefaultValue("The requested operation ").
-			setTitle("Sos Errormessage OperationNotSupported Start").
+			setTitle("Service Errormessage <tt>OperationNotSupported</tt> Start").
 			setDescription("TODO: Add description.").
-			setOptional(false).
 			setOrder(62),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_SOS_SERVICE).
 			setDefaultValue("SOS").
-			setTitle("Sos Service").
+			setTitle("<tt>Service Identifier</tt>").
 			setDescription("TODO: Add description.").
-			setOptional(false).
 			setOrder(63),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_SOS_TERMS_PROCEDUREIDENTIFIER).
 			setDefaultValue("procedure").
-			setTitle("Sos Terms Procedureidentifier").
+			setTitle("Sos Terms <tt>Procedure Identifier</tt>").
 			setDescription("TODO: Add description.").
-			setOptional(false).
 			setOrder(64),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_SOS_VERSION).
 			setDefaultValue("2.0.0").
-			setTitle("Sos Version").
+			setTitle("<tt>Service Version</tt>").
 			setDescription("TODO: Add description.").
-			setOptional(false).
 			setOrder(65),
 
 			new StringSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_URLPATTERN).
 			setDefaultValue("/rest").
-			setTitle("Urlpattern").
+			setTitle("<tt>Urlpattern</tt>").
 			setDescription("The URL identifier of the RESTful binding.").
-			setOptional(false).
 			setOrder(66),
 			
 			new UriSettingDefinition().
@@ -641,15 +555,13 @@ public class RestSettings implements SettingDefinitionProvider {
 			setDefaultValue(URI.create("https://raw.githubusercontent.com/52North/SOS/master/bindings/rest/xml/src/main/xsd/sosREST.xsd")).
 			setTitle("Encoding Schema URL").
 			setDescription("The URL to the encoding schema. Should be a web accessible URL returning a XSD file").
-			setOptional(false).
 			setOrder(67)
 			
 			);
 
 	
 	@Override
-	public Set<SettingDefinition<?, ?>> getSettingDefinitions()
-	{
+	public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
 		return Collections.unmodifiableSet(DEFINITIONS);
 	}
 

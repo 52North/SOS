@@ -17,17 +17,17 @@
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
     </properties>
     <build>
-        <finalName>${conf.sos.name}##${project.version}</finalName>
+        <finalName>${conf.sos.name}</finalName>
         <plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>**/*Suite*.java</include>
-					</includes>
-				</configuration>
-			</plugin>
+            <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                            <includes>
+                                    <include>**/*Suite*.java</include>
+                            </includes>
+                    </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -130,7 +130,11 @@
         </pluginManagement>
     </build>
     <dependencies>
-
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- LOGGING -->
 
         <dependency>
@@ -206,6 +210,10 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-gml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-uvf</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -291,10 +299,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-mysql</artifactId>
         </dependency>
-        <dependency>
-		    <groupId>${project.groupId}</groupId>
-		    <artifactId>hibernate-datasource-h2</artifactId>
-		</dependency>
+            <dependency>
+    		    <groupId>${project.groupId}</groupId>
+    		    <artifactId>hibernate-datasource-h2</artifactId>
+    		</dependency>
 
         <!-- BINDINGS -->
 
@@ -346,6 +354,44 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>gda-hibernate</artifactId>
+        </dependency>
+        
+        <!-- INSERT FEATUREOFINTEREST -->
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ifoi-operation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ifoi-coding</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ifoi-hibernate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-ifoi-v10</artifactId>
+        </dependency>
+
+        <!-- DELETE RESULT TEMPLATE -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-operation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-coding</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-hibernate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-drt-v100</artifactId>
         </dependency>
 
         <!-- DELETE OBSERVATION -->
@@ -542,26 +588,26 @@
             <artifactId>seriestype</artifactId>
         </dependency>
         <!-- netCDF -->
-		<dependency>
-	        <groupId>com.axiomalaska</groupId>
-	        <artifactId>cf4j</artifactId>
-      	</dependency>
-		<dependency>
-			<groupId>edu.ucar</groupId>
-			<artifactId>netcdf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
+        <dependency>
+            <groupId>com.axiomalaska</groupId>
+            <artifactId>cf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>netcdf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>api-netcdf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>coding-netcdf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>coding-oceansites</artifactId>
-		</dependency>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-oceansites</artifactId>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>

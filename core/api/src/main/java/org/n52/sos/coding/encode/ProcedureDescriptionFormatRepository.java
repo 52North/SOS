@@ -28,7 +28,6 @@
  */
 package org.n52.sos.coding.encode;
 
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -54,9 +53,9 @@ import com.google.common.collect.Sets;
  *
  * @author Christian Autermann
  */
-public class ProcedureDescriptionFormatRepository implements
-                   ActivationManager<ProcedureDescriptionFormatKey>,
-                   ActivationSource<ProcedureDescriptionFormatKey> {
+public class ProcedureDescriptionFormatRepository
+        implements ActivationManager<ProcedureDescriptionFormatKey>,
+        ActivationSource<ProcedureDescriptionFormatKey> {
 
     @Deprecated
     private static ProcedureDescriptionFormatRepository instance;
@@ -68,14 +67,26 @@ public class ProcedureDescriptionFormatRepository implements
 
     private final Map<String, Map<String, Set<String>>> transactionalProcedureDescriptionFormats = Maps.newHashMap();
 
-
-    void init(ServiceOperatorRepository serviceOperatorRepository,
-            EncoderRepository encoderRepository) {
+    /**
+     * This class does not implement {@link Constructable} due to some circular dependencies that can lead to an
+     * incorrect initialization order; instead {@link ProcedureDescriptionFormatRepositoryInitializer} does this for us.
+     *
+     * @param serviceOperatorRepository the service operator respository
+     * @param encoderRepository         the encoder repository
+     */
+    public void init(ServiceOperatorRepository serviceOperatorRepository,
+              EncoderRepository encoderRepository) {
         ProcedureDescriptionFormatRepository.instance = this;
       this.encoderRepository = encoderRepository;
       this.serviceOperatorRepository = serviceOperatorRepository;
       generateProcedureDescriptionFormatMaps();
   }
+
+        this.serviceOperatorRepository = Objects.requireNonNull(serviceOperatorRepository);
+        this.encoderRepository = Objects.requireNonNull(encoderRepository);
+
+        generateProcedureDescriptionFormatMaps();
+    }
 
     private void generateProcedureDescriptionFormatMaps() {
         this.procedureDescriptionFormats.clear();

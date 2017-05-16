@@ -35,9 +35,10 @@ import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.svalbard.encode.EncoderRepository;
 
 /**
- * TODO JavaDoc
+ * Separate initializer for {@link ProcedureDescritionFormatRepository}
  *
- * @author Christian Autermann
+ * @see ProcedureDescritionFormatRepository.init()
+ * @author Martin Kiesow
  */
 public class ProcedureDescriptionFormatRepositoryInitializer implements Constructable {
 

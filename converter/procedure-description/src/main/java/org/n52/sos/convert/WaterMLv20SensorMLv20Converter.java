@@ -62,10 +62,10 @@ public class WaterMLv20SensorMLv20Converter extends AbstractWaterMLv20SensorMLCo
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterMLv20SensorMLv101Converter.class);
 
     private static final Set<ConverterKey> CONVERTER_KEYS = CollectionHelper.set(
-            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL),
-            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorML20Constants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
-            new ConverterKey(SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING),
-            new ConverterKey(SensorML20Constants.SENSORML_OUTPUT_FORMAT_MIME_TYPE, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
+            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL),
+            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL),
+            new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING),
+            new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
 
     public WaterMLv20SensorMLv20Converter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
@@ -77,8 +77,8 @@ public class WaterMLv20SensorMLv20Converter extends AbstractWaterMLv20SensorMLCo
         if (objectToConvert.getDefaultElementEncoding().equals(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)
                 && objectToConvert instanceof ObservationProcess) {
             return convertWML2ObservationProcessToSensorML20((ObservationProcess)objectToConvert);
-        } else if ((objectToConvert.getDefaultElementEncoding().equals(SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL)
-                || objectToConvert.getDefaultElementEncoding().equals(SensorML20Constants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+        } else if ((objectToConvert.getDefaultElementEncoding().equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL)
+                || objectToConvert.getDefaultElementEncoding().equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
                 && objectToConvert instanceof AbstractSensorML) {
             return convertSensorML20ToWML2ObservationProcess((AbstractSensorML)objectToConvert);
         }

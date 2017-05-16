@@ -45,6 +45,9 @@
     <bean id="procedureDescriptionFormatRepository"
           class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository" />
 
+    <bean id="procedureDescriptionFormatRepositoryInitializer"
+          class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepositoryInitializer" />
+
     <bean id="batchRequestOperator"
           class="org.n52.sos.request.operator.BatchRequestOperator"/>
 

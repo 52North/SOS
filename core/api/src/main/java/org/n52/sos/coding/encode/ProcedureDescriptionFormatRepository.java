@@ -31,6 +31,7 @@ package org.n52.sos.coding.encode;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -64,7 +65,6 @@ public class ProcedureDescriptionFormatRepository
     private final Set<ProcedureDescriptionFormatKey> keys = new HashSet<>();
     private EncoderRepository encoderRepository;
     private ServiceOperatorRepository serviceOperatorRepository;
-
     private final Map<String, Map<String, Set<String>>> transactionalProcedureDescriptionFormats = Maps.newHashMap();
 
     /**
@@ -77,11 +77,6 @@ public class ProcedureDescriptionFormatRepository
     public void init(ServiceOperatorRepository serviceOperatorRepository,
               EncoderRepository encoderRepository) {
         ProcedureDescriptionFormatRepository.instance = this;
-      this.encoderRepository = encoderRepository;
-      this.serviceOperatorRepository = serviceOperatorRepository;
-      generateProcedureDescriptionFormatMaps();
-  }
-
         this.serviceOperatorRepository = Objects.requireNonNull(serviceOperatorRepository);
         this.encoderRepository = Objects.requireNonNull(encoderRepository);
 

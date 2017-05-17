@@ -43,5 +43,11 @@ public interface GWMLConstants {
 
     String OBS_TYPE_GEOLOGY_LOG = "http://www.opengis.net/def/observationType/OGC-GWML/2.2/GW_GeologyLog";
     
+    String OBS_TYPE_GEOLOGY_LOG_COVERAGE = "http://www.opengis.net/def/observationType/OGC-GWML/2.2/GW_GeologyLogCoverage";
+    
     MediaType CONTENT_TYPE_GWML_22 = new MediaType("text", "xml", "subtype", "gwml/2.2");
+    
+    String PARAM_FROM_DEPTH = "fromDepth";
+    
+    String PARAM_TO_DEPTH = "toDepth";
 }

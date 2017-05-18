@@ -101,12 +101,19 @@ public class SplitMergeObservations
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SplitMergeObservations.class);
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
-    private boolean includeResultTimeForMerging = false; 
+    private boolean includeResultTimeForMerging = false;
+    private boolean checkForDuplicity = false;
+    
     
     @Setting(ServiceSettings.INCLUDE_RESULT_TIME_FOR_MERGING)
     public void setIncludeResultTimeForMerging(boolean includeResultTimeForMerging) {
         this.includeResultTimeForMerging = includeResultTimeForMerging;
-    }   
+    }
+    
+    @Setting(ServiceSettings.CHECK_FOR_DUPLICITY)
+    public void setCheckForDuplicity(boolean checkForDuplicity) {
+        this.checkForDuplicity = checkForDuplicity;
+    } 
 
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
@@ -143,14 +150,12 @@ public class SplitMergeObservations
         }
         if (request instanceof AbstractObservationRequest) {
             AbstractObservationRequest req = (AbstractObservationRequest) request;
-            if (req.isSetResponseFormat()) {
-                if (OmConstants.NS_OM_2.equals(req.getResponseFormat())
+            if (req.isSetResponseFormat() ) {
+                if (checkForDuplicity && (OmConstants.NS_OM_2.equals(req.getResponseFormat())
                         || OmConstants.NS_OM.equals(req.getResponseFormat())
                         || OmConstants.CONTENT_TYPE_OM.toString().equals(req.getResponseFormat())
-                        || OmConstants.CONTENT_TYPE_OM_2.toString().equals(req.getResponseFormat())) {
-                    req.setCheckForDuplicity(true);
-                } else {
-                    req.setCheckForDuplicity(false);
+                        || OmConstants.CONTENT_TYPE_OM_2.toString().equals(req.getResponseFormat()))) {
+                    req.setCheckForDuplicity(checkForDuplicity);
                 }
             }
         }

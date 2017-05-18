@@ -75,6 +75,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
 
     public static final String INCLUDE_RESULT_TIME_FOR_MERGING = "service.includeResultTimeForMerging";
 
+    public static final String CHECK_FOR_DUPLICITY = "service.checkForDuplicity";
+
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
 
     public static final UriSettingDefinition SERVICE_URL_DEFINITION = new UriSettingDefinition()
@@ -204,6 +206,16 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setTitle("Should this SOS include the resultTime for merging?")
                      .setDescription(
                             "Whether the SOS should include the resultTime as inidcator when merging observations!");
+     
+     public static final BooleanSettingDefinition CHECK_FOR_DUPLICITY_DEFINITION =
+             new BooleanSettingDefinition()
+                     .setGroup(GROUP)
+                     .setOrder(23)
+                     .setKey(CHECK_FOR_DUPLICITY)
+                     .setDefaultValue(false)
+                     .setTitle("Should this SOS check for duplicated observations in the response?")
+                     .setDescription(
+                            "Whether the SOS should if the response contains duplicated observations. Only necessary if you have inserted an observation for multiple offerings!");
       
     
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
@@ -218,7 +230,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
             CACHE_FILE_FOLDER_DEFILINION,
             CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS_DEFINITION,
             ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE_DEFINITION,
-            INCLUDE_RESULT_TIME_FOR_MERGING_DEFINITION);
+            INCLUDE_RESULT_TIME_FOR_MERGING_DEFINITION,
+            CHECK_FOR_DUPLICITY_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

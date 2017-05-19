@@ -83,14 +83,18 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionD
             UpdateSensorResponse response = new UpdateSensorResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
+            ProcedureDAO procedureDAO = new ProcedureDAO();
+            Procedure procedure =
+                    procedureDAO.getProcedureForIdentifier(request.getProcedureIdentifier(), session);
             for (SosProcedureDescription procedureDescription : request.getProcedureDescriptions()) {
                 DateTime currentTime = new DateTime(DateTimeZone.UTC);
                 // TODO: check for all validTimes of descriptions for this
                 // identifier
                 // ITime validTime =
                 // getValidTimeForProcedure(procedureDescription);
-                Procedure procedure =
-                        new ProcedureDAO().getProcedureForIdentifier(request.getProcedureIdentifier(), session);
+//                
+                procedure = procedureDAO.updateProcedure(procedure, procedureDescription, session);
+                
                 if (procedure instanceof TProcedure) {
                     ProcedureDescriptionFormat procedureDescriptionFormat =
                             new ProcedureDescriptionFormatDAO().getProcedureDescriptionFormatObject(

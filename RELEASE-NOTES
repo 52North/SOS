@@ -28,6 +28,8 @@ RELEASE NOTES
         * https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#A_61_61_Procedure_type_support
       * DeleteResultTemplate operation
         * Allows the deletion of resultTemplates by identifier or offering/observedProperty pairs
+      * Update procedure name/description in UpdateSensorDescription
+        * Update the procedure name/description if changed 
       * UVF encoding
         * https://wiki.52north.org/SensorWeb/UvfEncoding
       * WaterML 2.0 MonitoringPoint support in database
@@ -94,8 +96,8 @@ RELEASE NOTES
       * Issue #395: Creating database schema fails for MySQL
       * Issue #422: Failed conversion between SML 2.0 and SML 1.0.1
       * Issue #439: quality tag how metadata of output list
-      * Issue #???: Hidden NPE cause by not set request context while inserting new sample data
-                    https://github.com/52North/SOS/pull/543
+      * Hidden NPE cause by not set request context while inserting new sample data
+      * Avoid query for next value chunk if previous has less than chunk size
 
 
     Release 52n-sensorweb-sos-4.3.14

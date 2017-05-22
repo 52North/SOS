@@ -39,7 +39,9 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assume;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.n52.sos.netcdf.NetcdfConstants;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -51,7 +53,9 @@ import ucar.nc2.jni.netcdf.Nc4prototypes;
 
 public class ObservationNetCDFEncodingsTest extends AbstractObservationEncodingsTest {
 
-
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder();
+    
     @Test
     public void testSos2GetObsNetcdf() throws IOException {
         testGetObsNetcdf(Sos2Constants.SERVICEVERSION, NetcdfConstants.CONTENT_TYPE_NETCDF.toString(), false);
@@ -122,7 +126,7 @@ public class ObservationNetCDFEncodingsTest extends AbstractObservationEncodings
         }
 
         InputStream inputStream = sendGetObsKvp(serviceVersion, responseFormat).asInputStream();
-        File netcdfFile = File.createTempFile("52n-sos-netcdf-test", ".nc");
+        File netcdfFile = testFolder.newFile("52n-sos-netcdf-test.nc");
         FileOutputStream fileOutputStream = new FileOutputStream(netcdfFile);
         if (isZip) {
             ZipInputStream zis = new ZipInputStream(inputStream);
@@ -141,6 +145,7 @@ public class ObservationNetCDFEncodingsTest extends AbstractObservationEncodings
         assertThat(netcdfDataset, notNullValue());
         netcdfDataset.close();
         netcdfFile.delete();
+        testFolder.delete();
     }
 
 }

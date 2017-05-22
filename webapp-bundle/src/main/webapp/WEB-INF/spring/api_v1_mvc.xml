@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+    <mvc:annotation-driven />
+    <ctx:annotation-config />
+
+    <!--
+        This bean description file injects the SPI implementation into the Web binding layer.
+        Any change will corrupt the API Web layer. Custom implementation has to be defined
+        by bean descriptions using the ref-ids associated below.
+    -->
+
+    <bean class="org.n52.web.ctrl.ResourcesController">
+        <property name="metadataService" ref="metadataService" />
+    </bean>
+
+    <bean class="org.n52.web.ctrl.SearchController">
+        <property name="searchService" ref="searchService"/>
+    </bean>
+
+    <bean class="org.n52.web.ctrl.OfferingsParameterController" parent="parameterController">
+        <property name="parameterService">
+            <bean class="org.n52.web.ctrl.ParameterBackwardsCompatibilityAdapter">
+                <constructor-arg index="0" ref="offeringParameterService" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean class="org.n52.web.ctrl.ServicesParameterController" parent="parameterController">
+        <property name="parameterService">
+            <bean class="org.n52.web.ctrl.ParameterBackwardsCompatibilityAdapter">
+                <constructor-arg index="0" ref="serviceParameterService" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean class="org.n52.web.ctrl.CategoriesParameterController" parent="parameterController">
+        <property name="parameterService">
+            <bean class="org.n52.web.ctrl.ParameterBackwardsCompatibilityAdapter">
+                <constructor-arg index="0" ref="categoryParameterService" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean class="org.n52.web.ctrl.FeaturesParameterController" parent="parameterController">
+        <property name="parameterService">
+            <bean class="org.n52.web.ctrl.ParameterBackwardsCompatibilityAdapter">
+                <constructor-arg index="0" ref="featureParameterService" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean class="org.n52.web.ctrl.ProceduresParameterController" parent="parameterController">
+        <property name="parameterService">
+            <bean class="org.n52.web.ctrl.ParameterBackwardsCompatibilityAdapter">
+                <constructor-arg index="0" ref="procedureParameterService" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean class="org.n52.web.ctrl.PhenomenaParameterController" parent="parameterController">
+        <property name="parameterService">
+            <bean class="org.n52.web.ctrl.ParameterBackwardsCompatibilityAdapter">
+                <constructor-arg index="0" ref="phenomenonParameterService" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean class="org.n52.web.ctrl.PlatformsParameterController" parent="parameterController">
+        <property name="parameterService" ref="platformParameterService" />
+        <property name="metadataExtensions">
+            <list merge="true">
+                <bean class="org.n52.io.extension.parents.HierarchicalParameterExtension">
+                    <property name="service" ref="hierarchicalParameterService" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.n52.web.ctrl.GeometriesController" parent="parameterController">
+        <property name="parameterService" ref="geometriesService" />
+    </bean>
+
+    <bean class="org.n52.web.ctrl.DatasetController" parent="parameterController">
+        <property name="parameterService" ref="datasetService" />
+        <property name="metadataExtensions">
+            <list merge="true">
+                <bean class="org.n52.io.extension.RenderingHintsExtension" />
+                <bean class="org.n52.io.extension.StatusIntervalsExtension" />
+                <bean class="org.n52.io.extension.resulttime.ResultTimeExtension">
+                    <property name="service" ref="resultTimeService" />
+                </bean>
+                <!-- Using DatabaseMetadataExtension requires some preparation work. -->
+                <!-- Have a look at the README.md at TBD -->
+                <!--<bean class="org.n52.io.extension.metadata.DatabaseMetadataExtension" />-->
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.n52.web.ctrl.DataController">
+        <property name="dataService" ref="datasetService" />
+        <property name="datasetService" ref="datasetService" />
+        <property name="requestIntervalRestriction" value="${request.interval.restriction}" />
+    </bean>
+
+</beans>

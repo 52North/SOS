@@ -86,7 +86,7 @@ public class HibernateProcedureDescriptionGeneratorRepository extends
 
     public HibernateProcedureDescriptionGeneratorFactory getFactory(
             final HibernateProcedureDescriptionGeneratorFactoryKeyType key) {
-        return (HibernateProcedureDescriptionGeneratorFactory) factories.get(key);
+        return factories.get(key);
     }
 
     /**

@@ -40,6 +40,7 @@ import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureDocument;
 import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureType;
 import net.opengis.samplingSpatial.x20.ShapeType;
 
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
@@ -49,6 +50,7 @@ import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -58,6 +60,7 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.W3CConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +76,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * @since 4.0.0
  * 
  */
-public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
+public class SamplingDecoderv20 extends AbstractOmDecoderv20 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamplingDecoderv20.class);
 
@@ -115,9 +118,20 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
     }
 
     @Override
-    public AbstractFeature decode(final XmlObject element) throws OwsExceptionReport {
+    public AbstractFeature decode(final Object element) throws OwsExceptionReport {
         // validate XmlObject
-        XmlHelper.validateDocument(element);
+        if (element instanceof XmlObject) {
+            // set namespace for default XML type (e.g. xs:string, xs:integer,
+            // xs:boolean, ...)
+            // Fix for problem with XmlBeans: namespace is not set in child elements
+            // when defined in root of request (SOAP)
+            final XmlCursor cursor = ((XmlObject)element).newCursor();
+            if (cursor.toFirstChild() && cursor.namespaceForPrefix(W3CConstants.NS_XS_PREFIX) == null) {
+                cursor.prefixForNamespace(W3CConstants.NS_XS);
+            }
+            cursor.dispose();
+            XmlHelper.validateDocument((XmlObject)element);
+        }
         if (element instanceof SFSpatialSamplingFeatureDocument) {
             return parseSpatialSamplingFeature(((SFSpatialSamplingFeatureDocument) element)
                     .getSFSpatialSamplingFeature());
@@ -129,25 +143,17 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
 
     private AbstractFeature parseSpatialSamplingFeature(final SFSpatialSamplingFeatureType spatialSamplingFeature)
             throws OwsExceptionReport {
-        final SamplingFeature sosFeat = new SamplingFeature(null, spatialSamplingFeature.getId());
-        if (spatialSamplingFeature.getIdentifier() != null
-                && spatialSamplingFeature.getIdentifier().getStringValue() != null
-                && !spatialSamplingFeature.getIdentifier().getStringValue().isEmpty()) {
-            final CodeWithAuthority identifier =
-                    (CodeWithAuthority) CodingHelper.decodeXmlElement(spatialSamplingFeature.getIdentifier());
-            sosFeat.setIdentifier(identifier);
-        }
-        if (spatialSamplingFeature.getNameArray() != null) {
-            sosFeat.setName(getNames(spatialSamplingFeature));
-        }
-        if (spatialSamplingFeature.isSetDescription()) {
-            sosFeat.setDescription(spatialSamplingFeature.getDescription().getStringValue());
-        }
+        final AbstractSamplingFeature sosFeat = new SamplingFeature(null, spatialSamplingFeature.getId());
+        // parse identifier, names, description
+        parseAbstractFeatureType(spatialSamplingFeature, sosFeat);
         sosFeat.setFeatureType(getFeatureType(spatialSamplingFeature.getType()));
         sosFeat.setSampledFeatures(getSampledFeatures(spatialSamplingFeature.getSampledFeatureArray()));
         sosFeat.setXmlDescription(getXmlDescription(spatialSamplingFeature));
         sosFeat.setGeometry(getGeometry(spatialSamplingFeature.getShape()));
         checkTypeAndGeometry(sosFeat);
+        if (spatialSamplingFeature.getParameterArray() != null) {
+            sosFeat.setParameters(parseNamedValueTypeArray(spatialSamplingFeature.getParameterArray()));
+        }
         sosFeat.setGmlId(spatialSamplingFeature.getId());
         return sosFeat;
     }
@@ -157,19 +163,6 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
                 SFSpatialSamplingFeatureDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         featureDoc.setSFSpatialSamplingFeature(spatialSamplingFeature);
         return featureDoc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
-    }
-
-    private List<CodeType> getNames(final SFSpatialSamplingFeatureType spatialSamplingFeature)
-            throws OwsExceptionReport {
-        final int length = spatialSamplingFeature.getNameArray().length;
-        final List<CodeType> names = new ArrayList<CodeType>(length);
-        for (int i = 0; i < length; i++) {
-            final Object decodedElement = CodingHelper.decodeXmlObject(spatialSamplingFeature.getNameArray(i));
-            if (decodedElement instanceof CodeType) {
-                names.add((CodeType) decodedElement);
-            }
-        }
-        return names;
     }
 
     private String getFeatureType(final ReferenceType type) {
@@ -245,15 +238,18 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
     }
 
     private Geometry getGeometry(final ShapeType shape) throws OwsExceptionReport {
-        final Object decodedObject = CodingHelper.decodeXmlElement(shape.getAbstractGeometry());
-        if (decodedObject instanceof Geometry) {
-            return (Geometry) decodedObject;
+        if (shape.isSetAbstractGeometry()) {
+            final Object decodedObject = CodingHelper.decodeXmlElement(shape.getAbstractGeometry());
+            if (decodedObject instanceof Geometry) {
+                return (Geometry) decodedObject;
+            }
+            throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation).withMessage(
+                    "The requested geometry type of featureOfInterest is not supported by this service!");
         }
-        throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation).withMessage(
-                "The requested geometry type of featureOfInterest is not supported by this service!");
+        return null;
     }
 
-    private void checkTypeAndGeometry(final SamplingFeature sosFeat) throws OwsExceptionReport {
+    private void checkTypeAndGeometry(final AbstractSamplingFeature sosFeat) throws OwsExceptionReport {
         final String featTypeForGeometry = getFeatTypeForGeometry(sosFeat.getGeometry());
         if (sosFeat.getFeatureType() == null) {
             sosFeat.setFeatureType(featTypeForGeometry);

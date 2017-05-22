@@ -71,9 +71,9 @@ public class HibernateStreamingSettings implements SettingDefinitionProvider {
                     .setKey(DATASOURCE_STREAMING_APPROACH)
                     .setDefaultValue(HibernateStreamingConfiguration.DEFAULT_CHUNK_STREAMING_DATASOURCE)
                     .setTitle(
-                            "Should this service query the streaming datasource values (currently only GetObservation) as chunk of x (true) ora as scrollable values?")
+                            "Should this service query the streaming datasource values (currently only GetObservation) as chunk of x (true) or as scrollable values?")
                     .setDescription(
-                            "Whether the service should query the streaming stream datasource values (currently only GetObservation) as chunk of x (true) or as scrollable values.");
+                            "Whether the service should query the streaming stream datasource values (currently only GetObservation) as chunk of x (true) or as scrollable values. NOTE: Please uncheck if you use Oracle because there is an issue in Hibernate ORM which cause exceptions if yor request contains offering parameter.");
 
     public static final IntegerSettingDefinition CHUNK_SIZE_DEFINITION =
             new IntegerSettingDefinition()

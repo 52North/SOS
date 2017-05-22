@@ -411,7 +411,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
             exceptionText.append("\n");
         }
         if (owsException.getCause() != null) {
-            exceptionText.append("[EXEPTION]: \n");
+            exceptionText.append("[EXCEPTION]: \n");
             final String localizedMessage = owsException.getCause().getLocalizedMessage();
             final String message = owsException.getCause().getMessage();
             if (localizedMessage != null && message != null) {

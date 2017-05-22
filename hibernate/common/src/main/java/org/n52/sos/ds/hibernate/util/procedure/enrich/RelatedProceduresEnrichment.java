@@ -85,9 +85,7 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
     @Override
     public void enrich() throws OwsExceptionReport {
         Set<String> parentProcedures = getParentProcedures();
-        if (CollectionHelper.isNotEmpty(parentProcedures)) {
-            getDescription().addParentProcedures(parentProcedures);
-        }
+        getDescription().setParentProcedures(parentProcedures);
         Set<SosProcedureDescription> childProcedures = getChildProcedures();
         if (CollectionHelper.isNotEmpty(childProcedures)) {
             getDescription().addChildProcedures(childProcedures);

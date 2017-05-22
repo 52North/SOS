@@ -35,6 +35,7 @@ import java.util.Set;
 import org.n52.sos.decode.DecoderKey;
 import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
+import org.n52.sos.exception.ows.concrete.InvalidOutputFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOutputFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
@@ -96,9 +97,13 @@ public class DescribeSensorKvpDecoderv100 extends AbstractKvpDecoder {
                     } // outputFormat
                     else if (parameterName.equalsIgnoreCase(Sos1Constants.DescribeSensorParams.outputFormat.name())
                             && !Strings.isNullOrEmpty(parameterValues)) {
-                     // parse outputFormat through MediaType to ensure it's a mime type and eliminate whitespace variations
-                        request.setProcedureDescriptionFormat(KvpHelper.checkParameterSingleValue(
-                                MediaType.normalizeString(parameterValues), parameterName));
+                        // parse outputFormat through MediaType to ensure it's a mime type and eliminate whitespace variations
+                        if (MediaType.isMediaType(parameterValues)) {
+                            request.setProcedureDescriptionFormat(KvpHelper.checkParameterSingleValue(
+                                    MediaType.normalizeString(parameterValues), parameterName));
+                        } else {
+                            throw new InvalidOutputFormatParameterException(parameterValues);
+                        }
                         foundOutputFormat = true;
 //                     // language (optional)
 //                    } else if (parameterName.equalsIgnoreCase(SosConstants.InspireParams.language.name())) {

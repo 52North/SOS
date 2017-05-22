@@ -28,14 +28,14 @@
  */
 package org.n52.sos.decode;
 
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
-import static org.n52.sos.util.KvpHelper.checkParameterSingleValue;
+import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.*;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.concrete.MissingRequestParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
@@ -71,7 +71,7 @@ public class DeleteObservationKvpDecoder extends AbstractKvpDecoder {
         if (objectToDecode == null) {
             throw new UnsupportedDecoderInputException(this, objectToDecode);
         }
-        DeleteObservationRequest deleteObservationRequest = new DeleteObservationRequest();
+        DeleteObservationRequest request = new DeleteObservationRequest(NS_SOSDO_2_0);
         CompositeOwsException exceptions = new CompositeOwsException();
         boolean foundRequest = false, foundService = false, foundVersion = false, foundObservation = false;
 
@@ -79,21 +79,50 @@ public class DeleteObservationKvpDecoder extends AbstractKvpDecoder {
             String parameterValues = objectToDecode.get(parameterName);
             try {
                 if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
-                    deleteObservationRequest.setService(KvpHelper.checkParameterSingleValue(parameterValues,
+                    request.setService(KvpHelper.checkParameterSingleValue(parameterValues,
                             parameterName));
                     foundService = true;
                 } else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
-                    deleteObservationRequest.setVersion(KvpHelper.checkParameterSingleValue(parameterValues,
+                    request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues,
                             parameterName));
                     foundVersion = true;
                 } else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
                     KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
                     foundRequest = true;
-                } else if (parameterName.equalsIgnoreCase(PARAMETER_NAME)) {
-                    deleteObservationRequest.setObservationIdentifier(checkParameterSingleValue(parameterValues,
-                            parameterName));
+                } 
+                // observation (optional)
+                else if (parameterName.equalsIgnoreCase(PARAM_OBSERVATION)) {
+                    request.setObservationIdentifiers(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
                     foundObservation = true;
+                } 
+                // offering (optional)
+                else if (parameterName.equalsIgnoreCase(PARAM_OFFERING)) {
+                    request.setOfferings(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
                 }
+                // observedProperty (optional)
+                else if (parameterName.equalsIgnoreCase(PARAM_OBSERVED_PROPERTY)) {
+                    request.setObservedProperties(KvpHelper.checkParameterMultipleValues(parameterValues,
+                            parameterName));
+                }
+                // procedure (optional)
+                else if (parameterName.equalsIgnoreCase(PARAM_PROCEDURE)) {
+                    request.setProcedures(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
+                }
+                // featureOfInterest (optional)
+                else if (parameterName.equalsIgnoreCase(PARAM_FEATURE_OF_INTEREST)) {
+                    request.setFeatureIdentifiers(KvpHelper.checkParameterMultipleValues(parameterValues,
+                            parameterName));
+                }
+                // eventTime (optional)
+                else if (parameterName.equalsIgnoreCase(PARAM_TEMPORAL_FILTER)) {
+                    try {
+                        request.setTemporalFilters(parseTemporalFilter(
+                                KvpHelper.checkParameterMultipleValues(parameterValues, parameterName), parameterName));
+                    } catch (final OwsExceptionReport e) {
+                        exceptions.add(new InvalidParameterValueException(parameterName, parameterValues).causedBy(e));
+                    }
+                }
+                
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
@@ -111,13 +140,9 @@ public class DeleteObservationKvpDecoder extends AbstractKvpDecoder {
             exceptions.add(new MissingRequestParameterException());
         }
 
-        if (!foundObservation) {
-            exceptions.add(new MissingObservationParameterException());
-        }
-
         exceptions.throwIfNotEmpty();
 
-        return deleteObservationRequest;
+        return request;
     }
 
 }

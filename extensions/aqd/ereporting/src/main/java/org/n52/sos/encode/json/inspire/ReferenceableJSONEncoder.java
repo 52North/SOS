@@ -30,7 +30,7 @@ package org.n52.sos.encode.json.inspire;
 
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.Referenceable;
+import org.n52.sos.w3c.xlink.Referenceable;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

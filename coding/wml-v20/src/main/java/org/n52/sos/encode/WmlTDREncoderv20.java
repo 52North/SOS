@@ -65,6 +65,7 @@ import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
@@ -72,7 +73,6 @@ import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
@@ -106,7 +106,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     private static final Set<EncoderKey> ENCODER_KEYS = createEncoderKeys();
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.ObservationType, Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR));;
+            SupportedTypeKey.ObservationType, Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -134,6 +134,11 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
         return Collections.unmodifiableMap(SUPPORTED_TYPES);
     }
+    
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
+        return Collections.singletonMap(WaterMLConstants.NS_WML_20_DR, getSupportedTypes().get(SupportedTypeKey.ObservationType));
+    }
 
     @Override
     public Set<String> getConformanceClasses() {
@@ -159,7 +164,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(WaterMLConstants.WML_20_SCHEMA_LOCATION, WaterMLConstants.WML_20_DR_SCHEMA_LOCATION,
-                GmlCoverageConstants.GML_COVERAGE_10_SCHEMA_LOCATION);
+                GmlCoverageConstants.GML_COVERAGE_10_SCHEMA_LOCATION, WaterMLConstants.WML_20_MP_SCHEMA_LOCATION);
     }
 
     @Override
@@ -194,6 +199,10 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         } else {
             super.encode(objectToEncode, outputStream, encodingValues);
         }
+    }
+    
+    protected OMObservationType createOmObservationType() {
+        return OMObservationType.Factory.newInstance(getXmlOptions());
     }
 
     @Override
@@ -341,7 +350,11 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         List<TimeValuePair> timeValuePairs = tvpValue.getValue();
         List<String> toList = Lists.newArrayListWithCapacity(timeValuePairs.size());
         for (TimeValuePair timeValuePair : timeValuePairs) {
-            toList.add(getTimeString(timeValuePair.getTime()));
+            if (timeValuePair.getValue() != null
+                    && (timeValuePair.getValue() instanceof CountValue || timeValuePair.getValue() instanceof QuantityValue)
+                    && timeValuePair.getValue().isSetValue()) {
+                toList.add(getTimeString(timeValuePair.getTime()));
+            }
         }
         return toList;
     }
@@ -361,8 +374,6 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
             if (timeValuePair.getValue() != null
                     && (timeValuePair.getValue() instanceof CountValue || timeValuePair.getValue() instanceof QuantityValue)) {
                 values.add(timeValuePair.getValue().getValue());
-            } else {
-                values.add("");
             }
         }
         return values;

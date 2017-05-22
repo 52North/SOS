@@ -29,7 +29,7 @@
 package org.n52.sos.ext.deleteobservation;
 
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.response.AbstractOperationResponse;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -37,10 +37,13 @@ import org.n52.sos.response.AbstractServiceResponse;
  * 
  * @since 1.0.0
  */
-public class DeleteObservationResponse extends AbstractServiceResponse {
+public class DeleteObservationResponse extends AbstractOperationResponse {
     private OmObservation deletedObservation;
-
     private String observationIdentifier;
+    
+    public DeleteObservationResponse(String sosDoVersion) {
+        super(sosDoVersion);
+    }
 
     public void setObservationId(String observationIdentifier) {
         this.observationIdentifier = observationIdentifier;
@@ -62,4 +65,5 @@ public class DeleteObservationResponse extends AbstractServiceResponse {
     public String getOperationName() {
         return DeleteObservationConstants.Operations.DeleteObservation.name();
     }
+
 }

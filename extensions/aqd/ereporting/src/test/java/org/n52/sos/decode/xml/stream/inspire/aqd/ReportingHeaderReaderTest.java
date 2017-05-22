@@ -57,9 +57,9 @@ import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.Nillable;
-import org.n52.sos.util.Reference;
-import org.n52.sos.util.Referenceable;
+import org.n52.sos.w3c.Nillable;
+import org.n52.sos.w3c.xlink.Reference;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.xml.sax.SAXException;
 
 /**
@@ -90,7 +90,7 @@ public class ReportingHeaderReaderTest {
                                 .setOrganisationName("Organisation")
                                 .setPositionName("Postionti")
                                 .addRole(new Reference().setHref(URI
-                                        .create("http://hallo")))
+                                        .create("http://hallo.org")))
                                 .addRole(Nillable.<Reference>withheld())
                                 .setContact(new Contact()
                                         .addTelephoneFacsimile("1234")
@@ -105,7 +105,7 @@ public class ReportingHeaderReaderTest {
                                                 .setPostCode("12341234")
                                                 .setAddressFeature(new Reference()
                                                         .setHref(URI
-                                                                .create("http://asdfasdf")))
+                                                                .create("http://asdfasdf.org")))
                                                 .addLocatorDesignator("localtor")
                                                 .addAddressArea(Nillable
                                                         .<GeographicalName>withheld())
@@ -124,7 +124,7 @@ public class ReportingHeaderReaderTest {
                                                         .setPronunciation(new Pronunciation()
                                                                 .setIPA("asdfasdf")
                                                                 .setSoundLink(URI
-                                                                        .create("http://asdfasdf"))
+                                                                        .create("http://asdfasdf.org"))
                                                         )
                                                 )
                                                 .addAdminUnit(new GeographicalName()
@@ -142,7 +142,7 @@ public class ReportingHeaderReaderTest {
                                                         .setPronunciation(new Pronunciation()
                                                                 .setIPA("asdfasdf")
                                                                 .setSoundLink(URI
-                                                                        .create("http://asdfasdf"))
+                                                                        .create("http://asdfasdf.org"))
                                                         ))
                                                 .addPostName(Nillable
                                                         .<GeographicalName>withheld())
@@ -161,7 +161,7 @@ public class ReportingHeaderReaderTest {
                                                         .setPronunciation(new Pronunciation()
                                                                 .setIPA("asdfasdf")
                                                                 .setSoundLink(URI
-                                                                        .create("http://asdfasdf"))
+                                                                        .create("http://asdfasdf.org"))
                                                         ))
                                                 .addThoroughfare(Nillable
                                                         .<GeographicalName>withheld())
@@ -180,7 +180,7 @@ public class ReportingHeaderReaderTest {
                                                         .setPronunciation(new Pronunciation()
                                                                 .setIPA("asdfasdf")
                                                                 .setSoundLink(URI
-                                                                        .create("http://asdfasdf"))
+                                                                        .create("http://asdfasdf.org"))
                                                         )
                                                 )
                                         )

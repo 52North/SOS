@@ -57,11 +57,6 @@ public class SqlServerCoreDatasource extends AbstractSqlServerDatasource {
     }
 
     @Override
-    public boolean supportsClear() {
-        return false;
-    }
-
-    @Override
     public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
         return filter(super.getChangableSettingDefinitions(current),
                 ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));

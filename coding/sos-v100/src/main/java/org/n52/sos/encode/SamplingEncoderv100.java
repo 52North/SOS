@@ -57,7 +57,7 @@ import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos1Constants;
@@ -144,8 +144,8 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
     }
 
     private XmlObject createFeature(AbstractFeature absFeature) throws OwsExceptionReport {
-        if (absFeature instanceof SamplingFeature) {
-            SamplingFeature sampFeat = (SamplingFeature) absFeature;
+        if (absFeature instanceof AbstractSamplingFeature) {
+            AbstractSamplingFeature sampFeat = (AbstractSamplingFeature) absFeature;
             if (sampFeat.getFeatureType().equals(SfConstants.FT_SAMPLINGPOINT)
                     || sampFeat.getFeatureType().equals(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT)
                     || sampFeat.getGeometry() instanceof Point) {
@@ -155,6 +155,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
                 addValuesToFeature(xbSamplingPoint, sampFeat);
                 XmlObject xbGeomety = getEncodedGeometry(sampFeat.getGeometry(), absFeature.getGmlId());
                 xbSamplingPoint.addNewPosition().addNewPoint().set(xbGeomety);
+                sampFeat.wasEncoded();
                 return xbSamplingPointDoc;
             } else if (sampFeat.getFeatureType().equals(SfConstants.FT_SAMPLINGCURVE)
                     || sampFeat.getFeatureType().equals(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE)
@@ -165,6 +166,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
                 addValuesToFeature(xbSamplingCurve, sampFeat);
                 XmlObject xbGeomety = getEncodedGeometry(sampFeat.getGeometry(), absFeature.getGmlId());
                 xbSamplingCurve.addNewShape().addNewCurve().set(xbGeomety);
+                sampFeat.wasEncoded();
                 return xbSamplingCurveDoc;
             } else if (sampFeat.getFeatureType().equals(SfConstants.FT_SAMPLINGSURFACE)
                     || sampFeat.getFeatureType().equals(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_SURFACE)
@@ -175,6 +177,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
                 addValuesToFeature(xbSamplingSurface, sampFeat);
                 XmlObject xbGeomety = getEncodedGeometry(sampFeat.getGeometry(), absFeature.getGmlId());
                 xbSamplingSurface.addNewShape().addNewSurface().set(xbGeomety);
+                sampFeat.wasEncoded();
                 return xbSamplingSurfaceDoc;
             }
         } else if (absFeature instanceof FeatureCollection) {
@@ -197,7 +200,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
         }
     }
 
-    private void addValuesToFeature(SamplingFeatureType xbSamplingFeature, SamplingFeature sampFeat)
+    private void addValuesToFeature(SamplingFeatureType xbSamplingFeature, AbstractSamplingFeature sampFeat)
             throws OwsExceptionReport {
         xbSamplingFeature.setId(sampFeat.getGmlId());
         if (sampFeat.isSetIdentifier()
@@ -233,7 +236,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
         setMetaDataProperty(xbSamplingFeature, sampFeat);
     }
     
-    private void setMetaDataProperty(SamplingFeatureType sft, SamplingFeature sampFeat) throws OwsExceptionReport {
+    private void setMetaDataProperty(SamplingFeatureType sft, AbstractSamplingFeature sampFeat) throws OwsExceptionReport {
         if (sampFeat.isSetMetaDataProperty()) {
             for (AbstractMetaData abstractMetaData : sampFeat.getMetaDataProperty()) {
                 XmlObject encodeObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, abstractMetaData);

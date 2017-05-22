@@ -37,12 +37,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import junit.framework.TestCase;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
+
+import junit.framework.TestCase;
 
 /**
  * @since 4.0.0
@@ -50,10 +52,10 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
  */
 public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     private AbstractHibernateFullDBDatasource ds;
-
+    
     private static final int CHANGEABLE_COUNT = 10;
-
-    private static final int MAX_COUNT = 15;
+    
+    private static final int MAX_COUNT = 19;
 
     @Override
     protected void setUp() throws Exception {
@@ -84,31 +86,33 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         current.put(HibernateDatasourceConstants.HIBERNATE_DIRECTORY, "some-directory-stuff-to-test");
 
         final Map<String, Object> settings = ds.parseDatasourceProperties(current);
-        checkSettingKeys(settings.keySet(), false, false);
+        checkSettingKeys(settings.keySet(), false, false, false);
     }
 
     private void checkSettingDefinitionsTransactional(final Set<SettingDefinition<?, ?>> settings) {
-        checkSettingDefinitions(settings, false, true);
+        checkSettingDefinitions(settings, false, true, true);
     }
 
     private void checkSettingDefinitionsChangableSetting(final Set<SettingDefinition<?, ?>> settings) {
-        checkSettingDefinitions(settings, true, false);
+        checkSettingDefinitions(settings, true, false, false);
 
     }
 
-    private void checkSettingDefinitions(final Set<SettingDefinition<?, ?>> settings, final boolean changeable, final boolean settingsDefinitions) {
-        final List<String> keys = new ArrayList<String>();
+    private void checkSettingDefinitions(final Set<SettingDefinition<?, ?>> settings, final boolean changeable, final boolean settingsDefinitions, final boolean timeFormat) {
+        final List<String> keys = new ArrayList<>();
         final Iterator<SettingDefinition<?, ?>> iterator = settings.iterator();
         while (iterator.hasNext()) {
             keys.add(iterator.next().getKey());
         }
-        checkSettingKeys(keys, changeable, settingsDefinitions);
+        checkSettingKeys(keys, changeable, settingsDefinitions, timeFormat);
     }
 
-    private void checkSettingKeys(final Collection<String> keys, final boolean changeable, final boolean settingsDefinitions) {
+    private void checkSettingKeys(final Collection<String> keys, final boolean changeable, final boolean settingsDefinitions, final boolean timeFormat) {
         boolean transactional = keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY);
         boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
+        boolean featureConcept = keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY);
         boolean multiLanguage = keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY);
+        boolean seriesMetadata = keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY);
 
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));
@@ -123,7 +127,12 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         assertTrue(changeable || keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
         assertTrue(!transactional || keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY));
         assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
+        assertTrue(!featureConcept || keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY));
         assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
+        assertTrue(!seriesMetadata || keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIMEZONE_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_FORMAT_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_Z_KEY));
 
         if (changeable) {
             assertEquals(CHANGEABLE_COUNT, keys.size());
@@ -131,8 +140,11 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
             int counter = MAX_COUNT;
             if (!transactional) { counter--; }
             if (!concept) { counter--; }
+            if (!featureConcept) { counter--; }
             if (!multiLanguage){ counter--; }
+            if (!seriesMetadata){ counter--; }
             if (settingsDefinitions){ counter--; }
+            if (!timeFormat){ counter-= 3; }
             assertEquals(counter, keys.size());
         }
     }

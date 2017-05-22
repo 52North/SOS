@@ -47,4 +47,8 @@ public class DeleteObservationEvent extends SosDeletionEvent<DeleteObservationRe
     public OmObservation getDeletedObservation() {
         return deletedObservation;
     }
+    
+    public boolean isSetDeletedObservation() {
+        return getDeletedObservation() != null;
+    }
 }

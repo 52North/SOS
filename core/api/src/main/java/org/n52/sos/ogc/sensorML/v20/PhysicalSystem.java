@@ -86,6 +86,11 @@ public class PhysicalSystem extends AbstractPhysicalProcess implements HasCompon
     public boolean isSetComponents() {
         return components != null && !components.isEmpty();
     }
+    
+    @Override
+    public boolean isAggragation() {
+        return true;
+    }
 
     public SmlConnection getConnections() {
         return connections;

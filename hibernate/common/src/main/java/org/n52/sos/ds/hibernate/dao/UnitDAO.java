@@ -33,6 +33,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ogc.UoM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,21 @@ public class UnitDAO {
         LOGGER.debug("QUERY getUnit(): {}", HibernateHelper.getSqlString(criteria));
         return (Unit) criteria.uniqueResult();
     }
+    
+    /**
+     * Get unit object for unit
+     * 
+     * @param unit
+     *            Unit
+     * @param session
+     *            Hibernate session
+     * @return Unit object
+     */
+    public Unit getUnit(UoM unit, Session session) {
+        Criteria criteria = session.createCriteria(Unit.class).add(Restrictions.eq(Unit.UNIT, unit.getUom()));
+        LOGGER.debug("QUERY getUnit(): {}", HibernateHelper.getSqlString(criteria));
+        return (Unit) criteria.uniqueResult();
+    }
 
     /**
      * Insert and get unit object
@@ -71,10 +87,29 @@ public class UnitDAO {
      * @return Unit object
      */
     public Unit getOrInsertUnit(String unit, Session session) {
-        Unit result = getUnit(unit, session);
+        return getOrInsertUnit(new UoM(unit), session);
+    }
+    
+    /**
+     * Insert and get unit object
+     * 
+     * @param unit
+     *            Unit
+     * @param session
+     *            Hibernate session
+     * @return Unit object
+     */
+    public Unit getOrInsertUnit(UoM unit, Session session) {
+        Unit result = getUnit(unit.getUom(), session);
         if (result == null) {
             result = new Unit();
-            result.setUnit(unit);
+            result.setUnit(unit.getUom());
+            if (unit.isSetName()) {
+                result.setName(unit.getName());
+            }
+            if (unit.isSetLink()) {
+                result.setLink(unit.getLink());
+            }
             session.save(result);
             session.flush();
             session.refresh(result);

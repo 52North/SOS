@@ -42,7 +42,9 @@ public class StreamingSettings implements SettingDefinitionProvider {
 
     public static final String FORCE_STREAMING_ENCODING = "service.streaming.encoding";
 
-    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Streaming").setOrder(5);
+    public static final SettingDefinitionGroup GROUP =
+            new SettingDefinitionGroup().setTitle("Streaming").setOrder(5).setDescription(
+                    "NOTE for Oracle users! Because of an issue in Hibernate ORM the chunk streaming approach throws an exception if the request conatains an offering parameter! Please, uncheck the third checkbox to use scollable values.");
 
     public static final BooleanSettingDefinition FORCE_STREAMING_ENCODING_DEFINITION = new BooleanSettingDefinition()
             .setGroup(GROUP)

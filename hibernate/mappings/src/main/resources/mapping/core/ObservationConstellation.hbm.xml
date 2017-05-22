@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ObservationConstellation" table="observationConstellation" >
+    <class name="org.n52.sos.ds.hibernate.entities.ObservationConstellation" table="observationconstellation" >
         <comment>Table to store the ObservationConstellation information. Contains information about the constellation of observableProperty, procedure, offering and the observationType. Mapping file: mapping/core/ObservationConstellation.hbm.xml</comment>
         <id name="observationConstellationId" type="long">
             <column name="observationConstellationId">
@@ -24,12 +24,12 @@
         </many-to-one>
         <many-to-one name="observationType" class="org.n52.sos.ds.hibernate.entities.ObservationType" foreign-key="obsConstObservationIypeFk" >
             <column name="observationTypeId">
-                <comment>Foreign Key (FK) to the related observableProperty. Contains "observationtype".observationtypeid</comment>
+            	<comment>Foreign Key (FK) to the related observation type. Contains "observationtype".observationtypeid</comment>
             </column>
         </many-to-one>
         <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="obsConstOfferingFk" unique-key="obsnConstellationIdentity">
             <column index="obsConstOfferingIdx" name="offeringId" not-null="true">
-                <comment>Foreign Key (FK) to the related observableProperty. Contains "offering".offeringid</comment>
+            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
             </column>
         </many-to-one>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
@@ -40,6 +40,11 @@
         <property name="hiddenChild" type="org.hibernate.type.TrueFalseType">
             <column name="hiddenChild" not-null="true" default="'F'" check="hiddenChild in ('T','F')">
                 <comment>Flag to indicate that this observationConstellations procedure is a child procedure of another procedure. If true, the related procedure is not contained in OGC SOS 2.0 Capabilities but in OGC SOS 1.0.0 Capabilities.</comment>
+            </column>
+        </property>
+        <property name="disabled" type="org.hibernate.type.TrueFalseType">
+            <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')">
+                <comment>Flag to indicate that this observationConstellations is disabled for insertion of observations. If false, new observation could be added to the SOS.</comment>
             </column>
         </property>
     </class>

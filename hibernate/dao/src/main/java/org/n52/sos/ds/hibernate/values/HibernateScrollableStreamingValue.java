@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.values;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
-import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -40,7 +40,7 @@ import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Hibernate streaming value implementation for {@link ScrollableResults}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  */
@@ -52,7 +52,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param procedure
@@ -85,15 +85,15 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-	public AbstractValue nextEntity() throws OwsExceptionReport {
-    	return (AbstractValue) scrollableResult.get()[0];
-	}
+    public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
+        return (AbstractValuedLegacyObservation<?>) scrollableResult.get()[0];
+    }
 
-	@Override
+    @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-        	AbstractValue resultObject = nextEntity();
-            TimeValuePair value = resultObject.createTimeValuePairFrom();
+            AbstractValuedLegacyObservation<?> resultObject = nextEntity();
+            TimeValuePair value = createTimeValuePairFrom(resultObject);
             session.evict(resultObject);
             return value;
         } catch (final HibernateException he) {
@@ -104,11 +104,15 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
-            OmObservation observation = observationTemplate.cloneTemplate();
-            AbstractValue resultObject = nextEntity();
+            OmObservation observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
+            AbstractValuedLegacyObservation<?> resultObject = nextEntity();
             resultObject.addValuesToObservation(observation, getResponseFormat());
+//            addValuesToObservation(observation, resultObject);
+//            if (resultObject.hasSamplingGeometry()) {
+//                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
+//            }
             checkForModifications(observation);
             session.evict(resultObject);
             return observation;
@@ -121,7 +125,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
 
     /**
      * Get the next results from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -130,15 +134,18 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
             session = sessionHolder.getSession();
         }
         try {
-            // query with temporal filter
-            if (temporalFilterCriterion != null) {
-                setScrollableResult(valueDAO.getStreamingValuesFor(request, procedure, observableProperty,
-                        featureOfInterest, temporalFilterCriterion, session));
-            }
-            // query without temporal or indeterminate filters
-            else {
-                setScrollableResult(valueDAO.getStreamingValuesFor(request, procedure, observableProperty,
-                        featureOfInterest, session));
+            if (request instanceof GetObservationRequest) {
+                GetObservationRequest getObsReq = (GetObservationRequest)request;
+                // query with temporal filter
+                if (temporalFilterCriterion != null) {
+                    setScrollableResult(valueDAO.getStreamingValuesFor(getObsReq, procedure, observableProperty,
+                            featureOfInterest, temporalFilterCriterion, session));
+                }
+                // query without temporal or indeterminate filters
+                else {
+                    setScrollableResult(valueDAO.getStreamingValuesFor(getObsReq, procedure, observableProperty,
+                            featureOfInterest, session));
+                }
             }
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
@@ -149,7 +156,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
 
     /**
      * Set the queried {@link ScrollableResults} to local variable
-     * 
+     *
      * @param scrollableResult
      *            Queried {@link ScrollableResults}
      */

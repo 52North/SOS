@@ -91,12 +91,8 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
             for (final String featureId : getFeatureIds()) {
                 final AbstractFeature feature = createFeatureOfInterest(featureId);
                 final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
-
                 final OmObservation sosObservation = new OmObservation();
-                sosObservation.setNoDataValue(getNoDataValue());
-                sosObservation.setTokenSeparator(getTokenSeparator());
-                sosObservation.setTupleSeparator(getTupleSeparator());
-                sosObservation.setDecimalSeparator(getDecimalSeparator());
+                addDefaultValuesToObservation(sosObservation);
                 sosObservation.setObservationConstellation(obsConst);
                 final NilTemplateValue value = new NilTemplateValue();
                 value.setUnit(obsProp.getUnit());

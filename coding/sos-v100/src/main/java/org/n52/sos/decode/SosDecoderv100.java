@@ -40,6 +40,8 @@ import java.util.Set;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.InvalidOutputFormatParameterException;
+import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.filter.SpatialFilter;
@@ -217,19 +219,24 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      * @param descSensorDoc
      *            XmlBean created from the incoming request stream
      * @return Returns SosDescribeSensorRequest representing the request
+     * @throws InvalidOutputFormatParameterException
      * 
      * 
      * @throws OwsExceptionReport
      *             * If parsing the XmlBean failed
      */
-    private AbstractServiceCommunicationObject parseDescribeSensor(DescribeSensorDocument descSensorDoc) {
-
+    private AbstractServiceCommunicationObject parseDescribeSensor(DescribeSensorDocument descSensorDoc)
+            throws InvalidOutputFormatParameterException {
         DescribeSensorRequest request = new DescribeSensorRequest();
         DescribeSensor descSensor = descSensorDoc.getDescribeSensor();
         request.setService(descSensor.getService());
         request.setVersion(descSensor.getVersion());
         //parse outputFormat through MediaType to ensure it's a mime type and eliminate whitespace variations
-        request.setProcedureDescriptionFormat(MediaType.normalizeString(descSensor.getOutputFormat()));
+        if (MediaType.isMediaType(descSensor.getOutputFormat())) {
+            request.setProcedureDescriptionFormat(MediaType.normalizeString(descSensor.getOutputFormat()));
+        } else {
+            throw new InvalidOutputFormatParameterException(descSensor.getOutputFormat());
+        }
         request.setProcedure(descSensor.getProcedure());
         return request;
     }

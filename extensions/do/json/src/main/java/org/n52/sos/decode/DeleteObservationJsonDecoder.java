@@ -28,11 +28,20 @@
  */
 package org.n52.sos.decode;
 
+import static org.n52.sos.coding.json.JSONConstants.FEATURE_OF_INTEREST;
+import static org.n52.sos.coding.json.JSONConstants.OBSERVED_PROPERTY;
+import static org.n52.sos.coding.json.JSONConstants.OFFERING;
+import static org.n52.sos.coding.json.JSONConstants.PROCEDURE;
+import static org.n52.sos.coding.json.JSONConstants.TEMPORAL_FILTER;
+
+import java.util.List;
+
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
 import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
+import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -61,9 +70,17 @@ public class DeleteObservationJsonDecoder
     @Override
     protected DeleteObservationRequest decodeRequest(JsonNode node)
             throws OwsExceptionReport {
-        DeleteObservationRequest req = new DeleteObservationRequest();
-        req.setObservationIdentifier(node.path(JSONConstants.OBSERVATION)
-                .textValue());
-        return req;
+        DeleteObservationRequest r = new DeleteObservationRequest(DeleteObservationConstants.NS_SOSDO_2_0);
+        r.setObservationIdentifiers(parseStringOrStringList(node.path(JSONConstants.OBSERVATION)));
+        r.setFeatureIdentifiers(parseStringOrStringList(node.path(FEATURE_OF_INTEREST)));
+        r.setObservedProperties(parseStringOrStringList(node.path(OBSERVED_PROPERTY)));
+        r.setOfferings(parseStringOrStringList(node.path(OFFERING)));
+        r.setProcedures(parseStringOrStringList(node.path(PROCEDURE)));
+        r.setTemporalFilters(parseTemporalFilters(node.path(TEMPORAL_FILTER)));
+        return r;
+    }
+    
+    private List<TemporalFilter> parseTemporalFilters(JsonNode node) throws OwsExceptionReport {
+        return decodeJsonToObjectList(node, TemporalFilter.class);
     }
 }

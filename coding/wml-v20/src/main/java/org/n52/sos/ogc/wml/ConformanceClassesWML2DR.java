@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ogc.wml;
+package org.n52.sos.ogc.series.wml;
 
 /**
  * @since 4.0.0

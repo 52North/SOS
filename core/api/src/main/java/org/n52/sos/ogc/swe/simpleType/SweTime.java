@@ -29,12 +29,17 @@
 package org.n52.sos.ogc.swe.simpleType;
 
 import org.joda.time.DateTime;
+
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.w3c.xlink.Referenceable;
 
 /**
  * SOS internal representation of SWE simpleType time
- * 
+ *
  * @since 4.0.0
  */
 public class SweTime extends SweAbstractUomType<DateTime> {
@@ -43,6 +48,7 @@ public class SweTime extends SweAbstractUomType<DateTime> {
      * value
      */
     private DateTime value;
+    private Referenceable<SweAllowedTimes> constraint;
 
     @Override
     public DateTime getValue() {
@@ -67,10 +73,59 @@ public class SweTime extends SweAbstractUomType<DateTime> {
     public boolean isSetValue() {
         return value != null;
     }
+    
+    /**
+     * @return the constraint
+     */
+    public Referenceable<SweAllowedTimes> getConstraint() {
+        return constraint;
+    }
+
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(SweAllowedTimes constraint) {
+        this.constraint = Referenceable.of(constraint);
+    }
+    
+    public boolean isSetContstraint() {
+        return getConstraint() != null && !getConstraint().isAbsent();
+    }
+    
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(Referenceable<SweAllowedTimes> constraint) {
+        this.constraint = constraint;
+    }
 
     @Override
     public SweDataComponentType getDataComponentType() {
         return SweDataComponentType.Time;
     }
 
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+    
+    @Override
+    public SweTime clone() {
+        SweTime clone = new SweTime();
+        copyValueTo(clone);
+        if (isSetValue()) {
+            clone.setValue(getValue());
+        }
+        if (isSetContstraint()) {
+            clone.setConstraint(getConstraint());
+        }
+        return clone;
+    }
 }

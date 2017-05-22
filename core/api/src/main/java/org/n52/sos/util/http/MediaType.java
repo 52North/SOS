@@ -244,6 +244,26 @@ public class MediaType implements Comparable<MediaType> {
         Preconditions.checkArgument(string != null);
         return new MediaType(com.google.common.net.MediaType.parse(string.trim()));
     }
+    
+    public static boolean check(String string) {
+        try {
+            Preconditions.checkArgument(string != null);
+            com.google.common.net.MediaType.parse(string.trim());
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        return true;
+        
+    }
+
+    public static boolean isMediaType(String string) {
+        try {
+            parse(string);
+        } catch (IllegalArgumentException e){
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Normalize mime type string by processing it through the MediaType parser.

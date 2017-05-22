@@ -1,0 +1,4 @@
+org.n52.sos.gda.GetDataAvailabilityXmlDecoder
+org.n52.sos.gda.GetDataAvailabilityJsonDecoder
+org.n52.sos.gda.GetDataAvailabilityKvpDecoder
+org.n52.svalbard.gda.v20.GetDataAvailabilityXmlDecoder

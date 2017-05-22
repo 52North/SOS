@@ -28,23 +28,22 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ogc.sensorML.Term;
 
 /**
  * SOS internal representation of SensorML identifier
  * 
  * @since 4.0.0
  */
-public class SmlIdentifier {
+public class SmlIdentifier extends Term {
 
-    private String name;
-
-    private String definition;
-
-    private String value;
+	 /**
+     * constructor
+     */
+    public SmlIdentifier() {
+    	
+    }
     
-    private String label;
-
     /**
      * constructor
      * 
@@ -57,94 +56,9 @@ public class SmlIdentifier {
      */
     public SmlIdentifier(final String name, final String definition, final String value) {
         super();
-        this.name = name;
-        this.label = name;
-        this.definition = definition;
-        this.value = value;
-    }
-    
-
-    /**
-     * @return the Identifier name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name
-     *            Identifier name
-     */
-    public void setName(final String name) {
-        this.name = name;
-        this.label = name;
-    }
-    
-    
-    /**
-     * @return the Identifier label
-     */
-    public String getLabel() {
-        return name;
-    }
-
-    /**
-     * @param name
-     *            Identifier name
-     */
-    public void setLabel(final String label) {
-        this.label = label;
-        this.name = label;
-    }
-
-    /**
-     * @return the Identifier definition
-     */
-    public String getDefinition() {
-        return definition;
-    }
-
-    /**
-     * @param definition
-     *            Identifier definition
-     */
-    public void setDefinition(final String definition) {
-        this.definition = definition;
-    }
-
-    /**
-     * @return the Identifier value
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * @param value
-     *            Identifier value
-     */
-    public void setValue(final String value) {
-        this.value = value;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("SosSMLIdentifier [name=%s, label=%s, definition=%s, value=%s]", name, label, definition, value);
-    }
-
-    public boolean isSetName() {
-        return StringHelper.isNotEmpty(name);
-    }
-    
-    public boolean isSetLabel() {
-        return StringHelper.isNotEmpty(label);
-    }
-
-    public boolean isSetValue() {
-        return StringHelper.isNotEmpty(value);
-    }
-
-    public boolean isSetDefinition() {
-        return StringHelper.isNotEmpty(definition);
+        setName(name);
+        setLabel(name);
+        setDefinition(definition);
+        setValue(value);
     }
 }

@@ -28,11 +28,15 @@
  */
 package org.n52.sos.ogc.gml;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 
-public class AbstractReferenceType {
+import com.google.common.base.Objects;
+
+public class AbstractReferenceType implements Comparable<AbstractReferenceType>{
 
     /**
      * Href
@@ -56,7 +60,7 @@ public class AbstractReferenceType {
      */
     public String getHref() {
     	if (href != null) {
-    		return href.getHref();
+    	   return href.getHref();
     	}
         return null;
     }
@@ -171,5 +175,27 @@ public class AbstractReferenceType {
     @Override
     public String toString() {
         return String.format("AbstractReferenceType [title=%s, role=%s, href=%s]", getTitle(), getRole(), getHref());
+    }
+
+    @Override
+    public int compareTo(AbstractReferenceType o) {
+        return checkNotNull(o) == this ? 0 
+                : getHref() == o.getHref() ? 0 
+                        : getHref() == null ? -1
+                                : o.getHref() == null ? 1 
+                                        : getHref().compareTo(o.getHref());
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof AbstractReferenceType) {
+            return hashCode() == o.hashCode();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.href, 47);
     }
 }

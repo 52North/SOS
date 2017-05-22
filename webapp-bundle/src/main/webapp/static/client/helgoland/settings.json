@@ -4,29 +4,28 @@
   "undefinedUomString": "-",
   "aggregateServices": true,
   "saveStatus": true,
-  "providerBlackList": [{
-    "serviceID": "xyz",
-    "apiUrl": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
-  }],
   "restApiUrls": {
-    "http://localhost:8080/52n-sos-webapp/api/v1/": "localhost"
-  },
-  "defaultProvider": {
-    "serviceID": "1",
-    "url": "http://localhost:8080/52n-sos-webapp/api/v1/"
-  },
+        "http://localhost:8080/52n-sos-webapp/api/": "localhost"
+    },
+    "defaultProvider": {
+        "serviceID": "1",
+        "apiUrl": "http://localhost:8080/52n-sos-webapp/api/"
+    },
   "chartOptions": {
     "yaxis": {
       "tickDecimals": 2
     }
   },
-  "supportedLanguages": [{
-    "code": "de",
-    "label": "Deutsch"
-  }, {
-    "code": "en",
-    "label": "English"
-  }],
+  "supportedLanguages": [
+    {
+      "code": "de",
+      "label": "Deutsch"
+    },
+    {
+      "code": "en",
+      "label": "English"
+    }
+  ],
   "selectColorFromList": true,
   "colorList": [
     "#078D53",
@@ -91,11 +90,5 @@
       "group": "Raster"
     }
   },
-  "showScale": true,
-  "datasetPresenter": {
-    "measurement": [{
-      "service": "mobilePresentDataset",
-      "platformType": "mobile_insitu"
-    }]
-  }
+  "showScale": true
 }

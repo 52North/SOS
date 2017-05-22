@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>rest</artifactId>
-        <version>4.3.14</version>
+        <version>4.4.0</version>
     </parent>
     <artifactId>rest-code</artifactId>
     <name>52°North SOS - Extension REST Binding - Core</name>
@@ -20,7 +20,7 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <!-- XML Beans Generated Classes -->
         <dependency>
@@ -60,8 +60,12 @@
             <artifactId>coding-sensorML-v101</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-xml</artifactId>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sosdo-v10</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sosdo-v20</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

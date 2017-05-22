@@ -28,15 +28,20 @@
  */
 package org.n52.sos.ogc.swe.simpleType;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.w3c.xlink.Referenceable;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SweCount extends SweAbstractSimpleType<Integer> {
 
     private Integer value;
+    private Referenceable<SweAllowedValues> constraint;
 
     @Override
     public Integer getValue() {
@@ -67,11 +72,61 @@ public class SweCount extends SweAbstractSimpleType<Integer> {
         return SweDataComponentType.Count;
     }
 
-	public void increaseCount() {
-		value++;
-	}
+    public void increaseCount() {
+        value++;
+    }
 
-	public void increaseCount(int count) {
-		value += count;
-	}
+    public void increaseCount(int count) {
+        value += count;
+    }
+    
+    /**
+     * @return the constraint
+     */
+    public Referenceable<SweAllowedValues> getConstraint() {
+        return constraint;
+    }
+
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(SweAllowedValues constraint) {
+        this.constraint = Referenceable.of(constraint);
+    }
+    
+    public boolean isSetContstraint() {
+        return getConstraint() != null && !getConstraint().isAbsent();
+    }
+    
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(Referenceable<SweAllowedValues> constraint) {
+        this.constraint = constraint;
+    }
+    
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    @Override
+    public SweCount clone() {
+        SweCount clone = new SweCount();
+        copyValueTo(clone);
+        if (isSetValue()) {
+            clone.setValue(getValue());
+        }
+        if (isSetContstraint()) {
+            clone.setConstraint(getConstraint());
+        }
+        return clone;
+    }
 }

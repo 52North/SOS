@@ -51,6 +51,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OperationNotSupportedException;
 import org.n52.sos.exception.ows.concrete.DateTimeException;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
+import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -126,11 +127,11 @@ public class ObservationsDecoder extends ResourceDecoder {
 
     private RestRequest decodeObservationsDeleteRequest(String pathPayload)
     {
-        DeleteObservationRequest deleteObservationRequest = new DeleteObservationRequest();
+        DeleteObservationRequest deleteObservationRequest = new DeleteObservationRequest(DeleteObservationConstants.NS_SOSDO_1_0);
         
         deleteObservationRequest.setService(bindingConstants.getSosService());
         deleteObservationRequest.setVersion(bindingConstants.getSosVersion());
-        deleteObservationRequest.setObservationIdentifier(pathPayload);
+        deleteObservationRequest.addObservationIdentifier(pathPayload);
         
         return new ObservationsDeleteRequest(deleteObservationRequest);
     }

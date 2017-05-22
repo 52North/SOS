@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns2:SF_SpatialSamplingFeature xmlns:ns2="http://www.opengis.net/samplingSpatial/2.0" xmlns:ns1="http://www.opengis.net/gml/3.2" ns1:id="ssf_2270788A70F8175B619C47F908D40FDD3F64D9FE">
+  <ns1:identifier codeSpace="">elv-ws2500</ns1:identifier>
+  <ns1:name codeSpace="http://www.opengis.net/def/nil/OGC/0/unknown">ELV WS2500</ns1:name>
+  <ns3:type xmlns:ns3="http://www.opengis.net/sampling/2.0" xmlns:xlin="http://www.w3.org/1999/xlink" xlin:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"/>
+  <ns3:sampledFeature xmlns:ns3="http://www.opengis.net/sampling/2.0" xmlns:xlin="http://www.w3.org/1999/xlink" xlin:href="http://www.opengis.net/def/nil/OGC/0/unknown"/>
+  <ns2:shape>
+    <ns1:Point ns1:id="point_ssf_2270788A70F8175B619C47F908D40FDD3F64D9FE">
+      <ns1:pos srsName="http://www.opengis.net/def/crs/EPSG/0/4326">51.934814453125 7.652428150177</ns1:pos>
+    </ns1:Point>
+  </ns2:shape>
+</ns2:SF_SpatialSamplingFeature>

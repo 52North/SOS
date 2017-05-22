@@ -32,18 +32,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.gml.CodeType;
-import net.opengis.gml.CoordinatesType;
-import net.opengis.gml.DirectPositionType;
-import net.opengis.gml.EnvelopeDocument;
-import net.opengis.gml.EnvelopeType;
-import net.opengis.gml.PointType;
-import net.opengis.gml.TimeInstantDocument;
-import net.opengis.gml.TimeInstantType;
-import net.opengis.gml.TimePeriodDocument;
-import net.opengis.gml.TimePeriodType;
-import net.opengis.gml.TimePositionType;
-
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
@@ -63,6 +51,18 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.vividsolutions.jts.geom.Geometry;
+
+import net.opengis.gml.CodeType;
+import net.opengis.gml.CoordinatesType;
+import net.opengis.gml.DirectPositionType;
+import net.opengis.gml.EnvelopeDocument;
+import net.opengis.gml.EnvelopeType;
+import net.opengis.gml.PointType;
+import net.opengis.gml.TimeInstantDocument;
+import net.opengis.gml.TimeInstantType;
+import net.opengis.gml.TimePeriodDocument;
+import net.opengis.gml.TimePeriodType;
+import net.opengis.gml.TimePositionType;
 
 /**
  * @since 4.0.0

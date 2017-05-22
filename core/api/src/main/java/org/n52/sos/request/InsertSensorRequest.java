@@ -47,6 +47,8 @@ import com.google.common.collect.Lists;
  * 
  */
 public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResponse> {
+    
+    private static final String SENSOR_TYPE_FLAG = "isType";
 
     private String procedureDescriptionFormat;
 
@@ -81,8 +83,9 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
         return procedureDescriptionFormat;
     }
 
-    public void setProcedureDescriptionFormat(String procedureDescriptionFormat) {
+    public InsertSensorRequest setProcedureDescriptionFormat(String procedureDescriptionFormat) {
         this.procedureDescriptionFormat = procedureDescriptionFormat;
+        return this;
     }
 
     public boolean isSetProcedureDescriptionFormat() {
@@ -104,8 +107,9 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
      * @param observableProperty
      *            the observableProperty to set
      */
-    public void setObservableProperty(List<String> observableProperty) {
+    public InsertSensorRequest setObservableProperty(List<String> observableProperty) {
         this.observableProperty = observableProperty;
+        return this;
     }
 
     public boolean isSetObservableProperty() {
@@ -127,8 +131,9 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
      * @param procedureDescription
      *            the procedureDescription to set
      */
-    public void setProcedureDescription(SosProcedureDescription procedureDescription) {
+    public InsertSensorRequest setProcedureDescription(SosProcedureDescription procedureDescription) {
         this.procedureDescription = procedureDescription;
+        return this;
     }
 
     public boolean isSetProcedureDescription() {
@@ -150,8 +155,9 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
      * @param metadata
      *            the metadata to set
      */
-    public void setMetadata(SosInsertionMetadata metadata) {
+    public InsertSensorRequest setMetadata(SosInsertionMetadata metadata) {
         this.metadata = metadata;
+        return this;
     }
 
     public boolean isSetMetadata() {
@@ -162,8 +168,9 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
         return relatedFeatures;
     }
 
-    public void setRelatedFeature(List<SwesFeatureRelationship> relatedFeatures) {
+    public InsertSensorRequest setRelatedFeature(List<SwesFeatureRelationship> relatedFeatures) {
         this.relatedFeatures = relatedFeatures;
+        return this;
     }
 
     public boolean isSetRelatedFeatures() {
@@ -174,8 +181,9 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
         return assignedProcedureIdentifier;
     }
 
-    public void setAssignedProcedureIdentifier(String assignedProcedureID) {
+    public InsertSensorRequest setAssignedProcedureIdentifier(String assignedProcedureID) {
         this.assignedProcedureIdentifier = assignedProcedureID;
+        return this;
     }
 
     public boolean isSetAssignedProcedureIdentifier() {
@@ -186,8 +194,9 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
         return assignedOfferings;
     }
 
-    public void setAssignedOfferings(List<SosOffering> assignedOfferings) {
+    public InsertSensorRequest setAssignedOfferings(List<SosOffering> assignedOfferings) {
         this.assignedOfferings.addAll(assignedOfferings);
+        return this;
     }
 
     public SosOffering getFirstAssignedOffering() {
@@ -204,5 +213,15 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
     @Override
     public InsertSensorResponse getResponse() throws OwsExceptionReport {
         return (InsertSensorResponse) new InsertSensorResponse().set(this);
+    }
+    
+    /**
+     * @return <code>true</code>, if the sensor type flag is set
+     */
+    public boolean isType() {
+        if (hasExtension(SENSOR_TYPE_FLAG)) {
+            return getExtensions().isBooleanExtensionSet(SENSOR_TYPE_FLAG);
+        }
+        return false;
     }
 }

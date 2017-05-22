@@ -45,6 +45,14 @@ public class DateTimeHelperTest {
     
     private final int TIME_LENGTH = 23;
     
+    private final DateTime DT_1950 = new DateTime(1950, 1, 1, 0, 0, DateTimeZone.UTC);
+    
+    private final DateTime DT_END = new DateTime(2015, 7, 27, 11, 25, DateTimeZone.UTC);
+    
+    private final int DAYS_SINCE = 23948;
+    
+    private final double DAYS_SINCE_PR = 23948.475694444445;
+    
     @Test
     public void testGetTimeLengthBeforeTimeZone() {
         assertThat(DateTimeHelper.getTimeLengthBeforeTimeZone(testTimePositiveTimeZone), is(TIME_LENGTH));
@@ -62,5 +70,12 @@ public class DateTimeHelperTest {
         assertThat(currentDateTime.equals(DateTimeHelper.makeDateTime(new java.sql.Timestamp(current))), is(true));
         assertThat(currentDateTime.equals(DateTimeHelper.makeDateTime(new java.sql.Time(current))), is(true));
     }
+    
+    @Test
+    public void testGetDaysSince() {
+        assertThat(DateTimeHelper.getDaysSince(DT_1950, DT_END), is(DAYS_SINCE));
+        assertThat(DateTimeHelper.getDaysSinceWithPrecision(DT_1950, DT_END), is(DAYS_SINCE_PR));
+    }
+    
 
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ValidProcedureTime" table="validProcedureTime">
+    <class name="org.n52.sos.ds.hibernate.entities.ValidProcedureTime" table="validproceduretime">
         <comment>Table to store procedure descriptions which were inserted or updated via the transactional Profile. Mapping file: mapping/transactionl/ValidProcedureTime.hbm.xml</comment>
         <id name="validProcedureTimeId" type="long">
             <column name="validProcedureTimeId">
@@ -12,12 +12,12 @@
                 <param name="sequence">validProcedureTimeId_seq</param>
             </generator>
         </id>
-       <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.TProcedure" foreign-key="validProcedureTimeProcedureFk">
+       <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.TProcedure"  foreign-key="validProcedureTimeProcedureFk">
             <column name="procedureId" not-null="true">
                 <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
             </column>    
         </many-to-one>
-        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" foreign-key="validProcProcDescFormatFk">
+        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat"  foreign-key="validProcProcDescFormatFk">
             <column name="procedureDescriptionFormatId" not-null="true">
                 <comment>Foreign Key (FK) to the related procedureDescriptionFormat. Contains "procedureDescriptionFormat".procedureDescriptionFormatid</comment>
             </column>
@@ -29,7 +29,7 @@
         </property>
         <property name="endTime" type="timestamp">
             <column index="validProcedureTimeEndTimeIdx" name="endTime" length="29" not-null="false" default="NULL">
-                <comment>Timestamp since this procedure description is invalid</comment>
+                <comment>Timestamp until this procedure description is invalid</comment>
             </column>
         </property>
         <property name="descriptionXml" type="org.hibernate.type.StringClobType" >

@@ -37,7 +37,7 @@ import org.n52.sos.util.JavaHelper;
  *
  * @author Christian Autermann
  */
-public class GmlBaseUnit {
+public class GmlBaseUnit extends AbtractGmd {
             
     private String id;
     private final String identifier;

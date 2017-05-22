@@ -34,6 +34,7 @@ import java.util.Set;
 
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionProvider;
+import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.ds.Datasource;
@@ -117,6 +118,24 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected static final String TIMEZONE_KEY = "datasource.timezone";
 
     protected static final String TIMEZONE_DEFAULT_VALUE = "UTC";
+    
+    protected static final String TIME_STRING_FORMAT_KEY = "datasource.timeStringFormat";
+    
+    protected static final String TIME_STRING_FORMAT_TITLE = "Datasource time string format";
+
+    protected static final String TIME_STRING_FORMAT_DESCRIPTION =
+            "Define the time string format of the datasource to ensure time is always parsed in the defined time format";
+    
+    protected static final String TIME_STRING_FORMAT_DEFAULT_VALUE = "";
+    
+    protected static final String TIME_STRING_Z_KEY = "datasource.timeStringZt";
+    
+    protected static final String TIME_STRING_Z_TITLE = "Has the datasource time string a 'Z'";
+
+    protected static final String TIME_STRING_Z_DESCRIPTION =
+            "Define if the datasoucre time string uses a 'Z' instead of '+00:00'.";
+    
+    protected static final boolean TIME_STRING_Z_DEFAULT_VALUE = false;
 
     private String usernameDefault;
 
@@ -151,7 +170,9 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
                 createPortDefinition(portDefault),
                 createMinPoolSizeDefinition(minPoolSizeDefault),
                 createMaxPoolSizeDefinition(maxPoolSizeDefault),
-                createTimeZoneDefinition(TIMEZONE_DEFAULT_VALUE));
+                createTimeZoneDefinition(TIMEZONE_DEFAULT_VALUE),
+                createTimeStringFormatDefinition(TIME_STRING_FORMAT_DEFAULT_VALUE),
+                createTimeStringZDefinition(TIME_STRING_Z_DEFAULT_VALUE));
     }
 
     @Override
@@ -164,7 +185,9 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
                 createPortDefinition(JavaHelper.asInteger(settings.get(PORT_KEY))),
                 createMinPoolSizeDefinition(JavaHelper.asInteger(settings.get(MIN_POOL_SIZE_KEY))),
                 createMaxPoolSizeDefinition(JavaHelper.asInteger(settings.get(MAX_POOL_SIZE_KEY))),
-                createTimeZoneDefinition((String) settings.get(TIMEZONE_KEY)));
+                createTimeZoneDefinition((String) settings.get(TIMEZONE_KEY)),
+                createTimeStringFormatDefinition((String) settings.get(TIME_STRING_FORMAT_KEY)),
+                createTimeStringZDefinition((boolean) settings.get(TIME_STRING_Z_KEY)));
     }
 
     /**
@@ -225,7 +248,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Minimal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMinPoolSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_6)
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
                 .setKey(MIN_POOL_SIZE_KEY).setTitle(MIN_POOL_SIZE_TITLE).setDescription(MIN_POOL_SIZE_DESCRIPTION)
                 .setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
     }
@@ -236,7 +259,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Maximal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_8)
                 .setKey(MAX_POOL_SIZE_KEY).setTitle(MAX_POOL_SIZE_TITLE).setDescription(MAX_POOL_SIZE_DESCRIPTION)
                 .setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
     }
@@ -247,11 +270,23 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Time zone settings definition
      */
     protected StringSettingDefinition createTimeZoneDefinition() {
-        return new StringSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_8)
+        return new StringSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_9)
                 .setKey(TIMEZONE_KEY).setTitle(TIMEZONE_TITLE).setDescription(TIMEZONE_DESCRIPTION)
                 .setDefaultValue(TIMEZONE_DEFAULT_VALUE).setOptional(true);
     }
+    
+    protected StringSettingDefinition createTimeStringFormatDefinition() {
+        return new StringSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_10)
+                .setKey(TIME_STRING_FORMAT_KEY).setTitle(TIME_STRING_FORMAT_TITLE).setDescription(TIME_STRING_FORMAT_DESCRIPTION)
+                .setDefaultValue(TIME_STRING_FORMAT_DEFAULT_VALUE).setOptional(true);
+    }
 
+    protected BooleanSettingDefinition createTimeStringZDefinition() {
+        return new BooleanSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_11)
+                .setKey(TIME_STRING_Z_KEY).setTitle(TIME_STRING_Z_TITLE).setDescription(TIME_STRING_Z_DESCRIPTION)
+                .setDefaultValue(TIME_STRING_Z_DEFAULT_VALUE).setOptional(true);
+    }
+    
     protected StringSettingDefinition createUsernameDefinition(String defaultValue) {
         return createUsernameDefinition().setDescription(usernameDescription).setDefaultValue(defaultValue);
     }
@@ -282,6 +317,14 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
 
     protected StringSettingDefinition createTimeZoneDefinition(String defaultValue) {
         return createTimeZoneDefinition().setDefaultValue(defaultValue);
+    }
+    
+    protected StringSettingDefinition createTimeStringFormatDefinition(String defaultValue) {
+        return createTimeStringFormatDefinition().setDefaultValue(defaultValue);
+    }
+    
+    protected BooleanSettingDefinition createTimeStringZDefinition(boolean defaultValue) {
+        return createTimeStringZDefinition().setDefaultValue(defaultValue);
     }
 
     /**
@@ -391,15 +434,6 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         settings.putAll(changed);
         return settings;
     }
-
-    /**
-     * Parse datasource properties to map
-     *
-     * @param current
-     *            Current datasource properties
-     * @return Map with String key and Object value
-     */
-    protected abstract Map<String, Object> parseDatasourceProperties(Properties current);
 
     /**
      * Converts the given connection settings into a valid JDBC string.

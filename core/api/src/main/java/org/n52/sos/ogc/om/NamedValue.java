@@ -33,13 +33,13 @@ import org.n52.sos.ogc.om.values.Value;
 
 /**
  * Class representing a O&M conform NamedValue
- * 
+ *
  * @since 4.0.0
- * 
+ *
  * @param <T>
  *            value type
  */
-public class NamedValue<T> {
+public class NamedValue<T> implements Comparable<NamedValue<T>> {
 
     /**
      * Value name
@@ -51,9 +51,22 @@ public class NamedValue<T> {
      */
     private Value<T> value;
 
+    public NamedValue(ReferenceType name, Value<T> value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    public NamedValue() {
+        this(null, null);
+    }
+
+    public NamedValue(Value<T> value) {
+        this(null, value);
+    }
+
     /**
      * Get value name
-     * 
+     *
      * @return Value name
      */
     public ReferenceType getName() {
@@ -62,7 +75,7 @@ public class NamedValue<T> {
 
     /**
      * Set value name
-     * 
+     *
      * @param name
      *            Value name to set
      */
@@ -72,7 +85,7 @@ public class NamedValue<T> {
 
     /**
      * Get value
-     * 
+     *
      * @return Value
      */
     public Value<T> getValue() {
@@ -81,7 +94,7 @@ public class NamedValue<T> {
 
     /**
      * Set value
-     * 
+     *
      * @param value
      *            Value to set
      */
@@ -91,7 +104,7 @@ public class NamedValue<T> {
 
     /**
      * Check whether value name is set
-     * 
+     *
      * @return <code>true</code>, if value name is set
      */
     public boolean isSetName() {
@@ -100,10 +113,24 @@ public class NamedValue<T> {
 
     /**
      * Check whether value is set
-     * 
+     *
      * @return <code>true</code>, if value is set
      */
     public boolean isSetValue() {
         return value != null && value.isSetValue();
+    }
+
+    @Override
+    public int compareTo(NamedValue<T> o) {
+        if (o == null) {
+            throw new NullPointerException();
+        }
+        if (getName() == null ^ o.getName() == null) {
+            return (getName() == null) ? -1 : 1;
+        }
+        if (getName() == null && o.getName() == null) {
+            return 0;
+        }
+        return getName().compareTo(o.getName());
     }
 }

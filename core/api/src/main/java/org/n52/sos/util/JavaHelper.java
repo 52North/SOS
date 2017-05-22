@@ -87,7 +87,7 @@ public final class JavaHelper {
      *            sensor description
      * @return generated sensor id as hex SHA-1.
      */
-    public static String generateID(final String message) {
+    public static synchronized String generateID(final String message) {
         final long autoGeneratredID = new DateTime().getMillis();
         final String concate = random.nextDouble() +  message + Long.toString(autoGeneratredID);
         return bytesToHex(messageDigest.digest(concate.getBytes()));

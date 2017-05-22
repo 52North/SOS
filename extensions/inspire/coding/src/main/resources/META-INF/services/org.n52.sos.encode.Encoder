@@ -1,0 +1,8 @@
+org.n52.svalbard.encode.inspire.base.IdentifierPropertyTypeEncoder
+org.n52.svalbard.encode.inspire.base.IdentifierTypeEncoder
+org.n52.svalbard.encode.inspire.base2.RelatedPartyTypeEncoder
+org.n52.svalbard.encode.inspire.ef.EnvironmentalMonitoringFaciltityTypeEncoder
+org.n52.svalbard.encode.inspire.ef.EnvironmentalMonitoringFaciltityDocumentEncoder
+org.n52.svalbard.encode.inspire.ef.EnvironmentalMonitoringFaciltityPropertyTypeEncoder
+org.n52.svalbard.encode.inspire.ef.EnvironmentalMonitoringFaciltityForGmlFeaturePropertyTypeEncoder
+org.n52.svalbard.encode.inspire.ef.OperationalActivityPeriodTypeEncoder

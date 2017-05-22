@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>52n-sos</artifactId>
 		<groupId>org.n52.sensorweb.sos</groupId>
-		 <version>4.3.14</version>
+		 <version>4.4.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>webapp-bundle</artifactId>
@@ -11,11 +11,12 @@
 	<name>52°North SOS - Webapp with Sensor Web REST API</name>
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
-		<timeseries.api.version>1.10.0</timeseries.api.version>
+    <series.api.version>2.0.0-alpha.5</series.api.version>
+    <series.db.version>2.0.0-alpha.2</series.db.version>
     <helgoland.version>1.0.0</helgoland.version>
 	</properties>
 	<build>
-		<finalName>${conf.sos.name}##${project.version}</finalName>
+		<finalName>${conf.sos.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -29,20 +30,20 @@
 						</goals>
 						<configuration>
 							<artifactItems>
-								<artifactItem>
-									<groupId>org.n52.sensorweb</groupId>
-									<artifactId>timeseries-web</artifactId>
-									<includes>api-doc/**</includes>
-									<outputDirectory>${project.build.directory}/${project.build.finalName}/static/doc</outputDirectory>
-									<overWrite>false</overWrite>
-								</artifactItem>
-							</artifactItems>
+                <artifactItem> 
+                 <groupId>org.n52.series-api.db</groupId> 
+                 <artifactId>mappings</artifactId> 
+                 <includes>hbm/sos/v44/*.hbm.xml</includes>
+                 <outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly/</outputDirectory> 
+                 <overWrite>true</overWrite>
+                </artifactItem> 
+							 </artifactItems>
 							<overWriteReleases>false</overWriteReleases>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-      <plugin>
+        <plugin>
           <groupId>com.googlecode.maven-download-plugin</groupId>
           <artifactId>download-maven-plugin</artifactId>
           <version>1.3.0</version>
@@ -60,7 +61,7 @@
                   </configuration>
               </execution>
           </executions>
-      </plugin>
+        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -85,24 +86,6 @@
 					</overlays>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<overlays>
-						<overlay>
-							<groupId>org.n52.sensorweb</groupId>
-    						<artifactId>restful-timeseries-client</artifactId>
-    						<excludes>
-                	<exclude>**/WEB-INF/**</exclude>
-                	<exclude>**/META-INF/**</exclude>
-                	<exclude>settings.json</exclude>
-              	</excludes>
-              	<targetPath>static/client/jsClient</targetPath>
-						</overlay>
-					</overlays>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -113,47 +96,206 @@
 		</dependency>
 
 		<!-- REST API Dependencies -->
-		<dependency>
-			<groupId>org.n52.sensorweb</groupId>
-			<artifactId>timeseries-web</artifactId>
-			<version>${timeseries.api.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>gt-main</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>gt-epsg-hsql</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>gt-opengis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>gt-metadata</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+    <dependency>
+      <groupId>org.n52.series-api</groupId>
+      <artifactId>io</artifactId>
+      <version>${series.api.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>c3p0</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.mchange</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.n52.series-api</groupId>
+      <artifactId>rest</artifactId>
+      <version>${series.api.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>c3p0</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.mchange</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.n52.series-api</groupId>
+      <artifactId>spi</artifactId>
+      <version>${series.api.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>c3p0</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.mchange</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.n52.series-api.db</groupId>
+      <artifactId>dao</artifactId>
+      <version>${series.db.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+      </exclusions>
+     </dependency>
+     <dependency>
+      <groupId>org.n52.series-api.db</groupId>
+      <artifactId>mappings</artifactId>
+      <version>${series.db.version}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.n52.series-api.db</groupId>
+      <artifactId>sos-integration</artifactId>
+      <version>${series.db.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-main</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.n52.sensorweb</groupId>
-			<artifactId>timeseries-series-dao</artifactId>
-			<version>${timeseries.api.version}</version>
-		</dependency>
+     
+    <!-- copied from REST-API series-dao-webapp -->  
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-oxm</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aspects</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjtools</artifactId>
+        <version>1.8.9</version>
+        <scope>runtime</scope>
+    </dependency>
+        
+		<!-- <dependency>
+			<groupId>org.n52.series-api</groupId>
+			<artifactId>series-dao-sos</artifactId>
+			<version>${series.api.version}</version>
+		</dependency> -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>webapp</artifactId>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.sensorweb</groupId>
-    		<artifactId>restful-timeseries-client</artifactId>
-    		<version>1.0.0</version>
 			<type>war</type>
 		</dependency>
 	</dependencies>

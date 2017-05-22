@@ -133,7 +133,6 @@ create index seriesCountParamIdx on sos.countseriesparamvalue (value);
 alter table sos.domainofvalidity add constraint dovIdentifierUK unique (identifier);
 alter table sos.featureofinterest add constraint foiIdentifierUK unique (identifier);
 alter table sos.featureofinterest add constraint featureUrl unique (url);
-;
 alter table sos.featureofinteresttype add constraint featureTypeUK unique (featureOfInterestType);
 create index featParamNameIdx on sos.featureparameter (name);
 alter table sos.i18nfeatureofinterest add constraint i18nFeatureIdentity unique (objectId, locale);

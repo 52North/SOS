@@ -6,8 +6,8 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
 
-    Release 52n-sensorweb-sos-4.4.0
-=====================================
+   Release 52n-sensorweb-sos-4.4.0
+===================================
  
   --- New features ---
 
@@ -100,7 +100,7 @@ RELEASE NOTES
       * Avoid query for next value chunk if previous has less than chunk size
 
 
-    Release 52n-sensorweb-sos-4.3.14
+   Release 52n-sensorweb-sos-4.3.14
 =====================================
 
   --- New features ---
@@ -114,7 +114,7 @@ RELEASE NOTES
     * some fixes for the rest api (bundle)
 
 
-    Release 52n-sensorweb-sos-4.3.13
+   Release 52n-sensorweb-sos-4.3.13
 =====================================
 
   --- New features ---
@@ -129,7 +129,7 @@ RELEASE NOTES
 
     * some minor fixes (getting unit from series)
 
-    Release 52n-sensorweb-sos-4.3.12
+   Release 52n-sensorweb-sos-4.3.12
 =====================================
 
   --- New features ---
@@ -149,7 +149,7 @@ RELEASE NOTES
     * some minor fixes
  
 
-    Release 52n-sensorweb-sos-4.3.11
+   Release 52n-sensorweb-sos-4.3.11
 =====================================
 
   --- New features ---
@@ -179,7 +179,7 @@ RELEASE NOTES
     * Issue #503: Capabilities cache update fails for old database concept
  
    Release 52n-sensorweb-sos-4.3.9
-=====================================
+====================================
 
   --- New features ---
   
@@ -199,7 +199,7 @@ RELEASE NOTES
     
  
    Release 52n-sensorweb-sos-4.3.8
-=====================================
+====================================
 
   --- New features ---
   
@@ -226,8 +226,8 @@ RELEASE NOTES
     * Fix issue with H2 file database when create schema is selected
     
  
-      Release 52n-sensorweb-sos-4.3.7
-=====================================
+   Release 52n-sensorweb-sos-4.3.7
+====================================
 
   --- New features ---
   
@@ -258,8 +258,8 @@ RELEASE NOTES
     * Issue #426: Add OGC-SOS 1.0.0 GetObservation resultModel support
     
 
-     Release 52n-sensorweb-sos-4.3.6
-===================================
+   Release 52n-sensorweb-sos-4.3.6
+====================================
 
   --- New features ---
   
@@ -271,7 +271,7 @@ RELEASE NOTES
   --- Fixed issues ---
   
   
-    Release 52n-sensorweb-sos-4.3.5
+   Release 52n-sensorweb-sos-4.3.5
 ====================================
 
   --- New features ---
@@ -291,7 +291,7 @@ RELEASE NOTES
       * Issue #365: SOS Client InsertResultTemplate example '[POX] InsertResultTemplate - with ResultTime (SOS 2.0.0)'
  
    Release 52n-sensorweb-sos-4.3.4
-===================================
+====================================
 
   --- New features ---
   
@@ -309,7 +309,7 @@ RELEASE NOTES
       * Issue #322: Missing samplingGeometry (om:parameter) in returned observation
  
    Release 52n-sensorweb-sos-4.3.3
-===================================
+====================================
 
   --- New features ---
   
@@ -323,7 +323,7 @@ RELEASE NOTES
  
  
    Release 52n-sensorweb-sos-4.3.2
-==================================
+====================================
 
   --- New features ---
   
@@ -338,7 +338,7 @@ RELEASE NOTES
 
 	  
    Release 52n-sensorweb-sos-4.3.1
-==================================
+====================================
 
   --- New features ---
   
@@ -351,7 +351,7 @@ RELEASE NOTES
   
  
   Release 52n-sensorweb-sos-4.3.0
-==================================
+===================================
  
   --- New features ---
   
@@ -391,7 +391,7 @@ RELEASE NOTES
 	
  
   Release 52n-sensorweb-sos-4.2.0
-==================================
+===================================
 
  --- New features ---
  

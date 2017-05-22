@@ -7,7 +7,7 @@ RELEASE NOTES
  (SensorML as well).
 
    Release 52n-sensorweb-sos-4.4.0
-===================================
+====================================
  
   --- New features ---
 
@@ -59,6 +59,7 @@ RELEASE NOTES
       * Update setting descriptions
       * Contains Sensor Web REST-API v2.0.0
       * Contains Helgoland map client v1.0.0
+      * Select profile (default SOS 2.0, Hydrology, INSPIRE) via admin interface
   
   --- Fixed issues ---
 

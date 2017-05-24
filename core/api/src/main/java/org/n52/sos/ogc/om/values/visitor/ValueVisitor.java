@@ -105,7 +105,7 @@ public interface ValueVisitor<T> {
     
     T visit(ProfileValue value)
             throws OwsExceptionReport;
-
+    
     T visit(UnknownValue value)
             throws OwsExceptionReport;
 

@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.n52.sos.ogc.gwml.GWMLConstants;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.BooleanValue;
@@ -96,7 +97,8 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier<Abs
         for (OmObservation o : response.getObservationCollection()) {
             if (o.getObservationConstellation().isSetObservationType() 
                     && (GWMLConstants.OBS_TYPE_GEOLOGY_LOG.equals(o.getObservationConstellation().getObservationType())
-                    || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE.equals(o.getObservationConstellation().getObservationType()))) {
+                    || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE.equals(o.getObservationConstellation().getObservationType())
+                    || OmConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(o.getObservationConstellation().getObservationType()))) {
                 if (o.isSetValue() && o.getValue() instanceof SingleObservationValue) {
                     if (o.getValue().getValue() instanceof BooleanValue || o.getValue().getValue() instanceof CategoryValue
                             || o.getValue().getValue() instanceof CountValue || o.getValue().getValue() instanceof QuantityValue

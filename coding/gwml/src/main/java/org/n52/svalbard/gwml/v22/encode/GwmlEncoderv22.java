@@ -74,7 +74,7 @@ public class GwmlEncoderv22 extends OmEncoderv20 {
             OmObservation.class, NamedValue.class, SingleObservationValue.class, MultiObservationValues.class);
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.ObservationType, (Set<String>) Sets.newHashSet(GWMLConstants.OBS_TYPE_GEOLOGY_LOG));
+            SupportedTypeKey.ObservationType, (Set<String>) Sets.newHashSet(GWMLConstants.OBS_TYPE_GEOLOGY_LOG, OmConstants.OBS_TYPE_PROFILE_OBSERVATION));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,

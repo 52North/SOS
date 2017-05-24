@@ -110,6 +110,7 @@
     <bean class="org.n52.web.ctrl.DataController">
         <property name="dataService" ref="datasetService" />
         <property name="datasetService" ref="datasetService" />
+        <property name="preRenderingTask" ref="preRenderingJob" />
         <property name="requestIntervalRestriction" value="${request.interval.restriction}" />
     </bean>
 

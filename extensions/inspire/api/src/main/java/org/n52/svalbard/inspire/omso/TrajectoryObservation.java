@@ -141,7 +141,7 @@ public class TrajectoryObservation extends AbstractInspireObservation {
     }
 
     @Override
-    protected void mergeValues(ObservationValue<?> observationValue) {
+    protected boolean mergeValues(ObservationValue<?> observationValue) {
         if (observationValue.getValue() instanceof TLVTValue) {
             TLVTValue tlvtValue = (TLVTValue) observationValue.getValue();
             List<TimeLocationValueTriple> valuesToMerge = tlvtValue.getValue();
@@ -149,8 +149,9 @@ public class TrajectoryObservation extends AbstractInspireObservation {
             // (List<TimeLocationValueTriple>)((TLVTValue)observationValue.getValue()).getValue();
             ((TLVTValue) getValue().getValue()).addValues(valuesToMerge);
             checkForFeature(valuesToMerge);
+            return true;
         } else {
-            super.mergeValues(observationValue);
+           return super.mergeValues(observationValue);
         }
     }
 

@@ -63,7 +63,7 @@ public class GWGeologyLogObservationTypeEncoder extends OmEncoderv20 {
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
             SupportedTypeKey.ObservationType, (Set<String>) Sets.newHashSet(GWMLConstants.OBS_TYPE_GEOLOGY_LOG, 
                     GWMLConstants.OBS_TYPE_GEOLOGY_LOG, OmConstants.OBS_TYPE_CATEGORY_OBSERVATION, 
-                    OmConstants.OBS_TYPE_TEXT_OBSERVATION));
+                    OmConstants.OBS_TYPE_TEXT_OBSERVATION, OmConstants.OBS_TYPE_PROFILE_OBSERVATION));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,

@@ -34,25 +34,34 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.MultiObservationValues;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.ObservationMergeIndicator;
+import org.n52.sos.ogc.om.ObservationMerger;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.om.ParameterHolder;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.ProfileLevel;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TextValue;
@@ -130,9 +139,9 @@ public class ObservationUnfolder {
                     final Map<Value<?>, String> definitionsForObservedValues = Maps.newHashMap();
                     Value<?> observedValue = null;
                     GeometryHolder samplingGeometry = new GeometryHolder();
+                    ParameterHolder parameterHolder = new ParameterHolder();
                     String featureOfInterest = null;
                     String procedure = null;
-
                     for (SweField field : elementType.getFields()) {
                         final SweAbstractDataComponent dataComponent = field.getElement();
                         String token = block.get(tokenIndex.get());
@@ -191,8 +200,12 @@ public class ObservationUnfolder {
                             }
                         } else if (dataComponent instanceof SweDataRecord) {
                             try {
-                                observedValue =
-                                        parseSweDataRecord(((SweDataRecord) dataComponent).clone(), block, tokenIndex);
+                                if (dataComponent.getDefinition().contains(OmConstants.OM_PARAMETER)) {
+                                    parseDataRecordAsParameter((SweDataRecord)dataComponent, block, tokenIndex, parameterHolder);
+                                } else {
+                                    observedValue =
+                                            parseSweDataRecord(((SweDataRecord) dataComponent).clone(), block, tokenIndex);
+                                }
                             } catch (CloneNotSupportedException e) {
                                 throw new NoApplicableCodeException().causedBy(e).withMessage(
                                         "Unable to copy element '%s'.", dataComponent.getClass().getName());
@@ -210,6 +223,7 @@ public class ObservationUnfolder {
                                     dataComponent != null ? dataComponent.getClass().getName() : "null");
                         }
                         if (observedValue != null) {
+
                             definitionsForObservedValues.put(observedValue, dataComponent.getDefinition());
                             observedValues.add(observedValue);
                             observedValue = null;
@@ -217,8 +231,13 @@ public class ObservationUnfolder {
                        tokenIndex.incrementAndGet();
                     }
                     for (final Value<?> iValue : observedValues) {
-                        final OmObservation newObservation =
-                                createSingleValueObservation(multiObservation, phenomenonTime, resultTime, iValue);
+                        OmObservation newObservation = null;
+                        if (isProfileObservations()) {
+                            newObservation = createSingleValueObservation(multiObservation, phenomenonTime, resultTime, convertToProfileValue(iValue, parameterHolder));
+                        } else {
+                            newObservation = createSingleValueObservation(multiObservation, phenomenonTime, resultTime, iValue);
+                        }
+                                
                         if (samplingGeometry != null && samplingGeometry.hasGeometry()) {
                             newObservation.addSpatialFilteringProfileParameter(samplingGeometry.getGeometry());
                         }
@@ -240,6 +259,9 @@ public class ObservationUnfolder {
                     featureOfInterest = null;
                     procedure = null;
                 }
+            }
+            if (isProfileObservations()) {
+                return new ObservationMerger().mergeObservations(observationCollection, ObservationMergeIndicator.defaultObservationMergerIndicator().setPhenomenonTime(true));
             }
             return observationCollection;
         }
@@ -283,7 +305,7 @@ public class ObservationUnfolder {
             } else if (field.getElement() instanceof SweCount) {
                 ((SweCount) field.getElement()).setValue(Integer.parseInt(token));
             } else {
-                throw new NoApplicableCodeException().withMessage("sweField type '%s' not supported",
+                throw new NoApplicableCodeException().withMessage("sweField type '%s' not yet supported",
                         field != null ? field.getClass().getName() : "null");
             }
             tokenIndex.incrementAndGet();
@@ -361,7 +383,7 @@ public class ObservationUnfolder {
                         holder.setLongitude(value);
                     }
                 } else {
-                    throw new NoApplicableCodeException().withMessage("sweField type '%s' not supported",
+                    throw new NoApplicableCodeException().withMessage("sweField type '%s' not yet supported",
                             coordinate != null ? coordinate.getClass().getName() : "null");
                 }
                 tokenIndex.incrementAndGet();
@@ -375,7 +397,63 @@ public class ObservationUnfolder {
         }
     }
 
-    
+    private void parseDataRecordAsParameter(SweDataRecord record, List<String> block, IncDecInteger tokenIndex, ParameterHolder parameterHolder) throws CodedException {
+        boolean tokenIndexIncreased = false;
+        for (SweField field : record.getFields()) {
+            String token = block.get(tokenIndex.get());
+            Value<?> value = null;
+            ReferenceType name = new ReferenceType(field.getElement().getDefinition());
+            if (field.getElement() instanceof SweQuantity) {
+                value = new QuantityValue(Double.parseDouble(token), ((SweQuantity) field.getElement()).getUomObject());
+            } else if (field.getElement() instanceof SweBoolean) {
+                value = new BooleanValue(Boolean.parseBoolean(token));
+            } else if (field.getElement() instanceof SweText) {
+                value = new TextValue(token);
+            } else if (field.getElement() instanceof SweCategory) {
+                value = new CategoryValue(token);
+            } else if (field.getElement() instanceof SweCount) {
+                value = new CountValue(Integer.parseInt(token));
+            } else {
+                throw new NoApplicableCodeException().withMessage("sweField type '%s' not yet supported",
+                        field != null ? field.getClass().getName() : "null");
+            }
+            if (value != null) {
+                parameterHolder.addParameter(new NamedValue<>(name, value));
+            }
+            tokenIndex.incrementAndGet();
+            tokenIndexIncreased = true;
+        }
+        // decrease token index because it is increased in the calling method.
+        if (tokenIndexIncreased) {
+            tokenIndex.decrementAndGet();
+        }
+    }
+
+    private Value<?> convertToProfileValue(Value<?> value, ParameterHolder parameterHolder) {
+        ProfileLevel profileLevel = new ProfileLevel();
+        profileLevel.addValue(value);
+        if (parameterHolder.isSetHeightDepthParameter()) {
+            if (parameterHolder.isSetHeightParameter()) {
+                profileLevel.setLevelStart(toQuantityValue(parameterHolder.getHeightParameter()));
+            } if (parameterHolder.isSetDepthParameter()) {
+                profileLevel.setLevelStart(toQuantityValue(parameterHolder.getDepthParameter()));
+            }
+        } else if (parameterHolder.isSetFromToParameter()) {
+            profileLevel.setLevelStart(toQuantityValue(parameterHolder.getFromParameter()));
+            profileLevel.setLevelEnd(toQuantityValue(parameterHolder.getToParameter()));
+        }
+        return new ProfileValue().addValue(profileLevel);
+    }
+
+    private QuantityValue toQuantityValue(NamedValue<Double> parameter) {
+        QuantityValue value = (QuantityValue)parameter.getValue();
+        value.setDefinition(parameter.getName().getHref());
+        return value;
+    }
+
+    private boolean isProfileObservations() {
+        return multiObservation.getObservationConstellation().isSetObservationType() && multiObservation.getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
+    }
 
     public class GeometryHolder {
         private Double latitude;

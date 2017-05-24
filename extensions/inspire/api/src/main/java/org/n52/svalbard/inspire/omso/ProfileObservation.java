@@ -136,19 +136,22 @@ public class ProfileObservation extends AbstractInspireObservation {
     }
 
     @Override
-    protected void mergeValues(ObservationValue<?> observationValue) {
-      if (observationValue.getValue() instanceof RectifiedGridCoverage) {
-          ((RectifiedGridCoverage)getValue().getValue()).addValue(((RectifiedGridCoverage)observationValue.getValue()).getValue());
-//      } else if (observationValue.getValue() instanceof ReverencableGridCoverage) {
-//          ((ReverencableGridCoverage)getValue()).addValue(((ReverencableGridCoverage)observationValue).getValue());
-          
-          if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
-              if (((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
-                  // TODO check for SamplingCurve and Depht/Height
-              }
-          }
-      } else {
-          super.mergeValues(observationValue);
-      }
+    protected boolean mergeValues(ObservationValue<?> observationValue) {
+        if (observationValue.getValue() instanceof RectifiedGridCoverage) {
+            ((RectifiedGridCoverage) getValue().getValue())
+                    .addValue(((RectifiedGridCoverage) observationValue.getValue()).getValue());
+            // } else if (observationValue.getValue() instanceof
+            // ReverencableGridCoverage) {
+            // ((ReverencableGridCoverage)getValue()).addValue(((ReverencableGridCoverage)observationValue).getValue());
+
+            if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+                if (((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                    // TODO check for SamplingCurve and Depht/Height
+                }
+            }
+            return true;
+        } else {
+            return super.mergeValues(observationValue);
+        }
     }
 }

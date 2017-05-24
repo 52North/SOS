@@ -100,7 +100,7 @@ public class ObservationTypeObservationVisitor implements ObservationVisitor<Str
     
     @Override
     public String visit(ProfileObservation o) throws OwsExceptionReport {
-        return GWMLConstants.OBS_TYPE_GEOLOGY_LOG;
+        return OmConstants.OBS_TYPE_PROFILE_OBSERVATION;
     }
 
     public static ObservationTypeObservationVisitor getInstance() {

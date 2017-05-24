@@ -212,6 +212,11 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             session.saveOrUpdate(series);
             session.flush();
             session.refresh(series);
+        } else if (ctx.isSetSeriesType() && !series.isSetSeriesType()) {
+            ctx.addValuesToSeries(series);
+            session.saveOrUpdate(series);
+            session.flush();
+            session.refresh(series);
         }
         return series;
     }

@@ -17,7 +17,7 @@
     <import resource="spi-impl-dao_v1_beans_legacy.xml"/>
 
 
-    <!--<import resource="spi-impl-dao_tasks.xml" />-->
+    <import resource="spi-impl-dao_tasks.xml" />
 
     <!-- For SOS Bundles (instead of extra database config) -->
     <bean class="org.n52.series.db.da.sos.SOSHibernateSessionHolder" destroy-method="shutdown" />

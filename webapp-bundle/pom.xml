@@ -11,8 +11,8 @@
 	<name>52°North SOS - Webapp with Sensor Web REST API</name>
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
-    <series.api.version>2.0.0-alpha.5</series.api.version>
-    <series.db.version>2.0.0-alpha.2</series.db.version>
+    <series.api.version>2.0.0-SNAPSHOT</series.api.version>
+    <series.db.version>2.0.0-SNAPSHOT</series.db.version>
     <helgoland.version>1.0.0</helgoland.version>
 	</properties>
 	<build>

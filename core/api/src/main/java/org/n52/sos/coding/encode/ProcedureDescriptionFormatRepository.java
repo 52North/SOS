@@ -28,7 +28,6 @@
  */
 package org.n52.sos.coding.encode;
 
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -57,9 +56,8 @@ import com.google.common.collect.Sets;
  * @author Christian Autermann
  */
 public class ProcedureDescriptionFormatRepository
-        implements Constructable,
-                   ActivationManager<ProcedureDescriptionFormatKey>,
-                   ActivationSource<ProcedureDescriptionFormatKey> {
+        implements ActivationManager<ProcedureDescriptionFormatKey>,
+        ActivationSource<ProcedureDescriptionFormatKey> {
 
     @Deprecated
     private static ProcedureDescriptionFormatRepository instance;
@@ -71,12 +69,19 @@ public class ProcedureDescriptionFormatRepository
 
     private final Map<String, Map<String, Set<String>>> transactionalProcedureDescriptionFormats = Maps.newHashMap();
 
-    @Override
-    public void init() {
+    /**
+     * This class does not implement {@link Constructable} due to some circular dependencies that can lead to an
+     * incorrect initialization order; instead {@link ProcedureDescriptionFormatRepositoryInitializer} does this for us.
+     *
+     * @param serviceOperatorRepository the service operator respository
+     * @param encoderRepository         the encoder repository
+     */
+    public void init(ServiceOperatorRepository serviceOperatorRepository,
+              EncoderRepository encoderRepository) {
         ProcedureDescriptionFormatRepository.instance = this;
 
-        Objects.requireNonNull(this.encoderRepository);
-        Objects.requireNonNull(this.serviceOperatorRepository);
+        this.serviceOperatorRepository = Objects.requireNonNull(serviceOperatorRepository);
+        this.encoderRepository = Objects.requireNonNull(encoderRepository);
 
         generateProcedureDescriptionFormatMaps();
     }

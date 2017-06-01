@@ -12,7 +12,7 @@
   <name>52°North SOS - Webapp Package for OSGeo-Live</name>
   <description>52°North SOS Webapp Package based on webapp-bundle with OSGeo-Live driven default configuration and example data.</description>
   <build>
-    <finalName>${conf.sos.name}##${project.version}</finalName>
+    <finalName>${conf.sos.name}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

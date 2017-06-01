@@ -49,7 +49,7 @@
         <!-- sos name -->
         <conf.sos.name>52nSOS</conf.sos.name>
         <!-- version of the current osgeo-live-release in development -->
-        <conf.osgeo.live.version>10.5</conf.osgeo.live.version>
+        <conf.osgeo.live.version>11.0</conf.osgeo.live.version>
         <timestamp>${maven.build.timestamp}</timestamp>
         <!-- Source encoding during build process ** !!! DO NOT CHANGE !!! ** -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

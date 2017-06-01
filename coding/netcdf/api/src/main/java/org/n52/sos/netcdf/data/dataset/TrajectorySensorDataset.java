@@ -39,7 +39,7 @@ import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import ucar.nc2.constants.CF;
 
 /**
- * Implementation of {@link AbstractStringSensorDataset} for trajectory sensor datasets.
+ * Implementation of {@link AbstractSensorDataset} for trajectory sensor datasets.
  *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>

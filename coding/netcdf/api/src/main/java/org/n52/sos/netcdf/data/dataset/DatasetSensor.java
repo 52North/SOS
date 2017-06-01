@@ -34,7 +34,6 @@ import org.n52.shetland.ogc.sensorML.AbstractSensorML;
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
- * @param <T>
  */
 public abstract class DatasetSensor implements Comparable<DatasetSensor> {
 

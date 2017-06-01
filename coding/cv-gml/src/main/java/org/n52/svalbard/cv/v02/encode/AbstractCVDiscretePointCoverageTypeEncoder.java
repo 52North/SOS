@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -129,7 +129,11 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
             throws UnsupportedEncoderInputException, OwsExceptionReport {
         CVPointValuePairType cvpvpt = CVPointValuePairType.Factory.newInstance(getXmlOptions());
         cvpvpt.setGeometry(encodeGeometry(value.getPoint(), JavaHelper.generateID(value.toString())));
-        cvpvpt.setValue(encodeValue(value.getValue()));
+        if (value.isSetValue()) {
+            cvpvpt.setValue(encodeValue(value.getValue()));
+        } else {
+            cvpvpt.addNewValue();
+        }
         return cvpvpt;
     }
 

@@ -60,7 +60,6 @@ import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.series.wml.WaterMLConstants;
 import org.n52.sos.ogc.series.wml.WmlMonitoringPoint;
@@ -220,12 +219,10 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                 OMObservationDocument omObservationDoc =
                         OMObservationDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
                 for (OmObservation sosObservation : sosObservations) {
-                    if (checkObservationHasValue(sosObservation)) {
                         Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
                         String gmlId = "sf_" + sfIdCounter;
                         foiHelper.put(HelperValues.GMLID, gmlId);
                         omObservationDoc.setOMObservation((OMObservationType) encodeOmObservation(sosObservation, foiHelper));
-                    }
                 }
                 return omObservationDoc;
             } else {
@@ -233,7 +230,6 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                         CollectionDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
                 CollectionType wmlCollection = xmlCollectionDoc.addNewCollection();
                 for (OmObservation sosObservation : sosObservations) {
-                    if (checkObservationHasValue(sosObservation)) {
                         Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
                         String gmlId;
                         // FIXME CodeWithAuthority VS. String keys
@@ -251,7 +247,6 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                         foiHelper.put(HelperValues.GMLID, gmlId);
                         wmlCollection.addNewObservationMember().setOMObservation(
                                 (OMObservationType) encodeOmObservation(sosObservation, foiHelper));
-                    }
                 }
                 return xmlCollectionDoc;
             }
@@ -800,9 +795,4 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             }
         }
     }
-    
-    protected boolean checkObservationHasValue(OmObservation o) {
-        return o != null && o.isSetValue() && o.getValue().isSetValue() && o.getValue().getValue().isSetValue();
-    }
-
 }

@@ -109,7 +109,7 @@ public class DeleteObservationRequestOperator
                 exceptions.add(owse);
             }
             try {
-                checkProcedureIDs(sosRequest.getProcedures(), DeleteObservationConstants.PARAM_PROCEDURE);
+                checkQueryableProcedures(sosRequest.getProcedures(), DeleteObservationConstants.PARAM_PROCEDURE);
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }

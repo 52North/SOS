@@ -50,6 +50,7 @@ import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -182,6 +183,13 @@ public abstract class AbstractValuedLegacyObservation<T>
             observation.setDescription(getDescription());
         }
         Value<?> value = accept(new ObservationValueCreator());
+        if (!value.isSetUnit()
+                && observation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty
+                && ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
+                        .isSetUnit()) {
+            value.setUnit( ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
+                        .getUnit());
+        }
         if (!observation.getObservationConstellation().isSetObservationType()) {
             observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));
         }

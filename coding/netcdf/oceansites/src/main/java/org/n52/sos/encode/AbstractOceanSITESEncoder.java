@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -48,6 +48,11 @@ import org.n52.sos.util.DateTimeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.axiomalaska.cf4j.constants.ACDDConstants;
+import com.axiomalaska.cf4j.constants.CFConstants;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.CDMNode;
@@ -56,11 +61,6 @@ import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.NetcdfFileWriter.Version;
 import ucar.nc2.Variable;
 import ucar.nc2.constants.CF.FeatureType;
-
-import com.axiomalaska.cf4j.constants.ACDDConstants;
-import com.axiomalaska.cf4j.constants.CFConstants;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 
 /**
  * Abstract encoder class of {@link AbstractNetcdfEncoder} for OceanSITES netCDF
@@ -233,7 +233,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
                 if (OceanSITESHelper.getInstance().isSetDataMode()) {
                     dataModeText = OceanSITESHelper.getInstance().getDataMode().name();
                 }
-                writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.DATA_MODE, dataModeText));
+                return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.DATA_MODE, dataModeText));
             }
         }
         return getAttribute(writer, OceanSITESConstants.DATA_MODE);

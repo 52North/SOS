@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>52n-sos</artifactId>
 		<groupId>org.n52.sensorweb.sos</groupId>
-		 <version>4.4.0-SNAPSHOT</version>
+		 <version>4.4.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>webapp-bundle</artifactId>
@@ -11,10 +11,12 @@
 	<name>52°North SOS - Webapp with Sensor Web REST API</name>
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
-		<series.api.version>2.0.0-alpha.2</series.api.version>
+    <series.api.version>2.0.0-SNAPSHOT</series.api.version>
+    <series.db.version>2.0.0-SNAPSHOT</series.db.version>
+    <helgoland.version>1.0.0</helgoland.version>
 	</properties>
 	<build>
-		<finalName>${conf.sos.name}##${project.version}</finalName>
+		<finalName>${conf.sos.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -28,16 +30,9 @@
 						</goals>
 						<configuration>
 							<artifactItems>
-								<artifactItem>
-									<groupId>org.n52.series-api</groupId>
-									<artifactId>rest</artifactId>
-									<includes>api-doc/**</includes>
-									<outputDirectory>${project.build.directory}/${project.build.finalName}/static/doc</outputDirectory>
-									<overWrite>false</overWrite>
-								</artifactItem>
                 <artifactItem> 
-                 <groupId>org.n52.series-api</groupId> 
-                 <artifactId>series-mappings</artifactId> 
+                 <groupId>org.n52.series-api.db</groupId> 
+                 <artifactId>mappings</artifactId> 
                  <includes>hbm/sos/v44/*.hbm.xml</includes>
                  <outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly/</outputDirectory> 
                  <overWrite>true</overWrite>
@@ -48,6 +43,25 @@
 					</execution>
 				</executions>
 			</plugin>
+        <plugin>
+          <groupId>com.googlecode.maven-download-plugin</groupId>
+          <artifactId>download-maven-plugin</artifactId>
+          <version>1.3.0</version>
+          <executions>
+              <execution>
+                  <id>download-helgoland</id>
+                  <phase>generate-sources</phase>
+                  <goals>
+                      <goal>wget</goal>
+                  </goals>
+                  <configuration>
+                      <url>https://github.com/52North/helgoland/releases/download/v${helgoland.version}/client.${helgoland.version}.war</url>
+                      <unpack>true</unpack>
+                      <outputDirectory>${project.build.directory}/${project.build.finalName}/static/client/helgoland</outputDirectory>
+                  </configuration>
+              </execution>
+          </executions>
+        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -72,24 +86,6 @@
 					</overlays>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<overlays>
-						<overlay>
-							<groupId>org.n52.sensorweb</groupId>
-    						<artifactId>restful-timeseries-client</artifactId>
-    						<excludes>
-                	<exclude>**/WEB-INF/**</exclude>
-                	<exclude>**/META-INF/**</exclude>
-                	<exclude>settings.json</exclude>
-              	</excludes>
-              	<targetPath>static/client/jsClient</targetPath>
-						</overlay>
-					</overlays>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -100,29 +96,37 @@
 		</dependency>
 
 		<!-- REST API Dependencies -->
-		<dependency>
-			<groupId>org.n52.series-api</groupId>
-			<artifactId>series-dao-sos</artifactId>
-			<version>${series.api.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>gt-main</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>gt-epsg-hsql</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>gt-opengis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.geotools</groupId>
-					<artifactId>gt-metadata</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+    <dependency>
+      <groupId>org.n52.series-api</groupId>
+      <artifactId>io</artifactId>
+      <version>${series.api.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>c3p0</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.mchange</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>org.n52.series-api</groupId>
       <artifactId>rest</artifactId>
@@ -154,11 +158,88 @@
         </exclusion>
       </exclusions>
     </dependency>
-     <dependency>
+    <dependency>
       <groupId>org.n52.series-api</groupId>
-      <artifactId>series-mappings</artifactId>
+      <artifactId>spi</artifactId>
       <version>${series.api.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>c3p0</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.mchange</groupId>
+          <artifactId>c3p0</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.n52.series-api.db</groupId>
+      <artifactId>dao</artifactId>
+      <version>${series.db.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+      </exclusions>
+     </dependency>
+     <dependency>
+      <groupId>org.n52.series-api.db</groupId>
+      <artifactId>mappings</artifactId>
+      <version>${series.db.version}</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-main</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-opengis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-metadata</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.n52.series-api.db</groupId>
+      <artifactId>sos-integration</artifactId>
+      <version>${series.db.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.geotools</groupId>
@@ -215,12 +296,6 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>webapp</artifactId>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.sensorweb</groupId>
-    		<artifactId>restful-timeseries-client</artifactId>
-    		<version>1.0.0</version>
 			<type>war</type>
 		</dependency>
 	</dependencies>

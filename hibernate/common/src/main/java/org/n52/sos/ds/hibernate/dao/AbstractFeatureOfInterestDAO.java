@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,9 +30,7 @@ package org.n52.sos.ds.hibernate.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -80,28 +78,25 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         return c.list();
     }
 
+    @SuppressWarnings("unchecked")
     public Geometry getFeatureExtent(Collection<String> identifiers, Session session) {
+        Geometry geom = null;
         if (identifiers != null && !identifiers.isEmpty()) {
-            Geometry geom = null;
             int count = 1;
             for (List<String> ids : QueryHelper.getListsForIdentifiers(identifiers)) {
                 Criteria c = getDefaultCriteria(session);
                 addIdentifierRestriction(c, ids);
                 c.setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY));
                 LOGGER.debug("QUERY getFeatureExtent(identifiers)({}): {}", count++, HibernateHelper.getSqlString(c));
-                if (geom == null) {
-                    geom =  (Geometry) c.uniqueResult();
-                } else {
-                    geom.union((Geometry) c.uniqueResult());
-                }
+                mergeGeometries(geom, c.list());
             }
-            return geom;
         } else {
             Criteria c = getDefaultCriteria(session);
             c.setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY));
             LOGGER.debug("QUERY getFeatureExtent(identifiers): {}", HibernateHelper.getSqlString(c));
-            return (Geometry) c.uniqueResult();
+            mergeGeometries(geom, c.list());
         }
+        return geom;
     }
 
     /**
@@ -163,6 +158,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         }
     }
     
+    @SuppressWarnings("unchecked")
     private List<AbstractFeatureOfInterest> getFeaturesChunks(Collection<String> identifiers,
             Collection<SpatialFilter> filters, Session session) throws OwsExceptionReport {
         List<AbstractFeatureOfInterest> features = new ArrayList<>();
@@ -177,10 +173,11 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         return features;
     }
     
-    private void addIdentifierRestriction(Criteria c, Collection<String> identifiers) {
+    private Criteria addIdentifierRestriction(Criteria c, Collection<String> identifiers) {
         if (CollectionHelper.isNotEmpty(identifiers)) {
             c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, identifiers));
         }
+        return c;
     }
     
     private void addSpatialFilters(Criteria c, Collection<SpatialFilter> filters) throws OwsExceptionReport {
@@ -194,6 +191,18 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         }
     }
     
+    private void mergeGeometries(Geometry geom, List<Object> list) {
+        for (Object extent : list) {
+            if (extent != null) {
+                if (geom == null) {
+                    geom =  (Geometry) extent;
+                } else {
+                    geom.union((Geometry) extent);
+                }
+            }
+        }
+    }
+
     public void updateFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest, AbstractFeature abstractFeature, Session session) {
         addName(abstractFeature, featureOfInterest, session);
         session.saveOrUpdate(featureOfInterest);

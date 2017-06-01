@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,6 +42,7 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
@@ -74,7 +75,7 @@ public class TrajectoryObservation extends AbstractInspireObservation {
     public TrajectoryObservation(OmObservation observation) {
         super(observation);
         getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION);
-        SamplingFeature sf = new SamplingFeature(new CodeWithAuthority(""));
+        SamplingFeature sf = new SamplingFeature(getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority());
         sf.setFeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE);
         getObservationConstellation().setFeatureOfInterest(sf);
         if (isSetSpatialFilteringProfileParameter()) {
@@ -106,9 +107,9 @@ public class TrajectoryObservation extends AbstractInspireObservation {
             if (isSetSpatialFilteringProfileParameter()) {
                 geometry = getSpatialFilteringProfileParameter().getValue().getValue();
             } else {
-                if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature
-                        && ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
-                    geometry = ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).getGeometry();
+                if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature
+                        && ((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                    geometry = ((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).getGeometry();
                 }
             }
             TLVTValue tlvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>) value, geometry);
@@ -140,7 +141,7 @@ public class TrajectoryObservation extends AbstractInspireObservation {
     }
 
     @Override
-    protected void mergeValues(ObservationValue<?> observationValue) {
+    protected boolean mergeValues(ObservationValue<?> observationValue) {
         if (observationValue.getValue() instanceof TLVTValue) {
             TLVTValue tlvtValue = (TLVTValue) observationValue.getValue();
             List<TimeLocationValueTriple> valuesToMerge = tlvtValue.getValue();
@@ -148,8 +149,9 @@ public class TrajectoryObservation extends AbstractInspireObservation {
             // (List<TimeLocationValueTriple>)((TLVTValue)observationValue.getValue()).getValue();
             ((TLVTValue) getValue().getValue()).addValues(valuesToMerge);
             checkForFeature(valuesToMerge);
+            return true;
         } else {
-            super.mergeValues(observationValue);
+           return super.mergeValues(observationValue);
         }
     }
 
@@ -163,8 +165,8 @@ public class TrajectoryObservation extends AbstractInspireObservation {
      */
     private void checkForFeature(List<TimeLocationValueTriple> values) {
         AbstractFeature featureOfInterest = getObservationConstellation().getFeatureOfInterest();
-        if (featureOfInterest instanceof SamplingFeature) {
-            SamplingFeature sf = (SamplingFeature) featureOfInterest;
+        if (featureOfInterest instanceof AbstractSamplingFeature) {
+            AbstractSamplingFeature sf = (AbstractSamplingFeature) featureOfInterest;
             Coordinate[] coords = getCoordinates(values);
             int srid = 0;
             if (sf.isSetGeometry()) {

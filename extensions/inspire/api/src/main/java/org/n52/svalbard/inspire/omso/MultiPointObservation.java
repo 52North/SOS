@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,6 +40,7 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.PointValuePair;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.util.CollectionHelper;
@@ -92,8 +93,8 @@ public class MultiPointObservation extends AbstractInspireObservation {
 
     @Override
     public OmObservation cloneTemplate() {
-        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
-            ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+        if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+            ((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).setEncode(true);
         }
         return cloneTemplate(new MultiPointObservation());
     }
@@ -111,22 +112,23 @@ public class MultiPointObservation extends AbstractInspireObservation {
     }
 
     @Override
-    protected void mergeValues(ObservationValue<?> observationValue) {
+    protected boolean mergeValues(ObservationValue<?> observationValue) {
         if (observationValue.getValue() instanceof MultiPointCoverage) {
             List<PointValuePair> valuesToMerge = ((MultiPointCoverage) observationValue.getValue()).getValue();
             ((MultiPointCoverage) getValue().getValue()).addValues(valuesToMerge);
-            if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
-                if (((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+            if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+                if (((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
                     try {
-                        ((SamplingFeature) getObservationConstellation().getFeatureOfInterest())
+                        ((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest())
                                 .setGeometry(getEnvelope(((MultiPointCoverage) getValue().getValue()).getValue()));
                     } catch (InvalidSridException e) {
                         // TODO
                     }
                 }
             }
+            return true;
         } else {
-            super.mergeValues(observationValue);
+            return super.mergeValues(observationValue);
         }
     }
 
@@ -142,10 +144,10 @@ public class MultiPointObservation extends AbstractInspireObservation {
             point = geometry.getInteriorPoint();
             point.setSRID(geometry.getSRID());
         } else {
-            if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature
-                    && ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+            if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature
+                    && ((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
                 Geometry geometry =
-                        ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).getGeometry();
+                        ((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).getGeometry();
                 point = geometry.getInteriorPoint();
                 point.setSRID(geometry.getSRID());
             }
@@ -185,10 +187,10 @@ public class MultiPointObservation extends AbstractInspireObservation {
                 }
                 envelope.expandToInclude(geometry.getEnvelopeInternal());
             } else {
-                if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature
-                        && ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature
+                        && ((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
                     Geometry geometry =
-                            ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).getGeometry();
+                            ((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).getGeometry();
                     if (factory == null && geometry != null) {
                         factory = geometry.getFactory();
                     }

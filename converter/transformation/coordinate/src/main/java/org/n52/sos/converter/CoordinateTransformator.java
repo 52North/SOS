@@ -43,10 +43,17 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.AbstractStreaming;
+import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.PointValuePair;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
+import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
+import org.n52.sos.ogc.om.values.MultiPointCoverage;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractComponent;
@@ -276,8 +283,8 @@ public class CoordinateTransformator extends
      */
     private AbstractServiceRequest<?> modifyInsertResultTemplateRequest(InsertResultTemplateRequest request)
             throws OwsExceptionReport {
-        if (request.getObservationTemplate().getFeatureOfInterest() instanceof SamplingFeature) {
-            checkResponseGeometryOfSamplingFeature((SamplingFeature) request.getObservationTemplate()
+        if (request.getObservationTemplate().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+            checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) request.getObservationTemplate()
                     .getFeatureOfInterest(), getGeomtryHandler().getStorageEPSG());
         }
         return request;
@@ -817,9 +824,9 @@ public class CoordinateTransformator extends
         if (CollectionHelper.isNotEmpty(observations)) {
             int storageCRS = getGeomtryHandler().getStorageEPSG();
             for (OmObservation omObservation : observations) {
-                if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
-                    SamplingFeature samplingFeature =
-                            (SamplingFeature) omObservation.getObservationConstellation().getFeatureOfInterest();
+                if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+                    AbstractSamplingFeature samplingFeature =
+                            (AbstractSamplingFeature) omObservation.getObservationConstellation().getFeatureOfInterest();
                     checkRequestedGeometryOfSamplingFeature(samplingFeature);
                 }
                 if (omObservation.isSetParameter()) {
@@ -843,8 +850,8 @@ public class CoordinateTransformator extends
     private void checkResponseObservations(List<OmObservation> observations, int targetCRS) throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(observations)) {
             for (OmObservation omObservation : observations) {
-                if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature)
-                    checkResponseGeometryOfSamplingFeature((SamplingFeature) omObservation
+                if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature)
+                    checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) omObservation
                             .getObservationConstellation().getFeatureOfInterest(), targetCRS);
                 if (omObservation.isSetParameter()) {
                     checkOmParameterForGeometry(omObservation.getParameter(), targetCRS);
@@ -852,8 +859,35 @@ public class CoordinateTransformator extends
                 if (omObservation.getValue() instanceof AbstractStreaming) {
                     ((AbstractStreaming) omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs,
                             targetCRS);
+                } else if (omObservation.getValue() instanceof MultiObservationValues) {
+                    if (((MultiObservationValues)omObservation.getValue()).getValue() instanceof TLVTValue) {
+                        checkTLVTValueForGeometry((TLVTValue)((MultiObservationValues)omObservation.getValue()).getValue(), targetCRS);
+                    }
+                } else if (omObservation.getValue() instanceof SingleObservationValue) {
+                    SingleObservationValue singleValue = (SingleObservationValue)omObservation.getValue();
+                    if (singleValue.getValue() instanceof CvDiscretePointCoverage) {
+                        checkCvDiscretePointCoverageForGeometry((CvDiscretePointCoverage)singleValue.getValue(),targetCRS);
+                    } else if (((SingleObservationValue)omObservation.getValue()).getValue() instanceof MultiPointCoverage) {
+                        checkMultiPointCoverageForGeometry((MultiPointCoverage)singleValue.getValue(),targetCRS);
+                    }
                 }
             }
+        }
+    }
+
+    private void checkMultiPointCoverageForGeometry(MultiPointCoverage value, int targetCRS) throws OwsExceptionReport {
+        for (PointValuePair pvp : value.getValue()) {
+            pvp.setPoint((Point)getGeomtryHandler().transform(pvp.getPoint(), targetCRS));
+        }
+    }
+
+    private void checkCvDiscretePointCoverageForGeometry(CvDiscretePointCoverage value, int targetCRS) throws OwsExceptionReport {
+        value.getValue().setPoint((Point)getGeomtryHandler().transform(value.getValue().getPoint(), targetCRS));
+    }
+
+    private void checkTLVTValueForGeometry(TLVTValue value, int targetCRS) throws OwsExceptionReport {
+        for (TimeLocationValueTriple tlvt : value.getValue()) {
+            tlvt.setLocation(getGeomtryHandler().transform(tlvt.getLocation(), targetCRS));
         }
     }
 
@@ -866,7 +900,7 @@ public class CoordinateTransformator extends
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void checkRequestedGeometryOfSamplingFeature(SamplingFeature samplingFeature) throws OwsExceptionReport {
+    private void checkRequestedGeometryOfSamplingFeature(AbstractSamplingFeature samplingFeature) throws OwsExceptionReport {
         if (samplingFeature.isSetGeometry()) {
             samplingFeature.setGeometry(getGeomtryHandler().transformToStorageEpsg(samplingFeature.getGeometry()));
         }
@@ -883,7 +917,7 @@ public class CoordinateTransformator extends
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void checkResponseGeometryOfSamplingFeature(SamplingFeature samplingFeature, int targetCRS)
+    private void checkResponseGeometryOfSamplingFeature(AbstractSamplingFeature samplingFeature, int targetCRS)
             throws OwsExceptionReport {
         if (samplingFeature.isSetGeometry()) {
             if (samplingFeature.getGeometry().getSRID() != targetCRS) {
@@ -908,12 +942,12 @@ public class CoordinateTransformator extends
             if (feature instanceof FeatureCollection) {
                 FeatureCollection featureCollection = (FeatureCollection) feature;
                 for (AbstractFeature abstractFeature : featureCollection.getMembers().values()) {
-                    if (abstractFeature instanceof SamplingFeature) {
-                        checkResponseGeometryOfSamplingFeature((SamplingFeature) abstractFeature, targetCRS);
+                    if (abstractFeature instanceof AbstractSamplingFeature) {
+                        checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) abstractFeature, targetCRS);
                     }
                 }
-            } else if (feature instanceof SamplingFeature) {
-                checkResponseGeometryOfSamplingFeature((SamplingFeature) feature, targetCRS);
+            } else if (feature instanceof AbstractSamplingFeature) {
+                checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) feature, targetCRS);
             }
         }
     }

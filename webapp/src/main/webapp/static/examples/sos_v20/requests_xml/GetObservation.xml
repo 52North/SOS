@@ -19,10 +19,10 @@
 	-->
 	<!-- 
 	<swes:extension xsi:type="swe:CountPropertyType">
-		<swe:Text>
+		<swe:Count>
 			<swe:identifier>crs</swe:identifier>
 			<swe:value>4326</swe:value>
-		</swe:Text>
+		</swe:Count>
 	</swes:extension>
 	 -->
 	 <!-- 
@@ -144,5 +144,9 @@
  	-->
 	<!-- optional -->
 	<sos:responseFormat>http://www.opengis.net/om/2.0</sos:responseFormat>
-
+  <!--
+  <sos:responseFormat>http://www.opengis.net/waterml/2.0</sos:responseFormat>
+  <sos:responseFormat>http://www.opengis.net/waterml-dr/2.0</sos:responseFormat>
+  <sos:responseFormat>http://inspire.ec.europa.eu/schemas/omso/3.0</sos:responseFormat>
+  -->
 </sos:GetObservation>

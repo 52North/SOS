@@ -99,7 +99,7 @@ public class GetDataAvailabilityOperator
             exceptions.add(owse);
         }
         try {
-            checkQueryableProcedureIDs(request.getProcedures(), GetDataAvailabilityParams.procedure.name());
+            checkQueryableProcedures(request.getProcedures(), GetDataAvailabilityParams.procedure.name());
             // add instance and child procedures to request
             if (request.isSetProcedure()) {
                 request.setProcedures(addChildProcedures(addInstanceProcedures(request.getProcedures())));

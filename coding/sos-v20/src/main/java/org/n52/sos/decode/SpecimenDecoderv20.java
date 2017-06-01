@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,6 +46,7 @@ import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SfSpecimen;
 import org.n52.sos.ogc.om.values.QuantityValue;
@@ -206,7 +207,7 @@ public class SpecimenDecoderv20 extends SamplingDecoderv20 {
                 if (sampledFeature.getHref().startsWith("#")) {
                     sampledFeatures.add(new SamplingFeature(null, sampledFeature.getHref().replace("#", "")));
                 } else {
-                    final SamplingFeature sampFeat =
+                    final AbstractSamplingFeature sampFeat =
                             new SamplingFeature(new CodeWithAuthority(sampledFeature.getHref()));
                     if (sampledFeature.getTitle() != null && !sampledFeature.getTitle().isEmpty()) {
                         sampFeat.addName(new CodeType(sampledFeature.getTitle()));

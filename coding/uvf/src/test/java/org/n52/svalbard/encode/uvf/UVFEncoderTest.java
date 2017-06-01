@@ -1,25 +1,30 @@
 /**
- * ﻿Copyright (C) 2013
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  */
 package org.n52.svalbard.encode.uvf;
 
@@ -38,7 +43,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.n52.schetland.uvf.UVFConstants;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
@@ -54,7 +58,6 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.CountValue;
@@ -63,6 +66,9 @@ import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.DefaultTVPMeasurementMetadata;
+import org.n52.sos.ogc.series.wml.WaterMLConstants.InterpolationType;
 import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValues;
 import org.n52.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.response.GetObservationResponse;
@@ -87,6 +93,7 @@ public class UVFEncoderTest {
     private GetObservationResponse responseToEncode;
     private String obsPropIdentifier = "test-obs-prop-identifier";
     private String foiIdentifier = "test-foi-identifier";
+    final String foiName = "test-foi-name";
     private String unit = "test-unit";
 
     @Before
@@ -109,6 +116,7 @@ public class UVFEncoderTest {
         // Feature Of Interest
         CodeWithAuthority featureIdentifier = new CodeWithAuthority(foiIdentifier);
         AbstractFeature featureOfInterest = new SamplingFeature(featureIdentifier);
+        featureOfInterest.addName(new CodeType(foiName));
         int srid = 4326;
         String geomWKT = "POINT(51.9350382 7.6521225)";
         final Geometry point = JTSHelper.createGeometryFromWKT(geomWKT, srid);
@@ -125,6 +133,8 @@ public class UVFEncoderTest {
 
         // observation value
         ObservationValue<?> value = new SingleObservationValue<>(phenomenonTime, measuredValue);
+        value.setDefaultPointMetadata(new DefaultPointMetadata().setDefaultTVPMeasurementMetadata(
+                new DefaultTVPMeasurementMetadata().setInterpolationtype(InterpolationType.Continuous)));
         omObservation.setValue(value);
 
         // observation type
@@ -159,19 +169,19 @@ public class UVFEncoderTest {
 
     @Test
     public void shouldEncodeFunctionInterpretationLine() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        Assert.assertThat(new String(encoder.encode(responseToEncode).getBytes()).split("\n")[0],
+        Assert.assertThat(getResponseString()[0],
                 Is.is("$ib Funktion-Interpretation: Linie"));
     }
 
     @Test
     public void shouldEncodeIndexUnitTime() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        Assert.assertThat(new String(encoder.encode(responseToEncode).getBytes()).split("\n")[1],
+        Assert.assertThat(getResponseString()[1],
                 Is.is("$sb Index-Einheit: *** Zeit ***"));
     }
 
     @Test
     public void shouldEncodeMeasurementIdentifier() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[2];
+        final String actual = getResponseString()[2];
         final String expected = "$sb Mess-Groesse: " + obsPropIdentifier
                 .substring(obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH, obsPropIdentifier.length());
 
@@ -181,7 +191,7 @@ public class UVFEncoderTest {
     
     @Test
     public void shouldEncodeUnitOfMeasurement() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[3];
+        final String actual = getResponseString()[3];
         final String expected = "$sb Mess-Einheit: " + unit;
 
         Assert.assertThat(actual, Is.is(expected));
@@ -190,7 +200,7 @@ public class UVFEncoderTest {
     @Test
     public void shouldEncodeMeasurementLocationIdentifier()
             throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[4];
+        final String actual = getResponseString()[4];
         final String expected = "$sb Mess-Stellennummer: " + foiIdentifier
                 .substring(foiIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH, foiIdentifier.length());
 
@@ -201,18 +211,18 @@ public class UVFEncoderTest {
     @Test
     public void shouldEncodeTimeseriesTypeIdentifierTimebased()
             throws UnsupportedEncoderInputException, OwsExceptionReport {
-        Assert.assertThat(new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5], Is.is("*Z"));
+        Assert.assertThat(getResponseString()[6], Is.is("*Z"));
     }
 
     @Test
     public void shouldEncodeTimeseriesIdentifierAndCenturies() throws UnsupportedEncoderInputException,
             OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[6];
+        final String actual = getResponseString()[7];
         final String expected = obsPropIdentifier.substring(
             obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
             obsPropIdentifier.length()) +
             " " + unit + "     " + 
-            "1970 1970";
+            "1900 1900";
 
         Assert.assertThat(actual, Is.is(expected));
     }
@@ -226,23 +236,19 @@ public class UVFEncoderTest {
         Time phenomenonTime = new TimePeriod(start, end);
         globalValues.addPhenomenonTime(phenomenonTime);
         responseToEncode.setGlobalValues(globalValues);
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[6];
+        final String actual = getResponseString()[7];
         final String expected = obsPropIdentifier.substring(
             obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
             obsPropIdentifier.length()) +
             " " + unit + "     " + 
-            "1970 1970";
+            "1900 1900";
 
         Assert.assertThat(actual, Is.is(expected));
     }
     
     @Test
     public void shouldEncodeMeasurementLocationName() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String foiName = "test-foi-name";
-        CodeType name = new CodeType(foiName);
-        responseToEncode.getObservationCollection().get(0).getObservationConstellation().getFeatureOfInterest().
-            setName(CollectionHelper.list(name));
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5];
+        final String actual = getResponseString()[5];
         final String expected = "$sb Mess-Stellenname: " + foiName;
 
         Assert.assertThat(actual, Is.is(expected));
@@ -251,15 +257,15 @@ public class UVFEncoderTest {
     @Test
     public void shouldEncodeMeasurementLocationIdAndCoordinates() throws UnsupportedEncoderInputException,
             OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[7];
-        final String expected = "1              51.93503827.6521225 0.000     ";
+        final String actual = getResponseString()[8];
+        final String expected = "1              7.6521225 51.9350382          ";
         
         Assert.assertThat(actual, Is.is(expected));
     }
     
     @Test
     public void shouldEncodeTemporalBoundingBox() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[8];
+        final String actual = getResponseString()[9];
         final String expected = "70010112007001011200Zeit    ";
 
         Assert.assertThat(actual, Is.is(expected));
@@ -268,7 +274,7 @@ public class UVFEncoderTest {
     @Test
     public void shouldEncodeSingleObservationValueAndTimestamp() throws UnsupportedEncoderInputException,
             OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String actual = getResponseString()[10];
         final String expected = "700101120052.0      ";
         
         Assert.assertThat(actual, Is.is(expected));
@@ -279,7 +285,7 @@ public class UVFEncoderTest {
             OwsExceptionReport {
         ((QuantityValue)responseToEncode.getObservationCollection().get(0).getValue().getValue()).
             setValue(52.1234567890);
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String actual = getResponseString()[10];
         final String expected = "700101120052.1234567";
 
         Assert.assertThat(actual, Is.is(expected));
@@ -290,7 +296,7 @@ public class UVFEncoderTest {
             UnsupportedEncoderInputException, OwsExceptionReport {
         Time phenomenonTime = new TimePeriod(new Date(UTC_TIMESTAMP_0), new Date(UTC_TIMESTAMP_1));
         responseToEncode.getObservationCollection().get(0).getValue().setPhenomenonTime(phenomenonTime );
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String actual = getResponseString()[10];
         final String expected = "700101120052.0      ";
         
         Assert.assertThat(actual, Is.is(expected));
@@ -311,7 +317,7 @@ public class UVFEncoderTest {
         mv.setValue(value);
         responseToEncode.getObservationCollection().get(0).setValue(mv);
 
-        final String[] encodedLines = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+        final String[] encodedLines = getResponseString();
 
         Assert.assertThat(encodedLines[8], Is.is("69123112007001011200Zeit    "));
         Assert.assertThat(encodedLines[9], Is.is("691231120052.1234567"));
@@ -322,7 +328,7 @@ public class UVFEncoderTest {
     public void shouldEncodeSingleObservationWithNoDataValue() throws
             UnsupportedEncoderInputException, OwsExceptionReport {
         responseToEncode.getObservationCollection().get(0).getValue().setValue(null);;
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String actual = getResponseString()[9];
         final String expected = "7001011200-777      ";
 
         Assert.assertThat(actual, Is.is(expected));
@@ -339,7 +345,7 @@ public class UVFEncoderTest {
         ((OmObservableProperty)responseToEncode.getObservationCollection().get(0).getObservationConstellation()
                 .getObservableProperty()).setUnit(null);
         
-        final String[] actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+        final String[] actual = getResponseString();
         final String expected = "$sb Mess-Einheit: " + unit;
 
         Assert.assertThat(Arrays.asList(actual), IsNot.not(CoreMatchers.hasItems(expected)));
@@ -356,7 +362,7 @@ public class UVFEncoderTest {
                 new CountValue(52)));
         ((OmObservableProperty)responseToEncode.getObservationCollection().get(0).getObservationConstellation()
                 .getObservableProperty()).setUnit(null);
-        final String[] actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+        final String[] actual = getResponseString();
         final String expected = obsPropIdentifier.substring(
             obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
             obsPropIdentifier.length()) +
@@ -374,5 +380,9 @@ public class UVFEncoderTest {
         
         BinaryAttachmentResponse encodedResponse = encoder.encode(responseToEncode);
         Assert.assertThat(encodedResponse.getSize(), Is.is(-1));
+    }
+    
+    private String[] getResponseString() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        return new String(encoder.encode(responseToEncode).getBytes()).split("\n");
     }
 }

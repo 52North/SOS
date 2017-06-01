@@ -286,7 +286,7 @@ public final class OMHelper {
 
         @Override
         public String visit(ProfileValue value) throws OwsExceptionReport {
-            return GWMLConstants.OBS_TYPE_GEOLOGY_LOG;
+            return OmConstants.OBS_TYPE_PROFILE_OBSERVATION;
         }
     }
 }

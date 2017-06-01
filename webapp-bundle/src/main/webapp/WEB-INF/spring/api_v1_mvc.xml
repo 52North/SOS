@@ -78,6 +78,13 @@
 
     <bean class="org.n52.web.ctrl.PlatformsParameterController" parent="parameterController">
         <property name="parameterService" ref="platformParameterService" />
+        <property name="metadataExtensions">
+            <list merge="true">
+                <bean class="org.n52.io.extension.parents.HierarchicalParameterExtension">
+                    <property name="service" ref="hierarchicalParameterService" />
+                </bean>
+            </list>
+        </property>
     </bean>
 
     <bean class="org.n52.web.ctrl.GeometriesController" parent="parameterController">
@@ -90,9 +97,12 @@
             <list merge="true">
                 <bean class="org.n52.io.extension.RenderingHintsExtension" />
                 <bean class="org.n52.io.extension.StatusIntervalsExtension" />
+                <bean class="org.n52.io.extension.resulttime.ResultTimeExtension">
+                    <property name="service" ref="resultTimeService" />
+                </bean>
                 <!-- Using DatabaseMetadataExtension requires some preparation work. -->
                 <!-- Have a look at the README.md at TBD -->
-                <!--<bean class="org.n52.io.extension.DatabaseMetadataExtension" />-->
+                <!--<bean class="org.n52.io.extension.metadata.DatabaseMetadataExtension" />-->
             </list>
         </property>
     </bean>
@@ -100,7 +110,8 @@
     <bean class="org.n52.web.ctrl.DataController">
         <property name="dataService" ref="datasetService" />
         <property name="datasetService" ref="datasetService" />
-        <property name="requestIntervalRestriction" value="P1Y1D" />
+        <property name="preRenderingTask" ref="preRenderingJob" />
+        <property name="requestIntervalRestriction" value="${request.interval.restriction}" />
     </bean>
 
 </beans>

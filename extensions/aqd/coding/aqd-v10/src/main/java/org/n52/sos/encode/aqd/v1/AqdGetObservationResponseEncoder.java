@@ -183,9 +183,4 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
 
         return featureCollection;
     }
-    
-    protected boolean checkObservationHasValue(OmObservation o) {
-        return o != null && o.isSetValue() && o.getValue().isSetValue() && o.getValue().getValue().isSetValue();
-    }
-
 }

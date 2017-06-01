@@ -1,25 +1,30 @@
 /**
- * ﻿Copyright (C) 2013
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  */
 package org.n52.sos.convert;
 
@@ -27,11 +32,8 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.n52.schetland.uvf.UVFConstants;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
@@ -49,8 +51,8 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.util.Validation;
 import org.n52.sos.util.http.MediaType;
+import org.n52.sos.uvf.UVFSettings;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -58,19 +60,8 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
-public class UVFRequestModifier implements RequestResponseModifier<AbstractObservationRequest, AbstractServiceResponse>, SettingDefinitionProvider {
+public class UVFRequestModifier implements RequestResponseModifier<AbstractObservationRequest, AbstractServiceResponse> {
 
-    private static final String DEFAULT_CRS_SETTING_KEY = "uvf.default.crs";
-
-    private static final Set<SettingDefinition<?, ?>> DEFAULT_CRS_SETTING_DEFINITION = ImmutableSet.<SettingDefinition<?,?>>of(
-            new StringSettingDefinition()
-            .setGroup(org.n52.sos.service.MiscSettings.GROUP)
-            .setOrder(66)
-            .setKey(DEFAULT_CRS_SETTING_KEY)
-            .setDefaultValue("31466")
-            .setTitle("The default CRS EPSG code used in UVF response")
-            .setDescription(String.format("The default CRS EPSG code that is used if no swe extension is present in "
-                    + "the request that specifies one. Allowed values are: %s", UVFConstants.ALLOWED_CRS)));
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = Sets.newHashSet(
             new RequestResponseModifierKeyType(
@@ -122,9 +113,9 @@ public class UVFRequestModifier implements RequestResponseModifier<AbstractObser
         return defaultCRS;
     }
     
-    @Setting(DEFAULT_CRS_SETTING_KEY)
+    @Setting(UVFSettings.DEFAULT_CRS_SETTING_KEY)
     public void setDefaultCRS(String defaultCRS) {
-        Validation.notNullOrEmpty(DEFAULT_CRS_SETTING_KEY, defaultCRS);
+        Validation.notNullOrEmpty(UVFSettings.DEFAULT_CRS_SETTING_KEY, defaultCRS);
         final int minimum = UVFConstants.MINIMUM_EPSG_CODE;
         final int maximum = UVFConstants.MAXIMUM_EPSG_CODE;
         try {
@@ -132,7 +123,7 @@ public class UVFRequestModifier implements RequestResponseModifier<AbstractObser
             if (newDefaultCRS < minimum || newDefaultCRS > maximum) {
                 throw new ConfigurationException(String.format("Setting with key '%s': '%s' outside allowed interval "
                         + "]%s, %s[.",
-                        DEFAULT_CRS_SETTING_KEY, defaultCRS, minimum, maximum));
+                        UVFSettings.DEFAULT_CRS_SETTING_KEY, defaultCRS, minimum, maximum));
             }
         } catch (NumberFormatException e) {
             throw new ConfigurationException(String.format("Could not parse given new default CRS EPSG code '%s'. "
@@ -153,10 +144,4 @@ public class UVFRequestModifier implements RequestResponseModifier<AbstractObser
     public RequestResponseModifierFacilitator getFacilitator() {
         return new RequestResponseModifierFacilitator();
     }
-
-    @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return DEFAULT_CRS_SETTING_DEFINITION;
-    }
-
 }

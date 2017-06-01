@@ -545,7 +545,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     }
 
     @Test
-    public void should_not_contain_related_result_templates_after_DeleteSenosr() throws OwsExceptionReport {
+    public void should_not_contain_related_result_templates_after_DeleteSensor() throws OwsExceptionReport {
         updateCacheWithInsertResultTemplate(RESULT_TEMPLATE_IDENTIFIER);
         deleteSensorPreparation();
 

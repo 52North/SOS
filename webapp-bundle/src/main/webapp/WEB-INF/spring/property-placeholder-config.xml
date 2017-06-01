@@ -7,14 +7,13 @@
         http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-4.2.xsd">
-    <!-- 
-    <ctx:property-placeholder location="classpath:/custom-application.properties"
-        ignore-resource-not-found="true" ignore-unresolvable="true" order="0" />
 
-    <ctx:property-placeholder location="${custom.properties.file}"
-        ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
-    -->
+    <!-- these properties do override default settings 
+    <ctx:property-placeholder location="${local.configFile}"
+        ignore-resource-not-found="true" ignore-unresolvable="true" order="0" />
+-->
+    <!-- default settings -->
     <ctx:property-placeholder location="classpath:/application.properties"
-        ignore-resource-not-found="false" ignore-unresolvable="false" order="2" />
+        ignore-resource-not-found="false" ignore-unresolvable="false" order="1" />
 
 </beans>

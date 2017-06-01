@@ -64,14 +64,6 @@
                 <comment>Foreign Key (FK) to the related samplingPoint. Contains "samplingPoint".samplingPointId</comment>
             </column>
         </many-to-one>
-        <many-to-one name="offering" 
-				        class="org.n52.sos.ds.hibernate.entities.Offering" 
-				        foreign-key="oseriesOfferingFk">
-            <column index="seriesOfferingIdx" 
-			            name="offeringId">
-            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
-            </column>
-        </many-to-one>
         <property name="deleted"
                   type="org.hibernate.type.TrueFalseType">
             <column name="deleted"

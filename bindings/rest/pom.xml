@@ -3,12 +3,11 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>bindings</artifactId>
-        <version>4.4.0-SNAPSHOT</version>
+        <version>4.4.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rest</artifactId>
     <packaging>pom</packaging>
-    <version>4.4.0-SNAPSHOT</version>
     <name>52°North SOS - Extension REST Binding</name>
     <description>RESTful binding for the 52°North SOS</description>
     <url>http://52north.org/communities/sensorweb/sosREST/</url>
@@ -21,35 +20,6 @@
         <sos.groupid>org.n52.sensorweb.sos</sos.groupid>
 		<svn.url>https://svn.52north.org/svn/swe/main/SOS/Extensions/Binding/RESTful/trunk/</svn.url>
     </properties>
-    <scm>
-        <connection>scm:svn:${svn.url}trunk/</connection>
-        <developerConnection>scm:svn:${svn.url}trunk/</developerConnection>
-		<url>https://svn.52north.org/svn/swe/main/SOS/Extensions/Binding/RESTful/trunk/</url>
-    </scm>
-    <organization>
-        <name>52°North</name>
-        <url>http://52north.org/</url>
-    </organization>
-    <developers>
-        <developer>
-            <name>Eike Hinderk Jürrens</name>
-            <organization>52°North</organization>
-            <organizationUrl>http://52north.org/</organizationUrl>
-        </developer>
-    </developers>
-    <mailingLists>
-        <mailingList>
-            <name>Sensor Web Mailing List</name>
-            <post>swe@52north.org</post>
-            <subscribe>http://list.52north.org/mailman/listinfo/swe</subscribe>
-            <unsubscribe>http://list.52north.org/mailman/listinfo/swe#subscribers</unsubscribe>
-            <archive>http://list.52north.org/pipermail/swe/</archive>
-        </mailingList>
-    </mailingLists>
-    <issueManagement>
-        <system>Bugzilla</system>
-        <url>https://bugzilla.52north.org/</url>
-    </issueManagement>
     <contributors>
         <contributor>
             <name>Eike Hinderk Jürrens</name>

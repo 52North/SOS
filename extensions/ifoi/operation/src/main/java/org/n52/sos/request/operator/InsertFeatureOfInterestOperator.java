@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,7 +37,6 @@ import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestConstants;
 import org.n52.sos.ds.AbstractInsertFeatureOfInterestHandler;
 import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.FeatureInsertion;
-import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -46,7 +45,6 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.InsertFeatureOfInterestRequest;
-import org.n52.sos.request.operator.WSDLAwareRequestOperator;
 import org.n52.sos.response.InsertFeatureOfInterestResponse;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.wsdl.WSDLOperation;

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,7 +36,7 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.PointValuePair;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.GeometryValue;
 
@@ -66,7 +66,7 @@ public class PointObservation extends AbstractInspireObservation {
         getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION);
         if (!checkForFeatureGeometry(observation) && observation.isSetSpatialFilteringProfileParameter()) {
             try {
-                ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setGeometry(getGeometryFromSamplingGeometry(observation));
+                ((AbstractSamplingFeature)getObservationConstellation().getFeatureOfInterest()).setGeometry(getGeometryFromSamplingGeometry(observation));
             } catch (InvalidSridException e) {
                 // TODO
             }
@@ -75,8 +75,8 @@ public class PointObservation extends AbstractInspireObservation {
     
     @Override
     public OmObservation cloneTemplate() {
-        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
-            ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+        if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature){
+            ((AbstractSamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
         }
         return cloneTemplate(new PointObservation());
     }
@@ -101,16 +101,16 @@ public class PointObservation extends AbstractInspireObservation {
                 geometry = getGeometryFromFeature(this);
                 domainExtent = getObservationConstellation().getFeatureOfInterest().getGmlId();
             }
-            cvDiscretePointCoverage.setDomainExtent("#" + geometry.getGeometryType() + "_" + domainExtent);
-            Point point = null;
             if (geometry != null) {
+                cvDiscretePointCoverage.setDomainExtent("#" + geometry.getGeometryType() + "_" + domainExtent);
+                Point point = null;
                 if (geometry instanceof Point) {
                     point = (Point)geometry;
                 } else {
                     point = geometry.getCentroid();
                 }
+                cvDiscretePointCoverage.setValue(new PointValuePair(point, value.getValue()));
             }
-            cvDiscretePointCoverage.setValue(new PointValuePair(point, value.getValue()));
             super.setValue(new SingleObservationValue<>(value.getPhenomenonTime(), cvDiscretePointCoverage));
         }
     }

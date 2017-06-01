@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.4.0-SNAPSHOT</version>
+    <version>4.4.1-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
@@ -64,12 +64,12 @@
         <config.logger.history.max>30</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
-        <postgresql.version>9.4.1211.jre7</postgresql.version>
+        <postgresql.version>9.4.1212.jre7</postgresql.version>
         <postgis.version>2.2.0</postgis.version>
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.2</slf4j.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
-        <hibernate.spatial.version>4.3.1-52N</hibernate.spatial.version>
+        <hibernate.spatial.version>4.3.2-52N</hibernate.spatial.version>
         <c3p0.version>0.9.5.2</c3p0.version>
         <sqlite.version>3.7.2</sqlite.version>
         <geotools.version>14.0</geotools.version>
@@ -78,7 +78,7 @@
         <sqljdbc4.version>4.0</sqljdbc4.version>
 
         <!-- 52N dependency versions -->
-        <n52.common.xml.version>2.2.1-SNAPSHOT</n52.common.xml.version>
+        <n52.common.xml.version>2.3.0</n52.common.xml.version>
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
@@ -616,6 +616,10 @@
                         <groupId>org.postgresql</groupId>
                         <artifactId>postgresql</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -762,7 +766,12 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-ifoi-v10</artifactId>
-                <version>2.2.1-SNAPSHOT</version>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-drt-v100</artifactId>
+                <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
@@ -1105,6 +1114,26 @@
                 <artifactId>ifoi-hibernate</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt-operation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt-hibernate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- required for common test classes -->
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1315,8 +1344,8 @@
             <!-- netCDF -->
             <dependency>
                 <groupId>edu.ucar</groupId>
-                <artifactId>netcdf</artifactId>
-                <version>4.3.22</version>
+                <artifactId>netcdf4</artifactId>
+                <version>4.6.10</version>
                 <exclusions>
                   <exclusion>
                     <groupId>c3p0</groupId>
@@ -1331,7 +1360,7 @@
             <dependency>
                 <groupId>com.axiomalaska</groupId>
                 <artifactId>cf4j</artifactId>
-                <version>27.2</version>
+                <version>35.0</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -1481,7 +1510,7 @@
                     <strictCheck>true</strictCheck>
                     <properties>
                         <inceptionYear>2012</inceptionYear>
-                        <latestYearOfContribution>2016</latestYearOfContribution>
+                        <latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>
                     </properties>
                 </configuration>
                 <!-- 
@@ -1587,7 +1616,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>3.6.1</version>
                     <configuration>
                         <compilerVersion>1.7</compilerVersion>
                         <source>1.7</source>
@@ -1652,7 +1681,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.16</version>
+                    <version>2.20</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
@@ -1663,7 +1692,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>2.6</version>
                     <configuration>
                         <descriptors>
                             <descriptor>misc/assembly.xml</descriptor>
@@ -1709,6 +1738,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <!-- 
         <repository>
             <id>Refractions</id>
             <name>Refractions repository</name>
@@ -1717,6 +1747,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+         -->
         <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>
@@ -1730,10 +1761,12 @@
             <name>Boundless Cloud Repository</name>
             <url>https://boundless.artifactoryonline.com/boundless/main</url>
         </repository>
+        <!-- 
         <repository>
             <id>unidata-releases</id>
             <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
         </repository>
+         -->
         <repository>
             <id>boundlessgeo-releases</id>
             <url>https://repo.boundlessgeo.com/main</url>

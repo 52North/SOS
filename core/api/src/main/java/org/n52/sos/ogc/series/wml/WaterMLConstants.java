@@ -254,7 +254,8 @@ public interface WaterMLConstants {
             return this.toString();
         }
 
+        public static InterpolationType from(String v) {
+            return valueOf(v.replace(INTERPOLATION_TYPE + "/", ""));
+        }
     }
-
-    
 }

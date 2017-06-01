@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
+import com.google.common.base.Strings;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,7 +36,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
-
 import org.hibernate.type.descriptor.ValueBinder;
 import org.hibernate.type.descriptor.ValueExtractor;
 import org.hibernate.type.descriptor.WrapperOptions;
@@ -43,17 +43,16 @@ import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
 import org.hibernate.type.descriptor.sql.BasicBinder;
 import org.hibernate.type.descriptor.sql.BasicExtractor;
 import org.hibernate.type.descriptor.sql.TimestampTypeDescriptor;
-
-import com.google.common.base.Strings;
+import org.joda.time.DateTimeZone;
 
 /**
  * Hibernate TypeDescriptor which forces all Timestamps queried from/inserted to
  * the database to use UTC instead of the JVM's timezone.
- * 
+ *
  * @author Shane StClair <shane@axiomalaska.com>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
- * @since 4.4.0
+ *
+ * @since 4.3.12
  */
 public class ConfigurableTimestampTypeDescriptor extends TimestampTypeDescriptor {
 
@@ -69,13 +68,13 @@ public class ConfigurableTimestampTypeDescriptor extends TimestampTypeDescriptor
 
     /**
      * Get instance of {@link ConfigurableTimestampTypeDescriptor}
-     * 
+     *
      * @param timeZone
      *            The {@link TimeZone} string. If null or empty, UTC is used.
      */
     public ConfigurableTimestampTypeDescriptor(String timeZone) {
         if (!Strings.isNullOrEmpty(timeZone)) {
-            this.timeZone = TimeZone.getTimeZone(timeZone.trim());
+            this.timeZone = DateTimeZone.forID(timeZone.trim()).toTimeZone();
         }
     }
 

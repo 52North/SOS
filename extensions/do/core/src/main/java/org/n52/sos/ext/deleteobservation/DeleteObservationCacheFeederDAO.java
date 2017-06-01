@@ -33,7 +33,6 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.n52.sos.ds.DatasourceCacheUpdate;
-import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -41,7 +40,7 @@ import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.slf4j.Logger;
@@ -190,8 +189,8 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      *             if the FeatureQueryHandler fails
      */
     protected void updateSpatialBoundingBoxes(AbstractFeature featureOfInterest) throws OwsExceptionReport {
-        if (featureOfInterest instanceof SamplingFeature) {
-            final SamplingFeature ssf = (SamplingFeature) featureOfInterest;
+        if (featureOfInterest instanceof AbstractSamplingFeature) {
+            final AbstractSamplingFeature ssf = (AbstractSamplingFeature) featureOfInterest;
             if (ssf.getGeometry() != null) {
                 if (!globalSpatialBoundingBoxUpdated && getCache().getGlobalEnvelope() != null && isCritical(
                         ssf.getGeometry().getEnvelopeInternal(), getCache().getGlobalEnvelope().getEnvelope())) {

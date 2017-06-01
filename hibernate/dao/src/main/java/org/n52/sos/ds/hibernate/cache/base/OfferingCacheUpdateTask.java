@@ -125,6 +125,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
 
         getCache().addOffering(offeringId);
+        getCache().addPublishedOffering(offeringId);
         addOfferingNamesAndDescriptionsToCache(offeringId, session);
         // only check once, check flag in other methods
         obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
@@ -301,6 +302,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             observationTypes.add(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
         } else if (observationDAO.checkSweDataArrayObservationsFor(offeringId, session)) {
             observationTypes.add(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+        } else if (observationDAO.checkComplexObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+        } else if (observationDAO.checkProfileObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
         }
         return observationTypes;
     }

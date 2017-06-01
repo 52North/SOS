@@ -72,6 +72,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
         final String procedure = request.getProcedureIdentifier();
 
         cache.removeProcedure(procedure);
+        cache.removePublishedProcedure(procedure);
 
         cache.removeMinPhenomenonTimeForProcedure(procedure);
         cache.removeMaxPhenomenonTimeForProcedure(procedure);
@@ -115,6 +116,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
                     cache.removeObservablePropertiesForResultTemplate(resultTemplate);
                 }
                 cache.removeOffering(offering);
+                cache.removePublishedOffering(offering);
             }
         }
 

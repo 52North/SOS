@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,16 +33,23 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
 public class SeriesMetadataDAO {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(SeriesMetadataDAO.class);
 
     @SuppressWarnings("unchecked")
     public List<SeriesMetadata> getMetadata(long series, Session session) {
         Criteria c = getDefaultSeriesCriteria(session);
         addSeriesRestriction(series, c);
+        LOGGER.debug("QUERY getMetadata(series): {}", HibernateHelper.getSqlString(c));
         return c.list();
     }
 
@@ -55,6 +62,7 @@ public class SeriesMetadataDAO {
         Criteria c = getDefaultSeriesCriteria(session);
         addSeriesRestriction(seriesId, c);
         addDomainRestriction(domainIdentifier, c);
+        LOGGER.debug("QUERY getDomainMetadata(seriesId, domainIdentifier): {}", HibernateHelper.getSqlString(c));
         return c.list();
     }
 

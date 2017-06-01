@@ -96,10 +96,6 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     @Override
     public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
-        return mergeObservation(false);
-    }
-    
-    public Collection<OmObservation> mergeObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         Map<String, OmObservation> observations = Maps.newHashMap();
         while (hasNextValue()) {
             AbstractValuedLegacyObservation<?> nextEntity = nextEntity();
@@ -110,7 +106,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
                 if (observations.containsKey(key) && mergableObservationValue) {
                     observation = observations.get(key);
                 } else {
-                    observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
+                    observation = observationTemplate.cloneTemplate(true);
                     addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
                     if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
                         observations.put(Long.toString(nextEntity.getObservationId()), observation);

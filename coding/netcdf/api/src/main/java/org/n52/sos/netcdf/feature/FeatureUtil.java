@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,7 +31,7 @@ package org.n52.sos.netcdf.feature;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -46,17 +46,17 @@ import com.vividsolutions.jts.geom.Point;
  *
  */
 public class FeatureUtil {
-    public static Set<Point> getFeaturePoints( Set<SamplingFeature> features ){
+    public static Set<Point> getFeaturePoints( Set<AbstractSamplingFeature> features ){
     	Set<Point> featurePoints = new HashSet<Point>();
     	
-        for( SamplingFeature feature : features ){            
+        for( AbstractSamplingFeature feature : features ){            
             featurePoints.addAll(getFeaturePoints( feature ));
         }
 
         return featurePoints;
     }
     
-    public static Set<Point> getFeaturePoints( SamplingFeature feature ){
+    public static Set<Point> getFeaturePoints( AbstractSamplingFeature feature ){
         Set<Point> points = new HashSet<Point>();
         if( feature != null && feature.isSetGeometry()){
             return getPoints(feature.getGeometry());
@@ -81,7 +81,7 @@ public class FeatureUtil {
         return points;
     }
     
-    public static Set<Double> getFeatureHeights( SamplingFeature feature ){
+    public static Set<Double> getFeatureHeights( AbstractSamplingFeature feature ){
         return getHeights(getFeaturePoints( feature ));
     }
     

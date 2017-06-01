@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>ifoi</artifactId>
-        <version>4.4.0-SNAPSHOT</version>
+        <version>4.4.1-SNAPSHOT</version>
     </parent>
     <artifactId>ifoi-operation</artifactId>
     <name>52°North SOS - Extension InsertFeatureOfInterest - SOS 2.0 Operation</name>
@@ -15,36 +15,4 @@
             <artifactId>api</artifactId>
         </dependency>
     </dependencies>
-     <repositories>
-		<repository>
-			<id>Apache</id>
-			<name>Apache repository</name>
-			<url>http://repo1.maven.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>n52-releases</id>
-			<name>52n Releases</name>
-			<url>http://52north.org/maven/repo/releases</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>n52s</id>
-			<name>52n Snapshots</name>
-			<url>http://52north.org/maven/repo/snapshots</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 </project>

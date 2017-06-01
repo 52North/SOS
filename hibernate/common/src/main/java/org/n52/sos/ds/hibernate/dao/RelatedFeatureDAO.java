@@ -41,7 +41,7 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.slf4j.Logger;
@@ -130,11 +130,11 @@ public class RelatedFeatureDAO {
             final RelatedFeature relFeat = new RelatedFeature();
             String identifier = feature.getIdentifierCodeWithAuthority().getValue();
             String url = null;
-            if (feature instanceof SamplingFeature) {
+            if (feature instanceof AbstractSamplingFeature) {
                 identifier =
                         Configurator.getInstance().getFeatureQueryHandler()
-                                .insertFeature((SamplingFeature) feature, session);
-                url = ((SamplingFeature) feature).getUrl();
+                                .insertFeature((AbstractSamplingFeature) feature, session);
+                url = ((AbstractSamplingFeature) feature).getUrl();
             }
             relFeat.setFeatureOfInterest(new FeatureOfInterestDAO().getOrInsertFeatureOfInterest(identifier, url,
                     session));

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,6 +38,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -115,6 +116,13 @@ public abstract class ObservationFactory {
     public ComplexObservation complex()
             throws OwsExceptionReport {
         return instantiate(complexClass());
+    }
+    
+    public abstract Class<? extends ProfileObservation> profileClass();
+
+    public ProfileObservation profile()
+            throws OwsExceptionReport {
+        return instantiate(profileClass());
     }
 
     private <T extends Observation<?>> T instantiate(Class<T> c)

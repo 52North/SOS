@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,9 +30,16 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
+import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.ProfileGeneratorSplitter;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.BlobValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.BooleanValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.CategoryValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.GeometryValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.NumericValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.TextValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
@@ -44,6 +51,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObserva
 import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
@@ -73,7 +81,9 @@ public class ObservationValueCreator
     @Override
     public QuantityValue visit(NumericValuedObservation o) {
         QuantityValue v = new QuantityValue(o.getValue());
-        addUnit(o, v);
+        if (!addUnit(o, v) && o instanceof NumericValuedSeriesObservation && ((NumericValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((NumericValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
@@ -81,14 +91,18 @@ public class ObservationValueCreator
     @Override
     public UnknownValue visit(BlobValuedObservation o) {
         UnknownValue v = new UnknownValue(o.getValue());
-        addUnit(o, v);
+        if (!addUnit(o, v) && o instanceof BlobValuedSeriesObservation && ((BlobValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((BlobValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
     @Override
     public BooleanValue visit(BooleanValuedObservation o) {
         BooleanValue v = new BooleanValue(o.getValue());
-        addUnit(o, v);
+        if (!addUnit(o, v) && o instanceof BooleanValuedSeriesObservation && ((BooleanValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((BooleanValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
@@ -97,7 +111,9 @@ public class ObservationValueCreator
         CategoryValue v = new CategoryValue(o.getValue());
         addAdditonalData(o, v);
         addDefinitionFromObservableProperty(o, v);
-        addUnit(o, v);
+        if (!addUnit(o, v) && o instanceof CategoryValuedSeriesObservation && ((CategoryValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((CategoryValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
@@ -118,7 +134,9 @@ public class ObservationValueCreator
     @Override
     public GeometryValue visit(GeometryValuedObservation o) {
         GeometryValue v = new GeometryValue(o.getValue());
-        addUnit(o, v);
+        if (!addUnit(o, v) && o instanceof GeometryValuedSeriesObservation && ((GeometryValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((GeometryValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
@@ -127,7 +145,9 @@ public class ObservationValueCreator
         TextValue v = new TextValue(o.getValue());
         addAdditonalData(o, v);
         addDefinitionFromObservableProperty(o, v);
-        addUnit(o, v);
+        if (!addUnit(o, v) && o instanceof TextValuedSeriesObservation && ((TextValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((TextValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
@@ -167,12 +187,18 @@ public class ObservationValueCreator
         }
     }
 
-    protected void addUnit(ValuedObservation<?> o, Value<?> v) {
+    protected boolean addUnit(ValuedObservation<?> o, Value<?> v) {
         if (!v.isSetUnit() && o.isSetUnit()) {
-            v.setUnit(o.getUnit().getUnit());
+            v.setUnit(getUnit(o.getUnit()));
+            return true;
         }
+        return false;
     }
-    
-    
+
+
+    protected UoM getUnit(Unit unit) {
+        UoM uom = new UoM(unit.getUnit());
+        return uom;
+    }
 
 }

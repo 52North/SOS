@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,6 +41,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.n52.sos.ds.hibernate.H2Configuration;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
@@ -49,11 +50,14 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sensorML.AbstractProcess;
+import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sensorML.SensorML20Constants;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
+import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -96,13 +100,13 @@ public class DescribeSensorProcedureDescriptionFormatTest extends AbstractCompli
     public void before() throws OwsExceptionReport {
         activate();
 
-        InsertSensorDocument insertSensorSml1Doc = createInsertSensorRequest(PROCEDURE1, PROCEDURE1, "offering", "obs_prop",
+        InsertSensorDocument insertSensorSml1Doc = createInsertSensorRequest(PROCEDURE1, PROCEDURE1, "offering1", "obs_prop",
                 SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL);
         assertThat(pox().entity(insertSensorSml1Doc.xmlText(XML_OPTIONS)).response().asXmlObject(),
                 is(instanceOf(InsertSensorResponseDocument.class)));
 
-        InsertSensorDocument insertSensorSml2Doc = createInsertSensorRequest(PROCEDURE2, PROCEDURE2, "offering", "obs_prop",
-                SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL);
+        InsertSensorDocument insertSensorSml2Doc = createInsertSensorRequest(PROCEDURE2, PROCEDURE2, "offering2", "obs_prop",
+                SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL);
         assertThat(pox().entity(insertSensorSml2Doc.xmlText(XML_OPTIONS)).response().asXmlObject(),
                 is(instanceOf(InsertSensorResponseDocument.class)));
     }
@@ -235,14 +239,14 @@ public class DescribeSensorProcedureDescriptionFormatTest extends AbstractCompli
     // using SensorML 2.0 URL format (http://www.opengis.net/sensorml/2.0)
     @Test
     public void testSml2Sos2DescribeSensorSensorML2UrlPox() {
-        verifyDescribeSensorResponseDocument(sendDescribeSensor2RequestViaPox(PROCEDURE2, SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL),
-                SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL);
+        verifyDescribeSensorResponseDocument(sendDescribeSensor2RequestViaPox(PROCEDURE2, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL),
+                SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL);
     }
 
     @Test
     public void testSml2Sos2DescribeSensorSensorML2UrlKvp() {
-        verifyDescribeSensorResponseDocument(sendDescribeSensor2RequestViaKvp(PROCEDURE2, SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL),
-                SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL);
+        verifyDescribeSensorResponseDocument(sendDescribeSensor2RequestViaKvp(PROCEDURE2, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL),
+                SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL);
     }
 
     // Procedure inserted with SensorML 2.0 URL format can NOT be requested with SOS 2.0
@@ -265,12 +269,12 @@ public class DescribeSensorProcedureDescriptionFormatTest extends AbstractCompli
     // ProcedureEncoder's getSupportedProcedureDescriptionFormats for SOS 2.0 (ConverterKeys are not checked)
     @Test
     public void testSml2Sos2DescribeSensorSensorML2MimeTypePox() throws OwsExceptionReport {
-        verifyInvalidParameterValue(sendDescribeSensor2RequestViaPox(PROCEDURE2, SensorML20Constants.SENSORML_OUTPUT_FORMAT_MIME_TYPE));
+        verifyInvalidParameterValue(sendDescribeSensor2RequestViaPox(PROCEDURE2, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE));
     }
 
     @Test
     public void testSml2Sos2DescribeSensorSensorML2MimeTypeKvp() throws OwsExceptionReport {
-        verifyInvalidParameterValue(sendDescribeSensor2RequestViaKvp(PROCEDURE2, SensorML20Constants.SENSORML_OUTPUT_FORMAT_MIME_TYPE));
+        verifyInvalidParameterValue(sendDescribeSensor2RequestViaKvp(PROCEDURE2, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE));
     }
 
     // Procedure inserted with SensorML 2.0 URL format can be requested with SOS 1.0
@@ -289,12 +293,12 @@ public class DescribeSensorProcedureDescriptionFormatTest extends AbstractCompli
     // using SensorML 2.0 mime type format (text/xml; subtype="sensorml/2.0")
     @Test
     public void testSml2Sos1DescribeSensorSensorML2MimeTypePox() throws OwsExceptionReport {
-        verifySensorMLDocument(sendDescribeSensor1RequestViaPox(PROCEDURE2, SensorML20Constants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), PROCEDURE2);
+        verifyPhysicalSystemDocument(sendDescribeSensor1RequestViaPox(PROCEDURE2, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), PROCEDURE2);
     }
 
     @Test
     public void testSml2Sos1DescribeSensorSensorML2MimeTypeKvp() throws OwsExceptionReport {
-        verifySensorMLDocument(sendDescribeSensor1RequestViaKvp(PROCEDURE2, SensorML20Constants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), PROCEDURE2);
+        verifyPhysicalSystemDocument(sendDescribeSensor1RequestViaKvp(PROCEDURE2, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), PROCEDURE2);
     }
 
     private void verifyInvalidParameterValue(XmlObject xmlObject) throws OwsExceptionReport {
@@ -334,10 +338,10 @@ public class DescribeSensorProcedureDescriptionFormatTest extends AbstractCompli
 
     private void verifyPhysicalSystemDocument(XmlObject xmlObject, String identifier) throws OwsExceptionReport {
         assertThat(xmlObject, is(instanceOf(PhysicalSystemDocument.class)));
-        verifySensorMLDocument((PhysicalSystemDocument) xmlObject, identifier);
+        verifyPhysicalSystemDocument((PhysicalSystemDocument) xmlObject, identifier);
     }
 
-    private void verifySensorMLDocument(PhysicalSystemDocument physicalSystemDoc, String identifier)
+    private void verifyPhysicalSystemDocument(PhysicalSystemDocument physicalSystemDoc, String identifier)
             throws OwsExceptionReport {
         Object decodedXmlObject = CodingHelper.decodeXmlObject(physicalSystemDoc);
         assertThat(decodedXmlObject, is(instanceOf(PhysicalSystem.class)));
@@ -395,20 +399,30 @@ public class DescribeSensorProcedureDescriptionFormatTest extends AbstractCompli
                 .accept(MediaTypes.APPLICATION_XML.toString());
     }
 
-    protected SensorML createProcedure(String identifier, String procedure, String offering, String obsProp) {
-        SensorML wrapper = new SensorML();
-        org.n52.sos.ogc.sensorML.System sensorML = new org.n52.sos.ogc.sensorML.System();
-        wrapper.addMember(sensorML);
-        sensorML.addIdentifier(new SmlIdentifier(identifier, OGCConstants.URN_UNIQUE_IDENTIFIER, procedure));
-        sensorML.addPhenomenon(new OmObservableProperty(obsProp));
-        wrapper.setIdentifier(new CodeWithAuthority(procedure, "identifier_codespace"));
-        return wrapper;
+    protected void addValueToProcedure(AbstractProcess process, String identifier, String procedure, String offering, String obsProp) {
+        process.addIdentifier(new SmlIdentifier(identifier, OGCConstants.URN_UNIQUE_IDENTIFIER, procedure));
+        process.addPhenomenon(new OmObservableProperty(obsProp));
+        process.setIdentifier(new CodeWithAuthority(procedure, "identifier_codespace"));
     }
 
     protected InsertSensorDocument createInsertSensorRequest(String identifier, String procedure, String offering,
             String obsProp, String procedureDescriptionFormat) throws OwsExceptionReport {
-        SensorML sml = createProcedure(identifier, procedure, offering, obsProp);
-
+        String namespace = null;
+        AbstractSensorML sml = null;
+        if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL.equals(procedureDescriptionFormat)) {
+            org.n52.sos.ogc.sensorML.System system = new org.n52.sos.ogc.sensorML.System();
+            addValueToProcedure(system, identifier, procedure, offering, obsProp);
+            sml = new SensorML().addMember(system);
+            namespace = SensorMLConstants.NS_SML;
+        } else if (SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL.equals(procedureDescriptionFormat)) {
+            PhysicalSystem physicalSystem = new PhysicalSystem();
+            addValueToProcedure(physicalSystem, identifier, procedure, offering, obsProp);
+            sml = physicalSystem;
+            namespace = SensorML20Constants.NS_SML_20;
+        }
+        if (namespace == null && sml == null) {
+            throw new NoApplicableCodeException();
+        }
         InsertSensorDocument document = InsertSensorDocument.Factory.newInstance();
         InsertSensorType insertSensor = document.addNewInsertSensor();
         insertSensor.setService(SosConstants.SOS);
@@ -425,7 +439,7 @@ public class DescribeSensorProcedureDescriptionFormatTest extends AbstractCompli
         insertSensor.setProcedureDescriptionFormat(procedureDescriptionFormat);
 
         insertSensor.addNewMetadata().addNewInsertionMetadata().set(createSensorInsertionMetadata());
-        insertSensor.addNewProcedureDescription().set(CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, sml));
+        insertSensor.addNewProcedureDescription().set(CodingHelper.encodeObjectToXml(namespace, sml));
         return document;
     }
 

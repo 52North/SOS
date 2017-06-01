@@ -137,13 +137,11 @@ public class AqdHelper {
 
     public void processObservation(OmObservation observation, TimeInstant resultTime,
             FeatureCollection featureCollection, AbstractEReportingHeader eReportingHeader, int counter) {
-        if (checkObservationHasValue(observation)) {
-            observation.setGmlId(getObservationId(counter));
-            // add xlink:href to eReportingHeader.content
-            eReportingHeader.addContent((AbstractFeature)new OmObservation().setIdentifier(new CodeWithAuthority(getObservationXlink(observation.getGmlId()))));
-            observation.setResultTime(resultTime);
-            featureCollection.addMember(observation);
-        }
+        observation.setGmlId(getObservationId(counter));
+        // add xlink:href to eReportingHeader.content
+        eReportingHeader.addContent((AbstractFeature)new OmObservation().setIdentifier(new CodeWithAuthority(getObservationXlink(observation.getGmlId()))));
+        observation.setResultTime(resultTime);
+        featureCollection.addMember(observation);
     }
 
     public String getObservationXlink(String gmlId) {
@@ -204,9 +202,5 @@ public class AqdHelper {
     
     public boolean isSetVerificationFlags() {
         return CollectionHelper.isNotEmpty(getVerificationFlags());
-    }
-    
-    protected boolean checkObservationHasValue(OmObservation o) {
-        return o != null && (!(o instanceof StreamableValue) || (o.isSetValue() && o.getValue().isSetValue() && o.getValue().getValue().isSetValue()));
     }
 }

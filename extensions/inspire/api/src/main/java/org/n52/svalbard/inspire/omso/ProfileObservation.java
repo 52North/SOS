@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,7 +37,7 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.values.ProfileLevel;
 import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
@@ -73,8 +73,8 @@ public class ProfileObservation extends AbstractInspireObservation {
     
     @Override
     public OmObservation cloneTemplate() {
-        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
-            ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+        if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature){
+            ((AbstractSamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
         }
         return cloneTemplate(new ProfileObservation());
     }
@@ -121,8 +121,8 @@ public class ProfileObservation extends AbstractInspireObservation {
     
     private void setFeatureGeometry(List<Coordinate> coordinates, int srid) {
         AbstractFeature featureOfInterest = getObservationConstellation().getFeatureOfInterest();
-        if (featureOfInterest instanceof SamplingFeature) {
-            SamplingFeature sf = (SamplingFeature) featureOfInterest;
+        if (featureOfInterest instanceof AbstractSamplingFeature) {
+            AbstractSamplingFeature sf = (AbstractSamplingFeature) featureOfInterest;
             Coordinate[] coords = coordinates.toArray(new Coordinate[0]);
             try {
                 LineString lineString = new GeometryFactory().createLineString(coords);
@@ -136,19 +136,22 @@ public class ProfileObservation extends AbstractInspireObservation {
     }
 
     @Override
-    protected void mergeValues(ObservationValue<?> observationValue) {
-      if (observationValue.getValue() instanceof RectifiedGridCoverage) {
-          ((RectifiedGridCoverage)getValue().getValue()).addValue(((RectifiedGridCoverage)observationValue.getValue()).getValue());
-//      } else if (observationValue.getValue() instanceof ReverencableGridCoverage) {
-//          ((ReverencableGridCoverage)getValue()).addValue(((ReverencableGridCoverage)observationValue).getValue());
-          
-          if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
-              if (((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
-                  // TODO check for SamplingCurve and Depht/Height
-              }
-          }
-      } else {
-          super.mergeValues(observationValue);
-      }
+    protected boolean mergeValues(ObservationValue<?> observationValue) {
+        if (observationValue.getValue() instanceof RectifiedGridCoverage) {
+            ((RectifiedGridCoverage) getValue().getValue())
+                    .addValue(((RectifiedGridCoverage) observationValue.getValue()).getValue());
+            // } else if (observationValue.getValue() instanceof
+            // ReverencableGridCoverage) {
+            // ((ReverencableGridCoverage)getValue()).addValue(((ReverencableGridCoverage)observationValue).getValue());
+
+            if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+                if (((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                    // TODO check for SamplingCurve and Depht/Height
+                }
+            }
+            return true;
+        } else {
+            return super.mergeValues(observationValue);
+        }
     }
 }

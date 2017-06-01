@@ -29,7 +29,6 @@
 package org.n52.sos.ds.datasource;
 
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -40,8 +39,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.security.auth.login.CredentialException;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;

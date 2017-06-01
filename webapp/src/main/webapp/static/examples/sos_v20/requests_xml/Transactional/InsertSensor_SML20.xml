@@ -38,7 +38,7 @@
 				 <!-- Offering is generated if not specified. -->
 		         <sml:capability name="offeringID">
 		            <swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
-		               <swe:label>offeringID</swe:label>
+		               <swe:label>Test Offering #9</swe:label>
 		               <swe:value>http://www.52north.org/test/offering/9</swe:value>
 		            </swe:Text>
 		         </sml:capability>

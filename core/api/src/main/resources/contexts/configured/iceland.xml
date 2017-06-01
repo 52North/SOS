@@ -9,6 +9,7 @@
     <bean id="poxBinding" class="org.n52.iceland.binding.pox.PoxBinding" />
     <bean id="jsonBinding" class="org.n52.iceland.binding.json.JSONBinding" />
     <bean id="soapBinding" class="org.n52.iceland.binding.soap.SoapBinding" />
+    <bean id="staBinding" class="org.n52.iceland.binding.sta.StaBinding" />
 
     <bean id="serviceMetadataRepository" class="org.n52.iceland.ogc.ows.OwsServiceMetadataRepositoryImpl" />
 

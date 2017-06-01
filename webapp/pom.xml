@@ -105,6 +105,11 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard-sensorthings</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
         </dependency>

@@ -74,4 +74,8 @@
     <bean class="org.n52.svalbard.encode.WmlTVPEncoderv20"/>
     <bean class="org.n52.svalbard.encode.WsaEncoder"/>
     <bean class="org.n52.svalbard.encode.XlinkEncoderv1999"/>
+
+    <bean class="org.n52.svalbard.encode.StaGetDatastreamResponseEncoder"/>
+    <bean class="org.n52.svalbard.encode.StaDatastreamEncoder"/>
+    <bean class="org.n52.svalbard.encode.StaObservationEncoder"/>
 </beans>

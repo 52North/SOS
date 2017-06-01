@@ -759,7 +759,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             processModel.setOutputs(createOutputs(sosProcessModel.getOutputs()));
         }
         // set method
-        if (processModel.getMethod() != null) {
+        if (sosProcessModel.isSetMethod() && processModel.getMethod() == null) {
             processModel.setMethod(createMethod(sosProcessModel.getMethod()));
         }
     }

@@ -175,6 +175,8 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
             ObservationOfferingType xbObservationOffering = xbObservationOfferings.addNewObservationOffering();
             // TODO check NAme or ID
             xbObservationOffering.setId(NcNameResolver.fixNcName(offering.getOffering().getIdentifier()));
+            xbObservationOffering.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML,
+                    new CodeType(offering.getOffering().getIdentifier(), "uniqueID")));
 
             // only if fois are contained for the offering set the values of the
             // envelope

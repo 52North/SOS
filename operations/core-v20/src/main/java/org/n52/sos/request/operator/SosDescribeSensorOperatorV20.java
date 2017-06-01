@@ -86,7 +86,7 @@ public class SosDescribeSensorOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkProcedureID(sosRequest.getProcedure(), SosConstants.DescribeSensorParams.procedure.name());
+            checkProcedure(sosRequest.getProcedure(), SosConstants.DescribeSensorParams.procedure.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

@@ -500,7 +500,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
             final Collection<String> responseFormats =
                     CodingRepository.getInstance().getSupportedResponseFormats(SosConstants.SOS,
                             Sos1Constants.SERVICEVERSION);
-            if (checkOfferingValues(envelopeForOffering, featuresForoffering, responseFormats)) {
+            if (checkOfferingValues(envelopeForOffering, featuresForoffering, responseFormats, procedures)) {
                 final SosObservationOffering sosObservationOffering = new SosObservationOffering();
 
                 // insert observationTypes
@@ -577,9 +577,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
     }
 
     private boolean checkOfferingValues(final SosEnvelope envelopeForOffering, final Set<String> featuresForOffering,
-            final Collection<String> responseFormats) {
+            final Collection<String> responseFormats, Collection<String> procedures) {
         return SosEnvelope.isNotNullOrEmpty(envelopeForOffering) && CollectionHelper.isNotEmpty(featuresForOffering)
-                && CollectionHelper.isNotEmpty(responseFormats);
+                && CollectionHelper.isNotEmpty(responseFormats) && CollectionHelper.isNotEmpty(procedures);
     }
 
     /**
@@ -889,11 +889,13 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         final Collection<String> observablePropertiesForOffering =
                 getCache().getObservablePropertiesForOffering(offering);
         for (final String observableProperty : observablePropertiesForOffering) {
-            final Set<String> proceduresForObservableProperty =
-                    getCache().getProceduresForObservableProperty(observableProperty);
-            if (proceduresForObservableProperty.contains(procedure)
-                    || isHiddenChildProcedureObservableProperty(offering, proceduresForObservableProperty)) {
-                phenomenons.add(observableProperty);
+            if (getCache().getPublishedObservableProperties().contains(observableProperty)) {
+                final Set<String> proceduresForObservableProperty =
+                        getCache().getProceduresForObservableProperty(observableProperty);
+                if (proceduresForObservableProperty.contains(procedure)
+                        || isHiddenChildProcedureObservableProperty(offering, proceduresForObservableProperty)) {
+                    phenomenons.add(observableProperty);
+                }
             }
         }
         sosOffering.setObservableProperties(phenomenons);
@@ -992,7 +994,13 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
                             "No procedures are contained in the database for the offering '%s'! Please contact the admin of this SOS.",
                             offering);
         }
-        return procedures;
+        Collection<String> published = Sets.newHashSet();
+        for (String procedure : procedures) {
+            if (getCache().getPublishedProcedures().contains(procedure)) {
+                published.add(procedure);
+            }
+        }
+        return published;
     }
 
     private boolean isVersionSos2(final GetCapabilitiesResponse response) {

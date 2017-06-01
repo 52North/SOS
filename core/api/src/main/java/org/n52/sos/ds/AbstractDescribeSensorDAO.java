@@ -53,7 +53,7 @@ public abstract class AbstractDescribeSensorDAO extends AbstractOperationDAO {
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        addProcedureParameter(opsMeta);
+        addPublishedProcedureParameter(opsMeta);
         Set<String> pdfs = getCache().getRequstableProcedureDescriptionFormat();
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
             pdfs.addAll(CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS,

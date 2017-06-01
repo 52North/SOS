@@ -5,9 +5,87 @@ RELEASE NOTES
  in Observation&Measurement), information about the sensor itself (encoded in a 
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
+
+
+    Release 52n-sensorweb-sos-4.3.14
+=====================================
+
+  --- New features ---
+
+    
+  --- Changes ---
+    
+  
+  --- Fixed issues ---
+
+    * some fixes for the rest api (bundle)
+
+
+    Release 52n-sensorweb-sos-4.3.13
+=====================================
+
+  --- New features ---
+
+    
+  --- Changes ---
+    
+    * Update PostgreSQL JDBC to current which works with PG 9.6
+
+  
+  --- Fixed issues ---
+
+    * some minor fixes (getting unit from series)
+
+    Release 52n-sensorweb-sos-4.3.12
+=====================================
+
+  --- New features ---
+
+    * Make timezones configurable to handle time w/o zone information properly (instead of expecting UTC only)
+    * Add named query for samplingGeometry check in offering cache update
+    * Get unit from series table
+    
+  --- Changes ---
+    
+    * Set overall time extrema flag to false
+    * Enhancements for not publiched objects (series concept)
+    * Update REST-API to 1.10.0
+  
+  --- Fixed issues ---
+
+    * some minor fixes
+ 
+    Release 52n-sensorweb-sos-4.3.11
+=====================================
+
+  --- New features ---
+  
+    
+  --- Changes ---
+    
+    * Update REST-API version of bundle to 1.9.5
+  
+  --- Fixed issues ---
+
+    * Issue #506: Get HTTP Status 500 - Handler processing failed when install 52North SOS-webapp-4.3.10
+      * Missing c3p0 library
+    * Do not list not published procedure/featureOfInterest/observedProperty in Capabilities (series concept)
+ 
+   Release 52n-sensorweb-sos-4.3.10
+=====================================
+
+  --- New features ---
+  
+    
+  --- Changes ---
+
+  
+  --- Fixed issues ---
+
+    * Issue #503: Capabilities cache update fails for old database concept
  
    Release 52n-sensorweb-sos-4.3.9
-===================================== 
+=====================================
 
   --- New features ---
   

@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,10 +43,14 @@ import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
+import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.TObservableProperty;
+import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
+import org.n52.sos.exception.CodedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -158,6 +163,17 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
                 getCache().addParentProcedures(procedureIdentifier, parentProcedures);
             }
         }
+        try {
+            for (Procedure procedure : procedureDAO.getPublishedProcedure(getSession())) {
+                String identifier = procedure.getIdentifier();
+                getCache().addPublishedProcedure(identifier);
+                Set<String> parents = new HashSet<>();
+                getParents(parents, procedure);
+                getCache().addPublishedProcedures(parents);
+            }
+        } catch (CodedException e) {
+           getErrors().add(e);
+        }
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
         //multi-threaded execution
@@ -165,5 +181,14 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         startStopwatch();
         super.execute();
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Multi-Threaded Tasks) ({})", getStopwatchResult());
+    }
+    
+    private void getParents(Set<String> parents, Procedure procedure) {
+        if (procedure instanceof TProcedure && ((TProcedure)procedure).getParents() != null) {
+            for (Procedure parent : ((TProcedure)procedure).getParents()) {
+                parents.add(parent.getIdentifier());
+                getParents(parents, parent);
+            }
+        }
     }
 }

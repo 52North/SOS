@@ -90,7 +90,7 @@ public class SosGetFeatureOfInterestOperatorV20
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(sosRequest.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
+            checkProcedures(sosRequest.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
             if (sosRequest.isSetProcedures()) {
                 sosRequest.setProcedures(addChildProcedures(sosRequest.getProcedures()));
             }

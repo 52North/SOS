@@ -58,9 +58,9 @@ public abstract class AbstractGetFeatureOfInterestDAO extends AbstractOperationD
 
         final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
 
-        addProcedureParameter(opsMeta);
-        addFeatureOfInterestParameter(opsMeta, version);
-        addObservablePropertyParameter(opsMeta);
+        addPublishedProcedureParameter(opsMeta);
+        addPublishedFeatureOfInterestParameter(opsMeta, version);
+        addPublishedObservablePropertyParameter(opsMeta);
 
         // TODO constraint srid
         String parameterName = Sos2Constants.GetFeatureOfInterestParams.spatialFilter.name();

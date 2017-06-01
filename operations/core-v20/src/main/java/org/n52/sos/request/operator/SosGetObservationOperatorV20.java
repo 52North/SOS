@@ -123,7 +123,7 @@ public class SosGetObservationOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
+            checkProcedures(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
             // add child procedures to request
             if (sosRequest.isSetProcedure()) {
                 sosRequest.setProcedures(addChildProcedures(sosRequest.getProcedures()));
@@ -215,7 +215,7 @@ public class SosGetObservationOperatorV20 extends
         if (observedProperties != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
             final Collection<String> validObservedProperties =
-                    Configurator.getInstance().getCache().getObservableProperties();
+                    Configurator.getInstance().getCache().getPublishedObservableProperties();
             for (final String obsProp : observedProperties) {
                 if (obsProp.isEmpty()) {
                     exceptions.add(new MissingObservedPropertyParameterException());

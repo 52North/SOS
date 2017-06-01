@@ -47,10 +47,13 @@ public class OwsEncoderSettings implements SettingDefinitionProvider {
     public static final BooleanSettingDefinition INCLUDE_STACK_TRACE_IN_EXCEPTION_REPORT_DEFINITON =
             new BooleanSettingDefinition()
                     .setKey(INCLUDE_STACK_TRACE_IN_EXCEPTION_REPORT)
-                    .setTitle("Detailed Error Messages")
+                    .setTitle("Return detailed Error Messages?")
                     .setDescription(
-                            "Should OWS ExceptionReports include a complete stack trace for the causing exception?")
-                    .setDefaultValue(false).setGroup(MiscSettings.GROUP).setOrder(ORDER_15)
+                            "The service will include in <tt>OWS ExceptionReports</tt> a complete stack trace of the "
+                            + "causing exception when is option is activated.")
+                    .setDefaultValue(false)
+                    .setGroup(MiscSettings.GROUP)
+                    .setOrder(ORDER_15)
                     .setKey(INCLUDE_STACK_TRACE_IN_EXCEPTION_REPORT);
 
     @Override

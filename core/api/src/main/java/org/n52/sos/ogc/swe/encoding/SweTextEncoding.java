@@ -30,7 +30,7 @@ package org.n52.sos.ogc.swe.encoding;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SweTextEncoding extends SweAbstractEncoding {
 
@@ -115,6 +115,17 @@ public class SweTextEncoding extends SweAbstractEncoding {
             return false;
         }
         return true;
+    }
+    
+    @Override
+    public SweTextEncoding clone() {
+        SweTextEncoding clone = new SweTextEncoding();
+        clone.setBlockSeparator(getBlockSeparator());
+        clone.setCollapseWhiteSpaces(isCollapseWhiteSpaces());
+        clone.setDecimalSeparator(getDecimalSeparator());
+        clone.setTokenSeparator(getTokenSeparator());
+        clone.setXml(getXml());
+        return clone;
     }
 
 }

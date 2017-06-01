@@ -48,15 +48,15 @@ import org.n52.sos.util.DateTimeHelper;
  * <li>ISO 19108:2002, Geographic Information — Temporal schema, Section 5.2.3.5
  * </li>
  * </ul>
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
 public abstract class TemporalRestriction {
     /**
      * ISO 19108:2002 states (&lt;, &gt;) and not (&le;, &ge;).
-     * 
-     * 
+     *
+     *
      * TODO make this configurable
      */
     private static final boolean ALLOW_EQUALITY = false;
@@ -64,14 +64,14 @@ public abstract class TemporalRestriction {
     /**
      * Creates a criterion from this restriction for the specified fields and
      * time.
-     * 
+     *
      * @param ref
      *            the descriptor holding the property name(s)
      * @param time
      *            the compared time
-     * 
+     *
      * @return a <tt>Criterion</tt> that describes this restriction
-     * 
+     *
      * @throws UnsupportedTimeException
      *             if the supplied time can not be used with this restriction
      */
@@ -92,7 +92,7 @@ public abstract class TemporalRestriction {
 
     /**
      * Applies this restriction to the specified time periods.
-     * 
+     *
      * @param selfBegin
      *            the property name of the begin time stamp
      * @param selfEnd
@@ -101,7 +101,7 @@ public abstract class TemporalRestriction {
      *            the begin instance of the compared time period
      * @param otherEnd
      *            the end instance of the compared time period
-     * 
+     *
      * @return the criterion for the temporal relation (or <tt>null</tt> if not
      *         applicable)
      */
@@ -110,7 +110,7 @@ public abstract class TemporalRestriction {
 
     /**
      * Applies this restriction to the specified time instance and time period.
-     * 
+     *
      * @param selfPosition
      *            the property name of the instance
      * @param otherBegin
@@ -120,25 +120,25 @@ public abstract class TemporalRestriction {
      * @param isOtherPeriodFromReducedPrecisionInstant
      *            was the period interpreted from a reduced precision time?
      *            see DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition
-     * 
+     *
      * @return the criterion for the temporal relation (or <tt>null</tt> if not
      *         applicable)
      */
-    protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd, 
+    protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
             boolean isOtherPeriodFromReducedPrecisionInstant) {
         return null;
     }
 
     /**
      * Applies this restriction to the specified time period and time instance.
-     * 
+     *
      * @param selfBegin
      *            the property name of the begin time stamp
      * @param selfEnd
      *            the property name of the end time stamp
      * @param otherPosition
      *            the position of the compared time instance
-     * 
+     *
      * @return the criterion for the temporal relation (or <tt>null</tt> if not
      *         applicable)
      */
@@ -148,12 +148,12 @@ public abstract class TemporalRestriction {
 
     /**
      * Applies this restriction to the specified time instantes.
-     * 
+     *
      * @param selfPosition
      *            the property name of the time instance
      * @param otherPosition
      *            the position of the compared time instance
-     * 
+     *
      * @return the criterion for the temporal relation (or <tt>null</tt> if not
      *         applicable)
      */
@@ -166,12 +166,12 @@ public abstract class TemporalRestriction {
      * real period but a instance, the method will call
      * {@link #filterWithInstant(TimeInstant, TimePrimitiveFieldDescriptor)
      * filterWithInstant()}.
-     * 
+     *
      * @param time
      *            the time
      * @param r
      *            the property name(s)
-     * 
+     *
      * @return the <tt>Criterion</tt> that describes this restriction
      */
     private Criterion filterWithPeriod(TimePeriod time, TimePrimitiveFieldDescriptor r,
@@ -198,12 +198,12 @@ public abstract class TemporalRestriction {
      * instance with reduced precision a the method will call
      * {@link #filterWithPeriod(TimePeriod, TimePrimitiveFieldDescriptor)
      * filterWithPeriod()}.
-     * 
+     *
      * @param time
      *            the time
      * @param r
      *            the property name(s)
-     * 
+     *
      * @return the <tt>Criterion</tt> that describes this restriction
      */
     private Criterion filterWithInstant(TimeInstant time, TimePrimitiveFieldDescriptor r) {
@@ -231,10 +231,10 @@ public abstract class TemporalRestriction {
     /**
      * Check if <tt>time</tt> is a instance with reduces precision that
      * describes a period (a day, a hour, etc.).
-     * 
+     *
      * @param time
      *            the instant to check
-     * 
+     *
      * @return the end date of the period the instance with reduced precision
      *         started or <tt>null</tt> if there is no reduced precision
      */
@@ -250,7 +250,7 @@ public abstract class TemporalRestriction {
      * as periods (<tt>begin == end</tt>). The method builds a composite that
      * applies <tt>periods</tt> to "real" periods and <tt>instants</tt> to
      * periods that are instants by definition.
-     * 
+     *
      * @param periods
      *            the <tt>Criterion</tt> for "real" periods (may be
      *            <tt>null</tt>)
@@ -260,7 +260,7 @@ public abstract class TemporalRestriction {
      * @param r
      *            the <tt>TimePrimitiveFieldDescriptor</tt> that holds the
      *            property names
-     * 
+     *
      * @return the composite criterion or <tt>null</tt> if no <tt>Criterion</tt>
      *         could be applied
      */
@@ -277,12 +277,12 @@ public abstract class TemporalRestriction {
     /**
      * Creates a <tt>Criterion</tt> for the specified property. Used to easily
      * swap &lt; and &le;.
-     * 
+     *
      * @param property
      *            the property name
      * @param value
      *            the compared value
-     * 
+     *
      * @return the <tt>Criterion</tt>
      */
     protected Criterion lower(String property, Date value) {
@@ -292,12 +292,12 @@ public abstract class TemporalRestriction {
     /**
      * Creates a <tt>Criterion</tt> for the specified property. Used to easily
      * swap &gt; and &ge;.
-     * 
+     *
      * @param property
      *            the property name
      * @param value
      *            the compared value
-     * 
+     *
      * @return the <tt>Criterion</tt>
      */
     protected Criterion greater(String property, Date value) {
@@ -307,10 +307,10 @@ public abstract class TemporalRestriction {
     /**
      * Creates a <tt>Criterion</tt> that checks that the persisted period is a
      * "real" period (<tt>begin != end</tt>).
-     * 
+     *
      * @param r
      *            the property names
-     * 
+     *
      * @return the <tt>Criterion</tt>
      */
     protected PropertyExpression isPeriod(TimePrimitiveFieldDescriptor r) {
@@ -320,10 +320,10 @@ public abstract class TemporalRestriction {
     /**
      * Creates a <tt>Criterion</tt> that checks that the persisted period is a
      * instant period (<tt>begin == end</tt>).
-     * 
+     *
      * @param r
      *            the property names
-     * 
+     *
      * @return the <tt>Criterion</tt>
      */
     protected PropertyExpression isInstant(TimePrimitiveFieldDescriptor r) {
@@ -343,6 +343,7 @@ public abstract class TemporalRestriction {
      * <td><tt>self.end &lt; other.begin</tt></td>
      * <td><tt>self.end &lt; other.position</tt></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><tt>self.position &lt; other.begin</tt></td>
      * <td><tt>self.position &lt; other.position</tt></td>
@@ -385,6 +386,7 @@ public abstract class TemporalRestriction {
      * <td><tt>self.begin &gt; other.end</tt></td>
      * <td><tt>self.begin &gt; other.position</tt></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><tt>self.position &gt; other.end</tt></td>
      * <td><tt>self.position &gt; other.position</tt></td>
@@ -427,6 +429,7 @@ public abstract class TemporalRestriction {
      * <td><tt>self.begin = other.begin AND self.end &lt; other.end</tt></td>
      * <td><i>not defined</i></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><tt>self.position = other.begin</tt></td>
      * <td><i>not defined</i></td>
@@ -459,6 +462,7 @@ public abstract class TemporalRestriction {
      * <td><tt>self.begin &gt; other.begin AND self.end = other.end</tt></td>
      * <td><i>not defined</i></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><tt>self.position = other.end</tt></td>
      * <td><i>not defined</i></td>
@@ -491,6 +495,7 @@ public abstract class TemporalRestriction {
      * <td><tt>self.begin &lt; other.begin AND self.end = other.end</tt></td>
      * <td><tt>self.end = other.position</tt></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><i>not defined</i></td>
      * <td><i>not defined</i></td>
@@ -522,6 +527,7 @@ public abstract class TemporalRestriction {
      * <td><tt>self.begin = other.begin AND self.end &gt; other.end</tt></td>
      * <td><tt>self.begin = other.position</tt></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><i>not defined</i></td>
      * <td><i>not defined</i></td>
@@ -555,6 +561,7 @@ public abstract class TemporalRestriction {
      * </tr>
      * <td><b>Instant</b></td>
      * <td>
+     * <tr>
      * <tt>self.position &gt; other.begin AND self.position &lt; other.end</tt></td>
      * <td><i>not defined</i></td>
      * </tr>
@@ -587,6 +594,7 @@ public abstract class TemporalRestriction {
      * <td><i>if period is from a reduced precision instant, self.begin &ge; other.begin
      *        and self.end &le; other.end, otherwise not defined</i></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><i>not defined</i></td>
      * <td><tt>self.position = other.position</tt></td>
@@ -604,7 +612,7 @@ public abstract class TemporalRestriction {
                 boolean isOtherPeriodFromReducedPrecisionInstant) {
             if (isOtherPeriodFromReducedPrecisionInstant) {
                 //time period was created from a reduced precision instant
-                return Restrictions.and(Restrictions.ge(selfPosition, otherBegin), Restrictions.le(selfPosition, otherEnd));                
+                return Restrictions.and(Restrictions.ge(selfPosition, otherBegin), Restrictions.le(selfPosition, otherEnd));
             } else {
                 return null;
             }
@@ -630,6 +638,7 @@ public abstract class TemporalRestriction {
      * <td>
      * <tt>self.begin &lt; other.position AND self.end &gt; other.position</tt></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><i>not defined</i></td>
      * <td><i>not defined</i></td>
@@ -663,6 +672,7 @@ public abstract class TemporalRestriction {
      * </td>
      * <td><i>not defined</i></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><i>not defined</i></td>
      * <td><i>not defined</i></td>
@@ -690,6 +700,7 @@ public abstract class TemporalRestriction {
      * <td><tt>self.end = other.begin</tt></td>
      * <td><i>not defined</i></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><i>not defined</i></td>
      * <td><i>not defined</i></td>
@@ -716,6 +727,7 @@ public abstract class TemporalRestriction {
      * <td><tt>self.begin = other.end</tt></td>
      * <td><i>not defined</i></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><i>not defined</i></td>
      * <td><i>not defined</i></td>
@@ -744,6 +756,7 @@ public abstract class TemporalRestriction {
      * </td>
      * <td><i>not defined</i></td>
      * </tr>
+     * <tr>
      * <td><b>Instant</b></td>
      * <td><i>not defined</i></td>
      * <td><i>not defined</i></td>

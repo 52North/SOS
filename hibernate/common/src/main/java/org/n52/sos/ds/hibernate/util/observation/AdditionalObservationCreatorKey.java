@@ -74,10 +74,9 @@ public class AdditionalObservationCreatorKey implements Similar<AdditionalObserv
 
     @Override
     public int getSimilarity(AdditionalObservationCreatorKey key) {
-        AdditionalObservationCreatorKey aocKey = (AdditionalObservationCreatorKey) key;
-        if (Objects.equal(getNamespace(), aocKey.getNamespace())) {
+        if (Objects.equal(getNamespace(), key.getNamespace())) {
             return ClassHelper.getSimiliarity(getType() != null ? getType() : Object.class,
-                    aocKey.getType() != null ? aocKey.getType() : Object.class);
+                    key.getType() != null ? key.getType() : Object.class);
         } else {
             return -1;
         }

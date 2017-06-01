@@ -30,11 +30,15 @@ package org.n52.sos.ogc.swe.simpleType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.w3c.xlink.Referenceable;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * SOS internal representation of SWE simpleType text
- * 
+ *
  * @author Carsten Hollmann
  * @since 4.0.0
  */
@@ -44,6 +48,7 @@ public class SweText extends SweAbstractSimpleType<String> implements Comparable
      * value
      */
     private String value;
+    private Referenceable<SweAllowedTokens> constraint;
 
     /**
      * constructor
@@ -71,6 +76,31 @@ public class SweText extends SweAbstractSimpleType<String> implements Comparable
     public boolean isSetValue() {
         return value != null && !value.isEmpty();
     }
+    
+    /**
+     * @return the constraint
+     */
+    public Referenceable<SweAllowedTokens> getConstraint() {
+        return constraint;
+    }
+
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(SweAllowedTokens constraint) {
+        this.constraint = Referenceable.of(constraint);
+    }
+    
+    public boolean isSetContstraint() {
+        return getConstraint() != null && !getConstraint().isAbsent();
+    }
+    
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(Referenceable<SweAllowedTokens> constraint) {
+        this.constraint = constraint;
+    }
 
     @Override
     public SweDataComponentType getDataComponentType() {
@@ -85,4 +115,30 @@ public class SweText extends SweAbstractSimpleType<String> implements Comparable
                        : o.getValue() == null ? 1
                           : getValue().compareTo(o.getValue());
     }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+    
+    @Override
+    public SweText clone() {
+        SweText clone = new SweText();
+        copyValueTo(clone);
+        if (isSetValue()) {
+            clone.setValue(getValue());
+        }
+        if (isSetContstraint()) {
+            clone.setConstraint(getConstraint());
+        }
+        return clone;
+    }
+
 }

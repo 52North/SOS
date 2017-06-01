@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" table="featureOfInterestType">
+    <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" table="featureofinteresttype">
         <comment>Table to store the FeatureOfInterestType information. Mapping file: mapping/core/FeatureOfInterestType.hbm.xml</comment>
         <id name="featureOfInterestTypeId" type="long">
             <column name="featureOfInterestTypeId">

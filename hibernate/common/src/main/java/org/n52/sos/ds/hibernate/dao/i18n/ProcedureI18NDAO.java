@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.dao.i18n;
 
 import org.hibernate.Session;
-
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NProcedureMetadata;

@@ -61,16 +61,19 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos1Constants;
+import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.Referenceable;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class AqdEncoder extends AbstractXmlEncoder<Object> implements ObservationEncoder<XmlObject, Object> {
@@ -117,7 +120,17 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
 
     @Override
     public Set<String> getSupportedResponseFormats(String service, String version) {
+        //AQD response format is not a valid mime-type, breaks SOS 1.0 validation
+        if (service.equals(SosConstants.SOS) && version.equals(Sos1Constants.SERVICEVERSION)) {
+            return Sets.newHashSet();
+        }
+
         return Sets.newHashSet(AqdConstants.NS_AQD);
+    }
+
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
+        return Maps.newHashMap();
     }
 
     @Override

@@ -38,7 +38,6 @@ import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.StringHelper;
 
 
 public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernateDatasource {
@@ -67,11 +66,15 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         set.add(createBatchSizeDefinition(batchSizeDefault));
         set.add(createProvidedJdbcDriverDefinition(providedJdbc));
         set.add(getDatabaseConceptDefinition());
+        set.add(getFeatureConceptDefinition());
         if (isTransactionalDatasource()) {
             set.add(getTransactionalDefiniton());
         }
         if (isMultiLanguageDatasource()) {
             set.add(getMulitLanguageDefiniton());
+        }
+        if (isSeriesMetadataDatasource()) {
+            set.add(getSeriesMetadataDefiniton());
         }
         return set;
     }
@@ -137,25 +140,22 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(HibernateConstants.CONNECTION_TEST_ON_BORROW, "true");
         p.put(PROVIDED_JDBC, settings.get(PROVIDED_JDBC_DRIVER_KEY).toString());
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
-        p.put(HIBERNATE_DATASOURCE_TIMEZONE, settings.get(TIMEZONE_KEY));
+        p.put(FEATURE_CONCEPT_KEY, settings.get(FEATURE_CONCEPT_KEY));
+        if (settings.containsKey(TIMEZONE_KEY)) {
+            p.put(HIBERNATE_DATASOURCE_TIMEZONE, settings.get(TIMEZONE_KEY));
+        }
+        if (settings.containsKey(TIME_STRING_FORMAT_KEY) && settings.get(TIME_STRING_FORMAT_KEY) != null) {
+            p.put(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT, settings.get(TIME_STRING_FORMAT_KEY));
+        }
+        if (settings.containsKey(TIME_STRING_Z_KEY)) {
+            p.put(HIBERNATE_DATASOURCE_TIME_STRING_Z, settings.get(TIME_STRING_Z_KEY).toString());
+        }
         addMappingFileDirectories(settings, p);
 
         return p;
     }
 
-    private void checkAndPut(Properties p, String key, Object value) {
-        if (value != null) {
-            if (value instanceof String) {
-                if (StringHelper.isNotEmpty(((String) value))) {
-                    p.put(key, value);
-                }
-            } else {
-                p.put(key, value);
-            }
-        }
-    }
-
-    protected Map<String, Object> parseDatasourceProperties(final Properties current) {
+    public Map<String, Object> parseDatasourceProperties(final Properties current) {
         final Map<String, Object> settings = new HashMap<String, Object>(current.size());
         if (supportsSchema) {
             settings.put(SCHEMA_KEY, current.getProperty(HibernateConstants.DEFAULT_SCHEMA));
@@ -170,10 +170,18 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         }
         settings.put(TRANSACTIONAL_KEY, isTransactional(current));
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
+        settings.put(FEATURE_CONCEPT_KEY,  current.getProperty(FEATURE_CONCEPT_KEY));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,
                 current.getProperty(PROVIDED_JDBC, PROVIDED_JDBC_DRIVER_DEFAULT_VALUE.toString()));
-
-        settings.put(TIMEZONE_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIMEZONE));
+        if (current.containsKey(HIBERNATE_DATASOURCE_TIMEZONE)) {
+            settings.put(TIMEZONE_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIMEZONE));
+        }
+        if (current.containsKey(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT)) {
+            settings.put(TIME_STRING_FORMAT_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT));
+        }
+        if (current.containsKey(HIBERNATE_DATASOURCE_TIME_STRING_Z)) {
+            settings.put(TIME_STRING_Z_KEY, Boolean.valueOf(current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z)));
+        }
         final String url = current.getProperty(HibernateConstants.CONNECTION_URL);
 
         final String[] parsed = parseURL(url);

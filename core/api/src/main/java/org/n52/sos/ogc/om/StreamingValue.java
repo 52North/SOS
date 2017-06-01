@@ -85,6 +85,8 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
      *             If an error occurs
      */
     public abstract TimeValuePair nextValue() throws OwsExceptionReport;
+    
+    public abstract void mergeValue(StreamingValue<S> streamingValue);
 
     /**
      * Set the observation template which contains all metadata
@@ -94,6 +96,10 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
      */
     public void setObservationTemplate(OmObservation observationTemplate) {
         this.observationTemplate = observationTemplate;
+    }
+    
+    public OmObservation getObservationTemplate() {
+        return observationTemplate;
     }
 
     @Override

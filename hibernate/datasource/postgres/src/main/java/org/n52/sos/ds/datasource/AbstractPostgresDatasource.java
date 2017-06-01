@@ -29,7 +29,6 @@
 package org.n52.sos.ds.datasource;
 
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -41,14 +40,14 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.security.auth.login.CredentialException;
-
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
-import org.hibernate.spatial.dialect.postgis.PostgisDialect;
+import org.hibernate.spatial.dialect.postgis.PostgisDialectSpatialIndex;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -58,6 +57,8 @@ import com.google.common.collect.Lists;
  *
  */
 public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDBDatasource {
+	
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPostgresDatasource.class);
 
     protected static final String POSTGRES_DRIVER_CLASS = "org.postgresql.Driver";
 
@@ -107,7 +108,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
 
     @Override
     protected Dialect createDialect() {
-        return new PostgisDialect();
+        return new PostgisDialectSpatialIndex();
     }
 
     @Override
@@ -235,7 +236,6 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
             close(stmt);
             close(conn);
         }
-        
     }
 
     @Override

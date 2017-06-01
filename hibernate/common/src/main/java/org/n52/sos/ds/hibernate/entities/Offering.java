@@ -29,23 +29,30 @@
 package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationTypes;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
+import org.n52.sos.util.CollectionHelper;
+
+import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
  *
  */
 public class Offering extends AbstractIdentifierNameDescriptionEntity
-        implements Serializable, HasDisabledFlag {
+        implements Serializable, HasDisabledFlag, HasParentChilds<Offering>, HasObservationTypes {
 
     private static final long serialVersionUID = 6512574941388917166L;
-
     public static final String ID = "offeringId";
-
     private long offeringId;
-
     private Boolean disabled = false;
+    private Set<Offering> childs = Sets.newHashSet();
+    private Set<Offering> parents = Sets.newHashSet();
+    private Set<ObservationType> observationTypes = new HashSet<ObservationType>(0);
 
     public long getOfferingId() {
         return this.offeringId;
@@ -56,14 +63,8 @@ public class Offering extends AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public Offering setDisabled(final boolean disabled) {
+    public void setDisabled(final boolean disabled) {
         this.disabled = disabled;
-        return this;
-    }
-
-    @Override
-    public boolean getDisabled() {
-        return disabled;
     }
 
     @Override
@@ -71,4 +72,70 @@ public class Offering extends AbstractIdentifierNameDescriptionEntity
         return getDisabled();
     }
 
+    @Override
+    public boolean getDisabled() {
+        return disabled;
+    }
+    
+    @Override
+    public Set<Offering> getParents() {
+        return parents;
+    }
+
+    @Override
+    public void setParents(Set<Offering> parents) {
+        this.parents = parents;
+    }
+
+    @Override
+    public Set<Offering> getChilds() {
+        return childs;
+    }
+
+    @Override
+    public void setChilds(Set<Offering> childs) {
+        this.childs = childs;
+    }
+
+    @Override
+    public void addParent(Offering parent) {
+        if (parent == null) {
+            return;
+        }
+        if (this.parents == null) {
+            this.parents = new HashSet<>();
+        }
+        this.parents.add(parent);
+    }
+
+    @Override
+    public void addChild(Offering child) {
+        if (child == null) {
+            return;
+        }
+        if (this.childs == null) {
+            this.childs = new HashSet<>();
+        }
+        this.childs.add(child);
+    }
+
+    @Override
+    public boolean hasParents() {
+        return CollectionHelper.isNotEmpty(getParents());
+    }
+
+    @Override
+    public boolean hasChilds() {
+        return CollectionHelper.isNotEmpty(getChilds());
+    }
+    
+    @Override
+    public Set<ObservationType> getObservationTypes() {
+        return observationTypes;
+    }
+
+    @Override
+    public void setObservationTypes(final Set<ObservationType> observationTypes) {
+        this.observationTypes = observationTypes;
+    }
 }

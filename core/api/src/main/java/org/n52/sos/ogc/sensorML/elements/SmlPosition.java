@@ -31,16 +31,24 @@ package org.n52.sos.ogc.sensorML.elements;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.SweCoordinate;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweVector;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
+import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
+import com.google.common.collect.Lists;
+
 /**
  * SOS internal representation of SensorML position
- * 
+ *
  * @since 4.0.0
  */
 public class SmlPosition extends SweAbstractDataComponent {
@@ -64,39 +72,41 @@ public class SmlPosition extends SweAbstractDataComponent {
 
     /**
      * constructor
-     * 
+     *
      * @param name
-     *            Position name
+     *                       Position name
      * @param fixed
-     *            is fixed
+     *                       is fixed
      * @param referenceFrame
-     *            Position reference frame
+     *                       Position reference frame
      * @param position
-     *            Position coordinates
+     *                       Position coordinates
      */
-    public SmlPosition(final String name, final boolean fixed, final String referenceFrame,
-            final List<SweCoordinate<?>> position) {
+    public SmlPosition(final String name, final boolean fixed,
+                       final String referenceFrame,
+                       final List<SweCoordinate<?>> position) {
         super();
         setName(name);
         this.fixed = fixed;
         this.referenceFrame = referenceFrame;
         this.position = position;
     }
-    
+
     /**
      * constructor
-     * 
+     *
      * @param name
-     *            Position name
+     *                       Position name
      * @param fixed
-     *            is fixed
+     *                       is fixed
      * @param referenceFrame
-     *            Position reference frame
+     *                       Position reference frame
      * @param position
-     *            Position coordinates
+     *                       Position coordinates
      */
-    public SmlPosition(final CodeType name, final boolean fixed, final String referenceFrame,
-            final List<SweCoordinate<?>> position) {
+    public SmlPosition(final CodeType name, final boolean fixed,
+                       final String referenceFrame,
+                       final List<SweCoordinate<?>> position) {
         super();
         setName(name);
         this.fixed = fixed;
@@ -113,7 +123,8 @@ public class SmlPosition extends SweAbstractDataComponent {
 
     /**
      * @param fixed
-     *            the fixed to set
+     *              the fixed to set
+     *
      * @return This object
      */
     public SmlPosition setFixed(final boolean fixed) {
@@ -133,7 +144,8 @@ public class SmlPosition extends SweAbstractDataComponent {
 
     /**
      * @param referenceFrame
-     *            the referenceFrame to set
+     *                       the referenceFrame to set
+     *
      * @return This object
      */
     public SmlPosition setReferenceFrame(final String referenceFrame) {
@@ -149,18 +161,32 @@ public class SmlPosition extends SweAbstractDataComponent {
      * @return the position
      */
     public List<SweCoordinate<?>> getPosition() {
-        if (!isSetPosition() && isSetVector() && getVector().isSetCoordinates()) {
-            if (!isSetName() && vector.isSetName()) {
-                setName(vector.getName());
+        if (!isSetPosition()) {
+            if (isSetVector() && getVector().isSetCoordinates()) {
+                if (!isSetName() && vector.isSetName()) {
+                    setName(vector.getName());
+                }
+                return vector.getCoordinates();
+            } else if (isSetAbstractDataComponent() && getAbstractDataComponent() instanceof SweDataRecord) {
+                SweDataRecord dataRecord = (SweDataRecord) getAbstractDataComponent();
+                if (dataRecord.isSetFields()) {
+                    List<SweCoordinate<?>> coordinates = Lists.newArrayList();
+                    for (SweField field : dataRecord.getFields()) {
+                        if (field.getElement() instanceof SweQuantity) {
+                            coordinates.add(new SweCoordinate<Double>(field.getName().getValue(), (SweQuantity)field.getElement()));
+                        }
+                    }
+                    return coordinates;
+                }
             }
-            return vector.getCoordinates();
         }
         return position;
     }
 
     /**
      * @param position
-     *            the position to set
+     *                 the position to set
+     *
      * @return This object
      */
     public SmlPosition setPosition(final List<SweCoordinate<?>> position) {
@@ -207,7 +233,7 @@ public class SmlPosition extends SweAbstractDataComponent {
     }
     
     public boolean isSetAbstractDataComponent() {
-        return dataComponent != null && isSetVector();
+        return dataComponent != null || isSetVector();
     }
 
     @Override
@@ -215,4 +241,49 @@ public class SmlPosition extends SweAbstractDataComponent {
         return SweDataComponentType.Position;
     }
 
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    @Override
+    public SmlPosition clone() throws CloneNotSupportedException {
+        SmlPosition clone = new SmlPosition();
+        copyValueTo(clone);
+        if (isSetPosition()) {
+            clone.setPosition(getPosition());
+        }
+        if (isSetVector()) {
+            clone.setVector(getVector().clone());
+        } else if (isSetAbstractDataComponent()) {
+            clone.setAbstractDataComponent(getAbstractDataComponent().clone());
+        }
+        copyValueTo(clone);
+        return clone;
+    }
+    
+    @Override
+    public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
+        super.copyValueTo(copy);
+        if (copy instanceof SmlPosition) {
+            ((SmlPosition) copy).setFixed(isFixed());
+            ((SmlPosition) copy).setReferenceFrame(getReferenceFrame());
+            if (isSetPosition()) {
+                ((SmlPosition) copy).setPosition(Lists.newArrayList(getPosition()));
+            }
+            if (isSetVector()) {
+                ((SmlPosition) copy).setVector(getVector());
+            } else if (isSetAbstractDataComponent()) {
+                ((SmlPosition) copy).setAbstractDataComponent(getAbstractDataComponent());
+            }
+        }
+        return copy;
+    }
 }

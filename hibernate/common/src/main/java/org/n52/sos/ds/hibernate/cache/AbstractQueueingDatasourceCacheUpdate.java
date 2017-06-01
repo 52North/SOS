@@ -32,13 +32,11 @@ package org.n52.sos.ds.hibernate.cache;
 import org.n52.sos.ds.ConnectionProvider;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.hibernate.ThreadLocalSessionFactory;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CompositeParallelAction;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

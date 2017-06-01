@@ -11,21 +11,21 @@
 			xmlns:swes="http://www.opengis.net/swes/2.0"
 			xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
             
-            <!-- optional -->
-            <!--
-            <swes:extension>
-                <swe:Boolean definition="MergeObservationsIntoDataArray">
-                    <swe:value>true</swe:value>
-                </swe:Boolean>
-            </swes:extension>
-            -->
-            <!--
-            <swes:extension xsi:type="swe:CountPropertyType">
+        <!-- optional -->
+        <!--
+        <swes:extension>
+            <swe:Boolean definition="MergeObservationsIntoDataArray">
+                <swe:value>true</swe:value>
+            </swe:Boolean>
+        </swes:extension>
+        -->
+        <!--
+        <swes:extension xsi:type="swe:CountPropertyType">
 				<swe:Count>
 					<swe:identifier>crs</swe:identifier>
 					<swe:value>4326</swe:value>
-				</swe:Count>
-			</swes:extension>
+				</swe:Text>
+			</swe:Count>
 			-->
 			<!--
 			<swes:extension xsi:type="swe:TextPropertyType">
@@ -150,7 +150,11 @@
 
 			<!-- optional -->
 			<sos:responseFormat>http://www.opengis.net/om/2.0</sos:responseFormat>
-
+      <!--
+      <sos:responseFormat>http://www.opengis.net/waterml/2.0</sos:responseFormat>
+      <sos:responseFormat>http://www.opengis.net/waterml-dr/2.0</sos:responseFormat>
+      <sos:responseFormat>http://inspire.ec.europa.eu/schemas/omso/3.0</sos:responseFormat>
+      -->
 		</sos:GetObservation>
 	</env:Body>
 </env:Envelope>

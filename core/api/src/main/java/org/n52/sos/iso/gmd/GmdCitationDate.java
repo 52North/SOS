@@ -33,7 +33,7 @@ package org.n52.sos.iso.gmd;
  *
  * @author Christian Autermann
  */
-public class GmdCitationDate {
+public class GmdCitationDate extends AbtractGmd {
 
     private final GmdDateType dateType;
     private final String date;

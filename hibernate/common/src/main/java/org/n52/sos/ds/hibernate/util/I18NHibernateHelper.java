@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.n52.sos.ds.hibernate.entities.i18n.AbstractHibernateI18NMetadata;
-import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.metadata.AbstractI18NMetadata;
 import org.n52.sos.ogc.gml.AbstractFeature;

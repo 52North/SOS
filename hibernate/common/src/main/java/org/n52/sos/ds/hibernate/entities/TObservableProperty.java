@@ -28,48 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import java.util.Set;
-
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
-
-import com.google.common.collect.Sets;
-
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  */
-public class TObservableProperty extends ObservableProperty implements
-        HasParentChilds<ObservableProperty, TObservableProperty> {
+@Deprecated
+public class TObservableProperty
+        extends ObservableProperty {
+
     private static final long serialVersionUID = -2442057838780645108L;
-
-    private Set<ObservableProperty> childs = Sets.newHashSet();
-
-    private Set<ObservableProperty> parents = Sets.newHashSet();
-
-    public TObservableProperty() {
-        super();
-    }
-
-    @Override
-    public Set<ObservableProperty> getParents() {
-        return parents;
-    }
-
-    @Override
-    public TObservableProperty setParents(final Set<ObservableProperty> parents) {
-        this.parents = parents;
-        return this;
-    }
-
-    @Override
-    public Set<ObservableProperty> getChilds() {
-        return childs;
-    }
-
-    @Override
-    public TObservableProperty setChilds(final Set<ObservableProperty> childs) {
-        this.childs = childs;
-        return this;
-    }
 }

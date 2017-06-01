@@ -32,9 +32,13 @@ import static org.hamcrest.Matchers.*;
 
 import javax.xml.namespace.NamespaceContext;
 
+import org.apache.xmlbeans.XmlObject;
 import org.isotc211.x2005.gmd.DQDomainConsistencyDocument;
 import org.isotc211.x2005.gmd.DQDomainConsistencyPropertyType;
 import org.isotc211.x2005.gmd.DQDomainConsistencyType;
+import org.isotc211.x2005.gmd.MDMetadataPropertyType;
+import org.isotc211.x2005.gmd.MDMetadataType;
+import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -42,18 +46,24 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.iso.GcoConstants;
+import org.n52.sos.iso.gmd.CiResponsibleParty;
+import org.n52.sos.iso.gmd.GmdCitation;
+import org.n52.sos.iso.gmd.GmdCitationDate;
 import org.n52.sos.iso.gmd.GmdConformanceResult;
 import org.n52.sos.iso.gmd.GmdConstants;
+import org.n52.sos.iso.gmd.GmdDateType;
 import org.n52.sos.iso.gmd.GmdDomainConsistency;
 import org.n52.sos.iso.gmd.GmdQuantitativeResult;
+import org.n52.sos.iso.gmd.MDDataIdentification;
+import org.n52.sos.iso.gmd.MDMetadata;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.NamespaceContextBuilder;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.w3c.W3CConstants;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
+import org.opengis.metadata.citation.Role;
 import org.w3c.dom.Node;
 
 import com.google.common.collect.ImmutableMap;
@@ -133,5 +143,22 @@ public class Iso19139GmdEncoderTest {
         errors.checkThat(node, hasXPath("/gmd:DQ_DomainConsistency/gmd:result/gmd:DQ_QuantitativeResult/gmd:valueUnit/gml:BaseUnit/gml:catalogSymbol", NS_CTX, is("%")));
         errors.checkThat(node, hasXPath("/gmd:DQ_DomainConsistency/gmd:result/gmd:DQ_QuantitativeResult/gmd:valueUnit/gml:BaseUnit/gml:unitsSystem/@xlink:href", NS_CTX, is("http://www.opengis.net/def/uom/UCUM/")));
         errors.checkThat(node, hasXPath("/gmd:DQ_DomainConsistency/gmd:result/gmd:DQ_QuantitativeResult/gmd:value/gco:Record", NS_CTX, is("5.0")));
+    }
+    
+    @Test 
+    public void checkMDMetadataReferenceEncoding() throws OwsExceptionReport {
+        MDMetadata mdMmetadata = new MDMetadata(new SimpleAttrs().setHref("href").setTitle("title"));
+        XmlObject xmlObject = encoder.encode(mdMmetadata);
+        xmlObject.validate();
+        errors.checkThat(xmlObject, instanceOf(MDMetadataPropertyType.class));
+    }
+    
+    @Test 
+    public void checkMDMetadataEncoding() throws OwsExceptionReport {
+        MDDataIdentification identificationInfo = new MDDataIdentification(new GmdCitation("title", new GmdCitationDate(GmdDateType.publication(), "date")), "abstrakt", "ger");
+        MDMetadata mdMmetadata = new MDMetadata(new CiResponsibleParty(new org.n52.sos.iso.gco.Role(Role.AUTHOR.name())), DateTime.now(), identificationInfo);
+        XmlObject xmlObject = encoder.encode(mdMmetadata);
+        xmlObject.validate();
+        errors.checkThat(xmlObject, instanceOf(MDMetadataType.class));
     }
 }

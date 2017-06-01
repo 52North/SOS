@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd">
+	<env:Body>
+		<sos:InsertResult service="SOS" version="2.0.0" xmlns:sos="http://www.opengis.net/sos/2.0" 
+			xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
+			<sos:template>http://www.52north.org/test/procedure/10/template/Glider_Journy_10</sos:template>
+			<sos:resultValues>15@2012-11-19T13:30:00+02:00#159.15#sunny#10#I am text#true#27.992421#-15.362673@2012-11-19T13:31:00+02:00#159.15#sunny#10#I am text 2#true#27.992411#-15.362683@2012-11-19T13:32:00+02:00#159.85#sunny#100#I am text 3#true#27.992401#-15.362693@2012-11-19T13:33:00+02:00#160.5#sunny#10#I am text 4#true#27.992391#-15.362703@2012-11-19T13:34:00+02:00#160.9#sunny#1000#I am text 5#false#27.992381#-15.362713@2012-11-19T13:35:00+02:00#160.7#cloudy#10#I am text 6#true#27.992371#-15.362723@2012-11-19T13:36:00+02:00#160.5#cloudy#100#I am text 7#true#27.992361#-15.362733@2012-11-19T13:37:00+02:00#160.6#cloudy#10#I am text 8#true#27.992351#-15.362743@2012-11-19T13:38:00+02:00#160.5#sunny#1000#I am text 9#false#27.992341#-15.362753@2012-11-19T13:39:00+02:00#160.4#sunny#10#I am text 10#true#27.992331#-15.362763@2012-11-19T13:40:00+02:00#160.34#sunny#100#I am text 11#true#27.992321#-15.362773@2012-11-19T13:41:00+02:00#160.25#sunny#10#I am text 12#true#27.992311#-15.362783@2012-11-19T13:42:00+02:00#159.79#cloudy#1000#I am text 13#false#27.992301#-15.362793@2012-11-19T13:43:00+02:00#159.56#cloudy#10#I am text 14#true#27.992291#-15.362803@2012-11-19T13:44:00+02:00#159.25#sunny#10#I am text 15#true#27.992281#-15.362813@</sos:resultValues>
+		</sos:InsertResult>
+	</env:Body>
+</env:Envelope>

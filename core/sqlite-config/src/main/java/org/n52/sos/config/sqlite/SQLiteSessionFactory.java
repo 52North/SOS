@@ -39,10 +39,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.sqlite.entities.AdminUser;
 import org.n52.sos.config.sqlite.entities.Binding;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
@@ -67,6 +63,8 @@ import org.n52.sos.ds.hibernate.AbstractSessionFactoryProvider;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.service.SosContextListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

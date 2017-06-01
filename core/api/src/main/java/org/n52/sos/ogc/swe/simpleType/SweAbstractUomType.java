@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ogc.swe.simpleType;
 
+import org.n52.sos.ogc.UoM;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
@@ -39,7 +42,7 @@ public abstract class SweAbstractUomType<T> extends SweAbstractSimpleType<T> {
     /**
      * unit of measurement
      */
-    private String uom;
+    private UoM uom;
 
     /**
      * Get unit of measurement
@@ -47,6 +50,18 @@ public abstract class SweAbstractUomType<T> extends SweAbstractSimpleType<T> {
      * @return the uom
      */
     public String getUom() {
+        if (uom != null) {
+            return uom.getUom();
+        }
+        return "";
+    }
+    
+    /**
+     * Get unit of measurement object
+     * 
+     * @return the uom
+     */
+    public UoM getUomObject() {
         return uom;
     }
 
@@ -58,6 +73,18 @@ public abstract class SweAbstractUomType<T> extends SweAbstractSimpleType<T> {
      * @return This SweAbstractUomType
      */
     public SweAbstractUomType<T> setUom(final String uom) {
+        this.uom = new UoM(uom);
+        return this;
+    }
+    
+    /**
+     * Set unit of measurement 
+     * 
+     * @param uom
+     *            the uom to set
+     * @return This SweAbstractUomType
+     */
+    public SweAbstractUomType<T> setUom(final UoM uom) {
         this.uom = uom;
         return this;
     }
@@ -75,5 +102,13 @@ public abstract class SweAbstractUomType<T> extends SweAbstractSimpleType<T> {
     public String toString() {
         return String.format("%s [simpleType=%s, value=%s, uom=%s, quality=%s]", getClass().getSimpleName(),
                 getDataComponentType(), getValue(), getUom(), getQuality());
+    }
+    
+    @Override
+    public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
+        if (copy instanceof SweAbstractUomType<?>) {
+            ((SweAbstractUomType<?>) copy).setUom(getUom());
+        }
+        return super.copyValueTo(copy);
     }
 }

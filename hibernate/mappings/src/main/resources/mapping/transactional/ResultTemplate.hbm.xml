@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ResultTemplate" table="resultTemplate">
+    <class name="org.n52.sos.ds.hibernate.entities.ResultTemplate" table="resulttemplate">
     <comment>Table to store resultTemplates (OGC SOS 2.0 result handling profile). Mapping file: mapping/transactionl/ResultTemplate.hbm.xml</comment>
         <id name="resultTemplateId" type="long">
             <column name="resultTemplateId">
@@ -23,12 +23,12 @@
             </column>
         </many-to-one>
         <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" foreign-key="resultTemplateProcedureFk">
-            <column index="resultTempProcedureIdx" name="procedureId" not-null="true">
+            <column index="resultTempProcedureIdx" name="procedureId" not-null="false">
                 <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureId</comment>
             </column>
         </many-to-one>
-        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" foreign-key="resultTemplateFeatureIdx">
-            <column name="featureOfInterestId" not-null="true">
+        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest" foreign-key="resultTemplateFeatureIdx">
+            <column name="featureOfInterestId" not-null="false">
                 <comment>Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
             </column>
         </many-to-one>

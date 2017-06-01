@@ -83,11 +83,6 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
         }
     }
 
-    @Override
-    public boolean supportsClear() {
-        return false;
-    }
-
     private String getGetAndDropConstraint(String table, String column, Map<String, Object> databaseSettings) {
         StringBuilder builder = new StringBuilder();
         builder.append(DECLARE_VARIABLE);

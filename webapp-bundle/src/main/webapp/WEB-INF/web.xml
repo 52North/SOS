@@ -110,7 +110,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<load-on-startup>-1</load-on-startup>
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
-			<param-value>/WEB-INF/spring/api-view-config.xml,/WEB-INF/spring/api-dispatcher.xml</param-value>
+			<param-value>/WEB-INF/spring/application-context.xml,/WEB-INF/spring/dispatcher-servlet.xml</param-value>
 		</init-param>
 	</servlet>
 	<!-- Admin servlet -->

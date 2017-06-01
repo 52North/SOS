@@ -37,7 +37,7 @@ import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
  * @param <T>
  * @since 4.0.0
  */
-public class SweCoordinate<T> {
+public class SweCoordinate<T> implements Cloneable {
 
     /**
      * Coordinate name
@@ -97,5 +97,11 @@ public class SweCoordinate<T> {
     @Override
     public String toString() {
         return String.format("SosSweCoordinate[name=%s, value=%s]", getName(), getValue());
+    }
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    protected SweCoordinate clone() throws CloneNotSupportedException {
+        return new SweCoordinate(getName(), (SweAbstractSimpleType<?>)getValue().clone());
     }
 }

@@ -28,6 +28,8 @@
  */
 package org.n52.sos.encode;
 
+import static org.n52.sos.service.ServiceSettings.VALIDATE_RESPONSE;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
@@ -42,13 +44,14 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.coding.OperationKey;
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -68,6 +71,7 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
+@Configurable
 public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractXmlEncoder<T>
         implements StreamingEncoder<XmlObject, T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
@@ -82,7 +86,9 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
 
     private final Class<T> responseType;
 
-    private final boolean validate;
+    private final boolean validationEnabled;
+    
+    private boolean validateResponse = false;
 
     /**
      * constructor
@@ -99,21 +105,24 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
      *            Service XML schema prefix
      * @param responseType
      *            Response type
-     * @param validate
-     *            Indicator if the created/encoded object should be validated
+     * @param validationEnabled
+     *            Indicator if the created/encoded object can be validated
      */
     public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix,
-            Class<T> responseType, boolean validate) {
+            Class<T> responseType, boolean validationEnabled) {
         OperationKey key = new OperationKey(service, version, operation);
         this.encoderKeys =
-                Sets.newHashSet(new XmlEncoderKey(namespace, responseType), new OperationEncoderKey(key,
-                        MediaTypes.TEXT_XML), new OperationEncoderKey(key, MediaTypes.APPLICATION_XML));
+                Sets.newHashSet(new XmlEncoderKey(namespace, responseType), 
+                        new OperationEncoderKey(key, MediaTypes.TEXT_XML), 
+                        new OperationEncoderKey(key, MediaTypes.APPLICATION_XML),
+                        new ResponseContentTypeEncoderKey(responseType, MediaTypes.TEXT_XML), 
+                        new ResponseContentTypeEncoderKey(responseType, MediaTypes.APPLICATION_XML));
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(encoderKeys));
         this.namespace = namespace;
         this.prefix = prefix;
         this.version = version;
         this.responseType = responseType;
-        this.validate = validate;
+        this.validationEnabled = validationEnabled;
     }
 
     /**
@@ -134,8 +143,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
      */
     public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix,
             Class<T> responseType) {
-        this(service, version, operation, namespace, prefix, responseType, ServiceConfiguration.getInstance()
-                .isValidateResponse());
+        this(service, version, operation, namespace, prefix, responseType, true);
     }
 
     @Override
@@ -167,13 +175,15 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         }
         XmlObject xml = create(response);
         setSchemaLocations(xml);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Encoded object {} is valid: {}", xml.schemaType().toString(),
-                    XmlHelper.validateDocument(xml));
-        } else {
-            if (validate) {
-                LOGGER.warn("Encoded object {} is valid: {}", xml.schemaType().toString(),
+        if (validationEnabled) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Encoded object {} is valid: {}", xml.schemaType().toString(),
                         XmlHelper.validateDocument(xml));
+            } else {
+                if (validateResponse) {
+                    LOGGER.warn("Encoded object {} is valid: {}", xml.schemaType().toString(),
+                            XmlHelper.validateDocument(xml));
+                }
             }
         }
         return xml;
@@ -196,10 +206,16 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     public boolean forceStreaming() {
     	return false;
     }
+    
+    @Setting(VALIDATE_RESPONSE)
+    public void setValidateResponse(final boolean validateResponse) {
+        this.validateResponse = validateResponse;
+    }
 
     private void setSchemaLocations(XmlObject document) {
         Map<String, SchemaLocation> schemaLocations = Maps.newHashMap();
-        for (String ns : N52XmlHelper.getNamespaces(document)) {
+        Set<String> namespaces = N52XmlHelper.getNamespaces(document);
+        for (String ns : namespaces) {
             for (SchemaLocation sl : CodingRepository.getInstance().getSchemaLocation(ns)) {
                 schemaLocations.put(sl.getNamespace(), sl);
             }
@@ -209,13 +225,11 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         }
         // override default schema location with concrete URL's
         for (SchemaLocation sl : getConcreteSchemaLocations()) {
-            schemaLocations.put(sl.getNamespace(), sl);
+            if (namespaces.contains(sl.getNamespace())) {
+                schemaLocations.put(sl.getNamespace(), sl);
+            }
         }
         N52XmlHelper.setSchemaLocationsToDocument(document, schemaLocations.values());
-    }
-
-    protected XmlOptions getXmlOptions() {
-        return XmlOptionsHelper.getInstance().getXmlOptions();
     }
 
     /**

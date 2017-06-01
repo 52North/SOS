@@ -55,7 +55,7 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.gml.time.TimePosition;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -291,7 +291,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
         if (geom instanceof Point) {
             PointType xbPoint = PointType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             if (foiId != null) {
-                xbPoint.setId("point_" + foiId);
+                xbPoint.setId(geom.getGeometryType() + "_" + foiId);
             }
             createPointFromJtsGeometry((Point) geom, xbPoint);
             return xbPoint;
@@ -299,14 +299,14 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
             LineStringType xbLineString =
                     LineStringType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             if (foiId != null) {
-                xbLineString.setId("lineString_" + foiId);
+                xbLineString.setId(geom.getGeometryType() + "_" + foiId);
             }
             createLineStringFromJtsGeometry((LineString) geom, xbLineString);
             return xbLineString;
         } else if (geom instanceof Polygon) {
             PolygonType xbPolygon = PolygonType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             if (foiId != null) {
-                xbPolygon.setId("polygon_" + foiId);
+                xbPolygon.setId(geom.getGeometryType() + "_" + foiId);
             }
             createPolygonFromJtsGeometry((Polygon) geom, xbPolygon);
             return xbPolygon;
@@ -467,8 +467,8 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
     }
 
     private XmlObject createFeature(AbstractFeature sosAbstractFeature) throws OwsExceptionReport {
-        if (sosAbstractFeature instanceof SamplingFeature) {
-            SamplingFeature sampFeat = (SamplingFeature) sosAbstractFeature;
+        if (sosAbstractFeature instanceof AbstractSamplingFeature) {
+            AbstractSamplingFeature sampFeat = (AbstractSamplingFeature) sosAbstractFeature;
             if (sosAbstractFeature.isSetGmlID()) {
                 FeaturePropertyType featureProperty =
                         FeaturePropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
@@ -484,11 +484,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
                     }
                     return featureProperty;
                 }
-                StringBuilder builder = new StringBuilder();
-                builder.append("sf_");
-                builder.append(JavaHelper.generateID(sosAbstractFeature.getIdentifierCodeWithAuthority().getValue()));
-                sosAbstractFeature.setGmlId(builder.toString());
-                Encoder<XmlObject, SamplingFeature> encoder = CodingHelper.getEncoder(SfConstants.NS_SA, sampFeat);
+                Encoder<XmlObject, AbstractSamplingFeature> encoder = CodingHelper.getEncoder(SfConstants.NS_SA, sampFeat);
                 if (encoder != null) {
                     return encoder.encode(sampFeat);
                 } else {
@@ -513,8 +509,8 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
         if (sosFeatureCollection.isSetMembers()) {
             if (members.size() == 1) {
                 for (String member : members.keySet()) {
-                    if (members.get(member) instanceof SamplingFeature) {
-                        return createFeature((SamplingFeature) members.get(member));
+                    if (members.get(member) instanceof AbstractSamplingFeature) {
+                        return createFeature(members.get(member));
                     } else {
                         throw new NoApplicableCodeException().withMessage("No encoder found for featuretype");
                     }
@@ -528,8 +524,8 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
                 builder.append(JavaHelper.generateID(Long.toString(System.currentTimeMillis())));
                 xbFeatCol.setId(builder.toString());
                 for (String member : members.keySet()) {
-                    if (members.get(member) instanceof SamplingFeature) {
-                        XmlObject xmlFeature = createFeature((SamplingFeature) members.get(member));
+                    if (members.get(member) instanceof AbstractSamplingFeature) {
+                        XmlObject xmlFeature = createFeature(members.get(member));
                         xbFeatCol.addNewFeatureMember().set(xmlFeature);
                     } else {
                         throw new NoApplicableCodeException().withMessage("No encoder found for featuretype");
@@ -554,7 +550,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
     private XmlObject createEnvelope(SosEnvelope sosEnvelope) {
         EnvelopeType envelopeType = EnvelopeType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        MinMax<String> minmax = SosHelper.getMinMaxFromEnvelope(sosEnvelope.getEnvelope());
+        MinMax<String> minmax = SosHelper.getMinMaxFromEnvelope(sosEnvelope);
         envelopeType.addNewLowerCorner().setStringValue(minmax.getMinimum());
         envelopeType.addNewUpperCorner().setStringValue(minmax.getMaximum());
         envelopeType.setSrsName(ServiceConfiguration.getInstance().getSrsNamePrefix() + sosEnvelope.getSrid());

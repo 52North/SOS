@@ -107,7 +107,7 @@ public class SosDescribeSensorOperatorV100 extends
     }
     
     private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest) throws MissingParameterValueException, OwsExceptionReport {
-        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos1Constants.DescribeSensorParams.outputFormat)) {
+        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos1Constants.DescribeSensorParams.outputFormat, true)) {
             SosHelper.checkOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()),
                     sosRequest.getService(), sosRequest.getVersion());
         }

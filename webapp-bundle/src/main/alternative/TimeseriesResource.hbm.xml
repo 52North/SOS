@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.n52.series.db.da.beans.v1">
+    <class name="TimeseriesEntity" table="series">
+        <id name="pkid" type="long">
+            <column name="seriesid"/>
+            <generator class="assigned"/>
+        </id>
+        <many-to-one class="org.n52.series.db.da.beans.v1.CategoryEntity" column="observablepropertyid" insert="false" name="category" update="false"/>
+        <many-to-one class="org.n52.series.db.da.beans.v1.ProcedureEntity" column="procedureid" name="procedure"/>
+        <many-to-one class="org.n52.series.db.da.beans.v1.PhenomenonEntity" column="observablepropertyid" insert="false" name="phenomenon" update="false"/>
+        <many-to-one class="org.n52.series.db.da.beans.v1.FeatureEntity" formula="(select s.stationid from station s, samplingpoint sp where s.stationid = sp.station and sp.samplingpointid = samplingpointid)" name="feature"/>
+        <many-to-one class="org.n52.series.db.da.beans.v1.UnitEntity" column="unitid" name="unit"/>
+        <property formula="3" name="numberOfDecimals" type="int"/>
+        <property column="published" name="published" type="org.hibernate.type.TrueFalseType"/>
+        <component class="org.n52.series.db.da.beans.v1.ObservationEntity" name="firstValue">
+            <property column="firsttimestamp" name="timestamp" type="timestamp"/>
+            <property column="firstnumericvalue" name="value" type="double"/>
+        </component>
+        <component class="org.n52.series.db.da.beans.v1.ObservationEntity" name="lastValue">
+            <property column="lasttimestamp" name="timestamp" type="timestamp"/>
+            <property column="lastnumericvalue" name="value" type="double"/>
+        </component>
+        <list fetch="select" inverse="true" name="observations" table="observation">
+            <key column="observationid"/>
+            <index column="seriesid"/>
+            <one-to-many class="ObservationEntity"/>
+        </list>
+    </class>
+</hibernate-mapping>

@@ -61,4 +61,16 @@ public class DefaultProfileHandler implements ProfileHandler {
         return activeProfile != null;
     }
 
+    @Override
+    public void activateProfile(String identifier) {
+        availableProfiles.get(identifier).setActiveProfile(true);
+        
+    }
+
+    @Override
+    public void persist() {}
+
+    @Override
+    public void reloadProfiles() {}
+
 }

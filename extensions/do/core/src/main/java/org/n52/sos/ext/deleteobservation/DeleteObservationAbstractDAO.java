@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
+import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAM_OBSERVATION;
 
 import org.n52.sos.ds.AbstractOperationDAO;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -53,6 +53,6 @@ public abstract class DeleteObservationAbstractDAO extends AbstractOperationDAO 
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        opsMeta.addAnyParameterValue(PARAMETER_NAME);
+        opsMeta.addAnyParameterValue(PARAM_OBSERVATION);
     }
 }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos</artifactId>
-        <version>4.3.14</version>
+        <version>4.4.0</version>
     </parent>
     <artifactId>converter</artifactId>
     <packaging>pom</packaging>
@@ -14,5 +14,6 @@
         <module>transformation</module>
         <module>identifier-modifier</module>
         <module>split-and-merge</module>
+        <module>seriestype</module>
     </modules>
 </project>

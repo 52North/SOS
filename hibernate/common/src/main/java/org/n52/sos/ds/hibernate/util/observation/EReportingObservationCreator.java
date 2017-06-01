@@ -28,51 +28,54 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.util.Collections;
 import java.util.Set;
 
+import org.hibernate.Session;
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBooleanObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingCategoryObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingCountObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingGeometryObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNumericObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingTextObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBlobObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBooleanObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingCategoryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingCountObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingGeometryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingNumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingSweDataArrayObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingTextObservation;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.util.CollectionHelper;
 
 public class EReportingObservationCreator implements AdditionalObservationCreator<EReportingSeries> {
 
-    @SuppressWarnings("unchecked")
-    private static final Set<AdditionalObservationCreatorKey> KEYS = CollectionHelper.union(
-            AdditionalObservationCreatorRepository.encoderKeysForElements(AqdConstants.NS_AQD,
-                    EReportingObservation.class, EReportingBlobObservation.class, EReportingBooleanObservation.class,
-                    EReportingCategoryObservation.class, EReportingCountObservation.class,
-                    EReportingGeometryObservation.class, EReportingNumericObservation.class,
-                    EReportingSweDataArrayObservation.class, EReportingTextObservation.class, EReportingSeries.class),
-            AdditionalObservationCreatorRepository.encoderKeysForElements(null, EReportingObservation.class,
-                    EReportingBlobObservation.class, EReportingBooleanObservation.class,
-                    EReportingCategoryObservation.class, EReportingCountObservation.class,
-                    EReportingGeometryObservation.class, EReportingNumericObservation.class,
-                    EReportingSweDataArrayObservation.class, EReportingTextObservation.class));
+    private static final Set<AdditionalObservationCreatorKey> KEYS
+            = AdditionalObservationCreatorRepository
+            .encoderKeysForElements(AqdConstants.NS_AQD,
+                                    AbstractEReportingObservation.class,
+                                    EReportingBlobObservation.class,
+                                    EReportingBooleanObservation.class,
+                                    EReportingCategoryObservation.class,
+                                    EReportingCountObservation.class,
+                                    EReportingGeometryObservation.class,
+                                    EReportingNumericObservation.class,
+                                    EReportingSweDataArrayObservation.class,
+                                    EReportingTextObservation.class);
 
-    private final EReportingObservationHelper helper = new EReportingObservationHelper();
+    private final EReportingObservationHelper helper
+            = new EReportingObservationHelper();
 
     @Override
     public Set<AdditionalObservationCreatorKey> getKeys() {
-        return KEYS;
+        return Collections.unmodifiableSet(KEYS);
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, AbstractObservation observation) {
+    public OmObservation create(OmObservation omObservation, Observation<?> observation) {
         if (observation instanceof EReportingObservation) {
-            EReportingObservation eReportingObservation = (EReportingObservation) observation;
+            EReportingObservation<?> eReportingObservation = (EReportingObservation<?>) observation;
             create(omObservation, eReportingObservation.getEReportingSeries());
             add(omObservation, observation);
             omObservation.setValue(EReportingHelper.createSweDataArrayValue(omObservation, eReportingObservation));
@@ -80,7 +83,7 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
         }
         return omObservation;
     }
-
+    
     @Override
     public OmObservation create(OmObservation omObservation, EReportingSeries series) {
         for (NamedValue<?> namedValue : helper.createOmParameterForEReporting(series)) {
@@ -90,12 +93,27 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
     }
 
     @Override
-    public OmObservation add(OmObservation omObservation, AbstractObservation observation) {
+    public OmObservation add(OmObservation omObservation, Observation<?> observation) {
         if (observation instanceof EReportingObservation) {
-            EReportingObservation eReportingObservation = (EReportingObservation) observation;
+            EReportingObservation<?> eReportingObservation = (EReportingObservation<?>) observation;
             omObservation.setAdditionalMergeIndicator(eReportingObservation.getPrimaryObservation());
         }
         return omObservation;
+    }
+
+    @Override
+    public OmObservation create(OmObservation omObservation, EReportingSeries series, Session session) {
+        return create(omObservation, series);
+    }
+
+    @Override
+    public OmObservation create(OmObservation omObservation, Observation<?> observation, Session session) {
+        return create(omObservation, observation);
+    }
+
+    @Override
+    public OmObservation add(OmObservation omObservation, Observation<?> observation, Session session) {
+        return add(omObservation, observation);
     }
 
 }

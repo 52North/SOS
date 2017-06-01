@@ -62,7 +62,7 @@ public class CodeWithAuthority implements Comparable<CodeWithAuthority>, Seriali
      *            Value/identifier
      */
     public CodeWithAuthority(String value) {
-        this.value = value;
+       setValue(value);
     }
 
     /**
@@ -74,7 +74,7 @@ public class CodeWithAuthority implements Comparable<CodeWithAuthority>, Seriali
      *            Code space
      */
     public CodeWithAuthority(String value, String codeSpace) {
-        this.value = value;
+        setValue(value);
         this.codeSpace = codeSpace;
     }
 

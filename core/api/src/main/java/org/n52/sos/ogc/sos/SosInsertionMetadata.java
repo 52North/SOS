@@ -68,8 +68,9 @@ public class SosInsertionMetadata {
      * @param featureOfInterestTypes
      *            the featureOfInterestTypes to set
      */
-    public void setFeatureOfInterestTypes(Collection<String> featureOfInterestTypes) {
+    public SosInsertionMetadata setFeatureOfInterestTypes(Collection<String> featureOfInterestTypes) {
         this.featureOfInterestTypes = Sets.newHashSet(featureOfInterestTypes);
+        return this;
     }
 
     /**
@@ -83,7 +84,8 @@ public class SosInsertionMetadata {
      * @param observationTypes
      *            the observationTypes to set
      */
-    public void setObservationTypes(Collection<String> observationTypes) {
+    public SosInsertionMetadata setObservationTypes(Collection<String> observationTypes) {
         this.observationTypes = Sets.newHashSet(observationTypes);
+        return this;
     }
 }

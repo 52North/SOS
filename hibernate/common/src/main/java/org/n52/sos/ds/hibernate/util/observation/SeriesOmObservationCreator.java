@@ -33,7 +33,12 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.sos.convert.ConverterException;
-import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.parameter.SeriesParameterDAO;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameterAdder;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -44,6 +49,7 @@ import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.AbstractObservationRequest;
+import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,14 +99,13 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
             AbstractFeature feature = createFeatureOfInterest(series.getFeatureOfInterest().getIdentifier());
 
             final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
-
             final OmObservation sosObservation = new OmObservation();
-            sosObservation.setNoDataValue(getNoDataValue());
-            sosObservation.setTokenSeparator(getTokenSeparator());
-            sosObservation.setTupleSeparator(getTupleSeparator());
-            sosObservation.setDecimalSeparator(getDecimalSeparator());
+            sosObservation.setObservationID(Long.toString(series.getSeriesId()));
+            addDefaultValuesToObservation(sosObservation);
             sosObservation.setObservationConstellation(obsConst);
             checkForAdditionalObservationCreator(series, sosObservation);
+            addParameter(sosObservation, series);
+            // TODO
             final NilTemplateValue value = new NilTemplateValue();
             value.setUnit(obsProp.getUnit());
             sosObservation.setValue(new SingleObservationValue(new TimeInstant(), value));
@@ -157,14 +162,31 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
      * @param feature
      *            FeatureOfInterest object
      * @return Observation constellation
+     * @throws OwsExceptionReport 
      */
     protected OmObservationConstellation getObservationConstellation(SosProcedureDescription procedure,
-            OmObservableProperty obsProp, AbstractFeature feature) {
+            OmObservableProperty obsProp, AbstractFeature feature) throws OwsExceptionReport {
         OmObservationConstellation obsConst = new OmObservationConstellation(procedure, obsProp, null, feature, null);
         /* get the offerings to find the templates */
         if (obsConst.getOfferings() == null) {
-            obsConst.setOfferings(Sets.newHashSet(getCache().getOfferingsForProcedure(
-                    obsConst.getProcedure().getIdentifier())));
+            if (getSeries().isSetOffering()) {
+                obsConst.setOfferings(Sets.newHashSet(getSeries().getOffering().getIdentifier()));
+            } else {
+                AbstractSeriesObservationDAO observationDAO = (AbstractSeriesObservationDAO)DaoFactory.getInstance().getObservationDAO();
+                obsConst.setOfferings(observationDAO.getOfferingsForSeries(series, getSession()));
+//            } else {
+//                obsConst.setOfferings(Sets.newHashSet(getCache().getOfferingsForProcedure(
+//                        obsConst.getProcedure().getIdentifier())));
+            }
+        }
+        if (getSeries().isSetIdentifier()) {
+            addIdentifier(obsConst, getSeries());
+        }
+        if (getSeries().isSetName()) {
+            addName(obsConst, getSeries());
+        }
+        if (getSeries().isSetDescription()) {
+            obsConst.setDescription(getSeries().getDescription());
         }
         return obsConst;
     }
@@ -177,11 +199,24 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     }
     
     @SuppressWarnings("unchecked")
-    protected void checkForAdditionalObservationCreator(Series series, OmObservation sosObservation) {
+    protected void checkForAdditionalObservationCreator(Series series, OmObservation sosObservation) throws CodedException {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), series.getClass());
         if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
             AdditionalObservationCreator<Series> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
-            creator.create(sosObservation, series);
+            creator.create(sosObservation, series, getSession());
+        } else if (checkAcceptType()) {
+            for (MediaType acceptType : getAcceptType()) {
+                AdditionalObservationCreatorKey acceptKey = new AdditionalObservationCreatorKey(acceptType.withoutParameters().toString(), series.getClass());
+                if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(acceptKey)) {
+                    AdditionalObservationCreator<Series> creator = AdditionalObservationCreatorRepository.getInstance().get(acceptKey);
+                    creator.create(sosObservation, series, getSession());
+                }
+            }
         }
     }
+
+    private void addParameter(OmObservation observation, Series series) throws OwsExceptionReport {
+        new SeriesParameterAdder(observation, new SeriesParameterDAO().getSeriesParameter(series, getSession())).add();
+    }
+
 }

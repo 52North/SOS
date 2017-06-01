@@ -37,26 +37,17 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class SpatialEntity extends DescriptionXmlEntity implements HasGeometry, HasCoordinate, HasIdentifier {
 
     private static final long serialVersionUID = 2051886640846877840L;
-
     private Geometry geom;
-
     private Object longitude;
-
     private Object latitude;
-
     private Object altitude;
-
     private int srid;
-
-    public SpatialEntity() {
-        super();
-    }
 
     @Override
     public Geometry getGeom() {
@@ -64,9 +55,8 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
     }
 
     @Override
-    public SpatialEntity setGeom(final Geometry geom) {
+    public void setGeom(final Geometry geom) {
         this.geom = geom;
-        return this;
     }
 
     @Override
@@ -113,22 +103,27 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
         return this;
     }
 
+    @Override
     public boolean isSetGeometry() {
         return getGeom() != null;
     }
 
+    @Override
     public boolean isSetLongLat() {
         return getLongitude() != null && getLatitude() != null;
     }
 
+    @Override
     public boolean isSetAltitude() {
         return getAltitude() != null;
     }
 
+    @Override
     public boolean isSetSrid() {
         return getSrid() > 0;
     }
 
+    @Override
     public boolean isSpatial() {
         return isSetGeometry() || (isSetLongLat() && isSetSrid());
     }

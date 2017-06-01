@@ -31,14 +31,17 @@ package org.n52.sos.ogc.swe;
 import java.util.Arrays;
 import java.util.List;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SweVector extends SweAbstractDataComponent {
     private List<SweCoordinate<?>> coordinates;
@@ -128,4 +131,39 @@ public class SweVector extends SweAbstractDataComponent {
         return StringHelper.isNotEmpty(localFrame);
     }
 
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    @Override
+    public SweVector clone() throws CloneNotSupportedException {
+        SweVector clone = new SweVector();
+        copyValueTo(clone);
+        if (isSetCoordinates()) {
+            List<SweCoordinate<?>> clonedList = Lists.newArrayListWithCapacity(getCoordinates().size());
+            for (SweCoordinate<?> sweCoordinate : getCoordinates()) {
+                clonedList.add(sweCoordinate.clone());
+            }
+            clone.setCoordinates(coordinates);
+        }
+        return clone;
+    }
+    @Override
+    public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
+        super.copyValueTo(copy);
+        if (copy instanceof SweVector) {
+            ((SweVector) copy).setReferenceFrame(getReferenceFrame());
+            ((SweVector) copy).setLocalFrame(getLocalFrame());
+            ((SweVector) copy).setCoordinates(getCoordinates());
+        }
+        return copy;
+    }
 }

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.util;
 
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -41,9 +42,12 @@ import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.decode.XmlNamespaceDecoderKey;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
+import org.n52.sos.encode.XmlDocumentEncoderKey;
 import org.n52.sos.encode.XmlEncoderKey;
+import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.NoDecoderForKeyException;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
+import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -78,9 +82,41 @@ public final class CodingHelper {
         }
         return encoder;
     }
-
+    
     public static XmlObject encodeObjectToXml(final String namespace, final Object o) throws OwsExceptionReport {
         return encodeObjectToXml(namespace, o, Maps.<HelperValues, String> newEnumMap(HelperValues.class));
+    }
+
+    public static XmlObject encodeObjectToXmlPropertyType(final String namespace, final Object o) throws UnsupportedEncoderInputException, OwsExceptionReport {
+        Encoder<XmlObject, Object> encoder = CodingRepository.getInstance().getEncoder(getPropertyTypeEncoderKey(namespace, o));
+        if (encoder != null) {
+            return encoder.encode(o, Maps.<HelperValues, String> newEnumMap(HelperValues.class));
+        }
+        EnumMap<HelperValues, String> helperValues = Maps.<HelperValues, String> newEnumMap(HelperValues.class);
+        helperValues.put(HelperValues.PROPERTY_TYPE, Boolean.TRUE.toString());
+        return encodeObjectToXml(namespace, o, helperValues);
+    }
+    
+    public static XmlObject encodeObjectToXmlPropertyType(final String namespace, final Object o,
+            Map<SosConstants.HelperValues, String> additionalValues)
+                    throws UnsupportedEncoderInputException, OwsExceptionReport {
+        Encoder<XmlObject, Object> encoder =
+                CodingRepository.getInstance().getEncoder(getPropertyTypeEncoderKey(namespace, o));
+        if (encoder != null) {
+            return encoder.encode(o, Maps.<HelperValues, String> newEnumMap(HelperValues.class));
+        }
+        additionalValues.put(HelperValues.PROPERTY_TYPE, Boolean.TRUE.toString());
+        return encodeObjectToXml(namespace, o, additionalValues);
+    }
+
+    public static XmlObject encodeObjectToXmlDocument(final String namespace, final Object o) throws UnsupportedEncoderInputException, OwsExceptionReport {
+        Encoder<XmlObject, Object> encoder = CodingRepository.getInstance().getEncoder(getDocumentEncoderKey(namespace, o));
+        if (encoder != null) {
+            return encoder.encode(o, Maps.<HelperValues, String> newEnumMap(HelperValues.class));
+        }
+        EnumMap<HelperValues, String> helperValues = Maps.<HelperValues, String> newEnumMap(HelperValues.class);
+        helperValues.put(HelperValues.DOCUMENT, Boolean.TRUE.toString());
+        return encodeObjectToXml(namespace, o, helperValues);
     }
 
     public static String encodeObjectToXmlText(final String namespace, final Object o) throws OwsExceptionReport {
@@ -130,6 +166,14 @@ public final class CodingHelper {
 
     public static EncoderKey getEncoderKey(final String namespace, final Object o) {
         return new XmlEncoderKey(namespace, o.getClass());
+    }
+    
+    public static EncoderKey getPropertyTypeEncoderKey(final String namespace, final Object o) {
+        return new XmlPropertyTypeEncoderKey(namespace, o.getClass());
+    }
+    
+    public static EncoderKey getDocumentEncoderKey(final String namespace, final Object o) {
+        return new XmlDocumentEncoderKey(namespace, o.getClass());
     }
 
     public static DecoderKey getDecoderKey(final XmlObject doc) {

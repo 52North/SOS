@@ -7,8 +7,7 @@
     },
     {
       "required": [
-        "version",
-        "observation"
+        "version"
       ],
       "properties": {
         "request": {
@@ -17,10 +16,56 @@
           ]
         },
         "observation": {
-          "type": "string",
-          "format": "uri"
+          "$ref": "#/definitions/uriOrUriList"
+        },
+        "procedure": {
+          "$ref": "#/definitions/uriOrUriList"
+        },
+        "observedProperty": {
+          "$ref": "#/definitions/uriOrUriList"
+        },
+        "featureOfInterest": {
+          "$ref": "#/definitions/uriOrUriList"
+        },
+         "offering": {
+          "$ref": "#/definitions/uriOrUriList"
+        },
+        "temporalFilter": {
+          "oneOf": [
+            {
+              "$ref": "http://www.52north.org/schema/json/TemporalFilter#"
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "http://www.52north.org/schema/json/TemporalFilter#"
+              }
+            }
+          ]
         }
       }
     }
-  ]
+  ],
+  "definitions": {
+    "uri": {
+      "type": "string",
+      "format": "uri"
+    },
+    "uriOrUriList": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/uri"
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/uri"
+          }
+        }
+      ]
+    }
+  }
 }

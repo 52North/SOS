@@ -3,7 +3,7 @@
     <parent>
         <artifactId>52n-sos</artifactId>
         <groupId>org.n52.sensorweb.sos</groupId>
-        <version>4.3.14</version>
+        <version>4.4.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>webapp</artifactId>
@@ -17,17 +17,17 @@
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
     </properties>
     <build>
-        <finalName>${conf.sos.name}##${project.version}</finalName>
+        <finalName>${conf.sos.name}</finalName>
         <plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>**/*Suite*.java</include>
-					</includes>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Suite*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -85,6 +85,18 @@
                     </overlays>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -119,7 +131,7 @@
     </build>
     <dependencies>
         <dependency>
-	    <groupId>com.mchange</groupId>
+            <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -197,6 +209,26 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>coding-gml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-uvf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-gml-cov</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-cv-gml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-gwml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>coding-sos-v100</artifactId>
         </dependency>
         <dependency>
@@ -267,10 +299,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-mysql</artifactId>
         </dependency>
-        <dependency>
-		    <groupId>${project.groupId}</groupId>
-		    <artifactId>hibernate-datasource-h2</artifactId>
-		</dependency>
+            <dependency>
+    		    <groupId>${project.groupId}</groupId>
+    		    <artifactId>hibernate-datasource-h2</artifactId>
+    		</dependency>
 
         <!-- BINDINGS -->
 
@@ -294,7 +326,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>binding-exi</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>binding-register</artifactId>
+        </dependency>
         <!-- REST BINDING -->
 
         <dependency>
@@ -314,14 +349,60 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>gda-coding</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>gda-hibernate</artifactId>
+        </dependency>
+        
+        <!-- INSERT FEATUREOFINTEREST -->
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ifoi-operation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ifoi-coding</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ifoi-hibernate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-ifoi-v10</artifactId>
+        </dependency>
+
+        <!-- DELETE RESULT TEMPLATE -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-operation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-coding</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-hibernate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-drt-v100</artifactId>
         </dependency>
 
         <!-- DELETE OBSERVATION -->
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-xml</artifactId>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sosdo-v10</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sosdo-v20</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -340,6 +421,11 @@
             <artifactId>do-kvp</artifactId>
         </dependency>
 
+		<!-- Related offering encoding -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-related-offering</artifactId>
+        </dependency>
 
         <!-- dependencies for integration test -->
         <dependency>
@@ -377,6 +463,13 @@
             <artifactId>test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sqlite-config</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
 
 
         <!-- #### Spring dependencies #### -->
@@ -434,6 +527,22 @@
             <groupId>${project.groupId}</groupId>
         	<artifactId>inspire-code</artifactId>
         </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-inspire-omso</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-inspire-ompr</artifactId>
+        </dependency>
+        <dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>inspire-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>inspire-coding</artifactId>
+		</dependency>
         
         <!-- AQD eReporting -->
          <dependency>
@@ -474,6 +583,31 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>split-and-merge</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>seriestype</artifactId>
+        </dependency>
+        <!-- netCDF -->
+        <dependency>
+            <groupId>com.axiomalaska</groupId>
+            <artifactId>cf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>netcdf4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>api-netcdf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-netcdf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-oceansites</artifactId>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -484,21 +618,6 @@
                     <artifactId>hibernate-datasource-oracle</artifactId>
                 </dependency>
             </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>maven-jetty-plugin</artifactId>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.oracle</groupId>
-                                <artifactId>ojdbc6</artifactId>
-                                <version>${ojdbc6.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>sqlserver</id>
@@ -508,81 +627,6 @@
                     <artifactId>hibernate-datasource-sqlserver</artifactId>
                 </dependency>
             </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>maven-jetty-plugin</artifactId>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.microsoft</groupId>
-                                <artifactId>sqljdbc4</artifactId>
-                                <version>${sqljdbc4.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <!-- Profile for integration testing, run with: mvn -P itest clean install -->
-            <!-- To specify an alternate port: mvn -P itest clean install -Djetty.port=9090 -->
-            <id>itest</id>
-            <properties>
-                <jetty.port>9090</jetty.port>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>maven-jetty-plugin</artifactId>
-                        <configuration>
-                            <scanIntervalSeconds>10</scanIntervalSeconds>
-                            <stopPort>9999</stopPort>
-                            <stopKey>STOP</stopKey>
-                            <contextPath>/</contextPath>
-                            <connectors>
-                                <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-                                    <port>${jetty.port}</port>
-                                </connector>
-                            </connectors>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>start-jetty</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                    <goal>run-exploded</goal>
-                                </goals>
-                                <configuration>
-                                    <scanIntervalSeconds>0</scanIntervalSeconds>
-                                    <daemon>true</daemon>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>stop-jetty</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>assembly</id>

@@ -28,72 +28,89 @@
  */
 package org.n52.sos.ogc.om.values;
 
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ogc.UoM;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 
 /**
  * Boolean measurement representation for observation
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
-public class BooleanValue implements Value<Boolean> {
+public class BooleanValue extends SweBoolean implements Value<Boolean> {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3752649909580561689L;
 
     /**
-     * Measurement value
-     */
-    private Boolean value;
-
-    /**
      * Unit of measure
      */
-    private String unit;
+    private UoM unit;
 
     /**
      * constructor
-     * 
+     *
      * @param value
-     *            Measurement value
+     *              Measurement value
      */
     public BooleanValue(Boolean value) {
-        this.value = value;
+        super();
+        super.setValue(value);
     }
 
     @Override
-    public void setValue(Boolean value) {
-        this.value = value;
-    }
-
-    @Override
-    public Boolean getValue() {
-        return value;
+    public BooleanValue setValue(Boolean value) {
+        super.setValue(value);
+        return this;
     }
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
     }
 
     @Override
-    public String toString() {
-        return String.format("BooleanValue [value=%s, unit=%s]", getValue(), getUnit());
+    public UoM getUnitObject() {
+        return this.unit;
     }
 
     @Override
-    public boolean isSetValue() {
-        return value != null;
+    public void setUnit(UoM unit) {
+        this.unit = unit;
     }
 
     @Override
     public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
+        return getUnitObject() != null && !getUnitObject().isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        return String
+                .format("BooleanValue [value=%s, unit=%s]", getValue(), getUnit());
+    }
+
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
     }
 }

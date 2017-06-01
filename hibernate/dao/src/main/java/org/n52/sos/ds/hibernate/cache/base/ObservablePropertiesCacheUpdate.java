@@ -40,19 +40,16 @@ import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.TObservableProperty;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  *
@@ -68,46 +65,61 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate");
         startStopwatch();
         ObservablePropertyDAO observablePropertyDAO = new ObservablePropertyDAO();
+        Map<ObservableProperty, Collection<ObservableProperty>> observablePropertyHierarchy = observablePropertyDAO.getObservablePropertyHierarchy(getSession());
         List<ObservableProperty> ops = observablePropertyDAO.getObservablePropertyObjects(getSession());
+//        Set<String> childObservableProperties = new HashSet<>(observablePropertyHierarchy.size());
+//
+//        for (Collection<ObservableProperty> children1: observablePropertyHierarchy.values()) {
+//            for (ObservableProperty observableProperty1 : children1) {
+//                childObservableProperties.add(observableProperty1.getIdentifier());
+//            }
+//        }
+
+
         // if ObservationConstellation is supported load them all at once,
         // otherwise query obs directly
         if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
-            Map<String, Collection<ObservationConstellationInfo>> ociMap =
-                    ObservationConstellationInfo.mapByObservableProperty(new ObservationConstellationDAO()
-                            .getObservationConstellationInfo(getSession()));
-            for (ObservableProperty op : ops) {
-                final String obsPropIdentifier = op.getIdentifier();
-                if (op.isSetName()) {
-                	getCache().addObservablePropertyIdentifierHumanReadableName(obsPropIdentifier, op.getName());
+            ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
+            Map<String, Collection<ObservationConstellationInfo>> ociMap = ObservationConstellationInfo.mapByObservableProperty(observationConstellationDAO.getObservationConstellationInfo(getSession()));
+
+            for (ObservableProperty observableProperty : observablePropertyHierarchy.keySet()) {
+                String observablePropertyIdentifier = observableProperty.getIdentifier();
+                Collection<ObservableProperty> children = observablePropertyHierarchy.get(observableProperty);
+                boolean isParent = !children.isEmpty();
+
+                if (observableProperty.isSetName()) {
+                	getCache().addObservablePropertyIdentifierHumanReadableName(observablePropertyIdentifier, observableProperty.getName());
                 }
-                Collection<ObservationConstellationInfo> ocis = ociMap.get(obsPropIdentifier);
-                if (CollectionHelper.isNotEmpty(ocis)) {
-                    getCache().setOfferingsForObservableProperty(
-                            obsPropIdentifier,
-                            DatasourceCacheUpdateHelper
-                                    .getAllOfferingIdentifiersFromObservationConstellationInfos(ocis));
-                    getCache().setProceduresForObservableProperty(
-                            obsPropIdentifier,
-                            DatasourceCacheUpdateHelper
-                                    .getAllProcedureIdentifiersFromObservationConstellationInfos(ocis));
+
+                if (!observableProperty.isHiddenChild()) {
+                    Collection<ObservationConstellationInfo> ocis = ociMap.get(observablePropertyIdentifier);
+                    if (CollectionHelper.isNotEmpty(ocis)) {
+                        getCache().setOfferingsForObservableProperty(observablePropertyIdentifier, DatasourceCacheUpdateHelper.getAllOfferingIdentifiersFromObservationConstellationInfos(ocis));
+                        getCache().setProceduresForObservableProperty(observablePropertyIdentifier, DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromObservationConstellationInfos(ocis));
+                    }
+                }
+
+                if (isParent) {
+                    getCache().addCompositePhenomenon(observablePropertyIdentifier);
+                    for (ObservableProperty child : children) {
+                        getCache().addCompositePhenomenonForObservableProperty(child.getIdentifier(), observablePropertyIdentifier);
+                        getCache().addObservablePropertyForCompositePhenomenon(observablePropertyIdentifier, child.getIdentifier());
+                    }
+
                 }
             }
         } else {
-            for (ObservableProperty op : ops) {
-                final String obsPropIdentifier = op.getIdentifier();
+            OfferingDAO offeringDAO = new OfferingDAO();
+            ProcedureDAO procedureDAO = new ProcedureDAO();
+            for (ObservableProperty op : observablePropertyHierarchy.keySet()) {
+                String observableProperty = op.getIdentifier();
                 try {
-                    getCache().setOfferingsForObservableProperty(
-                            obsPropIdentifier,
-                            new OfferingDAO().getOfferingIdentifiersForObservableProperty(obsPropIdentifier,
-                                    getSession()));
+                    getCache().setOfferingsForObservableProperty(observableProperty, offeringDAO.getOfferingIdentifiersForObservableProperty(observableProperty, getSession()));
                 } catch (OwsExceptionReport e) {
                     getErrors().add(e);
                 }
                 try {
-                    getCache().setProceduresForObservableProperty(
-                            obsPropIdentifier,
-                            new ProcedureDAO().getProcedureIdentifiersForObservableProperty(obsPropIdentifier,
-                                    getSession()));
+                    getCache().setProceduresForObservableProperty(observableProperty, procedureDAO.getProcedureIdentifiersForObservableProperty(observableProperty, getSession()));
                 } catch (OwsExceptionReport owse) {
                     getErrors().add(owse);
                 }

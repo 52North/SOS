@@ -35,8 +35,13 @@ import java.util.List;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
+import org.n52.sos.ogc.sensorML.elements.SmlIoPredicates;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * @since 4.0.0
@@ -144,6 +149,48 @@ public class AbstractProcess extends AbstractSensorML {
                 && component.getName().contains(SensorMLConstants.ELEMENT_NAME_CHILD_PROCEDURES)) {
             addChildProcedure(component.getProcess());
         }
+    }
+    
+    protected Predicate<SmlIo<?>> createSmlIoPredicate(String identifier) {
+        return SmlIoPredicates.identifierOrNameOrDefinition(identifier, identifier, identifier);
+    }
+    
+    public Optional<SmlIo<?>> findOutputs(Predicate<SmlIo<?>> predicate) {
+        if (isSetOutputs()) {
+            return Iterables.tryFind(getOutputs(), predicate);
+        }
+        return Optional.absent();
+    }
+
+    public boolean isOutputSet(Predicate<SmlIo<?>> predicate) {
+        return findOutputs(predicate).isPresent();
+    }
+    
+    @Override
+    public boolean supportsObservablePropertyName() {
+        return true;
+    }
+    
+    @Override
+    public boolean isSetObservablePropertyNameFor(String observableProperty) {
+        return isOutputSet(createSmlIoPredicate(observableProperty));
+    }
+    
+    @Override
+    public String getObservablePropertyNameFor(String observableProperty) {
+        if (isOutputSet(createSmlIoPredicate(observableProperty))) {
+            SmlIo<?> smlIo = findOutputs(createSmlIoPredicate(observableProperty)).get();
+            if (smlIo.getIoValue().isSetName()) {
+                return smlIo.getIoValue().getName().getValue();
+            }
+            if (smlIo.isSetTitle()) {
+                return smlIo.getTitle();
+            }
+            if (smlIo.isSetName()) {
+                return smlIo.getIoName();
+            }
+        }
+        return getObservablePropertyNameFor(observableProperty);
     }
     
     public void copyTo(AbstractProcess copyOf) {

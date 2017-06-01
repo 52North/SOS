@@ -36,7 +36,6 @@ import java.util.Set;
 
 import org.n52.sos.decode.DecoderKey;
 import org.n52.sos.decode.OperationDecoderKey;
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
@@ -48,18 +47,22 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.Sos2Constants.Extensions;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.KvpHelper;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.http.MediaTypes;
 
 /**
  * @since 4.0.0
  * 
  */
-public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
+public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder {
 
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
             Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetObservation, MediaTypes.APPLICATION_KVP);
@@ -122,11 +125,6 @@ public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
                         KvpHelper.checkParameterMultipleValues(splittedParameterValues, parameterName);
                         request.setSpatialFilter(parseSpatialFilter(splittedParameterValues, parameterName));
                     }
-
-                    // responseFormat (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.responseFormat.name())) {
-                        request.setResponseFormat(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    }
                     // namespaces (conditional)
                     else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.namespaces.name())) {
                         request.setNamespaces(parseNamespaces(parameterValues));
@@ -159,6 +157,24 @@ public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
         exceptions.throwIfNotEmpty();
 
         return request;
+    }
+    
+    @Override
+    protected boolean parseExtensionParameter(AbstractServiceRequest<?> request, String parameterValues,
+            String parameterName) throws OwsExceptionReport {
+        if ("extension".equalsIgnoreCase(parameterName)) {
+            List<String> checkParameterMultipleValues = KvpHelper.checkParameterMultipleValues(parameterValues, parameterName);
+            for (String parameterValue : checkParameterMultipleValues) {
+                final Object obj = CodingHelper.decodeXmlElement(XmlHelper.parseXmlString(parameterValue));
+                if (obj instanceof SwesExtension<?>) {
+                    request.addExtension((SwesExtension<?>) obj);
+                } else {
+                    request.addExtension(new SwesExtensionImpl<Object>().setValue(obj));
+                }
+            }
+            return true;
+        }
+        return super.parseExtensionParameter(request, parameterValues, parameterName);
     }
 
     private SwesExtensions parseExtension(final Extensions extension, final String parameterValues,

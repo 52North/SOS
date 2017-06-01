@@ -37,11 +37,12 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultEncoding;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultStructure;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.util.StringHelper;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure, HasObservableProperty, HasOffering,
         HasFeatureOfInterest, HasResultStructure, HasResultEncoding {
@@ -58,7 +59,7 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
 
     private Procedure procedure;
 
-    private FeatureOfInterest featureOfInterest;
+    private AbstractFeatureOfInterest featureOfInterest;
 
     private String identifier;
 
@@ -107,18 +108,27 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
         return this.procedure;
     }
 
+    @Override
     public void setProcedure(Procedure procedure) {
         this.procedure = procedure;
     }
+    
+    public boolean isSetProcedure() {
+        return getProcedure() != null;
+    }
 
     @Override
-    public FeatureOfInterest getFeatureOfInterest() {
+    public AbstractFeatureOfInterest getFeatureOfInterest() {
         return this.featureOfInterest;
     }
 
     @Override
-    public void setFeatureOfInterest(FeatureOfInterest featureOfInterest) {
+    public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
+    }
+    
+    public boolean isSetFeatureOfInterest() {
+        return getFeatureOfInterest() != null;
     }
 
     @Override
@@ -126,11 +136,11 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
         return this.identifier;
     }
 
-    public ResultTemplate setIdentifier(String identifier) {
+    @Override
+    public void setIdentifier(String identifier) {
         this.identifier = identifier;
-        return this;
     }
-    
+
     @Override
     public boolean isSetIdentifier() {
         return StringHelper.isNotEmpty(getIdentifier());
@@ -141,6 +151,7 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
         return resultStructure;
     }
 
+    @Override
     public boolean isSetResultStructure() {
         return StringHelper.isNotEmpty(resultStructure);
     }

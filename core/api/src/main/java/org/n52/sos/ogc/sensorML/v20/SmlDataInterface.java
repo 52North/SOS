@@ -28,44 +28,69 @@
  */
 package org.n52.sos.ogc.sensorML.v20;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
 import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
+ *         J&uuml;rrens</a>
  *
  * @since 4.3.0
  */
 public class SmlDataInterface extends SweAbstractDataComponent {
 
-	private SmlDataStreamPropertyType smlDataStreamPropertyType;
-	
-	private SweDataRecord inputParameters;
+    private SmlDataStreamPropertyType smlDataStreamPropertyType;
 
-	@Override
-	public SweDataComponentType getDataComponentType() {
-		return null;
-	}
+    private SweDataRecord inputParameters;
 
-	public SmlDataStreamPropertyType getData() {
-		return smlDataStreamPropertyType;
-	}
+    @Override
+    public SweDataComponentType getDataComponentType() {
+        return null;
+    }
 
-	public void setData(SmlDataStreamPropertyType smlDataStreamPropertyType) {
-		this.smlDataStreamPropertyType = smlDataStreamPropertyType;
-	}
+    public SmlDataStreamPropertyType getData() {
+        return smlDataStreamPropertyType;
+    }
 
-	public Boolean isSetInterfaceParameters() {
-		return inputParameters != null;
-	}
+    public void setData(SmlDataStreamPropertyType smlDataStreamPropertyType) {
+        this.smlDataStreamPropertyType = smlDataStreamPropertyType;
+    }
 
-	public SweDataRecord getInterfaceParameters() {
-		return inputParameters;
-	}
+    public Boolean isSetInterfaceParameters() {
+        return inputParameters != null;
+    }
 
-	public void setInputParameters(SweDataRecord inputParameters) {
-		this.inputParameters = inputParameters;
-	}
+    public SweDataRecord getInterfaceParameters() {
+        return inputParameters;
+    }
+
+    public void setInputParameters(SweDataRecord inputParameters) {
+        this.inputParameters = inputParameters;
+    }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor) throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor) throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    @Override
+    public SmlDataInterface clone() throws CloneNotSupportedException {
+        SmlDataInterface clone = new SmlDataInterface();
+        copyValueTo(clone);
+        clone.setData(getData());
+        if (isSetInterfaceParameters()) {
+            clone.setInputParameters(getInterfaceParameters().clone());
+        }
+        return clone;
+    }
 
 }

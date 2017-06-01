@@ -1,0 +1,4 @@
+The ORacle scripts uses the schema/database "oracle".
+
+If you want to create/update/drop your SOS tables, 
+please use an editor and replace "oracle" to your schema/database in the .sql files.

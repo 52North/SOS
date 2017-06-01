@@ -30,9 +30,7 @@ package org.n52.sos.ds;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -69,10 +67,10 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
     protected void setOperationsMetadata(final OwsOperation opsMeta, final String service, final String version)
             throws OwsExceptionReport {
 
-        final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getPublishedFeatureOfInterest(), version);
-//        addOfferingParameter(opsMeta);
-        addOfferingParameter(opsMeta, getPublishedOfferings());
-        addPublishedProcedureParameter(opsMeta);
+        final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
+        addOfferingParameter(opsMeta);
+        addQueryableProcedureParameter(opsMeta);
+        //addPublishedProcedureParameter(opsMeta);
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat, CodingRepository
                 .getInstance().getSupportedResponseFormats(SosConstants.SOS, version));
 
@@ -102,14 +100,14 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
         }
     }
 
-    private Collection<String> getPublishedOfferings() {
-        Set<String> procedures = getCache().getPublishedProcedures();
-        Set<String> offerings = new HashSet<>();
-        for (String procedure : procedures) {
-            offerings.addAll(getCache().getOfferingsForProcedure(procedure));
-        }
-        return offerings;
-    }
+//    private Collection<String> getPublishedOfferings() {
+//        Set<String> procedures = getCache().getPublishedProcedures();
+//        Set<String> offerings = new HashSet<>();
+//        for (String procedure : procedures) {
+//            offerings.addAll(getCache().getOfferingsForProcedure(procedure));
+//        }
+//        return offerings;
+//    }
 
     /**
      * Get the min/max phenomenon time of contained observations
@@ -152,7 +150,7 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
         }
         return resultModelsList;
     }
-
+    
     /**
      * process the GetObservation query
      * 

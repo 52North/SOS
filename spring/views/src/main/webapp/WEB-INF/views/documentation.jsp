@@ -51,7 +51,7 @@
 <c:if test="${sos:documentExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
     <li>
     	Sensor Web Client REST-API
-        <a id="rest-menuitem" class="menu-item4" target="_blank" href="<c:url value="/static/doc/api-doc/index.html" />">
+        <a id="rest-menuitem" class="menu-item4" target="_blank" href="<c:url value="https://52north.github.io/series-rest-api/" />">
             <span class="menu-title">documentation</span>
         </a>
     </li>

@@ -60,7 +60,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Implementatio of {@link XmlStreamWriter} for {@link GetObservationResponse}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
@@ -77,7 +77,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
 
     /**
      * constructor
-     * 
+     *
      * @param response
      *            {@link GetObservationResponse} to write to stream
      */
@@ -116,7 +116,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
 
     /**
      * Set the {@link GetObservationResponse} to be written to stream
-     * 
+     *
      * @param response
      *            {@link GetObservationResponse} to write to stream
      */
@@ -126,7 +126,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
 
     /**
      * Get the {@link GetObservationResponse} to write to stream
-     * 
+     *
      * @return {@link GetObservationResponse} to write
      */
     protected GetObservationResponse getResponse() {
@@ -163,8 +163,9 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                         }
                     } else {
                         do {
-                            writeObservationData(streamingObservation.nextSingleObservation(), encoder, encodingValues);
-                            writeNewLine();
+                            OmObservation observation = streamingObservation.nextSingleObservation();
+                                writeObservationData(observation, encoder, encodingValues);
+                                writeNewLine();
                         } while (streamingObservation.hasNextValue());
                     }
                 } else if (streamingObservation.getValue() != null) {
@@ -175,31 +176,31 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                 StreamingValue<?> streamingValue = (StreamingValue<?>) o.getValue();
                 if (streamingValue.hasNextValue()) {
                     if (response.isSetMergeObservation()) {
-                        if (encoder.supportsResultStreamingForMergedValues()) {
+                        if (encoder.supportsResultStreamingForMergedValues() && !response.getObservationMergeIndicator().isSetResultTime()) {
                             writeObservationData(o, encoder, encodingValues);
                             writeNewLine();
                         } else {
                             for (OmObservation obs : streamingValue.mergeObservation()) {
-                                writeObservationData(obs, encoder, encodingValues);
-                                writeNewLine();
+                                    writeObservationData(obs, encoder, encodingValues);
+                                    writeNewLine();
                             }
                         }
                     } else {
                         do {
                             OmObservation obs = streamingValue.nextSingleObservation();
                             if (obs != null) {
-                                writeObservationData(obs, encoder, encodingValues);
-                                writeNewLine();
+                                    writeObservationData(obs, encoder, encodingValues);
+                                    writeNewLine();
                             }
                         } while (streamingValue.hasNextValue());
                     }
                 } else if (streamingValue.getValue() != null) {
-                    writeObservationData(streamingValue.getValue().getValue(), encoder, encodingValues);
-                    writeNewLine();
+                        writeObservationData(streamingValue.getValue().getValue(), encoder, encodingValues);
+                        writeNewLine();
                 }
             } else {
-                writeObservationData(o, encoder, encodingValues);
-                writeNewLine();
+                    writeObservationData(o, encoder, encodingValues);
+                    writeNewLine();
             }
         }
         indent--;
@@ -230,7 +231,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
             ((StreamingEncoder<XmlObject, OmObservation>) encoder).encode(observation, getOutputStream(),
                     encodingValues.setAsDocument(true).setEmbedded(true).setIndent(indent));
         } else {
-            rawText((encoder.encode(observation, encodingValues.getAdditionalValues()))
+            rawText(encoder.encode(observation, encodingValues.getAdditionalValues())
                     .xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
         }
         indent--;
@@ -241,12 +242,12 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
 
     /**
      * Finds a O&Mv2 compatible {@link ObservationEncoder}
-     * 
+     *
      * @param responseFormat
      *            the response format
-     * 
+     *
      * @return the encoder or {@code null} if none is found
-     * 
+     *
      * @throws OwsExceptionReport
      *             if the found encoder is not a {@linkplain ObservationEncoder}
      */
@@ -264,5 +265,4 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                     .withMessage("Error while encoding response, encoder is not of type ObservationEncoder!");
         }
     }
-
 }

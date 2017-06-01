@@ -60,9 +60,9 @@ import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.Nillable;
-import org.n52.sos.util.Reference;
-import org.n52.sos.util.Referenceable;
+import org.n52.sos.w3c.Nillable;
+import org.n52.sos.w3c.xlink.Reference;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.xml.sax.SAXException;
 
 public class EReportingHeaderEncoderTest {

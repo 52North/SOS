@@ -44,7 +44,7 @@ import org.n52.sos.inspire.aqd.GeographicalName;
 import org.n52.sos.inspire.aqd.Spelling;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.Nillable;
+import org.n52.sos.w3c.Nillable;
 
 /**
  * TODO JavaDoc

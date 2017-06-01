@@ -40,6 +40,9 @@ import net.opengis.sos.x20.GetResultType;
 import net.opengis.sos.x20.GetResultType.SpatialFilter;
 
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.filter.FilterConstants;
@@ -55,17 +58,15 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.SchemaLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequest> {
+public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequest<?>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SosRequestEncoderv20.class);
 
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(Sos2Constants.NS_SOS_20,
@@ -92,14 +93,14 @@ public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequ
     }
 
     @Override
-    public XmlObject encode(final AbstractServiceRequest communicationObject) throws OwsExceptionReport {
-        final Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
+    public XmlObject encode(final AbstractServiceRequest<?> communicationObject) throws OwsExceptionReport {
+        final Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
         additionalValues.put(HelperValues.VERSION, Sos2Constants.SERVICEVERSION);
         return encode(communicationObject, additionalValues);
     }
 
     @Override
-    public XmlObject encode(final AbstractServiceRequest request, final Map<HelperValues, String> additionalValues)
+    public XmlObject encode(final AbstractServiceRequest<?> request, final Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         XmlObject encodedObject = encodeRequests(request);
         if (LOGGER.isDebugEnabled()) {
@@ -109,7 +110,7 @@ public class SosRequestEncoderv20 extends AbstractXmlEncoder<AbstractServiceRequ
         return encodedObject;
     }
 
-    private XmlObject encodeRequests(final AbstractServiceRequest request) throws OwsExceptionReport {
+    private XmlObject encodeRequests(final AbstractServiceRequest<?> request) throws OwsExceptionReport {
         if (request instanceof GetResultTemplateRequest) {
             return createGetResultTemplateRequest((GetResultTemplateRequest) request);
         } else if (request instanceof GetResultRequest) {

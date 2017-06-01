@@ -267,7 +267,7 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
 
     private class CompleteUpdate extends Update {
         private final ConcurrentLinkedQueue<PartialUpdate> updates
-                = new ConcurrentLinkedQueue<PartialUpdate>();
+                = new ConcurrentLinkedQueue<>();
 
         private final Lock lock = new ReentrantLock();
 

@@ -45,7 +45,7 @@ import org.n52.svalbard.encode.ExceptionEncoderKey;
  *
  */
 public class ExiExceptionEncoder extends ExiEncoder<OwsExceptionReport> {
-    private static final EncoderKey KEY = new ExceptionEncoderKey(MediaTypes.APPLICATION_XML);
+    private static final EncoderKey KEY = new ExceptionEncoderKey(MediaTypes.APPLICATION_EXI);
 
     @Override
     public Set<EncoderKey> getKeys() {

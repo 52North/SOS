@@ -53,7 +53,8 @@ import com.google.common.collect.Sets;
  * 
  */
 public class CollectionHelperTest {
-    private final Set<String> EMPTY_COLLECTION = new HashSet<String>(0);
+
+    private final Set<String> EMPTY_COLLECTION = new HashSet<>(0);
 
     @Test
     public void should_return_empty_list_when_union_receives_null() {
@@ -62,32 +63,32 @@ public class CollectionHelperTest {
 
     @Test
     public void should_return_empty_list_when_unionOfListOfLists_receives_empty_list() {
-        final Collection<? extends Collection<String>> emptyList = new ArrayList<Set<String>>(0);
+        final Collection<? extends Collection<String>> emptyList = new ArrayList<>(0);
         assertThat(unionOfListOfLists(emptyList), is(EMPTY_COLLECTION));
     }
 
     @Test
     public void should_return_union_of_values_without_duplicates() {
-        final Collection<String> listA = new ArrayList<String>(2);
+        final Collection<String> listA = new ArrayList<>(2);
         listA.add("A");
         listA.add("B");
 
-        final Collection<String> listB = new ArrayList<String>(4);
+        final Collection<String> listB = new ArrayList<>(4);
         listB.add("B");
         listB.add("C");
         listB.add(null);
 
-        final Collection<String> listC = new ArrayList<String>(2);
+        final Collection<String> listC = new ArrayList<>(2);
         listC.add("");
 
-        final Collection<Collection<String>> col = new ArrayList<Collection<String>>(4);
+        final Collection<Collection<String>> col = new ArrayList<>(4);
         col.add(listA);
         col.add(listB);
         col.add(listC);
         col.add(null);
         col.add(new ArrayList<String>(0));
 
-        final Collection<String> check = new HashSet<String>(4);
+        final Collection<String> check = new HashSet<>(4);
         check.add("A");
         check.add("B");
         check.add("C");
@@ -97,26 +98,26 @@ public class CollectionHelperTest {
 
     @Test
     public void isNotEmpty_should_return_true_if_map_is_not_empty() {
-        final Map<String, String> map = new HashMap<String, String>(1);
+        final Map<String, String> map = new HashMap<>(1);
         map.put("key", "value");
         assertThat(CollectionHelper.isNotEmpty(map), is(TRUE));
     }
 
     @Test
     public void isNotEmpty_should_return_false_if_map_is_empty() {
-        final Map<String, String> map = new HashMap<String, String>(0);
+        final Map<String, String> map = new HashMap<>(0);
         assertThat(CollectionHelper.isNotEmpty(map), is(FALSE));
     }
 
     @Test
     public void isEmpty_should_return_true_if_map_is_empty() {
-        final Map<String, String> map = new HashMap<String, String>(0);
+        final Map<String, String> map = new HashMap<>(0);
         assertThat(CollectionHelper.isEmpty(map), is(TRUE));
     }
 
     @Test
     public void isEmpty_should_return_false_if_map_is_not_empty() {
-        final Map<String, String> map = new HashMap<String, String>(1);
+        final Map<String, String> map = new HashMap<>(1);
         map.put("key", "value");
         assertThat(CollectionHelper.isEmpty(map), is(FALSE));
     }

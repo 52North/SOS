@@ -1359,11 +1359,14 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     @Override
     public void removeFeaturesOfInterestForOffering(final String offering) {
         notNullOrEmpty(OFFERING, offering);
-        LOG.trace("Removing featuresOfInterest for offering {}", offering);
-        for (String featureOfInterest : featuresOfInterestForOfferings.get(offering)) {
-            this.offeringsForFeaturesOfInterest.removeWithKey(featureOfInterest, offering);
+        // prevent NPEs in foreach of Map.get(..)
+        if (featuresOfInterestForOfferings.containsKey(offering)) {
+            LOG.trace("Removing featuresOfInterest for offering {}", offering);
+            for (String featureOfInterest : featuresOfInterestForOfferings.get(offering)) {
+                this.offeringsForFeaturesOfInterest.removeWithKey(featureOfInterest, offering);
+            }
+            this.featuresOfInterestForOfferings.remove(offering);
         }
-        this.featuresOfInterestForOfferings.remove(offering);
     }
 
     @Override

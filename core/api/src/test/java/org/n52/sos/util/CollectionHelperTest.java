@@ -153,4 +153,5 @@ public class CollectionHelperTest {
     	assertThat(iterator.next(),is(3));
     	assertThat(iterator.next(),is(4));
     }
+
 }

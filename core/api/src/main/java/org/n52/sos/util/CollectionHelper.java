@@ -546,6 +546,5 @@ public final class CollectionHelper {
 		}
 		return split;
 	}
-    
 
 }

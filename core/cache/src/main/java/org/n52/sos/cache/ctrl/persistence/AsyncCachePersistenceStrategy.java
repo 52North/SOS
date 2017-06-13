@@ -103,7 +103,7 @@ public class AsyncCachePersistenceStrategy
         persistCache(cache);
     }
 
-private class Updater implements Runnable {
+    private class Updater implements Runnable {
         
         private boolean reschedule = true;
         

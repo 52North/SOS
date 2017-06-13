@@ -46,6 +46,7 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
@@ -57,8 +58,10 @@ import net.opengis.om.x20.OMObservationType;
 
 public class GWGeologyLogObservationTypeEncoder extends OmEncoderv20 {
     
-    private static final Set<EncoderKey> ENCODER_KEYS =
-            CodingHelper.encoderKeysForElements(GWMLConstants.NS_GWML_22, OmObservation.class);
+    @SuppressWarnings("unchecked")
+    private static final Set<EncoderKey> ENCODER_KEYS = CollectionHelper.union(
+            CodingHelper.encoderKeysForElements(GWMLConstants.NS_GWML_22, OmObservation.class),
+            CodingHelper.encoderKeysForElements(GWMLConstants.NS_GWML_WELL_22, OmObservation.class));
     
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
             SupportedTypeKey.ObservationType, (Set<String>) Sets.newHashSet(GWMLConstants.OBS_TYPE_GEOLOGY_LOG, 
@@ -155,11 +158,14 @@ public class GWGeologyLogObservationTypeEncoder extends OmEncoderv20 {
     @Override
     public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
         nameSpacePrefixMap.put(GWMLConstants.NS_GWML_22, GWMLConstants.NS_GWML_2_PREFIX);
+        nameSpacePrefixMap.put(GWMLConstants.NS_GWML_WELL_22, GWMLConstants.NS_GWML_WELL_2_PREFIX);
     }
 
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet(GWMLConstants.GWML_22_SCHEMA_LOCATION);
+        Set<SchemaLocation> schemaLocations = Sets.newHashSet(GWMLConstants.GWML_22_SCHEMA_LOCATION, GWMLConstants.GWML_WELL_22_SCHEMA_LOCATION);
+        schemaLocations.addAll(super.getSchemaLocations());
+        return schemaLocations;
     }
 
     private void encodeStartDepth(StartDepth sd, SweQuantity sweQuantity) throws OwsExceptionReport {

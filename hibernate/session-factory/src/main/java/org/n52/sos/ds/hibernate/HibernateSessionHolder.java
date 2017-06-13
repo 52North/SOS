@@ -37,16 +37,16 @@ import org.n52.sos.service.Configurator;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class HibernateSessionHolder {
 
     private final ConnectionProvider connectionProvider;
 
     public HibernateSessionHolder() {
-        this(Configurator.getInstance().getDataConnectionProvider());
+        this.connectionProvider = Configurator.getInstance().getDataConnectionProvider();
     }
-    
+
     public HibernateSessionHolder(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
@@ -60,13 +60,20 @@ public class HibernateSessionHolder {
 
     public Session getSession() throws OwsExceptionReport {
         try {
-            return getSession(connectionProvider.getConnection());
+            return getSession(getConnectionProvider().getConnection());
         } catch (ConnectionProviderException cpe) {
             throw new NoApplicableCodeException().causedBy(cpe).withMessage("Error while getting new Session!");
         }
     }
 
     public void returnSession(Session session) {
-        this.connectionProvider.returnConnection(session);
+        getConnectionProvider().returnConnection(session);
+    }
+
+    private ConnectionProvider getConnectionProvider() {
+        if (Configurator.getInstance() != null) {
+            return Configurator.getInstance().getDataConnectionProvider();
+        }
+        return connectionProvider;
     }
 }

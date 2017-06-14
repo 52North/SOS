@@ -736,17 +736,17 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             builder.append(HIBERNATE_MAPPING_CORE_PATH)
                    .append(SessionFactoryProvider.PATH_SEPERATOR)
                    .append(getDatabaseConceptMappingDirectory(settings));
-        }
-        if (isTransactionalDatasource()) {
-            Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
-            if (t != null && t) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+            if (isTransactionalDatasource()) {
+                Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
+                if (t != null && t) {
+                    builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+                }
             }
-        }
-        if (isMultiLanguageDatasource()) {
-            Boolean t = (Boolean) settings.get(multilingualismDefinition.getKey());
-            if (t != null && t) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_I18N_PATH);
+            if (isMultiLanguageDatasource()) {
+                Boolean t = (Boolean) settings.get(multilingualismDefinition.getKey());
+                if (t != null && t) {
+                    builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_I18N_PATH);
+                }
             }
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());

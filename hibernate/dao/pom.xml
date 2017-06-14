@@ -95,7 +95,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-utils</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

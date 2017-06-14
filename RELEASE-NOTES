@@ -6,6 +6,20 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
 
+    Release 52n-sensorweb-sos-4.3.15
+=====================================
+
+  --- New features ---
+
+    
+  --- Changes ---
+    
+  
+  --- Fixed issues ---
+
+    * avoid orphaned session objects after re-configure SOS
+    * prevents resetting HIBERNATE_DIRECTORY config (missing extension/readonly folder)
+    
 
     Release 52n-sensorweb-sos-4.3.14
 =====================================

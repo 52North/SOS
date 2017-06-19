@@ -233,7 +233,7 @@ public class InsertDAOTest extends HibernateTestCase {
 
     private InsertResultTemplateDAO insertResultTemplateDAO = new InsertResultTemplateDAO();
 
-    private InsertResultDAO insertResultDAO;
+    private InsertResultDAO insertResultDAO = new InsertResultDAO();
 
     private GetObservationDAO getObsDAO = new GetObservationDAO();
 
@@ -254,7 +254,6 @@ public class InsertDAOTest extends HibernateTestCase {
 
     @Before
     public void setUp() throws OwsExceptionReport, ConverterException {
-        insertResultDAO = (InsertResultDAO)OperationDAORepository.getInstance().getOperationDAO(SosConstants.SOS, Sos2Constants.Operations.InsertResult.name());
         Session session = getSession();
         insertSensor(PROCEDURE1, OFFERING1, OBSPROP1, null);
         insertSensor(PROCEDURE2, OFFERING2, OBSPROP2, PROCEDURE1);

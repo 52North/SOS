@@ -40,8 +40,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractInsertResultDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -56,7 +54,6 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.ObservationType;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
@@ -102,12 +99,11 @@ import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.response.InsertResultResponse;
-import org.n52.sos.service.MiscSettings;
+import org.n52.sos.service.ServiceConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -117,21 +113,18 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  * 
  */
-@Configurable
 public class InsertResultDAO extends AbstractInsertResultDAO implements CapabilitiesExtensionProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultDAO.class);
     private static final int FLUSH_THRESHOLD = 50;
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
     private ResultHandlingHelper helper = new  ResultHandlingHelper();
-    private boolean convertComplexProfileToSingleProfiles;
 
     /**
      * constructor
      */
     public InsertResultDAO() {
         super(SosConstants.SOS);
-        SettingsManager.getInstance().configure(this);
     }
     
     @Override
@@ -561,6 +554,10 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         return oc;
     }
 
+    private boolean isConvertComplexProfileToSingleProfiles() {
+        return ServiceConfiguration.getInstance().isConvertComplexProfileToSingleProfiles();
+    }
+
     @Override
     public CapabilitiesExtension getExtension() {
         final SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
@@ -588,13 +585,6 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         return getOperationName();
     }
     
-    @Setting(MiscSettings.CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES)
-    public void setConvertComplexProfileToSingleProfiles(boolean convertComplexProfileToSingleProfiles) {
-        this.convertComplexProfileToSingleProfiles = convertComplexProfileToSingleProfiles;
-    }
-
-    public boolean isConvertComplexProfileToSingleProfiles() {
-        return this.convertComplexProfileToSingleProfiles;
-    }
+    
 
 }

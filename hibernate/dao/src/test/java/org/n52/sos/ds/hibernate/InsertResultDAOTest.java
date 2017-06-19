@@ -53,13 +53,8 @@ public class InsertResultDAOTest extends HibernateTestCase {
     private static final String OBS_PROP_2 = "obsProp_2";
     private static final String OBS_PROP_3 = "obsProp_3";
     
-    private InsertResultDAO insertResultDAO;
+    private InsertResultDAO insertResultDAO = new InsertResultDAO();
     
-    
-    @Before
-    public void setUp() {
-        insertResultDAO = (InsertResultDAO)OperationDAORepository.getInstance().getOperationDAO(SosConstants.SOS, Sos2Constants.Operations.InsertResult.name());
-    }
     
     @AfterClass
     public static void cleanUp() {

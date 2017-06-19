@@ -35,7 +35,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.sos.config.SettingsManager;
-import org.n52.sos.ds.OperationDAO;
 import org.n52.sos.ds.OperationDAORepository;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmConstants;
@@ -45,7 +44,6 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
-import org.n52.sos.service.Configurator;
 
 import com.google.common.collect.Sets;
 

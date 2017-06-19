@@ -52,6 +52,7 @@ import org.junit.runners.Parameterized;
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.convert.ConverterException;
+import org.n52.sos.ds.OperationDAORepository;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
@@ -232,7 +233,7 @@ public class InsertDAOTest extends HibernateTestCase {
 
     private InsertResultTemplateDAO insertResultTemplateDAO = new InsertResultTemplateDAO();
 
-    private InsertResultDAO insertResultDAO = new InsertResultDAO();
+    private InsertResultDAO insertResultDAO;
 
     private GetObservationDAO getObsDAO = new GetObservationDAO();
 
@@ -253,7 +254,7 @@ public class InsertDAOTest extends HibernateTestCase {
 
     @Before
     public void setUp() throws OwsExceptionReport, ConverterException {
-        
+        insertResultDAO = (InsertResultDAO)OperationDAORepository.getInstance().getOperationDAO(SosConstants.SOS, Sos2Constants.Operations.InsertResult.name());
         Session session = getSession();
         insertSensor(PROCEDURE1, OFFERING1, OBSPROP1, null);
         insertSensor(PROCEDURE2, OFFERING2, OBSPROP2, PROCEDURE1);

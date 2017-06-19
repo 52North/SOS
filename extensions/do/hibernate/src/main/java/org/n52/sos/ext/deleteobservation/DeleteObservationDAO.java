@@ -42,6 +42,8 @@ import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
@@ -148,6 +150,15 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
     
     private void delete(Observation<?> observation, Session session) {
         if (observation != null) {
+            if (observation instanceof ComplexObservation) {
+                for (Observation<?> o : ((ComplexObservation)observation).getValue()) {
+                    delete(o, session);
+                }
+            } else if (observation instanceof ProfileObservation) {
+                for (Observation<?> o : ((ProfileObservation)observation).getValue()) {
+                    delete(o, session);
+                }
+            }
             observation.setDeleted(true);
             session.saveOrUpdate(observation);
             checkSeriesForFirstLatest(observation, session);
@@ -166,8 +177,8 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
     private void checkSeriesForFirstLatest(Observation<?> observation, Session session) {
         if (observation instanceof SeriesObservation) {
             Series series = ((SeriesObservation) observation).getSeries();
-            if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())
-                    || series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
+            if ((series.isSetFirstTimeStamp() && series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart()))
+                    || (series.isSetLastTimeStamp() && series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd()))) {
                 new SeriesDAO().updateSeriesAfterObservationDeletion(series, (SeriesObservation) observation, session);
             }
         }

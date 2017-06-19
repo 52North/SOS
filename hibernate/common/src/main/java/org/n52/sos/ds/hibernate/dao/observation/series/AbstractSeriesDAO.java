@@ -550,7 +550,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      */
     public void updateSeriesAfterObservationDeletion(Series series, SeriesObservation<?> observation, Session session) {
         SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
-        if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
+        if (series.isSetFirstTimeStamp() && series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
             SeriesObservation<?> firstObservation = seriesObservationDAO.getFirstObservationFor(series, session);
             if (firstObservation != null) {
 	            series.setFirstTimeStamp(firstObservation.getPhenomenonTimeStart());
@@ -564,7 +564,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 	            }
             }
         } 
-        if (series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
+        if (series.isSetLastTimeStamp() && series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
             SeriesObservation<?> latestObservation = seriesObservationDAO.getLastObservationFor(series, session);
             if (latestObservation != null) {
             	series.setLastTimeStamp(latestObservation.getPhenomenonTimeEnd());

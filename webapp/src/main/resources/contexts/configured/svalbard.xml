@@ -78,4 +78,5 @@
     <bean class="org.n52.svalbard.encode.StaGetDatastreamResponseEncoder"/>
     <bean class="org.n52.svalbard.encode.StaDatastreamEncoder"/>
     <bean class="org.n52.svalbard.encode.StaObservationEncoder"/>
+    <bean class="org.n52.svalbard.encode.StaFeatureOfInterestEncoder"/>
 </beans>

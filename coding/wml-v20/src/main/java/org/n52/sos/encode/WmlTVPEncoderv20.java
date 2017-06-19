@@ -40,7 +40,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.streaming.WmlTVPEncoderv20XmlStreamWriter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.MultiObservationValues;

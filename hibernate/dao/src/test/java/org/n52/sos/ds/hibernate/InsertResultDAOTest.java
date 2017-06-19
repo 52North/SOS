@@ -31,13 +31,21 @@ package org.n52.sos.ds.hibernate;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.n52.sos.config.SettingsManager;
+import org.n52.sos.ds.OperationDAO;
+import org.n52.sos.ds.OperationDAORepository;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+import org.n52.sos.service.Configurator;
 
 import com.google.common.collect.Sets;
 
@@ -47,7 +55,19 @@ public class InsertResultDAOTest extends HibernateTestCase {
     private static final String OBS_PROP_2 = "obsProp_2";
     private static final String OBS_PROP_3 = "obsProp_3";
     
-    private InsertResultDAO insertResultDAO = new InsertResultDAO();
+    private InsertResultDAO insertResultDAO;
+    
+    
+    @Before
+    public void setUp() {
+        insertResultDAO = (InsertResultDAO)OperationDAORepository.getInstance().getOperationDAO(SosConstants.SOS, Sos2Constants.Operations.InsertResult.name());
+    }
+    
+    @AfterClass
+    public static void cleanUp() {
+        H2Configuration.recreate();
+        SettingsManager.getInstance().cleanup();
+    }
     
     @Test
     public void test_getIndexForObservedPropertyAndUnit_SimpleObservation() throws CodedException {

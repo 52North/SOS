@@ -39,15 +39,25 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.config.SettingsManager;
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractInsertResultDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
+import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
+import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
+import org.n52.sos.ds.hibernate.dao.OfferingDAO;
+import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
+import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.ObservationType;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.Unit;
@@ -66,6 +76,7 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
@@ -91,10 +102,12 @@ import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.response.InsertResultResponse;
+import org.n52.sos.service.MiscSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -104,18 +117,21 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  * 
  */
+@Configurable
 public class InsertResultDAO extends AbstractInsertResultDAO implements CapabilitiesExtensionProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultDAO.class);
     private static final int FLUSH_THRESHOLD = 50;
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
     private ResultHandlingHelper helper = new  ResultHandlingHelper();
+    private boolean convertComplexProfileToSingleProfiles;
 
     /**
      * constructor
      */
     public InsertResultDAO() {
         super(SosConstants.SOS);
+        SettingsManager.getInstance().configure(this);
     }
     
     @Override
@@ -150,6 +166,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
             }
 
             final ObservationConstellationDAO obsConstDao = new ObservationConstellationDAO();
+            final ObservationTypeDAO obsTypeDao =  new ObservationTypeDAO();
             Map<OmObservationConstellation, ObservationConstellation> obsConsts = new HashMap<>();
 
             int insertion = 0;
@@ -160,8 +177,12 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
             for (final OmObservation observation : observations) {
                 OmObservationConstellation omObsConst = observation.getObservationConstellation();
                 if (!obsConsts.containsKey(omObsConst)) {
-                    obsConsts.put(omObsConst, 
-                            obsConstDao.getObservationConstellation(omObsConst, session));
+                    ObservationConstellation oc = obsConstDao.getObservationConstellation(omObsConst, session);
+                    if (oc != null) {
+                        obsConsts.put(omObsConst, oc);
+                    } else if (oc == null && isConvertComplexProfileToSingleProfiles() && observation.isSetValue() && observation.getValue().isSetValue() && observation.getValue().getValue() instanceof ProfileValue) {
+                        obsConsts.put(omObsConst, insertObservationConstellationForProfiles(obsConstDao, obsTypeDao, observation, session));
+                    }
                 }
                 ObservationConstellation obsConst = obsConsts.get(observation.getObservationConstellation());
                 AbstractFeatureOfInterest feature = null;
@@ -271,7 +292,8 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     protected List<OmObservation> getSingleObservationsFromObservation(final OmObservation observation)
             throws OwsExceptionReport {
         try {
-            return HibernateObservationUtilities.unfoldObservation(observation);
+            
+            return HibernateObservationUtilities.unfoldObservation(observation, isConvertComplexProfileToSingleProfiles());
         } catch (final Exception e) {
             throw new InvalidParameterValueException()
                     .causedBy(e)
@@ -526,6 +548,19 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         return values.split(separator);
     }
 
+    private ObservationConstellation insertObservationConstellationForProfiles(ObservationConstellationDAO obsConstDao,
+            ObservationTypeDAO obsTypeDao, OmObservation o, Session session) {
+        Procedure procedure = new ProcedureDAO().getProcedureForIdentifier(o.getObservationConstellation().getProcedureIdentifier(), session);
+        ObservableProperty observableProperty = new ObservablePropertyDAO().getOrInsertObservableProperty(o.getObservationConstellation().getObservableProperty(), session);
+        Offering offering = new OfferingDAO().getOfferingForIdentifier(o.getObservationConstellation().getOfferings().iterator().next(), session);
+        
+        ObservationConstellation oc = obsConstDao.checkOrInsertObservationConstellation(procedure, observableProperty, offering, false, session);
+        if (o.getObservationConstellation().isSetObservationType()) {
+            oc.setObservationType(obsTypeDao.getObservationTypeObject(o.getObservationConstellation().getObservationType(), session));
+        }
+        return oc;
+    }
+
     @Override
     public CapabilitiesExtension getExtension() {
         final SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
@@ -551,6 +586,15 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     @Override
     public String getRelatedOperation() {
         return getOperationName();
+    }
+    
+    @Setting(MiscSettings.CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES)
+    public void setConvertComplexProfileToSingleProfiles(boolean convertComplexProfileToSingleProfiles) {
+        this.convertComplexProfileToSingleProfiles = convertComplexProfileToSingleProfiles;
+    }
+
+    public boolean isConvertComplexProfileToSingleProfiles() {
+        return this.convertComplexProfileToSingleProfiles;
     }
 
 }

@@ -70,7 +70,10 @@ public class ParameterHolder {
     }
     
     public boolean removeParameter(NamedValue<?> parameter) {
-        return this.parameter.remove(parameter);
+        if (parameter != null) {
+            return this.parameter.remove(parameter);
+        }
+        return false;
     }
     
     public boolean isSetParameter() {

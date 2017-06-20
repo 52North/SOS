@@ -293,6 +293,19 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         return existing;
     }
 
+    public ObservableProperty getOrInsertObservableProperty(AbstractPhenomenon observableProperty, Session session) {
+        ObservableProperty obsProp =getObservablePropertyForIdentifier(observableProperty.getIdentifier(), session);
+        if (obsProp == null) {
+            obsProp = new ObservableProperty();
+            addIdentifierNameDescription(observableProperty, obsProp, session);
+            obsProp.setHiddenChild(false);
+            session.save(obsProp);
+            session.flush();
+            session.refresh(obsProp);
+        }
+        return obsProp;
+    }
+
     protected void insertNonExisting(
             List<? extends AbstractPhenomenon> observableProperties,
             boolean hiddenChild,

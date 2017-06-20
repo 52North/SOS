@@ -31,15 +31,13 @@ package org.n52.sos.ds.hibernate;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Test;
 import org.n52.sos.config.SettingsManager;
-import org.n52.sos.ds.OperationDAORepository;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
@@ -55,11 +53,14 @@ public class InsertResultDAOTest extends HibernateTestCase {
     
     private InsertResultDAO insertResultDAO = new InsertResultDAO();
     
-    
+    @After
+    public void tearDown() throws OwsExceptionReport, InterruptedException {
+        H2Configuration.truncate();
+    }
+
     @AfterClass
     public static void cleanUp() {
         H2Configuration.recreate();
-        SettingsManager.getInstance().cleanup();
     }
     
     @Test

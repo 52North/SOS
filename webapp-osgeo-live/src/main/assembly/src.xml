@@ -9,13 +9,13 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <files>
         <file>
-            <source>src/assembly/52nSOS.png</source>
+            <source>src/main/assembly/52nSOS.png</source>
         </file>
         <file>
-            <source>src/assembly/52nSOS.sql</source>
+            <source>src/main/assembly/52nSOS.sql</source>
         </file>
         <file>
-            <source>src/assembly/logo.gif</source>
+            <source>src/main/assembly/logo.gif</source>
         </file>
         <file>
             <source>target/${conf.sos.name}.war</source>

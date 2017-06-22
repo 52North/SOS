@@ -42,7 +42,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptors>
-            <descriptor>src/assembly/src.xml</descriptor>
+            <descriptor>src/main/assembly/src.xml</descriptor>
           </descriptors>
         </configuration>
         <executions>

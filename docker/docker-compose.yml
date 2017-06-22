@@ -3,7 +3,7 @@
 # - a tomcat
 # - a nginx proxy
 # - a postgresql database server
-# 
+#
 # http://localhost:80/ redirects to the /52n-sos-webapp and uses the latest version of the tomcat M.x branch with Java 8 JRE.
 #
 # When configuring the SOS, please use the following information:
@@ -36,8 +36,7 @@ services:
     links:
       - db:postgres
     volumes:
-      - "../webapp-bundle/target/52nSOS.war:/usr/local/tomcat/webapps/52nSOS.war"
-      - "../webapp-bundle/target/52nSOS:/usr/local/tomcat/webapps/52nSOS"
+      - "../webapp-osgeo-live/target/52nSOS:/usr/local/tomcat/webapps/52nSOS"
       - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
     depends_on:
       - db

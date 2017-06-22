@@ -59,7 +59,7 @@
 
     via the [I18N settings](http://localhost:8080/52nSOS/admin/i18n).
 
-  1. Export the current database into file ```52nSOS.sql``` in ```webapp-osgeo-live/src/assembly``` folder using the following settings in e.g. PGAdmin III:
+  1. Export the current database into file ```52nSOS.sql``` in ```webapp-osgeo-live/src/main/assembly``` folder using the following settings in e.g. PGAdmin III:
 
     * File: ```52nSOS.sql```
     * Format: ```plain```

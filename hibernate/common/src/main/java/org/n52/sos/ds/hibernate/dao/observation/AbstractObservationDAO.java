@@ -82,6 +82,7 @@ import org.n52.shetland.ogc.om.values.SweDataArrayValue;
 import org.n52.shetland.ogc.om.values.TLVTValue;
 import org.n52.shetland.ogc.om.values.TVPValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.TimeRangeValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
@@ -1625,6 +1626,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 daos.parameter().insertParameter(sosObservation.getParameter(), observation.getObservationId(), caches.units, session);
             }
             return observation;
+        }
+
+        @Override
+        public Observation<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+            throw notSupported(value);
         }
 
         private  static Geometry getSamplingGeometry(GeometryHandler geometryHandler, OmObservation sosObservation) throws OwsExceptionReport {

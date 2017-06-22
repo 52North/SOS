@@ -91,8 +91,8 @@
         <iceland.version>2-SNAPSHOT</iceland.version>
         <shetland.version>1-SNAPSHOT</shetland.version>
         <svalbard.version>1-SNAPSHOT</svalbard.version>
-        <janmayen.version>1.0.0</janmayen.version>
-        <faroe.version>1.1.0</faroe.version>
+        <janmayen.version>1.1.0</janmayen.version>
+        <faroe.version>1.2.0</faroe.version>
         
         <dataset.api.version>2.0.0-rc.2-SNAPSHOT</dataset.api.version>
         <dataset.dao.version>2.0.0-SNAPSHOT</dataset.dao.version>

@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.util;
 import org.hibernate.criterion.Criterion;
 
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 
@@ -46,11 +47,26 @@ public class SpatialRestrictions {
     }
 
     /**
+     * Get the spatial restriction for the supplied filter.
+     *
+     * @param propertyName the column to apply the filter to
+     * @param filter       the filter
+     *
+     * @return the criterion
+     *
+     * @throws OwsExceptionReport if the spatial filter is not supported
+     */
+    public static Criterion filter(String propertyName, SpatialFilter filter) throws OwsExceptionReport {
+        return filter(propertyName, filter.getOperator(), filter.getGeometry().toGeometry());
+
+    }
+
+    /**
      * Get spatial filter restrictions.
      *
      * @param propertyName column name
-     * @param operator Spatial filter
-     * @param geometry the geometry
+     * @param operator     Spatial filter
+     * @param geometry     the geometry
      *
      * @return filter restriction
      *

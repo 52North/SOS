@@ -42,13 +42,13 @@ import org.junit.rules.ErrorCollector;
 
 import org.n52.shetland.aqd.EReportingChange;
 import org.n52.shetland.aqd.EReportingHeader;
-import org.n52.shetland.inspire.Address;
 import org.n52.shetland.inspire.Contact;
 import org.n52.shetland.inspire.GeographicalName;
 import org.n52.shetland.inspire.InspireID;
 import org.n52.shetland.inspire.Pronunciation;
 import org.n52.shetland.inspire.RelatedParty;
 import org.n52.shetland.inspire.Spelling;
+import org.n52.shetland.inspire.ad.AddressRepresentation;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.w3c.Nillable;
@@ -90,8 +90,8 @@ public class ReportingHeaderReaderTest {
                                         .addTelephoneVoice("asdfasdf")
                                         .setHoursOfService("asdfasdf")
                                         .setWebsite(Nillable.unknown())
-                                        .setElectronicMailAddress(Nillable.unknown())
-                                        .setAddress(new Address()
+                                        .setElectronicMailAddressRepresentation(Nillable.unknown())
+                                        .setAddressRepresentation(new AddressRepresentation()
                                                 .setPostCode("12341234")
                                                 .setAddressFeature(new Reference()
                                                         .setHref(URI.create("http://asdfasdf")))
@@ -186,13 +186,13 @@ public class ReportingHeaderReaderTest {
         Contact c2 = header.getReportingAuthority().getContact().get();
         errors.checkThat(c1, is(c2));
         errors.checkThat(c1.getContactInstructions(), is(c2.getContactInstructions()));
-        errors.checkThat(c1.getElectronicMailAddress(), is(c2.getElectronicMailAddress()));
+        errors.checkThat(c1.getElectronicMailAddressRepresentation(), is(c2.getElectronicMailAddressRepresentation()));
         errors.checkThat(c1.getHoursOfService(), is(c2.getHoursOfService()));
         errors.checkThat(c1.getTelephoneFacsimile(), is(c2.getTelephoneFacsimile()));
         errors.checkThat(c1.getTelephoneVoice(), is(c2.getTelephoneVoice()));
         errors.checkThat(c1.getWebsite(), is(c2.getWebsite()));
-        Address a1 = c1.getAddress().get();
-        Address a2 = c2.getAddress().get();
+        AddressRepresentation a1 = c1.getAddressRepresentation().get();
+        AddressRepresentation a2 = c2.getAddressRepresentation().get();
 
         errors.checkThat(a1.getAddressAreas(), is(a2.getAddressAreas()));
         errors.checkThat(a1.getAddressFeature(), is(a2.getAddressFeature()));

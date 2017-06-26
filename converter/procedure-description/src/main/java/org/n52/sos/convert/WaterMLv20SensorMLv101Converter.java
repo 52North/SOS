@@ -44,8 +44,8 @@ import org.n52.shetland.ogc.sensorML.ProcessModel;
 import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.System;
-import org.n52.shetland.ogc.wml.ObservationProcess;
-import org.n52.shetland.ogc.wml.WaterMLConstants;
+import org.n52.shetland.ogc.om.series.wml.ObservationProcess;
+import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;

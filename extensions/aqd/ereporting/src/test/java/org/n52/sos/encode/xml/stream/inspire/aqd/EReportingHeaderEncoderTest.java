@@ -52,13 +52,13 @@ import org.xml.sax.SAXException;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.EReportingChange;
 import org.n52.shetland.aqd.EReportingHeader;
-import org.n52.shetland.inspire.Address;
 import org.n52.shetland.inspire.Contact;
 import org.n52.shetland.inspire.GeographicalName;
 import org.n52.shetland.inspire.InspireID;
 import org.n52.shetland.inspire.Pronunciation;
 import org.n52.shetland.inspire.RelatedParty;
 import org.n52.shetland.inspire.Spelling;
+import org.n52.shetland.inspire.ad.AddressRepresentation;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -94,8 +94,8 @@ public class EReportingHeaderEncoderTest {
                                         .addTelephoneVoice("asdfasdf")
                                         .setHoursOfService("asdfasdf")
                                         .setWebsite(Nillable.unknown())
-                                        .setElectronicMailAddress(Nillable.unknown())
-                                        .setAddress(new Address()
+                                        .setElectronicMailAddressRepresentation(Nillable.unknown())
+                                        .setAddressRepresentation(new AddressRepresentation()
                                                 .setPostCode("12341234")
                                                 .setAddressFeature(new Reference()
                                                         .setHref(URI.create("http://asdfasdf")))

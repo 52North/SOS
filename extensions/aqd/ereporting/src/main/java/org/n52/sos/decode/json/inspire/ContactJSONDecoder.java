@@ -29,8 +29,8 @@
 package org.n52.sos.decode.json.inspire;
 
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.shetland.inspire.Address;
 import org.n52.shetland.inspire.Contact;
+import org.n52.shetland.inspire.ad.AddressRepresentation;
 import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -45,11 +45,11 @@ public class ContactJSONDecoder extends AbstractJSONDecoder<Contact> {
     public Contact decodeJSON(JsonNode node, boolean validate)
             throws DecodingException {
         Contact contact = new Contact();
-        contact.setAddress(decodeJsonToNillable(node
-                                            .path(AQDJSONConstants.ADDRESS), Address.class));
+        contact.setAddressRepresentation(decodeJsonToNillable(node
+                                            .path(AQDJSONConstants.ADDRESS), AddressRepresentation.class));
         contact.setContactInstructions(parseNillableString(node
                 .path(AQDJSONConstants.CONTACT_INSTRUCTIONS)));
-        contact.setElectronicMailAddress(parseNillableString(node
+        contact.setElectronicMailAddressRepresentation(parseNillableString(node
                 .path(AQDJSONConstants.ELECTRONIC_MAIL_ADDRESS)));
         contact.setHoursOfService(parseNillableString(node
                 .path(AQDJSONConstants.HOURS_OF_SERVICE)));

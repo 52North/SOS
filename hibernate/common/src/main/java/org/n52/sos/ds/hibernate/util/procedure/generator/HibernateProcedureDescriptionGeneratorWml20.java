@@ -39,11 +39,11 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.series.wml.ObservationProcess;
+import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.ogc.wml.ObservationProcess;
-import org.n52.shetland.ogc.wml.WaterMLConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 

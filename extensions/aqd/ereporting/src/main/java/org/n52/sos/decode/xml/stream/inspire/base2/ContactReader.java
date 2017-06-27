@@ -52,13 +52,13 @@ public class ContactReader extends XmlReader<Contact> {
     protected void read(QName name)
             throws XMLStreamException, OwsExceptionReport {
         if (name.equals(AqdConstants.QN_BASE2_ADDRESS)) {
-            this.contact.setAddress(delegate(new AddressReader()));
+            this.contact.setAddressRepresentation(delegate(new AddressReader()));
         } else if (name.equals(AqdConstants.QN_BASE2_CONTACT_INSTRUCTIONS)) {
             this.contact
                     .setContactInstructions(delegate(new NillableFreeTextReader()));
         } else if (name.equals(AqdConstants.QN_BASE2_ELECTRONIC_MAIL_ADDRESS)) {
             this.contact
-                    .setElectronicMailAddress(delegate(new NillableStringReader()));
+                    .setElectronicMailAddressRepresentation(delegate(new NillableStringReader()));
         } else if (name.equals(AqdConstants.QN_BASE2_HOURS_OF_SERVICE)) {
             this.contact
                     .setHoursOfService(delegate(new NillableFreeTextReader()));

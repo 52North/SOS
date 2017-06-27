@@ -32,19 +32,19 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.n52.shetland.aqd.AqdConstants;
-import org.n52.shetland.inspire.Address;
+import org.n52.shetland.inspire.ad.AddressRepresentation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.decode.xml.stream.NillableStringReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
 import org.n52.sos.decode.xml.stream.w3c.xlink.NillableReferenceReader;
 
-public class AddressRepresentationReader extends XmlReader<Address> {
-    private Address address;
+public class AddressRepresentationReader extends XmlReader<AddressRepresentation> {
+    private AddressRepresentation address;
 
     @Override
     protected void begin()
             throws XMLStreamException, OwsExceptionReport {
-        this.address = new Address();
+        this.address = new AddressRepresentation();
     }
 
     @Override
@@ -72,7 +72,7 @@ public class AddressRepresentationReader extends XmlReader<Address> {
     }
 
     @Override
-    protected Address finish()
+    protected AddressRepresentation finish()
             throws OwsExceptionReport {
         return this.address;
     }

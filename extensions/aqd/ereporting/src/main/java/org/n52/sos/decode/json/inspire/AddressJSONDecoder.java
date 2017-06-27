@@ -29,22 +29,22 @@
 package org.n52.sos.decode.json.inspire;
 
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.shetland.inspire.Address;
 import org.n52.shetland.inspire.GeographicalName;
+import org.n52.shetland.inspire.ad.AddressRepresentation;
 import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class AddressJSONDecoder extends AbstractJSONDecoder<Address> {
+public class AddressJSONDecoder extends AbstractJSONDecoder<AddressRepresentation> {
 
     public AddressJSONDecoder() {
-        super(Address.class);
+        super(AddressRepresentation.class);
     }
 
     @Override
-    public Address decodeJSON(JsonNode node, boolean validate)
+    public AddressRepresentation decodeJSON(JsonNode node, boolean validate)
             throws DecodingException {
-        Address address = new Address();
+        AddressRepresentation address = new AddressRepresentation();
         address.setAddressFeature(parseNillableReference(node
                 .path(AQDJSONConstants.ADDRESS_FEATURE)));
         address.setPostCode(parseNillableString(node

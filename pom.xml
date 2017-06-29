@@ -92,7 +92,7 @@
         <svalbard.version>1-SNAPSHOT</svalbard.version>
         <janmayen.version>1.2.0-SNAPSHOT</janmayen.version>
         <n52.common.xml.version>2.2.0</n52.common.xml.version>
-        <faroe.version>1.2.0</faroe.version>
+        <faroe.version>1.3.0-SNAPSHOT</faroe.version>
         <org.springframework.security.version>4.0.3.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.2.3.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>

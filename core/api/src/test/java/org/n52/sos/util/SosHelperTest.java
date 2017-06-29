@@ -73,12 +73,8 @@ public class SosHelperTest extends SosHelper {
 
     public static final String URL_PATTERN = "/kvp";
 
-    @BeforeClass
-    public static void setUp() {
-        setConfiguration(new Configuration());
-    }
-
     @Test
+    @Deprecated
     public void envelopeForEpsg4326() {
         double maxY = 52.15034, maxX = 8.05847;
         double minY = 51.95104, minX = 7.61353;
@@ -87,6 +83,7 @@ public class SosHelperTest extends SosHelper {
     }
 
     @Test
+    @Deprecated
     public void envelopeForEpsg31466() {
         double maxX = 3435628, maxY = 5780049;
         double minX = 3404751, minY = 5758364;
@@ -164,6 +161,11 @@ public class SosHelperTest extends SosHelper {
         builder.append("&").append(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat.name()).append("=")
                 .append(URLEncoder.encode(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, "UTF-8"));
         return builder.toString();
+    }
+
+    @BeforeClass
+    public static void setUp() {
+        setConfiguration(new Configuration());
     }
 
 }

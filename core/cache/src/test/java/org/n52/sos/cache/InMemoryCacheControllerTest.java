@@ -57,14 +57,12 @@ import static org.n52.sos.util.builder.SweDataArrayValueBuilder.aSweDataArrayVal
 import static org.n52.sos.util.builder.SweTimeBuilder.aSweTime;
 
 import java.util.Collections;
-import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.n52.iceland.util.Constants;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -134,6 +132,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     private static final String RESULT_TEMPLATE_IDENTIFIER = "test-result-template";
 
     private static final String OFFERING = PROCEDURE + OFFERING_IDENTIFIER_EXTENSION;
+    private static final int WGS84 = 4326;
 
     private OwsServiceRequest request;
 
@@ -581,7 +580,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
             throws OwsExceptionReport {
         double xCoord = -55.0;
         double yCoord = -66.0;
-        int epsgCode = Constants.EPSG_WGS84;
+        int epsgCode = WGS84;
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), epsgCode);
         Geometry geom = geometryFactory.createPoint(new Coordinate(xCoord, yCoord));
         ReferencedEnvelope offering2Envelope = new ReferencedEnvelope(geom.getEnvelopeInternal(), epsgCode);
@@ -779,14 +778,12 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     private void insertResultPreparation() throws OwsExceptionReport {
         observation =
                 anObservation()
-                        .setObservationConstellation(
-                                anObservationConstellation()
+                        .setObservationConstellation(anObservationConstellation()
                                         .setProcedure(aSensorMLProcedureDescription().setIdentifier(PROCEDURE).build())
                                         .addOffering(OFFERING)
-                                        .setFeature(
-                                                aSamplingFeature().setIdentifier(FEATURE)
+                                        .setFeature(aSamplingFeature().setIdentifier(FEATURE)
                                                         .setFeatureType(FT_SAMPLINGPOINT)
-                                                        .setGeometry(11.0, 11.0, Constants.EPSG_WGS84).build())
+                                                        .setGeometry(11.0, 11.0, WGS84).build())
                                         .setObservableProperty(
                                                 aObservableProperty().setIdentifier(OBSERVABLE_PROPERTY).build())
                                         .setObservationType(OBS_TYPE_SWE_ARRAY_OBSERVATION).build())
@@ -803,16 +800,6 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private void insertResultTemplateResponse(String resultTemplateIdentifier) {
         response = anInsertResultTemplateResponse().setTemplateIdentifier(resultTemplateIdentifier).build();
-    }
-
-    private boolean onlyValidRelatedFeaturesAreInRoleMap() {
-        Set<String> allowedRelatedFeatures = getCache().getRelatedFeatures();
-        for (String relatedFeatureWithRole : ((InMemoryCacheImpl) getCache()).getRolesForRelatedFeaturesMap().keySet()) {
-            if (!allowedRelatedFeatures.contains(relatedFeatureWithRole)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private String getProcedureIdentifier() {
@@ -923,7 +910,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     }
 
     private void insertObservationRequestExample(String procedure, long phenomenonTime) {
-        insertObservationRequestExample(procedure, 11.0, 22.0, Constants.EPSG_WGS84, FEATURE, phenomenonTime);
+        insertObservationRequestExample(procedure, 11.0, 22.0, WGS84, FEATURE, phenomenonTime);
     }
 
     private void insertObservationRequestExample(String procedure, double xCoord, double yCoord, int epsgCode,

@@ -583,10 +583,6 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1237,23 +1233,16 @@
                 <groupId>com.siemens.ct.exi</groupId>
                 <artifactId>exificient</artifactId>
                 <version>0.9.5</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>2.11.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>1.4.01</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>

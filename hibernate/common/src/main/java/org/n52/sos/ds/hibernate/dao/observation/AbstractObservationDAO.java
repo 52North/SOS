@@ -1596,6 +1596,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         public Observation<?> visit(ProfileValue value) throws OwsExceptionReport {
             ProfileObservation profile = observationFactory.profile();
             profile.setParent(true);
+            sosObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
             return persist(profile, persistChildren(value.getValue()));
         }
 
@@ -1649,19 +1650,23 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             OmObservation o = new OmObservation();
             sosObservation.copyTo(o);
             o.setParameter(level.getLevelStartEndAsParameter());
+            if (level.isSetPhenomenonTime()) {
+                o.setValue(new SingleObservationValue<>());
+                o.getValue().setPhenomenonTime(level.getPhenomenonTime());
+            }
             return o;
         }
 
         private ObservationPersister createChildPersister(ProfileLevel level, String observableProperty) throws OwsExceptionReport {
             return new ObservationPersister(daos, caches, getObservationWithLevelParameter(level),
                     getObservationConstellation(getObservableProperty(observableProperty)), featureOfInterest,
-                    samplingGeometry, offerings, session, true);
+                    getSamplingGeometryFromLevel(level), offerings, session, true);
         }
 
         private ObservationPersister createChildPersister(ProfileLevel level) throws OwsExceptionReport {
             return new ObservationPersister(daos, caches, getObservationWithLevelParameter(level),
                     observationConstellation, featureOfInterest,
-                    samplingGeometry, offerings, session, true);
+                    getSamplingGeometryFromLevel(level), offerings, session, true);
            
         }
 
@@ -1775,9 +1780,20 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                     || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE.equals(observationConstellation.getObservationType().getObservationType()));
         }
 
+        private Geometry getSamplingGeometryFromLevel(ProfileLevel level) throws OwsExceptionReport {
+            if (level.isSetLocation()) {
+                return GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(level.getLocation());
+            }
+            return null;
+        }
+
         private static Geometry getSamplingGeometry(OmObservation sosObservation) throws OwsExceptionReport {
             if (!sosObservation.isSetSpatialFilteringProfileParameter()) {
                 return null;
+            }
+            if (sosObservation.isSetValue() && sosObservation.getValue().isSetValue() && sosObservation.getValue().getValue() instanceof ProfileValue
+                    && ((ProfileValue)sosObservation.getValue().getValue()).isSetGeometry()) {
+                return GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(((ProfileValue)sosObservation.getValue().getValue()).getGeometry());
             }
             NamedValue<Geometry> spatialFilteringProfileParameter = sosObservation.getSpatialFilteringProfileParameter();
             Geometry geometry = spatialFilteringProfileParameter.getValue().getValue();

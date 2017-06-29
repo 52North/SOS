@@ -89,8 +89,9 @@ public class AbstractReferenceType implements Comparable<AbstractReferenceType>{
      * @param href
      *            Href to set
      */
-    public void setHref(String href) {
+    public AbstractReferenceType setHref(String href) {
         this.href = new W3CHrefAttribute(href);
+        return this;
     }
 
     /**

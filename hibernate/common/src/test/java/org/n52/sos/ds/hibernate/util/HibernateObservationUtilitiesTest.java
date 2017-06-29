@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.hibernate.Session;
 import org.junit.Ignore;
@@ -38,8 +37,8 @@ import org.junit.Test;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
-import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
@@ -89,10 +88,10 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
 
     @Test
     public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
-        List<OmObservation> resultList =
+        ObservationStream resultList =
                 HibernateObservationUtilities.createSosObservationsFromObservations(null, null, null, null, null, null, null);
         assertThat("result is null", resultList, is(not(nullValue())));
-        assertThat("elements in list", resultList.size(), is(0));
+        assertThat("elements in list", resultList.hasNext(), is(false));
     }
 
     @Test
@@ -158,13 +157,14 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             ArrayList<Observation<?>> observationsFromDataBase = new ArrayList<>();
             observationsFromDataBase.add(hObservation);
             // CALL
-            List<OmObservation> resultList =
+            ObservationStream resultList =
                     HibernateObservationUtilities.createSosObservationsFromObservations(observationsFromDataBase,
                             request, null, null, null, new DaoFactory(), session);
             // TEST RESULTS
             assertThat(resultList, is(notNullValue()));
-            assertThat(resultList.size(), is(1));
-            Object value = resultList.get(0).getValue().getValue();
+            assertThat(resultList.hasNext(), is(true));
+            Object value = resultList.next().getValue().getValue();
+            assertThat(resultList.hasNext(), is(false));
             Double val = Double.parseDouble(((SweDataArray) value).getValues().get(0).get(1));
             assertThat(value, is(instanceOf(SweDataArray.class)));
             assertThat(val, is(closeTo(1.0, 0.00001)));

@@ -43,6 +43,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  */
 public class SpatialRestrictions {
+    private static final int DWITHIN_DISTANCE = 10;
     private SpatialRestrictions() {
     }
 
@@ -58,7 +59,6 @@ public class SpatialRestrictions {
      */
     public static Criterion filter(String propertyName, SpatialFilter filter) throws OwsExceptionReport {
         return filter(propertyName, filter.getOperator(), filter.getGeometry().toGeometry());
-
     }
 
     /**
@@ -84,7 +84,7 @@ public class SpatialRestrictions {
             case Disjoint:
                 return disjoint(propertyName, geometry);
             case DWithin:
-                return distanceWithin(propertyName, geometry, 10);
+                return distanceWithin(propertyName, geometry, DWITHIN_DISTANCE);
             case Equals:
                 return eq(propertyName, geometry);
             case Intersects:

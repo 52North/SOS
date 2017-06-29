@@ -37,8 +37,12 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
@@ -55,12 +59,9 @@ import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.svalbard.encode.Encoder;
-import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.XmlEncoderKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -113,8 +114,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
             response.setVersion(request.getVersion());
             response.setResponseFormat(request.getResponseFormat());
             Locale locale = getRequestedLocale(request);
-            LocalizedProducer<OwsServiceProvider> serviceProviderFactory
-                    = this.serviceMetadataRepository.getServiceProviderFactory(request.getService());
+            LocalizedProducer<OwsServiceProvider> serviceProviderFactory = this.serviceMetadataRepository.getServiceProviderFactory(request.getService());
             response.setObservationCollection(HibernateObservationUtilities.createSosObservationsFromObservations(observations, request, serviceProviderFactory, locale, getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session));
             return response;
 

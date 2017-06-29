@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -49,6 +48,7 @@ import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -108,7 +108,7 @@ public abstract class AbstractOmObservationCreator {
                                         Session session) {
         this.request = request;
         this.session = session;
-        this.i18n = i18n == null ?  ServiceConfiguration.getInstance().getDefaultLanguage() : i18n;
+        this.i18n = i18n == null ? ServiceConfiguration.getInstance().getDefaultLanguage() : i18n;
         this.serviceProvider = serviceProvider;
         this.pdf = pdf;
         this.daoFactory = daoFactory;
@@ -169,7 +169,7 @@ public abstract class AbstractOmObservationCreator {
         return decimalSeparator;
     }
 
-     private ConverterRepository getConverterRepository() {
+    private ConverterRepository getConverterRepository() {
         return ConverterRepository.getInstance();
     }
 
@@ -185,8 +185,8 @@ public abstract class AbstractOmObservationCreator {
         return getActiveProfile().getResponseNoDataPlaceholder();
     }
 
-    public abstract List<OmObservation> create() throws OwsExceptionReport,
-                                                        ConverterException;
+    public abstract ObservationStream create() throws OwsExceptionReport,
+                                                      ConverterException;
 
     public String getVersion() {
         return request.getVersion();
@@ -213,10 +213,10 @@ public abstract class AbstractOmObservationCreator {
         namedValue.setName(referenceType);
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
-        namedValue.setValue(new GeometryValue(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
+        namedValue.setValue(new GeometryValue(getGeometryHandler()
+                .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }
-
 
     protected OmObservableProperty createObservableProperty(ObservableProperty observableProperty) throws CodedException {
         String phenID = observableProperty.getIdentifier();
@@ -231,25 +231,25 @@ public abstract class AbstractOmObservationCreator {
 
     /**
      * Get procedure object from series
+     *
      * @param identifier
      *
      * @return Procedure object
-     * @throws ConverterException
-     *             If an error occurs sensor description creation
-     * @throws OwsExceptionReport
-     *             If an error occurs
+     *
+     * @throws ConverterException If an error occurs sensor description creation
+     * @throws OwsExceptionReport If an error occurs
      */
     protected SosProcedureDescription<?> createProcedure(String identifier)
             throws ConverterException, OwsExceptionReport {
         Procedure hProcedure = getDaoFactory().getProcedureDAO().getProcedureForIdentifier(identifier, getSession());
         String pdf = !Strings.isNullOrEmpty(this.pdf) ? this.pdf
-                : hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
+                             : hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
         if (getActiveProfile().isEncodeProcedureInObservation()) {
             return new HibernateProcedureConverter(this.serviceProvider, getDaoFactory(), getConverterRepository(), getProcedureDescriptionGeneratorFactoryRepository())
                     .createSosProcedureDescription(hProcedure, pdf, getVersion(), getSession());
         } else {
-            SosProcedureDescriptionUnknownType sosProcedure =
-                    new SosProcedureDescriptionUnknownType(identifier, pdf, null);
+            SosProcedureDescriptionUnknownType sosProcedure
+                    = new SosProcedureDescriptionUnknownType(identifier, pdf, null);
             if (hProcedure.isSetName()) {
                 sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
                 addName(sosProcedure, hProcedure);
@@ -261,14 +261,19 @@ public abstract class AbstractOmObservationCreator {
     /**
      * @param abstractFeature
      * @param hAbstractFeature
+     *
      * @throws CodedException
      */
-    protected void addName(AbstractFeature abstractFeature, AbstractIdentifierNameDescriptionEntity hAbstractFeature) throws CodedException {
+    protected void addName(AbstractFeature abstractFeature, AbstractIdentifierNameDescriptionEntity hAbstractFeature)
+            throws CodedException {
         if (hAbstractFeature.isSetCodespaceName()) {
             try {
-                abstractFeature.addName(hAbstractFeature.getName(), new URI(hAbstractFeature.getCodespaceName().getCodespace()));
+                abstractFeature.addName(hAbstractFeature.getName(), new URI(hAbstractFeature.getCodespaceName()
+                                        .getCodespace()));
             } catch (URISyntaxException e) {
-                throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", hAbstractFeature.getCodespaceName().getCodespace());
+                throw new NoApplicableCodeException().causedBy(e)
+                        .withMessage("Error while creating URI from '{}'", hAbstractFeature.getCodespaceName()
+                                     .getCodespace());
             }
         }
         abstractFeature.addName(hAbstractFeature.getName());
@@ -279,18 +284,19 @@ public abstract class AbstractOmObservationCreator {
      * Get featureOfInterest object from series
      *
      * @param identifier
+     *
      * @return FeatureOfInerest object
-     * @throws OwsExceptionReport
-     *             If an error occurs
+     *
+     * @throws OwsExceptionReport If an error occurs
      */
     protected AbstractFeature createFeatureOfInterest(FeatureOfInterest foi) throws OwsExceptionReport {
         if (getActiveProfile().isEncodeFeatureOfInterestInObservations()) {
             FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
             queryObject.addFeatureIdentifier(foi.getIdentifier()).setConnection(getSession()).setVersion(getVersion());
             final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
-            if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null
-                    && !feature.getDefaultElementEncoding()
-                            .equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
+            if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null &&
+                     !feature.getDefaultElementEncoding()
+                        .equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
                 feature.setDefaultElementEncoding(getActiveProfile().getEncodingNamespaceForFeatureOfInterest());
             }
             return feature;
@@ -305,7 +311,9 @@ public abstract class AbstractOmObservationCreator {
                     try {
                         codeType.setCodeSpace(new URI(foi.getCodespaceName().getCodespace()));
                     } catch (URISyntaxException e) {
-                        throw new NoApplicableCodeException().causedBy(e).withMessage("The codespace '{}' of the name is not an URI!", foi.getCodespaceName().getCodespace());
+                        throw new NoApplicableCodeException().causedBy(e)
+                                .withMessage("The codespace '{}' of the name is not an URI!", foi.getCodespaceName()
+                                             .getCodespace());
                     }
                 }
                 samplingFeature.setName(codeType);
@@ -314,8 +322,10 @@ public abstract class AbstractOmObservationCreator {
         }
     }
 
-    protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) throws CodedException {
-        AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
+    protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation)
+            throws CodedException {
+        AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation
+                                                                                  .getClass());
 
         if (getAdditionalObservationCreatorRepository().hasAdditionalObservationCreatorFor(key)) {
             AdditionalObservationCreator creator = getAdditionalObservationCreatorRepository().get(key);

@@ -32,19 +32,15 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.OwsEncodingException;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.ows.service.ResponseFormat;
-import org.n52.shetland.ogc.sos.response.StreamingDataResponse;
 import org.n52.sos.exi.EXIObject;
 import org.n52.svalbard.encode.AbstractDelegatingEncoder;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncodingContext;
-import org.n52.svalbard.encode.StreamingDataEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
@@ -70,15 +66,6 @@ public abstract class ExiEncoder<T> extends AbstractDelegatingEncoder<EXIObject,
     @Override
     public EXIObject encode(T response) throws EncodingException {
         Encoder<Object, T> encoder = getEncoder(response);
-        if (response instanceof StreamingDataResponse &&
-            ((StreamingDataResponse) response).hasStreamingData() &&
-            !(encoder instanceof StreamingDataEncoder)) {
-            try {
-                ((StreamingDataResponse) response).mergeStreamingData();
-            } catch (OwsExceptionReport ex) {
-                throw new OwsEncodingException(ex);
-            }
-        }
         Object encode = encoder.encode(response);
         if (encode != null && encode instanceof XmlObject) {
             return new EXIObject((XmlObject) encode);

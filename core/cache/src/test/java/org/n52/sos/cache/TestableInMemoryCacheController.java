@@ -32,7 +32,6 @@ import java.io.File;
 
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.cache.ctrl.ContentCacheControllerImpl;
-import org.n52.iceland.cache.ctrl.persistence.AbstractPersistingCachePersistenceStrategy;
 import org.n52.iceland.cache.ctrl.persistence.ImmediatePersistenceStrategy;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
@@ -44,7 +43,7 @@ public class TestableInMemoryCacheController extends ContentCacheControllerImpl 
     private static File tempFile;
 
     public TestableInMemoryCacheController() {
-        tempFile = new File(directory, AbstractPersistingCachePersistenceStrategy.CACHE_FILE);
+        tempFile = new File(directory, "cache.tmp");
         ImmediatePersistenceStrategy ps = new ImmediatePersistenceStrategy();
         ps.setConfigLocationProvider(directory::getAbsolutePath);
         ps.init();

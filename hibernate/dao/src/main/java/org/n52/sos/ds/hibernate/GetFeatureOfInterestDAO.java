@@ -286,7 +286,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameter(final GetFeatureOfInterestRequest req, final Session session) throws OwsExceptionReport {
         if (req.hasNoParameter()) {
-            return new FeatureOfInterestDAO(daoFactory).getFeatureOfInterestIdentifiers(session);
+            return new FeatureOfInterestDAO(daoFactory).getIdentifiers(session);
         }
         if (req.containsOnlyFeatureParameter() && req.isSetFeatureOfInterestIdentifiers()) {
             final Criteria c =

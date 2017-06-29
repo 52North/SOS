@@ -39,15 +39,12 @@ import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.coding.encode.ResponseWriterRepository;
 import org.n52.janmayen.http.MediaType;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.ows.service.ResponseFormat;
-import org.n52.shetland.ogc.sos.response.StreamingDataResponse;
-import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.OperationResponseEncoderKey;
-import org.n52.svalbard.encode.StreamingDataEncoder;
 import org.n52.svalbard.encode.StreamingEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
@@ -64,14 +61,11 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
             = new ResponseWriterKey(OwsServiceResponse.class);
 
     private final ResponseWriterRepository responseWriterRepository;
-    private final boolean forceStreamingEncoding;
 
     public AbstractServiceResponseWriter(EncoderRepository encoderRepository,
-                                         ResponseWriterRepository responseWriterRepository,
-                                         boolean forceStreamingEncoding) {
+                                         ResponseWriterRepository responseWriterRepository) {
         super(encoderRepository);
         this.responseWriterRepository = responseWriterRepository;
-        this.forceStreamingEncoding = forceStreamingEncoding;
     }
 
 
@@ -84,22 +78,13 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
             throws IOException, EncodingException {
         Encoder<Object, OwsServiceResponse> encoder = getEncoder(asr);
         if (encoder != null) {
-            if (isStreaming(asr)) {
+            if (encoder instanceof StreamingEncoder) {
                 ((StreamingEncoder<?, OwsServiceResponse>) encoder).encode(asr, out);
             } else {
-                if (asr instanceof StreamingDataResponse && ((StreamingDataResponse) asr).hasStreamingData()
-                        && !(encoder instanceof StreamingDataEncoder)) {
-                    try {
-                        ((StreamingDataResponse) asr).mergeStreamingData();
-                    } catch (OwsExceptionReport owse) {
-                        throw new EncodingException(owse);
-                    }
-                }
                 // use encoded Object specific writer, e.g. XmlResponseWriter
                 Object encode = encoder.encode(asr);
                 if (encode != null) {
-                    ResponseWriter<Object> writer =
-                            this.responseWriterRepository.getWriter(encode.getClass());
+                    ResponseWriter<Object> writer = this.responseWriterRepository.getWriter(encode.getClass());
                     if (writer == null) {
                         throw new RuntimeException("no writer for " + encode.getClass() + " found!");
                     }
@@ -151,12 +136,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
      *         {@link StreamingEncoder}
      */
     private boolean isStreaming(OwsServiceResponse asr) {
-        Encoder<Object, OwsServiceResponse> encoder = getEncoder(asr);
-        if (encoder instanceof StreamingEncoder) {
-            StreamingEncoder<?, ?> sencoder = (StreamingEncoder<?, ?>) getEncoder(asr);
-            return this.forceStreamingEncoding || sencoder.forceStreaming();
-        }
-        return false;
+        return getEncoder(asr) instanceof StreamingEncoder;
     }
 
     @Override

@@ -68,13 +68,8 @@ public class GetObservationKvpDecoderv20Test {
         mapFalse.put("request", "GetObservation");
         final GetObservationRequest requestFalse = decoder.decode(mapFalse);
 
-        assertThat(
-                requestTrue.getExtensions().isBooleanExtensionSet(
-                        Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), is(TRUE));
-
-        assertThat(
-                requestFalse.getExtensions().isBooleanExtensionSet(
-                        Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), is(FALSE));
+        assertThat(requestTrue.getBooleanExtension(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), is(TRUE));
+        assertThat(requestFalse.getBooleanExtension(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), is(FALSE));
     }
 
 }

@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -53,8 +54,6 @@ import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
  *
  */
 public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreamingValue {
-
-    private static final long serialVersionUID = -1990901204421577265L;
 
     private Iterator<AbstractValuedLegacyObservation<?>> seriesValuesResult;
 
@@ -83,7 +82,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     @Override
-    public boolean hasNextValue() throws OwsExceptionReport {
+    public boolean hasNext() throws OwsExceptionReport {
         boolean next = false;
         if (seriesValuesResult == null || !seriesValuesResult.hasNext()) {
             if (!noChunk) {
@@ -112,7 +111,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
+            if (hasNext()) {
                 AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
                 TimeValuePair value = resultObject.createTimeValuePairFrom();
                 session.evict(resultObject);
@@ -127,9 +126,9 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     @Override
-    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+    public OmObservation next() throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
+            if (hasNext()) {
                 OmObservation observation = getObservationTemplate().cloneTemplate();
                 AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
                 resultObject.addValuesToObservation(observation, getResponseFormat());

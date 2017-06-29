@@ -57,10 +57,12 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionRepository;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
 import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderRepository;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionRepository;
-import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
@@ -108,21 +110,19 @@ import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.OMHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.config.CapabilitiesExtensionService;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
 import org.n52.svalbard.ConformanceClass;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
-import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
-import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
-import org.n52.shetland.util.OMHelper;
 
 /**
  * Implementation of the interface AbstractGetCapabilitiesHandler

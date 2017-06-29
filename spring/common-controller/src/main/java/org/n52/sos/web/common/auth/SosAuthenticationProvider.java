@@ -44,9 +44,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.config.AdminUserService;
 import org.n52.iceland.config.AdministratorUser;
-import org.n52.faroe.ConfigurationError;
 
 /**
  * @since 4.0.0
@@ -111,11 +111,13 @@ public class SosAuthenticationProvider implements AuthenticationProvider, Serial
     }
 
     public void setAdminUserName(AdministratorUser user, String name) {
-        this.adminUserService.saveAdminUser(user.setUsername(name));
+        user.setUsername(name);
+        this.adminUserService.saveAdminUser(user);
     }
 
     public void setAdminPassword(AdministratorUser user, String password) {
-        this.adminUserService.saveAdminUser(user.setPassword(getPasswordEncoder().encode(password)));
+        user.setPassword(getPasswordEncoder().encode(password));
+        this.adminUserService.saveAdminUser(user);
     }
 
     public AdministratorUser getAdmin(String username) throws ConfigurationError {

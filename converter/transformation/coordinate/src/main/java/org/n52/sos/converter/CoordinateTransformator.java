@@ -142,6 +142,20 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     private Set<String> eastingNames = Collections.emptySet();
     private Set<String> altitudeNames = Collections.emptySet();
 
+    private void checkResponseObservation(OmObservation omObservation, int targetCRS) throws OwsExceptionReport {
+        if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
+            checkResponseGeometryOfSamplingFeature((SamplingFeature) omObservation
+                    .getObservationConstellation().getFeatureOfInterest(), targetCRS);
+        }
+        if (omObservation.isSetParameter()) {
+            checkOmParameterForGeometry(omObservation.getParameter(), targetCRS);
+        }
+        if (omObservation.getValue() instanceof AbstractStreaming) {
+            ((AbstractStreaming) omObservation.getValue())
+                    .add(OWSConstants.AdditionalRequestParams.crs, targetCRS);
+        }
+    }
+
     /**
      *
      * Get the keys
@@ -329,7 +343,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     private OwsServiceResponse modifyGetObservationResponse(GetObservationRequest request,
             GetObservationResponse response) throws OwsExceptionReport {
         response.setResponseFormat(request.getResponseFormat());
-        checkResponseObservations(response.getObservationCollection(), getRequestedCrs(request));
+        int crs = getRequestedCrs(request);
+        response.setObservationCollection(response.getObservationCollection().modify(o -> checkResponseObservation(o, crs)));
         return response;
     }
 
@@ -346,7 +361,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      */
     private OwsServiceResponse modifyGetObservationByIdResponse(GetObservationByIdRequest request,
             GetObservationByIdResponse response) throws OwsExceptionReport {
-        checkResponseObservations(response.getObservationCollection(), getRequestedCrs(request));
+        int crs = getRequestedCrs(request);
+        response.setObservationCollection(response.getObservationCollection().modify(o -> checkResponseObservation(o, crs)));
         return response;
     }
 
@@ -853,20 +869,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      *             If the transformation fails
      */
     private void checkResponseObservations(List<OmObservation> observations, int targetCRS) throws OwsExceptionReport {
-        if (CollectionHelper.isNotEmpty(observations)) {
-            for (OmObservation omObservation : observations) {
-                if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
-                    checkResponseGeometryOfSamplingFeature((SamplingFeature) omObservation
-                            .getObservationConstellation().getFeatureOfInterest(), targetCRS);
-                }
-                if (omObservation.isSetParameter()) {
-                    checkOmParameterForGeometry(omObservation.getParameter(), targetCRS);
-                }
-                if (omObservation.getValue() instanceof AbstractStreaming) {
-                    ((AbstractStreaming) omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs,
-                            targetCRS);
-                }
-            }
+        for (OmObservation omObservation : observations) {
+            checkResponseObservation(omObservation, targetCRS);
         }
     }
 

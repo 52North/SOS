@@ -53,7 +53,7 @@ public class FeatureI18NDAO extends AbstractHibernateI18NDAO<FeatureOfInterest, 
 
     @Override
     protected FeatureOfInterest getEntity(String id, Session session) {
-        return new FeatureOfInterestDAO(daoFactory).getFeatureOfInterest(id, session);
+        return new FeatureOfInterestDAO(daoFactory).get(id, session);
     }
 
     @Override

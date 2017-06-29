@@ -30,8 +30,10 @@ package org.n52.sos.ds.hibernate.values;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.hibernate.HibernateException;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -74,7 +76,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-    public boolean hasNextValue() throws OwsExceptionReport {
+    public boolean hasNext() throws OwsExceptionReport {
         boolean next = false;
         if (valuesResult == null || !valuesResult.hasNext()) {
             if (!noChunk) {
@@ -102,13 +104,13 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
+            if (hasNext()) {
                 ValuedObservation<?> resultObject = nextEntity();
                 TimeValuePair value = createTimeValuePairFrom(resultObject);
                 session.evict(resultObject);
                 return value;
             }
-            return null;
+            throw new NoSuchElementException();
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
@@ -117,9 +119,9 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+    public OmObservation next() throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
+            if (hasNext()) {
                 OmObservation observation = getObservationTemplate().cloneTemplate();
                 AbstractValuedLegacyObservation<?> resultObject = nextEntity();
                 resultObject.addValuesToObservation(observation, getResponseFormat());

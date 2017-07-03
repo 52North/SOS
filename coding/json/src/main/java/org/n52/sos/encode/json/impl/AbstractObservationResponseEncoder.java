@@ -28,7 +28,6 @@
  */
 package org.n52.sos.encode.json.impl;
 
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -49,11 +48,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * TODO JavaDoc
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ * @param <T> the response type
  *
  * @since 4.0.0
  */
-public abstract class AbstractObservationResponseEncoder<T extends AbstractObservationResponse> extends
-        AbstractSosResponseEncoder<T> implements org.n52.svalbard.encode.ObservationEncoder<JsonNode, T> {
+public abstract class AbstractObservationResponseEncoder<T extends AbstractObservationResponse>
+        extends AbstractSosResponseEncoder<T>
+        implements org.n52.svalbard.encode.ObservationEncoder<JsonNode, T> {
     public AbstractObservationResponseEncoder(Class<T> type, String operation) {
         super(type, operation);
     }

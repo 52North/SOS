@@ -44,6 +44,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.xmlbeans.XmlOptions;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -66,6 +67,8 @@ import org.n52.shetland.w3c.Nillable;
 import org.n52.shetland.w3c.xlink.Reference;
 import org.n52.shetland.w3c.xlink.Referenceable;
 import org.n52.svalbard.encode.EReportingHeaderEncoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 public class EReportingHeaderEncoderTest {
@@ -180,7 +183,8 @@ public class EReportingHeaderEncoderTest {
                                                             MalformedURLException,
                                                             EncodingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new EReportingHeaderEncoder(header).write(baos);
+        new EReportingHeaderEncoder(baos, EncodingContext.empty(), new EncoderRepository(), XmlOptions::new, header)
+                .write();
         System.out.println(baos.toString("UTF-8"));
 //        xmlValidation(baos);
 

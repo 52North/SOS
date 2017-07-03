@@ -35,6 +35,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 
+import org.apache.xmlbeans.XmlOptions;
 import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
@@ -56,6 +57,8 @@ import org.n52.shetland.w3c.xlink.Reference;
 import org.n52.shetland.w3c.xlink.Referenceable;
 import org.n52.sos.decode.xml.stream.inspire.aqd.ReportingHeaderReader;
 import org.n52.svalbard.encode.EReportingHeaderEncoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.EncodingContext;
 
 /**
  * TODO JavaDoc
@@ -166,7 +169,7 @@ public class ReportingHeaderReaderTest {
                         );
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new EReportingHeaderEncoder(header).write(baos);
+        new EReportingHeaderEncoder(baos, EncodingContext.empty(), new EncoderRepository(), XmlOptions::new, header).write();
         ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
         EReportingHeader read = new ReportingHeaderReader().read(in);
 

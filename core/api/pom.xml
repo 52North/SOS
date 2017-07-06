@@ -39,7 +39,7 @@
             <groupId>org.n52.faroe</groupId>
             <artifactId>faroe-annotations</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.n52.faroe</groupId>
             <artifactId>faroe-json</artifactId>
         </dependency>
@@ -97,6 +97,10 @@
                     <artifactId>stax-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

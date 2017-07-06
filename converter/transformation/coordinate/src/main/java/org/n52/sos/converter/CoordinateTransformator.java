@@ -551,7 +551,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
         }
         if (easting != null && northing != null) {
 
-            double x, y;
+            double x;
+            double y;
             if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
                 y = northing.doubleValue();
                 x = easting.doubleValue();
@@ -700,11 +701,11 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Get the CRS from the request or if the CRS parameter is not set, return
-     * the {@link NOT_SET_EPSG}.
+     * the {@link #NOT_SET_EPSG}.
      *
      * @param request
      *            the request to check
-     * @return the requested CRS or {@link NOT_SET_EPSG}
+     * @return the requested CRS or {@link #NOT_SET_EPSG}
      * @throws OwsExceptionReport
      *             If an error occurs when parsing the request
      */

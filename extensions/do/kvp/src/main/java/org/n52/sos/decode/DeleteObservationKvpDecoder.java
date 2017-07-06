@@ -31,7 +31,7 @@ package org.n52.sos.decode;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
-import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
 import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 
 /**
@@ -43,14 +43,14 @@ import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 public class DeleteObservationKvpDecoder extends AbstractSosKvpDecoder<DeleteObservationRequest> {
 
     public DeleteObservationKvpDecoder() {
-        super(DeleteObservationRequest::new,
+        super(() -> new DeleteObservationRequest(DeleteObservationConstants.NS_SOSDO_1_0),
               Sos2Constants.SERVICEVERSION,
               DeleteObservationConstants.Operations.DeleteObservation.name());
     }
 
     @Override
     protected void getRequestParameterDefinitions(Builder<DeleteObservationRequest> builder) {
-        builder.add(DeleteObservationConstants.PARAMETER_NAME, DeleteObservationRequest::setObservationIdentifier);
+        builder.add(DeleteObservationConstants.PARAM_OBSERVATION, DeleteObservationRequest::addObservationIdentifier);
     }
 
 }

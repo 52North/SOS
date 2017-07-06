@@ -106,13 +106,14 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
      * @param asr
      *            {@link OwsServiceResponse} to get {@link Encoder} for
      * @return {@link Encoder} for the {@link OwsServiceResponse}
+     * @throws org.n52.svalbard.encode.exception.NoEncoderForKeyException if no encoder could be found
      */
-    private Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) {
-        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OwsOperationKey(asr), getEncodedContentType(asr));
+    private Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) throws NoEncoderForKeyException {
+        OperationResponseEncoderKey key = getEncoderKey(asr);
 
         Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(key));
+            throw new NoEncoderForKeyException(key);
         }
         return encoder;
     }
@@ -136,11 +137,16 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
      *         {@link StreamingEncoder}
      */
     private boolean isStreaming(OwsServiceResponse asr) {
-        return getEncoder(asr) instanceof StreamingEncoder;
+        return getEncoder(getEncoderKey(asr)) instanceof StreamingEncoder;
     }
 
     @Override
     public Set<ResponseWriterKey> getKeys() {
         return Collections.singleton(KEY);
+    }
+
+    private OperationResponseEncoderKey getEncoderKey(OwsServiceResponse asr) {
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OwsOperationKey(asr), getEncodedContentType(asr));
+        return key;
     }
 }

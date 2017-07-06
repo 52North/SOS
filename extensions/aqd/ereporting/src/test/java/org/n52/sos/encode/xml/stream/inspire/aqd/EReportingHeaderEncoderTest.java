@@ -35,6 +35,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.function.Supplier;
 
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLStreamException;
@@ -67,8 +68,10 @@ import org.n52.shetland.w3c.Nillable;
 import org.n52.shetland.w3c.xlink.Reference;
 import org.n52.shetland.w3c.xlink.Referenceable;
 import org.n52.svalbard.encode.EReportingHeaderEncoder;
+import org.n52.svalbard.encode.EncoderFlags;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.XmlEncoderFlags;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 public class EReportingHeaderEncoderTest {
@@ -183,8 +186,11 @@ public class EReportingHeaderEncoderTest {
                                                             MalformedURLException,
                                                             EncodingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        new EReportingHeaderEncoder(baos, EncodingContext.empty(), new EncoderRepository(), XmlOptions::new, header)
-                .write();
+
+        EncodingContext ctx = EncodingContext.empty()
+                        .with(EncoderFlags.ENCODER_REPOSITORY, new EncoderRepository())
+                        .with(XmlEncoderFlags.XML_OPTIONS, (Supplier<XmlOptions>) XmlOptions::new);
+        new EReportingHeaderEncoder(ctx, baos, header).write();
         System.out.println(baos.toString("UTF-8"));
 //        xmlValidation(baos);
 

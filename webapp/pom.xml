@@ -351,19 +351,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- REST BINDING -->
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>rest-code</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>rest-xml</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- GET DATA AVAILABILITY -->
 
         <dependency>

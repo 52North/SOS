@@ -29,7 +29,7 @@
 package org.n52.sos.encode.json.inspire;
 
 import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.inspire.Address;
+import org.n52.shetland.inspire.ad.AddressRepresentation;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.util.AQDJSONConstants;
 
@@ -41,14 +41,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  *
  * @author Christian Autermann
  */
-public class AddressJSONEncoder extends JSONEncoder<Address> {
+public class AddressJSONEncoder extends JSONEncoder<AddressRepresentation> {
 
     public AddressJSONEncoder() {
-        super(Address.class);
+        super(AddressRepresentation.class);
     }
 
     @Override
-    public JsonNode encodeJSON(Address t)
+    public JsonNode encodeJSON(AddressRepresentation t)
             throws EncodingException {
         ObjectNode j = nodeFactory().objectNode();
         j.set(AQDJSONConstants.ADDRESS_AREAS, encodeObjectToJson(t.getAddressAreas()));

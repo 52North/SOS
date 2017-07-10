@@ -108,7 +108,7 @@ public class SosUpdateSensorDescriptionOperatorV20 extends
 
     private void checkProcedureIdentifier(String procedureIdentifier) throws OwsExceptionReport {
         if (procedureIdentifier != null && !procedureIdentifier.isEmpty()) {
-            if (!getCache().getProcedures().contains(procedureIdentifier)) {
+            if (!getCache().getPublishedProcedures().contains(procedureIdentifier)) {
                 throw new InvalidProcedureParameterException(procedureIdentifier);
             }
         } else {

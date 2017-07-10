@@ -36,6 +36,8 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationTypes;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 
+import com.google.common.collect.Sets;
+
 /**
  * @since 4.0.0
  *
@@ -72,6 +74,11 @@ public class Offering extends AbstractIdentifierNameDescriptionEntity
     @Override
     public boolean getDisabled() {
         return disabled;
+    }
+    
+    @Override
+    public Set<Offering> getParents() {
+        return parents;
     }
 
     @Override

@@ -29,19 +29,24 @@
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPublishedFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.util.Constants;
 
 import com.google.common.base.Strings;
 
@@ -55,16 +60,15 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
         implements HasWriteableObservationContext,
                    HasDeletedFlag,
                    HasHiddenChildFlag,
-                   HasUnit,
-                   HasPublishedFlag,
-                   HasOffering {
+                   HasUnit, 
+                   HasPublishedFlag, 
+                   HasSeriesType,
+                   HasOffering{
 
     private static final long serialVersionUID = 7838379468605356753L;
 
     public static String ID = "seriesId";
-
     public static String FIRST_TIME_STAMP = "firstTimeStamp";
-
     public static String LAST_TIME_STAMP = "lastTimeStamp";
 
     public static final String ALIAS = "s";
@@ -72,14 +76,14 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     public static final String ALIAS_DOT = ALIAS + ".";
 
     private long seriesId;
-    private FeatureOfInterest featureOfInterest;
+    private AbstractFeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
     private Offering offering;
+
     private Boolean deleted = false;
     private Boolean published = true;
-
-    // the following values are used by the timeseries api
+    // the following values are used by the rest api
     private Date firstTimeStamp;
     private Date lastTimeStamp;
     private Double firstNumericValue;
@@ -87,7 +91,6 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     private Unit unit;
     private boolean hiddenChild;
     private String seriesType;
-
     /**
      * Get series id
      *
@@ -108,12 +111,12 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public FeatureOfInterest getFeatureOfInterest() {
+    public AbstractFeatureOfInterest getFeatureOfInterest() {
         return featureOfInterest;
     }
 
     @Override
-    public void setFeatureOfInterest(final FeatureOfInterest featureOfInterest) {
+    public void setFeatureOfInterest(final AbstractFeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
     }
 
@@ -291,6 +294,21 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
         return isSetFirstTimeStamp() && isSetLastTimeStamp();
     }
 
+    @Override
+    public Offering getOffering() {
+        return offering;
+    }
+
+    @Override
+    public void setOffering(final Offering offering) {
+        this.offering = offering;
+    }
+    
+    @Override
+    public boolean isSetOffering() {
+        return getOffering() != null;
+    }
+
     public boolean hasSameObservationIdentifier(Series s) {
         return getFeatureOfInterest().equals(s.getFeatureOfInterest()) && getProcedure().equals(s.getProcedure())
                 && getObservableProperty().equals(s.getObservableProperty());
@@ -303,7 +321,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     public void setSeriesType(String seriesType) {
         this.seriesType = seriesType;
     }
-
+    
     public boolean isSetSeriesType() {
         return !Strings.isNullOrEmpty(getSeriesType());
     }

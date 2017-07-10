@@ -68,6 +68,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 /**
  * TODO JavaDoc
@@ -87,7 +88,6 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         encodeObservationType(o, json);
         encodeIdentifier(o, json);
         encodeProcedure(o, json);
-        encodeOfferings(o, json);
         encodeParameter(o, json);
         encodeObservableProperty(o, json);
         encodeFeatureOfInterest(o, json);
@@ -139,20 +139,6 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         json.put(JSONConstants.TYPE, getObservationType(o));
     }
 
-    private void encodeOfferings(OmObservation o, ObjectNode json) {
-        OmObservationConstellation oc = o.getObservationConstellation();
-        if (oc.isSetOfferings()) {
-            if (oc.getOfferings().size() == 1) {
-                json.put(JSONConstants.OFFERING, oc.getOfferings().iterator().next());
-            } else {
-                ArrayNode offerings = json.putArray(JSONConstants.OFFERING);
-                for (String offering : oc.getOfferings()) {
-                    offerings.add(offering);
-                }
-            }
-        }
-    }
-
     private void encodeFeatureOfInterest(OmObservation o, ObjectNode json) throws EncodingException {
         OmObservationConstellation oc = o.getObservationConstellation();
         json.set(JSONConstants.FEATURE_OF_INTEREST, encodeObjectToJson(oc.getFeatureOfInterest()));
@@ -182,40 +168,153 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         Value<?> value = o.getValue().getValue();
         String type = getObservationType(o);
         if (value instanceof TVPValue) {
-            if (type.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
+//            if (type.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
                 return encodeTVPValue(o);
-            }
+//            }
         } else {
             return encodeValue(value);
         }
-        throw new UnsupportedEncoderInputException(this, value);
+//        throw new UnsupportedEncoderInputException(this, value);
     }
 
-    private JsonNode encodeValue(Value<?> value) throws EncodingException {
-        if (value instanceof QuantityValue) {
-            return encodeQualityValue(value);
-        } else if (value instanceof CountValue) {
-            return encodeCountValue(value);
-        } else if (value instanceof TextValue) {
-            return encodeTextValue(value);
-        } else if (value instanceof BooleanValue) {
-            return encodeBooleanValue(value);
-        } else if (value instanceof CategoryValue) {
-            return encodeCategoryValue(value);
-        } else if (value instanceof GeometryValue) {
-            return encodeGeometryValue(value);
-        } else if (value instanceof ComplexValue) {
-            return encodeComplexValue(value);
-        } else if (value instanceof SweDataArrayValue) {
-            return encodeSweDataArrayValue(value);
+    private JsonNode encodeValue(Value<?> value)
+            throws EncodingException {
+        return value.accept(new ValueVisitor<JsonNode>() {
+            @Override
+            public JsonNode visit(BooleanValue value) {
+                return encodeBooleanValue(value);
+            }
+
+            @Override
+            public JsonNode visit(CategoryValue value) {
+                return encodeCategoryValue(value);
+            }
+
+            @Override
+            public JsonNode visit(ComplexValue value)
+                    throws OwsExceptionReport {
+                return encodeComplexValue(value);
+            }
+
+            @Override
+            public JsonNode visit(CountValue value) {
+                return encodeCountValue(value);
+            }
+
+            @Override
+            public JsonNode visit(GeometryValue value)
+                    throws OwsExceptionReport {
+                return encodeGeometryValue(value);
+            }
+
+            @Override
+            public JsonNode visit(HrefAttributeValue value) {
+                return encodeHrefAttributeValue(value);
+            }
+
+            @Override
+            public JsonNode visit(NilTemplateValue value)
+                    throws OwsExceptionReport {
+                throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
+
+            }
+
+            @Override
+            public JsonNode visit(QuantityValue value) {
+                return encodeQualityValue(value);
+            }
+
+            @Override
+            public JsonNode visit(ReferenceValue value) {
+                return encodeReferenceValue(value);
+            }
+
+            @Override
+            public JsonNode visit(SweDataArrayValue value)
+                    throws OwsExceptionReport {
+                return encodeSweDataArrayValue(value);
+            }
+
+            @Override
+            public JsonNode visit(TVPValue value) throws OwsExceptionReport {
+                return encodeTVPValue(value);
+            }
+
+            @Override
+            public JsonNode visit(TextValue value) {
+                return encodeTextValue(value);
+            }
+
+            @Override
+            public JsonNode visit(UnknownValue value)
+                    throws OwsExceptionReport {
+                throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
+            }
+
+            @Override
+            public JsonNode visit(XmlValue value) {
+                return encodeXmlValue(value);
+            }
+
+            @Override
+            public JsonNode visit(TLVTValue value) throws OwsExceptionReport {
+                throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
+            }
+
+            @Override
+            public JsonNode visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+                throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
+            }
+
+            @Override
+            public JsonNode visit(MultiPointCoverage value) throws OwsExceptionReport {
+                throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
+            }
+
+            @Override
+            public JsonNode visit(RectifiedGridCoverage value) throws OwsExceptionReport {
+                throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
+            }
+
+            @Override
+            public JsonNode visit(ProfileValue value) throws OwsExceptionReport {
+                throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
+            }
+        });
+    }
+
+    private JsonNode encodeReferenceValue(ReferenceValue value) {
+        ReferenceType ref = value.getValue();
+        ObjectNode node = nodeFactory().objectNode();
+        node.put(JSONConstants.HREF, ref.getHref());
+        node.put(JSONConstants.ROLE, ref.getRole());
+        node.put(JSONConstants.TITLE, ref.getTitle());
+        return node;
+    }
+
+    private JsonNode encodeHrefAttributeValue(HrefAttributeValue value) {
+        ObjectNode node = nodeFactory().objectNode();
+        node.put(JSONConstants.HREF, value.getValue().getHref());
+        return node;
+    }
+
+    private JsonNode encodeTVPValue(TVPValue value) throws OwsExceptionReport {
+        ArrayNode arrayNode = nodeFactory().arrayNode();
+        for (TimeValuePair tvp : value.getValue()) {
+            ObjectNode node = nodeFactory().objectNode();
+            node.put(JSONConstants.TIME, encodeObjectToJson(tvp.getTime()));
+            node.put(JSONConstants.VALUE, encodeValue(value));
+            arrayNode.add(node);
         }
-        throw new UnsupportedEncoderInputException(this, value);
+        return arrayNode;
     }
 
     private JsonNode encodeQualityValue(Value<?> value) {
         QuantityValue quantityValue = (QuantityValue) value;
-        return nodeFactory().objectNode().put(JSONConstants.UOM, quantityValue.getUnit())
-                .put(JSONConstants.VALUE, quantityValue.getValue());
+        ObjectNode node = nodeFactory().objectNode();
+        node.put(JSONConstants.UOM, quantityValue.getUnit());
+        node.put(JSONConstants.VALUE, quantityValue.getValue());
+        return node;
     }
 
     private JsonNode encodeCountValue(Value<?> value) {
@@ -235,8 +334,10 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
 
     private JsonNode encodeCategoryValue(Value<?> value) {
         CategoryValue categoryValue = (CategoryValue) value;
-        return nodeFactory().objectNode().put(JSONConstants.CODESPACE, categoryValue.getUnit())
-                .put(JSONConstants.VALUE, categoryValue.getValue());
+        ObjectNode node = nodeFactory().objectNode();
+        node.put(JSONConstants.CODESPACE, categoryValue.getUnit());
+        node.put(JSONConstants.VALUE, categoryValue.getValue());
+        return node;
     }
 
     private JsonNode encodeGeometryValue(Value<?> value) throws EncodingException {
@@ -307,7 +408,9 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
             ArrayNode jvalues = result.putArray(JSONConstants.VALUES);
 
             for (TimeValuePair tvp : values) {
-                jvalues.addArray().add(encodeObjectToJson(tvp.getTime())).add(getTokenForValue(tvp.getValue()));
+                if (tvp != null && tvp.getValue() != null && tvp.getValue().isSetValue()) {
+                    jvalues.addArray().add(encodeObjectToJson(tvp.getTime())).add(getTokenForValue(tvp.getValue()));
+                }
             }
         }
         return result;
@@ -369,6 +472,10 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         } else {
             throw new UnsupportedEncoderInputException(this, value);
         }
+    }
+
+    private TextNode encodeXmlValue(XmlValue value) {
+        return nodeFactory().textNode(value.getValue().xmlText());
     }
 
     /**

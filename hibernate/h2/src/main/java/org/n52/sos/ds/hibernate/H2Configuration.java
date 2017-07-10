@@ -100,8 +100,10 @@ public class H2Configuration {
             resources.add("mapping/core/Codespace.hbm.xml");
             resources.add("mapping/core/FeatureOfInterest.hbm.xml");
             resources.add("mapping/core/FeatureOfInterestType.hbm.xml");
+            resources.add("/mapping/core/FeatureOfInterest.hbm.xml");
             resources.add("mapping/core/ObservableProperty.hbm.xml");
             resources.add("mapping/core/Offering.hbm.xml");
+            resources.add("/mapping/core/Parameter.hbm.xml");
             resources.add("mapping/core/Procedure.hbm.xml");
             resources.add("mapping/core/ProcedureDescriptionFormat.hbm.xml");
             resources.add("mapping/core/Unit.hbm.xml");
@@ -140,6 +142,8 @@ public class H2Configuration {
             resources.add("mapping/series/value/Numeric.hbm.xml");
             resources.add("mapping/series/value/SweDataArray.hbm.xml");
             resources.add("mapping/series/value/Text.hbm.xml");
+            resources.add("/mapping/parameter/feature/FeatureParameterValues.hbm.xml");
+            resources.add("/mapping/parameter/observation/ParameterValues.hbm.xml");
             return resources;
         }
     };

@@ -30,10 +30,14 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+
+import com.google.common.base.Strings;
 
 /**
  * Class to carry observation identifiers (featureOfInterest,
@@ -44,14 +48,17 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
  *
  */
 public class ObservationContext {
-    private FeatureOfInterest featureOfInterest;
+    private AbstractFeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
+    private Offering offering;
+    private String seriesType;
+    private boolean hiddenChild = false; 
 
     /**
      * @return the featureOfInterest
      */
-    public FeatureOfInterest getFeatureOfInterest() {
+    public AbstractFeatureOfInterest getFeatureOfInterest() {
         return featureOfInterest;
     }
 
@@ -59,7 +66,7 @@ public class ObservationContext {
      * @param featureOfInterest
      *                          the featureOfInterest to set
      */
-    public void setFeatureOfInterest(FeatureOfInterest featureOfInterest) {
+    public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
     }
 
@@ -104,22 +111,43 @@ public class ObservationContext {
     public boolean isSetProcedure() {
         return getProcedure() != null;
     }
+    
+    /**
+     * @return the offering
+     */
+    public Offering getOffering() {
+        return offering;
+    }
 
-    public void addIdentifierRestrictionsToCritera(Criteria criteria) {
+    /**
+     * @param offering the offering to set
+     */
+    public void setOffering(Offering offering) {
+        this.offering = offering;
+    }
+    
+    public boolean isSetOffering() {
+        return getOffering() != null;
+    }
+
+    public void addIdentifierRestrictionsToCritera(Criteria c) {
         if (isSetFeatureOfInterest()) {
-            criteria.add(Restrictions
+            c.add(Restrictions
                     .eq(HasWriteableObservationContext.FEATURE_OF_INTEREST,
                         getFeatureOfInterest()));
         }
         if (isSetObservableProperty()) {
-            criteria.add(Restrictions
+            c.add(Restrictions
                     .eq(HasWriteableObservationContext.OBSERVABLE_PROPERTY,
                         getObservableProperty()));
         }
         if (isSetProcedure()) {
-            criteria.add(Restrictions
+            c.add(Restrictions
                     .eq(HasWriteableObservationContext.PROCEDURE,
                         getProcedure()));
+        }
+        if (isSetOffering()) {
+            c.add(Restrictions.eq(HasWriteableObservationContext.OFFERING, offering));
         }
     }
 
@@ -133,5 +161,32 @@ public class ObservationContext {
         if (isSetProcedure()) {
             contextual.setProcedure(getProcedure());
         }
+        if (isSetOffering()) {
+            contextual.setOffering(getOffering());
+        }
+        if (contextual instanceof HasSeriesType && isSetSeriesType()) {
+            ((HasSeriesType)contextual).setSeriesType(getSeriesType());
+        }
     }
+
+    public void setSeriesType(String seriesType) {
+        this.seriesType = seriesType;
+    }
+    
+    public String getSeriesType() {
+        return this.seriesType;
+    }
+    
+    public boolean isSetSeriesType() {
+        return !Strings.isNullOrEmpty(getSeriesType());
+    }
+    
+    public void setHiddenChild(boolean hiddenChild) {
+        this.hiddenChild = hiddenChild;
+    }
+
+    public boolean isHiddenChild() {
+        return this.hiddenChild;
+    }
+
 }

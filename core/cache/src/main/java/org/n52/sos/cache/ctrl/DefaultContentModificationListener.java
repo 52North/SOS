@@ -28,6 +28,7 @@
  */
 package org.n52.sos.cache.ctrl;
 
+import org.n52.sos.cache.ctrl.action.ResultTemplateDeletionUpdate;
 import java.util.Collections;
 import java.util.Set;
 
@@ -42,12 +43,14 @@ import org.n52.janmayen.event.Event;
 import org.n52.janmayen.event.EventListener;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
+import org.n52.sos.cache.ctrl.action.FeatureInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
 import org.n52.sos.ds.CacheFeederHandler;
+import org.n52.sos.event.events.FeatureInsertion;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
@@ -56,6 +59,7 @@ import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.event.events.UpdateCache;
 
 import com.google.common.collect.Sets;
+import org.n52.sos.event.events.ResultTemplatesDeletion;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -72,7 +76,8 @@ public class DefaultContentModificationListener implements EventListener {
                     ResultTemplateInsertion.class,
                     SensorDeletion.class,
                     ResultInsertion.class,
-                    UpdateCache.class);
+                    UpdateCache.class,
+                    ResultTemplatesDeletion.class);
 
     private CacheFeederHandler handler;
     private ContentCacheController controller;
@@ -98,7 +103,13 @@ public class DefaultContentModificationListener implements EventListener {
             handle(new SensorDeletionUpdate(this.handler, e.getRequest()));
         } else if (event instanceof ResultInsertion) {
             ResultInsertion e = (ResultInsertion) event;
-            handle(new ResultInsertionUpdate(e.getRequest().getTemplateIdentifier(), e.getResponse().getObservation()));
+            handle(new ResultInsertionUpdate(e.getRequest().getTemplateIdentifier(), e.getResponse().getObservations()));
+        } else if (event instanceof FeatureInsertion) {
+            FeatureInsertion e = (FeatureInsertion) event;
+            handle(new FeatureInsertionUpdate(e.getRequest()));
+        } else if (event instanceof ResultTemplatesDeletion) {
+            ResultTemplatesDeletion e = (ResultTemplatesDeletion) event;
+            handle(new ResultTemplateDeletionUpdate(e.getResponse()));
         } else if (event instanceof UpdateCache) {
             handle(new CompleteCacheUpdate(this.handler));
         } else {

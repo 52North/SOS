@@ -35,6 +35,7 @@ import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventHandler;
 import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventResolver;
 import org.n52.iceland.statistics.api.utils.EventHandlerFinder;
+import org.n52.sos.ogc.sensorML.elements.SmlConnection;
 
 public class SosRequestEventResolver implements StatisticsServiceEventResolver<RequestEvent> {
 
@@ -44,6 +45,8 @@ public class SosRequestEventResolver implements StatisticsServiceEventResolver<R
 
     public SosRequestEventResolver() {
     }
+    
+    private SmlConnection connections;
 
     @Override
     public void setHandlers(Map<String, StatisticsServiceEventHandler<?>> handlers) {
@@ -71,5 +74,18 @@ public class SosRequestEventResolver implements StatisticsServiceEventResolver<R
     public RequestEvent getEvent() {
         return event;
     }
+
+    public SmlConnection getConnections() {
+        return connections;
+    }
+
+   public System setConnections(SmlConnection connections) {
+       this.connections = connections;
+       return this;
+   }
+   
+   public boolean isSetConnections() {
+       return getConnections() != null && getConnections().isSetConnections();
+   }
 
 }

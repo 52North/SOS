@@ -102,13 +102,16 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
+@Configurable
 public class InsertResultDAO extends AbstractInsertResultHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultDAO.class);
+    public static final String CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES = "misc.convertComplexProfileToSingleProfiles";
     private static final int FLUSH_THRESHOLD = 50;
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
     private DaoFactory daoFactory;
+    private boolean convertComplexProfileToSingleProfiles;
 
     public InsertResultDAO() {
         super(SosConstants.SOS);
@@ -489,6 +492,15 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
      */
     private String[] separateValues(final String values, final String separator) {
         return values.split(separator);
+    }
+    
+    @Setting(CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES)
+    public void setConvertComplexProfileToSingleProfiles(boolean convertComplexProfileToSingleProfiles) {
+        this.convertComplexProfileToSingleProfiles = convertComplexProfileToSingleProfiles;
+    }
+
+    public boolean isConvertComplexProfileToSingleProfiles() {
+        return this.convertComplexProfileToSingleProfiles;
     }
 
 }

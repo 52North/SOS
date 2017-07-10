@@ -54,7 +54,7 @@ import org.hibernate.type.descriptor.java.JdbcTimestampTypeDescriptor;
  * @author Shane StClair <shane@axiomalaska.com>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *
- * @since 4.4.0
+ * @since 4.3.12
  */
 public class ConfigurableTimestampType extends AbstractSingleColumnStandardBasicType<Date>
         implements VersionType<Date>, LiteralType<Date> {

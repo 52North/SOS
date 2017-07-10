@@ -123,6 +123,7 @@ public class SosInsertSensorOperatorV20 extends
     @Override
     protected void checkParameters(InsertSensorRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
+        String generatedId = JavaHelper.generateID(request.getProcedureDescription().toString());
         // check parameters with variable content
         try {
             checkServiceParameter(request.getService());
@@ -141,7 +142,7 @@ public class SosInsertSensorOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkAndSetAssignedProcedureID(request);
+            checkAndSetAssignedProcedureID(request, generatedId);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -157,7 +158,7 @@ public class SosInsertSensorOperatorV20 extends
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
-            checkAndSetAssignedOfferings(request);
+            checkAndSetAssignedOfferings(request, generatedId);
             try {
                 checkProcedureAndOfferingCombination(request);
             } catch (OwsExceptionReport owse) {
@@ -355,7 +356,7 @@ public class SosInsertSensorOperatorV20 extends
         }
     }
 
-    private void checkAndSetAssignedProcedureID(InsertSensorRequest request) throws OwsExceptionReport {
+    private void checkAndSetAssignedProcedureID(InsertSensorRequest request, String generatedId) throws OwsExceptionReport {
         if (request.getProcedureDescription().isSetIdentifier()) {
             request.setAssignedProcedureIdentifier(request.getProcedureDescription().getIdentifier());
         } else {
@@ -367,7 +368,7 @@ public class SosInsertSensorOperatorV20 extends
                 Sos2Constants.InsertSensorParams.procedureIdentifier);
     }
 
-    private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws OwsExceptionReport {
+    private void checkAndSetAssignedOfferings(InsertSensorRequest request, String generatedId) throws OwsExceptionReport {
         Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
         SosContentCache cache = getCache();
 
@@ -412,7 +413,7 @@ public class SosInsertSensorOperatorV20 extends
 
     private void checkProcedureAndOfferingCombination(InsertSensorRequest request) throws OwsExceptionReport {
         for (SosOffering offering : request.getAssignedOfferings()) {
-            if (!offering.isParentOffering() && getCache().getOfferings().contains(offering.getIdentifier())) {
+            if (!offering.isParentOffering() && getCache().getPublishedFeatureOfInterest().contains(offering.getIdentifier())) {
                 throw new InvalidParameterValueException().at(Sos2Constants.InsertSensorParams.offeringIdentifier)
                         .withMessage(
                                 "The offering with the identifier '%s' still exists in this service and it is not allowed to insert more than one procedure to an offering!",

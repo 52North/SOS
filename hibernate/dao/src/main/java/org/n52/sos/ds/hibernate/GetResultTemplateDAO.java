@@ -51,6 +51,7 @@ import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservab
  */
 public class GetResultTemplateDAO extends AbstractGetResultTemplateHandler {
     private HibernateSessionHolder sessionHolder;
+    private ResultHandlingHelper helper = new ResultHandlingHelper();
 
     public GetResultTemplateDAO() {
         super(SosConstants.SOS);
@@ -72,8 +73,10 @@ public class GetResultTemplateDAO extends AbstractGetResultTemplateHandler {
                 GetResultTemplateResponse response = new GetResultTemplateResponse();
                 response.setService(request.getService());
                 response.setVersion(request.getVersion());
-                response.setResultEncoding(ResultHandlingHelper.createSosResultEncoding(resultTemplate.getResultEncoding()));
-                response.setResultStructure(ResultHandlingHelper.createSosResultStructure(resultTemplate.getResultStructure()));
+                response.setResultEncoding(helper.createSosResultEncoding(resultTemplate
+                        .getResultEncoding()));
+                response.setResultStructure(helper.createSosResultStructure(resultTemplate
+                        .getResultStructure()));
                 return response;
             }
             throw new NoSweCommonEncodingForOfferingObservablePropertyCombination(request.getOffering(),

@@ -53,5 +53,15 @@ public class ObservationsSearchRequest implements IObservationsRequest {
     {
         return getObservationRequest;
     }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getGetObservationRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getGetObservationRequest();
+    }
 
 }

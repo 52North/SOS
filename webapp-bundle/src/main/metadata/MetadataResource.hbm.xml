@@ -24,7 +24,7 @@
         </subclass>
 
         <subclass name="MetadataBooleanEntity" discriminator-value="boolean">
-            <property name="value" column="field_value" type="org.hibernate.type.BooleanType"/>
+            <property name="value" column="field_value" type="org.hibernate.type.BooleanType" />
         </subclass>
 
         <subclass name="MetadataDoubleEntity" discriminator-value="double">

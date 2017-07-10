@@ -46,7 +46,6 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.JTSHelper;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSHelperForTesting;

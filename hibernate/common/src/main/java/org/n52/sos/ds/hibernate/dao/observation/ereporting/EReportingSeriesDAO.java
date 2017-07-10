@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -49,6 +50,7 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.util.CollectionHelper;
 
 public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
@@ -57,7 +59,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    protected Class<?> getSeriesClass() {
+    public Class<?> getSeriesClass() {
         return EReportingSeries.class;
     }
 
@@ -65,6 +67,16 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
         return getSeriesCriteria(request, features, session).list();
+    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
+        if (CollectionHelper.isNotEmpty(features)) {
+            List<Series> series = new ArrayList<>();
+            for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
+                series.addAll(getSeriesCriteria(request, ids, session).list());
+            }
+            return series;
+        } else {
+            return getSeriesCriteria(request, features, session).list();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -76,14 +88,59 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(String observedProperty, Collection<String> features, Session session) {
-        return getSeriesCriteria(observedProperty, features, session).list();
+        if (CollectionHelper.isNotEmpty(features)) {
+            List<Series> series = new ArrayList<>();
+            for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
+                series.addAll(getSeriesCriteria(observedProperty, ids, session).list());
+            }
+            return series;
+        } else {
+            return getSeriesCriteria(observedProperty, features, session).list();
+        }
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Series> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
+        if (CollectionHelper.isNotEmpty(features)) {
+            List<Series> series = new ArrayList<>();
+            for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
+                series.addAll(getSeriesCriteria(procedure, observedProperty, offering, ids, session).list());
+            }
+            return series;
+        } else {
+            return getSeriesCriteria(procedure, observedProperty, offering, features, session).list();
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session) {
-        return getSeriesCriteria(procedures, observedProperties, features, session).list();
+        if (CollectionHelper.isNotEmpty(features)) {
+            List<Series> series = new ArrayList<>();
+            for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
+                series.addAll(getSeriesCriteria(procedures, observedProperties, ids, session).list());
+            }
+            return series;
+        } else {
+            return getSeriesCriteria(procedures, observedProperties, features, session).list();
+        }
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
+            Collection<String> features, Collection<String> offerings, Session session) {
+        if (CollectionHelper.isNotEmpty(features)) {
+            List<Series> series = new ArrayList<>();
+            for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
+                series.addAll(getSeriesCriteria(procedures, observedProperties, ids, offerings, session).list());
+            }
+            return series;
+        } else {
+            return getSeriesCriteria(procedures, observedProperties, features, offerings, session).list();
+        }
     }
 
     @Override

@@ -45,13 +45,14 @@ import com.google.common.base.Strings;
  *
  * @author Christian Autermann
  */
-public class SeriesTextObservation
-        extends AbstractSeriesObservation<String>
-        implements TextObservation {
+public class SeriesTextObservation extends AbstractSeriesObservation<String> implements TextObservation {
 
     private static final long serialVersionUID = 627306968328720439L;
 
     private String value;
+    private String valueIdentifier;
+    private String valueName;
+    private String valueDescription;
 
     @Override
     public String getValue() {
@@ -72,28 +73,69 @@ public class SeriesTextObservation
     public String getValueAsString() {
         return getValue();
     }
+    
+    @Override
+    public void setValueIdentifier(String valueIdentifier) {
+        this.valueIdentifier = valueIdentifier;
+    }
 
     @Override
-    public void accept(VoidObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public String getValueIdentifier() {
+        return valueIdentifier;
+    }
+
+    @Override
+    public boolean isSetValueIdentifier() {
+        return !Strings.isNullOrEmpty(getValueIdentifier());
+    }
+
+    @Override
+    public void setValueName(String valueName) {
+        this.valueName = valueName;
+    }
+
+    @Override
+    public String getValueName() {
+        return valueName;
+    }
+
+    @Override
+    public boolean isSetValueName() {
+        return !Strings.isNullOrEmpty(getValueName());
+    }
+
+    @Override
+    public void setValueDescription(String valueDescription) {
+        this.valueDescription = valueDescription;
+    }
+
+    @Override
+    public String getValueDescription() {
+        return valueDescription;
+    }
+
+    @Override
+    public boolean isSetValueDescription() {
+        return !Strings.isNullOrEmpty(getValueDescription());
+    }
+
+    @Override
+    public void accept(VoidObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

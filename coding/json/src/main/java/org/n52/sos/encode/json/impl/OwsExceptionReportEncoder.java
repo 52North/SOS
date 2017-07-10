@@ -108,7 +108,7 @@ public class OwsExceptionReportEncoder extends JSONEncoder<OwsExceptionReport> {
             if (exceptionText.length() > 0) {
                 exceptionText.append(LF);
             }
-            exceptionText.append("[EXEPTION]: ").append(LF);
+            exceptionText.append("[EXCEPTION]: ").append(LF);
             String localizedMessage = ce.getCause().getLocalizedMessage();
             String message = ce.getCause().getMessage();
             if (localizedMessage != null && message != null) {

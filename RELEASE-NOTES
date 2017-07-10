@@ -6,33 +6,276 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform
  (SensorML as well).
 
-    Changes since last release
-==================================
-
+   Release 52n-sensorweb-sos-4.4.x
+====================================
+ 
   --- New features ---
-  
+
+      * 
   
   --- Changes ---
   
+      * 
   
   --- Fixed issues ---
   
+      * 
+
+   Release 52n-sensorweb-sos-4.4.0
+====================================
+
+  --- New features ---
+
+      * INSPIRE support for
+        * Technical Guidance for implementing download services using the OGC Sensor Observation Service 
+            and ISO 19143 Filter Encoding (http://inspire.ec.europa.eu/id/document/tg/download-sos) (Since 4.3.0)
+          * https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#INSPIRE_Download_Service_extension
+        * Guidelines for the use of Observations & Measurements and Sensor Web Enablement-related 
+            standards in INSPIRE (D2.9) (http://inspire.ec.europa.eu/id/document/tg/d2.9-o%26m-swe)
+          * https://wiki.52north.org/SensorWeb/InspireSpecialisedObservations
+          * GetDataAvailability 2.0
+            * Result contains the offering, procedure description formats and responseFormat/observationTypes.
+          * Hierarchical offering (similar to hierarchical procedure)
+            * allows to display only the parent offerings in the Capabilities
+      * InsertFeatureOfInterest operation
+        * Allows the insertion of featureOfInterest 
+      * Support for insertion of procedure types
+        * https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#A_61_61_Procedure_type_support
+      * DeleteResultTemplate operation
+        * Allows the deletion of resultTemplates by identifier or offering/observedProperty pairs
+      * Update procedure name/description in UpdateSensorDescription
+        * Update the procedure name/description if changed 
+      * UVF encoding
+        * https://wiki.52north.org/SensorWeb/UvfEncoding
+      * WaterML 2.0 MonitoringPoint support in database
+        * Inclusive support of relatedParty and verticalDatum
+        * https://wiki.52north.org/SensorWeb/WaterML
+      * ResultHandling
+        * Support insertion of ComplexObservations
+        * Support insertion of samplingGeometry
+        * Support for insertion of related featureOfInterest and procedure identifier in result values
+      * Enhanced DeleteObservation to allow deletion for featureOfInterest, procedure, observedProperty,
+          offering and temporalFilter
+      * Support for stored ISO strings as time in database (Hibernate datatype)
+      * Get name of observedProperty from procedure description if available
+        * Would be inserted into the observedProperty table.
+      * Support for netCDF encoding
+        * Support CF
+        * Support OceanSites
+      * Register binding
+        * Allows the insertion of the raw sensor description via HTTP POST
+        * https://wiki.52north.org/SensorWeb/RegisterBinding
+      * Insertion of "up-to-date" sample data that can be simply used by the Helgoland Client
+        * The SOS example requests are still for the test data!
+      * Show client IP during installation for transactional security settings
+  
+  --- Changes ---
+  
+      * Update setting descriptions
+      * Contains Sensor Web REST-API v2.0.0
+      * Contains Helgoland map client v1.0.0
+      * Select profile (default SOS 2.0, Hydrology, INSPIRE) via admin interface
+  
+  --- Fixed issues ---
+
+      * Issue #215: i18N GUI not rendered if required tables are missing
+      * Issue #221: Check identifiers of transactional operations for reserved characters
+      * Issue #250: Dispatching after reset is wrong
+      * Issue #255: NumericSettingDefinition breaks settings view in admin interface bug enhancement high priority
       * Issue #258: SQL-Server 2012 Express: Can not clean datasource via 
-      				admin/datasource -> clear datasource
-         * https://github.com/52North/SOS/pull/260
+                    admin/datasource -> clear datasource
+      * Issue #261: NPE is thrown when sending not supported XML requests.
+      * Issue #264: SOS throws a NPE in SensorML 1.0.1 decoder if characteristics/capabilities 
+                    element has no AbstractDataRecord element
       * Issue #266: Reload CapabilitiesExtensionProvider in CapabilitiesExtensionRepository 
-                   after changing operations status
+                    after changing operations status
       * Issue #267: Capabilities shows procedureDescriptionFormats in transactional 
-                   operations which are not supported
+                    operations which are not supported
       * Issue #277: Check for not null/empty coordinates in CoordinateTransformer.transformSweCoordinates() 
-                   before joining
+                    before joining
       * Issue #279: Extend the supported coordinate names
+      * Issue #282: Fix potential problems in CoordinateTransformer.getCrsFromString(String)
       * Issue #285: Client problem with feature capabilities in DescribeSensor 
-      				response with SensorML 1.0.1 encoded procedure
+                    response with SensorML 1.0.1 encoded procedure
+      * Issue #287: The XML text of the parsed SensorML 2.0 AbstractProcess from components is invalid.
+      * Issue #288: Clear Datasource fails with 500 Internal Server Error
+      * Issue #305: After changing datasource settings requests fail with exception
+      * Issue #318: NPE if SensorML 2.0 description contains an empty <sml:classification />
+      * Issue #323: GetFeatureOfInterestRequestDecoder no parse featureOfInterest parameter
+      * Issue #349: Change wording for SOS time period error
+      * Issue #351: Development Branch always 'enriching with discovery information'
+      * Issue #361: First/last numeric values are not updated in series table in develop branch
+      * Issue #367: java.lang.NullPointerException checking hasObservations
+      * Issue #369: SOS Client InsertObservation example '[POX] InsertObservation - ComplexObservation (SOS 2.0.0)'
+      * Issue #370: ExceptionReport: NullPointerException+CastException for ComplexObservation result template
+      * Issue #389: The build process fails after merging of #385
+      * Issue #395: Creating database schema fails for MySQL
+      * Issue #422: Failed conversion between SML 2.0 and SML 1.0.1
+      * Issue #439: quality tag how metadata of output list
+      * Hidden NPE cause by not set request context while inserting new sample data
+      * Avoid query for next value chunk if previous has less than chunk size
+
+
+   Release 52n-sensorweb-sos-4.3.14
+=====================================
+
+  --- New features ---
+
+    
+  --- Changes ---
+    
   
+  --- Fixed issues ---
+
+    * some fixes for the rest api (bundle)
+
+
+   Release 52n-sensorweb-sos-4.3.13
+=====================================
+
+  --- New features ---
+
+    
+  --- Changes ---
+    
+    * Update PostgreSQL JDBC to current which works with PG 9.6
+
   
-    Release 52n-sensorweb-sos-4.3.6
-===================================
+  --- Fixed issues ---
+
+    * some minor fixes (getting unit from series)
+
+   Release 52n-sensorweb-sos-4.3.12
+=====================================
+
+  --- New features ---
+
+    * Make timezones configurable to handle time w/o zone information properly (instead of expecting UTC only)
+    * Add named query for samplingGeometry check in offering cache update
+    * Get unit from series table
+    
+  --- Changes ---
+    
+    * Set overall time extrema flag to false
+    * Enhancements for not publiched objects (series concept)
+    * Update REST-API to 1.10.0
+  
+  --- Fixed issues ---
+
+    * some minor fixes
+ 
+
+   Release 52n-sensorweb-sos-4.3.11
+=====================================
+
+  --- New features ---
+  
+    
+  --- Changes ---
+    
+    * Update REST-API version of bundle to 1.9.5
+  
+  --- Fixed issues ---
+
+    * Issue #506: Get HTTP Status 500 - Handler processing failed when install 52North SOS-webapp-4.3.10
+      * Missing c3p0 library
+    * Do not list not published procedure/featureOfInterest/observedProperty in Capabilities (series concept)
+ 
+   Release 52n-sensorweb-sos-4.3.10
+=====================================
+
+  --- New features ---
+  
+    
+  --- Changes ---
+
+  
+  --- Fixed issues ---
+
+    * Issue #503: Capabilities cache update fails for old database concept
+ 
+   Release 52n-sensorweb-sos-4.3.9
+====================================
+
+  --- New features ---
+  
+    * helgoland client
+    
+  --- Changes ---
+ 
+ 
+  
+  --- Fixed issues ---
+    
+    * Issue #390: Add default="NULL" to nullable timestamp properties in mapping files
+    * Set metadata property
+    * Document-Ready-Callback for SOS Test client
+    * Fix issue with not defined altitude in SensorML position
+    * Fix mapping files for MySQL if timestamp column is nullable
+    
+ 
+   Release 52n-sensorweb-sos-4.3.8
+====================================
+
+  --- New features ---
+  
+    * Add offering to series table (optional -> can be null)
+    * Add support of SensorML connections encoding
+    * Add support for gml:MetadataProperty encoding
+    
+  --- Changes ---
+ 
+    * Issue #427: Check and remove lazy and fetch attributes from Hibernate mapping files
+    * Add child procedure and featureOfInterest to GDA request
+    * Update PostgreSQL version to support PostgreSQL 9.6.x
+    * Update REST-API version of bundle to 1.9.0
+      * Also implements support for offering in series table
+  
+  --- Fixed issues ---
+    
+    * Issue #350: java.lang.nullPointerException w/ SML contact element
+    * Issue #446: Issue regarding getCapabilities
+    * Issue #452: 'Clear Database' utility fails to remove data from PostgreSQL
+    * Issue #466: SOS 4.3.7 InsertObservation Geometry doesn't work
+    * Issue #467: Get 500 error with indeterminatePosition in TimeInstant
+    * Issue #484: WaterML 2.0 TVP response contains no values if phenomenonTime is a time period
+    * Fix issue with H2 file database when create schema is selected
+    
+ 
+   Release 52n-sensorweb-sos-4.3.7
+====================================
+
+  --- New features ---
+  
+    * Support for samplingGeometry stored as lat/lon
+    
+  --- Changes ---
+ 
+    * Issue #427: Check and remove lazy and fetch attributes from Hibernate mapping files
+    * Change XML validation to validate encoded objects only if debug log level is enabled.
+    * Update REST-API version of bundle to 1.8.0
+  
+  --- Fixed issues ---
+  
+    * NPE in SmlCapabilities when calling getCapabilities
+    * Fix indentation and implement short-circuit of the loop (https://github.com/52North/SOS/commit/23ab94e9da25f74a83c89ce22593228b39ac0890)
+    * Fix random id generation (https://github.com/52North/SOS/commit/6cbfd9a1f7849af0358d2b99de3a41605beb07f7)
+    * Issue #215: i18N GUI not rendered if required tables are missing
+    * Issue #250: Dispatching after reset is wrong
+    * Issue #382: Deleting Complex Observation
+    * Issue #393: SamplingGeometry in InsertObservation is not inserted into database using JSON binding
+    * Issue #397: InsertResult adding result to every observation offering available
+    * Issue #398: Invalid namespace prefix when querying AQD GetObservation with samplingGeometry in the response.
+    * Issue #405: Observation data failing to insert
+    * Issue #416: Test Client - wrong type of the wml2:metadata element?
+    * Issue #417: REST InsertObservation does not permit resultTime specified as xlink
+    * Issue #418: REST binding does not work with enabled transactional security
+    * Issue #424: AQD GetObservation executes a query for each series to get min/max phenomenonTime
+    * Issue #426: Add OGC-SOS 1.0.0 GetObservation resultModel support
+    
+
+   Release 52n-sensorweb-sos-4.3.6
+====================================
 
   --- New features ---
   
@@ -44,8 +287,8 @@ RELEASE NOTES
   --- Fixed issues ---
   
   
-    Release 52n-sensorweb-sos-4.3.5
-===================================
+   Release 52n-sensorweb-sos-4.3.5
+====================================
 
   --- New features ---
   
@@ -62,32 +305,18 @@ RELEASE NOTES
       * Issue #359: Missing "Version" and "Build date"
       * Issue #362: Minor typo in "Datasource configuration" wizard  
       * Issue #365: SOS Client InsertResultTemplate example '[POX] InsertResultTemplate - with ResultTime (SOS 2.0.0)'
-      
- 
-    Release 52n-sensorweb-sos-4.3.4
-===================================
-
-  --- New features ---
-  
-      * Add alternative Hibernate mapping files for REST-API which can be used with e-Reporting databse concept.
-  
-  --- Changes ---
- 
-      * Update REST-API version of bundle to 1.6.0
-  
-  --- Fixed issues ---
-  
-      * 
  
    Release 52n-sensorweb-sos-4.3.4
-===================================
+====================================
 
   --- New features ---
   
-       * Support OM_SamplingObservation in JSON binding (samplingGeometry in om:paramerter)
+    * Support OM_SamplingObservation in JSON binding (samplingGeometry in om:paramerter)
+    * Add alternative Hibernate mapping files for REST-API which can be used with e-Reporting databse concept.
   
   --- Changes ---
   
+    * Update REST-API version of bundle to 1.6.0
   
   --- Fixed issues ---
   
@@ -96,7 +325,7 @@ RELEASE NOTES
       * Issue #322: Missing samplingGeometry (om:parameter) in returned observation
  
    Release 52n-sensorweb-sos-4.3.3
-===================================
+====================================
 
   --- New features ---
   
@@ -110,7 +339,7 @@ RELEASE NOTES
  
  
    Release 52n-sensorweb-sos-4.3.2
-==================================
+====================================
 
   --- New features ---
   
@@ -125,7 +354,7 @@ RELEASE NOTES
 
 	  
    Release 52n-sensorweb-sos-4.3.1
-==================================
+====================================
 
   --- New features ---
   
@@ -138,7 +367,7 @@ RELEASE NOTES
   
  
   Release 52n-sensorweb-sos-4.3.0
-==================================
+===================================
 
   --- New features ---
 
@@ -178,7 +407,7 @@ RELEASE NOTES
 
 
   Release 52n-sensorweb-sos-4.2.0
-==================================
+===================================
 
  --- New features ---
 

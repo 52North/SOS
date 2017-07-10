@@ -44,7 +44,7 @@ import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 
 /**
  *
@@ -92,6 +92,15 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                 }
             }
 
+            for (FeatureOfInterest featureOfInterest : featureOfInterestDAO.getPublishedFeatureOfInterest(getSession())) {
+                String identifier = featureOfInterest.getIdentifier();
+                getCache().addPublishedFeatureOfInterest(identifier);
+                Collection<String> parentFois = foisWithParents.get(identifier);
+                if (!CollectionHelper.isEmpty(parentFois)) {
+                    getCache().addPublishedFeaturesOfInterest(parentFois);
+                }
+            }
+            
             FeatureQueryHandlerQueryObject queryHandler =
                     new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(getCache().getFeaturesOfInterest())
                             .setConnection(getSession());

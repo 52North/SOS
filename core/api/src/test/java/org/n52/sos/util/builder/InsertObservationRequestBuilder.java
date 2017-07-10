@@ -71,7 +71,7 @@ public class InsertObservationRequestBuilder {
         return this;
     }
 
-    public InsertObservationRequest build() {
+    public InsertObservationRequest build() throws OwsExceptionReport {
         InsertObservationRequest request = new InsertObservationRequest();
         request.setObservation(observations);
         request.setOfferings(offerings);

@@ -42,7 +42,7 @@ import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 
@@ -104,16 +104,18 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
             cache.updatePhenomenonTimeForProcedure(procedure, phenomenonTime);
 
             // update features
-            List<SamplingFeature> observedFeatures =
+            List<AbstractSamplingFeature> observedFeatures =
                     sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
 
             final Envelope envelope = createEnvelopeFrom(observedFeatures);
             cache.updateGlobalEnvelope(envelope);
 
-            for (SamplingFeature sosSamplingFeature : observedFeatures) {
+            for (AbstractSamplingFeature sosSamplingFeature : observedFeatures) {
                 String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
 
                 cache.addFeatureOfInterest(featureOfInterest);
+                cache.addPublishedFeatureOfInterest(featureOfInterest);
+                cache.addPublishedFeatureOfInterest(featureOfInterest);
                 if (sosSamplingFeature.isSetName()) {
                     cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest, sosSamplingFeature.getFirstName().getValue());
                 }
@@ -122,6 +124,7 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
                     for (AbstractFeature parentFeature : sosSamplingFeature.getSampledFeatures()) {
                         cache.addParentFeature(sosSamplingFeature.getIdentifierCodeWithAuthority().getValue(),
                                 parentFeature.getIdentifierCodeWithAuthority().getValue());
+                        cache.addPublishedFeatureOfInterest(parentFeature.getIdentifierCodeWithAuthority().getValue());
                     }
                 }
                 for (String offering : request.getOfferings()) {

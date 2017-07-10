@@ -58,5 +58,19 @@ public class SensorsPutRequest extends TransactionalSensorRequest {
     {
         return describeSensorRequest;
     }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getUpdateSensorRequest() != null || getDescribeSensorRequest() != null;
+    }
 
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        if (getUpdateSensorRequest() != null) {
+            return getUpdateSensorRequest();
+        } else if (getDescribeSensorRequest() != null) {
+            return getDescribeSensorRequest();
+        }
+        return null;
+    }
 }

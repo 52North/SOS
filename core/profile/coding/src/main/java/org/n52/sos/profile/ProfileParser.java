@@ -139,7 +139,7 @@ public class ProfileParser {
         }
         return "";
     }
-
+        profile.setDefinition(sosProfileDoc.xmlText());
     private String parseObservationResponseFormat(JsonNode node) {
         return parseText(node.path(OBSERVATION_RESPONSE_FORMAT));
     }

@@ -53,6 +53,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.ProfileGeneratorSplitter;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
@@ -62,6 +63,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObserva
 import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
 import org.n52.svalbard.decode.DecoderRepository;
@@ -160,6 +162,11 @@ public class SweAbstractDataComponentCreator
         } catch (DecodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex);
         }
+    }
+
+    @Override
+    public SweAbstractDataComponent visit(ProfileValuedObservation o) throws OwsExceptionReport {
+        return ProfileGeneratorSplitter.createValue(o);
     }
 
     protected <T extends SweAbstractDataComponent> T setCommonValues(

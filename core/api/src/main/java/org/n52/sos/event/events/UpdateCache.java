@@ -28,8 +28,6 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.iceland.event.events.AbstractFlowEvent;
-
 public class UpdateCache extends AbstractFlowEvent {
 
     public UpdateCache() {

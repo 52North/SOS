@@ -63,9 +63,9 @@ public class WaterMLv20SensorMLv20Converter extends AbstractWaterMLv20SensorMLCo
 
     private static final Set<ConverterKey> CONVERTER_KEYS = CollectionHelper.set(
             new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL),
-            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL),
+            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
             new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING),
-            new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
+            new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
 
     public WaterMLv20SensorMLv20Converter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",

@@ -52,13 +52,21 @@ import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.BlobValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.BooleanValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.CategoryValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.GeometryValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.NumericValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.TextValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.IdentifierNamDescription;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
 
@@ -79,7 +87,9 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     @Override
     public QuantityValue visit(NumericValuedObservation o) {
         QuantityValue v = new QuantityValue(o.getValue());
-        addUnit(o, v);
+        if (!addUnit(o, v) && o instanceof NumericValuedSeriesObservation && ((NumericValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((NumericValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
@@ -87,21 +97,29 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     @Override
     public UnknownValue visit(BlobValuedObservation o) {
         UnknownValue v = new UnknownValue(o.getValue());
-        addUnit(o, v);
+        if (!addUnit(o, v) && o instanceof BlobValuedSeriesObservation && ((BlobValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((BlobValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
     @Override
     public BooleanValue visit(BooleanValuedObservation o) {
         BooleanValue v = new BooleanValue(o.getValue());
-        addUnit(o, v);
+        if (!addUnit(o, v) && o instanceof BooleanValuedSeriesObservation && ((BooleanValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((BooleanValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
     @Override
     public CategoryValue visit(CategoryValuedObservation o) {
         CategoryValue v = new CategoryValue(o.getValue());
-        addUnit(o, v);
+        addAdditonalData(o, v);
+        addDefinitionFromObservableProperty(o, v);
+        if (!addUnit(o, v) && o instanceof CategoryValuedSeriesObservation && ((CategoryValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((CategoryValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
@@ -121,14 +139,20 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     @Override
     public GeometryValue visit(GeometryValuedObservation o) {
         GeometryValue v = new GeometryValue(o.getValue());
-        addUnit(o, v);
+        if (!addUnit(o, v) && o instanceof GeometryValuedSeriesObservation && ((GeometryValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((GeometryValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
     @Override
     public TextValue visit(TextValuedObservation o) {
         TextValue v = new TextValue(o.getValue());
-        addUnit(o, v);
+        addAdditonalData(o, v);
+        addDefinitionFromObservableProperty(o, v);
+        if (!addUnit(o, v) && o instanceof TextValuedSeriesObservation && ((TextValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((TextValuedSeriesObservation) o).getSeries().getUnit()));
+        }
         return v;
     }
 
@@ -146,12 +170,46 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
 
     }
 
-    protected void addUnit(ValuedObservation<?> o, Value<?> v) {
-        if (!v.isSetUnit() && o.isSetUnit()) {
-            v.setUnit(o.getUnit().getUnit());
-        }
+    @Override
+    public ProfileValue visit(ProfileValuedObservation o) throws OwsExceptionReport {
+        return ProfileGeneratorSplitter.create(o);
     }
 
 
+    @SuppressWarnings("rawtypes")
+    protected void addAdditonalData(IdentifierNamDescription o, SweAbstractSimpleType v) {
+        if (o.isSetValueIdentifier()) {
+            v.setIdentifier(o.getValueIdentifier());
+        }
+        if (o.isSetValueName()) {
+            v.setName(o.getValueName());
+        }
+        if (o.isSetValueDescription()) {
+            v.setDescription(o.getValueDescription());
+        }
+    }
+    
+    @SuppressWarnings("rawtypes")
+    protected void addDefinitionFromObservableProperty(ValuedObservation o, SweAbstractSimpleType v) {
+        if (o instanceof HasObservablePropertyGetter) {
+            if (((HasObservablePropertyGetter)o).getObservableProperty() != null) {
+                v.setDefinition(((HasObservablePropertyGetter)o).getObservableProperty().getIdentifier());
+            }
+        }
+    }
+
+    protected boolean addUnit(ValuedObservation<?> o, Value<?> v) {
+        if (!v.isSetUnit() && o.isSetUnit()) {
+            v.setUnit(getUnit(o.getUnit()));
+            return true;
+        }
+        return false;
+    }
+
+
+    protected UoM getUnit(Unit unit) {
+        UoM uom = new UoM(unit.getUnit());
+        return uom;
+    }
 
 }

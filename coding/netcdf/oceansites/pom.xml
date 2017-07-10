@@ -55,7 +55,13 @@
             <groupId>com.axiomalaska</groupId>
             <artifactId>cf4j</artifactId>
             <scope>provided</scope>
-        </dependency>
+	        <groupId>com.axiomalaska</groupId>
+	        <artifactId>cf4j</artifactId>
+      	</dependency>
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>netcdf4</artifactId>
+		</dependency>   
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf</artifactId>

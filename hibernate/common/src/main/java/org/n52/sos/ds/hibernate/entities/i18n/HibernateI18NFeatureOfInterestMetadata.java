@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.i18n;
 
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 
 /**
  * Implementation of {@link AbstractHibernateI18NMetadata} for {@link FeatureOfInterest}

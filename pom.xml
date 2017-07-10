@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <!-- Remove the parent in the case of 52°North repos are not available -->
     <parent>
@@ -61,7 +62,8 @@
         <!-- sos name -->
         <conf.sos.name>52n-sos-webapp</conf.sos.name>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <!-- Source encoding during build process ** !!! DO NOT CHANGE !!! ** -->
+        <!-- Source encoding during build process ** !!! DO NOT CHANGE !!! 
+            ** -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -80,8 +82,9 @@
         <logback.version>1.1.3</logback.version>
         <slf4j.version>1.7.21</slf4j.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
-        <hibernate.spatial.version>4.3.1-52N</hibernate.spatial.version>
+        <hibernate.spatial.version>4.3.2-52N</hibernate.spatial.version>
         <sqlite.version>3.8.11.2</sqlite.version>
+        <c3p0.version>0.9.5.2</c3p0.version>
         <geotools.version>14.1</geotools.version>
         <jackson.version>2.8.5</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
@@ -98,12 +101,12 @@
         <dataset.dao.version>2.0.0-SNAPSHOT</dataset.dao.version>
         <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version>
         
-        <n52.common.xml.version>2.2.0</n52.common.xml.version>
+        <n52.common.xml.version>2.3.0</n52.common.xml.version>
         <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
         <aspectj.version>1.8.9</aspectj.version>
         <saxon.version>9.1.0.8</saxon.version>
-        <sos.test.suite.version>1.0.0-M6</sos.test.suite.version>
+        <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -310,7 +313,32 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-dao</artifactId>
+                <artifactId>coding-gml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-gml-cov</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-cv-gml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-gwml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-uvf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>core-v100</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -386,6 +414,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>binding-register</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>enhanced-v20</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -402,6 +435,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>profile-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>request-response-coordinate-transformer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -449,9 +487,43 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>coding-inspire-omso</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-inspire-ompr</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>inspire-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>inspire-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>inspire-code</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>inspire-xml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- EREPORTING -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ereporting</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- AQD eReporting -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>inspire-xml</artifactId>
@@ -502,6 +574,12 @@
                 <artifactId>ereporting-identifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <!-- Related offering encoding -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-related-offering</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- Split and Merge observatioons -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -530,6 +608,12 @@
                 <artifactId>javax.servlet.jsp-api</artifactId>
                 <version>2.3.1</version>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>javax.servlet-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -563,6 +647,12 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>1.10.19</version>
+                <exclusions>
+                	<exclusion>
+	                    <artifactId>hamcrest-core</artifactId>
+	                    <groupId>org.hamcrest</groupId>
+	                </exclusion>
+            	</exclusions>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -677,6 +767,10 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>com.mchange</groupId>
+                        <artifactId>c3p0</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -697,7 +791,16 @@
                         <groupId>org.postgresql</groupId>
                         <artifactId>postgresql</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                    </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.postgresql</groupId>
@@ -720,6 +823,57 @@
                 <artifactId>sqlite-jdbc</artifactId>
                 <version>${sqlite.version}</version>
             </dependency>
+            <!-- TODO change if dependencies are officially released -->
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-cv-v022</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+           <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-base2-v20</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-base-v33</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-omor-v30</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-ompr-v30</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-omso-v30</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-omso-v301</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-ef-v40</artifactId>
+                <version>${n52.common.xml.version}</version>
+               </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gml-v33</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gwml-v22</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gml-v311</artifactId>
@@ -728,6 +882,11 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gml-v321</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gmlcov-v10</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
@@ -792,6 +951,36 @@
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gco-v20120713</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-ifoi-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-drt-v100</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosgda-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosgda-v20</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosro-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-om-v100</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
@@ -843,6 +1032,16 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-waterML-dr-v20</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosdo-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosdo-v20</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
@@ -1000,6 +1199,42 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-oxm</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>test-suite-common</artifactId>
                 <version>${sos.test.suite.version}</version>
@@ -1083,7 +1318,52 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>gda-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>gda-hibernate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi-operation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>ifoi-hibernate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt-operation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt-hibernate</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- required for common test classes -->
@@ -1107,7 +1387,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
+            <!-- <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>1.10</version>
@@ -1122,7 +1402,7 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-xml</artifactId>
                 <version>${project.version}</version>
-            </dependency>
+            </dependency> -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-core</artifactId>
@@ -1166,7 +1446,7 @@
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>5.1.37</version>
+                <version>5.1.38</version>
             </dependency>
             <dependency>
                 <groupId>com.github.fge</groupId>
@@ -1340,6 +1620,34 @@
                 <version>0.9.5</version>
             </dependency>
             <dependency>
+            <dependency>
+                <groupId>java3d</groupId>
+                <artifactId>vecmath</artifactId>
+                <version>1.5.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-api</artifactId>
+                <version>${geotools.version}</version>
+		<exclusions>
+	            <exclusion>
+			<groupId>javax.media</groupId>
+			<artifactId>jai_core</artifactId>
+		    </exclusion>
+		</exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.9-RC1</version>
+            </dependency>
+            <!-- EXI - Efficient XML Interchange -->
+            <dependency>
+                <groupId>com.siemens.ct.exi</groupId>
+                <artifactId>exificient</artifactId>
+                <version>0.9.4</version>
+            </dependency>
+            <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>2.11.0</version>
@@ -1358,23 +1666,23 @@
             <!-- netCDF -->
             <dependency>
                 <groupId>edu.ucar</groupId>
-                <artifactId>netcdf</artifactId>
-                <version>4.3.22</version>
+                <artifactId>netcdf4</artifactId>
+                <version>4.6.10</version>
                 <exclusions>
-                    <exclusion>
-                        <groupId>commons-httpclient</groupId>
-                        <artifactId>commons-httpclient</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.mchange</groupId>
-                        <artifactId>c3p0</artifactId>
+                  <exclusion>
+                    <groupId>c3p0</groupId>
+                    <artifactId>c3p0</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>com.mchange</groupId>
+                    <artifactId>c3p0</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.axiomalaska</groupId>
                 <artifactId>cf4j</artifactId>
-                <version>27.2</version>
+                <version>35.0</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -1401,7 +1709,8 @@
     <build>
         <plugins>
             <plugin>
-                <!-- execute "install" goal during release:prepare (instead of "integration-test") -->
+                <!-- execute "install" goal during release:prepare (instead 
+                    of "integration-test") -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
@@ -1429,7 +1738,8 @@
                                 <!-- true to solve https://github.com/ktoso/maven-git-commit-id-plugin/issues/61 -->
                                 <skip>true</skip>
                             </gitDescribe>
-                            <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
+                            <timestampFormat>{0,date,yyyy-MM-dd
+                                HH:mm:ss}</timestampFormat>
                         </configuration>
                     </execution>
                 </executions>
@@ -1460,12 +1770,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.3</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>jar-no-fork</goal>
+                            <goal>test-jar-no-fork</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -1483,8 +1794,7 @@
                             <source>
                                 import java.util.Date
                                 import java.text.MessageFormat
-                                def vartimestamp = MessageFormat.format("{0,date,yyyy}", new
-                                Date())
+                                def vartimestamp = MessageFormat.format("{0,date,yyyy}", new Date())
                                 project.properties['currentYearDynamic'] = vartimestamp
                             </source>
                         </configuration>
@@ -1523,6 +1833,7 @@
                         <year>${project.inceptionYear}-${currentYearDynamic}</year>
                     </properties>
                 </configuration>
+                <!-- 
                 <executions>
                     <execution>
                         <id>check-license</id>
@@ -1532,9 +1843,12 @@
                         </goals>
                     </execution>
                 </executions>
+                 -->
             </plugin>
-            <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true -DallowSnapshots=true -Psqlserver,oracle -->
-            <!-- Finish new release: mvn jgitflow:release-finish -DnoDeploy=true -Psqlserver,oracle -->
+            <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true 
+                -DallowSnapshots=true -Psqlserver,oracle -->
+            <!-- Finish new release: mvn jgitflow:release-finish -DnoDeploy=true 
+                -Psqlserver,oracle -->
             <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>
                 <artifactId>jgitflow-maven-plugin</artifactId>
@@ -1612,7 +1926,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>3.6.1</version>
                     <configuration>
                         <compilerVersion>1.8</compilerVersion>
                         <source>1.8</source>
@@ -1628,6 +1942,11 @@
                     <version>2.1.9</version>
                 </plugin>
                 <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>buildnumber-maven-plugin</artifactId> <version>1.3</version> </plugin> -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.8</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -1664,11 +1983,6 @@
                     <version>2.15</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.mortbay.jetty</groupId>
-                    <artifactId>maven-jetty-plugin</artifactId>
-                    <version>6.1.26</version>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
                     <version>1.3.2</version>
@@ -1676,7 +1990,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.16</version>
+                    <version>2.20</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
@@ -1687,7 +2001,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>2.6</version>
                     <configuration>
                         <descriptors>
                             <descriptor>misc/assembly.xml</descriptor>
@@ -1751,6 +2065,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <!-- 
         <repository>
             <id>refractions</id>
             <name>Refractions repository</name>
@@ -1759,6 +2074,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+         -->
         <repository>
             <id>hibernate-spatial</id>
             <url>http://www.hibernatespatial.org/repository</url>
@@ -1777,16 +2093,17 @@
         <repository>
             <id>boundlessgeo</id>
             <name>Boundless Cloud Repository</name>
-            <url>https://repo.boundlessgeo.com/main/</url>
+            <url>https://boundless.artifactoryonline.com/boundless/main</url>
         </repository>
-        <!-- <repository>
-            <id>boundless</id>
-            <name>Boundless, formerly OpenGeo</name>
-            <url>http://repo.boundlessgeo.com/main/</url>
-        </repository> -->
+        <!-- 
         <repository>
             <id>unidata-releases</id>
             <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+        </repository>
+         -->
+        <repository>
+            <id>boundlessgeo-releases</id>
+            <url>https://repo.boundlessgeo.com/main</url>
         </repository>
     </repositories>
     <profiles>
@@ -1800,8 +2117,8 @@
         </profile>
         <profile>
             <id>release</id>
-            <!-- a profile which shall be activated if a release is performed, it
-            is also automatic activated in the ci environment. -->
+            <!-- a profile which shall be activated if a release is performed, 
+                it is also automatic activated in the ci environment. -->
             <activation>
                 <property>
                     <name>env</name>
@@ -1814,8 +2131,8 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
                         <configuration>
-                            <!-- no build in release:prepare (takes to long time), so in bad cases
-                            release fails on perform -->
+                            <!-- no build in release:prepare (takes to long 
+                                time), so in bad cases release fails on perform -->
                             <preparationGoals>clean</preparationGoals>
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                             <tagBase>https://svn.52north.org/svn/swe/main/SOS/Service/tags/</tagBase>

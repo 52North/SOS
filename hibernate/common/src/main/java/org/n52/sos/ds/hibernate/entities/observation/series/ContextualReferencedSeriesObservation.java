@@ -28,12 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestGetter;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureGetter;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
@@ -57,7 +57,7 @@ public class ContextualReferencedSeriesObservation
     private Series series;
 
     @Override
-    public FeatureOfInterest getFeatureOfInterest() {
+    public AbstractFeatureOfInterest getFeatureOfInterest() {
         return isSetSeries() ? getSeries().getFeatureOfInterest() : null;
     }
 

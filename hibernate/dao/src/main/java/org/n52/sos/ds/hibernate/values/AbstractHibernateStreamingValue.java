@@ -89,7 +89,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateStreamingValue.class);
     protected final HibernateSessionHolder sessionHolder;
     protected Session session;
-    protected final GetObservationRequest request;
+    protected final AbstractObservationRequest request;
     protected Criterion temporalFilterCriterion;
     private final DaoFactory daoFactory;
 
@@ -109,27 +109,38 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     @Override
     public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
-
         Map<String, OmObservation> observations = Maps.newHashMap();
         while (hasNextValue()) {
             AbstractValuedLegacyObservation<?> nextEntity = nextEntity();
-            boolean mergableObservationValue = checkForMergability(nextEntity);
-            OmObservation observation = null;
-            if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
-                observation = observations.get(nextEntity.getDiscriminator());
-            } else {
-                observation = getObservationTemplate().cloneTemplate();
-                addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
-                if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
-                    observations.put(Long.toString(nextEntity.getObservationId()), observation);
+            if (nextEntity != null) {
+                boolean mergableObservationValue = checkForMergability(nextEntity);
+                OmObservation observation = null;
+                String key = getKey(nextEntity);
+                if (observations.containsKey(key) && mergableObservationValue) {
+                    observation = observations.get(key);
                 } else {
-                    observations.put(nextEntity.getDiscriminator(), observation);
+                    observation = observationTemplate.cloneTemplate(true);
+                    addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
+                    if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
+                        observations.put(Long.toString(nextEntity.getObservationId()), observation);
+                    } else {
+                        observations.put(key, observation);
+                    }
                 }
+                nextEntity.mergeValueToObservation(observation, getResponseFormat());
+                sessionHolder.getSession().evict(nextEntity);
             }
-            nextEntity.mergeValueToObservation(observation, getResponseFormat());
-            sessionHolder.getSession().evict(nextEntity);
         }
         return observations.values();
+    }
+
+    private String getKey(AbstractValuedLegacyObservation<?> nextEntity) {
+        if (nextEntity.getDiscriminator() != null) {
+            return nextEntity.getDiscriminator();
+        } else if (getObservationMergeIndicator() != null && getObservationMergeIndicator().isSetResultTime()) {
+            return nextEntity.getResultTime().toString();
+        }
+        return null;
     }
 
     private boolean checkForMergability(AbstractValuedLegacyObservation<?> nextEntity) {
@@ -151,6 +162,26 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
                 sessionHolder.returnSession(session);
             }
         }
+    }
+
+    /**
+     * constructor
+     *
+     * @param request
+     *            {@link AbstractObservationRequest}
+     */
+    public AbstractHibernateStreamingValue(AbstractObservationRequest request) {
+        this.request = request;
+    }
+
+    /**
+     * Set the observation template which contains all metadata
+     *
+     * @param observationTemplate
+     *            Observation template to set
+     */
+    public void setObservationTemplate(OmObservation observationTemplate) {
+        this.observationTemplate = observationTemplate;
     }
 
     /**
@@ -234,15 +265,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      * @return phenomenon time
      */
     protected Time createPhenomenonTime(TemporalReferencedObservation abstractValue) {
-        // create time element
-        final DateTime phenStartTime = new DateTime(abstractValue.getPhenomenonTimeStart(), DateTimeZone.UTC);
-        DateTime phenEndTime;
-        if (abstractValue.getPhenomenonTimeEnd() != null) {
-            phenEndTime = new DateTime(abstractValue.getPhenomenonTimeEnd(), DateTimeZone.UTC);
-        } else {
-            phenEndTime = phenStartTime;
-        }
-        return createTime(phenStartTime, phenEndTime);
+        return new PhenomenonTimeCreator(abstractValue).create();
     }
 
     /**
@@ -329,22 +352,6 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         return null;
     }
 
-    /**
-     * Create {@link Time} from {@link DateTime}s
-     *
-     * @param start
-     *            Start {@link DateTime}
-     * @param end
-     *            End {@link DateTime}
-     * @return Resulting {@link Time}
-     */
-    protected Time createTime(DateTime start, DateTime end) {
-        if (start.equals(end)) {
-            return new TimeInstant(start);
-        } else {
-            return new TimePeriod(start, end);
-        }
-    }
 
     /**
      * Get internal {@link Value} from {@link AbstractValuedLegacyObservation}

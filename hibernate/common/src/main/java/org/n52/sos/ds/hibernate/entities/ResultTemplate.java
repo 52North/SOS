@@ -37,6 +37,8 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultEncoding;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultStructure;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Strings;
 
@@ -59,7 +61,7 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
 
     private Procedure procedure;
 
-    private FeatureOfInterest featureOfInterest;
+    private AbstractFeatureOfInterest featureOfInterest;
 
     private String identifier;
 
@@ -89,10 +91,15 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
     }
 
     @Override
+    public boolean isSetOffering() {
+        return getOffering() != null;
+    }
+
+    @Override
     public ObservableProperty getObservableProperty() {
         return this.observableProperty;
     }
-
+    
     @Override
     public void setObservableProperty(ObservableProperty observableProperty) {
         this.observableProperty = observableProperty;
@@ -107,15 +114,23 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
     public void setProcedure(Procedure procedure) {
         this.procedure = procedure;
     }
+    
+    public boolean isSetProcedure() {
+        return getProcedure() != null;
+    }
 
     @Override
-    public FeatureOfInterest getFeatureOfInterest() {
+    public AbstractFeatureOfInterest getFeatureOfInterest() {
         return this.featureOfInterest;
     }
 
     @Override
-    public void setFeatureOfInterest(FeatureOfInterest featureOfInterest) {
+    public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
+    }
+    
+    public boolean isSetFeatureOfInterest() {
+        return getFeatureOfInterest() != null;
     }
 
     @Override

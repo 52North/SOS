@@ -160,12 +160,21 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     protected OwsDomain getQueryableProcedureParameter(String service, String version) {
         return getProcedureParameter(service, version, getCache().getQueryableProcedures());
     }
-
+    
+    protected OwsDomain getPublishedProcedureParameter(String service, String version) {
+        return getProcedureParameter(service, version, getCache().getPublishedProcedures());
+    }
+    
     protected OwsDomain getFeatureOfInterestParameter(String service, String version) {
         return getFeatureOfInterestParameter(service, version, SosHelper.getFeatureIDs(getCache()
                                              .getFeaturesOfInterest(), version));
     }
 
+    protected OwsDomain getPublishedFeatureOfInterestParameter(String service, String version) {
+        return getFeatureOfInterestParameter(service, version, SosHelper.getFeatureIDs(getCache()
+                                             .getPublishedFeaturesOfInterest(), version));
+    }
+    
     protected OwsDomain getFeatureOfInterestParameter(String service, String version,
                                                       Collection<String> featuresOfInterest) {
         return createDomain(SosConstants.GetObservationParams.featureOfInterest,
@@ -173,6 +182,10 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
                             getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
     }
 
+    protected OwsDomain getPublishedObservablePropertyParameter(String service, String version) {
+        return getObservablePropertyParameter(service, version, getPublishedObservableProperties());
+    }
+    
     protected OwsDomain getObservablePropertyParameter(String service, String version) {
         return getObservablePropertyParameter(service, version, getObservableProperties());
     }

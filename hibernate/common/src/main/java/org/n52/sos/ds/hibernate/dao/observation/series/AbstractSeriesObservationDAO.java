@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.dao.observation.series;
 import static org.hibernate.criterion.Restrictions.eq;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -43,6 +44,9 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.spatial.criterion.SpatialProjections;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
@@ -57,10 +61,11 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -69,10 +74,14 @@ import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferenced
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.util.HibernateConstants;
+import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
 
+import com.google.common.collect.Lists;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class AbstractSeriesObservationDAO extends AbstractObservationDAO {
@@ -101,7 +110,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         seriesCriteria.createCriteria(Series.PROCEDURE).add(eq(Procedure.IDENTIFIER, procedure));
 
         if (!isIncludeChildObservableProperties()) {
-            seriesCriteria.createCriteria(AbstractObservation.VALUE).createCriteria(AbstractObservation.ID);
+            seriesCriteria.createCriteria(AbstractObservation.VALUE).createCriteria(AbstractObservation.OBS_ID);
         }
 
         return criteria;
@@ -121,9 +130,15 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     public Criteria getObservationCriteriaForProcedure(String procedure, Session session) throws OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
         return criteria;
+    }
+
+    private Criteria getDefaultSeriesObservationCriteria(Criteria criteria) {
+        Criteria seriesCriteria = criteria.createCriteria(SeriesObservation.SERIES);
+        seriesCriteria.add(Restrictions.eq(Series.PUBLISHED, true));
+        return seriesCriteria;
     }
 
     @Override
@@ -131,7 +146,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             throws OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
         return criteria;
     }
@@ -141,7 +156,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             throws OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
         return criteria;
     }
@@ -151,7 +166,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             throws OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
-        Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
         return criteria;
@@ -192,10 +207,21 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     private Criteria addRestrictionsToCriteria(Criteria criteria, String procedure, String observableProperty,
             String featureOfInterest) throws OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
+        seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
+        seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
+        seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
+        return seriesCriteria;
+    }
+    
+    private Criteria addRestrictionsToCriteria(Criteria criteria, String procedure, String observableProperty,
+            String featureOfInterest, String offering) throws CodedException {
+        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
         seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
+        seriesDAO.addOfferingToCriteria(seriesCriteria, offering);
         return seriesCriteria;
     }
 
@@ -207,25 +233,129 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                         .setProjection(Projections.distinct(Projections.property(ContextualReferencedSeriesObservation.IDENTIFIER)))
                         .add(Restrictions.isNotNull(ContextualReferencedSeriesObservation.IDENTIFIER))
                         .add(Restrictions.eq(ContextualReferencedSeriesObservation.DELETED, false));
-        Criteria seriesCriteria = criteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
+        Criteria seriesCriteria = getDefaultSeriesObservationCriteria(criteria);
         seriesCriteria.createCriteria(Series.PROCEDURE)
                 .add(Restrictions.eq(Procedure.IDENTIFIER, procedureIdentifier));
         LOGGER.debug("QUERY getObservationIdentifiers(procedureIdentifier): {}",
                 HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
+    
+    @Override
+    public ScrollableResults getObservations(Set<String> procedure, Set<String> observableProperty,
+            Set<String> featureOfInterest, Set<String> offering, Criterion filterCriterion, Session session) {
+        Criteria c = getDefaultObservationCriteria(session);
+        String seriesAliasPrefix = createSeriesAliasAndRestrictions(c);
+        if (CollectionHelper.isNotEmpty(procedure)) {
+            c.createCriteria(seriesAliasPrefix + Series.PROCEDURE).add(Restrictions.in(Procedure.IDENTIFIER, procedure));
+        }
+        
+        if (CollectionHelper.isNotEmpty(observableProperty)) {
+            c.createCriteria(seriesAliasPrefix + Series.OBSERVABLE_PROPERTY).add(Restrictions.in(ObservableProperty.IDENTIFIER,
+                    observableProperty));
+        }
+        
+        if (CollectionHelper.isNotEmpty(featureOfInterest)) {
+            c.createCriteria(seriesAliasPrefix + Series.FEATURE_OF_INTEREST).add(Restrictions.in(FeatureOfInterest.IDENTIFIER, featureOfInterest));
+        }
+        
+        if (CollectionHelper.isNotEmpty(offering)) {
+            c.createCriteria(SeriesObservation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, offering));
+        }
+        String logArgs = "request, features, offerings";
+        if (filterCriterion != null) {
+            logArgs += ", filterCriterion";
+            c.add(filterCriterion);
+        }
+        LOGGER.debug("QUERY getObservations({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        
+        return c.scroll(ScrollMode.FORWARD_ONLY);
+    }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Geometry> getSamplingGeometries(String feature, Session session) {
+    public List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
         Criteria criteria = getDefaultObservationTimeCriteria(session).createAlias(AbstractSeriesObservation.SERIES, "s");
         criteria.createCriteria("s." + Series.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
-        criteria.add(Restrictions.isNotNull(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
         criteria.addOrder(Order.asc(AbstractTemporalReferencedObservation.PHENOMENON_TIME_START));
-        criteria.setProjection(Projections.property(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
-        return criteria.list();
+        if (HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY)) {
+            criteria.add(Restrictions.isNotNull(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
+            criteria.setProjection(Projections.property(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
+            LOGGER.debug("QUERY getSamplingGeometries(feature): {}", HibernateHelper.getSqlString(criteria));
+            return criteria.list();
+        } else if (HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), AbstractTemporalReferencedObservation.LONGITUDE)
+                && HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), AbstractTemporalReferencedObservation.LATITUDE)) {
+            criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractTemporalReferencedObservation.LATITUDE),
+                    Restrictions.isNotNull(AbstractTemporalReferencedObservation.LONGITUDE)));
+            List<Geometry> samplingGeometries = Lists.newArrayList();
+            LOGGER.debug("QUERY getSamplingGeometries(feature): {}", HibernateHelper.getSqlString(criteria));
+            for (AbstractTemporalReferencedObservation element : (List<AbstractTemporalReferencedObservation>)criteria.list()) {
+                samplingGeometries.add(new HibernateGeometryCreator().createGeometry(element));
+            }
+            return samplingGeometries;
+        }
+        return Collections.emptyList();
     }
 
+    @Override
+    public Long getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport {
+        Criteria criteria = getDefaultObservationTimeCriteria(session).createAlias(SeriesObservation.SERIES, "s");
+        criteria.createCriteria("s." + Series.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
+        criteria.setProjection(Projections.count(AbstractTemporalReferencedObservation.OBS_ID));
+        if (GeometryHandler.getInstance().isSpatialDatasource()) {
+            criteria.add(Restrictions.isNotNull(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
+            LOGGER.debug("QUERY getSamplingGeometriesCount(feature): {}", HibernateHelper.getSqlString(criteria));
+            return (Long)criteria.uniqueResult();
+        } else {
+            criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractTemporalReferencedObservation.LATITUDE),
+                    Restrictions.isNotNull(AbstractTemporalReferencedObservation.LONGITUDE)));
+            LOGGER.debug("QUERY getSamplingGeometriesCount(feature): {}", HibernateHelper.getSqlString(criteria));
+            return (Long)criteria.uniqueResult();
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
+        Criteria criteria = getDefaultObservationTimeCriteria(session).createAlias(SeriesObservation.SERIES, "s");
+        criteria.createCriteria("s." + Series.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
+        if (GeometryHandler.getInstance().isSpatialDatasource()) {
+            criteria.add(Restrictions.isNotNull(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
+            Dialect dialect = ((SessionFactoryImplementor) session.getSessionFactory()).getDialect();
+            if (HibernateHelper.supportsFunction(dialect, HibernateConstants.FUNC_EXTENT)) {
+                criteria.setProjection(SpatialProjections.extent(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
+                LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}",
+                        HibernateHelper.getSqlString(criteria));
+                return (Envelope) criteria.uniqueResult();
+            }
+        } else if (HibernateHelper.isColumnSupported(getObservationFactory().temporalReferencedClass(), AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY)) {
+            criteria.add(Restrictions.isNotNull(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
+            criteria.setProjection(Projections.property(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
+            LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}",
+                    HibernateHelper.getSqlString(criteria));
+            Envelope envelope = new Envelope();
+            for (Geometry geom : (List<Geometry>) criteria.list()) {
+                envelope.expandToInclude(geom.getEnvelopeInternal());
+            }
+            return envelope;
+        } else if (HibernateHelper.isColumnSupported(getObservationFactory().temporalReferencedClass(), AbstractTemporalReferencedObservation.LATITUDE)
+                && HibernateHelper.isColumnSupported(getObservationFactory().temporalReferencedClass(), AbstractTemporalReferencedObservation.LONGITUDE)) {
+            criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractTemporalReferencedObservation.LATITUDE),
+                    Restrictions.isNotNull(AbstractTemporalReferencedObservation.LONGITUDE)));
+            criteria.setProjection(Projections.projectionList().add(Projections.min(AbstractTemporalReferencedObservation.LATITUDE))
+                    .add(Projections.min(AbstractTemporalReferencedObservation.LONGITUDE))
+                    .add(Projections.max(AbstractTemporalReferencedObservation.LATITUDE))
+                    .add(Projections.max(AbstractTemporalReferencedObservation.LONGITUDE)));
+
+            LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}", HibernateHelper.getSqlString(criteria));
+            MinMaxLatLon minMaxLatLon = new MinMaxLatLon((Object[]) criteria.uniqueResult());
+            Envelope envelope = new Envelope(minMaxLatLon.getMinLon(), minMaxLatLon.getMaxLon(),
+                    minMaxLatLon.getMinLat(), minMaxLatLon.getMaxLat());
+            return envelope;
+        }
+        return null;
+    }
+    
     /**
      * Create series observation query criteria for series and offerings
      *
@@ -260,7 +390,9 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      */
     protected Criteria createCriteriaFor(Class<?> clazz, Series series, Session session) {
         final Criteria criteria = getDefaultObservationCriteria(session);
-        criteria.createCriteria(AbstractSeriesObservation.SERIES).add(Restrictions.eq(Series.ID, series.getSeriesId()));
+        criteria.createCriteria(AbstractSeriesObservation.SERIES)
+                .add(Restrictions.eq(Series.ID, series.getSeriesId()))
+                .add(Restrictions.eq(Series.PUBLISHED, true));
         return criteria;
     }
 
@@ -314,6 +446,32 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         criteria.setProjection(Projections.projectionList()
                 .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
                 .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
+        return criteria;
+    }
+    
+    /**
+     * Create criteria to query min/max time of each offering for series from series observation
+     *
+     * @param series
+     *            Series to get values for
+     * @param offerings
+     * @param session
+     *            Hibernate session
+     * @return Criteria to get min/max time values for series
+     */
+    public Criteria getOfferingMinMaxTimeCriteriaForSeriesObservation(Series series, Collection<String> offerings,
+            Session session) {
+        Criteria criteria = createCriteriaFor(getObservationFactory().temporalReferencedClass(), series, session);
+        if (CollectionHelper.isNotEmpty(offerings)) {
+            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS, "off").add(
+                    Restrictions.in(Offering.IDENTIFIER, offerings));
+        } else {
+            criteria.createAlias(AbstractObservation.OFFERINGS, "off");
+        }
+        criteria.setProjection(Projections.projectionList()
+                        .add(Projections.groupProperty("off." + Offering.IDENTIFIER))
+                        .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
+                        .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
         return criteria;
     }
 
@@ -658,7 +816,13 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         }
         String logArgs = "request, features, offerings";
         logArgs += ", sosIndeterminateTime";
-        addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+        if (series.isSetFirstTimeStamp() && sosIndeterminateTime.equals(SosIndeterminateTime.first)) {
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime, series.getFirstTimeStamp());
+        } else if (series.isSetLastTimeStamp() && sosIndeterminateTime.equals(SosIndeterminateTime.latest)) {
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime, series.getLastTimeStamp());
+        } else {
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+        }
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
 
@@ -734,4 +898,13 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                     HibernateHelper.getSqlString(c));
         return (SeriesObservation)c.uniqueResult();
     }
+    @SuppressWarnings("unchecked")
+    public List<String> getOfferingsForSeries(Series series, Session session) {
+        Criteria criteria = createCriteriaFor(getObservationFactory().temporalReferencedClass(), series, session);
+        criteria.createAlias(AbstractObservation.OFFERINGS, "off");
+        criteria.setProjection(Projections.distinct(Projections.property("off." + Offering.IDENTIFIER)));
+        LOGGER.debug("QUERY getOfferingsForSeries(series): {}", HibernateHelper.getSqlString(criteria));
+        return criteria.list();
+    }
+
 }

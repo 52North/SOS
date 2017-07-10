@@ -35,4 +35,4 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
  *
  * @author Christian Autermann
  */
-public interface TextValuedObservation extends ValuedObservation<String> {}
+public interface TextValuedObservation extends ValuedObservation<String>, IdentifierNamDescription {}

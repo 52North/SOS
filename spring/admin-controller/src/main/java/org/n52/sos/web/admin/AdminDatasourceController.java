@@ -30,11 +30,20 @@ package org.n52.sos.web.admin;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Optional;
-
+import javax.servlet.http.HttpServletRequest;
+import org.apache.xmlbeans.XmlException;
+import org.n52.sos.ds.ConnectionProviderException;
+import org.n52.sos.ds.GeneralQueryDAO;
+import org.n52.sos.exception.MissingServiceOperatorException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.RequestContext;
+import org.n52.sos.util.JSONUtils;
+import org.n52.sos.web.ControllerConstants;
 import javax.inject.Inject;
 
 import org.n52.iceland.ds.ConnectionProviderException;
@@ -65,6 +74,7 @@ import com.google.common.collect.Maps;
  */
 @Controller
 public class AdminDatasourceController extends AbstractDatasourceController {
+
     private static final Logger LOG = LoggerFactory.getLogger(AdminDatasourceController.class);
     private static final String ROWS = "rows";
     private static final String NAMES = "names";
@@ -133,4 +143,29 @@ public class AdminDatasourceController extends AbstractDatasourceController {
         }
         updateCache();
     }
+    
+    @ResponseBody
+    @ExceptionHandler(MissingServiceOperatorException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String onConnectionMissingServiceOperatorException(MissingServiceOperatorException e) {
+        return e.getMessage();
+    }
+    
+    @ResponseBody
+    @RequestMapping(
+            value = ControllerConstants.Paths.ADMIN_DATABASE_ADD_SAMPLEDATA,
+            method = RequestMethod.POST)
+    public String addSampledata(HttpServletRequest request) throws OwsExceptionReport,
+            ConnectionProviderException, IOException, URISyntaxException,
+            XmlException, MissingServiceOperatorException {
+
+        boolean sampledataAdded = new SampleDataInserter(
+                RequestContext.fromRequest(request))
+                .insertSampleData();
+        if (sampledataAdded) {
+            updateCache();
+        }
+        return "OK";
+    }
+
 }

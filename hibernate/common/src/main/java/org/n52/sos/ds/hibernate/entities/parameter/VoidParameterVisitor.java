@@ -48,6 +48,9 @@ public abstract class VoidParameterVisitor implements ParameterVisitor<Void> {
     protected abstract void _visit(TextValuedParameter p)
             throws OwsExceptionReport;
 
+    protected abstract void _visit(XmlValuedParameter p)
+            throws OwsExceptionReport;
+
 
     @Override
     public NamedValue<Void> visit(QuantityValuedParameter p)
@@ -79,6 +82,13 @@ public abstract class VoidParameterVisitor implements ParameterVisitor<Void> {
 
     @Override
     public NamedValue<Void> visit(TextValuedParameter p)
+            throws OwsExceptionReport {
+        _visit(p);
+        return null;
+    }
+
+    @Override
+    public NamedValue<Void> visit(XmlValuedParameter p)
             throws OwsExceptionReport {
         _visit(p);
         return null;

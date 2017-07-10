@@ -28,9 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 
 /**
@@ -62,7 +62,7 @@ public abstract class AbstractSeriesObservation<T>
     }
 
     @Override
-    public FeatureOfInterest getFeatureOfInterest() {
+    public AbstractFeatureOfInterest getFeatureOfInterest() {
         return isSetSeries() ? getSeries().getFeatureOfInterest() : null;
     }
 

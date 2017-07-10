@@ -52,6 +52,9 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_MAPPING_CORE_PATH = HIBERNATE_MAPPING_PATH + "/core";
 
+    // TODO change to /feature
+    String HIBERNATE_MAPPING_FEATURE_PATH = HIBERNATE_MAPPING_PATH + "/feature";
+    
     String HIBERNATE_MAPPING_TRANSACTIONAL_PATH = HIBERNATE_MAPPING_PATH + "/transactional";
 
     // concrete observation/value mapping file names
@@ -74,6 +77,16 @@ public interface HibernateDatasourceConstants {
     String HIBERNATE_MAPPING_FILE_TEXT = "Text.hbm.xml";
 
     // old concept
+    String HIBERNATE_MAPPING_SERIES_PATH = HIBERNATE_MAPPING_PATH + "/metadata";
+            
+    String HIBERNATE_MAPPING_SERIES_METADATA_PATH = HIBERNATE_MAPPING_SERIES_PATH + "/series";
+    
+    String HIBERNATE_MAPPING_PARAMETER_PATH = HIBERNATE_MAPPING_PATH + "/parameter";
+    
+    String HIBERNATE_MAPPING_PARAMETER_FEATURE_PATH = HIBERNATE_MAPPING_PARAMETER_PATH + "/feature";
+    
+    String HIBERNATE_MAPPING_PARAMETER_OBSERVATION_PATH = HIBERNATE_MAPPING_PARAMETER_PATH + "/observation";
+    
     String HIBERNATPE_MAPPING_OLD_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/old";
 
     String HIBERNATE_MAPPING_OLD_CONCEPT_BASE_PATH = HIBERNATPE_MAPPING_OLD_CONCEPT_PATH + HIBERNATE_MAPPING_BASE;
@@ -122,6 +135,10 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_DATASOURCE_TIMEZONE = "hibernate.datasource.timezone";
 
+    String HIBERNATE_DATASOURCE_TIME_STRING_FORMAT = "hibernate.datasource.timeStringFormat";
+    
+    String HIBERNATE_DATASOURCE_TIME_STRING_Z  = "hibernate.datasource.timeStringZ";
+    
     public enum DatabaseConcept {
         OLD_CONCEPT("Old concept"),
         SERIES_CONCEPT("Series concept"),
@@ -133,6 +150,22 @@ public interface HibernateDatasourceConstants {
            this.displayName = displayName;
         }
 
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
+    
+    
+    public enum FeatureConcept {
+        DEFAULT_FEATURE_CONCEPT("Default feature concept"),
+        EXTENDED_FEATURE_CONCEPT("Extended feature concept");
+        
+        private final String displayName;
+        
+        private FeatureConcept(String displayName) {
+           this.displayName = displayName;
+        }
+        
         public String getDisplayName() {
             return displayName;
         }

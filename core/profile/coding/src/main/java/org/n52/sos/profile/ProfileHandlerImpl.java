@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -70,7 +71,7 @@ public class ProfileHandlerImpl extends ProfileHandler implements Constructable 
         setActiveProfile(new DefaultProfile());
         addAvailableProfile(getActiveProfile());
         try {
-            loadProfiles();
+            addProfile(loadProfiles());
         } catch (OwsExceptionReport e) {
             throw new ConfigurationError("Error while loading profiles", e);
         }
@@ -94,7 +95,7 @@ public class ProfileHandlerImpl extends ProfileHandler implements Constructable 
         availableProfiles.put(profile.getIdentifier(), profile);
     }
 
-    private void loadProfiles() throws OwsExceptionReport {
+    private List<Profile> loadProfiles() throws OwsExceptionReport {
         IOFileFilter fileFilter = new WildcardFileFilter("profiles.json");
         File folder = FileUtils.toFile(ProfileHandlerImpl.class.getResource("/"));
         Collection<File> listFiles = FileUtils.listFiles(folder, fileFilter, DirectoryFileFilter.DIRECTORY);
@@ -116,6 +117,20 @@ public class ProfileHandlerImpl extends ProfileHandler implements Constructable 
                 throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while loading profies file.");
             }
         }
+        return profiles;
+    }
+    
+    private Collection<File> loadFiles() {
+        IOFileFilter fileFilter = new WildcardFileFilter("*-profile.xml");
+        File folder = FileUtils.toFile(ProfileHandlerImpl.class.getResource("/"));
+        return FileUtils.listFiles(folder, fileFilter, DirectoryFileFilter.DIRECTORY);
+    }
+    
+
+    private void addProfile(List<Profile> profiles) {
+       for (Profile profile : profiles) {
+           addProfile(profile);
+       }
     }
 
     private void addProfile(Profile profile) {
@@ -138,4 +153,50 @@ public class ProfileHandlerImpl extends ProfileHandler implements Constructable 
         return activeProfile != null;
     }
 
+    @Override
+    public void activateProfile(String identifier) {
+        if (getAvailableProfiles().containsKey(identifier)) {
+            for (Profile profile : getAvailableProfiles().values()) {
+                if (profile.getIdentifier().equals(identifier)) {
+                    profile.setActiveProfile(true);
+                    setActiveProfile(profile);
+                } else {
+                    profile.setActiveProfile(false);
+                }
+            }
+            persist();
+        }
+    }
+
+    @Override
+    public void persist() {
+        Collection<File> listFiles = loadFiles();
+        for (File file : listFiles) {
+            try {
+                XmlObject xmlDocument = XmlHelper.loadXmlDocumentFromFile(file);
+                if (xmlDocument instanceof SosProfileDocument) {
+                    SosProfileDocument doc = (SosProfileDocument) xmlDocument;
+                    doc.getSosProfile().setActiveProfile(checkActive(doc.getSosProfile().getIdentifier()));
+                    doc.save(file);
+                }
+            } catch (OwsExceptionReport e) {
+                LOGGER.error("Error while loading profile from file!", e);
+            } catch (IOException e) {
+                LOGGER.error("Error while storing profile to file!", e);
+            }
+        }
+    }
+
+    @Override
+    public void reloadProfiles() {
+        try {
+            addProfile(loadProfiles());
+        } catch (OwsExceptionReport e) {
+            throw new ConfigurationException("Error while loading profiles", e);
+        }
+    }
+
+    private boolean checkActive(String identifier) {
+        return getAvailableProfiles().get(identifier).isActiveProfile();
+    }
 }

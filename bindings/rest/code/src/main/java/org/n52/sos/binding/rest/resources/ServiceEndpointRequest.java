@@ -29,11 +29,22 @@
 package org.n52.sos.binding.rest.resources;
 
 import org.n52.sos.binding.rest.requests.RestRequest;
+import org.n52.sos.request.AbstractServiceRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
 public class ServiceEndpointRequest implements RestRequest {
+
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return false;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return null;
+    }
 
 }

@@ -76,8 +76,8 @@ import com.google.common.base.Strings;
 import com.vividsolutions.jts.io.ParseException;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- * TODO Use KVP helper from 52n-sos-api module
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
+ *         J&uuml;rrens</a> TODO Use KVP helper from 52n-sos-api module
  */
 public abstract class ResourceDecoder extends RestDecoder {
 
@@ -184,7 +184,7 @@ public abstract class ResourceDecoder extends RestDecoder {
         GetCapabilitiesRequest getCapabilitiesRequestOnlyContents = createGetCapabilitiesRequest();
 
         ArrayList<String> sections = new ArrayList<>(1);
-        sections.add(bindingConstants.getSosCapabilitiesSectionNameContents());
+        sections.add(RestConstants.SECTION_IDENTIFIER_CONTENTS);
         getCapabilitiesRequestOnlyContents.setSections(sections);
 
         return getCapabilitiesRequestOnlyContents;
@@ -242,8 +242,9 @@ public abstract class ResourceDecoder extends RestDecoder {
     }
 
     /*
-     * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#parseTemporalFilter(List<String>, String)}
-     * TODO move to KVP map decoder to share code
+     * {@link
+     * org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#parseTemporalFilter(List<
+     * String>, String)} TODO move to KVP map decoder to share code
      */
     protected List<TemporalFilter> parseTemporalFilter(List<String> parameterValues)
             throws DateTimeException, DecodingException {
@@ -259,8 +260,9 @@ public abstract class ResourceDecoder extends RestDecoder {
 
 
     /*
-     * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#createTemporalFilterFromValue(String, String)}
-     * TODO move to KVP map decoder to share code
+     * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#
+     * createTemporalFilterFromValue(String, String)} TODO move to KVP map
+     * decoder to share code
      */
     private TemporalFilter createTemporalFilterFromValue(String value, String valueReference) throws
             DateTimeException, DecodingException {

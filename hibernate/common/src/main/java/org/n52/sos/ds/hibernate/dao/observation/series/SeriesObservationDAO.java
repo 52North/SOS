@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -42,8 +43,10 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
+import org.n52.sos.util.CollectionHelper;
 
 
 public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
@@ -193,7 +196,15 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     @Override
     protected List<SeriesObservation<?>> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features,
             Criterion filterCriterion, IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
-        return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
+        if (CollectionHelper.isNotEmpty(features)) {
+            List<SeriesObservation<?>> observations = new ArrayList<>();
+            for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
+                observations.addAll(getSeriesObservationCriteriaFor(request, ids, filterCriterion, sosIndeterminateTime, session).list());
+            }
+            return observations;
+        } else {
+            return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
+        }
     }
 
 
@@ -202,7 +213,6 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     public List<SeriesObservation<?>> getSeriesObservationsFor(Series series, GetObservationRequest request,
             IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getSeriesObservationCriteriaFor(series, request, sosIndeterminateTime, session).list();
-
     }
 
     @Override

@@ -11,8 +11,6 @@
     <name>52°North SOS - Extension Modules</name>
     <description>52°North SOS - Extension Modules</description>
     <modules>
-    	<module>aqd</module>
-        <module>gda</module>
         <module>do</module>
         <module>inspire</module>
     </modules>

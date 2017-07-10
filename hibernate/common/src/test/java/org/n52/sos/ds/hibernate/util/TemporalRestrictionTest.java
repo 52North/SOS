@@ -41,7 +41,6 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.junit.After;
 import org.junit.Before;
-
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;

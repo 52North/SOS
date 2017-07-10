@@ -276,6 +276,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
                             logTypeNotSupported(observationType);
                     }
                 }
+                return new SmlIo<String>(new SweObservableProperty().setDefinition(observableProperty));
             }
         }
         return null;

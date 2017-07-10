@@ -36,6 +36,11 @@
     </function>
      -->
     <function>
+        <name>supportsI18N</name>
+        <function-class>org.n52.sos.web.JstlFunctions</function-class>
+        <function-signature>boolean supportsI18N()</function-signature>
+    </function>
+    <function>
         <name>viewExists</name>
         <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
         <function-signature>boolean viewExists(javax.servlet.ServletContext, java.lang.String)</function-signature>

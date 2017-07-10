@@ -65,8 +65,8 @@ import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
 
 import com.google.common.base.Strings;
@@ -117,12 +117,9 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         try {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
+            final CompositeOwsException exceptions = new CompositeOwsException();
 
-            CompositeOwsException exceptions = new CompositeOwsException();
             InsertObservationCache cache = new InsertObservationCache();
-
-            cache.addOfferings(request.getOfferings());
-
             // counter for batch flushing
             int obsCount = 0;
 
@@ -135,7 +132,14 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
                                     + " the Spatial Filtering Profile is specification conformant. To use a less"
                                     + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
                 }
-
+                if (sosObservation.isSetIdentifier()) {
+                    if (DaoFactory.getInstance().getObservationDAO()
+                            .isIdentifierContained(sosObservation.getIdentifier(), session)) {
+                        throw new NoApplicableCodeException().withMessage(
+                                "The observation identifier '%s' already exists in the database!",
+                                sosObservation.getIdentifier());
+                    }
+                }
                 insertObservation(sosObservation, cache, exceptions, session);
 
                 // flush every FLUSH_INTERVAL
@@ -169,6 +173,14 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
 
         return response;
     }
+    
+    private Set<Offering> getOfferings(Set<ObservationConstellation> hObservationConstellations) {
+        Set<Offering> offerings = Sets.newHashSet();
+        for (ObservationConstellation observationConstellation : hObservationConstellations) {
+            offerings.add(observationConstellation.getOffering());
+        }
+        return offerings;
+    }
 
     private void insertObservation(OmObservation sosObservation,
                                      InsertObservationCache cache,
@@ -184,7 +196,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         cache.addOfferings(offerings);
 
         Set<ObservationConstellation> hObservationConstellations = new HashSet<>();
-        FeatureOfInterest hFeature = null;
+        AbstractFeatureOfInterest hFeature = null;
 
         ObservationConstellationDAO observationConstellationDAO = daoFactory.getObservationConstellationDAO();
         for (String offeringID : sosObsConst.getOfferings()) {
@@ -223,14 +235,16 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
 
         if (!hObservationConstellations.isEmpty()) {
             AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
-            if (sosObservation.getValue() instanceof SingleObservationValue) {
-                observationDAO.insertObservationSingleValue(
-                        hObservationConstellations, hFeature, sosObservation,
-                        cache.getCodespaceCache(), cache.getUnitCache(), session);
-            } else if (sosObservation.getValue() instanceof MultiObservationValues) {
-                observationDAO.insertObservationMultiValue(
-                        hObservationConstellations, hFeature, sosObservation,
-                        cache.getCodespaceCache(), cache.getUnitCache(), session);
+            for (ObservationConstellation hObservationConstellation : hObservationConstellations) {
+                if (sosObservation.getValue() instanceof SingleObservationValue) {
+                    observationDAO.insertObservationSingleValue(
+                            hObservationConstellation, hFeature, sosObservation,
+                            cache.getCodespaceCache(), cache.getUnitCache(), getOfferings(hObservationConstellations), session);
+                } else if (sosObservation.getValue() instanceof MultiObservationValues) {
+                    observationDAO.insertObservationMultiValue(
+                            hObservationConstellation, hFeature, sosObservation,
+                            cache.getCodespaceCache(), cache.getUnitCache(), getOfferings(hObservationConstellations), session);
+                }
             }
         }
     }
@@ -311,15 +325,18 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
      * @param abstractFeature
      * @param cache
      * @param session
-     * @return hibernet FeatureOfInterest
+     * @return hibernate AbstractFeatureOfInterest
      * @throws OwsExceptionReport
      */
-    private FeatureOfInterest getFeature(AbstractFeature abstractFeature,
+    private AbstractFeatureOfInterest getFeature(AbstractFeature abstractFeature,
             InsertObservationCache cache, Session session) throws OwsExceptionReport {
-        FeatureOfInterest hFeature = cache.getFeature(abstractFeature);
+        AbstractFeatureOfInterest hFeature = cache.getFeature(abstractFeature);
         if (hFeature == null) {
             hFeature = new FeatureOfInterestDAO(daoFactory).checkOrInsertFeatureOfInterest(abstractFeature, session);
             cache.putFeature(abstractFeature, hFeature);
+        }
+        if (!hFeature.isSetName() && abstractFeature.isSetName()) {
+            featureOfInterestDAO.updateFeatureOfInterest(hFeature, abstractFeature, session);
         }
         return hFeature;
     }
@@ -365,10 +382,10 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
 
     private static class InsertObservationCache {
         private final Set<String> allOfferings = Sets.newHashSet();
-        private final Map<AbstractFeature, FeatureOfInterest> featureCache = Maps.newHashMap();
+        private final Map<AbstractFeature, AbstractFeatureOfInterest> featureCache = Maps.newHashMap();
         private final Table<OmObservationConstellation, String, ObservationConstellation> obsConstOfferingHibernateObsConstTable = HashBasedTable.create();
         private final Map<String, Codespace> codespaceCache = Maps.newHashMap();
-        private final Map<String, Unit> unitCache = Maps.newHashMap();
+        private final Map<UoM, Unit> unitCache = Maps.newHashMap();
         private final HashMultimap<OmObservationConstellation, String> obsConstOfferingCheckedMap = HashMultimap.create();
         private final HashMultimap<AbstractFeature, String> relatedFeatureCheckedMap = HashMultimap.create();
 
@@ -391,19 +408,19 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         public void checkFeature(AbstractFeature feature, String offering) {
             this.relatedFeatureCheckedMap.put(feature, offering);
         }
-        public void putFeature(AbstractFeature sfeature, FeatureOfInterest hfeature) {
+        public void putFeature(AbstractFeature sfeature, AbstractFeatureOfInterest hfeature) {
             this.featureCache.put(sfeature, hfeature);
         }
-        public FeatureOfInterest getFeature(AbstractFeature sfeature) {
+        public AbstractFeatureOfInterest getFeature(AbstractFeature sfeature) {
             return this.featureCache.get(sfeature);
         }
-        public Map<AbstractFeature, FeatureOfInterest> getFeatureCache() {
+        public Map<AbstractFeature, AbstractFeatureOfInterest> getFeatureCache() {
             return featureCache;
         }
         public Map<String, Codespace> getCodespaceCache() {
             return codespaceCache;
         }
-        public Map<String, Unit> getUnitCache() {
+        public Map<UoM, Unit> getUnitCache() {
             return unitCache;
         }
         public Set<String> getAllOfferings() {

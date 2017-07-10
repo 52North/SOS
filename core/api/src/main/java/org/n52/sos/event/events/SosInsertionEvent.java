@@ -28,10 +28,6 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.iceland.event.events.ModificationResponseEvent;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
-
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *

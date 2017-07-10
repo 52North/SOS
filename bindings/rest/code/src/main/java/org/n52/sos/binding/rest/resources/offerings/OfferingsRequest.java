@@ -49,4 +49,14 @@ public class OfferingsRequest implements RestRequest {
         return getCapabilitiesRequest;
     }
 
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getGetCapabilitiesRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getGetCapabilitiesRequest();
+    }
+
 }

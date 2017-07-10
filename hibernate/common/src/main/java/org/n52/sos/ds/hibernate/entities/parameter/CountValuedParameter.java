@@ -28,42 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter;
 
-import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-
-public class CountValuedParameter extends Parameter<Integer> {
-
-    private static final long serialVersionUID = 6578219247280678959L;
-    private Integer value;
-
-    @Override
-    public Integer getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(Integer value) {
-       this.value = value;
-    }
-
-    @Override
-    public boolean isSetValue() {
-        return getValue() != null;
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
-
-    @Override
-    public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
-        visitor.visit(this);
-    }
-
-    @Override
-    public <T> NamedValue<T> accept(ParameterVisitor<T> visitor) throws OwsExceptionReport {
-        return visitor.visit(this);
-    }
+public interface CountValuedParameter extends ValuedParameter<Integer> {
 
 }

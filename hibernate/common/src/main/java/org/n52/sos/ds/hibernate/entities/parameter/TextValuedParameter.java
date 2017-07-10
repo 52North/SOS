@@ -28,8 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter;
 
-import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+public interface TextValuedParameter extends ValuedParameter<String> {
 
 import com.google.common.base.Strings;
 

@@ -32,7 +32,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.RelatedObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 
 import com.google.common.base.Strings;
@@ -150,7 +152,7 @@ public interface HibernateRelations {
     interface HasFeatureOfInterestGetter {
         String FEATURE_OF_INTEREST = "featureOfInterest";
 
-        FeatureOfInterest getFeatureOfInterest();
+        AbstractFeatureOfInterest getFeatureOfInterest();
 
         default boolean hasFeatureOfInterest() {
             return getFeatureOfInterest() != null;
@@ -159,7 +161,7 @@ public interface HibernateRelations {
 
     interface HasFeatureOfInterest extends HasFeatureOfInterestGetter {
 
-        void setFeatureOfInterest(FeatureOfInterest featureOfInterest);
+        void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest);
 
     }
 
@@ -173,7 +175,8 @@ public interface HibernateRelations {
             extends HasReadableObservationContext,
                     HasObservableProperty,
                     HasProcedure,
-                    HasFeatureOfInterest {
+                    HasFeatureOfInterest,
+                    HasOffering {
     }
 
     interface HasDescriptionXml {
@@ -352,7 +355,16 @@ public interface HibernateRelations {
 
         void setProcedure(Procedure procedure);
     }
+    
+    interface HasSeriesType {
 
+        void setSeriesType(String seriesType);
+        
+        String getSeriesType();
+        
+        boolean isSetSeriesType();
+    }
+    
     interface HasProcedureDescriptionFormat {
         String PROCEDURE_DESCRIPTION_FORMAT = "procedureDescriptionFormat";
 
@@ -516,6 +528,8 @@ public interface HibernateRelations {
 
 //        Object getOffering();
         void setOfferings(Object offerings);
+        
+        boolean isSetOfferings();
 
     }
 
@@ -524,11 +538,22 @@ public interface HibernateRelations {
 
         Set<Parameter<?>> getParameters();
 
-        void setParameters(Object offerings);
+        void setParameters(Object parameters);
 
         default boolean hasParameters() {
             return getParameters() != null && !getParameters().isEmpty();
         }
+
+    }
+    
+    interface HasRelatedObservations {
+        String PARAMETERS = "relatedObservations";
+
+        Set<RelatedObservation> getRelatedObservations();
+
+        void setRelatedObservations(Set<RelatedObservation> relatedObservations);
+        
+        boolean hasRelatedObservations();
 
     }
 
@@ -603,11 +628,11 @@ public interface HibernateRelations {
 
         Object getLongitude();
 
-        void setLongitude(Object longitude);
+        HasCoordinate setLongitude(Object longitude);
 
         Object getLatitude();
 
-        void setLatitude(Object latitude);
+        HasCoordinate setLatitude(Object latitude);
 
         /**
          * Are longitude and latitude set
@@ -618,7 +643,7 @@ public interface HibernateRelations {
 
         Object getAltitude();
 
-        void setAltitude(Object altitude);
+        HasCoordinate setAltitude(Object altitude);
 
         /**
          * Is altitude set
@@ -649,6 +674,8 @@ public interface HibernateRelations {
         void setParents(Set<T> parents);
 
         void addParent(T parent);
+        
+        boolean hasParents();
 
         default boolean hasParents() {
             return getParents() != null && !getParents().isEmpty();
@@ -666,7 +693,7 @@ public interface HibernateRelations {
     }
 
     interface HasObservationId {
-        String ID = "observationId";
+        String OBS_ID = "observationId";
 
         /**
          * Get the observation id
@@ -683,7 +710,7 @@ public interface HibernateRelations {
          */
         void setObservationId(final long observationId);
     }
-
+    
     interface HasFeatureOfInterestId {
         String FEAT_ID = "featureOfInterestId";
 
@@ -702,7 +729,26 @@ public interface HibernateRelations {
          */
         void setFeatureOfInterestId(final long featureOfInterestId);
     }
+    
+    interface HasParamerterId {
+        String ID = "parameterId";
 
+        /**
+         * Get the parameter id
+         *
+         * @return parameter id
+         */
+        long getParameterId();
+
+        /**
+         * Set the parameter id
+         *
+         * @param parameterId
+         *                      ParameterId id to set
+         */
+        void setParameterId(final long parameterId);
+    }
+    
     interface HasLocale {
         String LOCALE = "locale";
 

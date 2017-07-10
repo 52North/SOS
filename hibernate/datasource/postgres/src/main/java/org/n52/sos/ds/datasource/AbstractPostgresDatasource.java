@@ -32,6 +32,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -39,6 +41,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.dialect.Dialect;
+import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.postgis.PostgisDialectSpatialIndex;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.slf4j.Logger;
@@ -209,19 +212,27 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
     @Override
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
+        CustomConfiguration config = getConfig(settings);
         Connection conn = null;
         Statement stmt = null;
         try {
             conn = openConnection(settings);
-            List<String> names = getQuotedSchemaTableNames(settings, conn);
+            String catalog = checkCatalog(conn);
+            String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
+            Iterator<Table> tables = config.getTableMappings();
+            List<String> names = new LinkedList<String>();
+            while (tables.hasNext()) {
+                Table table = tables.next();
+                if (table.isPhysicalTable()) {
+                    names.add(table.getQualifiedName(createDialect(), null, schema));
+                }
+            }
             if (!names.isEmpty()) {
                 stmt = conn.createStatement();
-                String sql = String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names));
-                LOGGER.debug("Executed clear datasource SQL statement: {}", sql);
-                stmt.execute(sql);
+                stmt.execute(String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names)));
             }
         } catch (SQLException ex) {
-            throw new ConfigurationError(ex);
+            throw new ConfigurationException(ex);
         } finally {
             close(stmt);
             close(conn);
@@ -231,17 +242,19 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
     @Override
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
+        	Class.forName(getDriverClass());
             String jdbc = toURL(settings);
-            Class.forName(getDriverClass());
             String pass = (String) settings.get(HibernateConstants.CONNECTION_PASSWORD);
             String user = (String) settings.get(HibernateConstants.CONNECTION_USERNAME);
+            precheckDriver(jdbc, user, pass);
             return DriverManager.getConnection(jdbc, user, pass);
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);
         }
     }
 
-    @Override
+
+	@Override
     protected String[] checkDropSchema(String[] dropSchema) {
         List<String> checkedSchema = Lists.newLinkedList();
         for (String string : dropSchema) {

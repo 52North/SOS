@@ -35,6 +35,7 @@ import java.util.Set;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
+import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.collect.Sets;
 
@@ -125,6 +126,16 @@ public class ObservableProperty extends AbstractIdentifierNameDescriptionEntity 
             childs = new HashSet<>();
         }
         childs.add(child);
+    }
+    
+    @Override
+    public boolean hasParents() {
+        return CollectionHelper.isNotEmpty(getParents());
+    }
+
+    @Override
+    public boolean hasChilds() {
+        return CollectionHelper.isNotEmpty(getChilds());
     }
 
 }

@@ -46,4 +46,14 @@ public class CapabilitiesRequestImpl implements CapabilitiesRequest {
     public GetCapabilitiesRequest getGetCapabilitiesRequest() {
         return getCapabilitiesRequest;
     }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getGetCapabilitiesRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getGetCapabilitiesRequest();
+    }
 }

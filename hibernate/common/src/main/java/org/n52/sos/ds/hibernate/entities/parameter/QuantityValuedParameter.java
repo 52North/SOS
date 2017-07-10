@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,60 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter;
 
-import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
-import org.n52.sos.ds.hibernate.entities.Unit;
-
-public class QuantityValuedParameter extends Parameter<Double> implements HasUnit {
-
-    private static final long serialVersionUID = 5179448871942580897L;
-    private Double value;
-    private Unit unit;
-
-    @Override
-    public Double getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(Double value) {
-        this.value = value;
-    }
-
-    @Override
-    public boolean isSetValue() {
-        return getValue() != null;
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
-
-    @Override
-    public Unit getUnit() {
-        return unit;
-    }
-
-    @Override
-    public void setUnit(final Unit unit) {
-        this.unit = unit;
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return getUnit() != null && getUnit().isSetUnit();
-    }
-
-    @Override
-    public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
-        visitor.visit(this);
-    }
-
-    @Override
-    public <T> NamedValue<T> accept(ParameterVisitor<T> visitor) throws OwsExceptionReport {
-        return visitor.visit(this);
-    }
+public interface QuantityValuedParameter extends ValuedParameter<Double>{
 
 }

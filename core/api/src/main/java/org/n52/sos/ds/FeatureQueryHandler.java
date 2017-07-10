@@ -104,7 +104,7 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
      * @return Identifier of the inserted feature
      * @throws OwsExceptionReport
      */
-    String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport;
+    String insertFeature(AbstractSamplingFeature samplingFeature, Object connection) throws OwsExceptionReport;
 
     int getStorageEPSG();
 

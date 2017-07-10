@@ -33,10 +33,9 @@ import java.io.Serializable;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
 
-public interface ValuedParameter<T> extends Serializable, HasValue<T>, HasName, HasObservationId {
+public interface ValuedParameter<T> extends Serializable, HasValue<T>, HasName {
 
     void accept(VoidParameterVisitor visitor) throws OwsExceptionReport;
 

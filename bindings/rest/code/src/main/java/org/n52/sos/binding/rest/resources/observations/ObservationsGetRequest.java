@@ -54,5 +54,20 @@ public class ObservationsGetRequest implements IObservationsRequest {
     {
         return getCapabilitesRequestOnlyContents;
     }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getGetObservationByIdRequest() != null || getGetCapabilitesRequestOnlyContents() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        if (getGetObservationByIdRequest() != null) {
+            return getGetObservationByIdRequest();
+        } else if (getGetCapabilitesRequestOnlyContents() != null) {
+            return getGetCapabilitesRequestOnlyContents();
+        }
+        return null;
+    }
 
 }

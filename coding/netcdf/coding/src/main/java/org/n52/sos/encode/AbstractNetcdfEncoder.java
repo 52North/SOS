@@ -184,7 +184,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
         return Collections.emptySet();
     }
-
+    
     @Override
     public Set<SupportedType> getSupportedTypes() {
         return Collections.unmodifiableSet(SUPPORTED_TYPES);
@@ -286,7 +286,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
 
         if (getNetcdfHelper().getNetcdfVersion().isNetdf4format() && !Nc4Iosp.isClibraryPresent()) {
             throw new EncodingException("Can't encode to netCDF because the native netCDF4 C library isn't installed. "
-                            + "See https://www.unidata.ucar.edu/software/thredds/v4.3/netcdf-java/reference/netcdf4Clibrary.html");
+                            + "See http://www.unidata.ucar.edu/software/netcdf/docs/winbin.html");
         }
 
         try {
@@ -331,7 +331,6 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         addGlobaleAttributes(writer, sensorDataset);
 
         // add appropriate dims for feature type
-        List<Dimension> noDims = Lists.newArrayList();
         List<Dimension> timeDims = Lists.newArrayList();
         List<Dimension> latLngDims = Lists.newArrayList();
         List<Dimension> latDims = Lists.newArrayList();
@@ -1313,14 +1312,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected Attribute getAttribute(NetcdfFileWriter writer, String name) {
-        if (CollectionHelper.isNotEmpty(writer.getNetcdfFile().getRootGroup().getAttributes())) {
-            for (Attribute attr : writer.getNetcdfFile().getRootGroup().getAttributes()) {
-                if (name.equals(attr.getShortName())) {
-                    return attr;
-                }
-            }
-        }
-        return null;
+        return writer.findGlobalAttribute(name);
     }
 
     protected String getPrefixlessIdentifier(String identifier) {

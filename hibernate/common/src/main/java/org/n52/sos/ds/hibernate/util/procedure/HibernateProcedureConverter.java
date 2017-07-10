@@ -215,7 +215,7 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
     boolean checkOutputFormatWithDescriptionFormat(String identifier, DescriptionXmlEntity procedure,
                                                    String requestedFormat, String descriptionFormat) throws
             OwsExceptionReport {
-        if (procedure.isSetDescriptionXml()) {
+        if (procedure.isSetDescriptionXml() || checkForDescriptionFile(procedure)) {
             if (requestedFormat.equalsIgnoreCase(descriptionFormat) ||
                      existConverter(descriptionFormat, requestedFormat)) {
                 return true;
@@ -229,6 +229,13 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
                 .at(SosConstants.DescribeSensorParams.procedure)
                 .withMessage("The value of the output format is wrong and has to be %s for procedure %s",
                              descriptionFormat, identifier).setStatus(HTTPStatus.BAD_REQUEST);
+    }
+
+    private boolean checkForDescriptionFile(DescriptionXmlEntity procedure) {
+        if (procedure instanceof Procedure) {
+            return ((Procedure) procedure).isSetDescriptionFile();
+        }
+        return false;
     }
 
     private boolean existConverter(String from, String to) {

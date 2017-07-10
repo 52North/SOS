@@ -63,9 +63,9 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -233,19 +233,24 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
      * @throws OwsExceptionReport
      *             If an error occurs during processing
      */
-    private FeatureCollection getFeatures(final GetFeatureOfInterestRequest request, final Session session) throws OwsExceptionReport {
-        final Set<String> foiIDs = new HashSet<>(queryFeatureIdentifiersForParameter(request, session));
-        if (request.isSetFeatureOfInterestIdentifiers()) {
-            addRequestedRelatedFeatures(foiIDs, request.getFeatureIdentifiers());
-        }
-        // feature of interest
+    private FeatureCollection getFeatures(final GetFeatureOfInterestRequest request, final Session session)
+            throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
-                .setFeatureIdentifiers(foiIDs)
                 .setSpatialFilters(request.getSpatialFilters())
                 .setConnection(session)
                 .setVersion(request.getVersion())
-                .setI18N(getRequestedLocale(request));
-        return new FeatureCollection(this.featureQueryHandler.getFeatures(queryObject));
+                .setI18N(LocaleHelper.fromRequest(request));
+        if (!request.hasNoParameter()) {
+            Set<String> foiIDs = new HashSet<>();
+            if (request.isSetFeatureOfInterestIdentifiers()) {
+                foiIDs.addAll(request.getFeatureIdentifiers());
+                addRequestedRelatedFeatures(foiIDs, request.getFeatureIdentifiers());
+            } else {
+                foiIDs = new HashSet<String>(queryFeatureIdentifiersForParameter(request, session));
+            }
+            queryObject.setFeatureIdentifiers(foiIDs);
+        }
+        return new FeatureCollection(getConfigurator().getFeatureQueryHandler().getFeatures(queryObject));
     }
 
     /**
@@ -286,7 +291,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameter(final GetFeatureOfInterestRequest req, final Session session) throws OwsExceptionReport {
         if (req.hasNoParameter()) {
-            return new FeatureOfInterestDAO(daoFactory).getFeatureOfInterestIdentifiers(session);
+            return new FeatureOfInterestDAO(daoFactory).getPublishedFeatureOfInterestIdentifiers(session);
         }
         if (req.containsOnlyFeatureParameter() && req.isSetFeatureOfInterestIdentifiers()) {
             final Criteria c =
@@ -376,7 +381,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameterForSeries(GetFeatureOfInterestRequest req, Session session)
             throws CodedException {
-        final Criteria c = session.createCriteria(FeatureOfInterest.class);
+        final Criteria c = new FeatureOfInterestDAO().getPublishedFeatureOfInterestCriteria(session);
         if (req.isSetFeatureOfInterestIdentifiers()) {
             c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeatureIdentifiers()));
         }

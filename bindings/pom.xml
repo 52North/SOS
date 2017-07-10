@@ -13,5 +13,6 @@
     <modules>
         <module>rest</module>
         <module>exi</module>
+        <module>register</module>
     </modules>
 </project>

@@ -142,6 +142,12 @@ public class ValueCreatingSweDataComponentVisitor implements SweDataComponentVis
     }
 
     @Override
+    public Value<?> visit(SweCategoryRange component) 
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
     public Value<?> visit(SweTime component)
             throws OwsExceptionReport {
         throw notSupported(component);

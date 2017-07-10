@@ -148,8 +148,8 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
         Stream<OwsDomain> commonParameters = Stream.of(getOfferingParameter(service, version),
                                                        getQueryableProcedureParameter(service, version),
                                                        getResponseFormatParameter(service, version),
-                                                       getObservablePropertyParameter(service, version),
-                                                       getFeatureOfInterestParameter(service, version, featureIDs));
+                                                       getPublishedObservablePropertyParameter(service, version),
+                                                       getPublishedFeatureOfInterestParameter(service, version, featureIDs));
         Stream<OwsDomain> versionParameters;
         switch (version) {
             case Sos2Constants.SERVICEVERSION:

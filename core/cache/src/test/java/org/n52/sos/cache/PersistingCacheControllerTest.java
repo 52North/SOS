@@ -51,6 +51,7 @@ public class PersistingCacheControllerTest extends AbstractCacheControllerTest {
         TestableInMemoryCacheController cc = new TestableInMemoryCacheController();
         assertThat(cc.getCache().getFeaturesOfInterest(), is(empty()));
         cc.getCache().addFeatureOfInterest(IDENTIFIER);
+        cc.getCache().addPublishedFeatureOfInterest(IDENTIFIER);
         assertThat(cc.getCache().getFeaturesOfInterest(), contains(IDENTIFIER));
         cc.destroy();
         assertThat(getTempFile(), is(existing()));

@@ -52,7 +52,7 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
                     getInstance().getDAO(I18NObservablePropertyMetadata.class);
             if (dao != null) {
                 Set<String> ids = getCache().getObservablePropertiesForProcedure(getIdentifier());
-                Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(ids);
+                Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(checkForPublished(ids));
                 for (I18NObservablePropertyMetadata i18n : metadata) {
                     OmObservableProperty observableProperty = new OmObservableProperty(i18n.getIdentifier());
                     Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(getLocale(), getDefaultLocale());
@@ -67,5 +67,15 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
 
     private Locale getDefaultLocale() {
         return ServiceConfiguration.getInstance().getDefaultLanguage();
+    }
+
+    private Set<String> checkForPublished(Set<String> ids) {
+        Set<String> obsProps = new HashSet<>();
+        for (String id : ids) {
+            if (getCache().getPublishedObservableProperties().contains(id)) {
+                obsProps.add(id);
+            }
+        }
+        return obsProps;
     }
 }

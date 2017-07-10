@@ -31,67 +31,8 @@ package org.n52.sos.ds.hibernate.entities.parameter;
 import java.io.Serializable;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParamerterId;
 
-import com.google.common.base.Strings;
-
-public abstract class Parameter<T> implements Serializable, HasObservationId, HasName, ValuedParameter<T> {
-
-    private static final long serialVersionUID = -1927879842082507108L;
-    private long parameterId;
-    private long observationId;
-    private String name;
-
-    public Parameter() {
-        super();
-    }
-
-    /**
-     * @return the parameterId
-     */
-    public long getParameterId() {
-        return parameterId;
-    }
-
-    /**
-     * @param parameterId the parameterId to set
-     */
-    public void setParameterId(long parameterId) {
-        this.parameterId = parameterId;
-    }
-
-    /**
-     * @return the observationId
-     */
-    public long getObservationId() {
-        return observationId;
-    }
-
-    /**
-     * @param observationId the observationId to set
-     */
-    public void setObservationId(long observationId) {
-        this.observationId = observationId;
-    }
-
-    /**
-     * @return the name
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-    /**
-     * @param name the name to set
-     */
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean isSetName() {
-        return !Strings.isNullOrEmpty(getName());
-    }
+public interface Parameter<T> extends  Serializable, HasParamerterId, HasName, ValuedParameter<T> {
 
 }

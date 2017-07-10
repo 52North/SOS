@@ -45,6 +45,7 @@ import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.service.Configurator;
 
@@ -137,11 +138,11 @@ public class RelatedFeatureDAO {
             final RelatedFeature relFeat = new RelatedFeature();
             String identifier = feature.getIdentifierCodeWithAuthority().getValue();
             String url = null;
-            if (feature instanceof SamplingFeature) {
+            if (feature instanceof AbstractSamplingFeature) {
                 identifier =
                         Configurator.getInstance().getFeatureQueryHandler()
-                                .insertFeature((SamplingFeature) feature, session);
-                url = ((SamplingFeature) feature).getUrl();
+                                .insertFeature((AbstractSamplingFeature) feature, session);
+                url = ((AbstractSamplingFeature) feature).getUrl();
             }
             relFeat.setFeatureOfInterest(new FeatureOfInterestDAO(daoFactory).getOrInsertFeatureOfInterest(identifier, url,
                     session));

@@ -49,6 +49,9 @@ public class TextValuedSeriesObservation extends AbstractValuedSeriesObservation
     private static final long serialVersionUID = -4907297395374635905L;
 
     private String value;
+    private String valueIdentifier;
+    private String valueName;
+    private String valueDescription;
 
     @Override
     public String getValue() {
@@ -64,10 +67,55 @@ public class TextValuedSeriesObservation extends AbstractValuedSeriesObservation
     public boolean isSetValue() {
         return !Strings.isNullOrEmpty(getValue());
     }
+    
+    @Override
+    public void setValueIdentifier(String valueIdentifier) {
+        this.valueIdentifier = valueIdentifier;
+    }
+
+    @Override
+    public String getValueIdentifier() {
+        return valueIdentifier;
+    }
+
+    @Override
+    public boolean isSetValueIdentifier() {
+        return !Strings.isNullOrEmpty(getValueIdentifier());
+    }
 
     @Override
     public String getValueAsString() {
         return getValue();
+    }
+    
+    @Override
+    public void setValueName(String valueName) {
+       this.valueName = valueName;
+    }
+
+    @Override
+    public String getValueName() {
+        return valueName;
+    }
+
+    @Override
+    public boolean isSetValueName() {
+        return !Strings.isNullOrEmpty(getValueName());
+    }
+
+    @Override
+    public void setValueDescription(String valueDescription) {
+        this.valueDescription = valueDescription;
+    }
+
+    @Override
+    public String getValueDescription() {
+        return valueDescription;
+    }
+
+    @Override
+    public boolean isSetValueDescription() {
+        return !Strings.isNullOrEmpty(getValueDescription());
     }
 
     @Override

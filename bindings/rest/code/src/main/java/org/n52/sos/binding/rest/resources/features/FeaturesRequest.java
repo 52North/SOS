@@ -48,6 +48,14 @@ public class FeaturesRequest implements RestRequest {
         return getFeatureOfInterestRequest;
     }
 
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getGetFeatureOfInterestRequest() != null;
+    }
 
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getGetFeatureOfInterestRequest();
+    }
 
 }

@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import java.util.Collection;
+
 import org.hibernate.Criteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,18 @@ public class SeriesValueTimeDAO extends AbstractSeriesValueTimeDAO {
     @Override
     protected Class<?> getSeriesValueTimeClass() {
         return TemporalReferencedSeriesObservation.class;
+    }
+
+    @Override
+    public ObservationTimeExtrema getTimeExtremaForSeries(Collection<Series> series, Criterion temporalFilter,
+            Session session) throws OwsExceptionReport {
+        return new ObservationTimeExtrema();
+    }
+
+    @Override
+    public ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series, Criterion temporalFilter,
+            Session session) throws OwsExceptionReport {
+        return new ObservationTimeExtrema();
     }
 
 }

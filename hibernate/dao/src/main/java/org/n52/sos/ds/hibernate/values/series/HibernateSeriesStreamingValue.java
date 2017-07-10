@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.values.series;
 
+import java.util.Set;
+
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -37,11 +39,14 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
 import org.n52.svalbard.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * Abstract Hibernate series streaming value class for the series concept
@@ -54,7 +59,8 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
     protected final AbstractSeriesValueDAO seriesValueDAO;
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
-    protected long series;
+    protected Set<Long> series = Sets.newHashSet();
+    private boolean duplicated;
 
     /**
      * constructor
@@ -65,13 +71,15 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
+     * @param duplicated 
      * @throws CodedException
      */
-    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long series) throws OwsExceptionReport {
+    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long series, boolean duplicated) throws OwsExceptionReport {
         super(connectionProvider, daoFactory, request);
         this.series = series;
         this.seriesValueDAO = daoFactory.getValueDAO();
         this.seriesValueTimeDAO = daoFactory.getValueTimeDAO();
+        this.duplicated = duplicated;
     }
 
     @Override
@@ -108,6 +116,28 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         } finally {
             sessionHolder.returnSession(s);
         }
+    }
+    
+    protected Set<Long> getSeries() {
+        return series;
+    }
+    
+    @Override
+    public void mergeValue(StreamingValue<AbstractValuedLegacyObservation<?>> streamingValue) {
+        if (streamingValue instanceof HibernateSeriesStreamingValue) {
+            series.addAll(((HibernateSeriesStreamingValue) streamingValue).getSeries());
+        }
+    }
+    
+    protected boolean checkValue(AbstractValuedLegacyObservation<?> value) {
+        if (isDuplicated()) {
+            return value.getOfferings() != null && value.getOfferings().size() == 1;
+        }
+        return true;
+     }
+    
+    protected boolean isDuplicated() {
+        return duplicated;
     }
 
 }

@@ -31,6 +31,7 @@ package org.n52.sos.ds;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.n52.sos.service.ServiceSettings;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
@@ -94,9 +95,9 @@ public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperati
     @Override
     protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
         return new HashSet<>(Arrays.asList(getQueryableProcedureParameter(service, version),
-                                           getObservablePropertyParameter(service, version),
-                                           getFeatureOfInterestParameter(service, version)));
-    // TODO add responseFormat
+                                           getPublishedObservablePropertyParameter(service, version),
+                                           getPublishedFeatureOfInterestParameter(service, version),
+                                           getOfferingParameter(service, version)));
     }
 
     /**

@@ -152,9 +152,9 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
     }
 
     public void insertNameAndDescription(IdentifierNameDescriptionEntity entity,
-                                         SamplingFeature samplingFeature,
+                                         AbstractFeature abstractFeature,
                                          Session session) {
-        if (samplingFeature.isSetName()) {
+        if (abstractFeature.isSetName()) {
 
         }
 //        session.saveOrUpdate(

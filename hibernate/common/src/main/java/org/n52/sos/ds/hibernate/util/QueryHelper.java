@@ -235,7 +235,7 @@ public class QueryHelper {
     }
 
     /**
-     * Creates a criterion for objects, considers if size is > 1000 (Oracle expression
+     * Creates a criterion for identifiers, considers if size is > 1000 (Oracle expression
      * limit).
      *
      * @param propertyName
@@ -243,6 +243,70 @@ public class QueryHelper {
      * @param identifiers
      *                     Identifiers list
      *
+     * @return Criterion.
+     */
+    public static Criterion getCriterionForObjects(String propertyName, Collection<?> identifiers) {
+        if (identifiers.size() >= LIMIT_EXPRESSION_DEPTH) {
+            List<?> identifiersList = Lists.newArrayList(identifiers);
+            Criterion criterion = null;
+            List<Object> ids = null;
+            for (int i = 0; i < identifiersList.size(); i++) {
+                if (i == 0 || i % (LIMIT_EXPRESSION_DEPTH - 1) == 0) {
+                    if (criterion == null && i != 0) {
+                        criterion = Restrictions.in(propertyName, ids);
+                    } else if (criterion != null) {
+                        criterion = Restrictions.or(criterion, Restrictions.in(propertyName, ids));
+                    }
+                    ids = Lists.newArrayList();
+                    ids.add(identifiersList.get(i));
+                } else {
+                    ids.add(identifiersList.get(i));
+                }
+            }
+            return criterion;
+        } else {
+            return Restrictions.in(propertyName, identifiers);
+        }
+    }
+    
+    /**
+     * Creates a list of lists from identifiers, considers if size is > 1000
+     * (Oracle expression limit).
+     * 
+     * @param identifiers
+     *            Identifiers list
+     * @return The splitted identifiers
+     */
+    public static List<List<String>> getListsForIdentifiers(Collection<String> identifiers) {
+        List<List<String>> list = new ArrayList<>();
+        List<String> identifiersList = Lists.newArrayList(identifiers);
+        if (identifiers.size() >= LIMIT_EXPRESSION_DEPTH) {
+            List<String> ids = null;
+            for (int i = 0; i < identifiersList.size(); i++) {
+                if (i == 0 || i % (LIMIT_EXPRESSION_DEPTH - 1) == 0) {
+                    if (i != 0) {
+                        list.add(ids);
+                    }
+                    ids = Lists.newArrayList();
+                    ids.add(identifiersList.get(i));
+                } else {
+                    ids.add(identifiersList.get(i));
+                }
+            }
+        } else {
+            list.add(identifiersList);
+        }
+        return list;
+    }
+    
+    /**
+     * Creates a criterion for objects, considers if size is > 1000 (Oracle expression
+     * limit).
+     * 
+     * @param propertyName
+     *            Column name.
+     * @param identifiers
+     *            Objects list
      * @return Criterion.
      */
     public static Criterion getCriterionForObjects(String propertyName, Collection<?> identifiers) {

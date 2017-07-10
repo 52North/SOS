@@ -1,0 +1,27 @@
+<ompr:Process gml:id="Process.1" xmlns:gmd="http://www.isotc211.org/2005/gmd"
+	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ompr="http://inspire.ec.europa.eu/schemas/ompr/3.0"
+	xmlns:base="http://inspire.ec.europa.eu/schemas/base/3.3" xmlns:base2="http://inspire.ec.europa.eu/schemas/base2/2.0"
+	xmlns:gco="http://www.isotc211.org/2005/gco" 
+	xsi:schemaLocation="http://inspire.ec.europa.eu/schemas/ompr/3.0 http://inspire.ec.europa.eu/schemas/ompr/3.0/Processes.xsd">
+	<ompr:inspireId>
+		<base:Identifier>
+			<base:localId>urn:sandre:donnees:79::CdElement:4:::referentiel:3.1:xml
+			</base:localId>
+			<base:namespace>http://www.sandre.eaufrance.fr/?urn=</base:namespace>
+		</base:Identifier>
+	</ompr:inspireId>
+	<ompr:name>Enregistreur numérique télétransmis</ompr:name>
+	<ompr:type>Automated GroundWater level monitoring</ompr:type>
+	<ompr:responsibleParty>
+		<base2:RelatedParty>
+			<base2:organisationName>
+				<gco:CharacterString>SANDRE</gco:CharacterString>
+			</base2:organisationName>
+			<base2:role
+				xlink:href="http://inspire.ec.europa.eu/codelist/RelatedPartyRoleValue/operator"
+				xlink:title="operator" />
+		</base2:RelatedParty>
+	</ompr:responsibleParty>
+</ompr:Process>

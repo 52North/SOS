@@ -56,5 +56,15 @@ public class ObservationsPostRequest implements IObservationsRequest {
     {
         return xb_OMObservation;
     }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getInsertObservationRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getInsertObservationRequest();
+    }
 
 }

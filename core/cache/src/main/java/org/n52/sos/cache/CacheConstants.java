@@ -37,11 +37,19 @@ public interface CacheConstants {
     String OFFERING = "offering";
 
     String OFFERINGS = "offerings";
+    
+    String PUBLISHED_OFFERING = "published offering";
+    
+    String PUBLISHED_OFFERINGS = "published offerings";
 
     String PROCEDURE = "procedure";
 
     String PROCEDURES = "procedures";
 
+    String PUBLISHED_PROCEDURE = "published procedure";
+    
+    String PUBLISHED_PROCEDURES = "published procedures";
+    
     String TYPE_PROCEDURE = "type " + PROCEDURE;
 
     String AGGREGATED_PROCEDURE = "aggregated " + PROCEDURE;
@@ -61,16 +69,24 @@ public interface CacheConstants {
     String FEATURE_OF_INTEREST = "featureOfInterest";
 
     String FEATURES_OF_INTEREST = "featuresOfInterest";
+    
+    String PUBLISHED_FEATURE_OF_INTEREST = "published featureOfInterest";
+    
+    String PUBLISHED_FEATURES_OF_INTEREST = "published featuresOfInterest";
 
     String OBSERVATION_IDENTIFIER = "observationIdentifier";
 
     String OBSERVATION_IDENTIFIERS = "observationIdentifiers";
-
+    
     String RESULT_TEMPLATE = "resultTemplate";
 
     String RESULT_TEMPLATES = "resultTemplates";
 
     String OBSERVABLE_PROPERTY = "observableProperty";
+    
+    String PUBLISHED_OBSERVABLE_PROPERTY = "published observableProperty";
+    
+    String PUBLISHED_OBSERVABLE_PROPERTIES = "published observableProperties";
 
     String RELATED_FEATURE = "relatedFeature";
 
@@ -105,6 +121,10 @@ public interface CacheConstants {
     String PARENT_PROCEDURE = "parentProcedure";
 
     String PARENT_PROCEDURES = "parentProcedures";
+    
+    String PARENT_OFFERING = "parentOffering";
+    
+    String PARENT_OFFERINGS = "parentOfferings";
 
     String ENVELOPE = "envelope";
 

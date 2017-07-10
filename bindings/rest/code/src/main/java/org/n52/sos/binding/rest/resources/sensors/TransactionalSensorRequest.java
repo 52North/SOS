@@ -34,7 +34,7 @@ import net.opengis.sensorML.x101.SystemType;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
-public class TransactionalSensorRequest implements ISensorsRequest {
+public abstract class TransactionalSensorRequest implements ISensorsRequest {
 
     private SystemType xb_smlSystem;
 

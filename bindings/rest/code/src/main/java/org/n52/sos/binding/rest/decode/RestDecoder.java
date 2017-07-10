@@ -69,7 +69,7 @@ public class RestDecoder extends AbstractXmlDecoder<HttpServletRequest, RestRequ
     private static final Logger LOGGER = LoggerFactory.getLogger(RestDecoder.class);
 
     private Set<DecoderKey> decoderKeys;
-    private Constants constants;
+    private RestConstants constants;
 
     @Inject
     public void setConstants(Constants constants) {
@@ -186,7 +186,7 @@ public class RestDecoder extends AbstractXmlDecoder<HttpServletRequest, RestRequ
         return Collections.unmodifiableSet(decoderKeys);
     }
 
-    private Constants bindingConstants() {
+    private RestConstants bindingConstants() {
         return this.constants;
     }
 

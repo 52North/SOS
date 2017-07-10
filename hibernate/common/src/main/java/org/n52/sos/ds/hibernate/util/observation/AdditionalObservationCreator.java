@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 import org.n52.janmayen.component.Component;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
@@ -40,6 +41,12 @@ public interface AdditionalObservationCreator extends Component<AdditionalObserv
 
     OmObservation create(OmObservation omObservation, Observation<?> observation) throws CodedException;
 
-    OmObservation add(OmObservation sosObservation, Observation<?> hObservation);
+    OmObservation add(OmObservation omObservation, Observation<?> observation);
+    
+    OmObservation create(OmObservation omObservation, T series, Session session) throws CodedException;
+
+    OmObservation create(OmObservation omObservation, Observation<?> observation, Session session) throws CodedException;
+    
+    OmObservation add(OmObservation omObservation, Observation<?> observation, Session session) throws CodedException;
 
 }

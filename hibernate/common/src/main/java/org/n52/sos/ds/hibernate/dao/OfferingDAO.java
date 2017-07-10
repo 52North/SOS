@@ -39,9 +39,11 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -67,6 +69,7 @@ import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
 
 import com.google.common.collect.Lists;
@@ -105,7 +108,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      */
     public TOffering getTOfferingForIdentifier(final String identifier, final Session session) {
         Criteria criteria =
-                session.createCriteria(TOffering.class).add(Restrictions.eq(Offering.IDENTIFIER, identifier));
+                getDefaultTransactionalCriteria(session).add(Restrictions.eq(Offering.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getTOfferingForIdentifier(): {}", HibernateHelper.getSqlString(criteria));
         return (TOffering) criteria.uniqueResult();
     }
@@ -137,7 +140,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     @SuppressWarnings("unchecked")
     public List<Offering> getOfferingObjectsForCacheUpdate(final Collection<String> identifiers,
             final Session session) {
-        Criteria criteria = session.createCriteria(Offering.class);
+        Criteria criteria = getDefaultCriteria(session);
         if (CollectionHelper.isNotEmpty(identifiers)) {
             criteria.add(Restrictions.in(Offering.IDENTIFIER, identifiers));
         }
@@ -156,7 +159,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      */
     public Offering getOfferingForIdentifier(final String identifier, final Session session) {
         Criteria criteria =
-                session.createCriteria(Offering.class).add(Restrictions.eq(Offering.IDENTIFIER, identifier));
+                getDefaultCriteria(session).add(Restrictions.eq(Offering.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getOfferingForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
         return (Offering) criteria.uniqueResult();
     }
@@ -174,7 +177,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     public Collection<Offering> getOfferingsForIdentifiers(final Collection<String> identifiers,
             final Session session) {
         Criteria criteria =
-                session.createCriteria(Offering.class).add(Restrictions.in(Offering.IDENTIFIER, identifiers));
+                getDefaultCriteria(session).add(Restrictions.in(Offering.IDENTIFIER, identifiers));
         LOGGER.debug("QUERY getOfferingsForIdentifiers(identifiers): {}", HibernateHelper.getSqlString(criteria));
         return (List<Offering>) criteria.list();
     }
@@ -195,7 +198,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
         Criteria c;
         if (flag) {
-            c = session.createCriteria(Offering.class);
+            c = getDefaultCriteria(session);
             c.add(Subqueries.propertyIn(Offering.ID,
                     getDetachedCriteriaOfferingForProcedureFromObservationConstellation(procedureIdentifier,
                             session)));
@@ -237,7 +240,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
         Criteria c;
         if (flag) {
-            c = session.createCriteria(Offering.class);
+            c = getDefaultCriteria(session);
             c.add(Subqueries.propertyIn(Offering.ID,
                     getDetachedCriteriaOfferingForObservablePropertyFromObservationConstellation(
                             observablePropertyIdentifier, session)));
@@ -524,18 +527,43 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      *            Hibernate session
      * @return Offering object
      */
+    @Deprecated
     public Offering getAndUpdateOrInsertNewOffering(final String offeringIdentifier, final String offeringName,
             final List<RelatedFeature> relatedFeatures, final List<ObservationType> observationTypes,
             final List<FeatureOfInterestType> featureOfInterestTypes, final Session session) {
+        return getAndUpdateOrInsertNewOffering(new SosOffering(offeringIdentifier, offeringName), relatedFeatures,
+                observationTypes, featureOfInterestTypes, session);
+    }
 
-        TOffering offering = getTOfferingForIdentifier(offeringIdentifier, session);
+    /**
+     * Insert or update and get offering
+     *
+     * @param assignedOffering
+     *            SosOffering to insert, update or get
+     * @param relatedFeatures
+     *            Related feature objects
+     * @param observationTypes
+     *            Allowed observation type objects
+     * @param featureOfInterestTypes
+     *            Allowed featureOfInterest type objects
+     * @param session
+     *            Hibernate session
+     * @return Offering object
+     */
+    public Offering getAndUpdateOrInsertNewOffering(SosOffering assignedOffering,
+            List<RelatedFeature> relatedFeatures, List<ObservationType> observationTypes,
+            List<FeatureOfInterestType> featureOfInterestTypes, Session session) {
+        TOffering offering = getTOfferingForIdentifier(assignedOffering.getIdentifier(), session);
         if (offering == null) {
             offering = new TOffering();
-            offering.setIdentifier(offeringIdentifier);
-            if (offeringName != null) {
-                offering.setName(offeringName);
+            offering.setIdentifier(assignedOffering.getIdentifier());
+            if (assignedOffering.isSetName()) {
+                offering.setName(assignedOffering.getFirstName().getValue());
             } else {
-                offering.setName("Offering for the procedure " + offeringIdentifier);
+                offering.setName("Offering for the procedure " + assignedOffering.getIdentifier());
+            }
+            if (assignedOffering.isSetDescription()) {
+                offering.setDescription(assignedOffering.getDescription());
             }
         }
         if (!relatedFeatures.isEmpty()) {
@@ -610,7 +638,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      */
     public List<String> getAllowedFeatureOfInterestTypes(String offeringIdentifier, Session session) {
         if (HibernateHelper.isEntitySupported(TOffering.class)) {
-            Criteria criteria = session.createCriteria(TOffering.class)
+            Criteria criteria = getDefaultTransactionalCriteria(session)
                     .add(Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
             LOGGER.debug("QUERY getAllowedFeatureOfInterestTypes(offering): {}",
                     HibernateHelper.getSqlString(criteria));
@@ -670,9 +698,95 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         }
 
         @Override
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({ "rawtypes"})
         public List transformList(List collection) {
             return collection;
         }
     }
+
+    public Map<String, Collection<String>> getOfferingIdentifiers(Session session) {
+        Criteria criteria = getDefaultCriteria(session);
+        ProjectionList projectionList = Projections.projectionList();
+        projectionList.add(Projections.property(Offering.IDENTIFIER));
+        criteria.createAlias(Offering.PARENTS, "po", JoinType.LEFT_OUTER_JOIN);
+        projectionList.add(Projections.property("po." + Offering.IDENTIFIER));
+        criteria.setProjection(projectionList);
+        // return as List<Object[]> even if there's only one column for
+        // consistency
+        criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
+
+        LOGGER.debug("QUERY getOfferingIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
+        @SuppressWarnings("unchecked")
+        List<Object[]> results = criteria.list();
+        Map<String, Collection<String>> map = Maps.newHashMap();
+        for (Object[] result : results) {
+            String offeringIdentifier = (String) result[0];
+            String parentOfferingIdentifier = null;
+            parentOfferingIdentifier = (String) result[1];
+            if (parentOfferingIdentifier == null) {
+                map.put(offeringIdentifier, null);
+            } else {
+                CollectionHelper.addToCollectionMap(offeringIdentifier, parentOfferingIdentifier, map);
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Add offering identifier restriction to Hibernate Criteria
+     * 
+     * @param criteria
+     *            Hibernate Criteria to add restriction
+     * @param offering
+     *            Offering identifier
+     */
+    public void addOfferingRestricionForObservation(Criteria c, String offering) {
+        addOfferingRestrictionFor(c, offering, AbstractObservation.OFFERINGS);
+    }
+
+    /**
+     * Add offering identifier restriction to Hibernate Criteria
+     * 
+     * @param criteria
+     *            Hibernate Criteria to add restriction
+     * @param offering
+     *            Offering identifier
+     */
+    public void addOfferingRestricionForSeries(Criteria c, String offering) {
+        addOfferingRestrictionFor(c, offering, Series.OFFERING);
+    }
+
+    private void addOfferingRestrictionFor(Criteria c, String offering, String associationPath) {
+        c.createCriteria(associationPath).add(Restrictions.eq(Offering.IDENTIFIER, offering));
+    }
+
+    public void addOfferingRestricionForObservation(DetachedCriteria dc, String offering) {
+        dc.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Offering> getPublishedOffering(Collection<String> identifiers, Session session) throws CodedException {
+        if (HibernateHelper.isEntitySupported(Series.class)) {
+            Criteria c = getDefaultCriteria(session);
+            c.add(Subqueries.propertyIn(Offering.ID, getDetachedCriteriaSeries(session)));
+            return c.list();
+        } 
+        return getOfferingObjectsForCacheUpdate(identifiers, session);
+     }
+
+    private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
+         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
+         detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
+         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.OFFERING)));
+         return detachedCriteria;
+     }
+    
+    protected Criteria getDefaultCriteria(Session session) {
+        return session.createCriteria(Offering.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
+    
+    protected Criteria getDefaultTransactionalCriteria(Session session) {
+        return session.createCriteria(TOffering.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
+
 }

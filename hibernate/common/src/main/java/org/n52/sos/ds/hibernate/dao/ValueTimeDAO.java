@@ -28,7 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.Set;
+
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -42,12 +45,15 @@ import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+
+import com.google.common.collect.Sets;
 
 /**
  * Implementation of {@link AbstractValueDAO} for old concept to query only time information
@@ -82,6 +88,30 @@ public class ValueTimeDAO extends AbstractValueDAO {
     }
 
     /**
+     * Query the minimum {@link TemporalReferencedLegacyObservation} for parameter
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure ids
+     * @param observableProperty
+     *            Datasource procedure ids
+     * @param featureOfInterest
+     *            Datasource procedure ids
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param session
+     *            Hibernate Session
+     * @return Resulting minimum {@link TemporalReferencedLegacyObservation}
+     * @throws OwsExceptionReport If an error occurs when executing the query
+     */
+    public TemporalReferencedLegacyObservation getMinValueFor(GetObservationRequest request, Set<Long> procedure,
+            Set<Long> observableProperty, Set<Long> featureOfInterest, Criterion temporalFilterCriterion,
+            Session session) throws HibernateException, OwsExceptionReport {
+        return (TemporalReferencedLegacyObservation) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest,
+                temporalFilterCriterion, SosIndeterminateTime.first, session).uniqueResult();
+    }
+
+    /**
      * Query the maximum {@link TemporalReferencedLegacyObservation} for parameter
      * @param request
      *            {@link GetObservationRequest}
@@ -102,6 +132,30 @@ public class ValueTimeDAO extends AbstractValueDAO {
             long featureOfInterest, Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         return (TemporalReferencedLegacyObservation) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest,
                 temporalFilterCriterion, ExtendedIndeterminateTime.LATEST, session).uniqueResult();
+    }
+
+    /**
+     * Query the maximum {@link TemporalReferencedLegacyObservation} for parameter
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure ids
+     * @param observableProperty
+     *            Datasource procedure ids
+     * @param featureOfInterest
+     *            Datasource procedure ids
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param session
+     *            Hibernate Session
+     * @return Resulting maximum {@link TemporalReferencedLegacyObservation}
+     * @throws OwsExceptionReport If an error occurs when executing the query
+     */
+    public TemporalReferencedLegacyObservation getMaxValueFor(GetObservationRequest request, Set<Long> procedure,
+            Set<Long> observableProperty, Set<Long> featureOfInterest, Criterion temporalFilterCriterion,
+            Session session) throws HibernateException, OwsExceptionReport {
+        return (TemporalReferencedLegacyObservation) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest,
+                temporalFilterCriterion, SosIndeterminateTime.latest, session).uniqueResult();
     }
 
     /**
@@ -126,6 +180,27 @@ public class ValueTimeDAO extends AbstractValueDAO {
     }
 
     /**
+     * Query the minimum {@link TemporalReferencedLegacyObservation} for parameter
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure ids
+     * @param observableProperty
+     *            Datasource procedure ids
+     * @param featureOfInterest
+     *            Datasource procedure ids
+     * @param session
+     *            Hibernate Session
+     * @return Resulting minimum {@link TemporalReferencedLegacyObservation}
+     * @throws OwsExceptionReport If an error occurs when executing the query
+     */
+    public TemporalReferencedLegacyObservation getMinValueFor(GetObservationRequest request, Set<Long> procedure,
+            Set<Long> observableProperty, Set<Long> featureOfInterest, Session session) throws HibernateException, OwsExceptionReport {
+        return (TemporalReferencedLegacyObservation) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest,
+                null, SosIndeterminateTime.latest, session).uniqueResult();
+    }
+
+    /**
      * Query the maximum {@link TemporalReferencedLegacyObservation} for parameter
      * @param request
      *            {@link GetObservationRequest}
@@ -144,6 +219,27 @@ public class ValueTimeDAO extends AbstractValueDAO {
             long featureOfInterest, Session session) throws OwsExceptionReport {
         return (TemporalReferencedLegacyObservation) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null,
                 ExtendedIndeterminateTime.LATEST, session).uniqueResult();
+    }
+
+    /**
+     * Query the maximum {@link TemporalReferencedLegacyObservation} for parameter
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure ids
+     * @param observableProperty
+     *            Datasource procedure ids
+     * @param featureOfInterest
+     *            Datasource procedure ids
+     * @param session
+     *            Hibernate Session
+     * @return Resulting maximum {@link TemporalReferencedLegacyObservation}
+     * @throws OwsExceptionReport If an error occurs when executing the query
+     */
+    public TemporalReferencedLegacyObservation getMaxValueFor(GetObservationRequest request, Set<Long> procedure,
+            Set<Long> observableProperty, Set<Long> featureOfInterest, Session session) throws HibernateException, OwsExceptionReport {
+        return (TemporalReferencedLegacyObservation) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null,
+                SosIndeterminateTime.latest, session).uniqueResult();
     }
 
     /**
@@ -168,30 +264,62 @@ public class ValueTimeDAO extends AbstractValueDAO {
     private Criteria getValueCriteriaFor(GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest, Criterion temporalFilterCriterion, IndeterminateValue sosIndeterminateTime,
             Session session) throws OwsExceptionReport {
+        return getValueCriteriaFor(request, Sets.newHashSet(procedure), Sets.newHashSet(observableProperty),
+                Sets.newHashSet(featureOfInterest), temporalFilterCriterion, sosIndeterminateTime, session);
+    }
+    
+    /**
+     * Create {@link Criteria} for parameter
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure ids
+     * @param observableProperty
+     *            Datasource procedure ids
+     * @param featureOfInterest
+     *            Datasource procedure ids
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param sosIndeterminateTime first/latest indicator
+     * @param session
+     *            Hibernate Session
+     * @return Resulting {@link Criteria}
+     * @throws OwsExceptionReport  If an error occurs when adding Spatial Filtering Profile
+     *             restrictions
+     */
+    private Criteria getValueCriteriaFor(GetObservationRequest request, Set<Long> procedure,
+            Set<Long> observableProperty, Set<Long> featureOfInterest, Criterion temporalFilterCriterion, SosIndeterminateTime sosIndeterminateTime,
+            Session session) throws OwsExceptionReport {
         final Criteria c =
-                getDefaultObservationCriteria(TemporalReferencedLegacyObservation.class, session)
-                        .createAlias(TemporalReferencedLegacyObservation.PROCEDURE, "p")
-                        .createAlias(TemporalReferencedLegacyObservation.FEATURE_OF_INTEREST, "f")
-                        .createAlias(TemporalReferencedLegacyObservation.OBSERVABLE_PROPERTY, "o");
+                getDefaultObservationCriteria(TemporalReferencedLegacyObservation.class, session);
 
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
 
-        c.add(Restrictions.eq("p." + Procedure.ID, observableProperty));
-        c.add(Restrictions.eq("o." + ObservableProperty.ID, observableProperty));
-        c.add(Restrictions.eq("f." + FeatureOfInterest.ID, featureOfInterest));
+        if (CollectionHelper.isNotEmpty(procedure)) {
+            c.createAlias(TemporalReferencedLegacyObservation.PROCEDURE, "p");
+            c.add(Restrictions.in("p." + Procedure.ID, procedure));
+        }
+        if (CollectionHelper.isNotEmpty(observableProperty)) {
+            c.createAlias(TemporalReferencedLegacyObservation.OBSERVABLE_PROPERTY, "o");
+            c.add(Restrictions.in("o." + ObservableProperty.ID, observableProperty));
+        }
+        if (CollectionHelper.isNotEmpty(featureOfInterest)) {
+            c.createAlias(TemporalReferencedLegacyObservation.FEATURE_OF_INTEREST, "f");
+            c.add(Restrictions.in("f." + FeatureOfInterest.ID, featureOfInterest));
+        }
+
+        if (CollectionHelper.isNotEmpty(request.getOfferings())) {
+            c.createCriteria(AbstractValuedLegacyObservation.OFFERINGS)
+                    .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+        }
 
         if (CollectionHelper.isNotEmpty(request.getOfferings())) {
             c.createCriteria(TemporalReferencedLegacyObservation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
 
         String logArgs = "request, series, offerings";
-        if (temporalFilterCriterion != null) {
-            logArgs += ", filterCriterion";
-            c.add(temporalFilterCriterion);
-        }
-        if (sosIndeterminateTime != null) {
-            addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
-        }
+        addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
+        addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
         addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;

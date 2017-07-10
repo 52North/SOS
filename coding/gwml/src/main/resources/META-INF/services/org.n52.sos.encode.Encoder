@@ -1,0 +1,3 @@
+org.n52.svalbard.gwml.v22.encode.GWGeologyLogCoveragePropertyTypeEncoder
+org.n52.svalbard.gwml.v22.encode.LogValuePropertyTypeEncoder
+org.n52.svalbard.gwml.v22.encode.GWGeologyLogObservationTypeEncoder

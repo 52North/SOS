@@ -43,7 +43,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObserv
 
 public interface EReportingDaoHelper {
 
-    default void addValidityAndVerificationRestrictions(Criteria c, GetObservationRequest request)
+    default void addValidityAndVerificationRestrictions(Criteria c, AbstractObservationRequest request)
             throws OwsExceptionReport {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
             ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());

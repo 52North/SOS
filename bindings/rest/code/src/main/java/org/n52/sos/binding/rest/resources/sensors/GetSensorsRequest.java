@@ -46,5 +46,15 @@ public class GetSensorsRequest implements ISensorsRequest {
     {
         return capabilitiesRequest;
     }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getCapabilitiesRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getCapabilitiesRequest();
+    }
 
 }

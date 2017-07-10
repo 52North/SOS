@@ -37,6 +37,8 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropert
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
 
 /**
  * @since 4.0.0
@@ -111,6 +113,11 @@ public class ObservationConstellation
     public void setOffering(Offering offering) {
         this.offering = offering;
     }
+    
+    @Override
+    public boolean isSetOffering() {
+        return getOffering() != null;
+    }
 
     @Override
     public boolean getDeleted() {
@@ -165,7 +172,8 @@ public class ObservationConstellation
     @Override
     public String toString() {
         return String
-                .format("ObservationConstellation [observationConstellationId=%s, observableProperty=%s, procedure=%s, observationType=%s, offering=%s, deleted=%s, hiddenChild=%s]",
+                .format("ObservationConstellation [observationConstellationId=%s, observableProperty=%s, procedure=%s, "
+                        + "observationType=%s, offering=%s, deleted=%s, hiddenChild=%s",
                         observationConstellationId, observableProperty, procedure, observationType, offering, deleted,
                         hiddenChild);
     }

@@ -109,7 +109,7 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder {
     public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
-
+    
     @Override
     public Set<String> getSupportedResponseFormats(String service, String version) {
         if (SUPPORTED_RESPONSE_FORMATS.get(service) != null) {

@@ -52,4 +52,13 @@ public class GetSensorByIdRequest implements ISensorsRequest{
         return describeSensorRequest;
     }
 
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getDescribeSensorRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getDescribeSensorRequest();
+    }
 }

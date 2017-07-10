@@ -193,7 +193,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     protected OwsServiceRequest changeGetDataAvailabilityRequestParameterValues(
             GetDataAvailabilityRequest request) {
         if (request.isSetOfferings()) {
-            request.setOffering(checkOfferingParameterValues(request.getOfferings()));
+            request.setOfferings(checkOfferingParameterValues(request.getOfferings()));
         }
         if (request.isSetFeaturesOfInterest()) {
             request.setFeatureOfInterest(checkFeatureOfInterestParameterValues(request.getFeaturesOfInterest()));
@@ -574,7 +574,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
 
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
-        return new RequestResponseModifierFacilitator().setAdderRemover(true);
+        return super.getFacilitator().setAdderRemover(true);
     }
 
     private Optional<Function<String, String>> getIdentifierCheckerForName(String name) {

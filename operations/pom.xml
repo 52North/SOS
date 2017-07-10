@@ -16,5 +16,6 @@
         <module>enhanced-v20</module>
         <module>resultHandling-v20</module>
         <module>transactional-v20</module>
+        <module>extensions-v20</module>
     </modules>
 </project>

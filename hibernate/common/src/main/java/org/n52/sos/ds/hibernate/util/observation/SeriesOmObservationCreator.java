@@ -31,8 +31,8 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.List;
 import java.util.Locale;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,10 +67,6 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesOmObservationCreator.class);
 
-    private static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES = "getUnitForObservablePropertyProcedureSeries";
-
-    private static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES = "getUnitForObservablePropertySeries";
-
     protected final Series series;
 
     public SeriesOmObservationCreator(Series series, AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, I18NDAORepository i18nr, String pdf, DaoFactory daoFactory, Session session) {
@@ -85,18 +81,17 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
         if (series != null) {
             SosProcedureDescription procedure = createProcedure(series.getProcedure());
             OmObservableProperty obsProp = createObservableProperty(series.getObservableProperty());
-            obsProp.setUnit(queryUnit());
+            obsProp.setUnit(queryUnit(getSeries()));
             AbstractFeature feature = createFeatureOfInterest(series.getFeatureOfInterest());
 
             final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
-
             final OmObservation sosObservation = new OmObservation();
-            sosObservation.setNoDataValue(getNoDataValue());
-            sosObservation.setTokenSeparator(getTokenSeparator());
-            sosObservation.setTupleSeparator(getTupleSeparator());
-            sosObservation.setDecimalSeparator(getDecimalSeparator());
+            sosObservation.setObservationID(Long.toString(series.getSeriesId()));
+            addDefaultValuesToObservation(sosObservation);
             sosObservation.setObservationConstellation(obsConst);
             checkForAdditionalObservationCreator(series, sosObservation);
+            addParameter(sosObservation, series);
+            // TODO
             final NilTemplateValue value = new NilTemplateValue();
             value.setUnit(obsProp.getUnit());
             sosObservation.setValue(new SingleObservationValue(new TimeInstant(), value));
@@ -115,14 +110,31 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
      * @param feature
      *            FeatureOfInterest object
      * @return Observation constellation
+     * @throws OwsExceptionReport 
      */
     protected OmObservationConstellation getObservationConstellation(SosProcedureDescription<?> procedure,
-            OmObservableProperty obsProp, AbstractFeature feature) {
+            OmObservableProperty obsProp, AbstractFeature feature) throws OwsExceptionReport {
         OmObservationConstellation obsConst = new OmObservationConstellation(procedure, obsProp, null, feature, null);
         /* get the offerings to find the templates */
         if (obsConst.getOfferings() == null) {
-            obsConst.setOfferings(Sets.newHashSet(getCache().getOfferingsForProcedure(
-                    obsConst.getProcedure().getIdentifier())));
+            if (getSeries().isSetOffering()) {
+                obsConst.setOfferings(Sets.newHashSet(getSeries().getOffering().getIdentifier()));
+            } else {
+                AbstractSeriesObservationDAO observationDAO = (AbstractSeriesObservationDAO)DaoFactory.getInstance().getObservationDAO();
+                obsConst.setOfferings(observationDAO.getOfferingsForSeries(series, getSession()));
+//            } else {
+//                obsConst.setOfferings(Sets.newHashSet(getCache().getOfferingsForProcedure(
+//                        obsConst.getProcedure().getIdentifier())));
+            }
+        }
+        if (getSeries().isSetIdentifier()) {
+            addIdentifier(obsConst, getSeries());
+        }
+        if (getSeries().isSetName()) {
+            addName(obsConst, getSeries());
+        }
+        if (getSeries().isSetDescription()) {
+            obsConst.setDescription(getSeries().getDescription());
         }
         return obsConst;
     }
@@ -135,34 +147,24 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     }
 
     @SuppressWarnings("unchecked")
-    protected void checkForAdditionalObservationCreator(Series series, OmObservation sosObservation) {
+    protected void checkForAdditionalObservationCreator(Series series, OmObservation sosObservation) throws CodedException {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), series.getClass());
         if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
             AdditionalObservationCreator creator = AdditionalObservationCreatorRepository.getInstance().get(key);
-            creator.create(sosObservation, series);
+            creator.create(sosObservation, series, getSession());
+        } else if (checkAcceptType()) {
+            for (MediaType acceptType : getAcceptType()) {
+                AdditionalObservationCreatorKey acceptKey = new AdditionalObservationCreatorKey(acceptType.withoutParameters().toString(), series.getClass());
+                if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(acceptKey)) {
+                    AdditionalObservationCreator<Series> creator = AdditionalObservationCreatorRepository.getInstance().get(acceptKey);
+                    creator.create(sosObservation, series, getSession());
+                }
+            }
         }
     }
 
-    private String queryUnit() {
-        if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES, getSession())) {
-            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES);
-            namedQuery.setParameter(Series.OBSERVABLE_PROPERTY,
-                    series.getObservableProperty().getIdentifier());
-            namedQuery.setParameter(Series.PROCEDURE,
-                    series.getProcedure().getIdentifier());
-            LOGGER.debug("QUERY queryUnit({}, {}) with NamedQuery '{}': {}",  series.getObservableProperty().getIdentifier(),
-                    series.getProcedure().getIdentifier(), SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES,
-                    namedQuery.getQueryString());
-            return (String) namedQuery.uniqueResult();
-        } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES, getSession())) {
-            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES);
-            namedQuery.setParameter(Series.OBSERVABLE_PROPERTY,
-                    series.getObservableProperty().getIdentifier());
-            LOGGER.debug("QUERY queryUnit({}) with NamedQuery '{}': {}", series.getObservableProperty().getIdentifier(),
-                    SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES, namedQuery.getQueryString());
-            return (String) namedQuery.uniqueResult();
-        }
-        return null;
+    private void addParameter(OmObservation observation, Series series) throws OwsExceptionReport {
+        new SeriesParameterAdder(observation, new SeriesParameterDAO().getSeriesParameter(series, getSession())).add();
     }
 
 }

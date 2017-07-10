@@ -49,6 +49,9 @@ public class CategoryValuedSeriesObservation extends AbstractValuedSeriesObserva
     private static final long serialVersionUID = -4206516111463835035L;
 
     private String value;
+    private String valueIdentifier;
+    private String valueName;
+    private String valueDescription;
 
     @Override
     public String getValue() {
@@ -69,10 +72,54 @@ public class CategoryValuedSeriesObservation extends AbstractValuedSeriesObserva
     public String getValueAsString() {
         return getValue();
     }
+    
+    @Override
+    public void setValueIdentifier(String valueIdentifier) {
+        this.valueIdentifier = valueIdentifier;
+    }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public String getValueIdentifier() {
+        return valueIdentifier;
+    }
+
+    @Override
+    public boolean isSetValueIdentifier() {
+        return !Strings.isNullOrEmpty(getValueIdentifier());
+    }
+
+    @Override
+    public void setValueName(String valueName) {
+       this.valueName = valueName;
+    }
+
+    @Override
+    public String getValueName() {
+        return valueName;
+    }
+
+    @Override
+    public boolean isSetValueName() {
+        return !Strings.isNullOrEmpty(getValueName());
+    }
+
+    @Override
+    public void setValueDescription(String valueDescription) {
+        this.valueDescription = valueDescription;
+    }
+
+    @Override
+    public String getValueDescription() {
+        return valueDescription;
+    }
+
+    @Override
+    public boolean isSetValueDescription() {
+        return !Strings.isNullOrEmpty(getValueDescription());
+    }
+
+    @Override
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 

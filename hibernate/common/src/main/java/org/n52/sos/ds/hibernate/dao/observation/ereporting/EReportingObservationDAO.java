@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -149,8 +150,15 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
                                                                   IndeterminateValue sosIndeterminateTime,
                                                                   Session session) throws HibernateException,
                                                                                           OwsExceptionReport {
-        return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session)
-                .list();
+        if (CollectionHelper.isNotEmpty(features)) {
+            List<SeriesObservation<?>> observations = new ArrayList<>();
+            for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
+                observations.addAll(getSeriesObservationCriteriaFor(request, ids, filterCriterion, sosIndeterminateTime, session).list());
+            }
+            return observations;
+        } else {
+            return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
+        }
     }
 
     @SuppressWarnings("unchecked")

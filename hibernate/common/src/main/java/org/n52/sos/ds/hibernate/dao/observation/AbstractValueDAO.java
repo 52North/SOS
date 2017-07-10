@@ -51,6 +51,8 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacy
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.util.GeometryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract DAO class for querying {@link AbstractValuedLegacyObservation}
@@ -60,6 +62,8 @@ import org.n52.sos.util.GeometryHandler;
  *
  */
 public abstract class AbstractValueDAO extends TimeCreator {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractValueDAO.class);
 
     /**
      * Check if a Spatial Filtering Profile filter is requested and add to
@@ -68,7 +72,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
      * @param c
      *            Criteria to add crtierion
      * @param request
-     *            GetObservation request
+     *            GetObservationRequest request
      * @param session
      *            Hiberante Session
      * @throws OwsExceptionReport
@@ -77,12 +81,26 @@ public abstract class AbstractValueDAO extends TimeCreator {
      */
     protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request,
             Session session) throws OwsExceptionReport {
-        if (request.hasSpatialFilteringProfileSpatialFilter()) {
-            c.add(SpatialRestrictions.filter(
-                    AbstractObservation.SAMPLING_GEOMETRY,
-                    request.getSpatialFilter().getOperator(),
-                    GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
-                            request.getSpatialFilter().getGeometry())));
+        if (request instanceof GetObservationRequest) {
+            if (((GetObservationRequest)request).hasSpatialFilteringProfileSpatialFilter()) {
+                if (GeometryHandler.getInstance().isSpatialDatasource()) {
+                    c.add(SpatialRestrictions.filter(
+                            AbstractObservation.SAMPLING_GEOMETRY,
+                            ((GetObservationRequest)request).getSpatialFilter().getOperator(),
+                            GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                                    ((GetObservationRequest)request).getSpatialFilter().getGeometry())));
+                } else {
+                    // TODO add filter with lat/lon
+                    LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
+                }
+            }
+        }
+    }
+    
+    protected void addTemporalFilterCriterion(Criteria c, Criterion temporalFilterCriterion, String logArgs) {
+        if (temporalFilterCriterion != null) {
+            logArgs += ", filterCriterion";
+            c.add(temporalFilterCriterion);
         }
     }
 
@@ -119,6 +137,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
         // get observations with exactly the extrema time
         c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
 
+        logArgs += ", sosIndeterminateTime";
         // not really necessary to return the Criteria object, but useful if we
         // want to chain
         logArgs += ", filterCriterion";
@@ -169,18 +188,19 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Start row
      * @param request
      */
-    protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow, GetObservationRequest request) {
-        c.addOrder(Order.asc(getOrderColumn(request)));
+    protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow, AbstractObservationRequest request) {
         if (chunkSize > 0) {
             c.setMaxResults(chunkSize).setFirstResult(currentRow);
         }
     }
 
-    private String getOrderColumn(GetObservationRequest request) {
-        if (request.isSetTemporalFilter()) {
-            TemporalFilter filter = request.getTemporalFilters().iterator().next();
-            if (filter.getValueReference().contains(AbstractTemporalReferencedObservation.RESULT_TIME)) {
-               return AbstractTemporalReferencedObservation.RESULT_TIME;
+    protected String getOrderColumn(AbstractObservationRequest request) {
+        if (request instanceof GetObservationRequest) {
+            if (((GetObservationRequest)request).isSetTemporalFilter()) {
+                TemporalFilter filter = ((GetObservationRequest)request).getTemporalFilters().iterator().next();
+                if (filter.getValueReference().contains(AbstractTemporalReferencedObservation.RESULT_TIME)) {
+                   return AbstractTemporalReferencedObservation.RESULT_TIME;
+                }
             }
         }
         return AbstractTemporalReferencedObservation.PHENOMENON_TIME_START;

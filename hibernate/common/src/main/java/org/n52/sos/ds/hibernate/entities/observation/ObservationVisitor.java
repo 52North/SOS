@@ -35,6 +35,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -63,5 +64,8 @@ public interface ObservationVisitor<T> {
     T visit(TextObservation o) throws OwsExceptionReport;
 
     T visit(SweDataArrayObservation o) throws OwsExceptionReport;
+    
+    T visit(ProfileObservation o)
+            throws OwsExceptionReport;
 
 }

@@ -243,7 +243,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
                 if (getOceanSITEHelper().isSetDataMode()) {
                     dataModeText = getOceanSITEHelper().getDataMode().name();
                 }
-                writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.DATA_MODE, dataModeText));
+                return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.DATA_MODE, dataModeText));
             }
         }
         return getAttribute(writer, OceanSITESConstants.DATA_MODE);

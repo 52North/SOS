@@ -147,10 +147,10 @@ public class NetCDFUtil {
 
             // get foi
             AbstractFeature aFoi = obsConst.getFeatureOfInterest();
-            if (!(aFoi instanceof SamplingFeature)) {
+            if (!(aFoi instanceof AbstractSamplingFeature)) {
                 throw new EncodingException("Encountered a feature which isn't a SamplingFeature");
             }
-            SamplingFeature foi = (SamplingFeature) aFoi;
+            AbstractSamplingFeature foi = (AbstractSamplingFeature) aFoi;
 
             for (Point point : FeatureUtil.getFeaturePoints(foi)) {
                 try {
@@ -441,8 +441,8 @@ public class NetCDFUtil {
 
         for (OmObservation sosObservation : observationCollection) {
             sosObservation.getObservationConstellation().getFeatureOfInterest();
-            SamplingFeature samplingFeature =
-                    (SamplingFeature) sosObservation.getObservationConstellation().getFeatureOfInterest();
+            AbstractSamplingFeature samplingFeature =
+                    (AbstractSamplingFeature) sosObservation.getObservationConstellation().getFeatureOfInterest();
             if (samplingFeature != null && samplingFeature.getGeometry() != null) {
                 if (envelope == null) {
                     envelope = samplingFeature.getGeometry().getEnvelopeInternal();
@@ -469,7 +469,7 @@ public class NetCDFUtil {
     // }
     // }
 
-    public static SubSensor createSubSensor(String sensor, SamplingFeature foi) {
+    public static SubSensor createSubSensor(String sensor, AbstractSamplingFeature foi) {
         // return null if sensor or station id is same as foi
         if (sensor.equals(foi.getIdentifierCodeWithAuthority().getValue())) {
             return null;

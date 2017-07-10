@@ -31,6 +31,8 @@ package org.n52.sos.ds.hibernate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -73,6 +75,10 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
+import org.n52.sos.service.operator.ServiceOperatorKey;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 
 /**
  * Implementation of the abstract class AbstractInsertSensorHandler
@@ -101,6 +107,7 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
 
     @Override
     public synchronized InsertSensorResponse insertSensor(final InsertSensorRequest request) throws OwsExceptionReport {
+        checkForTransactionalEntity();
         final InsertSensorResponse response = new InsertSensorResponse();
         response.setService(request.getService());
         response.setVersion(request.getVersion());
@@ -134,7 +141,7 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                                     .getFeatureOfInterestTypes(), session);
                     if (observationTypes != null && featureOfInterestTypes != null) {
                         final List<ObservableProperty> hObservableProperties =
-                                getOrInsertNewObservableProperties(request.getObservableProperty(), session);
+                                getOrInsertNewObservableProperties(request.getObservableProperty(), request.getProcedureDescription(), session);
                         final ObservationConstellationDAO observationConstellationDAO = daoFactory.getObservationConstellationDAO();
                         final OfferingDAO offeringDAO = daoFactory.getOfferingDAO();
                         for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
@@ -151,8 +158,7 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                                 }
                             }
                             final Offering hOffering =
-                                    offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getIdentifier(),
-                                            assignedOffering.getOfferingName(), hRelatedFeatures, observationTypes,
+                                    offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering, hRelatedFeatures, observationTypes,
                                             featureOfInterestTypes, session);
                             for (final ObservableProperty hObservableProperty : hObservableProperties) {
                                 observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,
@@ -171,59 +177,6 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
             } else {
                 throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat, request.getProcedureDescriptionFormat());
             }
-
-//            final List<ObservationType> observationTypes =
-//                    new ObservationTypeDAO().getOrInsertObservationTypes(request.getMetadata().getObservationTypes(),
-//                            session);
-//            final List<FeatureOfInterestType> featureOfInterestTypes =
-//                    new FeatureOfInterestTypeDAO().getOrInsertFeatureOfInterestTypes(request.getMetadata()
-//                            .getFeatureOfInterestTypes(), session);
-//            if (procedureDescriptionFormat != null && observationTypes != null && featureOfInterestTypes != null) {
-//                final Procedure hProcedure =
-//                        new ProcedureDAO().getOrInsertProcedure(assignedProcedureID, procedureDescriptionFormat,
-//                                request.getProcedureDescription(), session);
-//                // TODO: set correct validTime,
-//                new ValidProcedureTimeDAO().insertValidProcedureTime(
-//                        hProcedure,
-//                        procedureDescriptionFormat,
-//                        getSensorDescriptionFromProcedureDescription(request.getProcedureDescription(),
-//                                assignedProcedureID), new DateTime(DateTimeZone.UTC), session);
-//                final List<ObservableProperty> hObservableProperties =
-//                        getOrInsertNewObservableProperties(request.getObservableProperty(), session);
-//                final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
-//                final OfferingDAO offeringDAO = new OfferingDAO();
-//                for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
-//                    final List<RelatedFeature> hRelatedFeatures = new LinkedList<RelatedFeature>();
-//                    if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
-//                        final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO();
-//                        final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
-//                        for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
-//                            final List<RelatedFeatureRole> relatedFeatureRoles =
-//                                    relatedFeatureRoleDAO.getOrInsertRelatedFeatureRole(relatedFeature.getRole(),
-//                                            session);
-//                            hRelatedFeatures.addAll(relatedFeatureDAO.getOrInsertRelatedFeature(
-//                                    relatedFeature.getFeature(), relatedFeatureRoles, session));
-//                        }
-//                    }
-//                    final Offering hOffering =
-//                            offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getIdentifier(),
-//                                    assignedOffering.getOfferingName(), hRelatedFeatures, observationTypes,
-//                                    featureOfInterestTypes, session);
-//                    for (final ObservableProperty hObservableProperty : hObservableProperties) {
-//                        observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,
-//                                hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
-//                    }
-//                }
-//                // TODO: parent and child procedures
-//                response.setAssignedProcedure(assignedProcedureID);
-//                response.setAssignedOffering(firstAssignedOffering.getIdentifier());
-//            } else if (procedureDescriptionFormat == null && observationTypes != null
-//                    && featureOfInterestTypes != null) {
-//                throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
-//                        "");
-//            } else {
-//                throw new NoApplicableCodeException().withMessage("Error while inserting InsertSensor into database!");
-//            }
             session.flush();
             transaction.commit();
         } catch (final HibernateException he) {
@@ -244,15 +197,25 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
      *
      * @param obsProps
      *            observableProperty identifiers
+     * @param sosProcedureDescription 
      * @param session
      *            Hibernate Session
      * @return ObservableProperty entities
      */
     private List<ObservableProperty> getOrInsertNewObservableProperties(final List<String> obsProps,
-            final Session session) {
+            SosProcedureDescription sosProcedureDescription, final Session session) {
         final List<OmObservableProperty> observableProperties = new ArrayList<>(obsProps.size());
         for (final String observableProperty : obsProps) {
-            observableProperties.add(new OmObservableProperty(observableProperty));
+            OmObservableProperty omObservableProperty = new OmObservableProperty(observableProperty);
+            if (sosProcedureDescription.supportsObservablePropertyName()) {
+                if (sosProcedureDescription.isSetObservablePropertyNameFor(observableProperty)) {
+                    String name = sosProcedureDescription.getObservablePropertyNameFor(observableProperty);
+                    if (!Strings.isNullOrEmpty(name)) {
+                        omObservableProperty.addName(name);
+                    }
+                }
+            }
+            observableProperties.add(omObservableProperty);
         }
         return new ObservablePropertyDAO(daoFactory).getOrInsertObservableProperty(observableProperties, false, session);
     }
@@ -284,6 +247,37 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
             return procedureDescription.getXml();
         }
         return "";
+    }
+
+    private void checkForTransactionalEntity() throws CodedException {
+        if (!HibernateHelper.isEntitySupported(TProcedure.class)) {
+            throw new NoApplicableCodeException().withMessage("The transactional database profile is not activated!");
+        }
+    }
+    
+    @Override
+    public CapabilitiesExtension getExtension() {
+        final SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
+        insertionCapabilities.addFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
+        insertionCapabilities.addObservationTypes(getCache().getObservationTypes());
+        insertionCapabilities.addProcedureDescriptionFormats(CodingRepository.getInstance()
+                .getSupportedTransactionalProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
+        return insertionCapabilities;
+    }
+
+    @Override
+    public CapabilitiesExtensionKey getCapabilitiesExtensionKey() {
+        return new CapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
+    }
+
+    @Override
+    public boolean hasRelatedOperation() {
+        return true;
+    }
+
+    @Override
+    public String getRelatedOperation() {
+        return getOperationName();
     }
 
 }

@@ -64,7 +64,6 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -72,6 +71,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
@@ -132,7 +132,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      */
     @SuppressWarnings("unchecked")
     public List<Procedure> getProcedureObjects(final Session session) {
-        Criteria criteria = session.createCriteria(Procedure.class);
+        Criteria criteria = getDefaultCriteria(session);
         LOGGER.debug("QUERY getProcedureObjects(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -146,14 +146,13 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *         identifier collections
      */
     public Map<String, Collection<String>> getProcedureIdentifiers(final Session session) {
-        Criteria criteria = session.createCriteria(Procedure.class).add(Restrictions.eq(Procedure.DELETED, false));
+        Criteria criteria = getDefaultCriteria(session);
         ProjectionList projectionList = Projections.projectionList();
         projectionList.add(Projections.property(Procedure.IDENTIFIER));
         criteria.createAlias(Procedure.PARENTS, "pp", JoinType.LEFT_OUTER_JOIN);
         projectionList.add(Projections.property("pp." + Procedure.IDENTIFIER));
         criteria.setProjection(projectionList);
-        // return as List<Object[]> even if there's only one column for
-        // consistency
+        // return as List<Object[]> even if there's only one column for consistency
         criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
 
         LOGGER.debug("QUERY getProcedureIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
@@ -268,7 +267,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *
      * @return Map of foi identifier to procedure identifier collection
      * @throws HibernateException
-     * @throws CodedException
      */
     public Map<String, Collection<String>> getProceduresForAllFeaturesOfInterest(final Session session) {
         List<Object[]> results = getFeatureProcedureResult(session);
@@ -295,7 +293,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Hibernate session
      *
      * @return Map of procedure identifier to foi identifier collection
-     * @throws CodedException
      */
     public Map<String, Collection<String>> getFeaturesOfInterestsForAllProcedures(final Session session) {
         List<Object[]> results = getFeatureProcedureResult(session);
@@ -854,10 +851,13 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Hibernate session
      * @return Procedure object
      */
+    @Deprecated
     public Procedure getOrInsertProcedure(final String identifier,
             final ProcedureDescriptionFormat procedureDescriptionFormat, final Collection<String> parentProcedures,
             final Session session) {
-        return getOrInsertProcedure(identifier, procedureDescriptionFormat, parentProcedures, null, false, true, session);
+        SosProcedureDescription procedure = new SosProcedureDescriptionUnknowType(identifier,
+                procedureDescriptionFormat.getProcedureDescriptionFormat(), "").setParentProcedures(parentProcedures);
+        return getOrInsertProcedure(identifier, procedureDescriptionFormat, procedure, false, session);
     }
 
     /**
@@ -888,17 +888,26 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             final TProcedure tProcedure = new TProcedure();
             tProcedure.setProcedureDescriptionFormat(procedureDescriptionFormat);
             tProcedure.setIdentifier(identifier);
-            if (CollectionHelper.isNotEmpty(parentProcedures)) {
-                tProcedure.setParents(Sets.newHashSet(getProceduresForIdentifiers(parentProcedures, session)));
+            if (procedureDescription.isSetProcedureName()) {
+                tProcedure.setName(procedureDescription.getProcedureName());
             }
-            if (typeOf != null && !tProcedure.isSetTypeOf()) {
-                Procedure typeOfProc = getProcedureForIdentifier(typeOf.getTitle(), session);
+            if (procedureDescription.isSetParentProcedures()) {
+                tProcedure.setParents(Sets.newHashSet(getProceduresForIdentifiers(procedureDescription.getParentProcedures(), session)));
+            }
+            if (procedureDescription.isSetTypeOf() && !tProcedure.isSetTypeOf()) {
+                Procedure typeOfProc = getProcedureForIdentifier(procedureDescription.getTypeOf().getTitle(), session);
                 if (typeOfProc != null) {
                     tProcedure.setTypeOf(typeOfProc);
                 }
             }
             tProcedure.setIsType(isType);
-            tProcedure.setIsAggregation(isAggregation);
+            tProcedure.setIsAggregation(procedureDescription.isAggragation());
+            if (procedureDescription.isSetMobile()) {
+                tProcedure.setMobile(procedureDescription.getMobile());
+            }
+            if (procedureDescription.isSetInsitu()) {
+                tProcedure.setInsitu(procedureDescription.getInsitu());
+            }
             procedure = tProcedure;
         }
         procedure.setDeleted(false);
@@ -1051,7 +1060,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             // get the latest validProcedureTimes' procedureDescriptionFormats
             return new ValidProcedureTimeDAO(daoFactory).getTProcedureFormatMap(session);
         } else {
-            Criteria criteria = session.createCriteria(Procedure.class);
+            Criteria criteria = getDefaultCriteria(session);
             criteria.createAlias(Procedure.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
             criteria.setProjection(Projections.projectionList().add(Projections.property(Procedure.IDENTIFIER))
                     .add(Projections.property("pdf." + ProcedureDescriptionFormat.PROCEDURE_DESCRIPTION_FORMAT)));
@@ -1068,6 +1077,23 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             return procedureFormatMap;
         }
     }
+
+    @SuppressWarnings("unchecked")
+    public List<Procedure> getPublishedProcedure(Session session) throws CodedException {
+        if (HibernateHelper.isEntitySupported(Series.class)) {
+            Criteria c = session.createCriteria(Procedure.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            c.add(Subqueries.propertyIn(Procedure.ID, getDetachedCriteriaSeries(session)));
+            return c.list();
+        } 
+        return getProcedureObjects(session);
+     }
+     
+     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
+         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
+         detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
+         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.PROCEDURE)));
+         return detachedCriteria;
+     }
 
     /**
      * Procedure time extrema {@link ResultTransformer}
@@ -1097,9 +1123,25 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         }
 
         @Override
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({ "rawtypes"})
         public List transformList(List collection) {
             return collection;
         }
+    }
+
+    public Procedure updateProcedure(Procedure procedure, SosProcedureDescription procedureDescription, Session session) {
+        if (procedureDescription.isSetProcedureName()) {
+            if (!procedure.isSetName() || (procedure.isSetName() && !procedureDescription.getProcedureName().equals(procedure.getName()))) {
+                procedure.setName(procedureDescription.getProcedureName());
+            }
+            if (procedureDescription.isSetDescription() && !procedureDescription.getDescription().equals(procedure.getDescription())) {
+                procedure.setDescription(procedureDescription.getDescription());
+            }
+        }
+        session.saveOrUpdate(procedure);
+        session.flush();
+        session.refresh(procedure);
+        return procedure;
+        
     }
 }

@@ -88,9 +88,26 @@ public class ValuedParameterVisitor implements ParameterVisitor<NamedValue<?>> {
         return namedValue;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public NamedValue visit(XmlValuedParameter p) throws OwsExceptionReport {
+        NamedValue<XmlObject> namedValue = new NamedValue<>();
+        addName(namedValue, p);
+        namedValue.setValue(new XmlValue(p.getValueAsXml()));
+        return namedValue;
+    }
+
     protected void addUnit(ValuedParameter<?> vp, Value<?> v) {
         if (!v.isSetUnit() && vp instanceof HasUnit && ((HasUnit) vp).isSetUnit()) {
-            v.setUnit(((HasUnit) vp).getUnit().getUnit());
+            Unit unit = ((HasUnit)vp).getUnit();
+            UoM uom = new UoM(unit.getUnit());
+            if (unit.isSetName()) {
+                uom.setName(unit.getName());
+            }
+            if (unit.isSetLink()) {
+                uom.setLink(unit.getLink());
+            }
+            v.setUnit(uom);
         }
     }
 
@@ -99,5 +116,7 @@ public class ValuedParameterVisitor implements ParameterVisitor<NamedValue<?>> {
         namedValue.setName(referenceType);
         return namedValue;
     }
+
+
 
 }

@@ -36,12 +36,16 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservatio
 
 import com.google.common.base.Strings;
 
-public class TextValuedEReportingObservation extends AbstractValuedEReportingObservation<String>
+public class TextValuedEReportingObservation
+        extends AbstractValuedEReportingObservation<String>
         implements TextValuedObservation {
 
     private static final long serialVersionUID = -9156707657634066902L;
 
     private String value;
+    private String valueIdentifier;
+    private String valueName;
+    private String valueDescription;
 
     @Override
     public String getValue() {
@@ -61,6 +65,51 @@ public class TextValuedEReportingObservation extends AbstractValuedEReportingObs
     @Override
     public String getValueAsString() {
         return getValue();
+    }
+    
+    @Override
+    public void setValueIdentifier(String valueIdentifier) {
+        this.valueIdentifier = valueIdentifier;
+    }
+
+    @Override
+    public String getValueIdentifier() {
+        return valueIdentifier;
+    }
+
+    @Override
+    public boolean isSetValueIdentifier() {
+        return !Strings.isNullOrEmpty(getValueIdentifier());
+    }
+
+    @Override
+    public void setValueName(String valueName) {
+        this.valueName = valueName;
+    }
+
+    @Override
+    public String getValueName() {
+        return valueName;
+    }
+
+    @Override
+    public boolean isSetValueName() {
+        return !Strings.isNullOrEmpty(getValueName());
+    }
+
+    @Override
+    public void setValueDescription(String valueDescription) {
+        this.valueDescription = valueDescription;
+    }
+
+    @Override
+    public String getValueDescription() {
+        return valueDescription;
+    }
+
+    @Override
+    public boolean isSetValueDescription() {
+        return !Strings.isNullOrEmpty(getValueDescription());
     }
 
     @Override

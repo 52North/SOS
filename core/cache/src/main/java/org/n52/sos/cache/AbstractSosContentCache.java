@@ -406,6 +406,8 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
     private final SetMultiMap<String, String> childFeaturesForFeatureOfInterest = newSynchronizedSetMultiMap();
 
     private final SetMultiMap<String, String> childProceduresForProcedures = newSynchronizedSetMultiMap();
+    
+    private SetMultiMap<String, String> childOfferingsForOfferings = newSynchronizedSetMultiMap();
 
     private final SetMultiMap<String, String> compositePhenomenonForOfferings = newSynchronizedSetMultiMap();
 
@@ -432,6 +434,8 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
     private final SetMultiMap<String, String> parentFeaturesForFeaturesOfInterest = newSynchronizedSetMultiMap();
 
     private final SetMultiMap<String, String> parentProceduresForProcedures = newSynchronizedSetMultiMap();
+    
+    private SetMultiMap<String, String> parentOfferingsForOfferings = newSynchronizedSetMultiMap();
 
     private final SetMultiMap<String, String> proceduresForFeaturesOfInterest = newSynchronizedSetMultiMap();
 
@@ -492,6 +496,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
 
     private final Map<String, Set<String>> typeOfProceduresMap = newSynchronizedMap();
 
+    
     protected static Logger getLogger() {
         return null;
     }
@@ -734,12 +739,26 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
     protected SetMultiMap<String, String> getParentProceduresForProceduresMap() {
         return this.parentProceduresForProcedures;
     }
-
+    
     /**
      * @return the relating procedure -> child procedure
      */
     protected SetMultiMap<String, String> getChildProceduresForProceduresMap() {
         return this.childProceduresForProcedures;
+    }
+    
+    /**
+     * @return the relating offering -> parent offering
+     */
+    protected SetMultiMap<String, String> getParentOfferingsForOfferingsMap() {
+        return this.parentOfferingsForOfferings;
+    }
+    
+    /**
+     * @return the relating offering -> child offering
+     */
+    protected SetMultiMap<String, String> getChildOfferingsForOfferingsMap() {
+        return this.childOfferingsForOfferings;
     }
 
     /**
@@ -861,6 +880,22 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
         return typeOfProceduresMap;
     }
 
+    protected Set<String> getPublishedFeatureOfInterestSet() {
+        return publishedFeatureOfInterest;
+    }
+    
+    protected Set<String> getPublishedProcedureSet() {
+        return publishedProcedure;
+    }
+    
+    protected Set<String> getPublishedOfferingSet() {
+        return publishedOffering;
+    }
+    
+    protected Set<String> getPublishedObservablePropertySet() {
+        return publishedObservableProperty;
+    }
+
     /**
      * @return the updateTime
      */
@@ -892,11 +927,11 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
         return Objects.hashCode(updateTime,defaultEpsgCode, maxPhenomenonTimeForOfferings, minPhenomenonTimeForOfferings,
                 maxResultTimeForOfferings, minResultTimeForOfferings, maxPhenomenonTimeForProcedures,
                 minPhenomenonTimeForProcedures, allowedObservationTypeForOfferings, childFeaturesForFeatureOfInterest,
-                childProceduresForProcedures, compositePhenomenonForOfferings, featuresOfInterestForOfferings,
+                childProceduresForProcedures, childOfferingsForOfferings, compositePhenomenonForOfferings, featuresOfInterestForOfferings,
                 featuresOfInterestForResultTemplates, observablePropertiesForCompositePhenomenons,
                 observablePropertiesForOfferings, observablePropertiesForProcedures,
                 observationTypesForOfferings, observedPropertiesForResultTemplates, offeringsForObservableProperties, offeringsForProcedures,
-                parentFeaturesForFeaturesOfInterest, parentProceduresForProcedures, proceduresForFeaturesOfInterest,
+                parentFeaturesForFeaturesOfInterest, parentProceduresForProcedures, parentOfferingsForOfferings, proceduresForFeaturesOfInterest,
                 proceduresForObservableProperties, proceduresForOfferings, hiddenChildProceduresForOfferings,
                 relatedFeaturesForOfferings, resultTemplatesForOfferings, rolesForRelatedFeatures,
                 envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest,
@@ -905,6 +940,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
                 featureOfInterestIdentifierHumanReadableName, observablePropertyIdentifierHumanReadableName,
         procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName,
         typeInstanceProcedures, componentAggregationProcedures, typeOfProceduresMap);
+                publishedFeatureOfInterest, publishedObservableProperty, publishedOffering, publishedProcedure);
     }
 
     @Override
@@ -923,6 +959,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
                     && Objects.equal(this.childFeaturesForFeatureOfInterest, other.getChildFeaturesForFeaturesOfInterestMap())
                     && Objects.equal(this.childProceduresForProcedures, other.getChildProceduresForProceduresMap())
                     && Objects.equal(this.compositePhenomenonForOfferings, other.getCompositePhenomenonsForOfferingsMap())
+                    && Objects.equal(this.childOfferingsForOfferings, other.getChildOfferingsForOfferingsMap())
                     && Objects.equal(this.featuresOfInterestForOfferings, other.getFeaturesOfInterestForOfferingMap())
                     && Objects.equal(this.featuresOfInterestForResultTemplates, other.getFeaturesOfInterestForResultTemplatesMap())
                     && Objects.equal(this.observablePropertiesForCompositePhenomenons, other.getObservablePropertiesForCompositePhenomenonsMap())
@@ -934,6 +971,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
                     && Objects.equal(this.parentFeaturesForFeaturesOfInterest, other.getParentFeaturesForFeaturesOfInterestMap())
                     && Objects.equal(this.parentProceduresForProcedures, other.getParentProceduresForProceduresMap())
                     && Objects.equal(this.proceduresForFeaturesOfInterest, other.getProceduresForFeaturesOfInterestMap())
+                    && Objects.equal(this.parentOfferingsForOfferings, other.getParentOfferingsForOfferingsMap())
                     && Objects.equal(this.proceduresForObservableProperties, other.getProceduresForObservablePropertiesMap())
                     && Objects.equal(this.proceduresForOfferings, other.getProceduresForOfferingsMap())
                     && Objects.equal(this.hiddenChildProceduresForOfferings, other.getHiddenChildProceduresForOfferingsMap())
@@ -960,7 +998,11 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
                     && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName())
                     && Objects.equal(this.typeInstanceProcedures, other.getTypeIntanceProcedureMap())
                     && Objects.equal(this.componentAggregationProcedures, other.getComponentAggregationProcedureMap())
-                    && Objects.equal(this.typeOfProceduresMap, other.getTypeOfProcedureMap());
+                    && Objects.equal(this.typeOfProceduresMap, other.getTypeOfProcedureMap())
+                    && Objects.equal(this.getPublishedFeatureOfInterest(), other.getPublishedFeatureOfInterest())
+                    && Objects.equal(this.getPublishedObservableProperties(), other.getPublishedObservableProperties())
+                    && Objects.equal(this.getPublishedOfferings(), other.getPublishedOfferings())
+                    && Objects.equal(this.getPublishedProcedures(), other.getPublishedProcedures());
         }
         return false;
     }

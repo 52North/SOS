@@ -37,14 +37,58 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
+import org.n52.sos.util.DateTimeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implements EReportingDaoHelper {
     private final Set<Integer> verificationFlags;
     private final Set<Integer> validityFlags;
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(EReportingValueTimeDAO.class);
 
     public EReportingValueTimeDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags) {
         this.verificationFlags = verificationFlags;
         this.validityFlags = validityFlags;
+    }
+    @Override
+    protected Class<?> getSeriesValueTimeClass() {
+        return TemporalReferencedEReportingObservation.class;
+    }
+
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+        // add quality restrictions
+        EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
+    }
+
+    @Override
+    public ObservationTimeExtrema getTimeExtremaForSeries(Collection<Series> series, Criterion temporalFilterCriterion,
+            Session session) throws OwsExceptionReport {
+        Criteria c = getSeriesValueCriteriaFor(series, temporalFilterCriterion, null, session);
+        addPhenomenonTimeProjection(c);
+        LOGGER.debug("QUERY getTimeExtremaForSeries(series, temporalFilter): {}",
+                HibernateHelper.getSqlString(c));
+        return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
+    }
+
+    @Override
+    public ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series, Criterion temporalFilterCriterion,
+            Session session) throws OwsExceptionReport {
+        Criteria c = getSeriesValueCriteriaForSeriesIds(series, temporalFilterCriterion, null, session);
+        addPhenomenonTimeProjection(c);
+        LOGGER.debug("QUERY getTimeExtremaForSeriesIds(series, temporalFilter): {}",
+                HibernateHelper.getSqlString(c));
+        return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
+    }
+    
+    private ObservationTimeExtrema parseMinMaxPhenomenonTime(Object[] result) {
+        ObservationTimeExtrema ote = new ObservationTimeExtrema();
+        if (result != null) {
+            ote.setMinPhenomenonTime(DateTimeHelper.makeDateTime(result[0]));
+            ote.setMaxPhenomenonTime(DateTimeHelper.makeDateTime(result[1]));
+        }
+        return ote;
     }
 
     @Override
@@ -66,6 +110,13 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
         // add quality restrictions
         addValidityAndVerificationRestrictions(c, request);
+    }
+
+    private void addPhenomenonTimeProjection(Criteria c) {
+        ProjectionList projectionList = Projections.projectionList();
+        projectionList.add(Projections.min(TemporalReferencedEReportingObservation.PHENOMENON_TIME_START));
+        projectionList.add(Projections.max(TemporalReferencedEReportingObservation.PHENOMENON_TIME_END));
+        c.setProjection(projectionList);
     }
 
 }

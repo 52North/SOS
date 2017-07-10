@@ -55,6 +55,8 @@ import org.n52.sos.config.sqlite.hibernate.HibernateFileType;
 import org.n52.sos.config.sqlite.hibernate.HibernateSQLiteDialect;
 import org.n52.sos.config.sqlite.hibernate.HibernateTimeInstantType;
 import org.n52.sos.config.sqlite.hibernate.HibernateUriType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

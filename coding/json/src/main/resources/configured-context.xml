@@ -50,5 +50,50 @@
     <bean class="org.n52.sos.encode.json.impl.GetCapabilitiesResponseEncoder"/>
     <bean class="org.n52.sos.encode.json.impl.BatchResponseEncoder"/>
 
+<!-- Decoder implementations from extensions/aqd/ereporting -->
+    <bean class="org.n52.sos.decode.json.inspire.AddressJSONDecoder"/>
+    <bean class="org.n52.sos.decode.json.inspire.ContactJSONDecoder"/>
+    <bean class="org.n52.sos.decode.json.inspire.EReportingChangeJSONDecoder"/>
+    <bean class="org.n52.sos.decode.json.inspire.EReportingHeaderJSONDecoder"/>
+    <bean class="org.n52.sos.decode.json.inspire.GeographicalNameJSONDecoder"/>
+    <bean class="org.n52.sos.decode.json.inspire.InspireIDJSONDecode"/>
+    <bean class="org.n52.sos.decode.json.inspire.RelatedPartyJSONDecoder"/>
+    <bean class="org.n52.sos.decode.json.inspire.ReportObligationJSONDecoder"/>
+    <bean class="org.n52.sos.decode.json.inspire.SpellingJSONDecoder"/>
+    <bean class="org.n52.sos.decode.json.inspire.PronunciationJSONDecoder"/>
+
+    <!-- Encoder implementations from extensions/aqd/ereporting -->
+    <bean class="org.n52.sos.encode.json.inspire.ReferenceableJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.SpellingJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.GeographicNameJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.PronunciationJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.IterableJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.CodeTypeJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.InspireIdJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.RelatedPartyJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.ReferenceJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.EReportingHeaderJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.EReportingChangeJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.ContactJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.NillableJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.AddressJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.inspire.ReportObligationJSONEncoder"/>
+
+     <bean id="reportingHeaderSQLiteManager"
+          class="org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager">
+        <property name="sessionFactory">
+            <bean class="org.n52.sos.config.sqlite.SQLiteSessionFactory">
+                <property name="databaseName" value="eReportingHeader" />
+                <property name="annotatedClasses">
+                    <array>
+                        <value>org.n52.sos.inspire.aqd.persistence.JSONFragment</value>
+                    </array>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="reportObligationRepository"
+          class="org.n52.sos.inspire.aqd.ReportObligationRepository" />
 
 </beans>

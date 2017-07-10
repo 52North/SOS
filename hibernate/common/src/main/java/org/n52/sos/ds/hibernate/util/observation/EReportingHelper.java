@@ -74,6 +74,8 @@ import com.google.common.collect.Sets;
  *
  */
 public class EReportingHelper {
+    
+    private static final SweHelper helper = new SweHelper();
 
     /**
      * private constructor
@@ -207,7 +209,7 @@ public class EReportingHelper {
     }
 
     private static SweAbstractEncoding createEncoding(OmObservation omObservation) {
-        return new SweHelper().createTextEncoding(omObservation);
+        return helper.createTextEncoding(omObservation);
     }
 
     private static void addDoubleValue(List<String> list, Double value) {

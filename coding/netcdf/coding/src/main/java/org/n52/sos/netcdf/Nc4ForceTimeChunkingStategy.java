@@ -28,11 +28,11 @@
  */
 package org.n52.sos.netcdf;
 
+import com.axiomalaska.cf4j.CFStandardNames;
+
 import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
-import ucar.nc2.jni.netcdf.Nc4ChunkingStrategyImpl;
-
-import com.axiomalaska.cf4j.CFStandardNames;
+import ucar.nc2.write.Nc4ChunkingDefault;
 
 /**
  * Implementation of {@link Nc4ChunkingStrategyImpl} to force time chunk.
@@ -42,7 +42,7 @@ import com.axiomalaska.cf4j.CFStandardNames;
  * @since 4.4.0
  *
  */
-public class Nc4ForceTimeChunkingStategy extends Nc4ChunkingStrategyImpl {
+public class Nc4ForceTimeChunkingStategy extends Nc4ChunkingDefault {
     private static final int TIME_CHUNK_MAX = 1000;
 
     private final int chunkSize;

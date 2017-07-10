@@ -35,21 +35,27 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
+import org.n52.sos.util.Comparables;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class AbstractBaseObservation
         extends AbstractIdentifierNameDescriptionEntity
-        implements BaseObservation {
+        implements BaseObservation, Comparable<AbstractBaseObservation> {
     private static final long serialVersionUID = 5618279055717823761L;
 
     private long observationId;
     private Set<Offering> offerings = new HashSet<>(0);
     private Geometry samplingGeometry;
+    private Object latitude;
+    private Object longitude;
+    private Object altitude;
+    private int srid;
     private boolean deleted;
     private boolean child;
     private boolean parent;
     private Set<Parameter<?>> parameters = new HashSet<>(0);
+    private Set<RelatedObservation> relatedObservations = new HashSet<>(0);
 
     @Override
     public boolean getDeleted() {
@@ -82,6 +88,11 @@ public abstract class AbstractBaseObservation
     }
 
     @Override
+    public boolean isSetOfferings() {
+        return getOfferings() != null && !getOfferings().isEmpty();
+    }
+    
+    @Override
     public Geometry getSamplingGeometry() {
         return samplingGeometry;
     }
@@ -94,6 +105,66 @@ public abstract class AbstractBaseObservation
     @Override
     public boolean hasSamplingGeometry() {
         return getSamplingGeometry() != null && !getSamplingGeometry().isEmpty();
+    }
+    
+    @Override
+    public Object getLongitude() {
+        return longitude;
+    }
+
+    @Override
+    public AbstractBaseObservation setLongitude(final Object longitude) {
+        this.longitude = longitude;
+        return this;
+    }
+
+    @Override
+    public Object getLatitude() {
+        return latitude;
+    }
+
+    @Override
+    public AbstractBaseObservation setLatitude(final Object latitude) {
+        this.latitude = latitude;
+        return this;
+    }
+
+    @Override
+    public Object getAltitude() {
+        return altitude;
+    }
+
+    @Override
+    public AbstractBaseObservation setAltitude(final Object altitude) {
+        this.altitude = altitude;
+        return this;
+    }
+
+    public boolean isSetLongLat() {
+        return getLongitude() != null && getLatitude() != null;
+    }
+
+    public boolean isSetAltitude() {
+        return getAltitude() != null;
+    }
+
+    public boolean isSpatial() {
+        return hasSamplingGeometry() || isSetLongLat();
+    }
+    
+    @Override
+    public int getSrid() {
+        return srid;
+    }
+
+    @Override
+    public AbstractBaseObservation setSrid(final int srid) {
+        this.srid = srid;
+        return this;
+    }
+    
+    public boolean isSetSrid() {
+        return getSrid() > 0;
     }
 
     @Override
@@ -145,5 +216,24 @@ public abstract class AbstractBaseObservation
     public boolean hasParameters() {
         return CollectionHelper.isNotEmpty(getParameters());
     }
+    
+    @Override
+    public Set<RelatedObservation> getRelatedObservations() {
+        return relatedObservations;
+    }
 
+    @Override
+    public void setRelatedObservations(Set<RelatedObservation> relatedObservations) {
+        this.relatedObservations = relatedObservations;
+    }
+    
+    @Override
+    public boolean hasRelatedObservations() {
+        return CollectionHelper.isNotEmpty(getRelatedObservations());
+    }
+
+    @Override
+    public int compareTo(AbstractBaseObservation o) {
+        return Comparables.chain(o).compare(getObservationId(), o.getObservationId()).result();
+    }
 }

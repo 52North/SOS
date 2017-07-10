@@ -52,5 +52,15 @@ public class SensorsPostRequest extends TransactionalSensorRequest
     {
         return insertSensorRequest;
     }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getInsertSensorRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getInsertSensorRequest();
+    }
 
 }

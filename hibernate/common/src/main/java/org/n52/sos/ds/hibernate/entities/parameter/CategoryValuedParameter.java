@@ -28,65 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter;
 
-
-import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
-import org.n52.sos.ds.hibernate.entities.Unit;
-
-import com.google.common.base.Strings;
-
-public class CategoryValuedParameter extends Parameter<String> implements HasUnit {
-
-    private static final long serialVersionUID = 7634152902672770163L;
-
-    private String value;
-
-    private Unit unit;
-
-    @Override
-    public String getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public boolean isSetValue() {
-        return !Strings.isNullOrEmpty(getValue());
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue();
-    }
-
-    @Override
-    public Unit getUnit() {
-        return unit;
-    }
-
-    @Override
-    public void setUnit(final Unit unit) {
-        this.unit = unit;
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return getUnit() != null && getUnit().isSetUnit();
-    }
-
-    @Override
-    public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
-        visitor.visit(this);
-    }
-
-    @Override
-    public <T> NamedValue<T> accept(ParameterVisitor<T> visitor) throws OwsExceptionReport {
-        return visitor.visit(this);
-    }
+public interface CategoryValuedParameter extends ValuedParameter<String> {
 
 }

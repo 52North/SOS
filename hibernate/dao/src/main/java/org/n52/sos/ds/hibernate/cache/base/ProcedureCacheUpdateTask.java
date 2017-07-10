@@ -39,9 +39,11 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
+
+import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
@@ -53,6 +55,8 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
 
     private final String procedureId;
     private final DaoFactory daoFactory;
+    
+    private ProcedureDAO procedureDAO = new ProcedureDAO();
 
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded by a session in a different thread *
@@ -86,6 +90,19 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
                 getCache().setMaxPhenomenonTimeForProcedure(procedureId, pte.getMaxPhenomenonTime());
             }
         }
+        getProcedureDescriptionFormats();
+    }
+
+    private void getProcedureDescriptionFormats() {
+        Procedure procedure = procedureDAO.getProcedureForIdentifier(procedureId, getSession());
+        String procedureDescriptionFormat = procedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
+        Set<String> formats = Sets.newHashSet(procedureDescriptionFormat);
+        Set<String> toNamespaceConverterFrom = ConverterRepository.getInstance().getToNamespaceConverterFrom(procedureDescriptionFormat);
+        if (CollectionHelper.isNotEmpty(toNamespaceConverterFrom)) {
+            formats.addAll(toNamespaceConverterFrom);
+        }
+        
+        getCache().addProcedureDescriptionFormatsForProcedure(procedureId, formats);
     }
 
     protected Set<String> getProcedureIdentifiers(Set<Procedure> procedures) {

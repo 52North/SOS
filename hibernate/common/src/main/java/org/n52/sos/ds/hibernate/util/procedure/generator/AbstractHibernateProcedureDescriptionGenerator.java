@@ -254,7 +254,13 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator implements 
 
     @VisibleForTesting
     String[] getObservablePropertiesForProcedure(String identifier) {
-        Set<String> props = getCache().getObservablePropertiesForProcedure(identifier);
+        SortedSet<String> props = new TreeSet<>();
+        Set<String> obsProps = getCache().getObservablePropertiesForProcedure(identifier);
+        for (String obsProp : obsProps) {
+            if (getCache().getPublishedObservableProperties().contains(obsProp)) {
+                props.add(obsProp);
+            }
+        }
         return props.toArray(new String[props.size()]);
     }
 }

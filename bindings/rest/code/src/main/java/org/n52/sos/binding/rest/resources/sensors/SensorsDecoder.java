@@ -33,15 +33,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.opengis.sensorML.x101.AbstractProcessType;
-import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
-import net.opengis.sensorML.x101.IoComponentPropertyType;
-import net.opengis.sensorML.x101.SystemType;
-import net.opengis.sosREST.x10.SensorDocument;
-import net.opengis.sosREST.x10.SensorType;
-import net.opengis.swe.x101.AnyScalarPropertyType;
-import net.opengis.swe.x101.SimpleDataRecordType;
-
 import org.apache.xmlbeans.XmlObject;
 
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -65,6 +56,15 @@ import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.XmlHelper;
+
+import net.opengis.sensorML.x101.AbstractProcessType;
+import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
+import net.opengis.sensorML.x101.IoComponentPropertyType;
+import net.opengis.sensorML.x101.SystemType;
+import net.opengis.sosREST.x10.SensorDocument;
+import net.opengis.sosREST.x10.SensorType;
+import net.opengis.swe.x101.AnyScalarPropertyType;
+import net.opengis.swe.x101.SimpleDataRecordType;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -157,9 +157,10 @@ public class SensorsDecoder extends ResourceDecoder {
         SosInsertionMetadata insertionMetadata = new SosInsertionMetadata();
         Capabilities xb_insertionMetadata = null;
 
+        final String insertionMetadataTagName = "InsertionMetadata";
         if (xb_system.getCapabilitiesArray().length > 0) {
             for (Capabilities xb_Capability : xb_system.getCapabilitiesArray()) {
-                if (xb_Capability.isSetName() && xb_Capability.getName().equalsIgnoreCase(bindingConstants.getSmlCapabilityInsertMetadataName())) {
+                if (xb_Capability.isSetName() && xb_Capability.getName().equalsIgnoreCase(insertionMetadataTagName)) {
                     xb_insertionMetadata = xb_Capability;
                     break;
                 }
@@ -187,9 +188,9 @@ public class SensorsDecoder extends ResourceDecoder {
                     if (xb_fieldElement.isSetText()) {
                         String name = xb_fieldElement.getName();
                         if (!xb_fieldElement.getText().getValue().isEmpty() && name != null) {
-                            if (name.equalsIgnoreCase(bindingConstants.getSmlCapabilityObservationTypeName())) {
+                            if (name.equalsIgnoreCase("sos:ObservationType")) {
                                 observationTypes.add(xb_fieldElement.getText().getValue());
-                            } else if (name.equalsIgnoreCase(bindingConstants.getSmlCapabilityFeatureOfInterestTypeName())) {
+                            } else if (name.equalsIgnoreCase("sos:FeatureOfInterestType")) {
                                 featureTypes.add(xb_fieldElement.getText().getValue());
                             }
                         }

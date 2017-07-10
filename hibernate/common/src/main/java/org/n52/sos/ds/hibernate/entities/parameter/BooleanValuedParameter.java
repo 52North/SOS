@@ -28,42 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter;
 
-import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-
-public class BooleanValuedParameter extends Parameter<Boolean> {
-
-    private static final long serialVersionUID = 940615372876462865L;
-    private Boolean value;
-
-    @Override
-    public Boolean getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(Boolean value) {
-       this.value = value;
-    }
-
-    @Override
-    public boolean isSetValue() {
-        return value != null;
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
-
-    @Override
-    public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
-        visitor.visit(this);
-    }
-
-    @Override
-    public <T> NamedValue<T> accept(ParameterVisitor<T> visitor) throws OwsExceptionReport {
-        return visitor.visit(this);
-    }
+public interface BooleanValuedParameter extends ValuedParameter<Boolean> {
 
 }

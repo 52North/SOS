@@ -105,7 +105,7 @@ public class TransactionalRequestCheckerTest {
         tsc.setTransactionalAllowedIps(IP.toString());
         tsc.setTransactionalToken(NULL);
         thrown.expect(OwsExceptionReport.class);
-        thrown.expect(hasStatusCode(HTTPStatus.UNAUTHORIZED));
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.UNAUTHORIZED));
         new TransactionalRequestChecker(tsc).check(getRequestContextIp(false));
     }
 
@@ -116,7 +116,7 @@ public class TransactionalRequestCheckerTest {
         tsc.setTransactionalAllowedIps(NULL);
         tsc.setTransactionalToken(TOKEN);
         thrown.expect(OwsExceptionReport.class);
-        thrown.expect(hasStatusCode(HTTPStatus.UNAUTHORIZED));
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.UNAUTHORIZED));
         new TransactionalRequestChecker(tsc).check(getRequestContextToken(false));
     }
 
@@ -127,7 +127,7 @@ public class TransactionalRequestCheckerTest {
         tsc.setTransactionalAllowedIps(IP.toString());
         tsc.setTransactionalToken(TOKEN);
         thrown.expect(OwsExceptionReport.class);
-        thrown.expect(hasStatusCode(HTTPStatus.UNAUTHORIZED));
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.UNAUTHORIZED));
         new TransactionalRequestChecker(tsc).check(getRequestContextBoth(false, false));
     }
 
@@ -138,7 +138,7 @@ public class TransactionalRequestCheckerTest {
         tsc.setTransactionalAllowedIps(IP.toString());
         tsc.setTransactionalToken(TOKEN);
         thrown.expect(OwsExceptionReport.class);
-        thrown.expect(hasStatusCode(HTTPStatus.UNAUTHORIZED));
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.UNAUTHORIZED));
         new TransactionalRequestChecker(tsc).check(getRequestContextBoth(true, false));
     }
 
@@ -149,10 +149,19 @@ public class TransactionalRequestCheckerTest {
         tsc.setTransactionalAllowedIps(IP.toString());
         tsc.setTransactionalToken(TOKEN);
         thrown.expect(OwsExceptionReport.class);
-        thrown.expect(hasStatusCode(HTTPStatus.UNAUTHORIZED));
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.UNAUTHORIZED));
         new TransactionalRequestChecker(tsc).check(getRequestContextBoth(false, true));
     }
 
+    @Test
+    public void shouldException_MissingRequestContext() throws OwsExceptionReport {
+        thrown.expect(NoApplicableCodeException.class);
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.INTERNAL_SERVER_ERROR));
+        new TransactionalRequestChecker(tsc).check(null);
+    }
+
+    private RequestContext getRequestContextIp(boolean validIp) {
+        RequestContext requestContext = new RequestContext();
     private OwsServiceRequestContext getRequestContextIp(boolean validIp) {
         OwsServiceRequestContext requestContext = new OwsServiceRequestContext();
         requestContext.setIPAddress(validIp ? IP : INVALID_IP);

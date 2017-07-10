@@ -62,10 +62,10 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 
@@ -135,6 +135,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
 
         getCache().addOffering(offeringId);
+        getCache().addPublishedOffering(offeringId);
         addOfferingNamesAndDescriptionsToCache(offeringId, session);
         // only check once, check flag in other methods
         obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
@@ -313,6 +314,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             observationTypes.add(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
         } else if (observationDAO.checkSweDataArrayObservationsFor(offeringId, session)) {
             observationTypes.add(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+        } else if (observationDAO.checkComplexObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+        } else if (observationDAO.checkProfileObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
         }
         return observationTypes;
     }

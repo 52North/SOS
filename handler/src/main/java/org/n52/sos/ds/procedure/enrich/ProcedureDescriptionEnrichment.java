@@ -76,13 +76,15 @@ public abstract class ProcedureDescriptionEnrichment {
         Collection<SosOffering> offerings = Lists
                 .newArrayListWithCapacity(identifiers.size());
         for (String offering : identifiers) {
-            SosOffering sosOffering = new SosOffering(offering, false);
-            // add offering name
-            I18NHelper.addOfferingNames(getCache(), sosOffering, getLocale(), getLocale(), showAllLanguageValues);
-            // add offering description
-            I18NHelper.addOfferingDescription(sosOffering, getLocale(), getLocale(), getCache());
-            // add to list
-            offerings.add(sosOffering);
+            if (getCache().getPublishedOfferings().contains(offering)) {
+                SosOffering sosOffering = new SosOffering(offering, false);
+                // add offering name
+                I18NHelper.addOfferingNames(sosOffering, getLocale());
+                // add offering description
+                I18NHelper.addOfferingDescription(sosOffering, getLocale());
+                // add to list
+                offerings.add(sosOffering);
+            }
         }
         return offerings;
     }

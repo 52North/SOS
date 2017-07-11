@@ -28,6 +28,7 @@
  */
 package org.n52.sos.convert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.iceland.convert.Converter;
@@ -55,6 +56,7 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.w3c.Nillable;
 import org.n52.shetland.w3c.xlink.Reference;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -212,7 +214,7 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
                     smlResponsibleParty.setPhoneFax(toList(contact.getTelephoneFacsimile().get()));
                 }
                 if (contact.getTelephoneVoice().isPresent()) {
-                   smlResponsibleParty.setPhoneVoice(contact.getTelephoneVoice().get());
+                   smlResponsibleParty.setPhoneVoice(toList(contact.getTelephoneVoice().get()));
                 }
                 if (contact.getWebsite().isPresent()) {
                     smlResponsibleParty.setOnlineResource(Lists.newArrayList(contact.getWebsite().get()));
@@ -240,7 +242,7 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
                     relatedParty.setPositionName(getPTFreeText(smlResponsibleParty.getPositionName()));
                 }
                 if (smlResponsibleParty.isSetRole()) {
-                    relatedParty.setRole(Sets.newHashSet(new ReferenceType("", smlResponsibleParty.getRole())));
+                    relatedParty.addRole(Nillable.of(new Reference().setTitle(smlResponsibleParty.getRole())));
                 }
                 if (smlResponsibleParty.isSetPhone() || smlResponsibleParty.isSetPhoneFax()) {
                     Contact contactOmpr = new Contact();
@@ -252,10 +254,10 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
                         contactOmpr.setElectronicMailAddress(smlResponsibleParty.getEmail());
                     }
                     if (smlResponsibleParty.isSetPhone()) {
-                        contactOmpr.setTelephoneVoice(smlResponsibleParty.getPhoneVoice());
+                        contactOmpr.setTelephoneVoice(toNillableValueList(smlResponsibleParty.getPhoneVoice()));
                     }
                     if (smlResponsibleParty.isSetPhoneFax()) {
-                        contactOmpr.setTelephoneFacsimile(smlResponsibleParty.getPhoneFax());
+                        contactOmpr.setTelephoneFacsimile(toNillableValueList(smlResponsibleParty.getPhoneFax()));
                     }
                     if (smlResponsibleParty.isSetOnlineResources()) {
                         contactOmpr.setWebsite(smlResponsibleParty.getOnlineResources().iterator().next());
@@ -279,8 +281,25 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
     }
 
     private List<String> toList(List<Nillable<String>> list) {
-        list.forEach(s -> s.isPresent());
-        return null;
+        List<String> l = new ArrayList<>();
+        for (Nillable<String> s : list) {
+            if (s.isPresent()) {
+                l.add(s.get());
+            }
+        }
+        return l;
+    }
+
+    private List<Nillable<String>> toNillableValueList(List<String> list) {
+        List<Nillable<String>> l = new ArrayList<>();
+        for (String s : list) {
+            if (Strings.isNullOrEmpty(s)) {
+                l.add(Nillable.<String>nil());
+            } else {
+                l.add(Nillable.of(s));
+            }
+        }
+        return l;
     }
 
 }

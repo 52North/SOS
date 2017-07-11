@@ -74,4 +74,17 @@
     <bean class="org.n52.svalbard.encode.WmlTVPEncoderv20"/>
     <bean class="org.n52.svalbard.encode.WsaEncoder"/>
     <bean class="org.n52.svalbard.encode.XlinkEncoderv1999"/>
+    
+    <!-- Encoder implementations from coding/inspire/omso -->
+    <bean class="org.n52.svalbard.gml.v321.encode.MultiPointCoverageDocumentEncoder"/>
+    <bean class="org.n52.svalbard.gml.v321.encode.RectifiedGridCoverageDocumentEncoder"/>
+    
+     <bean class="org.n52.svalbard.gmlcov.v10.encode.ReverencableGridCoverageDocumentEncoder"/>
+     
+     <!-- Encoder implementations from coding/inspire/omso -->
+    <bean class="org.n52.svalbard.inspire.omso.v30.encode.PointObservationTypeEncoder"/>
+    <bean class="org.n52.svalbard.inspire.omso.v30.encode.MultiPointObservationTypeEncoder"/>
+    <bean class="org.n52.svalbard.inspire.omso.v30.encode.PointTimeSeriesObservationTypeEncoder"/>
+    <bean class="org.n52.svalbard.inspire.omso.v30.encode.TrajectoryObservationTypeEncoder"/>
+    <bean class="org.n52.svalbard.inspire.omso.v30.encode.ProfileObservationTypeEncoder"/>
 </beans>

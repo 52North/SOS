@@ -28,9 +28,6 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.response.InsertSensorResponse;
-
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *

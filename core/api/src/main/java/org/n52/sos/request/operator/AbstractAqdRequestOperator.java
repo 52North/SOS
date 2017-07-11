@@ -30,23 +30,6 @@ package org.n52.sos.request.operator;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
-
-import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
-import org.n52.iceland.request.handler.OperationHandler;
-import org.n52.shetland.aqd.AqdConstants;
-import org.n52.shetland.aqd.ReportObligationType;
-import org.n52.shetland.aqd.ReportObligations;
-import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
-import org.n52.shetland.ogc.ows.exception.MissingServiceParameterException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.util.AqdHelper;
-import org.n52.sos.inspire.aqd.ReportObligationRepository;
-
 public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
 

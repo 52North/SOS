@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
@@ -36,8 +39,6 @@ import org.n52.sos.ds.hibernate.dao.ValueDAO;
 import org.n52.sos.ds.hibernate.dao.ValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -51,7 +52,6 @@ import com.google.common.collect.Sets;
 public abstract class HibernateStreamingValue extends AbstractHibernateStreamingValue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateStreamingValue.class);
-    private static final long serialVersionUID = -7451818170087729427L;
     protected final ValueDAO valueDAO = new ValueDAO();
     protected final ValueTimeDAO valueTimeDAO = new ValueTimeDAO();
     protected final Set<Long> procedure = Sets.newHashSet();

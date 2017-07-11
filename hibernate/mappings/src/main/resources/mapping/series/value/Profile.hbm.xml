@@ -11,14 +11,14 @@
         		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
         	</column>
     	</key>
-    	<property name="fromLevel" 
+    	<property name="fromLevel"
     			  type="double">
      		<column name="fromlevel"
      				not-null="false">
      			<comment>Value of fromLevel</comment>
      		</column>
      	</property>
-     	<property name="toLevel" 
+     	<property name="toLevel"
     			  type="double">
      		<column name="tolevel"
      				not-null="false">

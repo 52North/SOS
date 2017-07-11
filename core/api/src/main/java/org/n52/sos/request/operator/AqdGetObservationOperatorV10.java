@@ -35,10 +35,10 @@ import java.util.Set;
 import org.joda.time.DateTime;
 
 import org.n52.faroe.annotation.Setting;
-import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -144,9 +144,8 @@ public class AqdGetObservationOperatorV10 extends
         return Lists.newArrayList(tf);
     }
 
-    private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest request) {
-        return request.getExtensions().isBooleanExtensionSet(
-                        Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
+    private boolean isSetExtensionMergeObservationsToSweDataArray(GetObservationRequest request) {
+        return request.getBooleanExtension(Sos2Constants.Extensions.MergeObservationsIntoDataArray);
     }
 
     @Override
@@ -223,7 +222,7 @@ public class AqdGetObservationOperatorV10 extends
         }
 
         request.setCheckForDuplicity(false);
-        
+
         checkExtensions(request, exceptions);
         exceptions.throwIfNotEmpty();
 

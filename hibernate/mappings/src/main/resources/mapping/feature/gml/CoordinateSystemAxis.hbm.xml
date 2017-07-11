@@ -59,7 +59,7 @@
         <many-to-one name="uom"
                      column="unitId"
                      class="org.n52.sos.ds.hibernate.entities.Unit"
-                     not-null="true" 
+                     not-null="true"
                      foreign-key="csaUnitFk" />
     </class>
 </hibernate-mapping>

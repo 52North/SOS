@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -26,25 +26,33 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.binding.rest.resources;
+package org.n52.sos.decode.kvp.v2;
 
-import org.n52.sos.binding.rest.requests.RestRequest;
+import org.n52.sos.decode.kvp.AbstractKvpDecoder;
+import org.n52.sos.decode.kvp.OwsServiceRequest;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.sos.util.KvpHelper;
 
-/**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- *
- */
-public class ServiceEndpointRequest implements RestRequest {
-
+public abstract class AbstractObservationKvpDecoder<R extends OwsServiceRequest> extends AbstractSosKvpDecoder<R> {
+    
     @Override
-    public boolean hasAbstractServiceRequest() {
-        return false;
+    protected boolean parseDefaultParameter(AbstractServiceRequest<?> request, String parameterValues,
+            String parameterName) throws OwsExceptionReport {
+        if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.resultType.name())) {
+            if (request instanceof AbstractObservationRequest) {
+                ((AbstractObservationRequest)request).setResultModel(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+                return true;
+            }
+        }
+        // responseFormat (optional)
+        else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.responseFormat.name())) {
+            ((AbstractObservationRequest)request).setResponseFormat(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+            return true;
+        }
+        return super.parseDefaultParameter(request, parameterValues, parameterName);
     }
-
-    @Override
-    public AbstractServiceRequest<?> getAbstractServiceRequest() {
-        return null;
-    }
-
+    
 }

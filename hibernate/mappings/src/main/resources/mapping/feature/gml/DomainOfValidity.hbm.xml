@@ -47,9 +47,9 @@
                 <comment>Description of the object, gml:description. Optional</comment>
             </column>
         </property>
-        <many-to-one name="exExtent" 
-                     column="exExtentId" 
-                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.ExExtentEntity" 
+        <many-to-one name="exExtent"
+                     column="exExtentId"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.ExExtentEntity"
                      foreign-key="dovexeFk" />
     </class>
 </hibernate-mapping>

@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -54,10 +55,12 @@ import javax.xml.namespace.QName;
 
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
+import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionRepository;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
 import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderRepository;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionRepository;
-import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
@@ -105,21 +108,19 @@ import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.OMHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.config.CapabilitiesExtensionService;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
 import org.n52.svalbard.ConformanceClass;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
-import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
-import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
-import org.n52.shetland.util.OMHelper;
 import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -339,16 +340,13 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     /**
      * Get the OperationsMetadat for all supported operations
      *
-     * @param service
-     *                Requested service
-     * @param version
-     *                Requested service version
+     * @param request the request
+     * @param service Requested service
+     * @param version Requested service version
      *
-     * @return OperationsMetadata for all operations supported by the requested
-     *         service and version
+     * @return OperationsMetadata for all operations supported by the requested service and version
      *
-     * @throws OwsExceptionReport
-     *                            If an error occurs
+     * @throws OwsExceptionReport If an error occurs
      */
     private OwsOperationsMetadata getOperationsMetadataForOperations(GetCapabilitiesRequest request,
                                                                      String service, String version)
@@ -417,7 +415,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     /**
      * Get the contents for SOS 1.0.0 capabilities
      *
-     * @param version
+     * @param sectionSpecificContentObject
      *                Requested service version
      *
      * @return Offerings for contents
@@ -429,11 +427,12 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     private List<SosObservationOffering> getContents(SectionSpecificContentObject sectionSpecificContentObject) throws
             OwsExceptionReport {
         String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
-        final Collection<String> offerings = getCache().getOfferings();
+        SosContentCache cache = getCache();
+        final Collection<String> offerings = cache.getOfferings();
         final List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
         for (final String offering : offerings) {
             final Collection<String> procedures = getProceduresForOffering(offering, version);
-            final ReferencedEnvelope envelopeForOffering = getCache().getEnvelopeForOffering(offering);
+            final ReferencedEnvelope envelopeForOffering = cache.getEnvelopeForOffering(offering);
             final Set<String> featuresForoffering = getFOI4offering(offering);
             final Collection<String> responseFormats = getResponseFormatRepository()
                     .getSupportedResponseFormats(SosConstants.SOS, Sos1Constants.SERVICEVERSION);
@@ -445,8 +444,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
                 // only if fois are contained for the offering set the values of
                 // the envelope
-                sosObservationOffering
-                        .setObservedArea(processObservedArea(getCache().getEnvelopeForOffering(offering)));
+                sosObservationOffering.setObservedArea(processObservedArea(cache.getEnvelopeForOffering(offering)));
 
                 // TODO: add intended application
                 // xb_oo.addIntendedApplication("");
@@ -455,16 +453,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                                                     sectionSpecificContentObject.getGetCapabilitiesRequest());
 
                 // set up phenomena
-                sosObservationOffering
-                        .setObservableProperties(getCache().getObservablePropertiesForOffering(offering));
-                sosObservationOffering.setCompositePhenomena(getCache().getCompositePhenomenonsForOffering(offering));
-                final Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
-                if (getCache().getCompositePhenomenonsForOffering(offering) != null) {
-                    for (final String compositePhenomenon : getCache().getCompositePhenomenonsForOffering(offering)) {
-                        phens4CompPhens.put(compositePhenomenon, getCache()
-                                            .getObservablePropertiesForCompositePhenomenon(compositePhenomenon));
-                    }
-                }
+                sosObservationOffering.setObservableProperties(cache.getObservablePropertiesForOffering(offering));
+                sosObservationOffering.setCompositePhenomena(cache.getCompositePhenomenonsForOffering(offering));
+                Map<String, Set<String>> phens4CompPhens = cache.getCompositePhenomenonsForOffering(offering).stream()
+                        .collect(toMap(Function.identity(), cache::getObservablePropertiesForCompositePhenomenon));
                 sosObservationOffering.setPhens4CompPhens(phens4CompPhens);
 
                 // set up time
@@ -479,8 +471,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                 sosObservationOffering.setProcedures(procedures);
 
                 // insert result models
-                final Collection<QName> resultModels = OMHelper.getQNamesForResultModel(getCache()
-                        .getObservationTypesForOffering(offering));
+                Collection<QName> resultModels = OMHelper.getQNamesForResultModel(
+                        cache.getObservationTypesForOffering(offering));
                 sosObservationOffering.setResultModels(resultModels);
 
                 // set response format
@@ -517,7 +509,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     /**
      * Get the contents for SOS 2.0 capabilities
      *
-     * @param version
+     * @param sectionSpecificContentObject
      *                Requested service version
      *
      * @return Offerings for contents
@@ -717,23 +709,18 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         filterCapabilities.setSpatialOperands(operands);
 
         // set SpatialOperators
-        final SetMultiMap<SpatialOperator, QName> ops = MultiMaps.newSetMultiMap(SpatialOperator.class);
+        Map<SpatialOperator, Set<QName>> ops = new EnumMap<>(SpatialOperator.class);
+//        final SetMultiMap<SpatialOperator, QName> ops = MultiMaps.newSetMultiMap(SpatialOperator.class);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            ops.add(SpatialOperator.BBOX, GmlConstants.QN_ENVELOPE_32);
+            ops.put(SpatialOperator.BBOX, Collections.singleton(GmlConstants.QN_ENVELOPE_32));
         } else if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            ops.add(SpatialOperator.BBOX, GmlConstants.QN_ENVELOPE);
+            ops.put(SpatialOperator.BBOX, Collections.singleton(GmlConstants.QN_ENVELOPE));
             // set Contains
-            ops.add(SpatialOperator.Contains, GmlConstants.QN_POINT);
-            ops.add(SpatialOperator.Contains, GmlConstants.QN_LINESTRING);
-            ops.add(SpatialOperator.Contains, GmlConstants.QN_POLYGON);
-            // set Intersects
-            ops.add(SpatialOperator.Intersects, GmlConstants.QN_POINT);
-            ops.add(SpatialOperator.Intersects, GmlConstants.QN_LINESTRING);
-            ops.add(SpatialOperator.Intersects, GmlConstants.QN_POLYGON);
-            // set Overlaps
-            ops.add(SpatialOperator.Overlaps, GmlConstants.QN_POINT);
-            ops.add(SpatialOperator.Overlaps, GmlConstants.QN_LINESTRING);
-            ops.add(SpatialOperator.Overlaps, GmlConstants.QN_POLYGON);
+            Set<QName> filterOperands = new HashSet<>(Arrays.asList(GmlConstants.QN_POINT,
+                                                                    GmlConstants.QN_LINESTRING,
+                                                                    GmlConstants.QN_POLYGON));
+            Stream.of(SpatialOperator.Contains, SpatialOperator.Intersects, SpatialOperator.Overlaps)
+                    .forEach(op -> ops.put(op, filterOperands));
         }
 
         filterCapabilities.setSpatialOperators(ops);
@@ -747,7 +734,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
      * @param version
      *                           SOS version
      */
-    private void getTemporalFilterCapabilities(final FilterCapabilities filterCapabilities, final String version) {
+    private void getTemporalFilterCapabilities(FilterCapabilities filterCapabilities, String version) {
 
         // set TemporalOperands
         final List<QName> operands = new ArrayList<>(2);

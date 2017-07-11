@@ -36,7 +36,7 @@ import org.n52.shetland.ogc.ows.extension.Extensions;
 
 /**
  * Interface for OfferingExtensionProvider. Implementations of this interface
- * are loaded by the {@link OfferingExtensionRepository}.
+ * are loaded by the {@link SosObservationOfferingExtensionRepository}.
  *
  * @since 1.0.0
  *

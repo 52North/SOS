@@ -72,7 +72,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
         try {
             FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
             Map<String,Collection<String>> foisWithParents = featureOfInterestDAO
-                .getFeatureOfInterestIdentifiersWithParents(getSession());
+                .getIdentifiersWithParents(getSession());
             List<FeatureOfInterest> featureOfInterestObjects = featureOfInterestDAO.getFeatureOfInterestObjects(getSession());
 
             Map<String, Collection<String>> procsForAllFois = daoFactory.getProcedureDAO()

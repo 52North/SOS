@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>52n-sos</artifactId>
 		<groupId>org.n52.sensorweb.sos</groupId>
-		<version>5.0.0-SNAPSHOT</version>
+		<version>5.0.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>webapp-bundle</artifactId>
@@ -11,10 +11,9 @@
 	<name>52°North SOS - Webapp with Sensor Web REST API</name>
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
-    <series.api.version>2.0.0-SNAPSHOT</series.api.version>
+    <rest.api.version>2.0.0-SNAPSHOT</rest.api.version>
     <series.db.version>2.0.0-SNAPSHOT</series.db.version>
     <helgoland.version>1.0.0</helgoland.version>
-        <helgoland.version>1.0.0</helgoland.version>
 	</properties>
 	<build>
 		<finalName>${conf.sos.name}</finalName>
@@ -111,7 +110,7 @@
     <dependency>
       <groupId>org.n52.series-api</groupId>
       <artifactId>io</artifactId>
-      <version>${series.api.version}</version>
+      <version>${rest.api.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.geotools</groupId>
@@ -142,7 +141,7 @@
     <dependency>
       <groupId>org.n52.series-api</groupId>
       <artifactId>rest</artifactId>
-      <version>${series.api.version}</version>
+      <version>${rest.api.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.geotools</groupId>
@@ -173,7 +172,7 @@
     <dependency>
       <groupId>org.n52.series-api</groupId>
       <artifactId>spi</artifactId>
-      <version>${series.api.version}</version>
+      <version>${rest.api.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.geotools</groupId>
@@ -304,7 +303,7 @@
 		<!-- <dependency>
 			<groupId>org.n52.series-api</groupId>
 			<artifactId>series-dao-sos</artifactId>
-			<version>${series.api.version}</version>
+			<version>${rest.api.version}</version>
 		</dependency> -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -322,16 +321,16 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <executions>
-                        	<execution>
-                        		<phase>install</phase>
-                        		<goals>
-                        			<goal>single</goal>
-                        		</goals>
-                        		<configuration>
-                        			<finalName>52n-sensorweb-sos-bundle-${project.version}</finalName>
-                        			<appendAssemblyId>false</appendAssemblyId>
-                        		</configuration>
-                        	</execution>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <finalName>52n-sensorweb-sos-bundle-${project.version}</finalName>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
@@ -349,5 +348,5 @@
                 </dependency>
             </dependencies>
         </profile>
-	</profiles>
+    </profiles>
 </project>

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <subclass name="org.n52.sos.ds.hibernate.entities.feature.Specimen" 
+    <subclass name="org.n52.sos.ds.hibernate.entities.feature.Specimen"
     				 extends="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest"
                      discriminator-value="Specimen">
         <join table="specimen">
@@ -11,7 +11,7 @@
                     <comment>Foreign Key (FK) to the related featureOfInterest from the featureOfInterest table. Contains "featureOfInterest".featureOfInterestId</comment>
                 </column>
             </key>
-            
+
             <property name="materialClass" type="string">
                 <column name="materialClass" not-null="true">
                     <comment>Material class</comment>

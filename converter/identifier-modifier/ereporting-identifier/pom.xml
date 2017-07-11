@@ -5,9 +5,9 @@
 		<groupId>org.n52.sensorweb.sos</groupId>
 		<artifactId>aqd</artifactId>
 <<<<<<< HEAD
-		  <version>5.0.0-SNAPSHOT</version>
+		  <version>5.0.1-SNAPSHOT</version>
 =======
-		  <version>4.4.1-SNAPSHOT</version>
+		  <version>5.0.1-SNAPSHOT</version>
 >>>>>>> develop
 	</parent>
 	<artifactId>ereporting-identifier</artifactId>

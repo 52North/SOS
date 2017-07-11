@@ -37,14 +37,14 @@ import org.n52.sos.response.DeleteResultTemplateResponse;
 
 /**
  * DAO to delete result templates out of the database.
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- * 
+ *
  * @since 4.4.0
  */
 @Configurable
 public abstract class AbstractDeleteResultTemplateHandler extends AbstractOperationDAO {
-    
+
     public AbstractDeleteResultTemplateHandler(String service) {
         super(service, DeleteResultTemplateConstants.OPERATION_NAME);
     }

@@ -27,13 +27,13 @@
         <property name="individualName" column="individualName" type="string" />
         <property name="organizationName" column="organizationName" type="string" />
         <property name="positionName" column="positionName" type="string" />
-        <many-to-one name="contactInfo" 
-                     column="contactInfo" 
-                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.ContactEntity" 
+        <many-to-one name="contactInfo"
+                     column="contactInfo"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.ContactEntity"
                      foreign-key="rpcontactFk" />
-        <many-to-one name="ciRole" 
-                     column="ciRole" 
-                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.RoleEntity" 
+        <many-to-one name="ciRole"
+                     column="ciRole"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.RoleEntity"
                      foreign-key="rproleFk" />
     </class>
 </hibernate-mapping>

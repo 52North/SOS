@@ -226,21 +226,16 @@ public class SosInsertSensorOperatorV20 extends
                 }
             }
             if (request.hasExtension(SensorMLConstants.INSITU)) {
-                procedureDescription
-                        .setInsitu(request.getExtensions().isBooleanExtensionSet(SensorMLConstants.INSITU));
+                procedureDescription.setInsitu(request.getBooleanExtension(SensorMLConstants.INSITU));
             } else if (request.hasExtension(SensorMLConstants.REMOTE)) {
-                procedureDescription
-                        .setInsitu(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.REMOTE));
+                procedureDescription.setInsitu(!request.getBooleanExtension(SensorMLConstants.REMOTE));
             }
             if (request.hasExtension(SensorMLConstants.MOBILE)) {
-                procedureDescription
-                        .setMobile(request.getExtensions().isBooleanExtensionSet(SensorMLConstants.MOBILE));
+                procedureDescription.setMobile(request.getBooleanExtension(SensorMLConstants.MOBILE));
             } else if (request.hasExtension(SensorMLConstants.FIXED)) {
-                procedureDescription
-                        .setMobile(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.FIXED));
+                procedureDescription.setMobile(!request.getBooleanExtension(SensorMLConstants.FIXED));
             } else if (request.hasExtension(SensorMLConstants.STATIONARY)) {
-                procedureDescription
-                        .setMobile(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.STATIONARY));
+                procedureDescription.setMobile(!request.getBooleanExtension(SensorMLConstants.STATIONARY));
             }
             if (request.getProcedureDescription().getProcedureDescription() instanceof AbstractSensorML) {
                 AbstractSensorML abstractSensorML =

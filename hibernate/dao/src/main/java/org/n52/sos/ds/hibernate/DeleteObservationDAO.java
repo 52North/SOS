@@ -28,8 +28,9 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import java.util.List;
-import java.util.Set;
+import static java.util.stream.Collectors.joining;
+
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
 
@@ -42,7 +43,7 @@ import org.hibernate.Transaction;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
@@ -51,10 +52,10 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.shetland.ogc.sos.response.DeleteObservationResponse;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
@@ -65,7 +66,6 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.base.Joiner;
@@ -108,7 +108,9 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
     @Override
     public synchronized DeleteObservationResponse deleteObservation(DeleteObservationRequest request)
             throws OwsExceptionReport {
-        DeleteObservationResponse response = request.getResponse();
+        DeleteObservationResponse response = new DeleteObservationResponse(DeleteObservationConstants.NS_SOSDO_);
+        response.setVersion(request.getVersion());
+        response.setService(request.getService());
         Session session = null;
         Transaction transaction = null;
         try {
@@ -117,7 +119,7 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
             if (request.isSetObservationIdentifiers()) {
                 deleteObservationsByIdentifier(request, response, session);
             } else {
-                deleteObservationByParameter(request, response, session);
+                throw new InvalidParameterValueException(DeleteObservationConstants.PARAM_OBSERVATION, id);
             }
             transaction.commit();
         } catch (HibernateException he) {

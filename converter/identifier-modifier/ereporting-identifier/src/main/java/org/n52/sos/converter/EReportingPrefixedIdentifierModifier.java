@@ -32,33 +32,29 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.AqdConstants.ProcessParameter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
-import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
-import org.n52.sos.convert.AbstractIdentifierModifier;
-import org.n52.sos.converter.util.EReportingPrefixedIdentifierHelper;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
-import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
@@ -66,12 +62,14 @@ import org.n52.shetland.ogc.sos.request.GetResultRequest;
 import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
-import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.sos.response.GetResultResponse;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
+import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
+import org.n52.sos.convert.AbstractIdentifierModifier;
+import org.n52.sos.converter.util.EReportingPrefixedIdentifierHelper;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -98,15 +96,10 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
         requestResponseMap.put(new GetResultTemplateRequest(), new GetResultTemplateResponse());
         requestResponseMap.put(new GetResultRequest(), new GetResultResponse());
         Set<RequestResponseModifierKey> keys = Sets.newHashSet();
-        for (String service : services) {
-            for (String version : versions) {
-                for (OwsServiceRequest request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKey(service, version, request));
-                    keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap
-                            .get(request)));
-                }
-            }
-        }
+        services.forEach(service -> versions.forEach(version -> requestResponseMap.forEach((request, response) -> {
+            keys.add(new RequestResponseModifierKey(service, version, request));
+            keys.add(new RequestResponseModifierKey(service, version, request, response));
+        })));
         return keys;
     }
 
@@ -126,17 +119,16 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     private OwsServiceResponse changeOmParameterValues(
             OwsServiceResponse response) {
         if (response instanceof AbstractObservationResponse) {
-            ((AbstractObservationResponse)response).getObservationCollection().stream()
-                    .filter(OmObservation::isSetParameter)
-                    .map(OmObservation::getParameter)
-                    .forEachOrdered(this::checkOmParameterForEReporting);
+            AbstractObservationResponse observationResponse = (AbstractObservationResponse)response;
+            observationResponse.setObservationCollection(observationResponse.getObservationCollection().modify(o -> {
+                checkOmParameterForEReporting(o.getParameter());
+            }));
         }
-
         return null;
     }
 
     private void checkOmParameterForEReporting(Collection<NamedValue<?>> parameter) {
-        parameter.forEach(namedValue -> {
+        Optional.ofNullable(parameter).orElseGet(Collections::emptyList).forEach(namedValue -> {
             ProcessParameter processParameter = ProcessParameter.fromOrUnknown(namedValue.getName().getHref());
             checkOmParameterFor(namedValue, processParameter);
         });

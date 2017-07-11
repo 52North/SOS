@@ -165,8 +165,9 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
 
         @Override
         public AdminUser apply(Session session) {
-            AdminUser user = new AdminUser().setUsername(username)
-                    .setPassword(password);
+            AdminUser user = new AdminUser();
+            user.setUsername(username);
+            user.setPassword(password);
             LOG.debug("Creating AdministratorUser {}", user);
             session.save(user);
             return user;

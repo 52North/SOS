@@ -30,7 +30,7 @@ package org.n52.sos.event.events;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- * 
+ *
  * @since 4.4.0
  *
  */

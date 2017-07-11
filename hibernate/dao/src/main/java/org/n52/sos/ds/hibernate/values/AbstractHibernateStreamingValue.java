@@ -38,6 +38,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -46,6 +48,7 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
@@ -56,6 +59,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.OMHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
@@ -68,11 +72,6 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayV
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.util.GmlHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.shetland.util.OMHelper;
 
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
@@ -108,9 +107,9 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     }
 
     @Override
-    public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
+    public ObservationStream merge() throws OwsExceptionReport {
         Map<String, OmObservation> observations = Maps.newHashMap();
-        while (hasNextValue()) {
+        while (hasNext()) {
             AbstractValuedLegacyObservation<?> nextEntity = nextEntity();
             if (nextEntity != null) {
                 boolean mergableObservationValue = checkForMergability(nextEntity);
@@ -131,7 +130,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
                 sessionHolder.getSession().evict(nextEntity);
             }
         }
-        return observations.values();
+        return ObservationStream.of(observations.values());
     }
 
     private String getKey(AbstractValuedLegacyObservation<?> nextEntity) {

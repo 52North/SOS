@@ -26,14 +26,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.exception.ows;
-
-import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateConstants;
-import org.n52.sos.util.http.HTTPStatus;
+package org.n52.sos.exception.sos.concrete;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- * 
+ *
  * @since 4.4.0
  */
 public class DeleteResultTemplateInvalidParameterValueException extends CodedOwsException {
@@ -52,5 +49,5 @@ public class DeleteResultTemplateInvalidParameterValueException extends CodedOws
                 DeleteResultTemplateConstants.PARAMETERS.observableProperty,
                 observedPropertyValue);
     }
-    
+
 }

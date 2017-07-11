@@ -40,7 +40,7 @@ public interface Profile {
     String getIdentifier();
 
     boolean isActiveProfile();
-    
+
     void setActiveProfile(boolean active);
 
     String getObservationResponseFormat();
@@ -78,8 +78,8 @@ public interface Profile {
     Set<String> getNoDataPlaceholder();
 
     boolean isSetNoDataPlaceholder();
-    
+
     void setDefinition(String definition);
-    
+
     String getDefinition();
 }

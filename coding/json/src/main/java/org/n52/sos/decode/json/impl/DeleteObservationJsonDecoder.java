@@ -31,7 +31,7 @@ package org.n52.sos.decode;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
-import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;

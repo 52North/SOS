@@ -64,7 +64,7 @@ public interface SosWritableContentCache
      * @return all features of interest associated with an offering
      */
     Set<String> getFeaturesOfInterestWithOffering();
-    
+
     /**
      * @return all offerings associated with a features of interest
      */
@@ -127,10 +127,10 @@ public interface SosWritableContentCache
      *            the feature of interest
      */
     void addFeatureOfInterestForOffering(String offering, String feature);
-    
+
     /**
      * Associate the specified offering with the specified features of interest.
-     * 
+     *
      * @param offering
      *            he offering
      * @param featuresOfInterest
@@ -281,7 +281,7 @@ public interface SosWritableContentCache
      *            the parent procedures
      */
     void addParentProcedures(String procedure, Collection<String> parentProcedures);
-    
+
     /**
      * Associate the specified parent offering with the specified offering
      *
@@ -422,7 +422,7 @@ public interface SosWritableContentCache
     void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName);
 
     void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName);
-    
+
     void addProcedureDescriptionFormatsForProcedure(String identifier, Set<String> formats);
 
     /**
@@ -673,10 +673,10 @@ public interface SosWritableContentCache
      *            the procedure
      */
     void removeProcedureForOffering(String offering, String procedure);
-    
+
     /**
      * Remove the specified procedure from map.
-     * 
+     *
      * @param identifier
      *            the procedure
      */
@@ -1112,7 +1112,7 @@ public interface SosWritableContentCache
      * Reset the feature of interest to offering relation.
      */
     void clearOfferingsForFeaturesOfInterest();
-    
+
     /**
      * Add the specified offering.
      *
@@ -1222,15 +1222,15 @@ public interface SosWritableContentCache
     void clearTypeOfProcedure();
 
     void addPublishedFeatureOfInterest(String featureOfInterest);
-    
+
     void addPublishedFeaturesOfInterest(Collection<String> featuresOfInterest);
-    
+
     void setPublishedFeaturesOfInterest(Collection<String> featuresOfInterest);
-    
+
     void clearPublishedFeaturesOfInterest();
-    
+
     void removePublishedFeatureOfInterest(String featureOfInterest);
-    
+
     void removePublishedFeaturesOfInterest(Collection<String> featuresOfInterest);
 
     void addPublishedProcedure(String procedure);

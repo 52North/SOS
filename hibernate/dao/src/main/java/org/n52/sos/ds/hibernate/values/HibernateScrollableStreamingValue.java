@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.values;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -47,8 +48,6 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacy
  * @since 4.1.0
  */
 public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
-
-    private static final long serialVersionUID = -1113871324524260053L;
 
     private ScrollableResults scrollableResult;
 
@@ -69,10 +68,10 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-    public boolean hasNextValue() throws OwsExceptionReport {
+    public boolean hasNext() throws OwsExceptionReport {
         boolean next = false;
         if (scrollableResult == null) {
-            getNextResults();
+            scrollableResult = getNextResults();
             if (scrollableResult != null) {
                 next = scrollableResult.next();
             }
@@ -99,27 +98,25 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
             return value;
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
+    public OmObservation next() throws OwsExceptionReport {
         try {
             OmObservation observation = getObservationTemplate.cloneTemplate(withIdentifierNameDesription);
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
             resultObject.addValuesToObservation(observation, getResponseFormat());
-//            addValuesToObservation(observation, resultObject);
-//            if (resultObject.hasSamplingGeometry()) {
-//                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
-//            }
             checkForModifications(observation);
             session.evict(resultObject);
             return observation;
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -127,41 +124,23 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     /**
      * Get the next results from database
      *
-     * @throws OwsExceptionReport
-     *             If an error occurs when querying the next results
+     * @return the results
+     *
+     * @throws OwsExceptionReport If an error occurs when querying the next results
      */
-    private void getNextResults() throws OwsExceptionReport {
+    private ScrollableResults getNextResults() throws OwsExceptionReport {
         if (session == null) {
             session = sessionHolder.getSession();
         }
         try {
-            if (request instanceof GetObservationRequest) {
-                GetObservationRequest getObsReq = (GetObservationRequest)request;
-                // query with temporal filter
-                if (temporalFilterCriterion != null) {
-                    setScrollableResult(valueDAO.getStreamingValuesFor(getObsReq, procedure, observableProperty,
-                            featureOfInterest, temporalFilterCriterion, session));
-                }
-                // query without temporal or indeterminate filters
-                else {
-                    setScrollableResult(valueDAO.getStreamingValuesFor(getObsReq, procedure, observableProperty,
-                            featureOfInterest, session));
-                }
-            }
+            return valueDAO.getStreamingValuesFor(request, procedure, observableProperty,
+                                                  featureOfInterest, temporalFilterCriterion, session);
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    /**
-     * Set the queried {@link ScrollableResults} to local variable
-     *
-     * @param scrollableResult
-     *            Queried {@link ScrollableResults}
-     */
-    private void setScrollableResult(ScrollableResults scrollableResult) {
-        this.scrollableResult = scrollableResult;
-    }
 }

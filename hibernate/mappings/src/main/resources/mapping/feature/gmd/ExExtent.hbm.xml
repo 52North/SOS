@@ -18,7 +18,7 @@
         <property name="description" column="description" type="string" />
         <set name="verticalExtent" table="exextentverticalext">
           <key column="exExtentId" not-null="true" foreign-key="exeexveFk"/>
-          <many-to-many column="exVerticalExtentId" 
+          <many-to-many column="exVerticalExtentId"
                         class="org.n52.sos.ds.hibernate.entities.feature.gmd.ExVerticalExtentEntity" />
         </set>
     </class>

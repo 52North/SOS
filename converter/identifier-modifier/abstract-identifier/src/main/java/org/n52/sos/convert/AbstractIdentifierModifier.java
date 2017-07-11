@@ -48,7 +48,6 @@ import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
-import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
@@ -316,7 +315,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     }
 
     protected OwsServiceResponse changeAbstractObservationResponseIdentifier(AbstractObservationResponse response) {
-        for (OmObservation omObservation : response.getObservationCollection()) {
+        response.setObservationCollection(response.getObservationCollection().modify(omObservation -> {
             OmObservationConstellation observationConstellation = omObservation.getObservationConstellation();
             checkAndChangeFeatureOfInterestIdentifier(observationConstellation.getFeatureOfInterest());
             checkAndChangeObservablePropertyIdentifier(observationConstellation.getObservableProperty());
@@ -324,7 +323,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
             if (getActiveProfile().isEncodeProcedureInObservation()) {
                 checkAndChangeProcedure(observationConstellation.getProcedure());
             }
-        }
+        }));
         return response;
     }
 

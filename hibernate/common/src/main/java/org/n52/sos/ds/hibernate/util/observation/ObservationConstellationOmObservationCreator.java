@@ -41,6 +41,7 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
@@ -50,8 +51,8 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.generator.AbstractHibernateProcedureDescriptionGeneratorSml;
@@ -88,30 +89,31 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
+    public ObservationStream create() throws OwsExceptionReport, ConverterException {
         final List<OmObservation> observations = Lists.newLinkedList();
-        if (getObservationConstellation() != null && getFeatureIds() != null) {
-            SosProcedureDescription procedure = createProcedure(getObservationConstellation().getProcedure());
-            OmObservableProperty obsProp = createObservableProperty(getObservationConstellation().getObservableProperty());
-            obsProp.setUnit(queryUnit());
-            FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO(getDaoFactory());
-            for (final String featureId : getFeatureIds()) {
-                final AbstractFeature feature = createFeatureOfInterest(featureOfInterestDAO.getFeatureOfInterest(featureId, getSession()));
-                final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
-
-                final OmObservation sosObservation = new OmObservation();
-                sosObservation.setNoDataValue(getNoDataValue());
-                sosObservation.setTokenSeparator(getTokenSeparator());
-                sosObservation.setTupleSeparator(getTupleSeparator());
-                sosObservation.setDecimalSeparator(getDecimalSeparator());
-                sosObservation.setObservationConstellation(obsConst);
-                final NilTemplateValue value = new NilTemplateValue();
-                value.setUnit(obsProp.getUnit());
-                sosObservation.setValue(new SingleObservationValue(new TimeInstant(), value));
-                observations.add(sosObservation);
-            }
+        if (getObservationConstellation() == null || getFeatureIds() == null) {
+            return ObservationStream.empty();
         }
-        return observations;
+        SosProcedureDescription procedure = createProcedure(getObservationConstellation().getProcedure().getIdentifier());
+        OmObservableProperty obsProp = createObservableProperty(getObservationConstellation().getObservableProperty());
+        obsProp.setUnit(queryUnit());
+        FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO(getDaoFactory());
+        for (final String featureId : getFeatureIds()) {
+            final AbstractFeature feature = createFeatureOfInterest(featureOfInterestDAO.get(featureId, getSession()));
+            final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
+
+            final OmObservation sosObservation = new OmObservation();
+            sosObservation.setNoDataValue(getNoDataValue());
+            sosObservation.setTokenSeparator(getTokenSeparator());
+            sosObservation.setTupleSeparator(getTupleSeparator());
+            sosObservation.setDecimalSeparator(getDecimalSeparator());
+            sosObservation.setObservationConstellation(obsConst);
+            final NilTemplateValue value = new NilTemplateValue();
+            value.setUnit(obsProp.getUnit());
+            sosObservation.setValue(new SingleObservationValue(new TimeInstant(), value));
+            observations.add(sosObservation);
+        }
+        return ObservationStream.of(observations);
     }
 
     private OmObservationConstellation getObservationConstellation(SosProcedureDescription<?> procedure,

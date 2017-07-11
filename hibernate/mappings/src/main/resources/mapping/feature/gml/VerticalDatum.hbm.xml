@@ -61,8 +61,8 @@
           <element column="scope" type="string" not-null="true" />
         </set>
         <property name="anchorDefinition" column="anchorDefinition" type="string" />
-        <many-to-one name="codespaceAnchorDef" column="codespaceAnchorDef" 
-                     class="org.n52.sos.ds.hibernate.entities.Codespace" 
+        <many-to-one name="codespaceAnchorDef" column="codespaceAnchorDef"
+                     class="org.n52.sos.ds.hibernate.entities.Codespace"
                      foreign-key="vdCodespaceADefFk" />
         <property name="realizationEpoch"
                   type="timestamp">

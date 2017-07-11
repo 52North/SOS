@@ -79,8 +79,8 @@ public interface SosContentCache
      * @return the allowed observation types
      */
     Set<String> getAllowedObservationTypesForOffering(String offering);
-    
-    
+
+
     /**
      * Returns the all observation types for the specified offering.
      *
@@ -146,7 +146,7 @@ public interface SosContentCache
      */
     Set<String> getFeaturesOfInterestForOffering(String offering);
 
-    
+
     /**
      * Returns all offerings for the specified featureOfInterest.
      *
@@ -156,7 +156,7 @@ public interface SosContentCache
      * @return the offerings associated with the featureOfInterest
      */
     Set<String> getOfferingsForFeatureOfInterest(String featureOfInterest);
-    
+
     /**
      * Returns all FeaturesOfInterest for the specified SosResultTemplate.
      *
@@ -624,7 +624,7 @@ public interface SosContentCache
      *         (and optionally themselves)
      */
     Set<String> getChildProcedures(Set<String> procedure, boolean fullHierarchy, boolean includeSelves);
-    
+
     /**
      * Returns collection containing parent offerings for the passed offering,
      * optionally navigating the full hierarchy and including itself.
@@ -695,10 +695,10 @@ public interface SosContentCache
      *         (and optionally themselves)
      */
     Set<String> getChildOfferings(Set<String> offering, boolean fullHierarchy, boolean includeSelves);
-    
+
     /**
      * Returns <code>true</code> if the passed offering has parent offerings.
-     * 
+     *
      * @param offering
      *            offering id to check for parents
      * @return <code>true</code> if the passed offering has parent offerings.
@@ -813,15 +813,15 @@ public interface SosContentCache
     Set<String> getInstancesForProcedure(String identifier);
 
     boolean hasInstancesForProcedure(String identifier);
-    
+
     Set<String> getProcedureDescriptionFormatsForProcedure(String procedure);
 
     Set<String> getPublishedFeatureOfInterest();
-    
+
     Set<String> getPublishedProcedures();
-    
+
     Set<String> getPublishedOfferings();
-    
+
     Set<String> getPublishedObservableProperties();
 
     enum TypeInstance {

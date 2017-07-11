@@ -29,8 +29,8 @@
 package org.n52.sos.ext.deleteobservation;
 
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
-import org.n52.shetland.ogc.sos.response.DeleteObservationResponse;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
 import org.n52.sos.event.events.SosDeletionEvent;
 
 /**
@@ -49,7 +49,7 @@ public class DeleteObservationEvent extends SosDeletionEvent<DeleteObservationRe
     public OmObservation getDeletedObservation() {
         return deletedObservation;
     }
-    
+
     public boolean isSetDeletedObservation() {
         return getDeletedObservation() != null;
     }

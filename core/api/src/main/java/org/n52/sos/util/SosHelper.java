@@ -439,14 +439,14 @@ public class SosHelper {
                 .setMaximum(Joiner.on(' ').join(envelope.getMaxX(), envelope.getMaxY()))
                 .setMinimum(Joiner.on(' ').join(envelope.getMinX(), envelope.getMinY()));
     }
-    
+
     public static MinMax<String> getMinMaxFromEnvelope(final SosEnvelope envelope) {
         if (envelope.isSetMinMaxZ()) {
             return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(), envelope.getEnvelope().getMaxY(), envelope.getMaxZ()))
-                    .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY(), envelope.getMinZ())); 
+                    .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY(), envelope.getMinZ()));
         }
         return getMinMaxFromEnvelope(envelope.getEnvelope());
-        
+
     }
 
      /**

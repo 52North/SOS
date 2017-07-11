@@ -30,19 +30,19 @@ package org.n52.sos.convert;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
-import org.n52.sos.convert.ConverterException;
-import org.n52.sos.convert.ConverterKeyType;
-import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.sensorML.AbstractProcess;
-import org.n52.sos.ogc.sensorML.SensorML20Constants;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.sos.ogc.sensorML.v20.PhysicalComponent;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.svalbard.inspire.ompr.InspireOMPRConstants;
-import org.n52.svalbard.inspire.ompr.Process;
+import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.convert.ConverterKey;
+import org.n52.shetland.inspire.ompr.InspireOMPRConstants;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.SensorML20Constants;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,19 +53,19 @@ public class InspireOmpr30SensorML20Converter extends AbstractInspireOmpr30Senso
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InspireOmpr30SensorML20Converter.class);
 
-    private static final List<ConverterKeyType> CONVERTER_KEY_TYPES = CollectionHelper.list(new ConverterKeyType(
+    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = CollectionHelper.set(new ConverterKey(
             SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
-            InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE), new ConverterKeyType(
+            InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE), new ConverterKey(
             SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE),
-            new ConverterKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
-                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL), new ConverterKeyType(
+            new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL), new ConverterKey(
                     SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL),
-            new ConverterKeyType(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), new ConverterKeyType(
+            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), new ConverterKey(
                             InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), new ConverterKeyType(
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), new ConverterKey(
                             InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL), new ConverterKeyType(
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL), new ConverterKey(
                             InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
 
     public InspireOmpr30SensorML20Converter() {
@@ -74,12 +74,12 @@ public class InspireOmpr30SensorML20Converter extends AbstractInspireOmpr30Senso
     }
 
     @Override
-    public List<ConverterKeyType> getConverterKeyTypes() {
-        return Collections.unmodifiableList(CONVERTER_KEY_TYPES);
+    public Set<ConverterKey> getKeys() {
+        return Collections.unmodifiableSet(CONVERTER_KEY_TYPES);
     }
 
     @Override
-    public SosProcedureDescription convert(SosProcedureDescription objectToConvert) throws ConverterException {
+    public SosProcedureDescription convert(SosProcedureDescription<?> objectToConvert) throws ConverterException {
         if (SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL.equals(objectToConvert.getDescriptionFormat())
                 || SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE.equals(objectToConvert.getDescriptionFormat())) {
             return convertSensorML20ToInspireOmpr30(objectToConvert);

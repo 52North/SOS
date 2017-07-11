@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-common</artifactId>
@@ -84,6 +84,10 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -41,6 +41,7 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
@@ -76,28 +77,28 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
+    public ObservationStream create() throws OwsExceptionReport, ConverterException {
         final List<OmObservation> observations = Lists.newLinkedList();
-        if (series != null) {
-            SosProcedureDescription procedure = createProcedure(series.getProcedure());
-            OmObservableProperty obsProp = createObservableProperty(series.getObservableProperty());
-            obsProp.setUnit(queryUnit(getSeries()));
-            AbstractFeature feature = createFeatureOfInterest(series.getFeatureOfInterest());
-
-            final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
-            final OmObservation sosObservation = new OmObservation();
-            sosObservation.setObservationID(Long.toString(series.getSeriesId()));
-            addDefaultValuesToObservation(sosObservation);
-            sosObservation.setObservationConstellation(obsConst);
-            checkForAdditionalObservationCreator(series, sosObservation);
-            addParameter(sosObservation, series);
-            // TODO
-            final NilTemplateValue value = new NilTemplateValue();
-            value.setUnit(obsProp.getUnit());
-            sosObservation.setValue(new SingleObservationValue(new TimeInstant(), value));
-            observations.add(sosObservation);
+        if(series == null) {
+            return ObservationStream.empty();
         }
-        return observations;
+        SosProcedureDescription procedure = createProcedure(series.getProcedure().getIdentifier());
+        OmObservableProperty obsProp = createObservableProperty(series.getObservableProperty());
+        obsProp.setUnit(queryUnit());
+        AbstractFeature feature = createFeatureOfInterest(series.getFeatureOfInterest());
+
+        final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
+        final OmObservation sosObservation = new OmObservation();
+        sosObservation.setNoDataValue(getNoDataValue());
+        sosObservation.setTokenSeparator(getTokenSeparator());
+        sosObservation.setTupleSeparator(getTupleSeparator());
+        sosObservation.setDecimalSeparator(getDecimalSeparator());
+        sosObservation.setObservationConstellation(obsConst);
+        checkForAdditionalObservationCreator(series, sosObservation);
+        final NilTemplateValue value = new NilTemplateValue();
+        value.setUnit(obsProp.getUnit());
+        sosObservation.setValue(new SingleObservationValue(new TimeInstant(), value));
+        return ObservationStream.of(sosObservation);
     }
 
     /**
@@ -149,9 +150,9 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     @SuppressWarnings("unchecked")
     protected void checkForAdditionalObservationCreator(Series series, OmObservation sosObservation) throws CodedException {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), series.getClass());
-        if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
-            AdditionalObservationCreator creator = AdditionalObservationCreatorRepository.getInstance().get(key);
-            creator.create(sosObservation, series, getSession());
+        AdditionalObservationCreatorRepository repo = AdditionalObservationCreatorRepository.getInstance();
+        if (repo.hasAdditionalObservationCreatorFor(key)) {
+            repo.get(key).create(sosObservation, series);
         } else if (checkAcceptType()) {
             for (MediaType acceptType : getAcceptType()) {
                 AdditionalObservationCreatorKey acceptKey = new AdditionalObservationCreatorKey(acceptType.withoutParameters().toString(), series.getClass());
@@ -163,6 +164,23 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
         }
     }
 
+    private String queryUnit() {
+        String property = series.getObservableProperty().getIdentifier();
+        String procedure = series.getProcedure().getIdentifier();
+
+        if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES, getSession())) {
+            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES);
+            namedQuery.setParameter(Series.OBSERVABLE_PROPERTY, property);
+            namedQuery.setParameter(Series.PROCEDURE, procedure);
+            LOGGER.debug("QUERY queryUnit({}, {}) with NamedQuery '{}': {}", property, procedure, SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES, namedQuery.getQueryString());
+            return (String) namedQuery.uniqueResult();
+        } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES, getSession())) {
+            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES);
+            namedQuery.setParameter(Series.OBSERVABLE_PROPERTY, property);
+            LOGGER.debug("QUERY queryUnit({}) with NamedQuery '{}': {}", property, SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES, namedQuery.getQueryString());
+            return (String) namedQuery.uniqueResult();
+        }
+        return null;
     private void addParameter(OmObservation observation, Series series) throws OwsExceptionReport {
         new SeriesParameterAdder(observation, new SeriesParameterDAO().getSeriesParameter(series, getSession())).add();
     }

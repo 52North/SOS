@@ -68,9 +68,9 @@ public abstract class ProfileHandler implements Constructable {
     public abstract Map<String, Profile> getAvailableProfiles();
 
     public abstract boolean isSetActiveProfile();
-    
+
     void activateProfile(String identifier);
-    
+
     void persist();
 
     void reloadProfiles();

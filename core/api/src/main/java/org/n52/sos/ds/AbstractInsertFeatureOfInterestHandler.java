@@ -39,14 +39,14 @@ import org.n52.sos.response.InsertFeatureOfInterestResponse;
 
 /**
  * DAO to get the DataAvailabilities out of the database.
- * 
+ *
  * @author Christian Autermann
- * 
+ *
  * @since 4.0.0
  */
 @Configurable
 public abstract class AbstractInsertFeatureOfInterestHandler extends AbstractOperationDAO {
-    
+
     public AbstractInsertFeatureOfInterestHandler(String service) {
         super(service, InsertFeatureOfInterestConstants.OPERATION_NAME);
     }
@@ -58,12 +58,12 @@ public abstract class AbstractInsertFeatureOfInterestHandler extends AbstractOpe
 
     /**
      * Get the DataAvailability out of the Database.
-     * 
+     *
      * @param request
      *            the <code>InsertFeatureOfInterestRequest</code>
      * @return the <code>InsertFeatureOfInterestResponse</code>
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             if an error occurs
      */

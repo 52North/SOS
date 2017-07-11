@@ -70,7 +70,7 @@
             </map>
         </property>
     </bean>
-    
+
     <!-- RequestOperator implementations from extensions/aqd/operation -->
     <bean class="org.n52.sos.request.operator.AqdGetCapabilitiesOperatorV10"/>
     <bean class="org.n52.sos.request.operator.AqdGetObservationOperatorV10"/>

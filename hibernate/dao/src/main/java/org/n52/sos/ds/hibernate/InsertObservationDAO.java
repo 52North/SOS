@@ -224,7 +224,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
                 // only do feature checking once for each
                 // AbstractFeature/offering combo
                 if (!cache.isChecked(sosObsConst.getFeatureOfInterest(), offeringID)) {
-                    new FeatureOfInterestDAO(daoFactory).checkOrInsertFeatureOfInterestRelatedFeatureRelation(
+                    new FeatureOfInterestDAO(daoFactory).checkOrInsertRelatedFeatureRelation(
                             hFeature, hObservationConstellation.getOffering(), session);
                     cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
                 }
@@ -332,7 +332,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
             InsertObservationCache cache, Session session) throws OwsExceptionReport {
         AbstractFeatureOfInterest hFeature = cache.getFeature(abstractFeature);
         if (hFeature == null) {
-            hFeature = new FeatureOfInterestDAO(daoFactory).checkOrInsertFeatureOfInterest(abstractFeature, session);
+            hFeature = new FeatureOfInterestDAO(daoFactory).checkOrInsert(abstractFeature, session);
             cache.putFeature(abstractFeature, hFeature);
         }
         if (!hFeature.isSetName() && abstractFeature.isSetName()) {

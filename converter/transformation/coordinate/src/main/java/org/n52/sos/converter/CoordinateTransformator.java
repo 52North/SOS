@@ -142,6 +142,32 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     private Set<String> eastingNames = Collections.emptySet();
     private Set<String> altitudeNames = Collections.emptySet();
 
+    private void checkResponseObservation(OmObservation omObservation, int targetCRS) throws OwsExceptionReport {
+
+if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature)
+                    checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) omObservation
+                            .getObservationConstellation().getFeatureOfInterest(), targetCRS);
+                }
+                if (omObservation.isSetParameter()) {
+                    checkOmParameterForGeometry(omObservation.getParameter(), targetCRS);
+                }
+                if (omObservation.getValue() instanceof AbstractStreaming) {
+                    ((AbstractStreaming) omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs,
+                            targetCRS);
+                } else if (omObservation.getValue() instanceof MultiObservationValues) {
+                    if (((MultiObservationValues)omObservation.getValue()).getValue() instanceof TLVTValue) {
+                        checkTLVTValueForGeometry((TLVTValue)((MultiObservationValues)omObservation.getValue()).getValue(), targetCRS);
+                    }
+                } else if (omObservation.getValue() instanceof SingleObservationValue) {
+                    SingleObservationValue singleValue = (SingleObservationValue)omObservation.getValue();
+                    if (singleValue.getValue() instanceof CvDiscretePointCoverage) {
+                        checkCvDiscretePointCoverageForGeometry((CvDiscretePointCoverage)singleValue.getValue(),targetCRS);
+                    } else if (((SingleObservationValue)omObservation.getValue()).getValue() instanceof MultiPointCoverage) {
+                        checkMultiPointCoverageForGeometry((MultiPointCoverage)singleValue.getValue(),targetCRS);
+                    }
+                }
+    }
+
     /**
      *
      * Get the keys
@@ -329,7 +355,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     private OwsServiceResponse modifyGetObservationResponse(GetObservationRequest request,
             GetObservationResponse response) throws OwsExceptionReport {
         response.setResponseFormat(request.getResponseFormat());
-        checkResponseObservations(response.getObservationCollection(), getRequestedCrs(request));
+        int crs = getRequestedCrs(request);
+        response.setObservationCollection(response.getObservationCollection().modify(o -> checkResponseObservation(o, crs)));
         return response;
     }
 
@@ -346,7 +373,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      */
     private OwsServiceResponse modifyGetObservationByIdResponse(GetObservationByIdRequest request,
             GetObservationByIdResponse response) throws OwsExceptionReport {
-        checkResponseObservations(response.getObservationCollection(), getRequestedCrs(request));
+        int crs = getRequestedCrs(request);
+        response.setObservationCollection(response.getObservationCollection().modify(o -> checkResponseObservation(o, crs)));
         return response;
     }
 
@@ -535,7 +563,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
         }
         if (easting != null && northing != null) {
 
-            double x, y;
+            double x;
+            double y;
             if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
                 y = northing.doubleValue();
                 x = easting.doubleValue();
@@ -684,11 +713,11 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Get the CRS from the request or if the CRS parameter is not set, return
-     * the {@link NOT_SET_EPSG}.
+     * the {@link #NOT_SET_EPSG}.
      *
      * @param request
      *            the request to check
-     * @return the requested CRS or {@link NOT_SET_EPSG}
+     * @return the requested CRS or {@link #NOT_SET_EPSG}
      * @throws OwsExceptionReport
      *             If an error occurs when parsing the request
      */
@@ -853,31 +882,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      *             If the transformation fails
      */
     private void checkResponseObservations(List<OmObservation> observations, int targetCRS) throws OwsExceptionReport {
-        if (CollectionHelper.isNotEmpty(observations)) {
-            for (OmObservation omObservation : observations) {
-                if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature)
-                    checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) omObservation
-                            .getObservationConstellation().getFeatureOfInterest(), targetCRS);
-                }
-                if (omObservation.isSetParameter()) {
-                    checkOmParameterForGeometry(omObservation.getParameter(), targetCRS);
-                }
-                if (omObservation.getValue() instanceof AbstractStreaming) {
-                    ((AbstractStreaming) omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs,
-                            targetCRS);
-                } else if (omObservation.getValue() instanceof MultiObservationValues) {
-                    if (((MultiObservationValues)omObservation.getValue()).getValue() instanceof TLVTValue) {
-                        checkTLVTValueForGeometry((TLVTValue)((MultiObservationValues)omObservation.getValue()).getValue(), targetCRS);
-                    }
-                } else if (omObservation.getValue() instanceof SingleObservationValue) {
-                    SingleObservationValue singleValue = (SingleObservationValue)omObservation.getValue();
-                    if (singleValue.getValue() instanceof CvDiscretePointCoverage) {
-                        checkCvDiscretePointCoverageForGeometry((CvDiscretePointCoverage)singleValue.getValue(),targetCRS);
-                    } else if (((SingleObservationValue)omObservation.getValue()).getValue() instanceof MultiPointCoverage) {
-                        checkMultiPointCoverageForGeometry((MultiPointCoverage)singleValue.getValue(),targetCRS);
-                    }
-                }
-            }
+        for (OmObservation omObservation : observations) {
+            checkResponseObservation(omObservation, targetCRS);
         }
     }
 

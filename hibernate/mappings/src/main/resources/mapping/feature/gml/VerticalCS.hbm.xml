@@ -49,11 +49,11 @@
         </property>
         <property name="remarks" column="remarks" type="string" />
         <set name="coordinateSystemAxis" table="verticalcscoodsysaxis">
-          <key column="verticalCSId" 
-               not-null="true" 
+          <key column="verticalCSId"
+               not-null="true"
                foreign-key="vcscsaidfk"/>
-          <many-to-many column="coordinateSystemAxis" 
-                        class="org.n52.sos.ds.hibernate.entities.feature.gml.CoordinateSystemAxisEntity" 
+          <many-to-many column="coordinateSystemAxis"
+                        class="org.n52.sos.ds.hibernate.entities.feature.gml.CoordinateSystemAxisEntity"
                         foreign-key="vcscsafk"/>
         </set>
         <property name="aggregation" column="aggregation" type="string" />

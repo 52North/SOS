@@ -50,31 +50,31 @@
             </column>
         </property>
         <property name="remarks" column="remarks" type="string" />
-        <set name="domainOfValidity" 
+        <set name="domainOfValidity"
              table="verticalcrsdomofval">
-          <key column="verticalcrsId" 
-               not-null="true" 
+          <key column="verticalcrsId"
+               not-null="true"
                foreign-key="vcrsdovidfk"/>
-          <many-to-many column="domainOfValidity" 
-                        class="org.n52.sos.ds.hibernate.entities.feature.gml.DomainOfValidityEntity" 
+          <many-to-many column="domainOfValidity"
+                        class="org.n52.sos.ds.hibernate.entities.feature.gml.DomainOfValidityEntity"
                         foreign-key="vcrsdovfk"/>
         </set>
-        <set name="scope" 
+        <set name="scope"
              table="verticalcrscope">
-          <key column="verticalcrsId" 
-               not-null="true" 
+          <key column="verticalcrsId"
+               not-null="true"
                foreign-key="vcrsscopefk"/>
-          <element column="scope" 
-                   type="string" 
+          <element column="scope"
+                   type="string"
                    not-null="true" />
         </set>
-        <many-to-one name="verticalCS" 
-                     column="verticalCS" 
-                     class="org.n52.sos.ds.hibernate.entities.feature.gml.VerticalCSEntity" 
+        <many-to-one name="verticalCS"
+                     column="verticalCS"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gml.VerticalCSEntity"
                      foreign-key="vcrsvcsfk"/>
-        <many-to-one name="verticalDatum" 
-                     column="verticalDatum" 
-                     class="org.n52.sos.ds.hibernate.entities.feature.gml.VerticalDatumEntity" 
+        <many-to-one name="verticalDatum"
+                     column="verticalDatum"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gml.VerticalDatumEntity"
                      foreign-key="vcrsvdfk"/>
     </class>
 </hibernate-mapping>

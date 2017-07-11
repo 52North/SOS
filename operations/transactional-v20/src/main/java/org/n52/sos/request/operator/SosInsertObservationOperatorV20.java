@@ -37,12 +37,12 @@ import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.ows.HasExtension;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
@@ -178,7 +178,7 @@ public class SosInsertObservationOperatorV20 extends
                 final OmObservationConstellation obsConstallation = observation.getObservationConstellation();
                 checkObservationConstellationParameter(obsConstallation);
                 // Requirement 67
-                checkOrSetObservationType(observation, isSplitObservations(request.getExtensions()));
+                checkOrSetObservationType(observation, isSplitObservations(request));
                 if (!cache.getObservationTypes().contains(obsConstallation.getObservationType())) {
                     exceptions.add(new InvalidObservationTypeException(obsConstallation.getObservationType()));
                 } else if (obsConstallation.isSetOfferings()) {
@@ -198,11 +198,8 @@ public class SosInsertObservationOperatorV20 extends
         }
     }
 
-    private boolean isSplitObservations(Extensions extensions) {
-        return extensions != null &&
-                 !extensions.isEmpty() &&
-                 extensions
-               .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
+    private boolean isSplitObservations(HasExtension<?> extensions) {
+        return extensions.getBooleanExtension(Sos2Constants.Extensions.SplitDataArrayIntoObservations);
 
     }
 

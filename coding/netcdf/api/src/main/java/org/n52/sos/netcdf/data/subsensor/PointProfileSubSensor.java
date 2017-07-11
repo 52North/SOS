@@ -37,7 +37,7 @@ package org.n52.sos.netcdf.data.subsensor;
  *
  */
 public class PointProfileSubSensor extends ProfileSubSensor {
-    private double height;
+    private final double height;
 
     public PointProfileSubSensor(double height) {
         this.height = height;
@@ -60,16 +60,20 @@ public class PointProfileSubSensor extends ProfileSubSensor {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (null == obj) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         PointProfileSubSensor other = (PointProfileSubSensor) obj;
         if (Double.doubleToLongBits(height) != Double
-                .doubleToLongBits(other.height))
+            .doubleToLongBits(other.height)) {
             return false;
+        }
         return true;
     }
 

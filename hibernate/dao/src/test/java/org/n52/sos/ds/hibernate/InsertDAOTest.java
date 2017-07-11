@@ -658,11 +658,11 @@ public class InsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
         GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        OmObservation omObservation = getObsResponse.getObservationCollection().next();
         if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+            assertThat(((StreamingValue)omObservation.getValue()).hasNext(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).next();
         }
         if (omObservation != null) {
             assertThat(omObservation.isSetParameter(), is(true));
@@ -709,11 +709,11 @@ public class InsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, obsTimeParam, feature);
         GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        OmObservation omObservation = getObsResponse.getObservationCollection().next();
         if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+            assertThat(((StreamingValue)omObservation.getValue()).hasNext(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).next();
         }
         if (omObservation != null) {
             assertThat(omObservation.isSetParameter(), is(true));
@@ -765,11 +765,11 @@ public class InsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
         GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        OmObservation omObservation = getObsResponse.getObservationCollection().next();
         if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+            assertThat(((StreamingValue)omObservation.getValue()).hasNext(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).next();
         }
         if (omObservation != null) {
             assertThat(omObservation.isSetParameter(), is(true));
@@ -807,11 +807,11 @@ public class InsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
         GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        OmObservation omObservation = getObsResponse.getObservationCollection().next();
         if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+            assertThat(((StreamingValue)omObservation.getValue()).hasNext(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).next();
         }
         if (omObservation != null) {
             assertThat(omObservation.isSetParameter(), is(true));
@@ -945,11 +945,11 @@ public class InsertDAOTest extends HibernateTestCase {
             obsFeature);
         GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        OmObservation omObservation = getObsResponse.getObservationCollection().next();
         if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+            assertThat(((StreamingValue)omObservation.getValue()).hasNext(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).next();
             assertThat(omObservation, notNullValue());
             assertThat(omObservation.getObservationConstellation(), notNullValue());
             OmObservationConstellation obsConst = omObservation.getObservationConstellation();

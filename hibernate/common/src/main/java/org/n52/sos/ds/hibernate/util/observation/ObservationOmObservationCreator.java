@@ -51,6 +51,7 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
@@ -137,9 +138,9 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     }
 
     @Override
-    public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
+    public ObservationStream create() throws OwsExceptionReport, ConverterException {
         if (getObservations() == null) {
-            return Collections.emptyList();
+            return ObservationStream.empty();
         } else if (this.observationCollection == null) {
             this.observationCollection = Lists.newLinkedList();
             // now iterate over resultset and create Measurement for each row
@@ -159,7 +160,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
                 observationCollection.add(createObservation(hObservation));
             }
         }
-        return this.observationCollection;
+        return ObservationStream.of(this.observationCollection);
     }
 
     protected OmObservation createObservation(Observation<?> hObservation) throws OwsExceptionReport, ConverterException {

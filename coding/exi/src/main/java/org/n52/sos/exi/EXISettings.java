@@ -29,7 +29,7 @@
 package org.n52.sos.exi;
 
 /**
- * Configuration settings for {@link EXIBinding}.
+ * Configuration settings for the EXI binding.
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *

@@ -144,7 +144,7 @@ public class RelatedFeatureDAO {
                                 .insertFeature((AbstractSamplingFeature) feature, session);
                 url = ((AbstractSamplingFeature) feature).getUrl();
             }
-            relFeat.setFeatureOfInterest(new FeatureOfInterestDAO(daoFactory).getOrInsertFeatureOfInterest(identifier, url,
+            relFeat.setFeatureOfInterest(new FeatureOfInterestDAO(daoFactory).getOrInsert(identifier, url,
                     session));
             relFeat.setRelatedFeatureRoles(new HashSet<>(roles));
             session.save(relFeat);

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>52n-sos</artifactId>
         <groupId>org.n52.sensorweb.sos</groupId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>webapp</artifactId>
@@ -15,6 +15,9 @@
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
+        <rest.api.version>2.0.0-SNAPSHOT</rest.api.version>
+        <series.db.version>2.0.0-SNAPSHOT</series.db.version>
+        <helgoland.version>1.0.0</helgoland.version>
     </properties>
     <build>
         <finalName>${conf.sos.name}</finalName>
@@ -160,18 +163,8 @@
             <artifactId>janmayen</artifactId>
         </dependency>
         <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>stax</groupId>
-                    <artifactId>stax-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -184,10 +177,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId> xml-apis</groupId>
-            <artifactId> xml-apis</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -255,6 +244,10 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+        </dependency>
 
         <!-- LOGGING -->
 
@@ -296,7 +289,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>cache</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>coding-gml</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -313,10 +310,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-gwml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sos-v100</artifactId>
         </dependency>
         <!-- CODING -->
 
@@ -451,19 +444,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>binding-register</artifactId>
         </dependency>
-        <!-- REST BINDING -->
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>rest-code</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>rest-xml</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- GET DATA AVAILABILITY -->
 
         <dependency>
@@ -684,11 +664,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>inspire-api</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>inspire-coding</artifactId>
-		</dependency>
-        
         <!-- AQD eReporting -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -732,10 +707,6 @@
             <artifactId>split-and-merge</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>seriestype</artifactId>
-        </dependency>
         <!-- netCDF -->
         <dependency>
             <groupId>com.axiomalaska</groupId>
@@ -744,7 +715,7 @@
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
-            <artifactId>netcdf</artifactId>
+            <artifactId>netcdf4</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

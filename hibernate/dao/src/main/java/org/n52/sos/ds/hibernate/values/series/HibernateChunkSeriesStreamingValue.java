@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -53,8 +54,6 @@ import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
  *
  */
 public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreamingValue {
-
-    private static final long serialVersionUID = -1990901204421577265L;
 
     private Iterator<AbstractValuedLegacyObservation<?>> seriesValuesResult;
 
@@ -86,7 +85,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     @Override
-    public boolean hasNextValue() throws OwsExceptionReport {
+    public boolean hasNext() throws OwsExceptionReport {
         boolean next = false;
         if (seriesValuesResult == null || !seriesValuesResult.hasNext()) {
             if (!noChunk && (valueCounter == 0 || valueCounter == chunkSize)) {
@@ -122,7 +121,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
+            if (hasNext()) {
                 AbstractValuedLegacyObservation<?> resultObject = getNextValue();
                 TimeValuePair value = null;
                 if (checkValue(resultObject)) {
@@ -140,9 +139,9 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     @Override
-    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
+    public OmObservation next(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
+            if (hasNext()) {
                 OmObservation observation = getObservationTemplate().cloneTemplate();
                 AbstractValuedLegacyObservation<?> resultObject = getNextValue();
                 if (checkValue(resultObject)) {

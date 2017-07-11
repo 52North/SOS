@@ -30,38 +30,39 @@ package org.n52.sos.convert;
 
 import java.util.List;
 
+import org.n52.iceland.convert.Converter;
+import org.n52.shetland.inspire.ad.AddressRepresentation;
+import org.n52.shetland.inspire.base.Identifier;
+import org.n52.shetland.inspire.base2.Contact;
+import org.n52.shetland.inspire.base2.DocumentCitation;
+import org.n52.shetland.inspire.base2.RelatedParty;
+import org.n52.shetland.inspire.ompr.ProcessParameter;
 import org.n52.shetland.iso.gmd.LocalisedCharacterString;
 import org.n52.shetland.iso.gmd.PT_FreeText;
-import org.n52.sos.convert.Converter;
-import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.sensorML.SmlContact;
-import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
-import org.n52.sos.ogc.sensorML.elements.AbstractSmlDocumentation;
-import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
-import org.n52.sos.ogc.sensorML.elements.SmlDocumentation;
-import org.n52.sos.ogc.sensorML.elements.SmlDocumentationList;
-import org.n52.sos.ogc.sensorML.elements.SmlDocumentationListMember;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.w3c.Nillable;
-import org.n52.svalbard.inspire.ad.AddressRepresentation;
-import org.n52.svalbard.inspire.base.Identifier;
-import org.n52.svalbard.inspire.base2.Contact;
-import org.n52.svalbard.inspire.base2.DocumentCitation;
-import org.n52.svalbard.inspire.base2.RelatedParty;
-import org.n52.svalbard.inspire.ompr.ProcessParameter;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.sensorML.SmlContact;
+import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
+import org.n52.shetland.ogc.sensorML.elements.AbstractSmlDocumentation;
+import org.n52.shetland.ogc.sensorML.elements.SmlClassifier;
+import org.n52.shetland.ogc.sensorML.elements.SmlDocumentation;
+import org.n52.shetland.ogc.sensorML.elements.SmlDocumentationList;
+import org.n52.shetland.ogc.sensorML.elements.SmlDocumentationListMember;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.w3c.Nillable;
+import org.n52.shetland.w3c.xlink.Reference;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public abstract class AbstractInspireOmpr30SensorMLConverter implements Converter<SosProcedureDescription, SosProcedureDescription> {
-    
+public abstract class AbstractInspireOmpr30SensorMLConverter implements Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> {
+
     private static final String PROCEDURE_NAME = "procedureName";
     private static final String INSPIRE_ID = "inspireId";
-    
+
     protected List<DocumentCitation> convertDocumentationToDocumentationCitation(List<AbstractSmlDocumentation> documentations) {
         List<DocumentCitation> documentationCitations = Lists.newArrayList();
         for (AbstractSmlDocumentation documentation : documentations) {
@@ -95,7 +96,7 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         for (DocumentCitation documentationCitation : documentationCitations) {
             SmlDocumentation smlDocumentation = new SmlDocumentation();
             if (!documentationCitation.isSetSimpleAttrs()) {
-                
+
             if (documentationCitation.isSetName())
                 smlDocumentation.setDescription(documentationCitation.getFirstName().getValue());
             }
@@ -113,7 +114,7 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         }
         return smlDocumentations;
     }
-    
+
     public SmlIdentifier convertInspireIdToIdentification(Identifier inspireId) {
         SmlIdentifier identifier = new SmlIdentifier();
         identifier.setName(INSPIRE_ID);
@@ -121,7 +122,7 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         identifier.setCodeSpace(inspireId.getCodeSpace());
         return identifier;
     }
-    
+
     public CodeWithAuthority convertIdentificationToInspireId(List<SmlIdentifier> identifications) {
         for (SmlIdentifier smlIdentifier : identifications) {
             if (smlIdentifier.isSetName() && INSPIRE_ID.equals(smlIdentifier.getName())) {
@@ -130,14 +131,14 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         }
         return null;
     }
-    
+
     protected SmlIdentifier convertNameToIdentification(CodeType firstName) {
         SmlIdentifier identifier = new SmlIdentifier();
         identifier.setName(PROCEDURE_NAME);
         identifier.setValue(firstName.getValue());
         return identifier;
     }
-    
+
     protected CodeType convertIdentifierToName(List<SmlIdentifier> identifications) {
         for (SmlIdentifier smlIdentifier : identifications) {
             if (smlIdentifier.isSetName() && PROCEDURE_NAME.equals(smlIdentifier.getName())) {
@@ -177,24 +178,26 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         for (RelatedParty relatedParty : responsibleParties) {
             SmlResponsibleParty smlResponsibleParty = new SmlResponsibleParty();
             if (relatedParty.isSetIndividualName()) {
-                smlResponsibleParty.setIndividualName(relatedParty.getIndividualName().getTextGroup().iterator().next().getValue());
+                smlResponsibleParty.setIndividualName(relatedParty.getIndividualName().get().getTextGroup().iterator().next().getValue());
             }
             if (relatedParty.isSetOrganisationName()) {
-                smlResponsibleParty.setOrganizationName(relatedParty.getOrganisationName().getTextGroup().iterator().next().getValue());
+                smlResponsibleParty.setOrganizationName(relatedParty.getOrganisationName().get().getTextGroup().iterator().next().getValue());
             }
             if (relatedParty.isSetPositionName()) {
-                smlResponsibleParty.setPositionName(relatedParty.getPositionName().getTextGroup().iterator().next().getValue());
+                smlResponsibleParty.setPositionName(relatedParty.getPositionName().get().getTextGroup().iterator().next().getValue());
             }
             if (relatedParty.isSetRole()) {
-                ReferenceType next = relatedParty.getRole().iterator().next();
-                if (next.isSetTitle()) {
-                    smlResponsibleParty.setRole(next.getTitle());
-                } else if (next.isSetHref()) {
-                    smlResponsibleParty.setRole(next.getHref());
+                Nillable<Reference> next = relatedParty.getRoles().iterator().next();
+                if (next.isPresent()) {
+                    if (next.get().getTitle().isPresent()) {
+                        smlResponsibleParty.setRole(next.get().getTitle().get());
+                    } else if (next.get().getHref().isPresent()) {
+                        smlResponsibleParty.setRole(next.get().getHref().get().toString());
+                    }
                 }
             }
             if (relatedParty.isSetContact()) {
-                Contact contact = relatedParty.getContact();
+                Contact contact = relatedParty.getContact().get();
                 if (contact.getAddress().isPresent()) {
                     AddressRepresentation addressRepresentation = contact.getAddress().get();
                     // TODO
@@ -206,7 +209,7 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
                     smlResponsibleParty.setEmail(contact.getElectronicMailAddress().get());
                 }
                 if (contact.getTelephoneFacsimile().isPresent()) {
-                    smlResponsibleParty.setPhoneFax(contact.getTelephoneFacsimile().get());
+                    smlResponsibleParty.setPhoneFax(toList(contact.getTelephoneFacsimile().get()));
                 }
                 if (contact.getTelephoneVoice().isPresent()) {
                    smlResponsibleParty.setPhoneVoice(contact.getTelephoneVoice().get());
@@ -219,8 +222,8 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         }
         return contacts;
     }
-    
-    
+
+
     protected List<RelatedParty> convertContactsToResponsibleParties(List<SmlContact> contacts) {
         List<RelatedParty> relatedParties = Lists.newArrayList();
         for (SmlContact contact : contacts) {
@@ -264,15 +267,20 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         }
         return relatedParties;
     }
-    
+
     private Nillable<AddressRepresentation> checkAddressRepresentation(SmlResponsibleParty smlResponsibleParty) {
         AddressRepresentation addressRepresentation = new AddressRepresentation();
-        // TODO 
+        // TODO
         return Nillable.<AddressRepresentation>nil();
     }
 
     private PT_FreeText getPTFreeText(String value) {
        return new PT_FreeText().addTextGroup(new LocalisedCharacterString(value));
+    }
+
+    private List<String> toList(List<Nillable<String>> list) {
+        list.forEach(s -> s.isPresent());
+        return null;
     }
 
 }

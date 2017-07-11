@@ -43,7 +43,8 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 
 public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernateDatasource {
-    private String schemaDefault, schemaDescription;
+    private String schemaDefault;
+    private String schemaDescription;
     private int batchSizeDefault;
     private boolean providedJdbc;
     private boolean supportsSchema;

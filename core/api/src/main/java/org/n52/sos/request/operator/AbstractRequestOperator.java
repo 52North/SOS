@@ -519,7 +519,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             throw new InvalidParameterValueException(parameterName, procedureID);
         }
     }
-    
+
     protected void checkTransactionalProcedures(final Collection<String> procedureIDs, final String parameterName)
             throws OwsExceptionReport {
         if (procedureIDs != null) {
@@ -634,7 +634,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             exceptions.throwIfNotEmpty();
         }
     }
-    
+
     protected void checkObservedProperties(final List<String> observedProperties, final String parameterName, boolean all)
             throws OwsExceptionReport {
         if (observedProperties != null) {
@@ -649,7 +649,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             exceptions.throwIfNotEmpty();
         }
     }
-    
+
     protected void checkObservedProperty(final String observedProperty, final String parameterName, boolean insertion)
             throws OwsExceptionReport {
         if (observedProperty == null || observedProperty.isEmpty()) {
@@ -679,7 +679,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     protected void checkOfferings(final Collection<String> offerings, final String parameterName) throws OwsExceptionReport {
         checkOfferings(offerings, parameterName, false);
     }
-    
+
     protected void checkOfferings(final Collection<String> offerings, final String parameterName, boolean all)
             throws OwsExceptionReport {
         if (offerings != null) {
@@ -698,7 +698,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     protected void checkOfferings(Collection<String> offerings, Enum<?> parameterName) throws OwsExceptionReport {
         checkOfferings(offerings, parameterName.name());
     }
-    
+
     protected void checkOfferings(Collection<String> offerings, Enum<?> parameterName, boolean all) throws OwsExceptionReport {
         checkOfferings(offerings, parameterName.name(), all);
     }
@@ -720,7 +720,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
                 throw new InvalidParameterValueException(parameterName, offering);
             }
         }
-        
+
     }
 
     protected void checkSpatialFilters(final Collection<SpatialFilter> spatialFilters, final String name)
@@ -871,7 +871,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
         return Lists.newArrayList(allObservedProperties);
     }
-    
+
     protected List<String> addChildOfferings(List<String> offerings) {
         Set<String> allOfferings = Sets.newHashSet(offerings);
         if (offerings != null) {
@@ -926,7 +926,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             return getCache().hasRequestableProcedureDescriptionFormat(format) ? true : hasPossibleProcedureDescriptionFormats(format, mimeTypeAllowed);
         }
     }
-    
+
     /**
      * Get possible procedure description formats for this procedure description
      * format. More precise, are there converter available.
@@ -955,7 +955,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
                 procedureDescriptionFormat));
         return !possibleFormats.isEmpty();
     }
-    
+
     private Set<String> checkForUrlVsMimeType(String procedureDescriptionFormat) {
         Set<String> possibleFormats = Sets.newHashSet();
         possibleFormats.add(procedureDescriptionFormat);

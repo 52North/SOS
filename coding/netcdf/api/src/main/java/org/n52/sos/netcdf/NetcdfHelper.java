@@ -31,9 +31,9 @@ package org.n52.sos.netcdf;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.faroe.ConfigurationError;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.iso.CodeList.CiRoleCodes;
 
@@ -78,6 +78,7 @@ public class NetcdfHelper implements Constructable {
 
     @Deprecated
     private static NetcdfHelper instance;
+
     /**
      * @return Returns a singleton instance of the AqdHelper.
      */
@@ -93,6 +94,7 @@ public class NetcdfHelper implements Constructable {
 
     /**
      * @param version
+     *
      * @throws ConfigurationException
      */
     @Setting(NetcdfSettingsProvider.NETCDF_VERSION)
@@ -101,22 +103,21 @@ public class NetcdfHelper implements Constructable {
     }
 
     /**
-     * @return
+     * @return the version object
      */
     public Version getNetcdfVersion() {
         return version;
     }
 
-
     /**
-     * @return
+     * @return the version string
      */
     public String getNetcdfVersionString() {
         return version.name();
     }
 
     /**
-     * @param chunkSize
+     * @param chunkSize the chunk size
      */
     @Setting(NetcdfSettingsProvider.NETCDF_CHUNK_SIZE_TIME)
     public void setChunkSizeTime(int chunkSize) {
@@ -124,14 +125,14 @@ public class NetcdfHelper implements Constructable {
     }
 
     /**
-     * @return
+     * @return the chunk size
      */
     public int getChunkSizeTime() {
         return chunkSizeTime;
     }
 
     /**
-     * @param fillValue
+     * @param fillValue the fill value
      */
     @Setting(NetcdfSettingsProvider.NETCDF_FILL_VALUE)
     public void setFillValue(double fillValue) {
@@ -139,21 +140,21 @@ public class NetcdfHelper implements Constructable {
     }
 
     /**
-     * @return
+     * @return the fill value
      */
     public double getFillValue() {
         return fillValue;
     }
 
     /**
-     * @return
+     * @return the fill value as float
      */
     public float getFillValueAsFloat() {
         return (float) fillValue;
     }
 
     /**
-     * @param heightDepth
+     * @param heightDepth either {@code height} or {@code depth}
      */
     @Setting(NetcdfSettingsProvider.NETCDF_HEIGHT_DEPTH)
     public void setHeightDepth(String heightDepth) {
@@ -161,15 +162,16 @@ public class NetcdfHelper implements Constructable {
     }
 
     /**
-     * @return
+     * @return the height/depth name
      */
     public CFStandardName getHeightDepth() {
         return heightDepth;
     }
 
     /**
-     * @param heightDepth
-     * @return
+     * @param heightDepth {@code height} or {@code depth}
+     *
+     * @return the standard name
      */
     private CFStandardName getStandardName(String heightDepth) {
         if (CFStandardNames.HEIGHT.getName().equals(heightDepth)) {
@@ -179,7 +181,7 @@ public class NetcdfHelper implements Constructable {
     }
 
     /**
-     * @param type
+     * @param type the variable type
      */
     @Setting(NetcdfSettingsProvider.NETCDF_VARIABLE_TYPE)
     public void setVariableType(String type) {
@@ -187,7 +189,7 @@ public class NetcdfHelper implements Constructable {
     }
 
     /**
-     * @return
+     * @return the variable type
      */
     public String getVariableType() {
         return variableType;

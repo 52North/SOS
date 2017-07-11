@@ -64,7 +64,7 @@ public class DefaultProfileHandler extends ProfileHandler {
     @Override
     public void activateProfile(String identifier) {
         availableProfiles.get(identifier).setActiveProfile(true);
-        
+
     }
 
     @Override

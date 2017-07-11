@@ -38,19 +38,19 @@ import org.n52.sos.ogc.gml.CodeType;
 import com.google.common.collect.Lists;
 
 public class ProfileValueTest {
-    
+
     private ProfileValue profileValue = createProfileValue(true, true);
-    
+
     @Test
     public void testFromLevel() {
         assertThat(profileValue.getFromLevel().getValue(), is(0.0));
     }
-    
+
     @Test
     public void testToLevel() {
         assertThat(profileValue.getToLevel().getValue(), is(30.0));
     }
-    
+
     private ProfileValue createProfileValue(boolean fromDepth, boolean toDepth) {
         ProfileValue coverage = new ProfileValue();
         coverage.addValue(createProfileLevel(fromDepth, toDepth, 0.0));

@@ -34,7 +34,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.n52.shetland.ogc.sos.SosConstants.SOS;
-import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.PARAMETER_NAME;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,12 +43,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.decode.OperationDecoderKey;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
-import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
-import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
+import org.n52.svalbard.decode.OperationDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -122,7 +121,7 @@ public class DeleteObservationKvpDecoderTest {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
         evolvingMap.put("service", SOS);
         evolvingMap.put("request", OPERATION_NAME);
-        evolvingMap.put(PARAM_OBSERVATION, "something");
+        evolvingMap.put(DeleteObservationConstants.PARAM_OBSERVATION, "something");
 
         instance.decode(evolvingMap);
     }
@@ -132,7 +131,7 @@ public class DeleteObservationKvpDecoderTest {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
         evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
         evolvingMap.put("request", OPERATION_NAME);
-        evolvingMap.put(PARAM_OBSERVATION, "something");
+        evolvingMap.put(DeleteObservationConstants.PARAM_OBSERVATION, "something");
 
         instance.decode(evolvingMap);
     }
@@ -143,7 +142,7 @@ public class DeleteObservationKvpDecoderTest {
         evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
         evolvingMap.put("request", OPERATION_NAME);
         evolvingMap.put("request", OPERATION_NAME + "2");
-        evolvingMap.put(PARAM_OBSERVATION, "something");
+        evolvingMap.put(DeleteObservationConstants.PARAM_OBSERVATION, "something");
 
         instance.decode(evolvingMap);
     }
@@ -155,7 +154,7 @@ public class DeleteObservationKvpDecoderTest {
         parameters.put("service", SOS);
         parameters.put("version", Sos2Constants.SERVICEVERSION);
         parameters.put("request", OPERATION_NAME);
-        parameters.put(PARAM_OBSERVATION, observationIdentifier);
+        parameters.put(DeleteObservationConstants.PARAM_OBSERVATION, observationIdentifier);
 
         DeleteObservationRequest decodedRequest = instance.decode(parameters);
 

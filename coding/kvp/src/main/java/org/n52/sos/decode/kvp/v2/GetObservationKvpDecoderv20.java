@@ -55,7 +55,7 @@ import org.n52.svalbard.util.XmlHelper;
  * @since 4.0.0
  *
  */
-public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObservationRequest> {
+public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<GetObservationRequest> {
 
 
     private DecoderRepository decoderRepository;

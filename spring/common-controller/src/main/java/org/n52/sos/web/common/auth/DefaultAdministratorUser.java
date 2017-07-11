@@ -46,17 +46,17 @@ public class DefaultAdministratorUser implements AdministratorUser {
     }
 
     @Override
+    public void setPassword(String password) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String getUsername() {
         return DEFAULT_USERNAME;
     }
 
     @Override
-    public AdministratorUser setPassword(String password) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public AdministratorUser setUsername(String username) {
+    public void setUsername(String username) {
         throw new UnsupportedOperationException();
     }
 

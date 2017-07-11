@@ -160,7 +160,7 @@
              inverse="true"
              cascade="delete-orphan">
             <key>
-                <column name="observationId" 
+                <column name="observationId"
                         not-null="true" />
             </key>
             <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter" />

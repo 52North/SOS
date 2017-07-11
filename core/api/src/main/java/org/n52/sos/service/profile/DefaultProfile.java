@@ -72,7 +72,7 @@ public class DefaultProfile implements Profile {
     private Map<String, Boolean> encodeProcedureInObservation = new HashMap<String, Boolean>(0);
 
     private Map<String, String> defaultObservationTypesForEncoding = new HashMap<String, String>(0);
-    
+
     private String definition;
 
     @Override
@@ -182,7 +182,7 @@ public class DefaultProfile implements Profile {
     public boolean isSetNoDataPlaceholder() {
         return defaultNoDataPlaceholder != null && !defaultNoDataPlaceholder.isEmpty();
     }
-    
+
     @Override
     public void setDefinition(String definition) {
         this.definition = definition;

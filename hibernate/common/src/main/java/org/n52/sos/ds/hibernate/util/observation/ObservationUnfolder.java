@@ -547,8 +547,8 @@ public class ObservationUnfolder {
         return field != null && field.getElement().isSetDefinition() &&
                 (field.getElement().getDefinition().contains("depth")
                         || field.getElement().getDefinition().contains("height")
-                        || field.getElement().getDefinition().contains("from")
-                        || field.getElement().getDefinition().contains("to"));
+                        || field.getElement().getDefinition().equalsIgnoreCase("from")
+                        || field.getElement().getDefinition().equalsIgnoreCase("to"));
     }
 
     private ReferenceType getParameterName(ReferenceType name) {
@@ -556,9 +556,9 @@ public class ObservationUnfolder {
             return (ReferenceType)new ReferenceType().setHref("depth");
         } else if (name.getHref().contains("height")) {
             return (ReferenceType)new ReferenceType().setHref("height");
-        } else if (name.getHref().contains("from")) {
+        } else if (name.getHref().equalsIgnoreCase("from")) {
             return (ReferenceType)new ReferenceType().setHref("from");
-        } else if (name.getHref().contains("to")) {
+        } else if (name.getHref().equalsIgnoreCase("to")) {
             return (ReferenceType)new ReferenceType().setHref("to");
         }
         return name;

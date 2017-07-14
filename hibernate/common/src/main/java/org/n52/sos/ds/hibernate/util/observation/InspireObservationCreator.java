@@ -33,8 +33,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.sos.ds.hibernate.dao.observation.series.RelatedSeriesDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
@@ -42,10 +43,8 @@ import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObserv
 import org.n52.sos.ds.hibernate.entities.observation.series.RelatedSeries;
 import org.n52.sos.ds.hibernate.entities.observation.series.RelatedSeriesAdder;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.ogc.om.OmObservation;
 
-public class InspireObservationCreator extends AbstractAdditionalObservationCreator<Series> {
+public class InspireObservationCreator extends AbstractAdditionalObservationCreator {
 
     private final static String NS_OMSO_30 = "http://inspire.ec.europa.eu/schemas/omso/3.0";
 

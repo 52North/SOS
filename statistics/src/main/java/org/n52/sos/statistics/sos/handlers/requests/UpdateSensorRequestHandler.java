@@ -39,14 +39,4 @@ public class UpdateSensorRequestHandler extends AbstractSosRequestHandler<Update
         put(SosDataMapping.US_PROCEDURE_DESCRIPTION_FORMAT, request.getProcedureDescriptionFormat());
     }
 
-    
-    @Override
-    public String getDescriptionFormat() {
-        return SensorMLConstants.NS_SML;
-    }
-    
-    @Override
-    public String getDefaultElementEncoding() {
-        return SensorMLConstants.NS_SML;
-    }
 }

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
-import org.n52.sos.ds.hibernate.entities.observation.legacy.ValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.HibernateSeriesRelations.HasSeries;
 
 /**
@@ -39,6 +39,6 @@ import org.n52.sos.ds.hibernate.entities.observation.series.HibernateSeriesRelat
  * @author Christian Autermann
  */
 public interface ValuedSeriesObservation<T>
-        extends ValuedLegacyObservation<T>,
+        extends ValuedObservation<T>,
                 HasSeries {
 }

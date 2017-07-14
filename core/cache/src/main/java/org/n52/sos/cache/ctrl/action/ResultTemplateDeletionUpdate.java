@@ -45,11 +45,11 @@
 */
 package org.n52.sos.cache.ctrl.action;
 
-import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Set;
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.response.DeleteResultTemplateResponse;
+
+import org.n52.iceland.cache.WritableContentCache;
+import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,11 +60,11 @@ import org.slf4j.LoggerFactory;
  * @since 4.4.0
  */
 public class ResultTemplateDeletionUpdate extends InMemoryCacheUpdate {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultTemplateDeletionUpdate.class);
-    
+
     private final DeleteResultTemplateResponse response;
-    
+
     public ResultTemplateDeletionUpdate(DeleteResultTemplateResponse response) {
         if (response == null) {
             String msg =
@@ -76,28 +76,27 @@ public class ResultTemplateDeletionUpdate extends InMemoryCacheUpdate {
         }
         this.response = response;
     }
-    
+
     @Override
     public void execute() {
-        final WritableContentCache cache = getCache();
         if (!response.isSetResultTemplates()) {
             return;
         }
         final List<String> deletedResultTemplates = response.getResultTemplates();
         // link between offering and result template
-        final Set<String> offeringsWithResultTemplate = cache.getOfferingsWithResultTemplate();
+        final Set<String> offeringsWithResultTemplate = getCache().getOfferingsWithResultTemplate();
         for (String offeringId : offeringsWithResultTemplate) {
-            for (String resultTemplateId : cache.getResultTemplatesForOffering(offeringId)) {
+            for (String resultTemplateId : getCache().getResultTemplatesForOffering(offeringId)) {
                 for (String deletedResultTemplateId : deletedResultTemplates) {
                     if (resultTemplateId.equals(deletedResultTemplateId)) {
-                        cache.removeResultTemplateForOffering(offeringId, resultTemplateId);
+                        getCache().removeResultTemplateForOffering(offeringId, resultTemplateId);
                     }
                 }
             }
-            
+
         }
         // result template itself
-        cache.removeResultTemplates(deletedResultTemplates);
+        getCache().removeResultTemplates(deletedResultTemplates);
     }
-    
+
 }

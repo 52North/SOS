@@ -32,11 +32,11 @@ import java.util.Objects;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.XmlValuedParameter;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class FeatureXmlValuedParameter extends FeatureParameter<String> implements org.n52.sos.ds.hibernate.entities.parameter.XmlValuedParameter {
 

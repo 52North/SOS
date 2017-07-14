@@ -31,20 +31,20 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.series.wml.DefaultPointMetadata;
 import org.n52.shetland.ogc.om.series.wml.DefaultTVPMeasurementMetadata;
 import org.n52.shetland.ogc.om.series.wml.MeasurementTimeseriesMetadata;
 import org.n52.shetland.ogc.om.series.wml.Metadata;
+import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
+import org.n52.shetland.ogc.om.series.wml.WaterMLConstants.InterpolationType;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.hibernate.dao.metadata.SeriesMetadataDAO;
 import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.series.wml.WaterMLConstants;
-import org.n52.sos.ogc.series.wml.WaterMLConstants.InterpolationType;
 
 import com.google.common.base.Optional;
 
@@ -67,7 +67,7 @@ public class WaterMLMetadataAdder {
 
     public WaterMLMetadataAdder add() throws CodedException {
         if (HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
-            List<SeriesMetadata> seriesMetadata = seriesMetadataDAO.getDomainMetadata(series.getSeriesId(), 
+            List<SeriesMetadata> seriesMetadata = seriesMetadataDAO.getDomainMetadata(series.getSeriesId(),
                     WaterMLConstants.NS_WML_20, session);
             OmObservationConstellation observationConstellation = omObservation.getObservationConstellation();
             /*
@@ -118,7 +118,7 @@ public class WaterMLMetadataAdder {
             boolean cumulative = false;
             if (cumulativeMetadata.isPresent()) {
                 if (!cumulativeMetadata.get().isEmpty() && (
-                            cumulativeMetadata.get().equalsIgnoreCase("true") || 
+                            cumulativeMetadata.get().equalsIgnoreCase("true") ||
                             cumulativeMetadata.get().equalsIgnoreCase("false") ||
                             cumulativeMetadata.get().equalsIgnoreCase("1") ||
                             cumulativeMetadata.get().equalsIgnoreCase("0"))) {
@@ -141,7 +141,7 @@ public class WaterMLMetadataAdder {
     private CodedException createMetadataInvalidException(String metadataKey, String metadataContent,
             IllegalArgumentException iae) {
         CodedException e = new NoApplicableCodeException().withMessage("Series Metadata '%s' for Series '%s' "
-                + "could not be parsed '%s'. Please contact the administrator of this service.", 
+                + "could not be parsed '%s'. Please contact the administrator of this service.",
                 metadataKey,
                 series.getSeriesId(),
                 metadataContent);

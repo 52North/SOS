@@ -34,7 +34,7 @@ import com.google.common.base.Strings;
 
 /**
  * Hibernate entity for address.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.4.0
  *
@@ -66,7 +66,7 @@ public class AddressEntity extends AbstractCiEntity {
     public boolean hasSetDeliveryPoint() {
         return getDeliveryPoint() != null && !getDeliveryPoint().isEmpty();
     }
-    
+
     /**
      * @return the city
      */
@@ -81,7 +81,7 @@ public class AddressEntity extends AbstractCiEntity {
     public void setCity(String city) {
         this.city = city;
     }
-    
+
     public boolean isSetCity() {
         return !Strings.isNullOrEmpty(getCity());
     }
@@ -100,7 +100,7 @@ public class AddressEntity extends AbstractCiEntity {
     public void setAdministrativeArea(String administrativeArea) {
         this.administrativeArea = administrativeArea;
     }
-    
+
     public boolean isSetAdministrativeArea() {
         return !Strings.isNullOrEmpty(getAdministrativeArea());
     }
@@ -123,7 +123,7 @@ public class AddressEntity extends AbstractCiEntity {
     public boolean isSetPostalCode() {
         return !Strings.isNullOrEmpty(getPostalCode());
     }
-    
+
     /**
      * @return the country
      */
@@ -138,7 +138,7 @@ public class AddressEntity extends AbstractCiEntity {
     public void setCountry(String country) {
         this.country = country;
     }
-    
+
     public boolean isSetCountry() {
         return !Strings.isNullOrEmpty(getCountry());
     }
@@ -157,7 +157,7 @@ public class AddressEntity extends AbstractCiEntity {
     public void setElectronicMailAddress(Set<String> electronicMailAddress) {
         this.electronicMailAddress = electronicMailAddress;
     }
-    
+
     public boolean hasElectronicMailAddress() {
         return getElectronicMailAddress() != null && !getElectronicMailAddress().isEmpty();
     }

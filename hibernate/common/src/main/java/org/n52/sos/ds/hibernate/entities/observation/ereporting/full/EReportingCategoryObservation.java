@@ -67,7 +67,7 @@ public class EReportingCategoryObservation
     public String getValueAsString() {
         return getValue();
     }
-    
+
     @Override
     public void setValueIdentifier(String valueIdentifier) {
         this.valueIdentifier = valueIdentifier;

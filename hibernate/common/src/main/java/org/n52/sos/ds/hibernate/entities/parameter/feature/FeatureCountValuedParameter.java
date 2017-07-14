@@ -28,10 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class FeatureCountValuedParameter extends FeatureParameter<Integer> implements org.n52.sos.ds.hibernate.entities.parameter.CountValuedParameter {
 
@@ -57,7 +57,7 @@ public class FeatureCountValuedParameter extends FeatureParameter<Integer> imple
     public String getValueAsString() {
         return getValue().toString();
     }
-    
+
     @Override
     public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);

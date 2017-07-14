@@ -86,4 +86,5 @@ public class EReportingBooleanObservation
     public String getValueAsString() {
         return getValue().toString();
     }
+
 }

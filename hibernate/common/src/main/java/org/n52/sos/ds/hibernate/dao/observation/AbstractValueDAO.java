@@ -33,21 +33,20 @@ import java.sql.Timestamp;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.TimeCreator;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.util.GeometryHandler;
@@ -55,14 +54,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract DAO class for querying {@link AbstractValuedLegacyObservation}
+ * Abstract DAO class for querying {@link ValuedObservation<?>}
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
 public abstract class AbstractValueDAO extends TimeCreator {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractValueDAO.class);
 
     /**
@@ -94,13 +93,6 @@ public abstract class AbstractValueDAO extends TimeCreator {
                     LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
                 }
             }
-        }
-    }
-    
-    protected void addTemporalFilterCriterion(Criteria c, Criterion temporalFilterCriterion, String logArgs) {
-        if (temporalFilterCriterion != null) {
-            logArgs += ", filterCriterion";
-            c.add(temporalFilterCriterion);
         }
     }
 
@@ -153,9 +145,9 @@ public abstract class AbstractValueDAO extends TimeCreator {
      */
     protected Projection getIndeterminateTimeExtremaProjection(IndeterminateValue indetTime) {
         if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
-            return Projections.min(AbstractValuedLegacyObservation.PHENOMENON_TIME_START);
+            return Projections.min(ValuedObservation.PHENOMENON_TIME_START);
         } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
-            return Projections.max(AbstractValuedLegacyObservation.PHENOMENON_TIME_END);
+            return Projections.max(ValuedObservation.PHENOMENON_TIME_END);
         }
         return null;
     }
@@ -170,9 +162,9 @@ public abstract class AbstractValueDAO extends TimeCreator {
      */
     protected String getIndeterminateTimeFilterProperty(IndeterminateValue indetTime) {
         if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
-            return AbstractValuedLegacyObservation.PHENOMENON_TIME_START;
+            return ValuedObservation.PHENOMENON_TIME_START;
         } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
-            return AbstractValuedLegacyObservation.PHENOMENON_TIME_END;
+            return ValuedObservation.PHENOMENON_TIME_END;
         }
         return null;
     }

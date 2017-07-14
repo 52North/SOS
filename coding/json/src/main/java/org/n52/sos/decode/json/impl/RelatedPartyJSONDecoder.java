@@ -26,13 +26,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.json.inspire;
+package org.n52.sos.decode.json.impl;
 
 
+import org.n52.shetland.inspire.base2.Contact;
+import org.n52.shetland.inspire.base2.RelatedParty;
+import org.n52.sos.coding.json.AQDJSONConstants;
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.shetland.inspire.Contact;
-import org.n52.shetland.inspire.RelatedParty;
-import org.n52.sos.util.AQDJSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -48,11 +48,11 @@ public class RelatedPartyJSONDecoder extends AbstractJSONDecoder<RelatedParty> {
         RelatedParty relatedParty = new RelatedParty();
         relatedParty.setContact(decodeJsonToNillable(node
                 .path(AQDJSONConstants.CONTACT), Contact.class));
-        relatedParty.setIndividualName(parseNillableString(node
+        relatedParty.setIndividualName(parseNillablePTFreeText(node
                 .path(AQDJSONConstants.INDIVIDUAL_NAME)));
-        relatedParty.setOrganisationName(parseNillableString(node
+        relatedParty.setOrganisationName(parseNillablePTFreeText(node
                 .path(AQDJSONConstants.ORGANISATION_NAME)));
-        relatedParty.setPositionName(parseNillableString(node
+        relatedParty.setPositionName(parseNillablePTFreeText(node
                 .path(AQDJSONConstants.POSITION_NAME)));
         for (JsonNode n : node.path(AQDJSONConstants.ROLES)) {
             relatedParty.addRole(parseNillableReference(n));

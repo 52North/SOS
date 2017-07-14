@@ -33,10 +33,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.request.InsertFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestRequest;
+import org.n52.sos.cache.SosWritableContentCache;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -52,23 +52,22 @@ public class FeatureInsertionUpdate extends InMemoryCacheUpdate {
 
     @Override
     public void execute() {
-        final WritableContentCache cache = getCache();
         List<AbstractSamplingFeature> samplingFeatures = new ArrayList<AbstractSamplingFeature>();
         for (AbstractFeature abstractFeature : request.getFeatureMembers()) {
             if (abstractFeature instanceof AbstractSamplingFeature) {
                 samplingFeatures.add((AbstractSamplingFeature)abstractFeature);
             }
-            cache.addFeatureOfInterest(abstractFeature.getIdentifier());
-            cache.addPublishedFeatureOfInterest(abstractFeature.getIdentifier());
+            getCache().addFeatureOfInterest(abstractFeature.getIdentifier());
+            getCache().addPublishedFeatureOfInterest(abstractFeature.getIdentifier());
             if (abstractFeature.isSetName()) {
-                    cache.addFeatureOfInterestIdentifierHumanReadableName(abstractFeature.getIdentifier(), abstractFeature.getFirstName().getValue());
+                getCache().addFeatureOfInterestIdentifierHumanReadableName(abstractFeature.getIdentifier(), abstractFeature.getFirstName().getValue());
             }
         }
         if (!samplingFeatures.isEmpty()) {
             final Envelope envelope = createEnvelopeFrom(samplingFeatures);
-            cache.updateGlobalEnvelope(envelope);
+            getCache().updateGlobalEnvelope(envelope);
         }
-        
+
     }
 
 }

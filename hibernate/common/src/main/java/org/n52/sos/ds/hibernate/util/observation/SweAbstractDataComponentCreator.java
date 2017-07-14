@@ -33,7 +33,6 @@ import java.net.URISyntaxException;
 
 import javax.inject.Inject;
 
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.janmayen.NcNameResolver;
 import org.n52.shetland.ogc.gml.CodeType;

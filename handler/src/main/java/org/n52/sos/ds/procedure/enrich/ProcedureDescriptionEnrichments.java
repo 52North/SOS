@@ -47,12 +47,12 @@ public class ProcedureDescriptionEnrichments extends AbstractProcedureDescriptio
     }
 
     public AbstractRelatedProceduresEnrichment<ProcedureEntity> createRelatedProceduresEnrichment() {
-    return setValues(new RelatedProceduresEnrichment())
+    return setValues(new RelatedProceduresEnrichment()
             .setConverter(getConverter())
             .setProcedure(getProcedure())
             .setProcedureDescriptionFormat(getProcedureDescriptionFormat())
             .setI18NDAORepository(getI18NDAORepository())
-            .setValidTime(getValidTime());
+            .setValidTime(getValidTime()));
     }
 
 }

@@ -28,12 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.entities.feature;
 
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SfSpecimen;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 public interface InsertFeatureVisitor {
-    
+
     FeatureOfInterest visit(SamplingFeature value)
             throws OwsExceptionReport;
 

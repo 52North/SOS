@@ -35,7 +35,7 @@ public class AbstractRelation {
     private long relationId;
     private String role;
     private String relatedUrl;
-    
+
     /**
      * @return the relationId
      */
@@ -49,7 +49,7 @@ public class AbstractRelation {
     public void setRelationId(long relationId) {
         this.relationId = relationId;
     }
-    
+
     /**
      * @return the role
      */
@@ -63,11 +63,11 @@ public class AbstractRelation {
     public void setRole(String role) {
         this.role = role;
     }
-    
+
     public boolean isSetRole() {
         return !Strings.isNullOrEmpty(getRole());
     }
-    
+
     /**
      * @return the relatedUrl
      */
@@ -81,7 +81,7 @@ public class AbstractRelation {
     public void setRelatedUrl(String relatedUrl) {
         this.relatedUrl = relatedUrl;
     }
-    
+
     public boolean isSetRelatedUrl() {
         return !Strings.isNullOrEmpty(getRelatedUrl());
     }

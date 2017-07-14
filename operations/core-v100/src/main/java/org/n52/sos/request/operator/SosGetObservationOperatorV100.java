@@ -36,16 +36,20 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.OMHelper;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.ds.AbstractGetObservationHandler;
@@ -74,9 +78,9 @@ public class SosGetObservationOperatorV100 extends
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton("http://www.opengis.net/spec/SOS/1.0/conf/core");
-    
-    private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(TimeOperator.TM_Equals,
-            new TimeInstant(SosIndeterminateTime.latest), "phenomenonTime");
+
+    private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(FilterConstants.TimeOperator.TM_Equals,
+            new TimeInstant(ExtendedIndeterminateTime.LATEST), "phenomenonTime");
 
     private ResponseFormatRepository responseFormatRepository;
 

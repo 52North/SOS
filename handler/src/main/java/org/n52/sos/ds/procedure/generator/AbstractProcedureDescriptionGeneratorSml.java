@@ -94,6 +94,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
     protected static final String POSITION_NAME = "sensorPosition";
     private GeometryHandler geometryHandler;
     private String srsNamePrefix;
+    private ProfileHandler profileHandler;
 
     public AbstractProcedureDescriptionGeneratorSml(ProfileHandler profileHandler,
             GeometryHandler geometryHandler,
@@ -103,6 +104,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
         super(i18NDAORepository, cacheController);
         this.geometryHandler = geometryHandler;
         this.srsNamePrefix = srsNamePrefix;
+        this.profileHandler = profileHandler;
     }
 
     /**
@@ -129,7 +131,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
 
         // 7 set inputs/outputs --> observableProperties
         if (ProcedureRequestSettingProvider.getInstance().isAddOutputsToSensorML() && !"hydrology"
-                .equalsIgnoreCase(ProfileHandler.getInstance().getActiveProfile().getIdentifier())) {
+                .equalsIgnoreCase(profileHandler.getActiveProfile().getIdentifier())) {
             abstractProcess.setInputs(createInputs(getIdentifierList(observableProperties)));
             abstractProcess.setOutputs(createOutputs(procedure, observableProperties, session));
         }

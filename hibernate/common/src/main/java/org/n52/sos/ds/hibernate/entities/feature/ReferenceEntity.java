@@ -31,7 +31,7 @@ package org.n52.sos.ds.hibernate.entities.feature;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.n52.sos.w3c.xlink.Reference;
+import org.n52.shetland.w3c.xlink.Reference;
 
 import com.google.common.base.Strings;
 
@@ -65,7 +65,7 @@ public abstract class ReferenceEntity extends NilReasonEntity {
     public void setHref(String href) {
         this.href = href;
     }
-    
+
     public boolean isSetHref() {
         return !Strings.isNullOrEmpty(getHref());
     }
@@ -88,7 +88,7 @@ public abstract class ReferenceEntity extends NilReasonEntity {
     public boolean isSetType() {
         return !Strings.isNullOrEmpty(getHref());
     }
-    
+
     /**
      * @return the role
      */
@@ -103,7 +103,7 @@ public abstract class ReferenceEntity extends NilReasonEntity {
     public void setRole(String role) {
         this.role = role;
     }
-    
+
     public boolean isSetRole() {
         return !Strings.isNullOrEmpty(getRole());
     }
@@ -122,7 +122,7 @@ public abstract class ReferenceEntity extends NilReasonEntity {
     public void setArcrole(String arcrole) {
         this.arcrole = arcrole;
     }
-    
+
     public boolean isSetArcrole() {
         return !Strings.isNullOrEmpty(getArcrole());
     }
@@ -145,7 +145,7 @@ public abstract class ReferenceEntity extends NilReasonEntity {
     public boolean isSetTitle() {
         return !Strings.isNullOrEmpty(getTitle());
     }
-    
+
     /**
      * @return the show
      */
@@ -160,7 +160,7 @@ public abstract class ReferenceEntity extends NilReasonEntity {
     public void setShow(String show) {
         this.show = show;
     }
-    
+
     public boolean isSetShow() {
         return !Strings.isNullOrEmpty(getShow());
     }
@@ -179,7 +179,7 @@ public abstract class ReferenceEntity extends NilReasonEntity {
     public void setActuate(String actuate) {
         this.actuate = actuate;
     }
-    
+
     public boolean isSetActuate() {
         return !Strings.isNullOrEmpty(getActuate());
     }
@@ -198,11 +198,11 @@ public abstract class ReferenceEntity extends NilReasonEntity {
     public void setRemoteSchema(String remoteSchema) {
         this.remoteSchema = remoteSchema;
     }
-    
+
     public boolean isSetRemoteSchema() {
         return !Strings.isNullOrEmpty(getRemoteSchema());
     }
-    
+
     public Reference createReferenceValues() {
         Reference reference = new Reference();
         if (isSetHref()) {

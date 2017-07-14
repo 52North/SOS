@@ -34,14 +34,14 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.util.QueryHelper;
 
 /**
  * Hibernate data access class for series
@@ -89,7 +89,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
             return getSeriesCriteria(procedures, observedProperties, features, session).list();
         }
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
@@ -118,7 +118,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
             return getSeriesCriteria(observedProperty, features, session).list();
         }
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {

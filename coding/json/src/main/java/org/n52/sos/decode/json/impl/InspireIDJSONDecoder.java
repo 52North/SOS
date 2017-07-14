@@ -26,40 +26,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.json.inspire;
+package org.n52.sos.decode.json.impl;
 
 import org.n52.faroe.Validation;
-import org.n52.shetland.inspire.InspireID;
-import org.n52.sos.util.AQDJSONConstants;
+import org.n52.shetland.inspire.base.Identifier;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.sos.coding.json.AQDJSONConstants;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class InspireIDJSONDecode extends AbstractJSONDecoder<InspireID> {
+public class InspireIDJSONDecoder
+        extends AbstractJSONDecoder<Identifier> {
 
-    public InspireIDJSONDecode() {
-        super(InspireID.class);
+    public InspireIDJSONDecoder() {
+        super(Identifier.class);
     }
 
     @Override
-    public InspireID decodeJSON(JsonNode node, boolean validate) throws DecodingException {
-            InspireID inspireID = new InspireID();
-        inspireID.setNamespace(getNamespace(node));
-        inspireID.setLocalId(getLocalId(node));
-        inspireID.setVersionId(parseNillableString(node.path(AQDJSONConstants.VERSION_ID)));
-        return inspireID;
+    public Identifier decodeJSON(JsonNode node, boolean validate) throws DecodingException {
+        CodeWithAuthority cwa = new CodeWithAuthority(getLocalId(node));
+        cwa.setCodeSpace(getNamespace(node));
+        Identifier Identifier = new Identifier(cwa);
+        Identifier.setVersionId(parseNillableString(node.path(AQDJSONConstants.VERSION_ID)));
+        return Identifier;
     }
 
     private String getNamespace(JsonNode node) throws DecodingException {
         String namespace = node.path(AQDJSONConstants.NAMESPACE).textValue();
-        Validation.notNullOrEmpty("InspireId namespace", namespace);
+        Validation.notNullOrEmpty("Identifier namespace", namespace);
         return namespace;
-     }
+    }
 
     private String getLocalId(JsonNode node) throws DecodingException {
         String localId = node.path(AQDJSONConstants.LOCAL_ID).textValue();
-        Validation.notNullOrEmpty("InspireId localId", localId);
+        Validation.notNullOrEmpty("Identifier localId", localId);
         return localId;
-     }
+    }
 
 }

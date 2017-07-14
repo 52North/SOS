@@ -36,9 +36,6 @@ import java.util.TreeSet;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -59,6 +56,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
@@ -82,6 +80,8 @@ import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.CodingSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -276,7 +276,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
                             logTypeNotSupported(observationType);
                     }
                 }
-                return new SmlIo<String>(new SweObservableProperty().setDefinition(observableProperty));
+                return new SmlIo(new SweObservableProperty().setDefinition(observableProperty));
             }
         }
         return null;

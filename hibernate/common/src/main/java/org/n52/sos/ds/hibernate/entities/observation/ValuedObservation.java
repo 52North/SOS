@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.entities.observation;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnitValue;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
@@ -39,6 +40,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObserv
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
+
 
 /**
  * A {@code ValuedObservation} is a temporal referenced observation that
@@ -61,7 +63,9 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservatio
  * @see TextValuedObservation
  */
 public interface ValuedObservation<T>
-        extends TemporalReferencedObservation, HasUnitValue<T> {
+        extends TemporalReferencedObservation, HasUnitValue<T>, HasWriteableObservationContext {
+
+    abstract String getDiscriminator();
 
     void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport;
 

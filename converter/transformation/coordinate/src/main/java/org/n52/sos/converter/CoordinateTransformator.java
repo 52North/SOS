@@ -47,10 +47,18 @@ import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.MultiObservationValues;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.PointValuePair;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.TimeLocationValueTriple;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.values.CvDiscretePointCoverage;
+import org.n52.shetland.ogc.om.values.MultiPointCoverage;
+import org.n52.shetland.ogc.om.values.TLVTValue;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
@@ -131,41 +139,50 @@ import com.vividsolutions.jts.geom.PrecisionModel;
  * @since 4.1.0
  *
  */
-public class CoordinateTransformator implements RequestResponseModifier, Constructable {
+public class CoordinateTransformator
+        implements RequestResponseModifier, Constructable {
 
     private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+
     private static final int NOT_SET_EPSG = -1;
+
     private static final String EPSG = "EPSG";
+
     private static final String EPSG_PREFIX = EPSG + ":";
+
     private static final String EPSG_PREFIX_DOUBLE_COLON = EPSG + "::";
+
     private Set<String> northingNames = Collections.emptySet();
+
     private Set<String> eastingNames = Collections.emptySet();
+
     private Set<String> altitudeNames = Collections.emptySet();
 
     private void checkResponseObservation(OmObservation omObservation, int targetCRS) throws OwsExceptionReport {
 
-if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature)
-                    checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) omObservation
-                            .getObservationConstellation().getFeatureOfInterest(), targetCRS);
-                }
-                if (omObservation.isSetParameter()) {
-                    checkOmParameterForGeometry(omObservation.getParameter(), targetCRS);
-                }
-                if (omObservation.getValue() instanceof AbstractStreaming) {
-                    ((AbstractStreaming) omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs,
-                            targetCRS);
-                } else if (omObservation.getValue() instanceof MultiObservationValues) {
-                    if (((MultiObservationValues)omObservation.getValue()).getValue() instanceof TLVTValue) {
-                        checkTLVTValueForGeometry((TLVTValue)((MultiObservationValues)omObservation.getValue()).getValue(), targetCRS);
-                    }
-                } else if (omObservation.getValue() instanceof SingleObservationValue) {
-                    SingleObservationValue singleValue = (SingleObservationValue)omObservation.getValue();
-                    if (singleValue.getValue() instanceof CvDiscretePointCoverage) {
-                        checkCvDiscretePointCoverageForGeometry((CvDiscretePointCoverage)singleValue.getValue(),targetCRS);
-                    } else if (((SingleObservationValue)omObservation.getValue()).getValue() instanceof MultiPointCoverage) {
-                        checkMultiPointCoverageForGeometry((MultiPointCoverage)singleValue.getValue(),targetCRS);
-                    }
-                }
+        if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+            checkResponseGeometryOfSamplingFeature(
+                    (AbstractSamplingFeature) omObservation.getObservationConstellation().getFeatureOfInterest(),
+                    targetCRS);
+        }
+        if (omObservation.isSetParameter()) {
+            checkOmParameterForGeometry(omObservation.getParameter(), targetCRS);
+        }
+        if (omObservation.getValue() instanceof AbstractStreaming) {
+            ((AbstractStreaming) omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs, targetCRS);
+        } else if (omObservation.getValue() instanceof MultiObservationValues) {
+            if (((MultiObservationValues) omObservation.getValue()).getValue() instanceof TLVTValue) {
+                checkTLVTValueForGeometry((TLVTValue) ((MultiObservationValues) omObservation.getValue()).getValue(),
+                        targetCRS);
+            }
+        } else if (omObservation.getValue() instanceof SingleObservationValue) {
+            SingleObservationValue singleValue = (SingleObservationValue) omObservation.getValue();
+            if (singleValue.getValue() instanceof CvDiscretePointCoverage) {
+                checkCvDiscretePointCoverageForGeometry((CvDiscretePointCoverage) singleValue.getValue(), targetCRS);
+            } else if (((SingleObservationValue) omObservation.getValue()).getValue() instanceof MultiPointCoverage) {
+                checkMultiPointCoverageForGeometry((MultiPointCoverage) singleValue.getValue(), targetCRS);
+            }
+        }
     }
 
     /**
@@ -191,7 +208,7 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
             services.forEach(service -> {
                 versions.forEach(version -> {
                     keysBuilder.add(new RequestResponseModifierKey(service, version, request),
-                         new RequestResponseModifierKey(service, version, request, response));
+                            new RequestResponseModifierKey(service, version, request, response));
                 });
             });
         });
@@ -265,8 +282,7 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private OwsServiceRequest modifyGetObservationRequest(GetObservationRequest request)
-            throws OwsExceptionReport {
+    private OwsServiceRequest modifyGetObservationRequest(GetObservationRequest request) throws OwsExceptionReport {
         if (request.isSetSpatialFilter()) {
             preProcessSpatialFilter(request.getSpatialFilter());
         }
@@ -318,8 +334,9 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
     private OwsServiceRequest modifyInsertResultTemplateRequest(InsertResultTemplateRequest request)
             throws OwsExceptionReport {
         if (request.getObservationTemplate().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
-            checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) request.getObservationTemplate()
-                    .getFeatureOfInterest(), getGeomtryHandler().getStorageEPSG());
+            checkResponseGeometryOfSamplingFeature(
+                    (AbstractSamplingFeature) request.getObservationTemplate().getFeatureOfInterest(),
+                    getGeomtryHandler().getStorageEPSG());
         }
         return request;
     }
@@ -356,7 +373,8 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
             GetObservationResponse response) throws OwsExceptionReport {
         response.setResponseFormat(request.getResponseFormat());
         int crs = getRequestedCrs(request);
-        response.setObservationCollection(response.getObservationCollection().modify(o -> checkResponseObservation(o, crs)));
+        response.setObservationCollection(
+                response.getObservationCollection().modify(o -> checkResponseObservation(o, crs)));
         return response;
     }
 
@@ -374,7 +392,8 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
     private OwsServiceResponse modifyGetObservationByIdResponse(GetObservationByIdRequest request,
             GetObservationByIdResponse response) throws OwsExceptionReport {
         int crs = getRequestedCrs(request);
-        response.setObservationCollection(response.getObservationCollection().modify(o -> checkResponseObservation(o, crs)));
+        response.setObservationCollection(
+                response.getObservationCollection().modify(o -> checkResponseObservation(o, crs)));
         return response;
     }
 
@@ -398,9 +417,8 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
                     if (sosObservationOffering.isSetObservedArea()) {
                         ReferencedEnvelope observedArea = sosObservationOffering.getObservedArea();
                         int targetSrid = getRequestedCrs(request);
-                        Envelope transformEnvelope =
-                                getGeomtryHandler().transformEnvelope(observedArea.getEnvelope(), observedArea.getSrid(),
-                                                                                              targetSrid);
+                        Envelope transformEnvelope = getGeomtryHandler().transformEnvelope(observedArea.getEnvelope(),
+                                observedArea.getSrid(), targetSrid);
                         observedArea.setEnvelope(transformEnvelope);
                         observedArea.setSrid(targetSrid);
                         sosObservationOffering.setObservedArea(observedArea);
@@ -513,7 +531,8 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
         if (targetCrs != sourceCrs) {
             if (position.isSetPosition()) {
                 position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
-                position.setReferenceFrame(transformReferenceFrame(position.getReferenceFrame(), sourceCrs, targetCrs));
+                position.setReferenceFrame(
+                        transformReferenceFrame(position.getReferenceFrame(), sourceCrs, targetCrs));
             } else if (position.isSetVector()) {
                 SweVector vector = position.getVector();
                 vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
@@ -543,8 +562,9 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
      * @throws OwsExceptionReport
      *             if an error occurs
      */
-    private List<? extends SweCoordinate<? extends Number>> transformSweCoordinates(List<? extends SweCoordinate<? extends Number>> position, int sourceCrs,
-            int targetCrs) throws OwsExceptionReport {
+    private List<? extends SweCoordinate<? extends Number>> transformSweCoordinates(
+            List<? extends SweCoordinate<? extends Number>> position, int sourceCrs, int targetCrs)
+            throws OwsExceptionReport {
         SweCoordinate<? extends Number> altitude = null;
         Number easting = null;
         Number northing = null;
@@ -574,7 +594,8 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
             }
 
             GeometryFactory factory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), sourceCrs);
-            Coordinate coordinate = getGeomtryHandler().transform(factory.createPoint(new Coordinate(x, y)), targetCrs).getCoordinate();
+            Coordinate coordinate = getGeomtryHandler().transform(factory.createPoint(new Coordinate(x, y)), targetCrs)
+                    .getCoordinate();
 
             if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
                 x = coordinate.y;
@@ -583,10 +604,11 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
                 x = coordinate.x;
                 y = coordinate.y;
             }
-            return newPosition;
-            return Stream.of(new SweCoordinate<>(northingName, createSweQuantity(y, SweConstants.Y_AXIS, getLatLongUOM())),
-                             new SweCoordinate<>(eastingName, createSweQuantity(x, SweConstants.X_AXIS, getLatLongUOM())),
-                             altitude)
+            return Stream
+                    .of(new SweCoordinate<>(northingName, createSweQuantity(y, SweConstants.Y_AXIS, getLatLongUOM())),
+                            new SweCoordinate<>(eastingName,
+                                    createSweQuantity(x, SweConstants.X_AXIS, getLatLongUOM())),
+                            altitude)
                     .filter(Objects::nonNull).collect(toList());
         }
         return position;
@@ -676,14 +698,18 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
                     if (capabilities.isSetAbstractDataRecord() && capabilities.getDataRecord().isSetFields()) {
                         for (SweField field : capabilities.getDataRecord().getFields()) {
                             if (SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX.equals(field.getName().getValue())
-                                    && field.getElement() instanceof SweEnvelope
-                                    && !Integer.toString(targetCrs).equals(((SweEnvelope) field.getElement()).getReferenceFrame())) {
+                                    && field.getElement() instanceof SweEnvelope && !Integer.toString(targetCrs)
+                                            .equals(((SweEnvelope) field.getElement()).getReferenceFrame())) {
                                 SweEnvelope envelope = (SweEnvelope) field.getElement();
                                 int sourceCrs = getCrsFromString(envelope.getReferenceFrame());
                                 boolean northingFirst = getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs);
-                                Envelope transformEnvelope = getGeomtryHandler().transformEnvelope(envelope.toEnvelope(), sourceCrs, targetCrs);
-                                SweEnvelope newEnvelope = new SweEnvelope(new ReferencedEnvelope(transformEnvelope, targetCrs), getLatLongUOM(), northingFirst);
-                                newEnvelope.setReferenceFrame(transformReferenceFrame(envelope.getReferenceFrame(), sourceCrs, targetCrs));
+                                Envelope transformEnvelope = getGeomtryHandler()
+                                        .transformEnvelope(envelope.toEnvelope(), sourceCrs, targetCrs);
+                                SweEnvelope newEnvelope =
+                                        new SweEnvelope(new ReferencedEnvelope(transformEnvelope, targetCrs),
+                                                getLatLongUOM(), northingFirst);
+                                newEnvelope.setReferenceFrame(
+                                        transformReferenceFrame(envelope.getReferenceFrame(), sourceCrs, targetCrs));
                                 field.setElement(newEnvelope);
                             }
                         }
@@ -722,7 +748,8 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
      *             If an error occurs when parsing the request
      */
     private int getCrsFrom(OwsServiceRequest request) throws OwsExceptionReport {
-        Optional<?> crsExtension = request.getExtension(OWSConstants.AdditionalRequestParams.crs).map(Extension::getValue);
+        Optional<?> crsExtension =
+                request.getExtension(OWSConstants.AdditionalRequestParams.crs).map(Extension::getValue);
 
         if (crsExtension.isPresent()) {
             return getCrs(crsExtension.get());
@@ -792,15 +819,10 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
             try {
                 return lastIndex == 0 ? Integer.valueOf(crs) : Integer.valueOf(crs.substring(lastIndex + 1));
             } catch (final NumberFormatException nfe) {
-                String parameter =
-                        new StringBuilder().append(SosConstants.GetObservationParams.srsName.name())
-                                .append('/').append(OWSConstants.AdditionalRequestParams.crs.name())
-                                .toString();
-                throw new NoApplicableCodeException()
-                        .causedBy(nfe)
-                        .at(parameter)
-                        .withMessage(
-                                "Error while parsing '%s' parameter! Parameter has to contain EPSG code number", parameter);
+                String parameter = new StringBuilder().append(SosConstants.GetObservationParams.srsName.name())
+                        .append('/').append(OWSConstants.AdditionalRequestParams.crs.name()).toString();
+                throw new NoApplicableCodeException().causedBy(nfe).at(parameter).withMessage(
+                        "Error while parsing '%s' parameter! Parameter has to contain EPSG code number", parameter);
             }
         }
         throw new MissingParameterValueException(OWSConstants.AdditionalRequestParams.crs);
@@ -809,7 +831,7 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
     private boolean checkReferenceFrame(String referenceFrame) {
         char[] charArray = referenceFrame.toCharArray();
         for (int i = 0; i < charArray.length; i++) {
-            if (Character.isDigit(referenceFrame.toCharArray()[i])){
+            if (Character.isDigit(referenceFrame.toCharArray()[i])) {
                 return true;
             }
         }
@@ -858,9 +880,10 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
         if (CollectionHelper.isNotEmpty(observations)) {
             int storageCRS = getGeomtryHandler().getStorageEPSG();
             for (OmObservation omObservation : observations) {
-                if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
-                    AbstractSamplingFeature samplingFeature =
-                            (AbstractSamplingFeature) omObservation.getObservationConstellation().getFeatureOfInterest();
+                if (omObservation.getObservationConstellation()
+                        .getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+                    AbstractSamplingFeature samplingFeature = (AbstractSamplingFeature) omObservation
+                            .getObservationConstellation().getFeatureOfInterest();
                     checkRequestedGeometryOfSamplingFeature(samplingFeature);
                 }
                 if (omObservation.isSetParameter()) {
@@ -887,14 +910,16 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
         }
     }
 
-    private void checkMultiPointCoverageForGeometry(MultiPointCoverage value, int targetCRS) throws OwsExceptionReport {
+    private void checkMultiPointCoverageForGeometry(MultiPointCoverage value, int targetCRS)
+            throws OwsExceptionReport {
         for (PointValuePair pvp : value.getValue()) {
-            pvp.setPoint((Point)getGeomtryHandler().transform(pvp.getPoint(), targetCRS));
+            pvp.setPoint((Point) getGeomtryHandler().transform(pvp.getPoint(), targetCRS));
         }
     }
 
-    private void checkCvDiscretePointCoverageForGeometry(CvDiscretePointCoverage value, int targetCRS) throws OwsExceptionReport {
-        value.getValue().setPoint((Point)getGeomtryHandler().transform(value.getValue().getPoint(), targetCRS));
+    private void checkCvDiscretePointCoverageForGeometry(CvDiscretePointCoverage value, int targetCRS)
+            throws OwsExceptionReport {
+        value.getValue().setPoint((Point) getGeomtryHandler().transform(value.getValue().getPoint(), targetCRS));
     }
 
     private void checkTLVTValueForGeometry(TLVTValue value, int targetCRS) throws OwsExceptionReport {
@@ -912,7 +937,8 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void checkRequestedGeometryOfSamplingFeature(AbstractSamplingFeature samplingFeature) throws OwsExceptionReport {
+    private void checkRequestedGeometryOfSamplingFeature(AbstractSamplingFeature samplingFeature)
+            throws OwsExceptionReport {
         if (samplingFeature.isSetGeometry()) {
             samplingFeature.setGeometry(getGeomtryHandler().transformToStorageEpsg(samplingFeature.getGeometry()));
         }
@@ -981,9 +1007,8 @@ if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceo
         for (NamedValue<?> namedValue : parameters) {
             if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
                 NamedValue<Geometry> spatialFilteringProfileParameter = (NamedValue<Geometry>) namedValue;
-                spatialFilteringProfileParameter.getValue().setValue(
-                        getGeomtryHandler().transform(spatialFilteringProfileParameter.getValue().getValue(),
-                                targetCRS));
+                spatialFilteringProfileParameter.getValue().setValue(getGeomtryHandler()
+                        .transform(spatialFilteringProfileParameter.getValue().getValue(), targetCRS));
             }
         }
     }

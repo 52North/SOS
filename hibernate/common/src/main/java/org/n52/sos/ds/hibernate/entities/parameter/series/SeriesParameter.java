@@ -37,11 +37,11 @@ public abstract class SeriesParameter<T> implements org.n52.sos.ds.hibernate.ent
     private long parameterId;
     private long seriesId;
     private String name;
-    
+
     public SeriesParameter() {
         super();
     }
-    
+
     /**
      * @return the parameterId
      */

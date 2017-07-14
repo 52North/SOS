@@ -32,12 +32,11 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;
 

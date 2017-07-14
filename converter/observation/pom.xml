@@ -11,6 +11,10 @@
     <name>52°North SOS - Observation Converter</name>
     <description>52°North SOS - Observation Converter</description>
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.n52.iceland</groupId>
 			<artifactId>iceland</artifactId>
@@ -20,17 +24,32 @@
             <artifactId>shetland</artifactId>
         </dependency>
         <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
-            <scope>runtime</scope>
-        </dependency>        
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-annotations</artifactId>
+        </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.n52.faroe</groupId>
+            <artifactId>faroe-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.janmayen</groupId>
+            <artifactId>janmayen</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
 </project>

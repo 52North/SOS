@@ -28,19 +28,19 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class FeatureQuantityValuedParameter extends FeatureParameter<Double> implements org.n52.sos.ds.hibernate.entities.parameter.QuantityValuedParameter, HasUnit {
 
     private static final long serialVersionUID = 5179448871942580897L;
     private Double value;
     private Unit unit;
-    
+
     @Override
     public Double getValue() {
         return value;
@@ -75,7 +75,7 @@ public class FeatureQuantityValuedParameter extends FeatureParameter<Double> imp
     public boolean isSetUnit() {
         return getUnit() != null && getUnit().isSetUnit();
     }
-    
+
     @Override
     public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);

@@ -35,7 +35,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.janmayen.i18n.LocalizedString;

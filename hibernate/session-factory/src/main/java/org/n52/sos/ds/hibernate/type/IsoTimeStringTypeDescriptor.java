@@ -51,11 +51,9 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
-import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
-import org.n52.sos.exception.ows.concrete.DateTimeParseException;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.StringHelper;
+import org.n52.shetland.util.DateTimeFormatException;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.DateTimeParseException;
 
 import com.google.common.base.Strings;
 
@@ -73,7 +71,7 @@ public class IsoTimeStringTypeDescriptor implements SqlTypeDescriptor {
         setTimeZone(timeZone);
         setDateFormat(dateFormat);
     }
-    
+
     public IsoTimeStringTypeDescriptor(String timeZone, String dateFormat, boolean useZAsOffset) {
         setTimeZone(timeZone);
         setDateFormat(dateFormat);
@@ -145,7 +143,7 @@ public class IsoTimeStringTypeDescriptor implements SqlTypeDescriptor {
 
     protected Date decode(String s) throws HibernateException {
         try {
-            if (StringHelper.isNotEmpty(s)) {
+            if (!Strings.isNullOrEmpty(s)) {
                 if (dateFormat != null && !dateFormat.isEmpty()) {
                     return DateTimeHelper.parseString2DateTime(s, dateFormat).toDate();
                 }
@@ -164,16 +162,16 @@ public class IsoTimeStringTypeDescriptor implements SqlTypeDescriptor {
                     if (useZAsOffset) {
                         String format =  dateFormat.contains("Z") ? dateFormat.replace("Z", "") : dateFormat;
                         DateTimeFormatter formatter = new DateTimeFormatterBuilder().append(DateTimeFormat.forPattern(format)).appendTimeZoneOffset("Z", true, 2, 4).toFormatter();
-                        return DateTimeHelper.formatDateTime2Formatter(new DateTime(d, timeZone), formatter);
+                        return DateTimeHelper.formatDateTime2FormattedString(new DateTime(d, timeZone), formatter);
                     }
                     return DateTimeHelper.formatDateTime2FormattedString(new DateTime(d, timeZone), dateFormat);
-                    
+
                 } catch (DateTimeFormatException e) {
                     throw new TypeMismatchException(String.format("Error while creating time string for format %s", d));
                 }
             }
             return DateTimeHelper.formatDateTime2IsoString(new DateTime(d, timeZone));
         }
-        return Constants.EMPTY_STRING;
+        return "";
     }
 }

@@ -32,7 +32,7 @@ import com.google.common.base.Strings;
 
 /**
  * Hibernate entity for onlineResource.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.4.0
  *
@@ -58,7 +58,7 @@ public class OnlineResourceEntity extends AbstractCiEntity {
     public void setLinkage(String linkage) {
         this.linkage = linkage;
     }
-    
+
     public boolean isSetLinkage() {
         return !Strings.isNullOrEmpty(getLinkage());
     }
@@ -77,7 +77,7 @@ public class OnlineResourceEntity extends AbstractCiEntity {
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
-    
+
     public boolean isSetProtocol() {
         return !Strings.isNullOrEmpty(getProtocol());
     }
@@ -96,7 +96,7 @@ public class OnlineResourceEntity extends AbstractCiEntity {
     public void setApplicationProfile(String applicationProfile) {
         this.applicationProfile = applicationProfile;
     }
-    
+
     public boolean isSetApplicationProfile() {
         return !Strings.isNullOrEmpty(getApplicationProfile());
     }
@@ -115,7 +115,7 @@ public class OnlineResourceEntity extends AbstractCiEntity {
     public void setFunction(String function) {
         this.function = function;
     }
-    
+
     public boolean isSetFunction() {
         return !Strings.isNullOrEmpty(getFunction());
     }

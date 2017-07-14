@@ -29,12 +29,13 @@
 package org.n52.sos.convert;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
 import org.n52.shetland.inspire.ompr.InspireOMPRConstants;
+import org.n52.shetland.inspire.ompr.Process;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
@@ -42,6 +43,7 @@ import org.n52.shetland.ogc.sensorML.SensorML20Constants;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +81,7 @@ public class InspireOmpr30SensorML20Converter extends AbstractInspireOmpr30Senso
     }
 
     @Override
-    public SosProcedureDescription convert(SosProcedureDescription<?> objectToConvert) throws ConverterException {
+    public SosProcedureDescription<?> convert(SosProcedureDescription<?> objectToConvert) throws ConverterException {
         if (SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL.equals(objectToConvert.getDescriptionFormat())
                 || SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE.equals(objectToConvert.getDescriptionFormat())) {
             return convertSensorML20ToInspireOmpr30(objectToConvert);
@@ -91,8 +93,9 @@ public class InspireOmpr30SensorML20Converter extends AbstractInspireOmpr30Senso
                 objectToConvert.getDescriptionFormat()));
     }
 
-    private SosProcedureDescription convertInspireOmpr30ToSensorML20(SosProcedureDescription objectToConvert) {
-        Process process = (Process) objectToConvert;
+    private SosProcedureDescription<?> convertInspireOmpr30ToSensorML20(SosProcedureDescription<?> objectToConvert) {
+        if (objectToConvert.getProcedureDescription() instanceof Process) {
+        Process process = (Process) objectToConvert.getProcedureDescription();
         PhysicalComponent component = new PhysicalComponent();
         component.setIdentifier(process.getIdentifierCodeWithAuthority());
         SmlIdentifier inspireIdIdentifier = convertInspireIdToIdentification(process.getInspireId());
@@ -118,34 +121,39 @@ public class InspireOmpr30SensorML20Converter extends AbstractInspireOmpr30Senso
         if (process.isSetResponsibleParty()) {
             component.setContact(convertResponsiblePartiesToContacts(process.getResponsibleParty()));
         }
-        return component;
+        return new SosProcedureDescription<AbstractFeature>(component);
+        }
+        return new SosProcedureDescriptionUnknownType(objectToConvert.getIdentifier());
     }
 
-    private SosProcedureDescription convertSensorML20ToInspireOmpr30(SosProcedureDescription objectToConvert) {
-        AbstractProcess abstractProcess = (AbstractProcess) objectToConvert;
-        Process process = new Process();
-        CodeWithAuthority inspireId = convertIdentificationToInspireId(abstractProcess.getIdentifications());
-        if (inspireId != null && inspireId.isSetValue()) {
-            process.setIdentifier(inspireId);
-        } else {
-            process.setIdentifier(abstractProcess.getIdentifierCodeWithAuthority());
-        }
-        if (abstractProcess.isSetDocumentation()) {
-            process.setDocumentation(convertDocumentationToDocumentationCitation(abstractProcess.getDocumentation()));
-        }
-        if (abstractProcess.isSetIdentifications()) {
-            CodeType name = convertIdentifierToName(abstractProcess.getIdentifications());
-            if (name != null) {
-                process.addName(name);
+    private SosProcedureDescription<?> convertSensorML20ToInspireOmpr30(SosProcedureDescription<?> objectToConvert) {
+        if (objectToConvert.getProcedureDescription() instanceof AbstractProcess) {
+            AbstractProcess abstractProcess = (AbstractProcess) objectToConvert.getProcedureDescription();
+            Process process = new Process();
+            CodeWithAuthority inspireId = convertIdentificationToInspireId(abstractProcess.getIdentifications());
+            if (inspireId != null && inspireId.isSetValue()) {
+                process.setIdentifier(inspireId);
+            } else {
+                process.setIdentifier(abstractProcess.getIdentifierCodeWithAuthority());
             }
+            if (abstractProcess.isSetDocumentation()) {
+                process.setDocumentation(convertDocumentationToDocumentationCitation(abstractProcess.getDocumentation()));
+            }
+            if (abstractProcess.isSetIdentifications()) {
+                CodeType name = convertIdentifierToName(abstractProcess.getIdentifications());
+                if (name != null) {
+                    process.addName(name);
+                }
+            }
+            if (abstractProcess.isSetClassifications()) {
+                process.setProcessParameter(convertClassifiersToProcessParameters(abstractProcess.getClassifications()));
+            }
+            if (abstractProcess.isSetContact()) {
+                process.setResponsibleParty(convertContactsToResponsibleParties(abstractProcess.getContact()));
+            }
+            return new SosProcedureDescription<AbstractFeature>(process);
         }
-        if (abstractProcess.isSetClassifications()) {
-            process.setProcessParameter(convertClassifiersToProcessParameters(abstractProcess.getClassifications()));
-        }
-        if (abstractProcess.isSetContact()) {
-            process.setResponsibleParty(convertContactsToResponsibleParties(abstractProcess.getContact()));
-        }
-        return process;
+        return new SosProcedureDescriptionUnknownType(objectToConvert.getIdentifier());
     }
 
 }

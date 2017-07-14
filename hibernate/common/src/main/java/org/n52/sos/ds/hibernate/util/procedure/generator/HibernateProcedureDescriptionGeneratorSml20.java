@@ -33,7 +33,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.OGCConstants;

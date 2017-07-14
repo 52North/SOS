@@ -32,20 +32,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.shetland.ogc.UoM;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.values.ProfileLevel;
+import org.n52.shetland.ogc.om.values.ProfileValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
-import org.n52.sos.ogc.UoM;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.values.ProfileLevel;
-import org.n52.sos.ogc.om.values.ProfileValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,9 +54,9 @@ import com.google.common.collect.Maps;
 
 public class ProfileGeneratorSplitter {
     private static final Logger LOG = LoggerFactory.getLogger(ProfileGeneratorSplitter.class);
-    
+
     public static ProfileValue create(ProfileValuedObservation entity) throws OwsExceptionReport {
-        ProfileValue profileValue = new ProfileValue();
+        ProfileValue profileValue = new ProfileValue("");
         profileValue.setGmlId("pv" + entity.getObservationId());
         UoM uom = null;
         if (entity.isSetLevelUnit()) {
@@ -78,7 +78,7 @@ public class ProfileGeneratorSplitter {
         profileValue.setValue(createProfileLevel(entity));
         return profileValue;
     }
-    
+
     public static SweAbstractDataComponent createValue(ProfileValuedObservation entity) throws OwsExceptionReport {
         return create(entity).asDataRecord();
     }
@@ -120,8 +120,8 @@ public class ProfileGeneratorSplitter {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static QuantityValue getLevelStart(Set<Parameter> parameters) throws OwsExceptionReport {
-        for (Parameter parameter : parameters) {
+    private static QuantityValue getLevelStart(Set<Parameter<?>> parameters) throws OwsExceptionReport {
+        for (Parameter<?> parameter : parameters) {
             if (checkParameterForStartLevel(parameter.getName())) {
                 NamedValue namedValue = parameter.accept(new ValuedParameterVisitor());
                 if (namedValue.getValue() instanceof QuantityValue) {
@@ -136,8 +136,8 @@ public class ProfileGeneratorSplitter {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static QuantityValue getLevelEnd(Set<Parameter> parameters) throws OwsExceptionReport {
-        for (Parameter parameter : parameters) {
+    private static QuantityValue getLevelEnd(Set<Parameter<?>> parameters) throws OwsExceptionReport {
+        for (Parameter<?> parameter : parameters) {
             if (checkParameterForEndLevel(parameter.getName())) {
                 NamedValue namedValue = parameter.accept(new ValuedParameterVisitor());
                 if (namedValue.getValue() instanceof QuantityValue) {

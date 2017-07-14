@@ -36,7 +36,7 @@ import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 
 public interface ProfileValuedObservation extends ValuedObservation<Set<Observation<?>>> {
-    
+
     /**
      * @return the fromLevel
      */
@@ -72,5 +72,5 @@ public interface ProfileValuedObservation extends ValuedObservation<Set<Observat
 
     boolean isSetLevelUnit();
 
-    
+
 }

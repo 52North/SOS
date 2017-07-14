@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.entities.feature;
 
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 public interface GeometryVisitor {
-    
+
     Geometry visit(FeatureOfInterest f) throws OwsExceptionReport;
 
     Geometry visit(Specimen f) throws OwsExceptionReport;

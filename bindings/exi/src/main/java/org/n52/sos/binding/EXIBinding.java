@@ -231,5 +231,4 @@ public class EXIBinding extends SimpleBinding {
         return Collections.singleton(MediaTypes.APPLICATION_EXI);
     }
 
-
 }

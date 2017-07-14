@@ -33,13 +33,13 @@ import com.google.common.base.Strings;
 
 /**
  * Hibernate entity for contact.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.4.0
  *
  */
 public class ContactEntity extends AbstractCiEntity {
-    
+
     private TelephoneEntity phone;
     private AddressEntity address;
     private OnlineResourceEntity onlineResource;
@@ -60,7 +60,7 @@ public class ContactEntity extends AbstractCiEntity {
     public void setPhone(TelephoneEntity phone) {
         this.phone = phone;
     }
-    
+
     public boolean isSetPhone() {
         return getPhone() != null;
     }
@@ -79,7 +79,7 @@ public class ContactEntity extends AbstractCiEntity {
     public void setAddress(AddressEntity address) {
         this.address = address;
     }
-    
+
     public boolean isSetAddress() {
         return getAddress() != null;
     }
@@ -98,7 +98,7 @@ public class ContactEntity extends AbstractCiEntity {
     public void setOnlineResource(OnlineResourceEntity onlineResource) {
         this.onlineResource = onlineResource;
     }
-    
+
     public boolean isSetOnlineResource() {
         return getOnlineResource() != null;
     }
@@ -117,7 +117,7 @@ public class ContactEntity extends AbstractCiEntity {
     public void setHoursOfService(String hoursOfService) {
         this.hoursOfService = hoursOfService;
     }
-    
+
     public boolean isSetHoursOfService() {
         return !Strings.isNullOrEmpty(getHoursOfService());
     }
@@ -136,7 +136,7 @@ public class ContactEntity extends AbstractCiEntity {
     public void setContactInstructions(String contactInstructions) {
         this.contactInstructions = contactInstructions;
     }
-    
+
     public boolean isSetContactInstructions() {
         return !Strings.isNullOrEmpty(getContactInstructions());
     }

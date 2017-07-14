@@ -28,6 +28,11 @@
  */
 package org.n52.sos.exception.sos.concrete;
 
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.ows.exception.CodedOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
+import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateConstants;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *

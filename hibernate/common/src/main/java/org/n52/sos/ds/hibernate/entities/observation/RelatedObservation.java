@@ -29,10 +29,10 @@
 package org.n52.sos.ds.hibernate.entities.observation;
 
 public class RelatedObservation extends AbstractRelation {
-    
+
     private Observation<?> observation;
-    private Observation<?> relatedObservation; 
-    
+    private Observation<?> relatedObservation;
+
     /**
      * @return the observation
      */
@@ -62,7 +62,7 @@ public class RelatedObservation extends AbstractRelation {
     public void setRelatedObservation(Observation<?> relatedObservation) {
         this.relatedObservation = relatedObservation;
     }
-    
+
     public boolean isSetRelatedObservation() {
         return getRelatedObservation() != null;
     }

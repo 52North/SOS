@@ -28,6 +28,9 @@
  */
 package org.n52.sos.event.events;
 
+import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateRequest;
+import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateResponse;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *

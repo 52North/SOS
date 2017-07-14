@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ext.deleteobservation;
+package org.n52.sos.ds;
 
 import java.util.Arrays;
 import java.util.HashSet;

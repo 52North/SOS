@@ -30,8 +30,8 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.sos.request.InsertResultRequest;
-import org.n52.sos.response.InsertResultResponse;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 
 /**
  *

@@ -32,11 +32,10 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.cache.SosContentCache;
 
 /**

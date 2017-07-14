@@ -173,4 +173,9 @@ public abstract class AbstractEReportingObservation<T>
         return this.uncertaintyEstimation != null;
     }
 
+    @Override
+    public String getDiscriminator() {
+        return getPrimaryObservation();
+    }
+
 }

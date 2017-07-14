@@ -28,6 +28,9 @@
  */
 package org.n52.sos.event.events;
 
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
+
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *

@@ -31,6 +31,12 @@ package org.n52.sos.ds;
 import java.util.Collection;
 import java.util.Map;
 
+import org.n52.iceland.ds.DatasourceDaoIdentifier;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.ReferencedEnvelope;
+
 /**
  * Interface for querying featurefInterest data from a data source
  *

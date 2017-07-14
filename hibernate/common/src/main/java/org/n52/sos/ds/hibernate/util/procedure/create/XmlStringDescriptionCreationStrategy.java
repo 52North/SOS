@@ -34,7 +34,6 @@ import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
-
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;

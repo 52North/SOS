@@ -34,11 +34,16 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.sos.ds.procedure.AbstractProcedureConverter;
 
-public abstract class AbstractRelatedProceduresEnrichment<T> extends ProcedureDescriptionEnrichment {
+public abstract class AbstractRelatedProceduresEnrichment<T>
+        extends ProcedureDescriptionEnrichment {
     private T procedure;
+
     private String procedureDescriptionFormat;
+
     private AbstractProcedureConverter<T> converter;
+
     private TimePeriod validTime;
+
     private I18NDAORepository i18NDAORepository;
 
     public AbstractRelatedProceduresEnrichment<T> setProcedure(T procedure) {
@@ -51,28 +56,25 @@ public abstract class AbstractRelatedProceduresEnrichment<T> extends ProcedureDe
         return this;
     }
 
-    public AbstractRelatedProceduresEnrichment<T> setConverter(
-            AbstractProcedureConverter<T> c) {
-        this.converter = checkNotNull(c);
-        return this;
-    }
-
     public AbstractRelatedProceduresEnrichment<T> setValidTime(TimePeriod validTime) {
         this.validTime = validTime;
         return this;
     }
 
+    public AbstractRelatedProceduresEnrichment<T> setConverter(AbstractProcedureConverter<T> converter) {
+        this.converter = converter;
+        return this;
+    }
+
     /**
-     * @param i18ndaoRepository the i18NDAORepository to set
+     * @param i18ndaoRepository
+     *            the i18NDAORepository to set
      */
     public AbstractRelatedProceduresEnrichment<T> setI18NDAORepository(I18NDAORepository i18ndaoRepository) {
         this.i18NDAORepository = i18ndaoRepository;
         return this;
     }
 
-    /**
-     * @return the procedure
-     */
     public T getProcedure() {
         return procedure;
     }
@@ -82,13 +84,6 @@ public abstract class AbstractRelatedProceduresEnrichment<T> extends ProcedureDe
      */
     public String getProcedureDescriptionFormat() {
         return procedureDescriptionFormat;
-    }
-
-    /**
-     * @return the converter
-     */
-    public AbstractProcedureConverter<T> getConverter() {
-        return converter;
     }
 
     /**
@@ -103,6 +98,10 @@ public abstract class AbstractRelatedProceduresEnrichment<T> extends ProcedureDe
      */
     public I18NDAORepository getI18NDAORepository() {
         return i18NDAORepository;
+    }
+
+    public AbstractProcedureConverter<T> getConverter() {
+        return converter;
     }
 
 }

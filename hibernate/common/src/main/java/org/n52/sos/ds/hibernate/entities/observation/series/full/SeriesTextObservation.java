@@ -73,7 +73,7 @@ public class SeriesTextObservation extends AbstractSeriesObservation<String> imp
     public String getValueAsString() {
         return getValue();
     }
-    
+
     @Override
     public void setValueIdentifier(String valueIdentifier) {
         this.valueIdentifier = valueIdentifier;

@@ -122,7 +122,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -402,10 +401,6 @@
             <artifactId>hibernate-datasource-common</artifactId>
             <scope>runtime</scope>
         </dependency>
-            <dependency>
-    		    <groupId>${project.groupId}</groupId>
-    		    <artifactId>hibernate-datasource-h2</artifactId>
-    		</dependency>
 
         <!-- BINDINGS -->
 
@@ -508,26 +503,6 @@
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-sosdo-v20</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-core</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-json</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-hibernate</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-kvp</artifactId>
-            <scope>runtime</scope>
         </dependency>
 
 		<!-- Related offering encoding -->
@@ -667,17 +642,7 @@
         <!-- AQD eReporting -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>coding-aqd-v10</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>core-aqd-v10</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>aqd-split-and-merge</artifactId>
+            <artifactId>aqd-v10</artifactId>
             <scope>runtime</scope>
         </dependency>
         <!-- flexible identifiers -->

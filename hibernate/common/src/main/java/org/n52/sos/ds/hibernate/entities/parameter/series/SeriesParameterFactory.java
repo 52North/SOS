@@ -28,32 +28,33 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter.series;
 
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.CvDiscretePointCoverage;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.MultiPointCoverage;
+import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.ProfileValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
+import org.n52.shetland.ogc.om.values.ReferenceValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TLVTValue;
+import org.n52.shetland.ogc.om.values.TVPValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.TimeRangeValue;
+import org.n52.shetland.ogc.om.values.UnknownValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
-import org.n52.sos.ogc.om.values.MultiPointCoverage;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.ProfileValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
-import org.n52.sos.ogc.om.values.ReferenceValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TLVTValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
-import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.om.values.XmlValue;
-import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class SeriesParameterFactory implements ValueVisitor<ValuedParameter<?>> {
+public class SeriesParameterFactory implements ValueVisitor<ValuedParameter<?>, OwsExceptionReport> {
 
     protected SeriesParameterFactory() {
     }
@@ -182,8 +183,7 @@ public class SeriesParameterFactory implements ValueVisitor<ValuedParameter<?>> 
     }
 
     @Override
-    public ValuedParameter<?> visit(XmlValue value)
-            throws OwsExceptionReport {
+    public ValuedParameter<?> visit(org.n52.shetland.ogc.om.values.XmlValue<?> value) throws OwsExceptionReport {
         return xml();
     }
 
@@ -209,6 +209,11 @@ public class SeriesParameterFactory implements ValueVisitor<ValuedParameter<?>> 
 
     @Override
     public ValuedParameter<?> visit(ProfileValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(TimeRangeValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 

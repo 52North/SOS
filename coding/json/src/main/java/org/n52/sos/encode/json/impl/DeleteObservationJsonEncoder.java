@@ -26,8 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.encode.json.impl;
 
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingServiceParameterException;
+import org.n52.shetland.ogc.ows.exception.MissingVersionParameterException;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
 import org.n52.sos.coding.json.JSONConstants;
@@ -69,7 +73,11 @@ public class DeleteObservationJsonEncoder extends AbstractSosResponseEncoder<Del
                 json.put(JSONConstants.DELETED_OBSERVATION, t.getObservationId());
             }
         }
-        exceptions.throwIfNotEmpty();
+        try {
+            exceptions.throwIfNotEmpty();
+        } catch (CompositeOwsException e) {
+            throw new EncodingException(e);
+        }
     }
 
 }

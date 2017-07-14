@@ -40,7 +40,6 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
-import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorML20Constants;
 import org.n52.shetland.ogc.sensorML.v20.AbstractPhysicalProcess;
 import org.n52.shetland.ogc.sensorML.v20.AbstractProcessV20;

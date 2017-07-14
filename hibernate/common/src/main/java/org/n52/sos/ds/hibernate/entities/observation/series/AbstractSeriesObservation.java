@@ -76,4 +76,6 @@ public abstract class AbstractSeriesObservation<T>
         return isSetSeries() ? getSeries().getProcedure() : null;
     }
 
+
+
 }

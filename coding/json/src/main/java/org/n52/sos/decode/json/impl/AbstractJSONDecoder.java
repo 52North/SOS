@@ -26,18 +26,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.json.inspire;
+package org.n52.sos.decode.json.impl;
 
 import java.net.URI;
 
+import org.n52.shetland.iso.gmd.LocalisedCharacterString;
+import org.n52.shetland.iso.gmd.PT_FreeText;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.util.DateTimeParseException;
 import org.n52.shetland.w3c.Nillable;
 import org.n52.shetland.w3c.xlink.Reference;
 import org.n52.shetland.w3c.xlink.Referenceable;
+import org.n52.sos.coding.json.AQDJSONConstants;
 import org.n52.sos.decode.json.JSONDecoder;
-import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.util.ThrowableFunction;
 import org.n52.svalbard.decode.exception.DecodingException;
 
@@ -51,6 +53,10 @@ public abstract class AbstractJSONDecoder<T> extends JSONDecoder<T> {
 
     protected Nillable<String> parseNillableString(JsonNode node) {
         return parseNillable(node).transform(JsonNode::textValue);
+    }
+
+    protected Nillable<PT_FreeText> parseNillablePTFreeText(JsonNode node) {
+        return parseNillable(node).transform(this::parsePTFreeText);
     }
 
     protected Nillable<JsonNode> parseNillable(JsonNode node) {
@@ -91,6 +97,12 @@ public abstract class AbstractJSONDecoder<T> extends JSONDecoder<T> {
         ref.setTitle(node.path(AQDJSONConstants.TITLE).textValue());
         ref.setType(node.path(AQDJSONConstants.TYPE).textValue());
         return ref;
+    }
+
+    protected PT_FreeText parsePTFreeText(JsonNode node) {
+        PT_FreeText ptFreeText = new PT_FreeText();
+        ptFreeText.addTextGroup(new LocalisedCharacterString(node.textValue()));
+        return ptFreeText;
     }
 
     protected Referenceable<Time> parseReferenceableTime(JsonNode node) {

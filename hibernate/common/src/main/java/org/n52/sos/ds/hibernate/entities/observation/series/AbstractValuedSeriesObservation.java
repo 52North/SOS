@@ -28,7 +28,21 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import org.n52.io.response.dataset.AbstractValue;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.OMHelper;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractValuedObservation;
+import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
+import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 
 /**
  * Abstract implementation of {@link ValuedSeriesObservation}.
@@ -37,7 +51,7 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacy
  * @param <T> the value type
  */
 public abstract class AbstractValuedSeriesObservation<T>
-        extends AbstractValuedLegacyObservation<T>
+        extends AbstractValuedObservation<T>
         implements ValuedSeriesObservation<T> {
 
     private static final long serialVersionUID = -2757686338936995366L;
@@ -56,6 +70,63 @@ public abstract class AbstractValuedSeriesObservation<T>
     @Override
     public boolean isSetSeries() {
         return getSeries() != null;
+    }
+
+    /**
+     * Add {@link AbstractValue} data to {@link OmObservation}
+     *
+     * @param observation
+     *            {@link OmObservation} to add data
+     * @param responseFormat
+     * @throws OwsExceptionReport
+     *             If an error occurs when getting the value
+     */
+    public OmObservation addValuesToObservation(OmObservation observation, String responseFormat)
+            throws OwsExceptionReport {
+        observation.setObservationID(Long.toString(getObservationId()));
+        if (!observation.isSetIdentifier() && isSetIdentifier()) {
+            CodeWithAuthority identifier = new CodeWithAuthority(getIdentifier());
+            if (isSetCodespace()) {
+                identifier.setCodeSpace(getCodespace().getCodespace());
+            }
+            observation.setIdentifier(identifier);
+        }
+        if (!observation.isSetName() && isSetDescription()) {
+            CodeType name = new CodeType(getName());
+            if (isSetCodespace()) {
+                try {
+                    name.setCodeSpace(new URI(getCodespace().getCodespace()));
+                } catch (URISyntaxException e) {
+                    throw new NoApplicableCodeException().causedBy(e).withMessage("Invalid codeSpace value: {}", getCodespace().getCodespace());
+                }
+            }
+            observation.setName(name);
+        }
+        if (!observation.isSetDescription() && isSetDescription()) {
+            observation.setDescription(getDescription());
+        }
+        Value<?> value = accept(new ObservationValueCreator());
+        if (!value.isSetUnit()
+                && observation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty
+                && ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
+                        .isSetUnit()) {
+            value.setUnit( ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
+                        .getUnit());
+        }
+        if (!observation.getObservationConstellation().isSetObservationType()) {
+            observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));
+        }
+        observation.setResultTime(createResutlTime(getResultTime()));
+        observation.setValidTime(createValidTime(getValidTimeStart(), getValidTimeEnd()));
+        if (hasSamplingGeometry()) {
+            observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
+        } else if (isSetLongLat()) {
+            observation.addParameter(createSpatialFilteringProfileParameter(new HibernateGeometryCreator().createGeometry(this)));
+        }
+        addRelatedObservation(observation);
+        addParameter(observation);
+        addValueSpecificDataToObservation(observation, responseFormat);
+        return observation;
     }
 
 }

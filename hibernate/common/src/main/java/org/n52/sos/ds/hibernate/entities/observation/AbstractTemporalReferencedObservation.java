@@ -31,10 +31,24 @@ package org.n52.sos.ds.hibernate.entities.observation;
 import java.util.Date;
 
 import org.joda.time.DateTime;
-
+import org.joda.time.DateTimeZone;
+import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.DateTimeHelper;
+import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterAdder;
+import org.n52.sos.ds.hibernate.util.observation.RelatedObservationAdder;
+import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.util.GmlHelper;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract implementation of {@link TemporalReferencedObservation}.
@@ -111,10 +125,8 @@ public abstract class AbstractTemporalReferencedObservation
     }
 
     /**
-     * Create the phenomenon time from {@link AbstractValue}
+     * Create the phenomenon time
      *
-     * @param abstractValue
-     *            {@link AbstractValue} for get time from
      * @return phenomenon time
      */
     public Time createPhenomenonTime() {
@@ -127,6 +139,57 @@ public abstract class AbstractTemporalReferencedObservation
             phenEndTime = phenStartTime;
         }
         return GmlHelper.createTime(phenStartTime, phenEndTime);
+    }
+
+    /**
+     * Create result time from {@link Date}
+     *
+     * @param date
+     *            {@link Date} to create result time from
+     * @return result time
+     */
+    protected TimeInstant createResutlTime(Date date) {
+        DateTime dateTime = new DateTime(date, DateTimeZone.UTC);
+        return new TimeInstant(dateTime);
+    }
+
+    /**
+     * Create {@link TimePeriod} from {@link Date}s
+     *
+     * @param start
+     *            Start {@link Date}
+     * @param end
+     *            End {@link Date}
+     * @return {@link TimePeriod} or null if {@link Date}s are null
+     */
+    protected TimePeriod createValidTime(Date start, Date end) {
+        // create time element
+        if (start != null && end != null) {
+            final DateTime startTime = new DateTime(start, DateTimeZone.UTC);
+            DateTime endTime = new DateTime(end, DateTimeZone.UTC);
+            return new TimePeriod(startTime, endTime);
+        }
+        return null;
+    }
+
+    protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
+            throws OwsExceptionReport {
+        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
+        final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
+        namedValue.setName(referenceType);
+        // TODO add lat/long version
+        Geometry geometry = samplingGeometry;
+        namedValue.setValue(new GeometryValue(GeometryHandler.getInstance()
+                .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
+        return namedValue;
+    }
+
+    protected void addRelatedObservation(OmObservation observation) throws OwsExceptionReport {
+        new RelatedObservationAdder(observation, this).add();
+    }
+
+    protected void addParameter(OmObservation observation) throws OwsExceptionReport {
+        new ParameterAdder(observation, this).add();
     }
 
 }

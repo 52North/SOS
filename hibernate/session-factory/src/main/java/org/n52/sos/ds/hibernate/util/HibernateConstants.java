@@ -71,7 +71,7 @@ public interface HibernateConstants {
     String THREAD_LOCAL_SESSION_CONTEXT = "thread";
 
     String HBM2DDL_UPDATE = "update";
-    
+
     String HBM2DDL_NONE = "none";
 
     String HBM2DDL_VALIDATE = "validate";
@@ -93,10 +93,10 @@ public interface HibernateConstants {
     String C3P0_MAX_STATEMENTS = AvailableSettings.C3P0_MAX_STATEMENTS;
 
     String C3P0_PREFERRED_TEST_QUERY = "hibernate.c3p0.preferredTestQuery";
-    
+
     /*
      * Default: 0
-     * 
+     *
      * Seconds. If set, if an application checks out but then fails to check-in
      * [i.e. close()] a Connection within the specified period of time, the pool
      * will unceremoniously destroy() the Connection. This permits applications
@@ -115,8 +115,8 @@ public interface HibernateConstants {
     String C3P0_UNRETURNED_CONNECTION_TIMEOUT = "hibernate.c3p0.unreturnedConnectionTimeout";
 
     /*
-     * Default: caller 
-     * 
+     * Default: caller
+     *
      * Must be one of caller, library, or none. Determines how
      * the contextClassLoader (see java.lang.Thread) of c3p0-spawned Threads is
      * determined. If caller, c3p0-spawned Threads (helper threads,
@@ -135,8 +135,8 @@ public interface HibernateConstants {
     String C3P0_CONTEXT_CLASS_LOADER_SOURCE = "hibernate.c3p0.contextClassLoaderSource";
 
     /*
-     * Default: false 
-     * 
+     * Default: false
+     *
      * If true, c3p0-spawned Threads will have the
      * java.security.AccessControlContext associated with c3p0 library classes.
      * By default, c3p0-spawned Threads (helper threads, java.util.Timer
@@ -167,8 +167,6 @@ public interface HibernateConstants {
     String CONNECTION_TEST_ON_BORROW = "hibernate.connection.testOnBorrow";
 
     String MAX_FETCH_DEPTH = AvailableSettings.MAX_FETCH_DEPTH;
-
-    String CONNECION_FINDER = org.hibernate.spatial.HibernateSpatialConfiguration.AvailableSettings.CONNECTION_FINDER;
 
     int LIMIT_EXPRESSION_DEPTH = 1000;
 

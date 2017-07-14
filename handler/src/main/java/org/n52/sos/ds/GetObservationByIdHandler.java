@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.series.db.HibernateSessionStore;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -86,7 +87,7 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
             if (dao != null) {
                 omObservations.addAll(dao.queryObservationsById(request));
             }
-            response.setObservationCollection(omObservations);
+            response.setObservationCollection(ObservationStream.of(omObservations));
             return response;
         } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!");

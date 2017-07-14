@@ -26,13 +26,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.gda;
+package org.n52.sos.request.operator;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.shetland.ogc.ows.exception.CodedOwsException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -41,8 +44,6 @@ import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants.GetDataAvailabi
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.ds.AbstractGetDataAvailabilityHandler;
-import org.n52.sos.request.operator.AbstractRequestOperator;
-import org.n52.sos.request.operator.WSDLAwareRequestOperator;
 import org.n52.sos.wsdl.WSDLOperation;
 
 /**
@@ -136,7 +137,7 @@ public class GetDataAvailabilityOperator
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        
+
         exceptions.throwIfNotEmpty();
     }
 

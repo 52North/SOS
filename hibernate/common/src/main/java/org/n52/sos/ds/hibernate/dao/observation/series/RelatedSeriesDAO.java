@@ -41,9 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RelatedSeriesDAO {
-    
+
 private static final Logger LOGGER = LoggerFactory.getLogger(RelatedSeriesDAO.class);
-    
+
     public List<RelatedSeries> getRelatedSeries(Series series, Session session) {
         return getRelatedSeries(series.getSeriesId(), session);
     }

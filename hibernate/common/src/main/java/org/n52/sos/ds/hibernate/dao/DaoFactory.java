@@ -37,8 +37,10 @@ import java.util.Set;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.EReportingSetting;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationTimeDAO;
@@ -61,7 +63,6 @@ import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObserv
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.shetland.util.EReportingSetting;
 
 /**
  * Hibernate data access factory.
@@ -97,7 +98,7 @@ public class DaoFactory {
             throw new NoApplicableCodeException().withMessage("Implemented series DAO is missing!");
         }
     }
-    
+
     public boolean isSeriesDAO() {
         if (HibernateHelper.isEntitySupported(AbstractEReportingObservation.class)) {
             return true;
@@ -107,7 +108,7 @@ public class DaoFactory {
            return false;
         }
     }
-    
+
 
     /**
      * Get the currently supported Hibernate Observation data access implementation
@@ -155,9 +156,9 @@ public class DaoFactory {
             throw new NoApplicableCodeException().withMessage("Implemented value time DAO is missing!");
         }
     }
-    
+
     public AbstractFeatureOfInterestDAO getFeatureDAO() throws CodedException {
-        return new FeatureOfInterestDAO();
+        return getFeatureOfInterestDAO();
     }
 
     public ProcedureDAO getProcedureDAO() {

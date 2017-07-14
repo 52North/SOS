@@ -32,11 +32,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.n52.janmayen.Producer;
 import org.n52.janmayen.component.AbstractComponentRepository;
 import org.n52.janmayen.lifecycle.Constructable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
 

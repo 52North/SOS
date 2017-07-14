@@ -32,41 +32,41 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.iceland.convert.RequestResponseModifierFacilitator;
+import org.n52.iceland.convert.RequestResponseModifierKey;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.convert.AbstractRequestResponseModifier;
-import org.n52.sos.convert.RequestResponseModifierFacilitator;
-import org.n52.sos.convert.RequestResponseModifierKeyType;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.response.InsertObservationResponse;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class SeriesTypeChecker extends AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+public class SeriesTypeChecker extends AbstractRequestResponseModifier {
 
-    private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
-    private static Set<RequestResponseModifierKeyType> getKeyTypes() {
+    private static Set<RequestResponseModifierKey> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
-        Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
+        Map<OwsServiceRequest, OwsServiceResponse> requestResponseMap = Maps.newHashMap();
 
         requestResponseMap.put(new InsertObservationRequest(), new InsertObservationResponse());
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
-                for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKeyType(service, version, request));
-                    keys.add(new RequestResponseModifierKeyType(service, version, request,
+                for (OwsServiceRequest request : requestResponseMap.keySet()) {
+                    keys.add(new RequestResponseModifierKey(service, version, request));
+                    keys.add(new RequestResponseModifierKey(service, version, request,
                             requestResponseMap.get(request)));
                 }
             }
@@ -75,21 +75,21 @@ public class SeriesTypeChecker extends AbstractRequestResponseModifier<AbstractS
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKey> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
 
     @Override
-    public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
        if (request instanceof InsertObservationRequest) {
            return checkForSeriesType((InsertObservationRequest)request);
        }
        return request;
     }
 
-    private AbstractServiceRequest<?> checkForSeriesType(InsertObservationRequest request) {
+    private OwsServiceRequest checkForSeriesType(InsertObservationRequest request) {
         if (request.hasExtension(Sos2Constants.Extensions.SeriesType)) {
-            SwesExtension<?> seriesType = request.getExtension(Sos2Constants.Extensions.SeriesType);
+            Extension<?> seriesType = request.getExtension(Sos2Constants.Extensions.SeriesType).get();
             for (OmObservation observation : request.getObservations()) {
                 if (seriesType.getValue() instanceof SweText) {
                     observation.setSeriesType(((SweText)seriesType.getValue()).getStringValue());

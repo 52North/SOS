@@ -28,11 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ogc.om.OmObservation;
 
-public abstract class AbstractAdditionalObservationCreator<T extends Series> implements AdditionalObservationCreator<T> {
+public abstract class AbstractAdditionalObservationCreator implements AdditionalObservationCreator {
 
     @Override
     public OmObservation create(OmObservation omObservation, Series series) {

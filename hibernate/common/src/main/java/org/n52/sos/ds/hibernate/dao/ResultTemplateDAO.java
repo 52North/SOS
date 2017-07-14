@@ -39,9 +39,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.hibernate.sql.JoinType;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -52,7 +50,6 @@ import org.n52.shetland.ogc.sos.SosResultStructure;
 import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -60,7 +57,6 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
@@ -69,6 +65,8 @@ import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.svalbard.util.XmlOptionsHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -230,7 +228,7 @@ public class ResultTemplateDAO {
      *            Insert result template request
      * @param observationConstellation
      *            Observation constellation object
-     * @param procedure 
+     * @param procedure
      * @param featureOfInterest
      *            FeatureOfInterest object
      * @param session
@@ -240,17 +238,16 @@ public class ResultTemplateDAO {
      */
     public void checkOrInsertResultTemplate(InsertResultTemplateRequest request,
                                             ObservationConstellation observationConstellation,
-                                            FeatureOfInterest featureOfInterest,
+                                            Procedure procedure,
+                                            AbstractFeatureOfInterest featureOfInterest,
                                             Session session) throws OwsExceptionReport {
         try {
             String offering = observationConstellation.getOffering().getIdentifier();
             String observableProperty = observationConstellation.getObservableProperty().getIdentifier();
-            String procedure = observationConstellation.getProcedure().getIdentifier();
-
 
             List<ResultTemplate> resultTemplates = getResultTemplateObject(offering, observableProperty, null, session);
             if (CollectionHelper.isEmpty(resultTemplates)) {
-                createAndSaveResultTemplate(request, observationConstellation, featureOfInterest, session);
+                createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest, session);
             } else {
                 List<String> storedIdentifiers = new ArrayList<>(0);
 
@@ -264,7 +261,7 @@ public class ResultTemplateDAO {
                             throw new InvalidParameterValueException()
                                     .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
                                     .withMessage("The requested resultStructure is different from already inserted result template for procedure (%s) observedProperty (%s) and offering (%s)!",
-                                                 procedure, observableProperty, offering);
+                                                 procedure.getIdentifier(), observableProperty, offering);
                         }
 
 
@@ -272,12 +269,12 @@ public class ResultTemplateDAO {
                             throw new InvalidParameterValueException()
                                     .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
                                     .withMessage("The requested resultEncoding is different from already inserted result template for procedure (%s) observedProperty (%s) and offering (%s)!",
-                                                 procedure, observableProperty, offering);
+                                                 procedure.getIdentifier(), observableProperty, offering);
                         }
                 }
                 if (request.getIdentifier() != null && !storedIdentifiers.contains(request.getIdentifier())) {
                     /* save it only if the identifier is different */
-                    createAndSaveResultTemplate(request, observationConstellation, featureOfInterest, session);
+                    createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest, session);
                 }
 
             }
@@ -296,7 +293,7 @@ public class ResultTemplateDAO {
      *            Insert result template request
      * @param observationConstellation
      *            Observation constellation object
-     * @param procedure 
+     * @param procedure
      * @param featureOfInterest
      *            FeatureOfInterest object
      * @param session

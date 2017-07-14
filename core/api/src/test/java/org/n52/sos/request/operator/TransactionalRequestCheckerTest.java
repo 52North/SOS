@@ -28,17 +28,16 @@
  */
 package org.n52.sos.request.operator;
 
-import static org.n52.iceland.util.HasStatusCode.hasStatusCode;
-
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
+import org.n52.iceland.util.HasStatusCode;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.net.IPAddress;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
 import com.vividsolutions.jts.io.ParseException;
@@ -160,8 +159,6 @@ public class TransactionalRequestCheckerTest {
         new TransactionalRequestChecker(tsc).check(null);
     }
 
-    private RequestContext getRequestContextIp(boolean validIp) {
-        RequestContext requestContext = new RequestContext();
     private OwsServiceRequestContext getRequestContextIp(boolean validIp) {
         OwsServiceRequestContext requestContext = new OwsServiceRequestContext();
         requestContext.setIPAddress(validIp ? IP : INVALID_IP);

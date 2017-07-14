@@ -26,11 +26,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.json.inspire;
+package org.n52.sos.decode.json.impl;
 
-import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.inspire.Spelling;
-import org.n52.sos.util.AQDJSONConstants;
+import org.n52.sos.coding.json.AQDJSONConstants;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

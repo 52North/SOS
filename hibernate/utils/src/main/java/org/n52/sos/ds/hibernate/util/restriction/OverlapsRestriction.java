@@ -64,9 +64,4 @@ public class OverlapsRestriction implements TemporalRestriction {
                                 Restrictions.lt(selfEnd, otherEnd));
     }
 
-
-    @Override
-    protected void writeAddtitionalNamespaces() throws XMLStreamException {
-        // nothing to write
-    }
 }

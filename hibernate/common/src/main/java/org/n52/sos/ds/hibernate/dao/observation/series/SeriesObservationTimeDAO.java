@@ -34,12 +34,11 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 
@@ -65,7 +64,7 @@ public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
     private Criteria createCriteriaFor(Class<?> clazz, Series series,
             Session session) {
         final Criteria criteria = session.createCriteria(clazz)
-                .add(Restrictions.eq(TemporalReferencedLegacyObservation.DELETED, false))
+                .add(Restrictions.eq(AbstractTemporalReferencedObservation.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         criteria.add(Restrictions.eq(TemporalReferencedSeriesObservation.SERIES, series));
         return criteria;
@@ -94,7 +93,7 @@ public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
                 .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
         return criteria;
     }
-	
+
 	public Criteria getOfferingMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(
                 Series series, Collection<String> offerings, Session session) {
         Criteria criteria = createCriteriaFor(TemporalReferencedSeriesObservation.class,

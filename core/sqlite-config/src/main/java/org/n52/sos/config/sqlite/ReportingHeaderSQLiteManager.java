@@ -26,22 +26,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.inspire.aqd.persistence;
-
-
+package org.n52.sos.config.sqlite;
 
 import javax.inject.Inject;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.shetland.aqd.ReportObligation;
-import org.n52.shetland.aqd.ReportObligationType;
-import org.n52.shetland.inspire.RelatedParty;
 import org.n52.janmayen.Json;
 import org.n52.janmayen.function.ThrowingFunction;
+import org.n52.shetland.aqd.ReportObligation;
+import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.inspire.base2.RelatedParty;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.config.sqlite.AbstractSQLiteDao;
+import org.n52.sos.config.sqlite.entities.JSONFragment;
 import org.n52.sos.encode.json.JSONEncoderKey;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderRepository;

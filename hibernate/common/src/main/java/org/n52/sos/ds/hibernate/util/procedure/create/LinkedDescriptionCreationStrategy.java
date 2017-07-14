@@ -36,9 +36,6 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
@@ -46,6 +43,8 @@ import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.XmlHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 

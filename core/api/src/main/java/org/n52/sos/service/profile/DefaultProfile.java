@@ -139,6 +139,11 @@ public class DefaultProfile implements Profile {
     }
 
     @Override
+    public Map<String, Boolean> getEncodeProcedureInObservation() {
+        return encodeProcedureInObservation;
+    }
+
+    @Override
     public boolean isReturnLatestValueIfTemporalFilterIsMissingInGetObservation() {
         return DEAFULT_RETURN_LATEST_VALUE_IF_TEMPORAL_FILTER_IS_MISSING_IN_GETOBSERVATION;
     }
@@ -176,11 +181,6 @@ public class DefaultProfile implements Profile {
     @Override
     public Set<String> getNoDataPlaceholder() {
         return defaultNoDataPlaceholder;
-    }
-
-    @Override
-    public boolean isSetNoDataPlaceholder() {
-        return defaultNoDataPlaceholder != null && !defaultNoDataPlaceholder.isEmpty();
     }
 
     @Override

@@ -93,7 +93,7 @@ public class SosGetFeatureOfInterestOperatorV20
             exceptions.add(owse);
         }
         try {
-            checkQueryableProcedureIDs(request.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
+            checkQueryableProcedures(request.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
             // add instance and child procedures to request
             if (request.isSetProcedures()) {
                 request.setProcedures(addChildProcedures(addInstanceProcedures(request.getProcedures())));

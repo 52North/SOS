@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation;
 
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
@@ -38,7 +39,6 @@ import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * TODO JavaDoc
@@ -64,7 +64,7 @@ public interface ObservationVisitor<T> {
     T visit(TextObservation o) throws OwsExceptionReport;
 
     T visit(SweDataArrayObservation o) throws OwsExceptionReport;
-    
+
     T visit(ProfileObservation o)
             throws OwsExceptionReport;
 

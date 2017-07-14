@@ -45,6 +45,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.internal.util.config.ConfigurationException;
 import org.hibernate.mapping.Table;
+import org.hibernate.spatial.HibernateSpatialConfiguration;
 import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
@@ -130,7 +131,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     @Override
     public Properties getDatasourceProperties(Map<String, Object> settings) {
          Properties p = super.getDatasourceProperties(settings);
-         p.put(HibernateConstants.CONNECION_FINDER, OracleC3P0ConnectionFinder.class.getName());
+         p.put(HibernateSpatialConfiguration.AvailableSettings.CONNECTION_FINDER, OracleC3P0ConnectionFinder.class.getName());
          return p;
     }
 

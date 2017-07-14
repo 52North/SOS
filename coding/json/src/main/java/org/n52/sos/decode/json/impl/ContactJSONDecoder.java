@@ -26,12 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.json.inspire;
+package org.n52.sos.decode.json.impl;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.shetland.inspire.Contact;
 import org.n52.shetland.inspire.ad.AddressRepresentation;
-import org.n52.sos.util.AQDJSONConstants;
+import org.n52.shetland.inspire.base2.Contact;
+import org.n52.sos.coding.json.AQDJSONConstants;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -45,13 +45,13 @@ public class ContactJSONDecoder extends AbstractJSONDecoder<Contact> {
     public Contact decodeJSON(JsonNode node, boolean validate)
             throws DecodingException {
         Contact contact = new Contact();
-        contact.setAddressRepresentation(decodeJsonToNillable(node
+        contact.setAddress(decodeJsonToNillable(node
                                             .path(AQDJSONConstants.ADDRESS), AddressRepresentation.class));
-        contact.setContactInstructions(parseNillableString(node
+        contact.setContactInstructions(parseNillablePTFreeText(node
                 .path(AQDJSONConstants.CONTACT_INSTRUCTIONS)));
-        contact.setElectronicMailAddressRepresentation(parseNillableString(node
+        contact.setElectronicMailAddress(parseNillableString(node
                 .path(AQDJSONConstants.ELECTRONIC_MAIL_ADDRESS)));
-        contact.setHoursOfService(parseNillableString(node
+        contact.setHoursOfService(parseNillablePTFreeText(node
                 .path(AQDJSONConstants.HOURS_OF_SERVICE)));
         contact.setWebsite(parseNillableString(node
                 .path(AQDJSONConstants.WEBSITE)));

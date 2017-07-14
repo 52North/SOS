@@ -32,6 +32,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
@@ -49,7 +51,7 @@ import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.exception.ows.concrete.DuplicateIdentifierException;
-import org.n52.sos.service.ServiceSettings;
+import org.n52.sos.service.SosSettings;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 import org.n52.svalbard.ConformanceClasses;
@@ -67,12 +69,12 @@ public class SosInsertResultTemplateOperatorV20
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_RESULT_INSERTION);
     private boolean allowTemplateWithoutProcedureAndFeature = false;
-    
+
     public SosInsertResultTemplateOperatorV20() {
         super(OPERATION_NAME, InsertResultTemplateRequest.class);
     }
-    
-    @Setting(ServiceSettings.ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE)
+
+    @Setting(SosSettings.ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE)
     public void setAllowTemplateWithoutProcedureAndFeature(boolean allowTemplateWithoutProcedureAndFeature) {
         this.allowTemplateWithoutProcedureAndFeature = allowTemplateWithoutProcedureAndFeature;
     }

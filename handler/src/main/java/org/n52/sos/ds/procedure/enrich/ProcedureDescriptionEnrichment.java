@@ -53,6 +53,7 @@ import com.google.common.collect.Lists;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public abstract class ProcedureDescriptionEnrichment {
+
     private static final IsApplicable IS_APPLICABLE = new IsApplicable();
     private SosProcedureDescription<?> description;
     private String version;
@@ -76,15 +77,13 @@ public abstract class ProcedureDescriptionEnrichment {
         Collection<SosOffering> offerings = Lists
                 .newArrayListWithCapacity(identifiers.size());
         for (String offering : identifiers) {
-            if (getCache().getPublishedOfferings().contains(offering)) {
-                SosOffering sosOffering = new SosOffering(offering, false);
-                // add offering name
-                I18NHelper.addOfferingNames(sosOffering, getLocale());
-                // add offering description
-                I18NHelper.addOfferingDescription(sosOffering, getLocale());
-                // add to list
-                offerings.add(sosOffering);
-            }
+            SosOffering sosOffering = new SosOffering(offering, false);
+            // add offering name
+            I18NHelper.addOfferingNames(getCache(), sosOffering, getLocale(), getLocale(), showAllLanguageValues);
+            // add offering description
+            I18NHelper.addOfferingDescription(sosOffering, getLocale(), getLocale(), getCache());
+            // add to list
+            offerings.add(sosOffering);
         }
         return offerings;
     }
@@ -154,5 +153,5 @@ public abstract class ProcedureDescriptionEnrichment {
         public boolean apply(ProcedureDescriptionEnrichment input) {
             return input.isApplicable();
         }
-    }
+}
 }

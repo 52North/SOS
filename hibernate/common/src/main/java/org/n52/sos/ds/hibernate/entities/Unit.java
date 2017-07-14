@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
+import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 
 import com.google.common.base.Strings;
@@ -49,9 +50,9 @@ public class Unit implements Serializable {
     private long unitId;
 
     private String unit;
-    
+
     private String name;
-    
+
     private String link;
 
     public long getUnitId() {
@@ -89,9 +90,9 @@ public class Unit implements Serializable {
     }
 
     public boolean isSetName() {
-        return StringHelper.isNotEmpty(getName());
+        return !Strings.isNullOrEmpty(getName());
     }
-    
+
     /**
      * @return the link
      */
@@ -105,9 +106,9 @@ public class Unit implements Serializable {
     public void setLink(String link) {
         this.link = link;
     }
-    
+
     public boolean isSetLink() {
-        return StringHelper.isNotEmpty(getLink());
+        return !Strings.isNullOrEmpty(getLink());
     }
 
 }

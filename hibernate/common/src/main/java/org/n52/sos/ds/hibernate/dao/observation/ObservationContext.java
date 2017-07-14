@@ -53,7 +53,7 @@ public class ObservationContext {
     private Procedure procedure;
     private Offering offering;
     private String seriesType;
-    private boolean hiddenChild = false; 
+    private boolean hiddenChild = false;
 
     /**
      * @return the featureOfInterest
@@ -111,7 +111,7 @@ public class ObservationContext {
     public boolean isSetProcedure() {
         return getProcedure() != null;
     }
-    
+
     /**
      * @return the offering
      */
@@ -125,7 +125,7 @@ public class ObservationContext {
     public void setOffering(Offering offering) {
         this.offering = offering;
     }
-    
+
     public boolean isSetOffering() {
         return getOffering() != null;
     }
@@ -172,15 +172,15 @@ public class ObservationContext {
     public void setSeriesType(String seriesType) {
         this.seriesType = seriesType;
     }
-    
+
     public String getSeriesType() {
         return this.seriesType;
     }
-    
+
     public boolean isSetSeriesType() {
         return !Strings.isNullOrEmpty(getSeriesType());
     }
-    
+
     public void setHiddenChild(boolean hiddenChild) {
         this.hiddenChild = hiddenChild;
     }

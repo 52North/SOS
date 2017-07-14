@@ -30,16 +30,21 @@ package org.n52.sos.ds.hibernate.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 
 import org.hibernate.Session;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
@@ -54,7 +59,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyNumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesNumericObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 
 /**
@@ -88,7 +93,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     @Test
     public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
         ObservationStream resultList =
-                HibernateObservationUtilities.createSosObservationsFromObservations(null, null, null, null, null, null, null);
+                HibernateObservationUtilities.createSosObservationFromObservationConstellation(null, null, null, null, null, null, null, null, null);
         assertThat("result is null", resultList, is(not(nullValue())));
         assertThat("elements in list", resultList.hasNext(), is(false));
     }
@@ -114,7 +119,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             ObservationConstellation hObservationConstellation = new ObservationConstellation();
             Codespace hCodespace = new Codespace();
             Procedure hProcedure = new Procedure();
-            LegacyNumericObservation hObservation = new LegacyNumericObservation();
+            SeriesNumericObservation hObservation = new SeriesNumericObservation();
 
             hProcedureDescriptionFormat.setProcedureDescriptionFormat(PROCEDURE_DESCRIPTION_FORMAT);
             hCodespace.setCodespace(CODESPACE);
@@ -158,7 +163,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             // CALL
             ObservationStream resultList =
                     HibernateObservationUtilities.createSosObservationsFromObservations(observationsFromDataBase,
-                            request, null, null, null, new DaoFactory(), session);
+                            request, null, null, null null, new DaoFactory(), session);
             // TEST RESULTS
             assertThat(resultList, is(notNullValue()));
             assertThat(resultList.hasNext(), is(true));

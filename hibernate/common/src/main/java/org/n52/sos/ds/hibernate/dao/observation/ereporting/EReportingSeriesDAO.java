@@ -35,7 +35,6 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -43,6 +42,7 @@ import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
@@ -50,7 +50,7 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.util.QueryHelper;
 
 public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
@@ -67,16 +67,6 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
         return getSeriesCriteria(request, features, session).list();
-    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
-        if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
-            for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
-                series.addAll(getSeriesCriteria(request, ids, session).list());
-            }
-            return series;
-        } else {
-            return getSeriesCriteria(request, features, session).list();
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -98,7 +88,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
             return getSeriesCriteria(observedProperty, features, session).list();
         }
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
@@ -127,7 +117,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
             return getSeriesCriteria(procedures, observedProperties, features, session).list();
         }
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,

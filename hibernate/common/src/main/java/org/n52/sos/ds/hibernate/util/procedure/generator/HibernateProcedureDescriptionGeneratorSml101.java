@@ -34,7 +34,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-
 import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;

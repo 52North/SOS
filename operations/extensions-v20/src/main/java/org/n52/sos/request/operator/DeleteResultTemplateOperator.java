@@ -28,22 +28,20 @@
  */
 package org.n52.sos.request.operator;
 
-import com.google.common.collect.Sets;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
+
+import org.n52.iceland.request.operator.RequestOperator;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateConstants;
+import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateRequest;
+import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateResponse;
 import org.n52.sos.ds.AbstractDeleteResultTemplateHandler;
-import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.ResultTemplatesDeletion;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.DeleteResultTemplateRequest;
-import org.n52.sos.response.DeleteResultTemplateResponse;
 
 /**
  * {@code IRequestOperator} to handle {@link DeleteResultTemplateRequest}s.
@@ -53,14 +51,10 @@ import org.n52.sos.response.DeleteResultTemplateResponse;
  * @since 4.0.0
  */
 public class DeleteResultTemplateOperator
-        extends 
+        extends
         AbstractTransactionalRequestOperator<AbstractDeleteResultTemplateHandler, DeleteResultTemplateRequest,
         DeleteResultTemplateResponse>
         implements RequestOperator {
-
-    private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet(
-            DeleteResultTemplateConstants.CONFORMANCE_CLASS_INSERTION,
-            DeleteResultTemplateConstants.CONFORMANCE_CLASS_RETRIEVAL);
 
     /**
      * Constructs a new {@code DeleteResultTemplateOperator}.
@@ -73,21 +67,16 @@ public class DeleteResultTemplateOperator
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
-    }
-
-    @Override
     public DeleteResultTemplateResponse receive(
             DeleteResultTemplateRequest request) throws OwsExceptionReport {
-        DeleteResultTemplateResponse response = 
-                getDao().deleteResultTemplates(request);
-        SosEventBus.fire(new ResultTemplatesDeletion(request, response));
+        DeleteResultTemplateResponse response =
+                getOperationHandler().deleteResultTemplates(request);
+        getServiceEventBus().submit(new ResultTemplatesDeletion(request, response));
         return response;
     }
 
     @Override
-    protected void checkParameters(DeleteResultTemplateRequest request) 
+    protected void checkParameters(DeleteResultTemplateRequest request)
             throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
 
@@ -106,7 +95,7 @@ public class DeleteResultTemplateOperator
         checkInvalidAllParameters(request, exceptions);
         checkResultTemplates(request, exceptions);
         checkObservedPropertyOfferingPairs(request, exceptions);
-        
+
         exceptions.throwIfNotEmpty();
     }
 
@@ -147,7 +136,7 @@ public class DeleteResultTemplateOperator
                     "resultTemplate XOR offering and observedProperty."));
         }
     }
-    
+
     private void checkInvalidAllParameters(DeleteResultTemplateRequest request,
             CompositeOwsException exceptions) {
         if (request.isSetResultTemplates() &&

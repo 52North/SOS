@@ -35,18 +35,18 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.util.QueryHelper;
 
 
 public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
@@ -105,9 +105,9 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<SeriesObservation<?>> getSeriesObservationForSosIndeterminateTimeFilter(Series series,
+    public List<SeriesObservation<?>> getSeriesObservationForExtendedIndeterminateTimeFilter(Series series,
             List<String> offerings, IndeterminateValue sosIndeterminateTime, Session session) {
-        return getSeriesObservationCriteriaForSosIndeterminateTimeFilter(series, offerings, sosIndeterminateTime, session).list();
+        return getSeriesObservationCriteriaForIndeterminateTimeFilter(series, offerings, sosIndeterminateTime, session).list();
     }
 
     /**
@@ -228,4 +228,5 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation sosObservation) {
         return c;
     }
+
 }

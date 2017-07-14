@@ -33,9 +33,6 @@ import java.io.InputStream;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -43,6 +40,8 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.service.Configurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;

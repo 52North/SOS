@@ -59,7 +59,8 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
 
     private final DaoFactory daoFactory;
 
-    public RelatedProceduresEnrichment(DaoFactory daoFactory) {
+    public RelatedProceduresEnrichment(
+            DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
 

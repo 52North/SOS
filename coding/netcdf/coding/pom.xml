@@ -58,7 +58,11 @@
 		<dependency>
 			<groupId>edu.ucar</groupId>
 			<artifactId>netcdf4</artifactId>
-		</dependency>   
+		</dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>cdm</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>

@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode;
+package org.n52.sos.decode.kvp.v2;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -42,7 +42,6 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
@@ -107,8 +106,8 @@ public class DeleteObservationKvpDecoderTest {
         instance.decode(evolvingMap);
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters5() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters5() throws DecodingException {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(2);
         evolvingMap.put("service", SOS);
         evolvingMap.put("request", OPERATION_NAME);
@@ -164,18 +163,18 @@ public class DeleteObservationKvpDecoderTest {
         assertThat(decodedRequest.getOperationName(), is(OPERATION_NAME));
         assertThat(decodedRequest.getObservationIdentifiers().iterator().next(), is(observationIdentifier));
     }
-    
+
     @Test
-    public void should_decode_valid_request_2() throws OwsExceptionReport {
+    public void should_decode_valid_request_2() throws DecodingException {
         HashMap<String, String> parameters = new HashMap<String, String>(4);
         parameters.put("service", SOS);
         parameters.put("version", Sos2Constants.SERVICEVERSION);
         parameters.put("request", OPERATION_NAME);
-        parameters.put(PARAM_PROCEDURE, "procedure");
-        parameters.put(PARAM_FEATURE_OF_INTEREST, "feature");
-        parameters.put(PARAM_OBSERVED_PROPERTY, "observedProperty");
-        parameters.put(PARAM_OFFERING, "offering");
-        parameters.put(PARAM_TEMPORAL_FILTER, "om:phenomeonTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00");
+        parameters.put(DeleteObservationConstants.PARAM_PROCEDURE, "procedure");
+        parameters.put(DeleteObservationConstants.PARAM_FEATURE_OF_INTEREST, "feature");
+        parameters.put(DeleteObservationConstants.PARAM_OBSERVED_PROPERTY, "observedProperty");
+        parameters.put(DeleteObservationConstants.PARAM_OFFERING, "offering");
+        parameters.put(DeleteObservationConstants.PARAM_TEMPORAL_FILTER, "om:phenomeonTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00");
 
         DeleteObservationRequest decodedRequest = instance.decode(parameters);
 

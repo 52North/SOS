@@ -28,8 +28,8 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.response.InsertResultTemplateResponse;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 
 /**
  *

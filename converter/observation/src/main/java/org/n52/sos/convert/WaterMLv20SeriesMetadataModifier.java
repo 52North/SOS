@@ -31,46 +31,49 @@ package org.n52.sos.convert;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.series.wml.WaterMLConstants;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.response.AbstractObservationResponse;
-import org.n52.sos.response.GetObservationByIdResponse;
-import org.n52.sos.response.GetObservationResponse;
+import org.n52.iceland.convert.RequestResponseModifierKey;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.ows.service.ResponseFormat;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Sets;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
+ *         J&uuml;rrens</a>
  *
  */
-public class WaterMLv20SeriesMetadataModifier extends AbstractRequestResponseModifier<AbstractObservationRequest, AbstractObservationResponse> {
-    
-    private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = Sets.newHashSet(
-            new RequestResponseModifierKeyType(SosConstants.SOS,
-                    Sos2Constants.SERVICEVERSION,
-                    new GetObservationRequest(),
+public class WaterMLv20SeriesMetadataModifier
+        extends AbstractRequestResponseModifier {
+
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = Sets.newHashSet(
+            new RequestResponseModifierKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, new GetObservationRequest(),
                     new GetObservationResponse()),
-            new RequestResponseModifierKeyType(SosConstants.SOS,
-                    Sos2Constants.SERVICEVERSION,
-                    new GetObservationByIdRequest(),
-                    new GetObservationByIdResponse()));
+            new RequestResponseModifierKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                    new GetObservationByIdRequest(), new GetObservationByIdResponse()));
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKey> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
 
     @Override
-    public AbstractObservationResponse modifyResponse(AbstractObservationRequest request, AbstractObservationResponse response)
+    public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
-        if (isWaterMLResponse(response) && !response.getObservationCollection().isEmpty()) {
-            for (OmObservation omObservation : response.getObservationCollection()) {
+        if (isWaterMLResponse(response) && response instanceof AbstractObservationResponse) {
+            while (((AbstractObservationResponse) response).getObservationCollection().hasNext()) {
+                OmObservation omObservation =
+                        ((AbstractObservationResponse) response).getObservationCollection().next();
                 if (!omObservation.isSetValue()) {
                     continue;
                 }
@@ -78,18 +81,17 @@ public class WaterMLv20SeriesMetadataModifier extends AbstractRequestResponseMod
                     omObservation.getValue().setDefaultPointMetadata(
                             omObservation.getObservationConstellation().getDefaultPointMetadata());
                 }
-                if(omObservation.getObservationConstellation().isSetMetadata()) {
-                    omObservation.getValue().setMetadata(
-                            omObservation.getObservationConstellation().getMetadata());
+                if (omObservation.getObservationConstellation().isSetMetadata()) {
+                    omObservation.getValue().setMetadata(omObservation.getObservationConstellation().getMetadata());
                 }
             }
         }
         return super.modifyResponse(request, response);
     }
 
-    private boolean isWaterMLResponse(AbstractObservationResponse response) {
-        return response.isSetResponseFormat() && response.getResponseFormat().equals(WaterMLConstants.NS_WML_20);
+    private boolean isWaterMLResponse(OwsServiceResponse response) {
+        return response instanceof ResponseFormat && ((ResponseFormat) response).isSetResponseFormat()
+                && ((ResponseFormat) response).getResponseFormat().equals(WaterMLConstants.NS_WML_20);
     }
-
 
 }

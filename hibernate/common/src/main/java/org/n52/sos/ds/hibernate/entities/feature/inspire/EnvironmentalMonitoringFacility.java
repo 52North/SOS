@@ -28,11 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.entities.feature.inspire;
 
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureVisitor;
 import org.n52.sos.ds.hibernate.entities.feature.GeometryVisitor;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -41,9 +41,9 @@ public class EnvironmentalMonitoringFacility extends FeatureOfInterest {
     private static final long serialVersionUID = -4612931300484622090L;
 
     private MediaMonitored mediaMonitored;
-    
+
     private String measurementRegime;
-    
+
     private boolean mobile;
 
     /**
@@ -87,7 +87,7 @@ public class EnvironmentalMonitoringFacility extends FeatureOfInterest {
     public void setMobile(boolean mobile) {
         this.mobile = mobile;
     }
-    
+
     @Override
     public AbstractFeature accept(FeatureVisitor visitor) throws OwsExceptionReport {
         return visitor.visit(this);

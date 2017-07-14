@@ -36,7 +36,7 @@ import com.google.common.base.Strings;
 
 /**
  * Helper class for the {@link PrefixedIdentifierModifier}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *

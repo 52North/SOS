@@ -28,16 +28,13 @@
  */
 package org.n52.sos.request.operator;
 
-import java.util.Collections;
-import java.util.Set;
-
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
+import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.util.SosHelper;
 
 public class AqdDescribeSensorOperatorV10
@@ -71,7 +68,7 @@ public class AqdDescribeSensorOperatorV10
             exceptions.add(owse);
         }
         try {
-            checkProcedureID(request.getProcedure(),
+            checkProcedure(request.getProcedure(),
                     SosConstants.DescribeSensorParams.procedure.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);

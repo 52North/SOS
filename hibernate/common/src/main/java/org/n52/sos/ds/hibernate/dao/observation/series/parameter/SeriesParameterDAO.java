@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 public class SeriesParameterDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesParameterDAO.class);
-    
+
     public List<Parameter> getSeriesParameter(Series series, Session session) {
         return getSeriesParameter(series.getSeriesId(), session);
     }
@@ -64,5 +64,5 @@ public class SeriesParameterDAO {
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
-        
+
 }

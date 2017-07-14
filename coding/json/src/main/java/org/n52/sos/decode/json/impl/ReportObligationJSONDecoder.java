@@ -26,29 +26,28 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.json.inspire;
+package org.n52.sos.decode.json.impl;
 
-import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.aqd.EReportingChange;
 import org.n52.shetland.aqd.ReportObligation;
-import org.n52.shetland.inspire.InspireID;
-import org.n52.sos.util.AQDJSONConstants;
+import org.n52.shetland.inspire.base.Identifier;
+import org.n52.sos.coding.json.AQDJSONConstants;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-
-public class ReportObligationJSONDecoder extends AbstractJSONDecoder<ReportObligation> {
+public class ReportObligationJSONDecoder
+        extends AbstractJSONDecoder<ReportObligation> {
 
     public ReportObligationJSONDecoder() {
         super(ReportObligation.class);
     }
 
     @Override
-    public ReportObligation decodeJSON(JsonNode node, boolean validate)
-            throws DecodingException {
+    public ReportObligation decodeJSON(JsonNode node, boolean validate) throws DecodingException {
         ReportObligation reportObligation = new ReportObligation();
         reportObligation.setChange(decodeJsonToObject(node.path(AQDJSONConstants.CHANGE), EReportingChange.class));
-        reportObligation.setInspireID(decodeJsonToObject(node.path(AQDJSONConstants.INSPIRE_ID), InspireID.class));
+        reportObligation.setInspireID(decodeJsonToObject(node.path(AQDJSONConstants.INSPIRE_ID), Identifier.class));
         reportObligation.setReportingPeriod(parseReferenceableTime(node.path(AQDJSONConstants.REPORTING_PERIOD)));
         return reportObligation;
     }

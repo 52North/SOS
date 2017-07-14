@@ -30,11 +30,28 @@ package org.n52.sos.request.operator;
 
 import java.util.Optional;
 
+import javax.inject.Inject;
+
+import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
+import org.n52.iceland.request.handler.OperationHandler;
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.aqd.EReportObligationRepository;
+import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.aqd.ReportObligations;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.MissingServiceParameterException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.util.AqdHelper;
+
 public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
 
     private AqdHelper aqdHelper;
-    private ReportObligationRepository reportObligationRepository;
+    private EReportObligationRepository reportObligationRepository;
 
     public AbstractAqdRequestOperator(String operationName, Class<Q> requestType) {
         super(AqdConstants.AQD, AqdConstants.VERSION, operationName, requestType);
@@ -49,12 +66,12 @@ public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q e
         this.aqdHelper = helper;
     }
 
-    public ReportObligationRepository getReportObligationRepository() {
+    public EReportObligationRepository getReportObligationRepository() {
         return reportObligationRepository;
     }
 
     @Inject
-    public void setReportObligationRepository(ReportObligationRepository repo) {
+    public void setReportObligationRepository(EReportObligationRepository repo) {
         this.reportObligationRepository = repo;
     }
 

@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.io.geojson.old.GeojsonPoint;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
@@ -51,7 +50,6 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.ProxyQueryHelper;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
 

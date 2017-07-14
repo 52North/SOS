@@ -36,7 +36,7 @@ import com.google.common.base.Strings;
 
 /**
  * Hibernate entiity for the coordinateSystemAxis
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.4.0
  *

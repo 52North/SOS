@@ -48,9 +48,11 @@ import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.TimeRangeValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.XmlValue;
 import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
 
 public class ParameterFactory implements ValueVisitor<ValuedParameter<?>, OwsExceptionReport> {
 
@@ -207,6 +209,11 @@ public class ParameterFactory implements ValueVisitor<ValuedParameter<?>, OwsExc
 
     @Override
     public ValuedParameter<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(XmlValue<?> value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 

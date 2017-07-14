@@ -28,24 +28,23 @@
  */
 package org.n52.sos.cache.ctrl;
 
-import org.n52.sos.cache.ctrl.action.ResultTemplateDeletionUpdate;
 import java.util.Collections;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCacheUpdate;
+import org.n52.iceland.convert.ConverterRepository;
 import org.n52.janmayen.event.Event;
 import org.n52.janmayen.event.EventListener;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
+import org.n52.sos.cache.ctrl.action.DeleteObservationUpdate;
 import org.n52.sos.cache.ctrl.action.FeatureInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
+import org.n52.sos.cache.ctrl.action.ResultTemplateDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
@@ -54,12 +53,15 @@ import org.n52.sos.event.events.FeatureInsertion;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
+import org.n52.sos.event.events.ResultTemplatesDeletion;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.event.events.UpdateCache;
+import org.n52.sos.event.events.DeleteObservationEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
-import org.n52.sos.event.events.ResultTemplatesDeletion;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -82,6 +84,8 @@ public class DefaultContentModificationListener implements EventListener {
     private CacheFeederHandler handler;
     private ContentCacheController controller;
 
+    private ConverterRepository converterRepository;
+
     @Override
     public Set<Class<? extends Event>> getTypes() {
         return Collections.unmodifiableSet(TYPES);
@@ -91,7 +95,7 @@ public class DefaultContentModificationListener implements EventListener {
     public void handle(Event event) {
         if (event instanceof SensorInsertion) {
             SensorInsertion e = (SensorInsertion) event;
-            handle(new SensorInsertionUpdate(e.getRequest(), e.getResponse()));
+            handle(new SensorInsertionUpdate(e.getRequest(), e.getResponse(), converterRepository));
         } else if (event instanceof ObservationInsertion) {
             ObservationInsertion e = (ObservationInsertion) event;
             handle(new ObservationInsertionUpdate(e.getRequest()));
@@ -103,7 +107,7 @@ public class DefaultContentModificationListener implements EventListener {
             handle(new SensorDeletionUpdate(this.handler, e.getRequest()));
         } else if (event instanceof ResultInsertion) {
             ResultInsertion e = (ResultInsertion) event;
-            handle(new ResultInsertionUpdate(e.getRequest().getTemplateIdentifier(), e.getResponse().getObservations()));
+            handle(new ResultInsertionUpdate(e.getRequest().getTemplateIdentifier(), e.getResponse().getObservation()));
         } else if (event instanceof FeatureInsertion) {
             FeatureInsertion e = (FeatureInsertion) event;
             handle(new FeatureInsertionUpdate(e.getRequest()));
@@ -112,6 +116,8 @@ public class DefaultContentModificationListener implements EventListener {
             handle(new ResultTemplateDeletionUpdate(e.getResponse()));
         } else if (event instanceof UpdateCache) {
             handle(new CompleteCacheUpdate(this.handler));
+        } else if (event instanceof DeleteObservationEvent) {
+            handle(new DeleteObservationUpdate(handler, ((DeleteObservationEvent) event).getDeletedObservation()));
         } else {
             LOGGER.debug("Can not handle modification event: {}", event);
         }
@@ -134,5 +140,10 @@ public class DefaultContentModificationListener implements EventListener {
     @Inject
     public void setController(ContentCacheController controller) {
         this.controller = controller;
+    }
+
+    @Inject
+    public void setConverterRepository(ConverterRepository converterRepository) {
+        this.converterRepository = converterRepository;
     }
 }

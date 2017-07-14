@@ -31,47 +31,48 @@ package org.n52.sos.convert;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.n52.sos.ogc.gwml.GWMLConstants;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.ProfileLevel;
-import org.n52.sos.ogc.om.values.ProfileValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.response.GetObservationByIdResponse;
+import org.n52.iceland.convert.RequestResponseModifierKey;
+import org.n52.shetland.ogc.gwml.GWMLConstants;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.ProfileLevel;
+import org.n52.shetland.ogc.om.values.ProfileValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class GwmlObservationModifier extends AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
-    
-    private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+public class GwmlObservationModifier extends AbstractRequestResponseModifier {
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
-    private static Set<RequestResponseModifierKeyType> getKeyTypes() {
+    private static Set<RequestResponseModifierKey> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
-        Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
+        Map<OwsServiceRequest, OwsServiceResponse> requestResponseMap = Maps.newHashMap();
         requestResponseMap.put(new GetObservationByIdRequest(), new GetObservationByIdResponse());
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
-                for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKeyType(service, version, request));
-                    keys.add(new RequestResponseModifierKeyType(service, version, request, requestResponseMap
+                for (OwsServiceRequest request : requestResponseMap.keySet()) {
+                    keys.add(new RequestResponseModifierKey(service, version, request));
+                    keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap
                             .get(request)));
                 }
             }
@@ -80,12 +81,12 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier<Abs
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKey> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
-    
+
     @Override
-    public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
+    public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
        if (response instanceof GetObservationByIdResponse) {
            return checkGetObservationByIdResponse((GetObservationByIdResponse)response);
@@ -93,9 +94,10 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier<Abs
        return super.modifyResponse(request, response);
     }
 
-    private AbstractServiceResponse checkGetObservationByIdResponse(GetObservationByIdResponse response) {
-        for (OmObservation o : response.getObservationCollection()) {
-            if (o.getObservationConstellation().isSetObservationType() 
+    private OwsServiceResponse checkGetObservationByIdResponse(GetObservationByIdResponse response) throws NoSuchElementException, OwsExceptionReport {
+        while (response.getObservationCollection().hasNext()) {
+            OmObservation o = response.getObservationCollection().next();
+            if (o.getObservationConstellation().isSetObservationType()
                     && (GWMLConstants.OBS_TYPE_GEOLOGY_LOG.equals(o.getObservationConstellation().getObservationType())
                     || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE.equals(o.getObservationConstellation().getObservationType())
                     || OmConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(o.getObservationConstellation().getObservationType()))) {
@@ -115,7 +117,7 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier<Abs
                                 }
                             }
                         }
-                        SingleObservationValue<List<ProfileLevel>> sov = new SingleObservationValue<>(new ProfileValue().addValue(pl));
+                        SingleObservationValue<List<ProfileLevel>> sov = new SingleObservationValue<>(new ProfileValue("").addValue(pl));
                         sov.setPhenomenonTime(o.getValue().getPhenomenonTime());
                         o.setValue(sov);
                     }

@@ -28,23 +28,31 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.hibernate.Criteria;
-
+import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
-import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implements EReportingDaoHelper {
     private final Set<Integer> verificationFlags;
     private final Set<Integer> validityFlags;
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EReportingValueTimeDAO.class);
 
     public EReportingValueTimeDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags) {
@@ -57,9 +65,9 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
     }
 
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
         // add quality restrictions
-        EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
+        addValidityAndVerificationRestrictions(c, request);
     }
 
     @Override
@@ -81,7 +89,7 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
                 HibernateHelper.getSqlString(c));
         return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
     }
-    
+
     private ObservationTimeExtrema parseMinMaxPhenomenonTime(Object[] result) {
         ObservationTimeExtrema ote = new ObservationTimeExtrema();
         if (result != null) {
@@ -99,17 +107,6 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
     @Override
     public Set<Integer> getValidityFlags() {
         return this.validityFlags;
-    }
-
-    @Override
-    protected Class<?> getSeriesValueTimeClass() {
-        return TemporalReferencedEReportingObservation.class;
-    }
-
-    @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
-        // add quality restrictions
-        addValidityAndVerificationRestrictions(c, request);
     }
 
     private void addPhenomenonTimeProjection(Criteria c) {

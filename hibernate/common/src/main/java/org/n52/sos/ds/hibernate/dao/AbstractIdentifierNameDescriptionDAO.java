@@ -33,20 +33,19 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.AbstractGML;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 
 public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
 

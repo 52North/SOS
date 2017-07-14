@@ -67,7 +67,7 @@ public class TextValuedSeriesObservation extends AbstractValuedSeriesObservation
     public boolean isSetValue() {
         return !Strings.isNullOrEmpty(getValue());
     }
-    
+
     @Override
     public void setValueIdentifier(String valueIdentifier) {
         this.valueIdentifier = valueIdentifier;
@@ -87,7 +87,7 @@ public class TextValuedSeriesObservation extends AbstractValuedSeriesObservation
     public String getValueAsString() {
         return getValue();
     }
-    
+
     @Override
     public void setValueName(String valueName) {
        this.valueName = valueName;

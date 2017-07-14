@@ -28,14 +28,11 @@
  */
 package org.n52.sos.ds;
 
+import org.n52.faroe.annotation.Configurable;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestConstants;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.ds.AbstractOperationDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.request.InsertFeatureOfInterestRequest;
-import org.n52.sos.response.InsertFeatureOfInterestResponse;
+import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestResponse;
 
 /**
  * DAO to get the DataAvailabilities out of the database.
@@ -45,15 +42,10 @@ import org.n52.sos.response.InsertFeatureOfInterestResponse;
  * @since 4.0.0
  */
 @Configurable
-public abstract class AbstractInsertFeatureOfInterestHandler extends AbstractOperationDAO {
+public abstract class AbstractInsertFeatureOfInterestHandler extends AbstractOperationHandler {
 
     public AbstractInsertFeatureOfInterestHandler(String service) {
         super(service, InsertFeatureOfInterestConstants.OPERATION_NAME);
-    }
-
-    @Override
-    protected void setOperationsMetadata(OwsOperation operation, String service, String version)
-            throws OwsExceptionReport {
     }
 
     /**

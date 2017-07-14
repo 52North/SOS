@@ -29,22 +29,25 @@
 package org.n52.sos.ds.procedure.enrich;
 
 import java.net.MalformedURLException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Locale;
 
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 

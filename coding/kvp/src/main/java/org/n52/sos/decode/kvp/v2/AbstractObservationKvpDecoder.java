@@ -28,31 +28,53 @@
  */
 package org.n52.sos.decode.kvp.v2;
 
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.decode.kvp.OwsServiceRequest;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.util.KvpHelper;
+import java.util.Collection;
+import java.util.function.Supplier;
 
-public abstract class AbstractObservationKvpDecoder<R extends OwsServiceRequest> extends AbstractSosKvpDecoder<R> {
-    
-    @Override
-    protected boolean parseDefaultParameter(AbstractServiceRequest<?> request, String parameterValues,
-            String parameterName) throws OwsExceptionReport {
-        if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.resultType.name())) {
-            if (request instanceof AbstractObservationRequest) {
-                ((AbstractObservationRequest)request).setResultModel(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                return true;
-            }
-        }
-        // responseFormat (optional)
-        else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.responseFormat.name())) {
-            ((AbstractObservationRequest)request).setResponseFormat(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-            return true;
-        }
-        return super.parseDefaultParameter(request, parameterValues, parameterName);
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosConstants.Operations;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
+import org.n52.svalbard.decode.DecoderKey;
+
+public abstract class AbstractObservationKvpDecoder<R extends AbstractObservationRequest> extends AbstractSosKvpDecoder<R> {
+
+
+    public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, DecoderKey... keys) {
+        super(supplier, keys);
     }
-    
+
+    public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, String version, Operations operation) {
+        super(supplier, version, operation);
+    }
+
+    public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, Collection<? extends DecoderKey> keys) {
+        super(supplier, keys);
+    }
+
+    public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, String service, String version, String operation) {
+        super(supplier, service, version, operation);
+    }
+
+    public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, String service, String version, Enum<?> operation) {
+        super(supplier, service, version, operation);
+    }
+
+    public AbstractObservationKvpDecoder(
+            Supplier<? extends R> supplier, String version, String operation) {
+        super(supplier, version, operation);
+    }
+
+    public AbstractObservationKvpDecoder(
+            Supplier<? extends R> supplier, String version, Enum<?> operation) {
+        super(supplier, version, operation);
+    }
+
+    @Override
+    protected void getRequestParameterDefinitions(Builder<R> builder) {
+        builder.add(SosConstants.GetObservationParams.resultType, AbstractObservationRequest::setResultModel);
+        builder.add(SosConstants.GetObservationParams.responseFormat,
+                AbstractObservationRequest::setResponseFormat);
+    }
+
 }

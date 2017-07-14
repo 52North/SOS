@@ -30,17 +30,14 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import javax.inject.Inject;
 
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.svalbard.decode.DecoderRepository;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.util.CodingHelper;
-import org.n52.svalbard.util.XmlHelper;
+import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
 import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.om.values.CountValue;
 import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.ProfileValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.SweDataArrayValue;
 import org.n52.shetland.ogc.om.values.TextValue;
@@ -50,6 +47,9 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.observation.ProfileGeneratorSplitter;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.series.valued.BlobValuedSeriesObservation;
@@ -69,6 +69,11 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObserva
 import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlHelper;
 
 /**
  * TODO JavaDoc
@@ -188,7 +193,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
             v.setDescription(o.getValueDescription());
         }
     }
-    
+
     @SuppressWarnings("rawtypes")
     protected void addDefinitionFromObservableProperty(ValuedObservation o, SweAbstractSimpleType v) {
         if (o instanceof HasObservablePropertyGetter) {

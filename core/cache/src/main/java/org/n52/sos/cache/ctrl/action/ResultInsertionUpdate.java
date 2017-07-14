@@ -73,7 +73,7 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
         this.observations = Lists.newArrayList(observation);
         this.templateIdentifier = templateIdentifier;
     }
-    
+
     public ResultInsertionUpdate(String templateIdentifier, List<OmObservation> observations) {
         if (observations == null || observations.isEmpty() || templateIdentifier == null || templateIdentifier.isEmpty()) {
             String msg =
@@ -96,24 +96,24 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
             final String observableProperty = observation.getObservationConstellation().getObservableProperty().getIdentifier();
             final Time phenomenonTime = observation.getPhenomenonTime();
             final Time resultTime = observation.getResultTime();
-    
+
             cache.updatePhenomenonTime(phenomenonTime);
             cache.updateResultTime(resultTime);
-    
+
             cache.addProcedure(procedure);
             cache.updatePhenomenonTimeForProcedure(procedure, phenomenonTime);
-    
+
             cache.addProcedureForObservableProperty(observableProperty, procedure);
             cache.addObservablePropertyForResultTemplate(templateIdentifier, observableProperty);
             cache.addObservablePropertyForProcedure(procedure, observableProperty);
-    
+
             List<AbstractSamplingFeature> observedFeatures =
                     sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
-    
+
             final Envelope envelope = createEnvelopeFrom(observedFeatures);
-    
+
             cache.updateGlobalEnvelope(envelope);
-    
+
             for (AbstractSamplingFeature sosSamplingFeature : observedFeatures) {
                 final String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
                 cache.addFeatureOfInterest(featureOfInterest);

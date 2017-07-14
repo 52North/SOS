@@ -53,6 +53,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.sos.request.operator.CoreProfileOperatorSettings;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;

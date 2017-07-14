@@ -42,7 +42,7 @@ import org.n52.shetland.aqd.AqdConstants.ProcessParameter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;

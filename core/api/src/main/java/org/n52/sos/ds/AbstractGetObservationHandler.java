@@ -31,7 +31,6 @@ package org.n52.sos.ds;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,9 +39,6 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
@@ -51,14 +47,16 @@ import org.n52.shetland.ogc.ows.OwsNoValues;
 import org.n52.shetland.ogc.ows.OwsPossibleValues;
 import org.n52.shetland.ogc.ows.OwsRange;
 import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosConstants.GetObservationParams;
-import org.n52.shetland.util.DateTimeHelper;
-import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.util.DateTimeFormatException;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.util.SosHelper;
 
 /**
@@ -143,18 +141,16 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
     @Override
     protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
 
-        final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
-
         Stream<OwsDomain> commonParameters = Stream.of(getOfferingParameter(service, version),
                                                        getQueryableProcedureParameter(service, version),
                                                        getResponseFormatParameter(service, version),
                                                        getPublishedObservablePropertyParameter(service, version),
-                                                       getPublishedFeatureOfInterestParameter(service, version, featureIDs));
+                                                       getPublishedFeatureOfInterestParameter(service, version));
         Stream<OwsDomain> versionParameters;
         switch (version) {
             case Sos2Constants.SERVICEVERSION:
                 versionParameters = Stream.of(getTemporalFilterParameter(service, version),
-                                              getSpatialFilterParameter(service, version, featureIDs));
+                                              getSpatialFilterParameter(service, version));
                 break;
             case Sos1Constants.SERVICEVERSION:
                 versionParameters = Stream.of(getEventTimeParameter(service, version),
@@ -182,9 +178,9 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
         }
     }
 
-    private OwsDomain getSpatialFilterParameter(String service, String version, Collection<String> featureIDs) {
+    private OwsDomain getSpatialFilterParameter(String service, String version) {
         Enum<?> name = Sos2Constants.GetObservationParams.spatialFilter;
-        return getEnvelopeParameter(name, featureIDs);
+        return getEnvelopeParameter(name, SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
     }
 
     private OwsDomain getResponseFormatParameter(String service, String version) {

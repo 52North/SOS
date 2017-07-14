@@ -32,7 +32,7 @@ import com.google.common.base.Strings;
 
 /**
  * Hibernate entity for responsibleParty.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.4.0
  *
@@ -59,7 +59,7 @@ public class ResponsiblePartyEntity extends AbstractCiEntity {
     public void setIndividualName(String individualName) {
         this.individualName = individualName;
     }
-    
+
     public boolean isSetIndividualName() {
         return !Strings.isNullOrEmpty(getIndividualName());
     }
@@ -78,7 +78,7 @@ public class ResponsiblePartyEntity extends AbstractCiEntity {
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
     }
-    
+
     public boolean isSetOrganizationName() {
         return !Strings.isNullOrEmpty(getOrganizationName());
     }
@@ -97,7 +97,7 @@ public class ResponsiblePartyEntity extends AbstractCiEntity {
     public void setPositionName(String positionName) {
         this.positionName = positionName;
     }
-    
+
     public boolean isSetPositionName() {
         return !Strings.isNullOrEmpty(getPositionName());
     }
@@ -116,7 +116,7 @@ public class ResponsiblePartyEntity extends AbstractCiEntity {
     public void setContactInfo(ContactEntity contactInfo) {
         this.contactInfo = contactInfo;
     }
-    
+
     public boolean isSetContactInfo() {
         return getContactInfo() != null;
     }

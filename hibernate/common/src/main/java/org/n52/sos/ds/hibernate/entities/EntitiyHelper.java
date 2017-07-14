@@ -33,8 +33,6 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedER
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.ContextualReferencedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
@@ -105,8 +103,6 @@ public class EntitiyHelper {
             return AbstractEReportingObservation.class;
         } else if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class)) {
             return AbstractSeriesObservation.class;
-        } else if (HibernateHelper.isEntitySupported(AbstractLegacyObservation.class)) {
-            return AbstractLegacyObservation.class;
         }
         return null;
     }
@@ -116,8 +112,6 @@ public class EntitiyHelper {
             return ContextualReferencedEReportingObservation.class;
         } else if (HibernateHelper.isEntitySupported(ContextualReferencedSeriesObservation.class)) {
             return ContextualReferencedSeriesObservation.class;
-        } else if (HibernateHelper.isEntitySupported(ContextualReferencedLegacyObservation.class)) {
-            return ContextualReferencedLegacyObservation.class;
         }
         return null;
     }

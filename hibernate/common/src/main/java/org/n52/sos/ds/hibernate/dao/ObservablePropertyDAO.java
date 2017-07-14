@@ -41,9 +41,6 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
@@ -57,10 +54,11 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.TObservableProperty;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO {
 
@@ -155,19 +153,10 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
                     ObservableProperty.ID,
                     getDetachedCriteriaObservablePropertyForProcedureFromObservationConstellation(procedureIdentifier)));
         } else {
-            if (HibernateHelper.isEntitySupported(Series.class)) {
                 c = getDefaultCriteria(session);
                 c.setProjection(Projections.distinct(Projections.property(ObservableProperty.IDENTIFIER)));
                 c.add(Subqueries.propertyIn(ObservableProperty.ID,
                         getDetachedCriteriaObservablePropertiesForProcedureFromSeries(procedureIdentifier, session)));
-            } else {
-                c = session.createCriteria(ContextualReferencedLegacyObservation.class)
-                        .add(Restrictions.eq(AbstractObservation.DELETED, false));
-                c.createCriteria(ContextualReferencedLegacyObservation.OBSERVABLE_PROPERTY)
-                        .setProjection(Projections.distinct(Projections.property(ObservableProperty.IDENTIFIER)));
-                c.createCriteria(ContextualReferencedLegacyObservation.PROCEDURE).add(
-                        Restrictions.eq(Procedure.IDENTIFIER, procedureIdentifier));
-            }
         }
         LOGGER.debug(
                 "QUERY getObservablePropertyIdentifiersForProcedure(observablePropertyIdentifier) using ObservationContellation entitiy ({}): {}",
@@ -480,17 +469,17 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     }
 
     @SuppressWarnings("unchecked")
-    public List<ObservableProperty> getPublishedObservableProperty(Session session) throws CodedException {
+    public List<ObservableProperty> getPublishedObservableProperty(Session session) throws OwsExceptionReport {
         if (HibernateHelper.isEntitySupported(Series.class)) {
             Criteria c = session.createCriteria(ObservableProperty.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
             c.add(Subqueries.propertyIn(ObservableProperty.ID, getDetachedCriteriaSeries(session)));
             return c.list();
-        } 
+        }
         return getObservablePropertyObjects(session);
      }
-     
-     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
-         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
+
+     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
+         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(daoFactory.getSeriesDAO().getSeriesClass());
          detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
          detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.OBSERVABLE_PROPERTY)));
          return detachedCriteria;

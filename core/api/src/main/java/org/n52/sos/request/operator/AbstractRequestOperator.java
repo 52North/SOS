@@ -33,57 +33,63 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.cache.ContentCacheController;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierRepository;
-import org.n52.janmayen.event.EventBus;
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
-import org.n52.shetland.ogc.ows.exception.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingValueReferenceException;
-import org.n52.shetland.ogc.ows.exception.MissingVersionParameterException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.request.handler.OperationHandler;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.janmayen.event.EventBus;
+import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.OwsOperation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.CodedOwsException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingServiceParameterException;
+import org.n52.shetland.ogc.ows.exception.MissingVersionParameterException;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.exception.VersionNegotiationFailedException;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 import org.n52.shetland.ogc.swes.SwesExtensions;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
-import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -116,8 +122,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             "validTime",
             "om:validTime");
 
-    private final RequestOperatorKey requestOperatorKey;
-    private final Class<Q> requestType;
+    private RequestOperatorKey requestOperatorKey;
+    private Class<Q> requestType;
     private OperationHandlerRepository operationHandlerRepository;
     private RequestResponseModifierRepository requestResponseModifierRepository;
     private ContentCacheController contentCacheController;
@@ -125,9 +131,9 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     private ServiceOperatorRepository serviceOperatorRepository;
     private EventBus serviceEventBus;
     private boolean includeChildObservableProperties;
-
-
-    private final String service;
+    private String service;
+    private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+    private ConverterRepository converterRepository;
 
     public AbstractRequestOperator(String service,
                                    String version,
@@ -201,6 +207,24 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         return serviceEventBus;
     }
 
+    @Inject
+    public void setProcedureDescriptionFormatRepository(ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
+        this.procedureDescriptionFormatRepository = procedureDescriptionFormatRepository;
+    }
+
+    public ProcedureDescriptionFormatRepository getProcedureDescriptionFormatRepository() {
+        return procedureDescriptionFormatRepository;
+    }
+
+    @Inject
+    public void setConverterRepository(ConverterRepository converterRepository) {
+        this.converterRepository = converterRepository;
+    }
+
+    public ConverterRepository getConverterRepository() {
+        return converterRepository;
+    }
+
     /**
      * @deprecated Use {@link #getOperationHandler()}
      */
@@ -247,7 +271,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     }
 
     @Override
-    public OwsServiceResponse receiveRequest(final OwsServiceRequest abstractRequest)
+    public OwsServiceResponse receiveRequest(OwsServiceRequest abstractRequest)
             throws OwsExceptionReport {
         this.serviceEventBus.submit(new RequestEvent(abstractRequest));
         if (requestType.isAssignableFrom(abstractRequest.getClass())) {
@@ -389,7 +413,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
-    protected void checkSingleVersionParameter(final OwsServiceRequest request) throws OwsExceptionReport {
+    protected void checkSingleVersionParameter(OwsServiceRequest request) throws OwsExceptionReport {
 
         // if version is incorrect, throw exception
         if (request.getVersion() == null) {
@@ -417,11 +441,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
      *             * if the versions list is empty or no matching version is *
      *             contained
      */
-    protected void checkAcceptedVersionsParameter(final String service, final String versionsString)
+    protected void checkAcceptedVersionsParameter(String service, String versionsString)
             throws OwsExceptionReport {
         // check acceptVersions
         if (versionsString != null && !versionsString.isEmpty()) {
-            final String[] versionsArray = versionsString.split(",");
+            String[] versionsArray = versionsString.split(",");
             checkAcceptedVersionsParameter(service, Arrays.asList(versionsArray));
         } else {
             throw new MissingParameterValueException(org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions);
@@ -457,11 +481,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
      * @throws OwsExceptionReport
      *             * if the value of the sensor ID parameter is incorrect
      */
-    protected void checkProcedure(final String procedureID, final Enum<?> parameterName) throws OwsExceptionReport {
+    protected void checkProcedure(String procedureID, Enum<?> parameterName) throws OwsExceptionReport {
         checkProcedure(procedureID, parameterName.name());
     }
 
-    protected void checkTransactionalProcedureID(final String procedureID, final String parameterName) throws OwsExceptionReport {
+    protected void checkTransactionalProcedureID(String procedureID, String parameterName) throws OwsExceptionReport {
         if (Strings.isNullOrEmpty(procedureID)) {
             throw new MissingProcedureParameterException();
         } else if (!getCache().hasTransactionalObservationProcedure(procedureID)) {
@@ -469,7 +493,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkQueryableProcedureID(final String procedureID, final String parameterName) throws OwsExceptionReport {
+    protected void checkQueryableProcedureID(String procedureID, String parameterName) throws OwsExceptionReport {
         if (Strings.isNullOrEmpty(procedureID)) {
             throw new MissingProcedureParameterException();
         } else if (!getCache().hasQueryableProcedure(procedureID)) {
@@ -489,7 +513,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
      * @throws OwsExceptionReport
      *             * if the value of the sensor ID parameter is incorrect
      */
-    protected void checkProcedure(final String procedureID, final String parameterName) throws OwsExceptionReport {
+    protected void checkProcedure(String procedureID, String parameterName) throws OwsExceptionReport {
         if (Strings.isNullOrEmpty(procedureID)) {
             throw new MissingProcedureParameterException();
         } else if (!getCache().getPublishedProcedures().contains(procedureID)) {
@@ -497,13 +521,13 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkProcedures(final Collection<String> procedureIDs, final String parameterName)
+    protected void checkProcedures(Collection<String> procedureIDs, String parameterName)
             throws OwsExceptionReport {
         if (procedureIDs != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
             procedureIDs.forEach(id -> {
                 try {
-                    checkProcedureID(id, parameterName);
+                    checkProcedure(id, parameterName);
                 } catch (OwsExceptionReport owse) {
                     exceptions.add(owse);
                 }
@@ -512,7 +536,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkTransactionalProcedure(final String procedureID, final String parameterName) throws OwsExceptionReport {
+    protected void checkTransactionalProcedure(String procedureID, String parameterName) throws OwsExceptionReport {
         if (Strings.isNullOrEmpty(procedureID)) {
             throw new MissingProcedureParameterException();
         } else if (!getCache().hasTransactionalObservationProcedure(procedureID)) {
@@ -520,14 +544,14 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkTransactionalProcedures(final Collection<String> procedureIDs, final String parameterName)
+    protected void checkTransactionalProcedures(Collection<String> procedureIDs, String parameterName)
             throws OwsExceptionReport {
         if (procedureIDs != null) {
-            final CompositeOwsException exceptions = new CompositeOwsException();
+            CompositeOwsException exceptions = new CompositeOwsException();
             procedureIDs.forEach(id -> {
                 try {
                     checkTransactionalProcedureID(id, parameterName);
-                } catch (final OwsExceptionReport owse) {
+                } catch (OwsExceptionReport owse) {
                     exceptions.add(owse);
                 }
             });
@@ -535,7 +559,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkQueryableProcedure(final String procedureID, final String parameterName) throws OwsExceptionReport {
+    protected void checkQueryableProcedure(String procedureID, String parameterName) throws OwsExceptionReport {
         if (Strings.isNullOrEmpty(procedureID)) {
             throw new MissingProcedureParameterException();
         } else if (!getCache().hasQueryableProcedure(procedureID)) {
@@ -543,14 +567,14 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkQueryableProcedures(final Collection<String> procedureIDs, final String parameterName)
+    protected void checkQueryableProcedures(Collection<String> procedureIDs, String parameterName)
             throws OwsExceptionReport {
         if (procedureIDs != null) {
-            final CompositeOwsException exceptions = new CompositeOwsException();
+            CompositeOwsException exceptions = new CompositeOwsException();
             procedureIDs.forEach(id -> {
                 try {
                     checkQueryableProcedureID(id, parameterName);
-                } catch (final OwsExceptionReport owse) {
+                } catch (OwsExceptionReport owse) {
                     exceptions.add(owse);
                 }
             });
@@ -558,7 +582,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkObservationID(final String observationID, final String parameterName)
+    protected void checkObservationID(String observationID, String parameterName)
             throws OwsExceptionReport {
         if (observationID == null || observationID.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
@@ -578,7 +602,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             observationIDs.forEach(id -> {
                 try {
                     checkObservationID(id, parameterName);
-                } catch (final OwsExceptionReport owse) {
+                } catch (OwsExceptionReport owse) {
                     exceptions.add(owse);
                 }
             });
@@ -601,7 +625,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkFeatureOfInterestIdentifier(final String featureOfInterest, final String parameterName)
+    protected void checkFeatureOfInterestIdentifier(String featureOfInterest, String parameterName)
             throws OwsExceptionReport {
         if (featureOfInterest == null || featureOfInterest.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
@@ -615,19 +639,19 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         throw new InvalidParameterValueException(parameterName, featureOfInterest);
     }
 
-    protected void checkObservedProperties(final Collection<String> observedProperties, final Enum<?> parameterName, boolean insertion)
+    protected void checkObservedProperties(Collection<String> observedProperties, Enum<?> parameterName, boolean insertion)
             throws OwsExceptionReport {
         checkObservedProperties(observedProperties, parameterName.name(), insertion);
     }
 
-    protected void checkObservedProperties(final Collection<String> observedProperties, final String parameterName, boolean insertion)
+    protected void checkObservedProperties(Collection<String> observedProperties, String parameterName, boolean insertion)
             throws OwsExceptionReport {
         if (observedProperties != null) {
-            final CompositeOwsException exceptions = new CompositeOwsException();
+            CompositeOwsException exceptions = new CompositeOwsException();
             observedProperties.forEach(id -> {
                 try {
                     checkObservedProperty(id, parameterName, insertion);
-                } catch (final OwsExceptionReport e) {
+                } catch (OwsExceptionReport e) {
                     exceptions.add(e);
                 }
             });
@@ -635,14 +659,14 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkObservedProperties(final List<String> observedProperties, final String parameterName, boolean all)
+    protected void checkObservedProperties(List<String> observedProperties, String parameterName, boolean all)
             throws OwsExceptionReport {
         if (observedProperties != null) {
-            final CompositeOwsException exceptions = new CompositeOwsException();
-            for (final String observedProperty : observedProperties) {
+            CompositeOwsException exceptions = new CompositeOwsException();
+            for (String observedProperty : observedProperties) {
                 try {
                     checkObservedProperty(observedProperty, parameterName, all);
-                } catch (final OwsExceptionReport e) {
+                } catch (OwsExceptionReport e) {
                     exceptions.add(e);
                 }
             }
@@ -650,7 +674,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkObservedProperty(final String observedProperty, final String parameterName, boolean insertion)
+    protected void checkObservedProperty(String observedProperty, String parameterName, boolean insertion)
             throws OwsExceptionReport {
         if (observedProperty == null || observedProperty.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
@@ -671,23 +695,23 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     }
 
-    protected void checkObservedProperty(final String observedProperty, final Enum<?> parameterName, boolean insertion)
+    protected void checkObservedProperty(String observedProperty, Enum<?> parameterName, boolean insertion)
             throws OwsExceptionReport {
         checkObservedProperty(observedProperty, parameterName.name(), insertion);
     }
 
-    protected void checkOfferings(final Collection<String> offerings, final String parameterName) throws OwsExceptionReport {
+    protected void checkOfferings(Collection<String> offerings, String parameterName) throws OwsExceptionReport {
         checkOfferings(offerings, parameterName, false);
     }
 
-    protected void checkOfferings(final Collection<String> offerings, final String parameterName, boolean all)
+    protected void checkOfferings(Collection<String> offerings, String parameterName, boolean all)
             throws OwsExceptionReport {
         if (offerings != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
             offerings.forEach(id -> {
                 try {
                     checkOffering(id, parameterName);
-                } catch (final OwsExceptionReport e) {
+                } catch (OwsExceptionReport e) {
                     exceptions.add(e);
                 }
             });
@@ -703,11 +727,15 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         checkOfferings(offerings, parameterName.name(), all);
     }
 
-    protected void checkOffering(final String offering, final Enum<?> parameterName) throws OwsExceptionReport {
+    protected void checkOffering(String offering, Enum<?> parameterName) throws OwsExceptionReport {
         checkOffering(offering, parameterName.name(), false);
     }
 
-    protected void checkOffering(final String offering, final String parameterName, boolean all) throws OwsExceptionReport {
+    protected void checkOffering(String offering, String parameterName) throws OwsExceptionReport {
+        checkOffering(offering, parameterName, false);
+    }
+
+    protected void checkOffering(String offering, String parameterName, boolean all) throws OwsExceptionReport {
         if (offering == null || offering.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
         }
@@ -723,18 +751,18 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     }
 
-    protected void checkSpatialFilters(final Collection<SpatialFilter> spatialFilters, final String name)
+    protected void checkSpatialFilters(Collection<SpatialFilter> spatialFilters, String name)
             throws OwsExceptionReport {
         // TODO make supported ValueReferences dynamic
         if (spatialFilters != null) {
-            for (final SpatialFilter spatialFilter : spatialFilters) {
+            for (SpatialFilter spatialFilter : spatialFilters) {
                 checkSpatialFilter(spatialFilter, name);
             }
         }
 
     }
 
-    protected void checkSpatialFilter(final SpatialFilter spatialFilter, final String name) throws OwsExceptionReport {
+    protected void checkSpatialFilter(SpatialFilter spatialFilter, String name) throws OwsExceptionReport {
         // TODO make supported ValueReferences dynamic
         if (spatialFilter != null) {
             if (!spatialFilter.hasValueReference()) {
@@ -784,12 +812,12 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     }
 
-    protected void checkTemporalFilter(final Collection<TemporalFilter> temporalFilters, final Enum<?> name)
+    protected void checkTemporalFilter(Collection<TemporalFilter> temporalFilters, Enum<?> name)
             throws OwsExceptionReport {
         checkTemporalFilter(temporalFilters, name.name());
     }
 
-    protected void checkResultTemplate(final String resultTemplate, final String parameterName)
+    protected void checkResultTemplate(String resultTemplate, String parameterName)
             throws OwsExceptionReport {
         if (resultTemplate == null || resultTemplate.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
@@ -825,10 +853,10 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected List<String> addChildProcedures(final Collection<String> procedures) {
-        final Set<String> allProcedures = Sets.newHashSet();
+    protected List<String> addChildProcedures(Collection<String> procedures) {
+        Set<String> allProcedures = Sets.newHashSet();
         if (procedures != null) {
-            for (final String procedure : procedures) {
+            for (String procedure : procedures) {
                 allProcedures.add(procedure);
                 allProcedures.addAll(getCache().getChildProcedures(procedure, true, false));
             }
@@ -836,8 +864,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         return Lists.newArrayList(allProcedures);
     }
 
-    protected List<String> addInstanceProcedures(final Collection<String> procedures) {
-        final Set<String> allProcedures = Sets.newHashSet();
+    protected List<String> addInstanceProcedures(Collection<String> procedures) {
+        Set<String> allProcedures = Sets.newHashSet();
         if (procedures != null) {
             for (String procedure : procedures) {
                 allProcedures.add(procedure);
@@ -849,10 +877,10 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         return Lists.newArrayList(allProcedures);
     }
 
-    protected List<String> addChildFeatures(final Collection<String> features) {
-        final Set<String> allFeatures = Sets.newHashSet();
+    protected List<String> addChildFeatures(Collection<String> features) {
+        Set<String> allFeatures = Sets.newHashSet();
         if (features != null) {
-            for (final String feature : features) {
+            for (String feature : features) {
                 allFeatures.add(feature);
                 allFeatures.addAll(getCache().getChildFeatures(feature, true, false));
             }
@@ -875,7 +903,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     protected List<String> addChildOfferings(List<String> offerings) {
         Set<String> allOfferings = Sets.newHashSet(offerings);
         if (offerings != null) {
-            for (final String offering : offerings) {
+            for (String offering : offerings) {
                 allOfferings.add(offering);
                 allOfferings.addAll(getCache().getChildOfferings(offering, true, false));
             }
@@ -883,7 +911,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         return Lists.newArrayList(allOfferings);
     }
 
-    protected void checkObservationType(final String observationType, final String parameterName)
+    protected void checkObservationType(String observationType, String parameterName)
             throws OwsExceptionReport {
         if (observationType == null || observationType.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
@@ -920,7 +948,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         if (Strings.isNullOrEmpty(format)) {
             throw new MissingParameterValueException(parameter);
         } else {
-            if (!mimeTypeAllowed && MediaType.check(format)) {
+            if (!mimeTypeAllowed && new MediaType(format) != null) {
                 throw new InvalidParameterValueException(parameter, format);
             }
             return getCache().hasRequestableProcedureDescriptionFormat(format) ? true : hasPossibleProcedureDescriptionFormats(format, mimeTypeAllowed);
@@ -942,7 +970,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
         String procedureDescriptionFormatMatchingString =
                 getProcedureDescriptionFormatMatchingString(procedureDescriptionFormat);
-        for (Entry<ServiceOperatorKey, Set<String>> pdfByServiceOperatorKey : CodingRepository.getInstance()
+        for (Entry<OwsServiceKey, Set<String>> pdfByServiceOperatorKey : getProcedureDescriptionFormatRepository()
                 .getAllProcedureDescriptionFormats().entrySet()) {
             for (String pdfFromRepository : pdfByServiceOperatorKey.getValue()) {
                 if (procedureDescriptionFormatMatchingString
@@ -951,7 +979,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
                 }
             }
         }
-        possibleFormats.addAll(ConverterRepository.getInstance().getFromNamespaceConverterTo(
+        possibleFormats.addAll(getConverterRepository().getFromNamespaceConverterTo(
                 procedureDescriptionFormat));
         return !possibleFormats.isEmpty();
     }

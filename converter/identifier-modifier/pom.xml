@@ -14,5 +14,6 @@
     	<module>abstract-identifier</module>
         <module>flexible-identifier</module>
         <module>prefixed-identifier</module>
+        <module>ereporting-identifier</module>
     </modules>
 </project>

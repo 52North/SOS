@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.feature;
 
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -50,5 +50,5 @@ public class FeatureOfInterest extends AbstractFeatureOfInterest {
     public Geometry accept(GeometryVisitor visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
-    
+
 }

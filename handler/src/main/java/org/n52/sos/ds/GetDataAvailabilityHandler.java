@@ -37,7 +37,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.hibernate.Session;
-import org.n52.iceland.coding.CodingRepository;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyDatasetDao;
@@ -46,11 +45,9 @@ import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.dao.DbQuery;
-import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
-import org.n52.shetland.ogc.om.ObservationType;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extension;
@@ -64,8 +61,6 @@ import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.FormatDescriptor
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ObservationFormatDescriptor;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ProcedureDescriptionFormatDescriptor;
 import org.n52.sos.ds.dao.GetDataAvailabilityDao;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.ObservationEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Lists;
@@ -75,7 +70,6 @@ import com.google.common.collect.Sets;
 public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandler implements ProxyQueryHelper {
 
     private HibernateSessionStore sessionStore;
-    private CodingRepository codingRepository;
     private GetDataAvailabilityDao dao;
 
 
@@ -86,11 +80,6 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
         this.sessionStore = sessionStore;
-    }
-
-    @Inject
-    public void setCodingRepository(CodingRepository codingRepository) {
-        this.codingRepository = codingRepository;
     }
 
     @Autowired(required=false)
@@ -346,8 +335,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
      * @return <code>true</code>, if optional count should be added
      */
     private boolean isShowCount(GetDataAvailabilityRequest request) {
-        if (request.isSetExtensions()) {
-            return request.getExtensions().isBooleanExtensionSet(SHOW_COUNT);
+        if (request.hasExtension(SHOW_COUNT)) {
+            return request.getBooleanExtension(SHOW_COUNT);
         }
         return isForceValueCount();
     }
@@ -360,8 +349,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
      * @return <code>true</code>, if result times should be added
      */
     private boolean isIncludeResultTime(GetDataAvailabilityRequest request) {
-        if (request.isSetExtensions()) {
-            return request.getExtensions().isBooleanExtensionSet(INCLUDE_RESULT_TIMES)
+        if (request.hasExtension(INCLUDE_RESULT_TIMES)) {
+            return request.getBooleanExtension(INCLUDE_RESULT_TIMES)
                     || hasPhenomenonTimeFilter(request.getExtensions());
         }
         return false;
@@ -413,26 +402,6 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             formatDescriptors.add(new ObservationFormatDescriptor(responsFormat, responsFormatObservationTypesMap.get(responsFormat)));
         }
         return formatDescriptors;
-    }
-
-    private Set<String> getResponseFormatsForObservationType(String observationType, String service, String version) {
-        Set<String> responseFormats = Sets.newHashSet();
-        for (Encoder<?, ?> e : codingRepository.getEncoders()) {
-            if (e instanceof ObservationEncoder) {
-                final ObservationEncoder<?, ?> oe = (ObservationEncoder<?, ?>) e;
-                Map<String, Set<SupportedType>> supportedResponseFormatObservationTypes = oe.getSupportedResponseFormatObservationTypes();
-                if (supportedResponseFormatObservationTypes != null && !supportedResponseFormatObservationTypes.isEmpty()) {
-                    for (final String responseFormat : supportedResponseFormatObservationTypes.keySet()) {
-                        for (SupportedType st : supportedResponseFormatObservationTypes.get(responseFormat)) {
-                            if (st instanceof ObservationType) {
-                                responseFormats.add(((ObservationType) st).getValue());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return responseFormats;
     }
 
     private boolean addParentDataAvailabilityIfMissing(Set<DataAvailability> parentDataAvailabilities,

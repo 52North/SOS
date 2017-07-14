@@ -55,11 +55,11 @@ import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
@@ -107,7 +107,7 @@ public class HibernateObservationBuilder {
 
     public List<Observation<?>> createObservation(String id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
             DateTime resultTime, DateTime validTimeStart, DateTime validTimeEnd) throws OwsExceptionReport {
-        List<Observation<?>> observations = Lists.newArrayList(); 
+        List<Observation<?>> observations = Lists.newArrayList();
         for (Offering offering : getOfferings()) {
              observations.add(createObservation(createObservation(offering), id, phenomenonTimeStart != null ? phenomenonTimeStart.toDate() : null,
                     phenomenonTimeEnd != null ? phenomenonTimeEnd.toDate() : null,
@@ -140,7 +140,7 @@ public class HibernateObservationBuilder {
     }
 
     protected Observation<?> createObservation(Offering offering) throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
         ObservationFactory observationFactory = observationDAO.getObservationFactory();
         BooleanObservation observation = observationFactory.truth();
         observation.setValue(true);
@@ -154,7 +154,7 @@ public class HibernateObservationBuilder {
                 abstractEReportingObservation.setVerification(1);
             }
         } else {
-            AbstractLegacyObservation<?> booleanObservation = (AbstractLegacyObservation<?>) observation;
+            AbstractObservation<?> booleanObservation = (AbstractObservation<?>) observation;
             booleanObservation.setFeatureOfInterest(getFeatureOfInterest());
             booleanObservation.setProcedure(getProcedure());
             booleanObservation.setObservableProperty(getObservableProperty());

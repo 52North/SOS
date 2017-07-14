@@ -34,9 +34,10 @@ import java.util.Set;
 
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.om.ObservationType;
 import org.n52.shetland.ogc.om.OmConstants;
-import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
@@ -44,12 +45,14 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- * @param <T> the response type
+ * @param <T>
+ *            the response type
  *
  * @since 4.0.0
  */
@@ -98,15 +101,13 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
 
     @Override
     public Map<String, Set<SupportedType>> getSupportedResponseFormatObservationTypes() {
-        return Collections.singletonMap(MediaTypes.APPLICATION_JSON.toString(), getSupportedTypes());
-    }
-    
-    @Override
-    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
         return Collections.singletonMap(MediaTypes.APPLICATION_JSON.toString(),
-                (Set<String>) Sets.newHashSet(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
-                        OmConstants.OBS_TYPE_COUNT_OBSERVATION, OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
-                        OmConstants.OBS_TYPE_MEASUREMENT, OmConstants.OBS_TYPE_TEXT_OBSERVATION,
-                        OmConstants.OBS_TYPE_TRUTH_OBSERVATION, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION));
+                Sets.newHashSet(new ObservationType(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION),
+                        new ObservationType(OmConstants.OBS_TYPE_COUNT_OBSERVATION),
+                        new ObservationType(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION),
+                        new ObservationType(OmConstants.OBS_TYPE_MEASUREMENT),
+                        new ObservationType(OmConstants.OBS_TYPE_TEXT_OBSERVATION),
+                        new ObservationType(OmConstants.OBS_TYPE_TRUTH_OBSERVATION),
+                        new ObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)));
     }
 }

@@ -39,9 +39,6 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.util.LocalizedProducer;
@@ -63,6 +60,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.parameter.SeriesParameterDAO;
@@ -78,8 +76,9 @@ import org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameterAdder;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -87,7 +86,7 @@ import com.google.common.collect.Sets;
 
 public class ObservationOmObservationCreator extends AbstractOmObservationCreator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationOmObservationCreator.class);
-    
+
     private final Collection<? extends Observation<?>> observations;
     private final AbstractObservationRequest request;
     private final Map<String, AbstractFeature> features = Maps.newHashMap();
@@ -125,7 +124,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return request.getResultModel();
     }
 
-    private SosProcedureDescription<?> getProcedure(String procedureId) {
+    private AbstractFeature getProcedure(String procedureId) {
         return procedures.get(procedureId);
     }
 
@@ -294,7 +293,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     }
 
     private Set<String> createOfferingSet(Observation<?> hObservation, String procedure, String observedProperty) {
-        Set<String> offerings = Sets.newHashSet();    
+        Set<String> offerings = Sets.newHashSet();
         if (hObservation instanceof AbstractSeriesObservation && ((AbstractSeriesObservation<?>) hObservation).getSeries().isSetOffering()) {
              offerings.add(((AbstractSeriesObservation<?>) hObservation).getSeries().getOffering().getIdentifier());
         } else if (hObservation.isSetOfferings()) {
@@ -309,7 +308,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return offerings;
     }
     private OmObservationConstellation createObservationConstellation(Observation<?> hObservation,
-            String procedureId, String phenomenonId, String featureId, Set<String> offerings) {
+            String procedureId, String phenomenonId, String featureId, Set<String> offerings) throws CodedException {
         OmObservationConstellation obsConst =
                 new OmObservationConstellation(getProcedure(procedureId), getObservedProperty(phenomenonId),
                         getFeature(featureId), offerings);
@@ -320,7 +319,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         if (StringHelper.isNotEmpty(getResultModel())) {
             obsConst.setObservationType(getResultModel());
         }
-        final ObservationConstellationDAO dao = new ObservationConstellationDAO();
+        final ObservationConstellationDAO dao = getDaoFactory().getObservationConstellationDAO();
         final ObservationConstellation hoc =
                 dao.getFirstObservationConstellationForOfferings(hObservation.getProcedure(),
                         hObservation.getObservableProperty(), hObservation.getOfferings(), getSession());

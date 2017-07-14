@@ -28,42 +28,46 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import com.google.common.collect.Lists;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateConstants;
+import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateRequest;
+import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateResponse;
 import org.n52.sos.ds.AbstractDeleteResultTemplateHandler;
-import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
-import org.n52.sos.exception.ows.DeleteResultTemplateInvalidParameterValueException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.DeleteResultTemplateRequest;
-import org.n52.sos.response.DeleteResultTemplateResponse;
-import org.n52.sos.util.http.HTTPStatus;
+import org.n52.sos.exception.sos.concrete.DeleteResultTemplateInvalidParameterValueException;
 
-public class DeleteResultTemplateHandler extends AbstractDeleteResultTemplateHandler {
+import com.google.common.collect.Lists;
 
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+public class DeleteResultTemplateHandler
+        extends AbstractDeleteResultTemplateHandler {
 
-    private final ResultTemplateDAO resultTemplateDAO = new ResultTemplateDAO();
-    private List<String> deletedResultTemplates;
+    private HibernateSessionHolder sessionHolder;
 
-    public DeleteResultTemplateHandler() {
-        super(SosConstants.SOS);
+    private DaoFactory daoFactory;
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -71,14 +75,16 @@ public class DeleteResultTemplateHandler extends AbstractDeleteResultTemplateHan
             throws OwsExceptionReport {
         Session session = null;
         Transaction transaction = null;
+        DeleteResultTemplateResponse response = new DeleteResultTemplateResponse();
+        response.set(request);
         try {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
             if (request.isSetResultTemplates()) {
-                deleteByTemplateId(session, request.getResultTemplates());
+                response.addDeletedResultTemplates(deleteByTemplateId(session, request.getResultTemplates()));
             } else {
-                deleteByObservedPropertyOfferingPair(session,
-                        request.getObservedPropertyOfferingPairs());
+                response.addDeletedResultTemplates(
+                        deleteByObservedPropertyOfferingPair(session, request.getObservedPropertyOfferingPairs()));
             }
             session.flush();
             transaction.commit();
@@ -90,49 +96,41 @@ public class DeleteResultTemplateHandler extends AbstractDeleteResultTemplateHan
         } finally {
             sessionHolder.returnSession(session);
         }
-        return request.getResponse().addDeletedResultTemplates(deletedResultTemplates);
+        return response;
     }
 
     protected void handleHibernateException(HibernateException he) throws OwsExceptionReport {
         HTTPStatus status = HTTPStatus.INTERNAL_SERVER_ERROR;
-        throw new NoApplicableCodeException()
-                .causedBy(he)
-                .withMessage("Error while deleting result templates!")
+        throw new NoApplicableCodeException().causedBy(he).withMessage("Error while deleting result templates!")
                 .setStatus(status);
     }
 
-    private void deleteByTemplateId(Session session,
-            List<String> resultTemplates)
+    private List<String> deleteByTemplateId(Session session, List<String> resultTemplates)
             throws InvalidParameterValueException {
-        deletedResultTemplates = Lists.newArrayList();
+        List<String> deletedResultTemplates = Lists.newArrayList();
         for (String resultTemplate : resultTemplates) {
             final ResultTemplate templateObject =
-                    resultTemplateDAO.getResultTemplateObject(
-                            resultTemplate,
-                            session);
+                    daoFactory.getResultTemplateDAO().getResultTemplateObject(resultTemplate, session);
             if (templateObject == null) {
-                throw new InvalidParameterValueException(
-                        DeleteResultTemplateConstants.PARAMETERS.resultTemplate,
+                throw new InvalidParameterValueException(DeleteResultTemplateConstants.PARAMETERS.resultTemplate,
                         resultTemplate);
             }
             session.delete(templateObject);
+
             deletedResultTemplates.add(resultTemplate);
         }
+        return deletedResultTemplates;
     }
 
-    private void deleteByObservedPropertyOfferingPair(Session session,
-            List<AbstractMap.SimpleEntry<String, String>> observedPropertyOfferingPairs)
-            throws CompositeOwsException {
-        deletedResultTemplates = Lists.newArrayList();
+    private List<String> deleteByObservedPropertyOfferingPair(Session session,
+            List<AbstractMap.SimpleEntry<String, String>> observedPropertyOfferingPairs) throws CompositeOwsException {
+        List<String> deletedResultTemplates = Lists.newArrayList();
         CompositeOwsException exceptions = new CompositeOwsException();
-        for (Map.Entry<String,String> observedPropertyOfferingPair : observedPropertyOfferingPairs) {
+        for (Map.Entry<String, String> observedPropertyOfferingPair : observedPropertyOfferingPairs) {
             final String offering = observedPropertyOfferingPair.getValue();
             final String observedProperty = observedPropertyOfferingPair.getKey();
             final ResultTemplate resultTemplateObject =
-                    resultTemplateDAO.getResultTemplateObject(
-                            offering,
-                            observedProperty,
-                            session);
+                    daoFactory.getResultTemplateDAO().getResultTemplateObject(offering, observedProperty, session);
             if (resultTemplateObject == null) {
                 exceptions.add(new DeleteResultTemplateInvalidParameterValueException(offering, observedProperty));
             }
@@ -141,6 +139,7 @@ public class DeleteResultTemplateHandler extends AbstractDeleteResultTemplateHan
             deletedResultTemplates.add(resultTemplateId);
         }
         exceptions.throwIfNotEmpty();
+        return deletedResultTemplates;
     }
 
 }

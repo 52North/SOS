@@ -29,6 +29,7 @@
 package org.n52.sos.ds.procedure.enrich;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -37,10 +38,13 @@ import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
 import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.util.GeometryHandler;
 
 
 public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment {
@@ -48,8 +52,7 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
     @Override
     public void enrich() throws OwsExceptionReport {
         if (isSetLocale()) {
-            I18NDAO<I18NObservablePropertyMetadata> dao = I18NDAORepository.
-                    getInstance().getDAO(I18NObservablePropertyMetadata.class);
+            I18NDAO<I18NObservablePropertyMetadata> dao = I18NDAORepository.getInstance().getDAO(I18NObservablePropertyMetadata.class);
             if (dao != null) {
                 Set<String> ids = getCache().getObservablePropertiesForProcedure(getIdentifier());
                 Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(checkForPublished(ids));
@@ -67,7 +70,7 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
 
     private Locale getDefaultLocale() {
         return ServiceConfiguration.getInstance().getDefaultLanguage();
-    }
+}
 
     private Set<String> checkForPublished(Set<String> ids) {
         Set<String> obsProps = new HashSet<>();

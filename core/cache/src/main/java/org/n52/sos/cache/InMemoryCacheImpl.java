@@ -44,9 +44,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.janmayen.function.Functions;
 import org.n52.janmayen.function.Predicates;
 import org.n52.janmayen.function.Suppliers;
@@ -58,9 +55,9 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.MinMax;
 import org.n52.shetland.util.ReferencedEnvelope;
-import org.n52.sos.cache.SosContentCache.ComponentAggregation;
-import org.n52.sos.cache.SosContentCache.TypeInstance;
 import org.n52.sos.request.ProcedureRequestSettingProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
@@ -81,10 +78,12 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     private final Map<String, Set<String>> allowedFeatureOfInterestTypeForOfferings = newSynchronizedMap();
     private final Map<String, Set<String>> childFeaturesForFeatureOfInterest = newSynchronizedMap();
     private final Map<String, Set<String>> childProceduresForProcedures = newSynchronizedMap();
+    private final Map<String, Set<String>> childOfferingsForOfferings = newSynchronizedMap();
     private final Map<String, Set<String>> compositePhenomenonsForProcedure = newSynchronizedMap();
     private final Map<String, Set<String>> compositePhenomenonsForOffering = newSynchronizedMap();
     private final Map<String, Set<String>> compositePhenomenonsForObservableProperty = newSynchronizedMap();
     private final Map<String, Set<String>> featuresOfInterestForOfferings = newSynchronizedMap();
+    private final Map<String, Set<String>> offeringsForFeaturesOfInterest = newSynchronizedMap();
     private final Map<String, Set<String>> featuresOfInterestForResultTemplates = newSynchronizedMap();
     private final Map<String, Set<String>> observablePropertiesForCompositePhenomenons = newSynchronizedMap();
     private final Map<String, Set<String>> observablePropertiesForOfferings = newSynchronizedMap();
@@ -96,6 +95,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     private final Map<String, Set<String>> offeringsForProcedures = newSynchronizedMap();
     private final Map<String, Set<String>> parentFeaturesForFeaturesOfInterest = newSynchronizedMap();
     private final Map<String, Set<String>> parentProceduresForProcedures = newSynchronizedMap();
+    private final Map<String, Set<String>> parentOfferingsForOfferings = newSynchronizedMap();
     private final Map<String, Set<String>> proceduresForFeaturesOfInterest = newSynchronizedMap();
     private final Map<String, Set<String>> proceduresForObservableProperties = newSynchronizedMap();
     private final Map<String, Set<String>> proceduresForOfferings = newSynchronizedMap();
@@ -128,12 +128,12 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     private int defaultEpsgCode = 4326;
     private ReferencedEnvelope globalEnvelope = new ReferencedEnvelope(null, defaultEpsgCode);
     private DateTime updateTime;
-    private final SetMultiMap<String,String> procedureProcedureDescriptionFormats = newSynchronizedSetMultiMap();
+    private final Map<String, Set<String>> procedureProcedureDescriptionFormats = newSynchronizedMap();
     private Set<String> publishedFeatureOfInterest = newSynchronizedSet();
     private Set<String> publishedProcedure= newSynchronizedSet();
     private Set<String> publishedOffering = newSynchronizedSet();
     private Set<String> publishedObservableProperty = newSynchronizedSet();
-    
+
     @Override
     public DateTime getLastUpdateTime() {
         return this.updateTime;
@@ -401,7 +401,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     public Set<String> getAllowedObservationTypesForOffering(String offering) {
         return copyOf(this.allowedObservationTypeForOfferings.get(offering));
     }
-    
+
     @Override
     public Set<String> getAllObservationTypesForOffering(final String offering) {
         Set<String> observationTypes  =Sets.newHashSet(copyOf(this.allowedObservationTypeForOfferings.get(offering)));
@@ -413,7 +413,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     public Set<String> getFeaturesOfInterestForOffering(String offering) {
         return copyOf(this.featuresOfInterestForOfferings.get(offering));
     }
-    
+
     @Override
     public Set<String> getOfferingsForFeatureOfInterest(final String featureOfInterest) {
         return copyOf(this.offeringsForFeaturesOfInterest.get(featureOfInterest));
@@ -485,7 +485,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     public Set<String> getChildProcedures(Set<String> procedureIdentifiers, boolean fullHierarchy, boolean includeSelves) {
         return getHierarchy(this.childProceduresForProcedures, procedureIdentifiers, fullHierarchy, includeSelves);
     }
-    
+
 
     @Override
     public Set<String> getParentOfferings(final String offeringIdentifier, final boolean fullHierarchy,
@@ -512,12 +512,12 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
             final boolean includeSelves) {
         return getHierarchy(this.childOfferingsForOfferings, offeringIdentifiers, fullHierarchy, includeSelves);
     }
-    
+
     @Override
     public boolean hasParentOfferings(String offering) {
         return this.parentOfferingsForOfferings.containsKey(offering);
     }
-    
+
     @Override
     public Set<String> getChildFeatures(final String featureIdentifier, final boolean fullHierarchy,
             final boolean includeSelf) {
@@ -1031,7 +1031,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     public Set<String> getFeaturesOfInterestWithOffering() {
         return CollectionHelper.unionOfListOfLists(this.featuresOfInterestForOfferings.values());
     }
-    
+
     @Override
     public Set<String> getOfferingWithFeaturesOfInterest() {
         return CollectionHelper.unionOfListOfLists(this.offeringsForFeaturesOfInterest.values());
@@ -1061,7 +1061,8 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
         notNullOrEmpty(FEATURE_OF_INTEREST, featureOfInterest);
         LOG.trace("Adding featureOfInterest {} to Offering {}", featureOfInterest, offering);
         this.featuresOfInterestForOfferings.computeIfAbsent(offering, createSynchronizedSet()).add(featureOfInterest);
-        this.offeringsForFeaturesOfInterest.add(featureOfInterest, offering);
+        this.offeringsForFeaturesOfInterest.computeIfAbsent(featureOfInterest, createSynchronizedSet())
+            .add(offering);
     }
 
     @Override
@@ -1231,7 +1232,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
         notNullOrEmpty(FEATURE_OF_INTEREST, featureOfInterest);
         LOG.trace("Removing featureOfInterest {} from offering {}", featureOfInterest, offering);
         this.featuresOfInterestForOfferings.getOrDefault(offering, Collections.emptySet()).remove(featureOfInterest);
-        this.offeringsForFeaturesOfInterest.removeWithKey(featureOfInterest, offering);
+        this.offeringsForFeaturesOfInterest.getOrDefault(featureOfInterest, Collections.emptySet()).remove(offering);
     }
 
     @Override
@@ -1248,7 +1249,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
         notNullOrEmpty(OFFERING, offering);
         LOG.trace("Removing featuresOfInterest for offering {}", offering);
         for (String featureOfInterest : featuresOfInterestForOfferings.get(offering)) {
-            this.offeringsForFeaturesOfInterest.removeWithKey(featureOfInterest, offering);
+            removeFeatureOfInterestForOffering(offering, featureOfInterest);
         }
         this.featuresOfInterestForOfferings.remove(offering);
     }
@@ -1512,14 +1513,15 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
         LOG.trace("Setting featureOfInterest for offering {} to {}", offering, newValue);
         this.featuresOfInterestForOfferings.put(offering, newValue);
     }
-    
+
     @Override
     public void addOfferingForFeaturesOfInterest(final String offering, final Collection<String> featuresOfInterest) {
         notNullOrEmpty(OFFERING, offering);
         noNullOrEmptyValues(FEATURES_OF_INTEREST, featuresOfInterest);
         LOG.trace("Adding offering {} to featureOfInterest {}", offering, featuresOfInterest);
         for (final String featureOfInterest : featuresOfInterest) {
-            this.offeringsForFeaturesOfInterest.add(featureOfInterest, offering);
+            this.offeringsForFeaturesOfInterest.computeIfAbsent(featureOfInterest, createSynchronizedSet())
+            .add(offering);
         }
     }
 
@@ -1575,14 +1577,14 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
                 -> this.childProceduresForProcedures.computeIfAbsent(parentProcedure, createSynchronizedSet())
                         .add(procedure));
     }
-    
+
     @Override
     public void addParentOffering(final String offering, final String parentOffering) {
         notNullOrEmpty(OFFERING, offering);
         notNullOrEmpty(PARENT_OFFERING, parentOffering);
         LOG.trace("Adding parentOffering {} to offering {}", parentOffering, offering);
-        this.parentOfferingsForOfferings.add(offering, parentOffering);
-        this.childOfferingsForOfferings.add(parentOffering, offering);
+        this.parentOfferingsForOfferings.computeIfAbsent(offering, createSynchronizedSet()).add(parentOffering);
+        this.childOfferingsForOfferings.computeIfAbsent(parentOffering, createSynchronizedSet()).add(offering);
     }
 
     @Override
@@ -1590,10 +1592,10 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
         notNullOrEmpty(OFFERING, offering);
         noNullOrEmptyValues(PARENT_OFFERINGS, parentOfferings);
         LOG.trace("Adding parentOfferings {} to offering {}", parentOfferings, offering);
-        this.parentOfferingsForOfferings.addAll(offering, parentOfferings);
-        for (final String parentProcedure : parentOfferings) {
-            this.childOfferingsForOfferings.add(parentProcedure, offering);
-        }
+        this.parentOfferingsForOfferings.computeIfAbsent(offering, createSynchronizedSet()).addAll(parentOfferings);
+        parentOfferings.forEach((parentOffering)
+                -> this.childOfferingsForOfferings.computeIfAbsent(parentOffering, createSynchronizedSet())
+                        .add(offering));
     }
 
     @Override
@@ -1875,7 +1877,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
         LOG.trace("Clearing features of interest for offerings");
         this.featuresOfInterestForOfferings.clear();
     }
-    
+
     @Override
     public void clearOfferingsForFeaturesOfInterest() {
         LOG.trace("Clearing offerings for features of interest");
@@ -2440,12 +2442,6 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     }
 
     @Override
-    public void setRequestableProcedureDescriptionFormat(Collection<String> formats) {
-        LOG.trace("Adding requestable procedureDescriptionFormat");
-        getRequestableProcedureDescriptionFormat().addAll(formats);
-    }
-
-    @Override
     public Set<String> getOfferingsForProcedures(Set<String> procedures) {
         return Optional.ofNullable(procedures)
                 .orElseGet(Collections::emptySet)
@@ -2641,7 +2637,8 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
 
     @Override
     public void addProcedureDescriptionFormatsForProcedure(String procedure, Set<String> formats) {
-        procedureProcedureDescriptionFormats.addAll(procedure, formats);
+        this.procedureProcedureDescriptionFormats.computeIfAbsent(procedure, createSynchronizedSet())
+        .addAll(formats);
     }
 
 
@@ -2661,17 +2658,17 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     public Set<String> getPublishedFeatureOfInterest() {
         return copyOf(publishedFeatureOfInterest);
     }
-    
+
     @Override
     public Set<String> getPublishedProcedures() {
         return copyOf(publishedProcedure);
     }
-    
+
     @Override
     public Set<String> getPublishedOfferings() {
         return copyOf(publishedOffering);
     }
-    
+
     @Override
     public Set<String> getPublishedObservableProperties() {
         return copyOf(publishedObservableProperty);
@@ -2692,7 +2689,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
             addPublishedFeatureOfInterest(featureOfInterest);
         }
     }
-    
+
     @Override
     public void setPublishedFeaturesOfInterest(final Collection<String> featuresOfInterest) {
         LOG.trace("Setting published FeaturesOfInterest");
@@ -2735,7 +2732,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
            addPublishedProcedure(procedure);
        }
    }
-   
+
    @Override
    public void setPublishedProcedures(final Collection<String> procedures) {
        LOG.trace("Setting published procedure");
@@ -2778,7 +2775,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
            addPublishedOffering(offering);
        }
    }
-   
+
    @Override
    public void setPublishedOfferings(final Collection<String> offerings) {
        LOG.trace("Setting published offering");
@@ -2821,7 +2818,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
            addPublishedObservableProperty(observableProperty);
        }
    }
-   
+
    @Override
    public void setPublishedObservableProperties(final Collection<String> observableProperties) {
        LOG.trace("Setting published observableProperties");
@@ -2849,7 +2846,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
            removePublishedObservableProperty(observableProperty);
        }
    }
-}
+
     @Override
     public int hashCode() {
         int hash = 5;

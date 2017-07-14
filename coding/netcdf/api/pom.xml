@@ -49,7 +49,7 @@
       	</dependency>
 		<dependency>
 			<groupId>edu.ucar</groupId>
-			<artifactId>netcdf4</artifactId>
+			<artifactId>cdm</artifactId>
 		</dependency>   
         <dependency>
             <groupId>javax.servlet</groupId>

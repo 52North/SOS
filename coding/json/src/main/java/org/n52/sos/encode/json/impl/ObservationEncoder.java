@@ -31,7 +31,9 @@ package org.n52.sos.encode.json.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.xmlbeans.XmlObject;
 import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -41,13 +43,24 @@ import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
 import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.MultiPointCoverage;
 import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.ProfileValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
+import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TLVTValue;
 import org.n52.shetland.ogc.om.values.TVPValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.TimeRangeValue;
+import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.XmlValue;
+import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
 import org.n52.shetland.ogc.swe.SweDataRecord;
@@ -179,31 +192,31 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
 
     private JsonNode encodeValue(Value<?> value)
             throws EncodingException {
-        return value.accept(new ValueVisitor<JsonNode>() {
+        return value.accept(new ValueVisitor<JsonNode, EncodingException>() {
             @Override
-            public JsonNode visit(BooleanValue value) {
+            public JsonNode visit(BooleanValue value) throws EncodingException {
                 return encodeBooleanValue(value);
             }
 
             @Override
-            public JsonNode visit(CategoryValue value) {
+            public JsonNode visit(CategoryValue value) throws EncodingException {
                 return encodeCategoryValue(value);
             }
 
             @Override
             public JsonNode visit(ComplexValue value)
-                    throws OwsExceptionReport {
+                    throws EncodingException {
                 return encodeComplexValue(value);
             }
 
             @Override
-            public JsonNode visit(CountValue value) {
+            public JsonNode visit(CountValue value) throws EncodingException {
                 return encodeCountValue(value);
             }
 
             @Override
             public JsonNode visit(GeometryValue value)
-                    throws OwsExceptionReport {
+                    throws EncodingException {
                 return encodeGeometryValue(value);
             }
 
@@ -214,70 +227,75 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
 
             @Override
             public JsonNode visit(NilTemplateValue value)
-                    throws OwsExceptionReport {
+                    throws EncodingException {
                 throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
 
             }
 
             @Override
-            public JsonNode visit(QuantityValue value) {
+            public JsonNode visit(QuantityValue value) throws EncodingException {
                 return encodeQualityValue(value);
             }
 
             @Override
-            public JsonNode visit(ReferenceValue value) {
+            public JsonNode visit(ReferenceValue value) throws EncodingException {
                 return encodeReferenceValue(value);
             }
 
             @Override
             public JsonNode visit(SweDataArrayValue value)
-                    throws OwsExceptionReport {
+                    throws EncodingException {
                 return encodeSweDataArrayValue(value);
             }
 
             @Override
-            public JsonNode visit(TVPValue value) throws OwsExceptionReport {
+            public JsonNode visit(TVPValue value) throws EncodingException {
                 return encodeTVPValue(value);
             }
 
             @Override
-            public JsonNode visit(TextValue value) {
+            public JsonNode visit(TextValue value) throws EncodingException {
                 return encodeTextValue(value);
             }
 
             @Override
             public JsonNode visit(UnknownValue value)
-                    throws OwsExceptionReport {
+                    throws EncodingException {
                 throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
             }
 
             @Override
-            public JsonNode visit(XmlValue value) {
+            public JsonNode visit(XmlValue<?> value) throws EncodingException{
                 return encodeXmlValue(value);
             }
 
             @Override
-            public JsonNode visit(TLVTValue value) throws OwsExceptionReport {
+            public JsonNode visit(TLVTValue value) throws EncodingException {
                 throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
             }
 
             @Override
-            public JsonNode visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+            public JsonNode visit(CvDiscretePointCoverage value) throws EncodingException {
                 throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
             }
 
             @Override
-            public JsonNode visit(MultiPointCoverage value) throws OwsExceptionReport {
+            public JsonNode visit(MultiPointCoverage value) throws EncodingException {
                 throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
             }
 
             @Override
-            public JsonNode visit(RectifiedGridCoverage value) throws OwsExceptionReport {
+            public JsonNode visit(RectifiedGridCoverage value) throws EncodingException {
                 throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
             }
 
             @Override
-            public JsonNode visit(ProfileValue value) throws OwsExceptionReport {
+            public JsonNode visit(ProfileValue value) throws EncodingException {
+                throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
+            }
+
+            @Override
+            public JsonNode visit(TimeRangeValue value) throws EncodingException {
                 throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
             }
         });
@@ -298,12 +316,12 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         return node;
     }
 
-    private JsonNode encodeTVPValue(TVPValue value) throws OwsExceptionReport {
+    private JsonNode encodeTVPValue(TVPValue value) throws EncodingException {
         ArrayNode arrayNode = nodeFactory().arrayNode();
         for (TimeValuePair tvp : value.getValue()) {
             ObjectNode node = nodeFactory().objectNode();
-            node.put(JSONConstants.TIME, encodeObjectToJson(tvp.getTime()));
-            node.put(JSONConstants.VALUE, encodeValue(value));
+            node.set(JSONConstants.TIME, encodeObjectToJson(tvp.getTime()));
+            node.set(JSONConstants.VALUE, encodeValue(value));
             arrayNode.add(node);
         }
         return arrayNode;
@@ -383,14 +401,6 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         return result;
     }
 
-    private String getObservationType(OmObservation o) throws EncodingException {
-        if (o.getObservationConstellation().isSetObservationType()) {
-            return o.getObservationConstellation().getObservationType();
-        } else {
-            return OMHelper.getObservationTypeFor(o.getValue().getValue());
-        }
-    }
-
     private JsonNode encodeTVPValue(OmObservation o) throws EncodingException {
         TVPValue tvpValue = (TVPValue) o.getValue().getValue();
         ObjectNode result = nodeFactory().objectNode();
@@ -414,6 +424,21 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
             }
         }
         return result;
+    }
+
+    private TextNode encodeXmlValue(XmlValue<?> value) {
+        if (value.getValue() instanceof XmlObject) {
+            return nodeFactory().textNode(((XmlObject) value.getValue()).xmlText());
+        }
+        return null;
+    }
+
+    private String getObservationType(OmObservation o) throws EncodingException {
+        if (o.getObservationConstellation().isSetObservationType()) {
+            return o.getObservationConstellation().getObservationType();
+        } else {
+            return OMHelper.getObservationTypeFor(o.getValue().getValue());
+        }
     }
 
     private SweField getFieldForValue(String phenomenon, Value<?> value) throws EncodingException {
@@ -472,10 +497,6 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         } else {
             throw new UnsupportedEncoderInputException(this, value);
         }
-    }
-
-    private TextNode encodeXmlValue(XmlValue value) {
-        return nodeFactory().textNode(value.getValue().xmlText());
     }
 
     /**

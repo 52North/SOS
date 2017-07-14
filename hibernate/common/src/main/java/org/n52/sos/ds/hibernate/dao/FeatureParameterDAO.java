@@ -31,43 +31,46 @@ package org.n52.sos.ds.hibernate.dao;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
+import org.n52.shetland.ogc.UoM;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.CvDiscretePointCoverage;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.MultiPointCoverage;
+import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.ProfileValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
+import org.n52.shetland.ogc.om.values.ReferenceValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TLVTValue;
+import org.n52.shetland.ogc.om.values.TVPValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.TimeRangeValue;
+import org.n52.shetland.ogc.om.values.UnknownValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.XmlValue;
+import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
+import org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter;
 import org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameterFactory;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.UoM;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
-import org.n52.sos.ogc.om.values.MultiPointCoverage;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.ProfileValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
-import org.n52.sos.ogc.om.values.ReferenceValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TLVTValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.om.values.XmlValue;
-import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 
 /**
  * Hibernate DAO class to sf:pramameter
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class FeatureParameterDAO {
 
@@ -83,7 +86,7 @@ public class FeatureParameterDAO {
             namedValue.getValue().accept(persister);
         }
     }
-    
+
     /**
      * If the local unit cache isn't null, use it when retrieving unit.
      *
@@ -97,7 +100,7 @@ public class FeatureParameterDAO {
     protected Unit getUnit(String unit, Map<UoM, Unit> localCache, Session session) {
         return getUnit(new UoM(unit), localCache, session);
     }
-    
+
     /**
      * If the local unit cache isn't null, use it when retrieving unit.
      *
@@ -125,7 +128,7 @@ public class FeatureParameterDAO {
         return FeatureParameterFactory.getInstance();
     }
 
-    public static class ParameterPersister implements ValueVisitor<ValuedParameter<?>> {
+    public static class ParameterPersister implements ValueVisitor<ValuedParameter<?>, OwsExceptionReport> {
         private final Caches caches;
         private final Session session;
         private final long featureOfInterestId;
@@ -140,7 +143,7 @@ public class FeatureParameterDAO {
                     featureOfInterestId,
                     session);
         }
-        
+
         public ParameterPersister(DAOs daos, Caches caches, NamedValue<?> namedValue, long featureOfInterestId, Session session) {
             this.featureOfInterestId = featureOfInterestId;
             this.caches = caches;
@@ -161,7 +164,7 @@ public class FeatureParameterDAO {
                 return units;
             }
         }
-    
+
         private static class DAOs {
             private final FeatureParameterDAO parameter;
 
@@ -173,29 +176,29 @@ public class FeatureParameterDAO {
                 return this.parameter;
             }
         }
-        
+
         private <V, T extends ValuedParameter<V>> T setUnitAndPersist(T parameter, Value<V> value) throws OwsExceptionReport {
             if (parameter instanceof HasUnit) {
                 ((HasUnit)parameter).setUnit(getUnit(value));
             }
             return persist(parameter, value.getValue());
         }
-        
+
         private Unit getUnit(Value<?> value) {
             return value.isSetUnit() ? daos.parameter().getUnit(value.getUnitObject(), caches.units(), session) : null;
         }
-        
+
         private <V, T extends ValuedParameter<V>> T persist(T parameter, Value<V> value) throws OwsExceptionReport {
             return persist(parameter, value.getValue());
         }
-        
+
         private <V, T extends ValuedParameter<V>> T persist(T parameter, V value) throws OwsExceptionReport {
             if (parameter instanceof org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter) {
                 if (parameter instanceof HasUnit && !((HasUnit)parameter).isSetUnit()) {
                     ((HasUnit)parameter).setUnit(getUnit(namedValue.getValue()));
                 }
-                
-                ((org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter)parameter).setFeatureOfInterestId(featureOfInterestId);
+
+                ((FeatureParameter)parameter).setFeatureOfInterestId(featureOfInterestId);
                 parameter.setName(namedValue.getName().getHref());
                 parameter.setValue(value);
                 session.saveOrUpdate(parameter);
@@ -268,7 +271,7 @@ public class FeatureParameterDAO {
         public ValuedParameter<?> visit(UnknownValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
-        
+
         @Override
         public ValuedParameter<?> visit(TLVTValue value) throws OwsExceptionReport {
             throw notSupported(value);
@@ -295,9 +298,16 @@ public class FeatureParameterDAO {
         }
 
         @Override
-        public ValuedParameter<?> visit(XmlValue value)
-                throws OwsExceptionReport {
-            return persist(parameterFactory.xml(), value.getValue().xmlText());
+        public ValuedParameter<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public ValuedParameter<?> visit(XmlValue<?> value) throws OwsExceptionReport {
+            if (value.getValue() instanceof XmlObject) {
+                return persist(parameterFactory.xml(), ((XmlObject) value.getValue()).xmlText());
+            }
+            throw notSupported(value);
         }
 
         private OwsExceptionReport notSupported(Value<?> value)

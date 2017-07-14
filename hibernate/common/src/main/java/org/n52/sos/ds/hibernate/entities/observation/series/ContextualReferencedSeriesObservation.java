@@ -28,9 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestGetter;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureGetter;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;

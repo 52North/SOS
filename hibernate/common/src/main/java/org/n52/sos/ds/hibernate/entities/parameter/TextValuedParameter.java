@@ -30,41 +30,4 @@ package org.n52.sos.ds.hibernate.entities.parameter;
 
 public interface TextValuedParameter extends ValuedParameter<String> {
 
-import com.google.common.base.Strings;
-
-public class TextValuedParameter extends Parameter<String> {
-
-    private static final long serialVersionUID = -6009881349223418155L;
-    private String value;
-
-    @Override
-    public String getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public boolean isSetValue() {
-        return !Strings.isNullOrEmpty(getValue());
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue();
-    }
-
-    @Override
-    public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
-        visitor.visit(this);
-    }
-
-    @Override
-    public <T> NamedValue<T> accept(ParameterVisitor<T> visitor) throws OwsExceptionReport {
-        return visitor.visit(this);
-    }
-
 }

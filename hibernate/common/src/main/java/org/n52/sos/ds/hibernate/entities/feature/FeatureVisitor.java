@@ -28,17 +28,17 @@
  */
 package org.n52.sos.ds.hibernate.entities.feature;
 
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
 import org.n52.sos.ds.hibernate.entities.feature.wml.MonitoringPoint;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public interface FeatureVisitor<T extends AbstractFeature> {
-    
+
     T visit(FeatureOfInterest f) throws OwsExceptionReport;
 
     T visit(Specimen f) throws OwsExceptionReport;
-    
+
     T visit(EnvironmentalMonitoringFacility f) throws OwsExceptionReport;
 
     T visit(MonitoringPoint f) throws OwsExceptionReport;

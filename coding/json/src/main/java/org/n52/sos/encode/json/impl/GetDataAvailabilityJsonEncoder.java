@@ -26,14 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.gda;
+package org.n52.sos.encode.json.impl;
+
+import java.util.Set;
 
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
-import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
-import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
-import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ObservationFormatDescriptor;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ProcedureDescriptionFormatDescriptor;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;

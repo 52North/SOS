@@ -30,14 +30,14 @@ package org.n52.sos.ds.hibernate.entities.parameter.series;
 
 import java.util.List;
 
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.CollectionHelper;
 
 public class SeriesParameterAdder {
-    
+
     private OmObservation observation;
     private List<Parameter> hParameters;
 

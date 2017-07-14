@@ -26,12 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.json.inspire;
+package org.n52.sos.encode.json.impl;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.sos.encode.json.JSONEncoder;
-import org.n52.sos.util.AQDJSONConstants;
 import org.n52.shetland.w3c.xlink.Reference;
+import org.n52.sos.coding.json.AQDJSONConstants;
+import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

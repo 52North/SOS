@@ -429,7 +429,7 @@ public class SosInsertSensorOperatorV20 extends
             }
         }
         if (procedureDescription.isSetParentProcedure()) {
-            if (procedureDescription.getParentProcedures().contains(assignedIdentifier)) {
+            if (procedureDescription.getParentProcedure().getHref().equals(assignedIdentifier)) {
                 throw new InvalidParameterValueException().at("parentProcdureIdentifier").withMessage(
                         "The procedure with the identifier '%s' is linked to itself as parent procedure !",
                         procedureDescription.getIdentifier());

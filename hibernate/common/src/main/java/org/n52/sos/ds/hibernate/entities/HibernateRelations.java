@@ -355,16 +355,16 @@ public interface HibernateRelations {
 
         void setProcedure(Procedure procedure);
     }
-    
+
     interface HasSeriesType {
 
         void setSeriesType(String seriesType);
-        
+
         String getSeriesType();
-        
+
         boolean isSetSeriesType();
     }
-    
+
     interface HasProcedureDescriptionFormat {
         String PROCEDURE_DESCRIPTION_FORMAT = "procedureDescriptionFormat";
 
@@ -528,8 +528,10 @@ public interface HibernateRelations {
 
 //        Object getOffering();
         void setOfferings(Object offerings);
-        
-        boolean isSetOfferings();
+
+        default boolean isSetOfferings() {
+            return getOfferings() != null && !getOfferings().isEmpty();
+        }
 
     }
 
@@ -545,14 +547,14 @@ public interface HibernateRelations {
         }
 
     }
-    
+
     interface HasRelatedObservations {
         String PARAMETERS = "relatedObservations";
 
         Set<RelatedObservation> getRelatedObservations();
 
         void setRelatedObservations(Set<RelatedObservation> relatedObservations);
-        
+
         boolean hasRelatedObservations();
 
     }
@@ -674,8 +676,6 @@ public interface HibernateRelations {
         void setParents(Set<T> parents);
 
         void addParent(T parent);
-        
-        boolean hasParents();
 
         default boolean hasParents() {
             return getParents() != null && !getParents().isEmpty();
@@ -710,7 +710,7 @@ public interface HibernateRelations {
          */
         void setObservationId(final long observationId);
     }
-    
+
     interface HasFeatureOfInterestId {
         String FEAT_ID = "featureOfInterestId";
 
@@ -729,7 +729,7 @@ public interface HibernateRelations {
          */
         void setFeatureOfInterestId(final long featureOfInterestId);
     }
-    
+
     interface HasParamerterId {
         String ID = "parameterId";
 
@@ -748,7 +748,7 @@ public interface HibernateRelations {
          */
         void setParameterId(final long parameterId);
     }
-    
+
     interface HasLocale {
         String LOCALE = "locale";
 

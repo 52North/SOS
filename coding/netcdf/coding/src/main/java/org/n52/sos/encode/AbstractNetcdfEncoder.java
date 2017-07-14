@@ -40,13 +40,11 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.request.handler.OperationHandler;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
@@ -57,7 +55,7 @@ import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
-import org.n52.shetland.ogc.om.ObservationType;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.values.Value;
@@ -86,7 +84,6 @@ import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 import org.n52.shetland.ogc.sos.response.BinaryAttachmentResponse;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
@@ -133,8 +130,6 @@ import ucar.nc2.Variable;
 import ucar.nc2.constants.CDM;
 import ucar.nc2.constants.CF;
 import ucar.nc2.jni.netcdf.Nc4Iosp;
-
-import org.n52.shetland.ogc.om.ObservationStream;
 
 /**
  * Abstract class of {@link ObservationEncoder} for netCDF encoding.
@@ -184,7 +179,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
         return Collections.emptySet();
     }
-    
+
     @Override
     public Set<SupportedType> getSupportedTypes() {
         return Collections.unmodifiableSet(SUPPORTED_TYPES);
@@ -384,7 +379,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         // time var
         Variable vTime = addVariableTime(writer, timeDims);
         if (numTimes > 1 && writer.getVersion().isNetdf4format()) {
-            vTime.addAttribute(new Attribute(CDM.CHUNK_SIZE, getNetcdfHelper().getChunkSizeTime()));
+            vTime.addAttribute(new Attribute(CDM.CHUNK_SIZES, getNetcdfHelper().getChunkSizeTime()));
         }
         ArrayDouble timeArray = new ArrayDouble(getDimShapes(timeDims));
         initArrayWithFillValue(timeArray, getNetcdfHelper().getFillValue());

@@ -38,5 +38,7 @@ import org.n52.sos.ds.hibernate.entities.feature.AbstractMonitoringFeature;
  */
 public class MonitoringPoint extends AbstractMonitoringFeature {
 
+    private static final long serialVersionUID = 1L;
+
 
 }

@@ -38,11 +38,11 @@ public abstract class Parameter<T> implements org.n52.sos.ds.hibernate.entities.
     private long parameterId;
     private long observationId;
     private String name;
-    
+
     public Parameter() {
         super();
     }
-    
+
     /**
      * @return the parameterId
      */

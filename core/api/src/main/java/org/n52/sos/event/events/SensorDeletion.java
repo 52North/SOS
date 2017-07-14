@@ -28,7 +28,8 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.sos.response.DeleteSensorResponse;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>

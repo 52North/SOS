@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.gda;
+package org.n52.sos.decode.json.impl;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -72,7 +72,7 @@ public class GetDataAvailabilityJsonDecoder extends AbstractSosRequestDecoder<Ge
             parseStringOrStringList(node.path(JSONConstants.OFFERING)).forEach(req::addOffering);
         }
         if (node.has(JSONConstants.RESPONSE_FORMAT)) {
-            req.setResponseFormat(node.path(RESPONSE_FORMAT).textValue());
+            req.setResponseFormat(node.path(JSONConstants.RESPONSE_FORMAT).textValue());
         }
         return req;
     }

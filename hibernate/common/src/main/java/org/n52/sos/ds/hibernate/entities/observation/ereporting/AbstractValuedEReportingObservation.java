@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
 import org.hibernate.Session;
-
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;

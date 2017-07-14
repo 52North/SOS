@@ -70,7 +70,7 @@ public class SeriesCategoryObservation
     public boolean isSetValue() {
         return !Strings.isNullOrEmpty(value);
     }
-    
+
     @Override
     public void setValueIdentifier(String valueIdentifier) {
         this.valueIdentifier = valueIdentifier;
@@ -85,7 +85,7 @@ public class SeriesCategoryObservation
     public boolean isSetValueIdentifier() {
         return !Strings.isNullOrEmpty(getValueIdentifier());
     }
-    
+
     @Override
     public void setValueName(String valueName) {
        this.valueName = valueName;

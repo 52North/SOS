@@ -327,9 +327,9 @@ public class MeasurementDecodingTest {
         thrown.expectMessage(is("Unsupported observationType: " + type));
         decoder.decode(c);
     }
-    
+
     @Test
-    public void testSamplingGeometry() throws OwsExceptionReport {
+    public void testSamplingGeometry() {
         assertThat(observation, is(notNullValue()));
         assertThat(observation.isSetSpatialFilteringProfileParameter(), is(true));
         assertThat(observation.getSpatialFilteringProfileParameter().getValue(), is(notNullValue()));

@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.entities.observation.series.full;
 
 import java.util.Set;
 
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
@@ -38,7 +39,6 @@ import org.n52.sos.ds.hibernate.entities.observation.VoidObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class SeriesProfileObservation extends AbstractSeriesObservation<Set<Observation<?>>>
     implements ProfileObservation {

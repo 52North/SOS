@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ext.deleteobservation;
+package org.n52.sos.request.operator;
 
 import static org.n52.shetland.ogc.sos.SosConstants.SOS;
 import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.CONFORMANCE_CLASSES;
@@ -42,8 +42,10 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.operator.AbstractTransactionalRequestOperator;
+import org.n52.sos.ds.AbstractDeleteObservationHandler;
+import org.n52.sos.event.events.DeleteObservationEvent;
+import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
+import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -115,24 +117,24 @@ public class DeleteObservationRequestOperator
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
-            
+
         }
         exceptions.throwIfNotEmpty();
     }
-    
+
     /**
      * checks if the passed offeringId is supported
-     * 
+     *
      * @param offeringIds
      *            the offeringId to be checked
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             if the passed offeringId is not supported
      */
     private void checkOfferingId(final Set<String> offeringIds) throws OwsExceptionReport {
         if (offeringIds != null) {
-            final Set<String> offerings = Configurator.getInstance().getCache().getOfferings();
+            final Set<String> offerings = getCache().getOfferings();
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final String offeringId : offeringIds) {
                 if (offeringId == null || offeringId.isEmpty()) {

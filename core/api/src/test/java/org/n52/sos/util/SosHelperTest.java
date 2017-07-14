@@ -34,6 +34,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 
 import org.junit.BeforeClass;
@@ -53,7 +54,8 @@ import com.vividsolutions.jts.geom.Envelope;
  * @since 4.0.0
  *
  */
-public class SosHelperTest extends SosHelper {
+public class SosHelperTest
+        extends SosHelper {
 
     public static final int EPSG4326 = 4326;
 
@@ -92,19 +94,17 @@ public class SosHelperTest extends SosHelper {
     }
 
     @Test
-    public void shouldValidHttpGetGetFeatureOfInterestRequest() throws MalformedURLException{
+    public void shouldValidHttpGetGetFeatureOfInterestRequest() throws MalformedURLException {
         assertThat(createFoiGetUrl(FOI_ID, VERSION_1, SERVICE_URL, URL_PATTERN), is(getFoi100Url()));
         assertThat(createFoiGetUrl(FOI_ID, VERSION_2, SERVICE_URL, URL_PATTERN), is(getFoi200Url()));
     }
 
     @Test
     public void shouldValidHttpGetDescribeSensorRequest() throws MalformedURLException, UnsupportedEncodingException {
-        assertThat(
-                getDescribeSensorUrl(VERSION_1, SERVICE_URL, PROC_ID, URL_PATTERN,
-                        SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), is(getProcDesc100Url()));
-        assertThat(
-                getDescribeSensorUrl(VERSION_2, SERVICE_URL, PROC_ID, URL_PATTERN,
-                        SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL), is(getProcDesc200Url()));
+        assertThat(getDescribeSensorUrl(VERSION_1, SERVICE_URL, PROC_ID, URL_PATTERN,
+                SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), is(getProcDesc100Url()));
+        assertThat(getDescribeSensorUrl(VERSION_2, SERVICE_URL, PROC_ID, URL_PATTERN,
+                SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL), is(getProcDesc200Url()));
     }
 
     protected void checkMinMax(MinMax<String> minmax, double minY, double minX, double maxY, double maxX) {
@@ -113,54 +113,54 @@ public class SosHelperTest extends SosHelper {
         assertThat(minmax.getMaximum(), is(maxY + " " + maxX));
     }
 
-    protected String getFoi100Url() {
+    protected URL getFoi100Url() throws MalformedURLException {
         StringBuilder builder = new StringBuilder();
         builder.append(SERVICE_URL).append(URL_PATTERN);
-        builder.append("?").append(OWSConstants.RequestParams.request.name()).append("=")
-                .append(SosConstants.Operations.GetFeatureOfInterest.name());
-        builder.append("&").append(OWSConstants.RequestParams.service.name()).append("=").append(SosConstants.SOS);
+        builder.append("?").append(OWSConstants.RequestParams.service.name()).append("=").append(SosConstants.SOS);
         builder.append("&").append(OWSConstants.RequestParams.version.name()).append("=").append(VERSION_1);
+        builder.append("&").append(OWSConstants.RequestParams.request.name()).append("=")
+                .append(SosConstants.Operations.GetFeatureOfInterest.name());
         builder.append("&").append(Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID.name()).append("=")
                 .append(FOI_ID);
-        return builder.toString();
+        return new URL(builder.toString());
     }
 
-    protected String getFoi200Url() {
+    protected URL getFoi200Url() throws MalformedURLException {
         StringBuilder builder = new StringBuilder();
         builder.append(SERVICE_URL).append(URL_PATTERN);
-        builder.append("?").append(OWSConstants.RequestParams.request.name()).append("=")
-                .append(SosConstants.Operations.GetFeatureOfInterest.name());
-        builder.append("&").append(OWSConstants.RequestParams.service.name()).append("=").append(SosConstants.SOS);
+        builder.append("?").append(OWSConstants.RequestParams.service.name()).append("=").append(SosConstants.SOS);
         builder.append("&").append(OWSConstants.RequestParams.version.name()).append("=").append(VERSION_2);
+        builder.append("&").append(OWSConstants.RequestParams.request.name()).append("=")
+                .append(SosConstants.Operations.GetFeatureOfInterest.name());
         builder.append("&").append(Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name()).append("=")
                 .append(FOI_ID);
-        return builder.toString();
+        return new URL(builder.toString());
     }
 
-    protected String getProcDesc100Url() throws UnsupportedEncodingException {
+    protected URL getProcDesc100Url() throws UnsupportedEncodingException, MalformedURLException {
         StringBuilder builder = new StringBuilder();
         builder.append(SERVICE_URL).append(URL_PATTERN);
-        builder.append("?").append(OWSConstants.RequestParams.request.name()).append("=")
-                .append(SosConstants.Operations.DescribeSensor.name());
-        builder.append("&").append(OWSConstants.RequestParams.service.name()).append("=").append(SosConstants.SOS);
+        builder.append("?").append(OWSConstants.RequestParams.service.name()).append("=").append(SosConstants.SOS);
         builder.append("&").append(OWSConstants.RequestParams.version.name()).append("=").append(VERSION_1);
+        builder.append("&").append(OWSConstants.RequestParams.request.name()).append("=")
+                .append(SosConstants.Operations.DescribeSensor.name());
         builder.append("&").append(SosConstants.DescribeSensorParams.procedure.name()).append("=").append(PROC_ID);
         builder.append("&").append(Sos1Constants.DescribeSensorParams.outputFormat.name()).append("=")
                 .append(URLEncoder.encode(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE, "UTF-8"));
-        return builder.toString();
+        return new URL(builder.toString());
     }
 
-    protected String getProcDesc200Url() throws UnsupportedEncodingException {
+    protected URL getProcDesc200Url() throws UnsupportedEncodingException, MalformedURLException {
         StringBuilder builder = new StringBuilder();
         builder.append(SERVICE_URL).append(URL_PATTERN);
-        builder.append("?").append(OWSConstants.RequestParams.request.name()).append("=")
-                .append(SosConstants.Operations.DescribeSensor.name());
-        builder.append("&").append(OWSConstants.RequestParams.service.name()).append("=").append(SosConstants.SOS);
+        builder.append("?").append(OWSConstants.RequestParams.service.name()).append("=").append(SosConstants.SOS);
         builder.append("&").append(OWSConstants.RequestParams.version.name()).append("=").append(VERSION_2);
+        builder.append("&").append(OWSConstants.RequestParams.request.name()).append("=")
+                .append(SosConstants.Operations.DescribeSensor.name());
         builder.append("&").append(SosConstants.DescribeSensorParams.procedure.name()).append("=").append(PROC_ID);
         builder.append("&").append(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat.name()).append("=")
                 .append(URLEncoder.encode(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, "UTF-8"));
-        return builder.toString();
+        return new URL(builder.toString());
     }
 
     @BeforeClass

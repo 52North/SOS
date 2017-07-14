@@ -28,12 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter.series;
 
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.google.common.base.Strings;
 
@@ -77,7 +77,7 @@ public class SeriesCategoryValuedParameter extends SeriesParameter<String> imple
     public boolean isSetUnit() {
         return getUnit() != null && getUnit().isSetUnit();
     }
-    
+
     @Override
     public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);

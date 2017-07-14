@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 import java.util.Set;
 
 import org.hibernate.Criteria;
-
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;

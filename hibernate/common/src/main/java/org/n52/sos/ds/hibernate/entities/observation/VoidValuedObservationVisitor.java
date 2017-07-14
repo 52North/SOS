@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation;
 
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
@@ -38,7 +39,6 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObserva
 import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * TODO JavaDoc
@@ -64,7 +64,7 @@ public abstract class VoidValuedObservationVisitor implements ValuedObservationV
     protected abstract void _visit(TextValuedObservation o) throws OwsExceptionReport;
 
     protected abstract void _visit(SweDataArrayValuedObservation o) throws OwsExceptionReport;
-    
+
     protected abstract void _visit(ProfileValuedObservation o)
             throws OwsExceptionReport;
 
@@ -121,7 +121,7 @@ public abstract class VoidValuedObservationVisitor implements ValuedObservationV
         _visit(o);
         return null;
     }
-    
+
     @Override
     public Void visit(ProfileValuedObservation o)
             throws OwsExceptionReport {

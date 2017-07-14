@@ -189,7 +189,7 @@ public abstract class UnspecifiedSessionFactoryProvider
                 properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT),
                 Boolean.valueOf(properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z))));
     }
-    
+
     protected abstract Configuration getConfiguration(Properties properties);
 
 }

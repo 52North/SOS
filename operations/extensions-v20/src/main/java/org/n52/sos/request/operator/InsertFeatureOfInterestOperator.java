@@ -31,22 +31,20 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestConstants;
+import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestResponse;
+import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.AbstractInsertFeatureOfInterestHandler;
-import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.FeatureInsertion;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.InsertFeatureOfInterestRequest;
-import org.n52.sos.response.InsertFeatureOfInterestResponse;
-import org.n52.sos.util.JavaHelper;
 import org.n52.sos.wsdl.WSDLOperation;
 
 /**
@@ -57,12 +55,9 @@ import org.n52.sos.wsdl.WSDLOperation;
  * @since 4.0.0
  */
 public class InsertFeatureOfInterestOperator
-        extends 
+        extends
         AbstractTransactionalRequestOperator<AbstractInsertFeatureOfInterestHandler, InsertFeatureOfInterestRequest, InsertFeatureOfInterestResponse>
         implements WSDLAwareRequestOperator {
-
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(InsertFeatureOfInterestConstants.CONFORMANCE_CLASS);
 
     /**
      * Constructs a new {@code InsertFeatureOfInterestOperator}.
@@ -73,14 +68,9 @@ public class InsertFeatureOfInterestOperator
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
-    }
-
-    @Override
     public InsertFeatureOfInterestResponse receive(InsertFeatureOfInterestRequest request) throws OwsExceptionReport {
-        InsertFeatureOfInterestResponse response = getDao().insertFeatureOfInterest(request);
-        SosEventBus.fire(new FeatureInsertion(request, response));
+        InsertFeatureOfInterestResponse response = getOperationHandler().insertFeatureOfInterest(request);
+        getServiceEventBus().submit(new FeatureInsertion(request, response));
         return response;
     }
 

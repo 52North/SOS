@@ -45,9 +45,9 @@
 		      "namespace": "http://www.opengis.net/waterml/2.0",
 		      "observationType": "http://www.opengis.net/def/observationType/waterml/2.0/MeasurementTimeseriesTVPObservation"
 		    }
-		}
+		},
         {
-        "identifier": "inspire",
+        	"identifier": "inspire",
 		    "active": false,
 		    "observationResponseFormat": "http://inspire.ec.europa.eu/schemas/omso/3.0",
 		    "encodeFeatureOfInterestInObservations": true,

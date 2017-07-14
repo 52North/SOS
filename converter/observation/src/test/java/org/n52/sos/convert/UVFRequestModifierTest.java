@@ -30,6 +30,8 @@ package org.n52.sos.convert;
 
 import java.util.Collections;
 
+import javax.naming.ConfigurationException;
+
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
@@ -39,24 +41,22 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.schetland.uvf.UVFConstants;
-import org.n52.sos.convert.RequestResponseModifierFacilitator;
-import org.n52.sos.convert.RequestResponseModifierKeyType;
-import org.n52.sos.convert.UVFRequestModifier;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.request.RequestContext;
-import org.n52.sos.util.http.MediaTypes;
+import org.n52.iceland.convert.RequestResponseModifierFacilitator;
+import org.n52.iceland.convert.RequestResponseModifierKey;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.uvf.UVFConstants;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -68,7 +68,7 @@ public class UVFRequestModifierTest {
     public ExpectedException exp = ExpectedException.none();
 
     private UVFRequestModifier modifier;
-    
+
     private GetObservationRequest request;
 
     @Before
@@ -76,7 +76,7 @@ public class UVFRequestModifierTest {
         modifier = new UVFRequestModifier();
         modifier.setDefaultCRS(UVFConstants.ALLOWED_CRS.get(0));
         request = new GetObservationRequest();
-        RequestContext requestContext = new RequestContext();
+        OwsServiceRequestContext requestContext = new OwsServiceRequestContext();
         requestContext.setAcceptType(Collections.singletonList(UVFConstants.CONTENT_TYPE_UVF));
         request.setRequestContext(requestContext);
         request.setFeatureIdentifiers(Collections.singletonList("test-feature-of-interest"));
@@ -85,20 +85,20 @@ public class UVFRequestModifierTest {
         SweText crsExtension = (SweText) new SweText()
                 .setValue(UVFConstants.ALLOWED_CRS.get(0))
                 .setIdentifier(OWSConstants.AdditionalRequestParams.crs.name());
-        request.addExtension(new SwesExtensionImpl<SweText>().setValue(crsExtension));
+        request.addExtension(new SwesExtension<SweText>().setValue(crsExtension));
     }
 
     @Test
     public void shouldModifyOnlySOS200GetObservationRequests() {
-        Assert.assertThat(modifier.getRequestResponseModifierKeyTypes().size(), Is.is(2));
-        final RequestResponseModifierKeyType key = modifier.getRequestResponseModifierKeyTypes().iterator().next();
+        Assert.assertThat(modifier.getKeys().size(), Is.is(2));
+        final RequestResponseModifierKey key = modifier.getKeys().iterator().next();
         Assert.assertThat(key.getService(), Is.is(SosConstants.SOS));
         Assert.assertThat(key.getVersion(), Is.is(Sos2Constants.SERVICEVERSION));
         Assert.assertThat(key.getRequest(),
                 CoreMatchers.either(Is.is(CoreMatchers.instanceOf(GetObservationRequest.class)))
                         .or(Is.is(CoreMatchers.instanceOf(GetObservationByIdRequest.class))));
     }
-    
+
 //    @Test
 //    public void shouldThrowExceptionIfFormatUVFAndMoreThanOneFeatureOfInterestRequested() throws OwsExceptionReport {
 //        exp.expect(NoApplicableCodeException.class);
@@ -165,14 +165,14 @@ public class UVFRequestModifierTest {
     @Test
     public void shouldNotModifyRequestNotForUVF() throws OwsExceptionReport{
         request.getRequestContext().setContentType(MediaTypes.APPLICATION_JSON.toString());
-        AbstractObservationRequest modifiedRequest = modifier.modifyRequest(request);
+        OwsServiceRequest modifiedRequest = modifier.modifyRequest(request);
         Assert.assertThat(modifiedRequest, IsInstanceOf.instanceOf(request.getClass()));
         Assert.assertThat((GetObservationRequest)modifiedRequest, IsEqual.equalTo(request));
     }
 
     @Test
     public void shouldNotModifyValidRequest() throws OwsExceptionReport {
-        AbstractObservationRequest modifiedRequest = modifier.modifyRequest(request);
+        OwsServiceRequest modifiedRequest = modifier.modifyRequest(request);
         Assert.assertThat(modifiedRequest, IsInstanceOf.instanceOf(request.getClass()));
         Assert.assertThat((GetObservationRequest)modifiedRequest, IsEqual.equalTo(request));
         Assert.assertThat((GetObservationRequest)modifiedRequest, IsEqual.equalTo(request));
@@ -181,14 +181,14 @@ public class UVFRequestModifierTest {
     @Test
     public void shouldReturnValidRequestResponseModifierFacilitator() {
         RequestResponseModifierFacilitator facilitator = modifier.getFacilitator();
-        
+
         Assert.assertThat(facilitator.isAdderRemover(), Is.is(false));
         Assert.assertThat(facilitator.isMerger(), Is.is(false));
         Assert.assertThat(facilitator.isSplitter(), Is.is(false));
     }
 
     @Test
-    public void shouldThrowConfigExcetionIfDefaultCrsEpsgIsBelowAllowedMinumum() {
+    public void shouldThrowConfigExcetionIfDefaultCrsEpsgIsBelowAllowedMinumum() throws ConfigurationException {
         exp.expect(ConfigurationException.class);
         exp.expectMessage("Setting with key 'uvf.default.crs': '31465' outside allowed interval ]31466, 31469[.");
 
@@ -196,7 +196,7 @@ public class UVFRequestModifierTest {
     }
 
     @Test
-    public void shouldThrowConfigExcetionIfDefaultCrsEpsgIsAbovenAllowedMaximum() {
+    public void shouldThrowConfigExcetionIfDefaultCrsEpsgIsAbovenAllowedMaximum() throws ConfigurationException {
         exp.expect(ConfigurationException.class);
         exp.expectMessage("Setting with key 'uvf.default.crs': '31470' outside allowed interval ]31466, 31469[.");
 
@@ -204,7 +204,7 @@ public class UVFRequestModifierTest {
     }
 
     @Test
-    public void shouldThrowConfigExcetionIfDefaultCrsEpsgIsNotParsebleToInteger() {
+    public void shouldThrowConfigExcetionIfDefaultCrsEpsgIsNotParsebleToInteger() throws ConfigurationException {
         exp.expect(ConfigurationException.class);
         exp.expectMessage("Could not parse given new default CRS EPSG code 'aString'. Choose an integer of the interval"
                 + " ]31466, 31469[.");
@@ -216,19 +216,19 @@ public class UVFRequestModifierTest {
     public void shouldAddExtensionWithDefaultCRSIfNotPresent() throws OwsExceptionReport {
         request.setExtensions(null);
 
-        AbstractObservationRequest modifiedRequest = modifier.modifyRequest(request);
-        final SwesExtensions extensions = modifiedRequest.getExtensions();
+        OwsServiceRequest modifiedRequest = modifier.modifyRequest(request);
+        final Extensions extensions = modifiedRequest.getExtensions();
 
         Assert.assertThat(extensions.getExtensions().size(), Is.is(1));
         Assert.assertThat(extensions.containsExtension(OWSConstants.AdditionalRequestParams.crs), Is.is(true));
         Assert.assertThat(
-                ((SweText)extensions.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).getValue(),
+                ((SweText)extensions.getExtension(OWSConstants.AdditionalRequestParams.crs).get().getValue()).getValue(),
                 Is.is(UVFConstants.ALLOWED_CRS.get(0)));
     }
 
     @Test
     public void shouldThrowExceptionWhenRequestedCRSIsOutsideAllowedValues() throws OwsExceptionReport {
-        ((SweText)request.getExtension(OWSConstants.AdditionalRequestParams.crs).getValue()).setValue(Integer.toString(42));
+        ((SweText)request.getExtension(OWSConstants.AdditionalRequestParams.crs).get().getValue()).setValue(Integer.toString(42));
         exp.expect(NoApplicableCodeException.class);
         exp.expectMessage("When requesting UVF format, the request MUST have a CRS of the German GK bands, e.g. "
                 + "'[31466, 31467, 31468, 31469]'. Requested was: '42'.");

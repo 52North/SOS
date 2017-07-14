@@ -38,7 +38,7 @@ public class SeriesMetadata {
     private String identifier;
     private String value;
     private String domain;
-    
+
     /**
      * @return the metadataId
      */

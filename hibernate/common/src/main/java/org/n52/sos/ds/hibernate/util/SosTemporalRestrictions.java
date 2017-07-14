@@ -35,12 +35,11 @@ import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
-
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.util.restriction.AfterRestriction;
 import org.n52.sos.ds.hibernate.util.restriction.BeforeRestriction;
 import org.n52.sos.ds.hibernate.util.restriction.BeginsRestriction;
@@ -88,7 +87,7 @@ public class SosTemporalRestrictions {
      * @see Observation#PHENOMENON_TIME_END
      */
     public static final TimePrimitiveFieldDescriptor PHENOMENON_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
-            AbstractLegacyObservation.PHENOMENON_TIME_START, AbstractLegacyObservation.PHENOMENON_TIME_END);
+            AbstractObservation.PHENOMENON_TIME_START, AbstractObservation.PHENOMENON_TIME_END);
 
     /**
      * Fields describing the result time of a {@code Observation}.
@@ -96,7 +95,7 @@ public class SosTemporalRestrictions {
      * @see Observation#RESULT_TIME
      */
     public static final TimePrimitiveFieldDescriptor RESULT_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
-            AbstractLegacyObservation.RESULT_TIME);
+            AbstractObservation.RESULT_TIME);
 
     /**
      * Fields describing the valid time of a {@code Observation}.
@@ -105,7 +104,7 @@ public class SosTemporalRestrictions {
      * @see Observation#VALID_TIME_END
      */
     public static final TimePrimitiveFieldDescriptor VALID_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
-            AbstractLegacyObservation.VALID_TIME_START, AbstractLegacyObservation.VALID_TIME_END);
+            AbstractObservation.VALID_TIME_START, AbstractObservation.VALID_TIME_END);
 
     /**
      * Fields describing the valid time of a {@code ValidProcedureTime}.

@@ -45,10 +45,6 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
@@ -74,14 +70,16 @@ import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.MinMax;
+import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.shetland.util.SosQueryBuilder;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.service.Configurator;
-import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.encode.Encoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -172,7 +170,7 @@ public class SosHelper {
      */
     public static URL getDescribeSensorUrl(String version, String serviceURL, String procedureId, String urlPattern,
                                            String procedureDescriptionFormat) throws MalformedURLException {
-        SosQueryBuilder b = new SosQueryBuilder(urlPattern);
+        SosQueryBuilder b = new SosQueryBuilder(getBaseGetUrl(serviceURL, urlPattern));
         b.addService();
         b.addVersion(version);
         b.addDescribeSensorRequest();
@@ -440,10 +438,10 @@ public class SosHelper {
                 .setMinimum(Joiner.on(' ').join(envelope.getMinX(), envelope.getMinY()));
     }
 
-    public static MinMax<String> getMinMaxFromEnvelope(final SosEnvelope envelope) {
-        if (envelope.isSetMinMaxZ()) {
-            return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(), envelope.getEnvelope().getMaxY(), envelope.getMaxZ()))
-                    .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY(), envelope.getMinZ()));
+    public static MinMax<String> getMinMaxFromEnvelope(final ReferencedEnvelope envelope) {
+        if (envelope.isSetEnvelope() && !envelope.getEnvelope().isNull()) {
+            return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(), envelope.getEnvelope().getMaxY()))
+                    .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY()));
         }
         return getMinMaxFromEnvelope(envelope.getEnvelope());
 

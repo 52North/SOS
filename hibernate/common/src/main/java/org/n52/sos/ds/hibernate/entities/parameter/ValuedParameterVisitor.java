@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter;
 
+import org.apache.xmlbeans.XmlObject;
+import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.BooleanValue;
@@ -38,6 +40,8 @@ import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ogc.om.values.XmlValue;
 
 public class ValuedParameterVisitor implements ParameterVisitor<NamedValue<?>> {
 

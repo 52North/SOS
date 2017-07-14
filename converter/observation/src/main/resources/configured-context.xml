@@ -3,5 +3,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
+    <bean class="org.n52.sos.convert.GwmlObservationModifier"/>
     <bean class="org.n52.sos.convert.InspireObservationResponseConverter"/>
+    <bean class="org.n52.sos.convert.UVFRequestModifier"/>
+    <bean class="org.n52.sos.convert.WaterMLv20SeriesMetadataModifier"/>
 </beans>

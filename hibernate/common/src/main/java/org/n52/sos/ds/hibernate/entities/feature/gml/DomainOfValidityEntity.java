@@ -33,7 +33,7 @@ import org.n52.sos.ds.hibernate.entities.feature.gmd.ExExtentEntity;
 
 /**
  * Hibernate entiity for the domainOfValidity
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.4.0
  *

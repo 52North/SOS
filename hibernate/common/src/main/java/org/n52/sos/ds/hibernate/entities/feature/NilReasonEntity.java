@@ -69,7 +69,7 @@ public abstract class NilReasonEntity extends AbstractIdentifierNameDescriptionE
     public void setNilReason(String nilReason) {
         this.nilReason = nilReason;
     }
-    
+
     public boolean isSetNilReason() {
         return !Strings.isNullOrEmpty(getNilReason());
     }

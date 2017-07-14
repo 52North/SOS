@@ -28,16 +28,15 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 
 @Configurable
 public class MetaDataConfigurations {
 
     private static MetaDataConfigurations instance;
     private boolean showCiOnlineReourceInObservations = false;
-    
+
     /**
      * @return Returns a singleton instance of the
      *         TransactionalSecurityConfiguration.
@@ -45,22 +44,22 @@ public class MetaDataConfigurations {
     public static synchronized MetaDataConfigurations getInstance() {
         if (instance == null) {
             instance = new MetaDataConfigurations();
-            SettingsManager.getInstance().configure(instance);
+//            SettingsManager.getInstance().configure(instance);
         }
         return instance;
     }
-    
+
     /**
      * @return the showCiOnlineReourceInObservations
      */
     public boolean isShowCiOnlineReourceInObservations() {
         return showCiOnlineReourceInObservations;
     }
-    
+
     /**
      * @param showCiOnlineReourceInObservations the showCiOnlineReourceInObservations to set
      */
-    @Setting(MetaDataSettings.OBSERVATION_ONLINE_RESOURCE)
+    @Setting(MetaDataSettingsProvider.OBSERVATION_ONLINE_RESOURCE)
     public void setShowCiOnlineReourceInObservations(boolean showCiOnlineReourceInObservations) {
         this.showCiOnlineReourceInObservations = showCiOnlineReourceInObservations;
     }

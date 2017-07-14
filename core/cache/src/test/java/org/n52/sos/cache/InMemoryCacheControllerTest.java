@@ -62,7 +62,7 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
+import org.n52.iceland.convert.ConverterRepository;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -142,9 +142,13 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private OmObservation observation;
 
+    private ConverterRepository converter;
+
     @Before
     public void initController() {
         controller = new TestableInMemoryCacheController();
+        converter = new ConverterRepository();
+        converter.init();
     }
 
     @After
@@ -835,7 +839,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     private void updateCacheWithInsertSensor(String procedureIdentifier) throws OwsExceptionReport {
         insertSensorRequestExample(procedureIdentifier);
         insertSensorResponseExample(procedureIdentifier);
-        controller.update(new SensorInsertionUpdate((InsertSensorRequest) request, (InsertSensorResponse) response));
+        controller.update(new SensorInsertionUpdate((InsertSensorRequest) request, (InsertSensorResponse) response, converter));
     }
 
     private DateTime getPhenomenonTimeFromObservation() {

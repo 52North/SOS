@@ -30,11 +30,11 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
 
 public class PhenomenonTimeCreator {
 
@@ -44,7 +44,7 @@ public class PhenomenonTimeCreator {
     public PhenomenonTimeCreator(TemporalReferencedObservation hObservation) {
         this.hObservation = hObservation;
     }
-    
+
     public PhenomenonTimeCreator(Series hSeries) {
         this.hSeries = hSeries;
     }
@@ -57,7 +57,7 @@ public class PhenomenonTimeCreator {
         }
         return null;
     }
-    
+
     private Time createFromObservation() {
         // create time element
         final DateTime phenStartTime = new DateTime(hObservation.getPhenomenonTimeStart(), DateTimeZone.UTC);

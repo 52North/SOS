@@ -26,53 +26,38 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ext.deleteobservation;
+package org.n52.sos.cache.ctrl.action;
 
-import java.util.List;
-
-import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.cache.SosContentCacheUpdate;
-import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ds.CacheFeederHandler;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 1.0.0
  */
-public class DeleteObservationCacheControllerUpdate extends SosContentCacheUpdate {
+public class DeleteObservationUpdate
+        extends CacheFeederDAOCacheUpdate {
     private final OmObservation observation;
-    private final DeleteObservationCacheFeederDAO cacheFeederDAO;
-    private final FeatureQueryHandler featureQueryHandler;
 
-    public DeleteObservationCacheControllerUpdate(FeatureQueryHandler featureQueryHandler,
-                                                  DeleteObservationCacheFeederDAO dao, OmObservation o) {
-        this.cacheFeederDAO = dao;
+    public DeleteObservationUpdate(CacheFeederHandler dao, OmObservation o) {
+        super(dao);
         this.observation = o;
-        this.featureQueryHandler = featureQueryHandler;
-    }
-
-    protected DeleteObservationCacheFeederDAO getDao() throws NoImplementationFoundException {
-        return cacheFeederDAO;
     }
 
     @Override
     public void execute() {
         try {
-            List<OwsExceptionReport> errors = CollectionHelper.synchronizedList();
-            getDao().setErrors(errors);
-            getDao().setFeatureQueryHandler(this.featureQueryHandler);
-            getDao().setCache(getCache());
-            getDao().setDeletedObservation(this.observation);
-            getDao().execute();
-            if (!errors.isEmpty()) {
-                throw new CompositeOwsException(errors);
+            if (observation != null) {
+
+                getCacheFeederDAO().updateCacheOfferings(getCache(),
+                        observation.getObservationConstellation().getOfferings());
+            } else {
+                getCacheFeederDAO().updateCache(getCache());
             }
-        } catch (OwsExceptionReport e) {
-            fail(e);
+        } catch (OwsExceptionReport ex) {
+            fail(ex);
         }
     }
 }

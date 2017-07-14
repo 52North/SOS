@@ -46,25 +46,39 @@ import com.google.common.collect.Lists;
 public abstract class AbstractProcedureDescriptionEnrichments<T> {
 
     private T procedure;
+
     private String identifier;
+
     private SosProcedureDescription<?> description;
+
     private String version;
+
     private String procedureDescriptionFormat;
+
     private Session session;
+
     private AbstractProcedureConverter<T> converter;
+
     private TimePeriod validTime;
-    private final Locale language;
+
+    private final Locale locale;
+
     private final LocalizedProducer<OwsServiceProvider> serviceProvider;
+
     private String typeOfIdentifier;
+
     private String typeOfFormat;
+
     private I18NDAORepository i18ndaoRepository;
+
     private GeometryHandler geometryHandler;
 
-   public AbstractProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, GeometryHandler geometryHandler) {
-    this.serviceProvider = serviceProvider;
-    this.language = locale;
-    this.geometryHandler = geometryHandler;
-   }
+    public AbstractProcedureDescriptionEnrichments(
+            Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, GeometryHandler geometryHandler) {
+        this.serviceProvider = serviceProvider;
+        this.locale = locale;
+        this.geometryHandler = geometryHandler;
+    }
 
     public abstract AbstractRelatedProceduresEnrichment<T> createRelatedProceduresEnrichment();
 
@@ -78,8 +92,7 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
         return this;
     }
 
-    public AbstractProcedureDescriptionEnrichments<T> setDescription(
-            SosProcedureDescription<?> description) {
+    public AbstractProcedureDescriptionEnrichments<T> setDescription(SosProcedureDescription<?> description) {
         this.description = description;
         return this;
     }
@@ -89,25 +102,23 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
         return this;
     }
 
-    public AbstractProcedureDescriptionEnrichments<T> setProcedureDescriptionFormat(
-            String pdf) {
+    public AbstractProcedureDescriptionEnrichments<T> setProcedureDescriptionFormat(String pdf) {
         this.procedureDescriptionFormat = pdf;
         return this;
     }
 
-//    public ProcedureDescriptionEnrichments setProcedureCache(
-//            Map<String, ProcedureEntity> procedureCache) {
-//        this.procedureCache = procedureCache;
-//        return this;
-//    }
+    // public ProcedureDescriptionEnrichments setProcedureCache(
+    // Map<String, ProcedureEntity> procedureCache) {
+    // this.procedureCache = procedureCache;
+    // return this;
+    // }
 
     public AbstractProcedureDescriptionEnrichments<T> setSession(Session session) {
         this.session = session;
         return this;
     }
 
-    public AbstractProcedureDescriptionEnrichments<T> setConverter(
-            AbstractProcedureConverter<T> converter) {
+    public AbstractProcedureDescriptionEnrichments<T> setConverter(AbstractProcedureConverter<T> converter) {
         this.converter = converter;
         return this;
     }
@@ -127,8 +138,7 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
         return this;
     }
 
-    public AbstractProcedureDescriptionEnrichments<T> setI18NDAORepository(
-            I18NDAORepository i18ndaoRepository) {
+    public AbstractProcedureDescriptionEnrichments<T> setI18NDAORepository(I18NDAORepository i18ndaoRepository) {
         this.i18ndaoRepository = i18ndaoRepository;
         return this;
     }
@@ -146,28 +156,52 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
     }
 
     public AbstractProcedureConverter<T> getConverter() {
-        return (AbstractProcedureConverter<T>)converter;
+        return (AbstractProcedureConverter<T>) converter;
     }
 
     public I18NDAORepository getI18NDAORepository() {
         return i18ndaoRepository;
     }
 
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public boolean isSetLocale() {
+        return getLocale() != null;
+    }
+
+    public SosProcedureDescription<?> getDescription() {
+        return description;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public LocalizedProducer<OwsServiceProvider> getServiceProvider() {
+        return serviceProvider;
+    }
+
+    public GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
     public Iterable<ProcedureDescriptionEnrichment> createAll() {
         return Iterables.filter(
-                Lists.newArrayList(
-                        createFeatureOfInterestEnrichment(),
-                        createRelatedProceduresEnrichment(),
-                        createValidTimeEnrichment(),
-                        createOfferingEnrichment(),
-                        createBoundingBoxEnrichment(),
-                        createClassifierEnrichment(),
-                        createIdentificationEnrichment(),
-                        createContactsEnrichment(),
-                        createKeywordEnrichment(),
-                        createObservablePropertyEnrichment(),
-                        createTypeOfEnrichmentEnrichment(),
-                        createRelatedProceduresEnrichment()),
+                Lists.newArrayList(createFeatureOfInterestEnrichment(), createRelatedProceduresEnrichment(),
+                        createValidTimeEnrichment(), createOfferingEnrichment(), createBoundingBoxEnrichment(),
+                        createClassifierEnrichment(), createIdentificationEnrichment(), createContactsEnrichment(),
+                        createKeywordEnrichment(), createObservablePropertyEnrichment(),
+                        createTypeOfEnrichmentEnrichment(), createRelatedProceduresEnrichment()),
                 ProcedureDescriptionEnrichment.predicate());
     }
 
@@ -190,7 +224,7 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
     }
 
     public ContactsEnrichment createContactsEnrichment() {
-        return setValues(new ContactsEnrichment(this.language, this.serviceProvider));
+        return setValues(new ContactsEnrichment(this.locale, this.serviceProvider));
     }
 
     public KeywordEnrichment createKeywordEnrichment() {
@@ -218,10 +252,7 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
     }
 
     protected <S extends ProcedureDescriptionEnrichment> S setValues(S enrichment) {
-        enrichment.setDescription(description)
-                .setIdentifier(identifier)
-                .setVersion(version)
-                .setLocale(language)
+        enrichment.setDescription(description).setIdentifier(identifier).setVersion(version).setLocale(locale)
                 .setSession(session);
         return enrichment;
     }

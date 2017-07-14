@@ -33,7 +33,6 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 public class SeriesMetadataDAO {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesMetadataDAO.class);
 
     @SuppressWarnings("unchecked")

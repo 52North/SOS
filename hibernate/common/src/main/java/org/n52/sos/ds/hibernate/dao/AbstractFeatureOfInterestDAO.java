@@ -38,16 +38,16 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.spatial.criterion.SpatialProjections;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,25 +55,25 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO implements HibernateSqlQueryConstants {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFeatureOfInterestDAO.class);
 
     public abstract AbstractFeatureOfInterest insertFeature(AbstractFeature samplingFeature, Session session) throws OwsExceptionReport;
-    
+
     public AbstractFeatureOfInterest getFeature(String identifier, Session session) {
         Criteria criteria = getDefaultCriteria(session)
                 .add(Restrictions.eq(FeatureOfInterest.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getFeature(identifier): {}", HibernateHelper.getSqlString(criteria));
         return (AbstractFeatureOfInterest) criteria.uniqueResult();
     }
-    
+
 
     @SuppressWarnings("unchecked")
     public List<String> getFeatureIdentifiers(SpatialFilter filter, Session session) throws OwsExceptionReport {
         final Criteria c = getDefaultCriteria(session)
                 .setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
-        if (filter != null) {
-            c.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(), filter.getGeometry()));
+        if (filter != null && (filter.getGeometry().getGeometry().isPresent() || filter.getGeometry().getEnvelope().isPresent())) {
+                c.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(), filter.getGeometry().toGeometry()));
         }
         return c.list();
     }
@@ -127,7 +127,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
             return c.list();
         }
     }
-    
+
     protected AbstractFeatureOfInterest getFeatureOfInterest(final String identifier, final Geometry geometry,
             final Session session) throws OwsExceptionReport {
         if (!identifier.startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX)) {
@@ -139,7 +139,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
                             .switchCoordinateAxisFromToDatasourceIfNeeded(geometry))).uniqueResult();
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<AbstractFeatureOfInterest> getFeatures(Session session) {
         return getDefaultCriteria(session).list();
@@ -157,7 +157,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
             return c.list();
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     private List<AbstractFeatureOfInterest> getFeaturesChunks(Collection<String> identifiers,
             Collection<SpatialFilter> filters, Session session) throws OwsExceptionReport {
@@ -172,25 +172,26 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         }
         return features;
     }
-    
+
     private Criteria addIdentifierRestriction(Criteria c, Collection<String> identifiers) {
         if (CollectionHelper.isNotEmpty(identifiers)) {
             c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, identifiers));
         }
         return c;
     }
-    
+
     private void addSpatialFilters(Criteria c, Collection<SpatialFilter> filters) throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(filters)) {
             final Disjunction disjunction = Restrictions.disjunction();
             for (final SpatialFilter filter : filters) {
-                disjunction.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(),
-                        filter.getGeometry()));
+                if (filter != null && (filter.getGeometry().getGeometry().isPresent() || filter.getGeometry().getEnvelope().isPresent())) {
+                    disjunction.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(), filter.getGeometry().toGeometry()));
+                }
             }
             c.add(disjunction);
         }
     }
-    
+
     private void mergeGeometries(Geometry geom, List<Object> list) {
         for (Object extent : list) {
             if (extent != null) {
@@ -211,5 +212,5 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
     protected Criteria getDefaultCriteria(Session session) {
         return session.createCriteria(AbstractFeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
-    
+
 }

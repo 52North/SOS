@@ -28,7 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation;
 
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 
 /**
  *
@@ -38,7 +45,56 @@ public abstract class AbstractObservation<T>
         implements Observation<T> {
 
     private static final long serialVersionUID = -5638600640028433573L;
+    private AbstractFeatureOfInterest featureOfInterest;
+    private ObservableProperty observableProperty;
+    private Procedure procedure;
+    private Offering offering;
     private Unit unit;
+
+    @Override
+    public AbstractFeatureOfInterest getFeatureOfInterest() {
+        return featureOfInterest;
+    }
+
+    @Override
+    public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
+        this.featureOfInterest = featureOfInterest;
+    }
+
+    @Override
+    public ObservableProperty getObservableProperty() {
+        return observableProperty;
+    }
+
+    @Override
+    public void setObservableProperty(ObservableProperty observableProperty) {
+        this.observableProperty = observableProperty;
+    }
+
+    @Override
+    public Procedure getProcedure() {
+        return procedure;
+    }
+
+    @Override
+    public void setProcedure(Procedure procedure) {
+        this.procedure = procedure;
+    }
+
+    @Override
+    public Offering getOffering() {
+        return offering;
+    }
+
+    @Override
+    public void setOffering(Offering offering) {
+       this.offering = offering;
+    }
+
+    @Override
+    public boolean isSetOffering() {
+        return getOffering() != null;
+    }
 
     @Override
     public Unit getUnit() {
@@ -59,4 +115,10 @@ public abstract class AbstractObservation<T>
     public String getValueAsString() {
         return getValue().toString();
     }
+
+    @Override
+    public String getDiscriminator() {
+        return null;
+    }
+
 }

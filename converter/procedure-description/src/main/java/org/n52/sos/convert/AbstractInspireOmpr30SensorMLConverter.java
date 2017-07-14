@@ -58,7 +58,6 @@ import org.n52.shetland.w3c.xlink.Reference;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public abstract class AbstractInspireOmpr30SensorMLConverter implements Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> {
 
@@ -98,21 +97,21 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         for (DocumentCitation documentationCitation : documentationCitations) {
             SmlDocumentation smlDocumentation = new SmlDocumentation();
             if (!documentationCitation.isSetSimpleAttrs()) {
-
-            if (documentationCitation.isSetName())
-                smlDocumentation.setDescription(documentationCitation.getFirstName().getValue());
-            }
-            if (documentationCitation.isSetDate()) {
-                smlDocumentation.setDate(new TimeInstant(documentationCitation.getDate().get()));
-            }
-            if (documentationCitation.isSetLinks()) {
-                for (Nillable<String> link : documentationCitation.getLinks()) {
-                    if (link.isPresent()) {
-                        smlDocumentation.setOnlineResource(link.get());
+                if (documentationCitation.isSetName()) {
+                    smlDocumentation.setDescription(documentationCitation.getFirstName().getValue());
+                }
+                if (documentationCitation.isSetDate()) {
+                    smlDocumentation.setDate(new TimeInstant(documentationCitation.getDate().get()));
+                }
+                if (documentationCitation.isSetLinks()) {
+                    for (Nillable<String> link : documentationCitation.getLinks()) {
+                        if (link.isPresent()) {
+                            smlDocumentation.setOnlineResource(link.get());
+                        }
                     }
                 }
+                smlDocumentations.add(smlDocumentation);
             }
-            smlDocumentations.add(smlDocumentation);
         }
         return smlDocumentations;
     }

@@ -28,12 +28,12 @@
  */
 package org.n52.sos.ds;
 
+import org.n52.faroe.annotation.Configurable;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateConstants;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.request.DeleteResultTemplateRequest;
-import org.n52.sos.response.DeleteResultTemplateResponse;
+import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateRequest;
+import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateResponse;
 
 /**
  * DAO to delete result templates out of the database.
@@ -43,16 +43,10 @@ import org.n52.sos.response.DeleteResultTemplateResponse;
  * @since 4.4.0
  */
 @Configurable
-public abstract class AbstractDeleteResultTemplateHandler extends AbstractOperationDAO {
+public abstract class AbstractDeleteResultTemplateHandler extends AbstractOperationHandler {
 
-    public AbstractDeleteResultTemplateHandler(String service) {
-        super(service, DeleteResultTemplateConstants.OPERATION_NAME);
-    }
-
-    @Override
-    protected void setOperationsMetadata(OwsOperation operation, String service, String version)
-            throws OwsExceptionReport {
-        // Do nothing
+    public AbstractDeleteResultTemplateHandler() {
+        super(SosConstants.SOS, DeleteResultTemplateConstants.OPERATION_NAME);
     }
 
     public abstract DeleteResultTemplateResponse deleteResultTemplates(DeleteResultTemplateRequest request)

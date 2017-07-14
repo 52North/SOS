@@ -28,16 +28,16 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter.series;
 
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class SeriesBooleanValuedParameter extends SeriesParameter<Boolean> implements org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter {
 
     private static final long serialVersionUID = 2677757361034841342L;
     private Boolean value;
-    
+
     @Override
     public Boolean getValue() {
         return value;

@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.Locale;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.util.LocalizedProducer;

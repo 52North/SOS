@@ -64,9 +64,9 @@ public interface ValuedObservationVisitor<T> {
     T visit(TextValuedObservation o) throws OwsExceptionReport;
 
     T visit(SweDataArrayValuedObservation o) throws OwsExceptionReport;
-    
+
     T visit(ProfileValuedObservation o)
             throws OwsExceptionReport;
-    
+
 
 }

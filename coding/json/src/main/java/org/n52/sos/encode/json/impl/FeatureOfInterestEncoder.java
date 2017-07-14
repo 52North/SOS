@@ -28,14 +28,14 @@
  */
 package org.n52.sos.encode.json.impl;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -64,7 +64,7 @@ public class FeatureOfInterestEncoder extends JSONEncoder<AbstractFeature> {
         }
     }
 
-    private JsonNode encodeSamplingFeature(AbstractFeature t) throws EncodingException {
+    private JsonNode encodeAbstractSamplingFeature(AbstractFeature t) throws EncodingException {
         AbstractSamplingFeature sf = (AbstractSamplingFeature) t;
         if (sf.isSetUrl()) {
             return nodeFactory().textNode(sf.getUrl());

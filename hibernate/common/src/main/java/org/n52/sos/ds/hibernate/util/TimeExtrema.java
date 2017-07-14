@@ -88,7 +88,7 @@ public class TimeExtrema {
                 return new TimeInstant(getMaxPhenomenonTime());
             }
             return new TimePeriod(getMinPhenomenonTime(), getMaxPhenomenonTime());
-        }
+            }
         return null;
     }
 
@@ -99,23 +99,6 @@ public class TimeExtrema {
         return null;
     }
 
-    public Time getPhenomenonTime() {
-        if (isSetPhenomenonTimes()) {
-            if (getMinPhenomenonTime().equals(getMaxPhenomenonTime())) {
-                return new TimeInstant(getMaxPhenomenonTime());
-            }
-            return new TimePeriod(getMinPhenomenonTime(), getMaxPhenomenonTime());
-            }
-        return null;
-    }
-    
-    public Time getResultTime() {
-        if (isSetResultTimes()) {
-            return new TimeInstant(getMaxResultTime());
-        }
-        return null;
-    }
-    
     public boolean isSetPhenomenonTimes() {
         return getMinPhenomenonTime() != null && getMaxPhenomenonTime() != null;
     }

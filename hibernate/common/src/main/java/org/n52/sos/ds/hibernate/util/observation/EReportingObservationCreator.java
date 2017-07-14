@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.Collections;
 import java.util.Set;
 
+import org.hibernate.Session;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
@@ -95,22 +96,22 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
     }
 
     @Override
+    public OmObservation create(OmObservation omObservation, Series series, Session session) throws CodedException {
+        return create(omObservation, series);
+    }
+
+    @Override
+    public OmObservation create(OmObservation omObservation, Observation<?> observation, Session session) throws CodedException {
+        return create(omObservation, observation);
+    }
+
+    @Override
     public OmObservation add(OmObservation omObservation, Observation<?> observation) {
         if (observation instanceof EReportingObservation) {
             EReportingObservation<?> eReportingObservation = (EReportingObservation<?>) observation;
             omObservation.setAdditionalMergeIndicator(eReportingObservation.getPrimaryObservation());
         }
         return omObservation;
-    }
-
-    @Override
-    public OmObservation create(OmObservation omObservation, EReportingSeries series, Session session) {
-        return create(omObservation, series);
-    }
-
-    @Override
-    public OmObservation create(OmObservation omObservation, Observation<?> observation, Session session) {
-        return create(omObservation, observation);
     }
 
     @Override

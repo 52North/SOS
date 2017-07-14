@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.gda;
+package org.n52.sos.decode.kvp.v2;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
@@ -54,11 +54,10 @@ public class GetDataAvailabilityKvpDecoder extends AbstractSosKvpDecoder<GetData
         builder.add(GetDataAvailabilityConstants.GetDataAvailabilityParams.featureOfInterest,
                     decodeList(GetDataAvailabilityRequest::setFeatureOfInterest));
         builder.add(GetDataAvailabilityConstants.GetDataAvailabilityParams.offering,
-                    decodeList(GetDataAvailabilityRequest::setOffering));
-                    } else if (name.equalsIgnoreCase(GetDataAvailabilityConstants.GetDataAvailabilityV20Params.responseFormat
-                            .name())) {
-                        request.setResponseFormat(KvpHelper.checkParameterSingleValue(parameterValues, name));
-                        request.setNamespace(GetDataAvailabilityConstants.NS_GDA_20);
-                    } else {
+                    decodeList(GetDataAvailabilityRequest::setOfferings));
+        builder.add(GetDataAvailabilityConstants.GetDataAvailabilityV20Params.responseFormat,
+                    GetDataAvailabilityRequest::setResponseFormat);
+        builder.add(GetDataAvailabilityConstants.GetDataAvailabilityV20Params.responseFormat,
+                GetDataAvailabilityRequest::setNamespace);
     }
 }

@@ -72,7 +72,7 @@ public class CategoryValuedSeriesObservation extends AbstractValuedSeriesObserva
     public String getValueAsString() {
         return getValue();
     }
-    
+
     @Override
     public void setValueIdentifier(String valueIdentifier) {
         this.valueIdentifier = valueIdentifier;

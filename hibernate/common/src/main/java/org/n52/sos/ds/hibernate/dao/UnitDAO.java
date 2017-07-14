@@ -33,9 +33,9 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.shetland.ogc.UoM;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ogc.UoM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,10 +69,10 @@ public class UnitDAO {
         LOGGER.debug("QUERY getUnit(): {}", HibernateHelper.getSqlString(criteria));
         return (Unit) criteria.uniqueResult();
     }
-    
+
     /**
      * Get unit object for unit
-     * 
+     *
      * @param unit
      *            Unit
      * @param session
@@ -97,10 +97,10 @@ public class UnitDAO {
     public Unit getOrInsertUnit(String unit, Session session) {
         return getOrInsertUnit(new UoM(unit), session);
     }
-    
+
     /**
      * Insert and get unit object
-     * 
+     *
      * @param unit
      *            Unit
      * @param session

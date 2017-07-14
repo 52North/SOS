@@ -34,7 +34,7 @@ import com.google.common.base.Strings;
 
 /**
  * Hibernate entity for CI entities.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.4.0
  *
@@ -58,7 +58,7 @@ public abstract class AbstractCiEntity extends ReferenceEntity {
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public boolean isSetId() {
         return !Strings.isNullOrEmpty(getId());
     }
@@ -77,7 +77,7 @@ public abstract class AbstractCiEntity extends ReferenceEntity {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
-    
+
     public boolean isSetUuid() {
         return !Strings.isNullOrEmpty(getUuid());
     }

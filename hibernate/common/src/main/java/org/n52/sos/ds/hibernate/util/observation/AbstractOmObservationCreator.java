@@ -30,23 +30,27 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.convert.ConverterRepository;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.LocalizedProducer;
+import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.iso.gmd.CiOnlineResource;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.GenericMetaData;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.ObservationStream;
@@ -68,9 +72,9 @@ import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -82,8 +86,11 @@ import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.encode.EncoderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -107,6 +114,7 @@ public abstract class AbstractOmObservationCreator {
     private EncoderRepository encoderRepository;
     private String pdf;
     private DaoFactory daoFactory;
+    private ProfileHandler profileHandler;
 
     public AbstractOmObservationCreator(AbstractObservationRequest request,
                                         Locale i18n,
@@ -127,6 +135,11 @@ public abstract class AbstractOmObservationCreator {
     @Inject
     public void setEncoderRepository(EncoderRepository encoderRepository) {
         this.encoderRepository = encoderRepository;
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
     }
 
     @Setting(CodingSettings.TOKEN_SEPARATOR)
@@ -164,7 +177,7 @@ public abstract class AbstractOmObservationCreator {
     }
 
     protected Profile getActiveProfile() {
-        return ProfileHandler.getInstance().getActiveProfile();
+        return profileHandler.getActiveProfile();
     }
 
     protected String getTokenSeparator() {
@@ -178,7 +191,7 @@ public abstract class AbstractOmObservationCreator {
     protected String getDecimalSeparator() {
         return decimalSeparator;
     }
-    
+
     private ConverterRepository getConverterRepository() {
         return ConverterRepository.getInstance();
     }
@@ -194,7 +207,7 @@ public abstract class AbstractOmObservationCreator {
     protected String getNoDataValue() {
         return getActiveProfile().getResponseNoDataPlaceholder();
     }
-    
+
     protected void addDefaultValuesToObservation(OmObservation o) {
         o.setNoDataValue(getActiveProfile().getResponseNoDataPlaceholder());
         o.setNoDataValue(getNoDataValue());
@@ -206,6 +219,7 @@ public abstract class AbstractOmObservationCreator {
 
     public abstract ObservationStream create() throws OwsExceptionReport,
                                                       ConverterException;
+
     private void addMetadata(OmObservation o) {
         if (MetaDataConfigurations.getInstance().isShowCiOnlineReourceInObservations()) {
             CiOnlineResource ciOnlineResource = new CiOnlineResource(ServiceConfiguration.getInstance().getServiceURL());
@@ -213,9 +227,6 @@ public abstract class AbstractOmObservationCreator {
             o.addMetaDataProperty(new GenericMetaData(ciOnlineResource));
         }
     }
-
-    public abstract List<OmObservation> create() throws OwsExceptionReport,
-                                                        ConverterException;
 
     public String getVersion() {
         return request.getVersion();
@@ -226,8 +237,8 @@ public abstract class AbstractOmObservationCreator {
                        ? request.getResponseFormat()
                        : getActiveProfile().getObservationResponseFormat();
     }
-    
-    
+
+
     public List<MediaType> getAcceptType() {
         return request.getRequestContext().getAcceptType().get();
     }
@@ -314,7 +325,7 @@ public abstract class AbstractOmObservationCreator {
             return sosProcedure;
         }
     }
-    
+
     /**
      * @param abstractFeature
      * @param hAbstractFeature
@@ -357,7 +368,7 @@ public abstract class AbstractOmObservationCreator {
      *
      * @throws OwsExceptionReport If an error occurs
      */
-    protected AbstractFeature createFeatureOfInterest(FeatureOfInterest foi) throws OwsExceptionReport {
+    protected AbstractFeature createFeatureOfInterest(AbstractFeatureOfInterest foi) throws OwsExceptionReport {
         if (getActiveProfile().isEncodeFeatureOfInterestInObservations()) {
             FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
             queryObject.addFeatureIdentifier(foi.getIdentifier()).setVersion(getVersion());
@@ -409,18 +420,18 @@ public abstract class AbstractOmObservationCreator {
     protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) throws CodedException {
         for (AdditionalObservationCreatorKey key : getAdditionalObservationCreatorKeys(hObservation)) {
             if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
-                AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
+                AdditionalObservationCreator creator = AdditionalObservationCreatorRepository.getInstance().get(key);
                 creator.create(sosObservation, hObservation, getSession());
                 break;
-            } 
+            }
         }
         if (checkAcceptType()) {
             for (AdditionalObservationCreatorKey key : getAdditionalObservationCreatorKeys(getAcceptType(), hObservation)) {
                 if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
-                    AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
+                    AdditionalObservationCreator creator = AdditionalObservationCreatorRepository.getInstance().get(key);
                     creator.create(sosObservation, hObservation, getSession());
                     break;
-                } 
+                }
             }
         }
     }
@@ -448,7 +459,7 @@ public abstract class AbstractOmObservationCreator {
     public static String checkVersion(AbstractObservationRequest request) {
         return request != null ? request.getVersion() : null;
     }
-    
+
     protected String queryUnit(Series series) {
         if (series.isSetUnit()) {
             return series.getUnit().getUnit();
@@ -469,7 +480,7 @@ public abstract class AbstractOmObservationCreator {
             LOGGER.debug("QUERY queryUnit({}) with NamedQuery '{}': {}", series.getObservableProperty().getIdentifier(),
                     SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES, namedQuery.getQueryString());
             return (String) namedQuery.uniqueResult();
-        } 
+        }
         return null;
     }
 }

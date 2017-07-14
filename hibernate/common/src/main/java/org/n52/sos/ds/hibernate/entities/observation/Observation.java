@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation;
 
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
@@ -36,7 +37,6 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * A {@code Observation} represents a full observation described by all possible

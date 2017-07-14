@@ -32,6 +32,22 @@ import java.util.Iterator;
 
 import javax.inject.Inject;
 
+import org.n52.janmayen.Json;
+import org.n52.shetland.aqd.EReportObligationRepository;
+import org.n52.shetland.aqd.ReportObligation;
+import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.inspire.base2.RelatedParty;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.coding.json.AQDJSONConstants;
+import org.n52.sos.encode.json.JSONEncoderKey;
+import org.n52.sos.web.common.AbstractController;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.JsonDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -41,23 +57,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.n52.janmayen.Json;
-import org.n52.shetland.aqd.ReportObligation;
-import org.n52.shetland.aqd.ReportObligationType;
-import org.n52.shetland.inspire.RelatedParty;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.encode.json.JSONEncoderKey;
-import org.n52.sos.inspire.aqd.ReportObligationRepository;
-import org.n52.sos.util.AQDJSONConstants;
-import org.n52.sos.web.common.AbstractController;
-import org.n52.svalbard.decode.Decoder;
-import org.n52.svalbard.decode.DecoderRepository;
-import org.n52.svalbard.decode.JsonDecoderKey;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderRepository;
-import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -75,12 +74,12 @@ public class AdminEReportingHeaderController extends AbstractController {
     private static final Logger LOG = LoggerFactory
             .getLogger(AdminEReportingHeaderController.class);
 
-    private ReportObligationRepository reportObligationRepository;
+    private EReportObligationRepository reportObligationRepository;
     private EncoderRepository encoderRepository;
     private DecoderRepository decoderRepository;
 
     @Inject
-    public void setReportObligationRepository(ReportObligationRepository reportObligationRepository) {
+    public void setReportObligationRepository(EReportObligationRepository reportObligationRepository) {
         this.reportObligationRepository = reportObligationRepository;
     }
 

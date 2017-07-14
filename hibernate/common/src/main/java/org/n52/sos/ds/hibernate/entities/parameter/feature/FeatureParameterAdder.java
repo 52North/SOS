@@ -29,12 +29,12 @@
 package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class FeatureParameterAdder {
-    
+
     private AbstractSamplingFeature abstractSamplingFeature;
     private FeatureOfInterest featureOfInterest;
 

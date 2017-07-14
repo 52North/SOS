@@ -84,7 +84,7 @@ public class ProfileImpl implements Profile {
     private Map<String, Boolean> encodeProcedureInObservation = new HashMap<String, Boolean>(0);
 
     private Map<String, String> defaultObservationTypesForEncoding = new HashMap<String, String>(0);
-    
+
     private String definition;
 
     public ProfileImpl() {
@@ -184,11 +184,6 @@ public class ProfileImpl implements Profile {
     }
 
     @Override
-    public boolean isEncodeProcedureInObservation() {
-        return encodeProcedureInObservation != null && !encodeProcedureInObservation.isEmpty();
-    }
-
-    @Override
     public boolean isEncodeProcedureInObservation(String namespace) {
         Boolean encode = encodeProcedureInObservation.get(namespace);
         if (encode != null) {
@@ -210,6 +205,11 @@ public class ProfileImpl implements Profile {
     }
 
     @Override
+    public Map<String, Boolean> getEncodeProcedureInObservation() {
+        return encodeProcedureInObservation;
+    }
+
+    @Override
     public boolean isReturnLatestValueIfTemporalFilterIsMissingInGetObservation() {
         return returnLatestValueIfTemporalFilterIsMissingInGetObservation;
     }
@@ -226,8 +226,9 @@ public class ProfileImpl implements Profile {
     }
 
     public void setDefaultObservationTypesForEncoding(Map<String, String> defaultObservationTypesForEncoding) {
+        this.defaultObservationTypesForEncoding.clear();
         if (defaultObservationTypesForEncoding != null) {
-            this.defaultObservationTypesForEncoding = defaultObservationTypesForEncoding;
+            this.defaultObservationTypesForEncoding.putAll(defaultObservationTypesForEncoding);
         }
     }
 
@@ -283,11 +284,6 @@ public class ProfileImpl implements Profile {
 
     public void setNoDataPlaceholder(Set<String> noDataPlaceholder) {
         this.noDataPlaceholder = noDataPlaceholder;
-    }
-
-    @Override
-    public boolean isSetNoDataPlaceholder() {
-        return noDataPlaceholder != null && !noDataPlaceholder.isEmpty();
     }
 
     @Override

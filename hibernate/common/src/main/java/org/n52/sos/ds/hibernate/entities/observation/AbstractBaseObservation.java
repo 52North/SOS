@@ -31,11 +31,11 @@ package org.n52.sos.ds.hibernate.entities.observation;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.n52.janmayen.Comparables;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
-import org.n52.sos.util.Comparables;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -91,7 +91,7 @@ public abstract class AbstractBaseObservation
     public boolean isSetOfferings() {
         return getOfferings() != null && !getOfferings().isEmpty();
     }
-    
+
     @Override
     public Geometry getSamplingGeometry() {
         return samplingGeometry;
@@ -106,7 +106,7 @@ public abstract class AbstractBaseObservation
     public boolean hasSamplingGeometry() {
         return getSamplingGeometry() != null && !getSamplingGeometry().isEmpty();
     }
-    
+
     @Override
     public Object getLongitude() {
         return longitude;
@@ -151,7 +151,7 @@ public abstract class AbstractBaseObservation
     public boolean isSpatial() {
         return hasSamplingGeometry() || isSetLongLat();
     }
-    
+
     @Override
     public int getSrid() {
         return srid;
@@ -162,7 +162,7 @@ public abstract class AbstractBaseObservation
         this.srid = srid;
         return this;
     }
-    
+
     public boolean isSetSrid() {
         return getSrid() > 0;
     }
@@ -216,7 +216,7 @@ public abstract class AbstractBaseObservation
     public boolean hasParameters() {
         return CollectionHelper.isNotEmpty(getParameters());
     }
-    
+
     @Override
     public Set<RelatedObservation> getRelatedObservations() {
         return relatedObservations;
@@ -226,7 +226,7 @@ public abstract class AbstractBaseObservation
     public void setRelatedObservations(Set<RelatedObservation> relatedObservations) {
         this.relatedObservations = relatedObservations;
     }
-    
+
     @Override
     public boolean hasRelatedObservations() {
         return CollectionHelper.isNotEmpty(getRelatedObservations());

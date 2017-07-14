@@ -28,38 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.util.Collections;
-import java.util.Set;
+public class MetaDataSettingsProvider {
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionProvider;
-import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.service.MiscSettings;
-
-import com.google.common.collect.Sets;
-
-public class MetaDataSettings implements SettingDefinitionProvider {
-    
     public static final String OBSERVATION_ONLINE_RESOURCE = "service.observation.onlineResource";
-    
-    public static final BooleanSettingDefinition OBSERVATION_ONLINE_RESOURCE_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(MiscSettings.GROUP)
-                    .setOrder(ORDER_0)
-                    .setKey(OBSERVATION_ONLINE_RESOURCE)
-                    .setTitle("Should the SOS encode CI_OnlineResource in observations?")
-                    .setOptional(true)
-                    .setDescription("Activate/Deactivate whether the service should encode "
-                            + "<tt>CI_OnlineResource</tt> in observations.")
-                    .setDefaultValue(false);
-
-    
-    private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
-            OBSERVATION_ONLINE_RESOURCE_DEFINITION);
-
-    @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Collections.unmodifiableSet(DEFINITIONS);
-    }
 
 }

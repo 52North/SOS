@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ogc.sos;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.n52.janmayen.component.Component;

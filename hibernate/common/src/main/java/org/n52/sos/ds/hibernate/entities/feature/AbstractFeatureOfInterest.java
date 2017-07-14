@@ -32,6 +32,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescriptionXml;
@@ -40,27 +42,29 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUrl;
+import org.n52.sos.ds.hibernate.entities.SpatialEntity;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 
-public abstract class AbstractFeatureOfInterest extends SpatialEntity  implements Serializable, HasFeatureOfInterestType, HasGeometry,
+public abstract class AbstractFeatureOfInterest extends SpatialEntity implements Serializable, HasFeatureOfInterestType, HasGeometry,
 HasDescriptionXml, HasUrl, HasCoordinate, HasParentChilds<AbstractFeatureOfInterest>, HasParameters {
-    
+
     private static final long serialVersionUID = -5435922563580498368L;
 
     public abstract AbstractFeature accept(FeatureVisitor visitor) throws OwsExceptionReport;
 
     public abstract Geometry accept(GeometryVisitor visitor) throws OwsExceptionReport;
-    
+
     public static final String ID = "featureOfInterestId";
     private long featureOfInterestId;
     private FeatureOfInterestType featureOfInterestType;
     private String url;
     private Set<AbstractFeatureOfInterest> childs = Sets.newHashSet();
     private Set<AbstractFeatureOfInterest> parents = Sets.newHashSet();
-    private Set<Parameter> parameters = new HashSet<>(0);
+    private Set<Parameter<?>> parameters = new HashSet<>(0);
 
     public long getFeatureOfInterestId() {
         return this.featureOfInterestId;
@@ -99,7 +103,7 @@ HasDescriptionXml, HasUrl, HasCoordinate, HasParentChilds<AbstractFeatureOfInter
     public void setUrl(String url) {
         this.url = url;
     }
-    
+
     @Override
     public boolean isSetUrl() {
         return !Strings.isNullOrEmpty(getUrl());
@@ -153,17 +157,7 @@ HasDescriptionXml, HasUrl, HasCoordinate, HasParentChilds<AbstractFeatureOfInter
     }
 
     @Override
-    public boolean hasParents() {
-        return CollectionHelper.isNotEmpty(getParents());
-    }
-
-    @Override
-    public boolean hasChilds() {
-        return CollectionHelper.isNotEmpty(getChilds());
-    }
-
-    @Override
-    public Set<Parameter> getParameters() {
+    public Set<Parameter<?>> getParameters() {
         return parameters;
     }
 
@@ -171,15 +165,10 @@ HasDescriptionXml, HasUrl, HasCoordinate, HasParentChilds<AbstractFeatureOfInter
     @Override
     public void setParameters(Object parameters) {
         if (parameters instanceof Set<?>) {
-            this.parameters = (Set<Parameter>) parameters;
+            this.parameters = (Set<Parameter<?>>) parameters;
         } else {
-            getParameters().add((Parameter) parameters);
+            getParameters().add((Parameter<?>) parameters);
         }
-    }
-    
-    @Override
-    public boolean hasParameters() {
-        return CollectionHelper.isNotEmpty(getParameters());
     }
 
 }

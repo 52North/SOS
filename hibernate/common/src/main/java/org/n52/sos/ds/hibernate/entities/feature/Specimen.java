@@ -30,9 +30,9 @@ package org.n52.sos.ds.hibernate.entities.feature;
 
 import java.util.Date;
 
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Geometry;
@@ -40,7 +40,7 @@ import com.vividsolutions.jts.geom.Geometry;
 public class Specimen extends FeatureOfInterest {
 
     private static final long serialVersionUID = -6274017088296908033L;
-    
+
     private String materialClass;
     private Date samplingTimeStart;
     private Date samplingTimeEnd;
@@ -49,7 +49,7 @@ public class Specimen extends FeatureOfInterest {
     private Unit sizeUnit;
     private String currentLocation;
     private String  specimenType;
-    
+
     /**
      * @return the materialClass
      */
@@ -77,7 +77,7 @@ public class Specimen extends FeatureOfInterest {
     public void setSamplingTimeStart(Date samplingTimeStart) {
         this.samplingTimeStart = samplingTimeStart;
     }
-    
+
     /**
      * @return the samplingTimeEnd
      */
@@ -98,14 +98,14 @@ public class Specimen extends FeatureOfInterest {
     public String getSamplingMethod() {
         return samplingMethod;
     }
-    
+
     /**
      * @param samplingMethod the samplingMethod to set
      */
     public void setSamplingMethod(String samplingMethod) {
         this.samplingMethod = samplingMethod;
     }
-    
+
     public boolean isSetSamplingMethod() {
         return !Strings.isNullOrEmpty(getSamplingMethod());
     }
@@ -123,11 +123,11 @@ public class Specimen extends FeatureOfInterest {
     public void setSize(Double size) {
         this.size = size;
     }
-    
+
     public boolean isSetSize() {
         return getSize() != null;
     }
-    
+
     public Unit getSizeUnit() {
         return sizeUnit;
     }
@@ -153,7 +153,7 @@ public class Specimen extends FeatureOfInterest {
     public void setCurrentLocation(String currentLocation) {
         this.currentLocation = currentLocation;
     }
-    
+
     public boolean isSetCurrentLocation() {
         return !Strings.isNullOrEmpty(getCurrentLocation());
     }

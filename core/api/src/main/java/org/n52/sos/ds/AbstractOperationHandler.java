@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -38,11 +39,10 @@ import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.handler.OperationHandlerKey;
 import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.om.ObservationType;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsDomain;
@@ -53,9 +53,15 @@ import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.SosSettings;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.SosHelper;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.ObservationEncoder;
+
+import com.google.common.collect.Sets;
 
 /**
  * Renamed, in version 4.x called AbstractOperationDAO
@@ -70,6 +76,8 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     private ContentCacheController contentCacheController;
     private boolean includeChildObservableProperties;
     private ProfileHandler profileHandler;
+    private EncoderRepository encoderRepository;
+    private boolean listOnlyParentOfferings;
 
     public AbstractOperationHandler(String service, String operationName) {
         this.key = new OperationHandlerKey(service, operationName);
@@ -93,6 +101,15 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
         this.contentCacheController = contentCacheController;
     }
 
+    protected EncoderRepository getEncoderRepository() {
+        return this.encoderRepository;
+    }
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
     protected ProfileHandler getProfileHandler() {
         return profileHandler;
     }
@@ -106,6 +123,14 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
         return getProfileHandler().getActiveProfile();
     }
 
+    @Setting(SosSettings.LIST_ONLY_PARENT_OFFERINGS)
+    public void setListOnlyParentOfferings(boolean listOnlyParentOfferings) {
+        this.listOnlyParentOfferings = listOnlyParentOfferings;
+    }
+
+    protected boolean checkListOnlyParentOfferings() {
+        return listOnlyParentOfferings;
+    }
     @Deprecated
     protected Configurator getConfigurator() {
         // FIXME use @Inject
@@ -171,8 +196,7 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     }
 
     protected OwsDomain getPublishedFeatureOfInterestParameter(String service, String version) {
-        return getFeatureOfInterestParameter(service, version, SosHelper.getFeatureIDs(getCache()
-                                             .getPublishedFeaturesOfInterest(), version));
+        return getFeatureOfInterestParameter(service, version, SosHelper.getFeatureIDs(getCache().getPublishedFeatureOfInterest(), version));
     }
 
     protected OwsDomain getFeatureOfInterestParameter(String service, String version,
@@ -183,7 +207,7 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     }
 
     protected OwsDomain getPublishedObservablePropertyParameter(String service, String version) {
-        return getObservablePropertyParameter(service, version, getPublishedObservableProperties());
+        return getObservablePropertyParameter(service, version, getCache().getPublishedObservableProperties());
     }
 
     protected OwsDomain getObservablePropertyParameter(String service, String version) {
@@ -238,6 +262,26 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
             }
         }
         return new OwsDomain(name, OwsAnyValue.instance());
+    }
+
+    protected Set<String> getResponseFormatsForObservationType(String observationType, String service, String version) {
+        Set<String> responseFormats = Sets.newHashSet();
+        for (Encoder<?, ?> e : getEncoderRepository().getEncoders()) {
+            if (e instanceof ObservationEncoder) {
+                final ObservationEncoder<?, ?> oe = (ObservationEncoder<?, ?>) e;
+                Map<String, Set<SupportedType>> supportedResponseFormatObservationTypes = oe.getSupportedResponseFormatObservationTypes();
+                if (supportedResponseFormatObservationTypes != null && !supportedResponseFormatObservationTypes.isEmpty()) {
+                    for (final String responseFormat : supportedResponseFormatObservationTypes.keySet()) {
+                        for (SupportedType st : supportedResponseFormatObservationTypes.get(responseFormat)) {
+                            if (st instanceof ObservationType) {
+                                responseFormats.add(((ObservationType) st).getValue());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return responseFormats;
     }
 
 }

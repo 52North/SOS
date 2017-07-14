@@ -33,19 +33,20 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.hibernate.sql.JoinType;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.StringHelper;
+import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -58,6 +59,8 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -71,7 +74,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         this.daoFactory = daoFactory;
     }
 
-    protected abstract Class<?> getSeriesClass();
+    public abstract Class<?> getSeriesClass();
 
     /**
      * Get series for GetObservation request and featuresOfInterest
@@ -87,17 +90,6 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session)
             throws OwsExceptionReport;
 
-    /**
-     * Get series for GetObservationByIdRequest request
-     * @param request GetObservationByIdRequest request to get series for
-     * @param session
-     *            Hibernate session
-     * @return Series that fit
-     * @throws CodedException
-     */
-    public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session)
-            throws OwsExceptionReport;
-    
     /**
      * Get series for GetObservationByIdRequest request
      * @param request GetObservationByIdRequest request to get series for
@@ -196,7 +188,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport;
 
-    protected Series getOrInsert(ObservationContext ctx, final Session session) throws CodedException {
+    protected Series getOrInsert(ObservationContext ctx, final Session session) throws OwsExceptionReport {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         ctx.addIdentifierRestrictionsToCritera(criteria);
         LOGGER.debug("QUERY getOrInsertSeries(feature, observableProperty, procedure): {}",
@@ -406,12 +398,12 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 
     /**
      * Add offering restriction to Hibernate Criteria with LEFT-OUTER-JOIN
-     * 
+     *
      * @param c
      *            Hibernate Criteria to add restriction
      * @param offerings
      *            Offering identifiers to add
-     * @throws OwsExceptionReport 
+     * @throws OwsExceptionReport
      */
     public void addOfferingToCriteria(Criteria c, Collection<String> offerings) {
         c.createAlias(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
@@ -419,13 +411,13 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 Restrictions.in("off." + Offering.IDENTIFIER, offerings)));
 
     }
-    
+
     public void addOfferingToCriteria(Criteria c, String offering) {
         c.createAlias(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
         c.add(Restrictions.or(Restrictions.isNull(Series.OFFERING),
                 Restrictions.eq("off." + Offering.IDENTIFIER, offering)));
     }
-    
+
     public void addOfferingToCriteria(Criteria c, Offering offering) {
         c.add(Restrictions.eq(Series.PROCEDURE, offering));
     }
@@ -542,7 +534,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 	                series.setFirstNumericValue(null);
 	            }
             }
-        } 
+        }
         if (series.isSetLastTimeStamp() && series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
             SeriesObservation<?> latestObservation = seriesObservationDAO.getLastObservationFor(series, session);
             if (latestObservation != null) {
@@ -642,7 +634,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     public DaoFactory getDaoFactory() {
         return daoFactory;
     }
-    
+
     protected boolean isIncludeChildObservableProperties() {
         return ServiceConfiguration.getInstance().isIncludeChildObservableProperties();
     }

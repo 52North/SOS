@@ -37,12 +37,14 @@ import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.swe.SweDataArray;
 
 public class AqdSplitMergeObservations implements RequestResponseModifier {
 
@@ -73,20 +75,6 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
             getObservationResponse.setObservationCollection(getObservationResponse.getObservationCollection().merge());
         }
         return response;
-    }
-
-    private OwsServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {
-        response.setMergeObservations(true);
-        if (!response.hasStreamingData()) {
-            response.setObservationCollection(mergeObservations(response.getObservationCollection()));
-        }
-        return response;
-    }
-
-    private List<OmObservation> mergeObservations(List<OmObservation> observationCollection) {
-        return new ObservationMerger()
-        .mergeObservations(observationCollection, ObservationMergeIndicator
-                .defaultObservationMergerIndicator());
     }
 
     private void mergeObservationValues(OmObservation combinedSosObs, OmObservation sosObservation) {
@@ -121,7 +109,7 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
 
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
-        return super.getFacilitator().setMerger(true).setSplitter(true);
+        return new RequestResponseModifierFacilitator().setMerger(true).setSplitter(true);
     }
 
 }

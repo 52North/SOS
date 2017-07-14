@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.hibernate.Session;
-
+import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
@@ -54,6 +54,7 @@ import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.TimeRangeValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.XmlValue;
 import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -61,6 +62,7 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
+import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterFactory;
 
 /**
  * Hibernate DAO class to om:pramameter
@@ -98,7 +100,7 @@ public class ParameterDAO {
     protected Unit getUnit(String unit, Map<UoM, Unit> localCache, Session session) {
         return getUnit(new UoM(unit), localCache, session);
     }
-    
+
     /**
      * If the local unit cache isn't null, use it when retrieving unit.
      *
@@ -195,7 +197,7 @@ public class ParameterDAO {
                 if (parameter instanceof HasUnit && !((HasUnit)parameter).isSetUnit()) {
                     ((HasUnit)parameter).setUnit(getUnit(namedValue.getValue()));
                 }
-                
+
                 ((org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter)parameter).setObservationId(observationId);
                 parameter.setName(namedValue.getName().getHref());
                 parameter.setValue(value);
@@ -297,6 +299,11 @@ public class ParameterDAO {
 
         @Override
         public ValuedParameter<?> visit(ProfileValue value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public ValuedParameter<?> visit(XmlValue<?> value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 

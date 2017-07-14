@@ -26,15 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.json.inspire;
+package org.n52.sos.decode.json.impl;
 
-import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.aqd.EReportingChange;
 import org.n52.shetland.aqd.EReportingHeader;
-import org.n52.shetland.inspire.InspireID;
-import org.n52.shetland.inspire.RelatedParty;
+import org.n52.shetland.inspire.base.Identifier;
+import org.n52.shetland.inspire.base2.RelatedParty;
 import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.sos.util.AQDJSONConstants;
+import org.n52.sos.coding.json.AQDJSONConstants;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -49,7 +49,7 @@ public class EReportingHeaderJSONDecoder extends AbstractJSONDecoder<EReportingH
             throws DecodingException {
         EReportingHeader header = new EReportingHeader();
         header.setChange(decodeJsonToObject(node.path(AQDJSONConstants.CHANGE), EReportingChange.class));
-        header.setInspireID(decodeJsonToObject(node.path(AQDJSONConstants.INSPIRE_ID), InspireID.class));
+        header.setIdentifier(decodeJsonToObject(node.path(AQDJSONConstants.INSPIRE_ID), Identifier.class));
         header.setReportingAuthority(decodeJsonToObject(node.path(AQDJSONConstants.REPORTING_AUTHORITY), RelatedParty.class));
         header.setReportingPeriod(parseReferenceableTime(node.path(AQDJSONConstants.REPORTING_PERIOD)));
         for (JsonNode child : node.path(AQDJSONConstants.CONTENT)) {

@@ -63,7 +63,6 @@ import org.n52.sos.ds.hibernate.util.procedure.create.XmlStringDescriptionCreati
 import org.n52.sos.ds.hibernate.util.procedure.enrich.ProcedureDescriptionEnrichments;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.ds.procedure.AbstractProcedureConverter;
-import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;

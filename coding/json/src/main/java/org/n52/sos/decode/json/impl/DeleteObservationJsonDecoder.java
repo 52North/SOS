@@ -26,8 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode;
+package org.n52.sos.decode.json.impl;
 
+import java.util.List;
+
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
@@ -35,9 +39,9 @@ import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 
 /**
  * TODO JavaDoc
@@ -60,18 +64,18 @@ public class DeleteObservationJsonDecoder
     }
 
     @Override
-    protected DeleteObservationRequest decodeRequest(JsonNode node)  {
+    protected DeleteObservationRequest decodeRequest(JsonNode node) throws DecodingException  {
         DeleteObservationRequest r = new DeleteObservationRequest(DeleteObservationConstants.NS_SOSDO_2_0);
         r.setObservationIdentifiers(parseStringOrStringList(node.path(JSONConstants.OBSERVATION)));
-        r.setFeatureIdentifiers(parseStringOrStringList(node.path(FEATURE_OF_INTEREST)));
-        r.setObservedProperties(parseStringOrStringList(node.path(OBSERVED_PROPERTY)));
-        r.setOfferings(parseStringOrStringList(node.path(OFFERING)));
-        r.setProcedures(parseStringOrStringList(node.path(PROCEDURE)));
-        r.setTemporalFilters(parseTemporalFilters(node.path(TEMPORAL_FILTER)));
+        r.setFeatureIdentifiers(parseStringOrStringList(node.path(JSONConstants.FEATURE_OF_INTEREST)));
+        r.setObservedProperties(parseStringOrStringList(node.path(JSONConstants.OBSERVED_PROPERTY)));
+        r.setOfferings(parseStringOrStringList(node.path(JSONConstants.OFFERING)));
+        r.setProcedures(parseStringOrStringList(node.path(JSONConstants.PROCEDURE)));
+        r.setTemporalFilters(parseTemporalFilters(node.path(JSONConstants.TEMPORAL_FILTER)));
         return r;
     }
-    
-    private List<TemporalFilter> parseTemporalFilters(JsonNode node) throws OwsExceptionReport {
+
+    private List<TemporalFilter> parseTemporalFilters(JsonNode node) throws DecodingException {
         return decodeJsonToObjectList(node, TemporalFilter.class);
     }
 }

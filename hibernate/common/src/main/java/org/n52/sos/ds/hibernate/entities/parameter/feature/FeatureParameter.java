@@ -38,11 +38,11 @@ public abstract class FeatureParameter<T> implements org.n52.sos.ds.hibernate.en
     private long parameterId;
     private long featureOfInterestId;
     private String name;
-    
+
     public FeatureParameter() {
         super();
     }
-    
+
     /**
      * @return the parameterId
      */

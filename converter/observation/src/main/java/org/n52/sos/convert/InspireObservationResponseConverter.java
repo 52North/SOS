@@ -28,43 +28,49 @@
  */
 package org.n52.sos.convert;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.convert.RequestResponseModifier;
+import org.n52.iceland.convert.RequestResponseModifierFacilitator;
+import org.n52.iceland.convert.RequestResponseModifierKey;
+import org.n52.shetland.inspire.omso.InspireOMSOConstants;
+import org.n52.shetland.inspire.omso.MultiPointObservation;
+import org.n52.shetland.inspire.omso.PointObservation;
+import org.n52.shetland.inspire.omso.PointTimeSeriesObservation;
+import org.n52.shetland.inspire.omso.ProfileObservation;
+import org.n52.shetland.inspire.omso.TrajectoryObservation;
 import org.n52.shetland.ogc.om.ObservationMergeIndicator;
-import org.n52.shetland.ogc.om.ObservationMerger;
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.StreamingObservation;
-import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.response.AbstractObservationResponse;
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.response.GetObservationByIdResponse;
-import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ServiceSettings;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
-import org.n52.svalbard.inspire.omso.MultiPointObservation;
-import org.n52.svalbard.inspire.omso.PointObservation;
-import org.n52.svalbard.inspire.omso.PointTimeSeriesObservation;
-import org.n52.svalbard.inspire.omso.ProfileObservation;
-import org.n52.svalbard.inspire.omso.TrajectoryObservation;
+import org.n52.shetland.ogc.om.ObservationStream;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.StreamingValue;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.service.SosSettings;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -73,36 +79,45 @@ import com.google.common.collect.Sets;
 /**
  * Implementation if {@link RequestResponseModifier} to convert default
  * observations into INSPIRE OM Specialised Observations.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 @Configurable
 public class InspireObservationResponseConverter
-        extends AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+        extends AbstractRequestResponseModifier {
 
-    private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
-    
-    private boolean includeResultTimeForMerging = false; 
-    
-    @Setting(ServiceSettings.INCLUDE_RESULT_TIME_FOR_MERGING)
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    private boolean includeResultTimeForMerging = false;
+    private ContentCacheController contentCacheController;
+
+    @Setting(SosSettings.INCLUDE_RESULT_TIME_FOR_MERGING)
     public void setIncludeResultTimeForMerging(boolean includeResultTimeForMerging) {
         this.includeResultTimeForMerging = includeResultTimeForMerging;
     }
 
-    private static Set<RequestResponseModifierKeyType> getKeyTypes() {
+    @Inject
+    public void setContentCacheController(ContentCacheController ctrl) {
+        this.contentCacheController = ctrl;
+    }
+
+    public ContentCacheController getContentCacheController() {
+        return contentCacheController;
+    }
+
+    private static Set<RequestResponseModifierKey> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
         Map<AbstractObservationRequest, AbstractObservationResponse> requestResponseMap = Maps.newHashMap();
         requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
         requestResponseMap.put(new GetObservationByIdRequest(), new GetObservationByIdResponse());
-        Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
+        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
-                for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKeyType(service, version, request));
-                    keys.add(new RequestResponseModifierKeyType(service, version, request,
+                for (OwsServiceRequest request : requestResponseMap.keySet()) {
+                    keys.add(new RequestResponseModifierKey(service, version, request));
+                    keys.add(new RequestResponseModifierKey(service, version, request,
                             requestResponseMap.get(request)));
                 }
             }
@@ -111,12 +126,12 @@ public class InspireObservationResponseConverter
     }
 
     @Override
-    public Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes() {
+    public Set<RequestResponseModifierKey> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
 
     @Override
-    public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
         if (request instanceof AbstractObservationRequest) {
             AbstractObservationRequest req = (AbstractObservationRequest) request;
             if (req.isSetResponseFormat() && InspireOMSOConstants.NS_OMSO_30.equals(req.getResponseFormat())) {
@@ -129,17 +144,17 @@ public class InspireObservationResponseConverter
     }
 
     @Override
-    public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
+    public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
         if (response instanceof AbstractObservationResponse) {
             AbstractObservationResponse resp = (AbstractObservationResponse) response;
             if (InspireOMSOConstants.NS_OMSO_30.equals(resp.getResponseFormat())
-                    && CollectionHelper.isNotEmpty(resp.getObservationCollection())) {
-                if (resp.hasStreamingData()) {
-                    checkForStreamingData(request, resp);
-                } else {
-                    checkForNonStreamingData(request, resp);
-                }
+                    && resp.getObservationCollection().hasNext()) {
+//                if (resp.hasStreamingData()) {
+                    checkData(request, resp);
+//                } else {
+//                    checkForNonStreamingData(request, resp);
+//                }
             }
         }
         return response;
@@ -147,7 +162,7 @@ public class InspireObservationResponseConverter
 
     /**
      * Check the {@link AbstractObservationResponse} with {@link StreamingValue}
-     * 
+     *
      * @param request
      *            The request
      * @param response
@@ -155,17 +170,16 @@ public class InspireObservationResponseConverter
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private void checkForStreamingData(AbstractServiceRequest<?> request, AbstractObservationResponse response)
+    private void checkData(OwsServiceRequest request, AbstractObservationResponse response)
             throws OwsExceptionReport {
         Map<String, List<OmObservation>> map = Maps.newHashMap();
-        for (OmObservation omObservation : response.getObservationCollection()) {
+        while (response.getObservationCollection().hasNext()) {
+            OmObservation omObservation = response.getObservationCollection().next();
             if (omObservation.getValue() instanceof StreamingValue<?>) {
                 if (checkRequestedObservationTypeForOffering(omObservation, request)) {
-                    boolean withIdentifierNameDesription = checkForObservationTypeForMerging(omObservation, request);
                     String observationType = checkForObservationTypeForStreaming(omObservation, request);
-                    List<OmObservation> observations = ((StreamingValue<?>) omObservation.getValue()).getObservation(withIdentifierNameDesription);
-                    if (CollectionHelper.isNotEmpty(observations)) {
-                        for (OmObservation observation : observations) {
+                    while (((StreamingValue<?>) omObservation.getValue()).hasNext()) {
+                        OmObservation observation = ((StreamingValue<?>) omObservation.getValue()).next();
                             if (InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(observationType)) {
                                 putOrAdd(map, InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION,
                                         convertToProfileObservations(observation));
@@ -183,10 +197,9 @@ public class InspireObservationResponseConverter
                                 putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION,
                                         convertToPointObservations(observation));
                             }
-                        }
                     }
                 }
-            } else if (omObservation.getValue() instanceof StreamingObservation) {
+            } else if (omObservation.getValue() instanceof StreamingValue<?>) {
                 // TODO
             }
         }
@@ -194,132 +207,108 @@ public class InspireObservationResponseConverter
     }
 
     /**
-     * Check the {@link AbstractObservationResponse} with default values
-     * 
-     * @param request
-     *            The request
-     * @param response
-     *            The response
-     * @throws CodedException 
-     */
-    private void checkForNonStreamingData(AbstractServiceRequest<?> request, AbstractObservationResponse response) throws CodedException {
-        Map<String, List<OmObservation>> map = Maps.newHashMap();
-        for (OmObservation observation : response.getObservationCollection()) {
-            if (checkRequestedObservationTypeForOffering(observation, request)) {
-                String observationType = checkForObservationTypeForStreaming(observation, request);
-                if (InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(observationType)) {
-                    putOrAdd(map, InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION,
-                            convertToProfileObservations(observation));
-                } else if (InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(observationType)) {
-                    putOrAdd(map, InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION,
-                            convertToTrajectoryObservations(observation));
-                } else if (InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION.equals(observationType)) {
-                    putOrAdd(map, InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION,
-                            convertToMultiPointObservations(observation));
-                } else if (InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION
-                        .equals(observationType)) {
-                    putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION,
-                            convertToPointTimeSeriesObservations(observation));
-                } else if (InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION.equals(observationType)) {
-                    putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION,
-                            convertToPointObservations(observation));
-                }
-            }
-        }
-        response.setObservationCollection(mergeObservations(map));
-    }
-
-    /**
      * Merge the observations depending on their observationType
-     * 
+     *
      * @param map
      *            {@link Map} with observationType key
      * @return Merged observations
+     * @throws OwsExceptionReport
      */
-    private List<OmObservation> mergeObservations(Map<String, List<OmObservation>> map) {
+    private ObservationStream mergeObservations(Map<String, List<OmObservation>> map) throws OwsExceptionReport {
         List<OmObservation> mergedObservations = Lists.newArrayList();
         for (String key : map.keySet()) {
             switch (key) {
             case InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION:
-                mergedObservations.addAll(mergeProfileObservation(map.get(key)));
+                mergedObservations.addAll(mergeProfileObservation(ObservationStream.of(map.get(key))));
                 break;
             case InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION:
-                mergedObservations.addAll(mergeTrajectoryObservation(map.get(key)));
+                mergedObservations.addAll(mergeTrajectoryObservation(ObservationStream.of(map.get(key))));
                 break;
             case InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION:
-                mergedObservations.addAll(mergeMultiPointObservation(map.get(key)));
+                mergedObservations.addAll(mergeMultiPointObservation(ObservationStream.of(map.get(key))));
                 break;
             case InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION:
-                mergedObservations.addAll(mergePointTimeSeriesObservation(map.get(key)));
+                mergedObservations.addAll(mergePointTimeSeriesObservation(ObservationStream.of(map.get(key))));
                 break;
             default:
                 mergedObservations.addAll(map.get(key));
                 break;
             }
         }
-        return mergedObservations;
+        return ObservationStream.of(mergedObservations);
     }
 
     /**
      * Merge observation of observationType
      * {@link InspireOMSOConstants#OBS_TYPE_POINT_TIME_SERIES_OBSERVATION}
-     * 
+     *
      * @param observations
      *            {@link OmObservation}s to merge
      * @return Merged observations
+     * @throws OwsExceptionReport
      */
-    private Collection<? extends OmObservation> mergePointTimeSeriesObservation(List<OmObservation> observations) {
-        return new ObservationMerger().mergeObservations(observations,
-                ObservationMergeIndicator.defaultObservationMergerIndicator().setResultTime(includeResultTimeForMerging));
+    private Collection<? extends OmObservation> mergePointTimeSeriesObservation(ObservationStream observations) throws OwsExceptionReport {
+        return toList(observations.merge(ObservationMergeIndicator.sameObservationConstellation().setResultTime(includeResultTimeForMerging)));
     }
 
     /**
      ** Merge observation of observationType
      * {@link InspireOMSOConstants#OBS_TYPE_MULTI_POINT_OBSERVATION}
-     * 
+     *
      * @param observations
      *            {@link OmObservation}s to merge
      * @return Merged observations
+     * @throws OwsExceptionReport
      */
-    private Collection<? extends OmObservation> mergeMultiPointObservation(List<OmObservation> observations) {
+    private Collection<? extends OmObservation> mergeMultiPointObservation(ObservationStream observations) throws OwsExceptionReport {
         ObservationMergeIndicator observationMergeIndicator = new ObservationMergeIndicator();
         observationMergeIndicator.setObservableProperty(true).setProcedure(true).setPhenomenonTime(true);
-        return new ObservationMerger().mergeObservations(observations, observationMergeIndicator);
+        return toList(observations.merge(observationMergeIndicator));
     }
 
     /**
      * Merge observation of observationType
      * {@link InspireOMSOConstants#OBS_TYPE_PROFILE_OBSERVATION}
-     * 
+     *
      * @param observations
      *            {@link OmObservation}s to merge
      * @return Merged observations
+     * @throws OwsExceptionReport
      */
-    private Collection<? extends OmObservation> mergeProfileObservation(List<OmObservation> observations) {
+    private Collection<? extends OmObservation> mergeProfileObservation(ObservationStream observations) throws OwsExceptionReport {
         ObservationMergeIndicator observationMergeIndicator = new ObservationMergeIndicator();
         observationMergeIndicator.setObservableProperty(true).setProcedure(true).setFeatureOfInterest(true)
                 .setPhenomenonTime(true).setOfferings(true);
-        return new ObservationMerger().mergeObservations(observations, observationMergeIndicator);
+        return toList(observations.merge(observationMergeIndicator));
     }
 
     /**
      * Merge observation of observationType
      * {@link InspireOMSOConstants#OBS_TYPE_TRAJECTORY_OBSERVATION}
-     * 
+     *
      * @param observations
      *            {@link OmObservation}s to merge
      * @return Merged observations
+     * @throws OwsExceptionReport
      */
-    private Collection<? extends OmObservation> mergeTrajectoryObservation(List<OmObservation> observations) {
+    private Collection<? extends OmObservation> mergeTrajectoryObservation(ObservationStream observations) throws OwsExceptionReport {
         ObservationMergeIndicator observationMergeIndicator = new ObservationMergeIndicator();
         observationMergeIndicator.setObservableProperty(true).setProcedure(true).setFeatureOfInterest(true)
                 .setOfferings(true);
-        return new ObservationMerger().mergeObservations(observations, observationMergeIndicator);
+        return toList(observations.merge(observationMergeIndicator));
+    }
+
+    private Collection<? extends OmObservation> toList(ObservationStream stream) throws NoSuchElementException, OwsExceptionReport {
+        List<OmObservation> observations = new ArrayList<>();
+        while (stream.hasNext()) {
+            observations.add(stream.next());
+        }
+        return observations;
     }
 
     /**
      * Convert observation to {@link PointObservation}
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to convert
      * @return Converted observation
@@ -330,7 +319,7 @@ public class InspireObservationResponseConverter
 
     /**
      * Convert observation to {@link PointTimeSeriesObservation}
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to convert
      * @return Converted observation
@@ -341,7 +330,7 @@ public class InspireObservationResponseConverter
 
     /**
      * Convert observation to {@link MultiPointObservation}
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to convert
      * @return Converted observation
@@ -353,7 +342,7 @@ public class InspireObservationResponseConverter
 
     /**
      * Convert observation to {@link ProfileObservation}
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to convert
      * @return Converted observation
@@ -364,7 +353,7 @@ public class InspireObservationResponseConverter
 
     /**
      * Convert observation to {@link TrajectoryObservation}
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to convert
      * @return Converted observation
@@ -376,14 +365,14 @@ public class InspireObservationResponseConverter
     /**
      * Check {@link OmObservation} for requested resultType or default
      * observationType
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to check
      * @param request
      *            {@link GetObservationRequest} to check
      * @return Observation type for {@link OmObservation}
      */
-    private String checkForObservationTypeForStreaming(OmObservation observation, AbstractServiceRequest<?> request) {
+    private String checkForObservationTypeForStreaming(OmObservation observation, OwsServiceRequest request) {
         if (request instanceof AbstractObservationRequest
                 && ((AbstractObservationRequest) request).isSetResultModel()) {
             String requestedObservationType = ((AbstractObservationRequest) request).getResultModel();
@@ -418,16 +407,15 @@ public class InspireObservationResponseConverter
 
     /**
      * Check for {@link TrajectoryObservation}
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to check
      * @return <code>true</code>, if observationType of observation is
      *         {@link InspireOMSOConstants#OBS_TYPE_TRAJECTORY_OBSERVATION}
      */
     private boolean checkForTrajectory(OmObservation observation) {
-        ContentCache cache = Configurator.getInstance().getCache();
         for (String offering : observation.getObservationConstellation().getOfferings()) {
-            if (cache.getAllObservationTypesForOffering(offering)
+            if (((SosContentCache) getContentCacheController().getCache()).getAllObservationTypesForOffering(offering)
                     .contains(InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION)) {
                 return true;
             }
@@ -437,7 +425,7 @@ public class InspireObservationResponseConverter
 
     /**
      * Check if observationType is valid for observation
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to check
      * @param observationType
@@ -445,9 +433,8 @@ public class InspireObservationResponseConverter
      * @return <code>true</code>, if observationType is valid for observation
      */
     private boolean checkForObservationType(OmObservation observation, String observationType) {
-        ContentCache cache = Configurator.getInstance().getCache();
         for (String offering : observation.getObservationConstellation().getOfferings()) {
-            if (cache.getAllObservationTypesForOffering(offering).contains(observationType)) {
+            if (((SosContentCache) getContentCacheController().getCache()).getAllObservationTypesForOffering(offering).contains(observationType)) {
                 return true;
             }
         }
@@ -456,7 +443,7 @@ public class InspireObservationResponseConverter
 
     /**
      * Check if the requested observationType is valid for the offering
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to check offering for
      * @param request
@@ -465,7 +452,7 @@ public class InspireObservationResponseConverter
      *         observationType is valid for offering of {@link OmObservation}
      */
     private boolean checkRequestedObservationTypeForOffering(OmObservation observation,
-            AbstractServiceRequest<?> request) {
+            OwsServiceRequest request) {
         if (request instanceof AbstractObservationRequest
                 && ((AbstractObservationRequest) request).isSetResultModel()) {
             String observationType = ((AbstractObservationRequest) request).getResultModel();
@@ -474,7 +461,7 @@ public class InspireObservationResponseConverter
         return true;
     }
 
-    private boolean checkForObservationTypeForMerging(OmObservation observation, AbstractServiceRequest<?> request) {
+    private boolean checkForObservationTypeForMerging(OmObservation observation, OwsServiceRequest request) {
         String observationType = checkForObservationTypeForStreaming(observation, request);
         return InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION.equals(observationType)
                 || InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(observationType);
@@ -482,7 +469,7 @@ public class InspireObservationResponseConverter
 
     /**
      * Check if the requested resultType is valid
-     * 
+     *
      * @param resultType
      *            Requested resultType
      * @throws CodedException
@@ -509,7 +496,7 @@ public class InspireObservationResponseConverter
 
     /**
      * Put/add {@link OmObservation}s to the map
-     * 
+     *
      * @param map
      *            The map to put/add
      * @param type

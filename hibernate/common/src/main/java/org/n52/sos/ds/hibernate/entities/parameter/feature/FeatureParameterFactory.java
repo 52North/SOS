@@ -28,32 +28,33 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.CvDiscretePointCoverage;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.MultiPointCoverage;
+import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.ProfileValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
+import org.n52.shetland.ogc.om.values.ReferenceValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TLVTValue;
+import org.n52.shetland.ogc.om.values.TVPValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.TimeRangeValue;
+import org.n52.shetland.ogc.om.values.UnknownValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.XmlValue;
+import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
-import org.n52.sos.ogc.om.values.MultiPointCoverage;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.ProfileValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
-import org.n52.sos.ogc.om.values.ReferenceValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TLVTValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.om.values.XmlValue;
-import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class FeatureParameterFactory implements ValueVisitor<ValuedParameter<?>> {
+public class FeatureParameterFactory implements ValueVisitor<ValuedParameter<?>, OwsExceptionReport> {
 
     protected FeatureParameterFactory() {
     }
@@ -97,17 +98,17 @@ public class FeatureParameterFactory implements ValueVisitor<ValuedParameter<?>>
     public FeatureTextValuedParameter text() throws OwsExceptionReport {
         return instantiate(textClass());
     }
-    
+
     public Class<? extends FeatureXmlValuedParameter> xmlClass() {
         return FeatureXmlValuedParameter.class;
     }
-    
+
     public FeatureXmlValuedParameter xml() throws OwsExceptionReport {
         return instantiate(xmlClass());
     }
 
     private <T extends ValuedParameter<?>> T instantiate(Class<T> c) throws OwsExceptionReport {
-    
+
         try {
             return c.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
@@ -180,7 +181,7 @@ public class FeatureParameterFactory implements ValueVisitor<ValuedParameter<?>>
     public ValuedParameter<?> visit(UnknownValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
-    
+
     @Override
     public ValuedParameter<?> visit(TLVTValue value) throws OwsExceptionReport {
         throw notSupported(value);
@@ -206,10 +207,15 @@ public class FeatureParameterFactory implements ValueVisitor<ValuedParameter<?>>
         throw notSupported(value);
     }
 
+
     @Override
-    public ValuedParameter<?> visit(XmlValue value) throws OwsExceptionReport {
-        // TODO Auto-generated method stub
-        return null;
+    public ValuedParameter<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(XmlValue<?> value) throws OwsExceptionReport {
+        throw notSupported(value);
     }
 
     private OwsExceptionReport notSupported(Value<?> value)

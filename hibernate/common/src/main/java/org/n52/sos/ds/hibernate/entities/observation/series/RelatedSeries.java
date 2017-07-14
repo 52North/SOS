@@ -31,11 +31,11 @@ package org.n52.sos.ds.hibernate.entities.observation.series;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractRelation;
 
 public class RelatedSeries extends AbstractRelation {
-    
+
     public static final String SERIES_ID = "seriesId";
     private long seriesId;
     private Series relatedSeries;
-    
+
     /**
      * @return the seriesId
      */
@@ -65,7 +65,7 @@ public class RelatedSeries extends AbstractRelation {
     public void setRelatedSeries(Series relatedSeries) {
         this.relatedSeries = relatedSeries;
     }
-    
+
     public boolean isSetRelatedSeries() {
         return getRelatedSeries() != null;
     }

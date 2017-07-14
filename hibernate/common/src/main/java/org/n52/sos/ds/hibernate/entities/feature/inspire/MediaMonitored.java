@@ -31,7 +31,7 @@ package org.n52.sos.ds.hibernate.entities.feature.inspire;
 import java.util.Set;
 
 public class MediaMonitored {
-    
+
     private long featureOfInterestId;
     private Set<String> mediaMonitored;
 
@@ -42,7 +42,7 @@ public class MediaMonitored {
     public void setFeatureOfInterestId(long featureOfInterestId) {
         this.featureOfInterestId = featureOfInterestId;
     }
-    
+
     /**
      * @return the mediaMonitored
      */

@@ -41,7 +41,6 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.AqdConstants.AssessmentType;
 import org.n52.shetland.aqd.AqdSamplingPoint;
@@ -58,6 +57,7 @@ import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
@@ -74,6 +74,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.util.QueryHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -113,11 +114,11 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<SeriesObservation<?>> getSeriesObservationForSosIndeterminateTimeFilter(Series series,
+    public List<SeriesObservation<?>> getSeriesObservationForExtendedIndeterminateTimeFilter(Series series,
                                                                                         List<String> offerings,
                                                                                         IndeterminateValue sosIndeterminateTime,
                                                                                         Session session) {
-        return getSeriesObservationCriteriaForSosIndeterminateTimeFilter(series, offerings, sosIndeterminateTime,
+        return getSeriesObservationCriteriaForIndeterminateTimeFilter(series, offerings, sosIndeterminateTime,
                                                                          session).list();
     }
 
@@ -308,4 +309,5 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     public ObservationFactory getObservationFactory() {
         return EReportingObservationFactory.getInstance();
     }
+
 }

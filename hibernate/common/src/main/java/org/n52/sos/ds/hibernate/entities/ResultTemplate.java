@@ -38,7 +38,6 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultEncoding;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultStructure;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Strings;
 
@@ -99,7 +98,7 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
     public ObservableProperty getObservableProperty() {
         return this.observableProperty;
     }
-    
+
     @Override
     public void setObservableProperty(ObservableProperty observableProperty) {
         this.observableProperty = observableProperty;
@@ -114,7 +113,7 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
     public void setProcedure(Procedure procedure) {
         this.procedure = procedure;
     }
-    
+
     public boolean isSetProcedure() {
         return getProcedure() != null;
     }
@@ -128,7 +127,7 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
     public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
     }
-    
+
     public boolean isSetFeatureOfInterest() {
         return getFeatureOfInterest() != null;
     }

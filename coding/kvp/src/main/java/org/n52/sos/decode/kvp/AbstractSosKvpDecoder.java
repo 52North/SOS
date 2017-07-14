@@ -58,6 +58,7 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CRSHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.DateTimeParseException;
@@ -86,6 +87,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
     private int defaultResponse3DEPSG;
     private String srsNamePrefixUrl;
     private String srsNamePrefixUrn;
+
 
     public AbstractSosKvpDecoder(Supplier<? extends R> supplier, String version, String operation) {
         this(supplier, SosConstants.SOS, version, operation);

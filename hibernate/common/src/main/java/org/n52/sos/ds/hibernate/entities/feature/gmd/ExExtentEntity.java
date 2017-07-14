@@ -32,7 +32,7 @@ import java.util.Set;
 
 /**
  * Hibernate entity for exExtent.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.4.0
  *

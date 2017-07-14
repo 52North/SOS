@@ -32,26 +32,24 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationContext;
-import org.n52.sos.binding.BindingRepository;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeFormatException;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.util.observation.PhenomenonTimeCreator;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.http.MediaTypes;
 
 public class RelatedSeriesAdder {
 
@@ -63,7 +61,7 @@ public class RelatedSeriesAdder {
         this.hRelatedSeries = hRelatedSeries;
     }
 
-    public void add() throws CodedException { 
+    public void add() throws CodedException {
         try {
             if (CollectionHelper.isNotEmpty(hRelatedSeries)) {
                 for (RelatedSeries relatedSeries : hRelatedSeries) {
@@ -87,7 +85,7 @@ public class RelatedSeriesAdder {
             throw new NoApplicableCodeException().causedBy(uee).withMessage("Unable to URL encode.");
         }
     }
-    
+
     private String createGetObservationByIdUrl(String observationIdentifier) throws UnsupportedEncodingException {
         if (isKvpSupported()) {
             final StringBuilder url = new StringBuilder();
@@ -124,21 +122,21 @@ public class RelatedSeriesAdder {
         }
         return "";
     }
-    
+
     private boolean isKvpSupported() {
         return BindingRepository.getInstance().isBindingSupported(MediaTypes.APPLICATION_KVP);
     }
-    
+
     private String getServiceUrl() {
         return ServiceConfiguration.getInstance().getServiceURL();
     }
-    
+
     private String encodeBaseGetUrl(String version) throws UnsupportedEncodingException {
         final StringBuilder url = new StringBuilder();
         // service URL
         url.append(getServiceUrl());
         // ?
-        url.append(Constants.QUERSTIONMARK_CHAR);
+        url.append('?');
         // service
         url.append(encodeServiceParam());
         // version
@@ -153,11 +151,11 @@ public class RelatedSeriesAdder {
     private String encodeVersionParam(String version) throws UnsupportedEncodingException {
         return encodeParam(OWSConstants.RequestParams.version.name(), version);
     }
-    
+
     private String encodeRequest(String requestName) throws UnsupportedEncodingException {
-        return encodeParam(RequestParams.request.name(), requestName);
+        return encodeParam(OWSConstants.RequestParams.request.name(), requestName);
     }
-    
+
     private String encodeTemporalFilterParam(Series hSeries) throws DateTimeFormatException, UnsupportedEncodingException {
         Time phenomenonTime = new PhenomenonTimeCreator(hSeries).create();
         final StringBuilder time = new StringBuilder("om:phenomenonTime").append(",");
@@ -176,7 +174,7 @@ public class RelatedSeriesAdder {
     private String encodeParam(String parameterName,String value) throws UnsupportedEncodingException {
         return encodeParam(parameterName, true, value);
     }
-    
+
     private String encodeParam(String parameterName, boolean withAmpersand, String value) throws UnsupportedEncodingException {
         final StringBuilder builder = new StringBuilder();
         if (withAmpersand) {
@@ -184,8 +182,8 @@ public class RelatedSeriesAdder {
         }
         return builder.append(parameterName).append("=").append(URLEncoder.encode(value, "UTF-8")).toString();
     }
-        
-    
+
+
 //    url.append(getParameter(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat.name(),
 //            URLEncoder.encode(procedureDescriptionFormat, "UTF-8")));
 

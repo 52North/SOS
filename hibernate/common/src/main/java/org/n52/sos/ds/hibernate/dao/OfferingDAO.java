@@ -47,12 +47,10 @@ import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -71,6 +69,8 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -734,19 +734,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
 
     /**
      * Add offering identifier restriction to Hibernate Criteria
-     * 
-     * @param criteria
-     *            Hibernate Criteria to add restriction
-     * @param offering
-     *            Offering identifier
-     */
-    public void addOfferingRestricionForObservation(Criteria c, String offering) {
-        addOfferingRestrictionFor(c, offering, AbstractObservation.OFFERINGS);
-    }
-
-    /**
-     * Add offering identifier restriction to Hibernate Criteria
-     * 
+     *
      * @param criteria
      *            Hibernate Criteria to add restriction
      * @param offering
@@ -763,28 +751,28 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     public void addOfferingRestricionForObservation(DetachedCriteria dc, String offering) {
         dc.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
     }
-    
+
     @SuppressWarnings("unchecked")
-    public List<Offering> getPublishedOffering(Collection<String> identifiers, Session session) throws CodedException {
+    public List<Offering> getPublishedOffering(Collection<String> identifiers, Session session) throws OwsExceptionReport {
         if (HibernateHelper.isEntitySupported(Series.class)) {
             Criteria c = getDefaultCriteria(session);
             c.add(Subqueries.propertyIn(Offering.ID, getDetachedCriteriaSeries(session)));
             return c.list();
-        } 
+        }
         return getOfferingObjectsForCacheUpdate(identifiers, session);
      }
 
-    private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
-         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
+    private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
+         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(daoFactory.getSeriesDAO().getSeriesClass());
          detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
          detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.OFFERING)));
          return detachedCriteria;
      }
-    
+
     protected Criteria getDefaultCriteria(Session session) {
         return session.createCriteria(Offering.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
-    
+
     protected Criteria getDefaultTransactionalCriteria(Session session) {
         return session.createCriteria(TOffering.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }

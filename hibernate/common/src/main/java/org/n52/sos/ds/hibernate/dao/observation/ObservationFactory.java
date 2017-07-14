@@ -117,7 +117,7 @@ public abstract class ObservationFactory {
             throws OwsExceptionReport {
         return instantiate(complexClass());
     }
-    
+
     public abstract Class<? extends ProfileObservation> profileClass();
 
     public ProfileObservation profile()

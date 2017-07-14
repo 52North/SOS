@@ -44,7 +44,7 @@ import org.n52.sos.ds.hibernate.entities.feature.gml.VerticalDatumEntity;
 public abstract class AbstractMonitoringFeature extends FeatureOfInterest {
 
     private MonitoringPointContent content;
-    
+
     /**
      * @return the content
      */
@@ -58,7 +58,7 @@ public abstract class AbstractMonitoringFeature extends FeatureOfInterest {
     public void setContent(MonitoringPointContent content) {
         this.content = content;
     }
-    
+
     public boolean isSetContent() {
         return getContent() != null;
     }
@@ -69,7 +69,7 @@ public abstract class AbstractMonitoringFeature extends FeatureOfInterest {
         }
         return Collections.emptyList();
     }
-    
+
     public AbstractMonitoringFeature setRelatedParty(Collection<ResponsiblePartyEntity> relatedParty) {
         if (!isSetContent()) {
             setContent(new MonitoringPointContent());
@@ -77,7 +77,7 @@ public abstract class AbstractMonitoringFeature extends FeatureOfInterest {
         getContent().setRelatedParty(relatedParty);
         return this;
     }
-    
+
     public AbstractMonitoringFeature addRelatedParty(Collection<ResponsiblePartyEntity> relatedParty) {
         if (!isSetContent()) {
             setContent(new MonitoringPointContent());
@@ -85,7 +85,7 @@ public abstract class AbstractMonitoringFeature extends FeatureOfInterest {
         getContent().addRelatedParty(relatedParty);
         return this;
     }
-    
+
     public AbstractMonitoringFeature addRelatedParty(ResponsiblePartyEntity relatedParty) {
         if (!isSetContent()) {
             setContent(new MonitoringPointContent());
@@ -93,18 +93,18 @@ public abstract class AbstractMonitoringFeature extends FeatureOfInterest {
         getContent().addRelatedParty(relatedParty);
         return this;
     }
-    
+
     public boolean hasRelatedParty() {
         return isSetContent() ? getContent().hasRelatedParty() : false;
     }
-    
+
     public List<VerticalDatumEntity> getVerticalDatum() {
         if (isSetContent()) {
             return getContent().getVerticalDatum();
         }
         return Collections.emptyList();
     }
-    
+
     public AbstractMonitoringFeature setVerticalDatum(Collection<VerticalDatumEntity> verticalDatum) {
         if (!isSetContent()) {
             setContent(new MonitoringPointContent());
@@ -112,7 +112,7 @@ public abstract class AbstractMonitoringFeature extends FeatureOfInterest {
         getContent().setVerticalDatum(verticalDatum);
         return this;
     }
-    
+
     public AbstractMonitoringFeature addVerticalDatum(Collection<VerticalDatumEntity> verticalDatum) {
         if (!isSetContent()) {
             setContent(new MonitoringPointContent());
@@ -120,7 +120,7 @@ public abstract class AbstractMonitoringFeature extends FeatureOfInterest {
         getContent().addVerticalDatum(verticalDatum);
         return this;
     }
-    
+
     public AbstractMonitoringFeature addVerticalDatum(VerticalDatumEntity verticalDatum) {
         if (!isSetContent()) {
             setContent(new MonitoringPointContent());
@@ -128,7 +128,7 @@ public abstract class AbstractMonitoringFeature extends FeatureOfInterest {
         getContent().addVerticalDatum(verticalDatum);
         return this;
     }
-    
+
     public boolean hasVerticalDatum() {
         return isSetContent() ? getContent().hasVerticalDatum() : false;
     }

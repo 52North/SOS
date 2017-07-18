@@ -32,7 +32,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.n52.faroe.AbstractSettingDefinition;
 import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.settings.BooleanSettingDefinition;
 import org.n52.faroe.settings.IntegerSettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.iceland.ds.Datasource;
@@ -116,23 +118,23 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected static final String TIMEZONE_KEY = "datasource.timezone";
 
     protected static final String TIMEZONE_DEFAULT_VALUE = "UTC";
-    
+
     protected static final String TIME_STRING_FORMAT_KEY = "datasource.timeStringFormat";
-    
+
     protected static final String TIME_STRING_FORMAT_TITLE = "Datasource time string format";
 
     protected static final String TIME_STRING_FORMAT_DESCRIPTION =
             "Define the time string format of the datasource to ensure time is always parsed in the defined time format";
-    
+
     protected static final String TIME_STRING_FORMAT_DEFAULT_VALUE = "";
-    
+
     protected static final String TIME_STRING_Z_KEY = "datasource.timeStringZt";
-    
+
     protected static final String TIME_STRING_Z_TITLE = "Has the datasource time string a 'Z'";
 
     protected static final String TIME_STRING_Z_DESCRIPTION =
             "Define if the datasoucre time string uses a 'Z' instead of '+00:00'.";
-    
+
     protected static final boolean TIME_STRING_Z_DEFAULT_VALUE = false;
 
     private String usernameDefault;
@@ -310,19 +312,31 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         def.setOptional(true);
         return def;
     }
-    
+
     protected StringSettingDefinition createTimeStringFormatDefinition() {
-        return new StringSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_10)
-                .setKey(TIME_STRING_FORMAT_KEY).setTitle(TIME_STRING_FORMAT_TITLE).setDescription(TIME_STRING_FORMAT_DESCRIPTION)
-                .setDefaultValue(TIME_STRING_FORMAT_DEFAULT_VALUE).setOptional(true);
+        StringSettingDefinition def = new StringSettingDefinition();
+                def.setDefaultValue(TIME_STRING_FORMAT_DEFAULT_VALUE)
+                .setGroup(ADVANCED_GROUP)
+                .setKey(TIME_STRING_FORMAT_KEY)
+                .setTitle(TIME_STRING_FORMAT_TITLE)
+                .setDescription(TIME_STRING_FORMAT_DESCRIPTION)
+                .setOptional(true);
+                def.setOrder(100);
+                    return def;
     }
 
     protected BooleanSettingDefinition createTimeStringZDefinition() {
-        return new BooleanSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_11)
-                .setKey(TIME_STRING_Z_KEY).setTitle(TIME_STRING_Z_TITLE).setDescription(TIME_STRING_Z_DESCRIPTION)
-                .setDefaultValue(TIME_STRING_Z_DEFAULT_VALUE).setOptional(true);
+        BooleanSettingDefinition def = new BooleanSettingDefinition();
+        def.setDefaultValue(TIME_STRING_Z_DEFAULT_VALUE)
+                .setGroup(ADVANCED_GROUP)
+                .setKey(TIME_STRING_Z_KEY)
+                .setTitle(TIME_STRING_Z_TITLE)
+                .setDescription(TIME_STRING_Z_DESCRIPTION)
+                .setOptional(true);
+                def.setOrder(11);
+                return def;
     }
-    
+
     protected StringSettingDefinition createUsernameDefinition(String defaultValue) {
         StringSettingDefinition def = createUsernameDefinition();
         def.setDescription(usernameDescription);
@@ -375,13 +389,17 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         def.setDefaultValue(defaultValue);
         return def;
     }
-    
+
     protected StringSettingDefinition createTimeStringFormatDefinition(String defaultValue) {
-        return createTimeStringFormatDefinition().setDefaultValue(defaultValue);
+        StringSettingDefinition def = createTimeStringFormatDefinition();
+        def.setDefaultValue(defaultValue);
+        return def;
     }
-    
+
     protected BooleanSettingDefinition createTimeStringZDefinition(boolean defaultValue) {
-        return createTimeStringZDefinition().setDefaultValue(defaultValue);
+        BooleanSettingDefinition def = createTimeStringZDefinition();
+        def.setDefaultValue(defaultValue);
+        return def;
     }
 
     /**

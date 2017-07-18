@@ -91,7 +91,7 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionH
             UpdateSensorResponse response = new UpdateSensorResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
-            for (SosProcedureDescription procedureDescription : request.getProcedureDescriptions()) {
+            for (SosProcedureDescription<?> procedureDescription : request.getProcedureDescriptions()) {
                 DateTime currentTime = new DateTime(DateTimeZone.UTC);
                 // TODO: check for all validTimes of descriptions for this
                 // identifier
@@ -138,7 +138,7 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionH
      *            Procedure description
      * @return SensorDescription String
      */
-    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription procedureDescription ) {
+    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription<?> procedureDescription ) {
         if (procedureDescription.getProcedureDescription() instanceof SensorML) {
             final SensorML sensorML = (SensorML) procedureDescription.getProcedureDescription() ;
             // if SensorML is not a wrapper

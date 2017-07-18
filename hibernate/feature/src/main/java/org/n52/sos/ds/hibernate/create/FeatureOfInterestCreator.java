@@ -31,29 +31,29 @@ package org.n52.sos.ds.hibernate.create;
 import java.util.Locale;
 
 import org.hibernate.Session;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 public class FeatureOfInterestCreator extends AbstractFeatureOfInerestCreator<FeatureOfInterest> {
 
-    public FeatureOfInterestCreator(int storageEPSG, int storage3depsg) {
-        super(storageEPSG, storage3depsg);
+    public FeatureOfInterestCreator(FeatureVisitorContext context) {
+        super(context);
     }
 
     @Override
-    public AbstractFeature create(FeatureOfInterest f, Locale i18n, String version, Session s)
+    public AbstractFeature create(FeatureOfInterest f)
             throws OwsExceptionReport {
-        return createFeature(f, i18n, version, s);
+        return createFeature(f);
     }
 
     @Override
-    public Geometry createGeometry(FeatureOfInterest feature, Session session) throws OwsExceptionReport {
-        return createGeometryFrom(feature, session);
+    public Geometry createGeometry(FeatureOfInterest feature) throws OwsExceptionReport {
+        return createGeometryFrom(feature);
     }
 
     @Override

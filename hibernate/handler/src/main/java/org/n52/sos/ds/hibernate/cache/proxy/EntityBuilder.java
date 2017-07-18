@@ -50,13 +50,13 @@ import org.n52.series.db.beans.ServiceEntity;
 import org.n52.series.db.beans.TextDatasetEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
 import com.google.common.base.Strings;
@@ -149,21 +149,21 @@ public class EntityBuilder {
         return phenomenon;
     }
 
-    public static FeatureEntity createFeature(FeatureOfInterest sosFeature, ServiceEntity service, boolean processParents, boolean processChilds) {
+    public static FeatureEntity createFeature(AbstractFeatureOfInterest sosFeature, ServiceEntity service, boolean processParents, boolean processChilds) {
         FeatureEntity feature = new FeatureEntity();
         feature.setService(service);
         setIdentifierNameDesxription(sosFeature, feature);
         feature.setGeometryEntity(new GeometryEntity().setGeometry(sosFeature.getGeom()));
         if (sosFeature.hasParents() && processParents) {
             Set<FeatureEntity> parents = new HashSet<>();
-            for (FeatureOfInterest parent : sosFeature.getParents()) {
+            for (AbstractFeatureOfInterest parent : sosFeature.getParents()) {
                 parents.add(createFeature(parent, service, true, false));
             }
             feature.setParents(parents);
         }
         if (sosFeature.hasChilds() && processChilds) {
             Set<FeatureEntity> childs = new HashSet<>();
-            for (FeatureOfInterest child : sosFeature.getChilds()) {
+            for (AbstractFeatureOfInterest child : sosFeature.getChilds()) {
                 childs.add(createFeature(child, service, false, true));
             }
             feature.setChildren(childs);

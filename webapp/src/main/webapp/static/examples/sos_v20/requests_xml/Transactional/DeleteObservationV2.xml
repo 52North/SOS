@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sosdo:DeleteObservation version="2.0.0" service="SOS" 
+<sosdo:DeleteObservation version="2.0.0" service="SOS"
     xmlns:sosdo="http://www.opengis.net/sosdo/2.0"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:fes="http://www.opengis.net/fes/2.0" 
+    xmlns:fes="http://www.opengis.net/fes/2.0"
     xmlns:gml="http://www.opengis.net/gml/3.2"
     xmlns:swes="http://www.opengis.net/swes/2.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -18,7 +18,7 @@
     <!-- optional, multiple values possible -->
     <sosdo:procedure>http://www.52north.org/test/procedure/1</sosdo:procedure>
     <sosdo:procedure>http://www.52north.org/test/procedure/2</sosdo:procedure>
-    
+
     <!-- optional, multiple values possible -->
     <sosdo:observedProperty>http://www.52north.org/test/observableProperty/1</sosdo:observedProperty>
     <sosdo:observedProperty>http://www.52north.org/test/observableProperty/2</sosdo:observedProperty>
@@ -41,7 +41,7 @@
             </gml:TimePeriod>
         </fes:During>
     </sosdo:temporalFilter>
-    
+
     <!-- optional
     <sosdo:temporalFilter>
         <fes:TEquals>
@@ -51,7 +51,7 @@
             </gml:TimeInstant>
         </fes:TEquals>
     </sosdo:temporalFilter>
-    
+
     <sosdo:temporalFilter>
         <fes:During>
             <fes:ValueReference>resultTime</fes:ValueReference>
@@ -61,7 +61,7 @@
             </gml:TimePeriod>
         </fes:During>
     </sosdo:temporalFilter>
-    
+
     <sosdo:temporalFilter>
         <fes:TEquals>
             <fes:ValueReference>resultTime</fes:ValueReference>

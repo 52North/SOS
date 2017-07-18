@@ -41,7 +41,6 @@ import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
@@ -99,12 +98,7 @@ public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObser
      * @return Criteria to query deleted observations
      */
     private Criteria getCriteria(Session session) {
-        final Criteria criteria;
-        if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class)) {
-            criteria = session.createCriteria(AbstractSeriesObservation.class);
-        } else {
-            criteria = session.createCriteria(AbstractLegacyObservation.class);
-        }
+        final Criteria criteria = session.createCriteria(AbstractSeriesObservation.class);
         criteria.add(Restrictions.eq(AbstractObservation.DELETED, true));
         LOG.debug("QUERY getCriteria(): {}", HibernateHelper.getSqlString(criteria));
         return criteria;

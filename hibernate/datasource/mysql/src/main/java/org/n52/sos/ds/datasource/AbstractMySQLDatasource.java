@@ -52,7 +52,7 @@ import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann
  */
 public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDatasource {

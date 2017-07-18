@@ -44,9 +44,7 @@ import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
 import org.n52.sos.ds.AbstractDeleteSensorHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -126,16 +124,10 @@ public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
                         deleteFlag, session);
             }
             // set deleted flag in Series and Observation table for series concept to true
-            if (EntitiyHelper.getInstance().isSeriesSupported()) {
-                List<Series> series =
-                        daoFactory.getSeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
-                                session);
-                getSeriesObservationDAO().updateObservationSetAsDeletedForSeries(series, deleteFlag, session);
-            }
-            // set deleted flag in Observation table for old concept to true
-            else {
-                new LegacyObservationDAO(daoFactory).updateObservationSetAsDeletedForProcedure(identifier, deleteFlag, session);
-            }
+            List<Series> series =
+                    daoFactory.getSeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
+                            session);
+            getSeriesObservationDAO().updateObservationSetAsDeletedForSeries(series, deleteFlag, session);
         } else {
             throw new NoApplicableCodeException().withMessage("The requested identifier is not contained in database");
         }

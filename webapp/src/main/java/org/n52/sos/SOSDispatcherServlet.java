@@ -30,6 +30,8 @@ package org.n52.sos;
 
 import javax.servlet.ServletContext;
 
+import org.n52.iceland.service.DatabaseSettingsHandler;
+import org.n52.sos.context.ContextSwitcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.target.HotSwappableTargetSource;
@@ -39,9 +41,6 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import org.n52.iceland.service.DatabaseSettingsHandler;
-import org.n52.sos.context.ContextSwitcher;
 
 /**
  * TODO JavaDoc

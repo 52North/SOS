@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import static java.util.stream.Collectors.toSet;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -48,14 +47,11 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-
-import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
@@ -65,8 +61,26 @@ public class HibernateObservationUtilities {
     private HibernateObservationUtilities() {
     }
 
-    public static ObservationStream createSosObservationsFromObservations(Collection<Observation<?>> o,
-             AbstractObservationRequest r, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale l, I18NDAORepository i18nr,String pdf, DaoFactory daoFactory, Session s) throws OwsExceptionReport, ConverterException {
+    public static ObservationStream createSosObservationsFromObservations(
+            Collection<Observation<?>> o,
+             AbstractObservationRequest r,
+             LocalizedProducer<OwsServiceProvider> serviceProvider,
+             I18NDAORepository i18nr,
+             String pdf,
+             DaoFactory daoFactory,
+             Session s) throws OwsExceptionReport, ConverterException {
+        return new ObservationOmObservationCreator(o, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, s).create();
+    }
+
+    public static ObservationStream createSosObservationsFromObservations(
+            Collection<Observation<?>> o,
+             AbstractObservationRequest r,
+             LocalizedProducer<OwsServiceProvider> serviceProvider,
+             Locale l,
+             I18NDAORepository i18nr,
+             String pdf,
+             DaoFactory daoFactory,
+             Session s) throws OwsExceptionReport, ConverterException {
         return new ObservationOmObservationCreator(o, r, serviceProvider, l, i18nr, pdf, daoFactory, s).create();
     }
 
@@ -115,7 +129,7 @@ public class HibernateObservationUtilities {
             DaoFactory daoFactory,
             Session session)
                     throws OwsExceptionReport, ConverterException {
-        return new ObservationConstellationOmObservationCreator(oc, fois, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, session).create();
+        return createSosObservationFromObservationConstellation(oc, fois, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, session);
     }
 
     public static ObservationStream createSosObservationFromObservationConstellation(
@@ -147,17 +161,30 @@ public class HibernateObservationUtilities {
      * @throws ConverterException
      *             If procedure creation fails
      */
-    public static ObservationStream createSosObservationFromSeries(Series series, AbstractObservationRequest r,
-            LocalizedProducer<OwsServiceProvider> serviceProvider, I18NDAORepository i18nr, String pdf, DaoFactory daoFactory, Session session) throws OwsExceptionReport, ConverterException {
+    public static ObservationStream createSosObservationFromSeries(
+            Series series,
+            AbstractObservationRequest r,
+            LocalizedProducer<OwsServiceProvider> serviceProvider,
+            I18NDAORepository i18nr,
+            String pdf,
+            DaoFactory daoFactory,
+            Session session) throws OwsExceptionReport, ConverterException {
         if (series instanceof EReportingSeries) {
             return createSosObservationFromEReportingSeries((EReportingSeries) series, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, session);
         } else {
-            return new SeriesOmObservationCreator(series, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, session).create();
+            return createSosObservationFromSeries(series, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, session);
         }
     }
 
-    public static ObservationStream createSosObservationFromSeries(EReportingSeries series,
-            AbstractObservationRequest r, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale l, I18NDAORepository i18nr, String pdf, DaoFactory daoFactory, Session session) throws OwsExceptionReport, ConverterException {
+    public static ObservationStream createSosObservationFromSeries(
+            Series series,
+            AbstractObservationRequest r,
+            LocalizedProducer<OwsServiceProvider> serviceProvider,
+            Locale l,
+            I18NDAORepository i18nr,
+            String pdf,
+            DaoFactory daoFactory,
+            Session session) throws OwsExceptionReport, ConverterException {
         if (series instanceof EReportingSeries) {
             return createSosObservationFromEReportingSeries((EReportingSeries) series, r, serviceProvider, l, i18nr, pdf, daoFactory, session);
         }
@@ -173,7 +200,7 @@ public class HibernateObservationUtilities {
             DaoFactory daoFactory,
             Session session)
                     throws OwsExceptionReport, ConverterException {
-        return new EReportingSeriesOmObservationCreator(series, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, session).create();
+        return createSosObservationFromEReportingSeries(series, r, serviceProvider, LocaleHelper.decode(r.getRequestedLanguage()), i18nr, pdf, daoFactory, session);
     }
 
     public static ObservationStream createSosObservationFromEReportingSeries(

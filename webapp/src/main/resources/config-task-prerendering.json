@@ -1,0 +1,96 @@
+{
+    "generalConfig": {
+        "outputPath": "generated/prerendered/v1",
+        "width": "800",
+        "height": "500",
+        "language": "de",
+        "grid": true,
+        "generalize": false
+    },
+    "phenomenonStyles": [
+        {
+            "id": "3",
+            "title": "Title of a Timeseries (without legend)",
+            "chartQualifier": "without_legend",
+            "interval": [
+                "lastWeek",
+                "lastMonth"
+            ],
+            "style": {
+                "chartType": "line",
+                "properties": {
+                    "color": "#00ffff",
+                    "lineType": "solid",
+                    "width": 2
+                }
+            }
+        },
+        {
+            "id": "3",
+            "title": "Title of a Timeseries (with legend)",
+            "chartQualifier": "with_legend",
+            "interval": [
+                "lastWeek",
+                "lastMonth"
+            ],
+            "config": {
+                "legend": true
+            },
+            "style": {
+                "chartType": "line",
+                "properties": {
+                    "color": "#00ffff",
+                    "lineType": "solid",
+                    "width": 2
+                }
+            }
+        },
+        {
+            "id": "9",
+            "interval": [
+                "lastWeek",
+                "lastMonth"
+            ],
+            "style": {
+                "chartType": "line",
+                "properties": {
+                    "color": "#0000ff",
+                    "lineType": "solid",
+                    "width": 2
+                }
+            }
+        },
+        {
+            "id": "4",
+            "interval": [
+                "lastWeek",
+                "lastMonth"
+            ],
+            "style": {
+                "chartType": "bar",
+                "properties": {
+                    "interval": "byDay",
+                    "color": "#ff0000",
+                    "width": 0.8
+                }
+            }
+        }
+    ],
+    "timeseriesStyles": [
+        {
+            "id": "16",
+            "interval": [
+                "lastWeek",
+                "lastMonth"
+            ],
+            "style": {
+                "chartType": "bar",
+                "properties": {
+                    "interval": "byDay",
+                    "width": 0.8,
+                    "color": "#0000ff"
+                }
+            }
+        }
+    ]
+}

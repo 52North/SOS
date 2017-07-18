@@ -163,9 +163,9 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator implements 
         Locale requestedLocale = getLocale();
         if (i18nDAO == null) {
             // no locale support
-            ProcedureDAO featureDAO = daoFactory.getProcedureDAO();
-            feature.addName(featureDAO.getName(procedure));
-            feature.setDescription(featureDAO.getDescription(procedure));
+            ProcedureDAO dao = daoFactory.getProcedureDAO();
+            feature.addName(dao.getName(procedure));
+            feature.setDescription(dao.getDescription(procedure));
         } else {
             if (requestedLocale != null) {
                 // specific locale was requested

@@ -32,6 +32,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -153,7 +154,9 @@ import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -578,29 +581,29 @@ public abstract class AbstractObservationDAO
      * featureOfInterest
      *
      * @param observationConstellations
-     *            Observation constellation objects
+     *                                  Observation constellation objects
      * @param feature
-     *            FeatureOfInterest object
+     *                                  FeatureOfInterest object
      * @param containerObservation
-     *            SOS observation
+     *                                  SOS observation
      * @param codespaceCache
-     *            Map based codespace object cache to prevent redundant queries
+     *                                  Map based codespace object cache to prevent redundant queries
      * @param unitCache
-     *            Map based unit object cache to prevent redundant queries
+     *                                  Map based unit object cache to prevent redundant queries
      * @param session
-     *            Hibernate session
+     *                                  Hibernate session
      *
      * @throws OwsExceptionReport
-     *             If an error occurs
+     *                            If an error occurs
      */
-    public void insertObservationMultiValue(ObservationConstellation observationConstellation,
+    public void insertObservationMultiValue(Set<ObservationConstellation> observationConstellations,
             AbstractFeatureOfInterest feature, OmObservation containerObservation,
-            Map<String, Codespace> codespaceCache, Map<UoM, Unit> unitCache, Set<Offering> hOfferings, Session session)
-            throws OwsExceptionReport {
+                                            Map<String, Codespace> codespaceCache,
+                                            Map<UoM, Unit> unitCache, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = HibernateObservationUtilities.unfoldObservation(containerObservation);
         for (OmObservation sosObservation : unfoldObservations) {
-            insertObservationSingleValue(observationConstellation, feature, sosObservation, codespaceCache, unitCache,
-                    hOfferings, session);
+            insertObservationSingleValue(observationConstellations, feature, sosObservation, codespaceCache, unitCache,
+                                         session);
         }
     }
 
@@ -608,22 +611,21 @@ public abstract class AbstractObservationDAO
      * Insert a single observation for observation constellations and
      * featureOfInterest without local caching for codespaces and units
      *
-     * @param observationConstellation
-     *            Observation constellation object
+     * @param hObservationConstellations
+     *                                   Observation constellation objects
      * @param hFeature
-     *            FeatureOfInterest object
+     *                                   FeatureOfInterest object
      * @param sosObservation
-     *            SOS observation to insert
+     *                                   SOS observation to insert
      * @param session
-     *            Hibernate session
+     *                                   Hibernate session
      *
      * @throws OwsExceptionReport
      */
-    public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
-            FeatureOfInterest hFeature, OmObservation sosObservation, Set<Offering> hOfferings, Session session)
+    public void insertObservationSingleValue(Set<ObservationConstellation> hObservationConstellations,
+            AbstractFeatureOfInterest hFeature, OmObservation sosObservation, Session session)
             throws OwsExceptionReport {
-        insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, hOfferings,
-                session);
+        insertObservationSingleValue(hObservationConstellations, hFeature, sosObservation, null, null, session);
     }
 
     /**
@@ -631,29 +633,50 @@ public abstract class AbstractObservationDAO
      * featureOfInterest with local caching for codespaces and units
      *
      * @param hObservationConstellations
-     *            Observation constellation objects
+     *                                   Observation constellation objects
      * @param hFeature
-     *            FeatureOfInterest object
+     *                                   FeatureOfInterest object
      * @param sosObservation
-     *            SOS observation to insert
+     *                                   SOS observation to insert
      * @param codespaceCache
-     *            Map cache for codespace objects (to prevent redundant
-     *            querying)
+     *                                   Map cache for codespace objects (to prevent redundant
+     *                                   querying)
      * @param unitCache
-     *            Map cache for unit objects (to prevent redundant querying)
+     *                                   Map cache for unit objects (to prevent redundant querying)
      * @param session
-     *            Hibernate session
+     *                                   Hibernate session
      *
      * @throws OwsExceptionReport
      */
     @SuppressWarnings("rawtypes")
-    public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
-            AbstractFeatureOfInterest hFeature, OmObservation sosObservation, Map<String, Codespace> codespaceCache,
-            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
-        SingleObservationValue<?> value = (SingleObservationValue) sosObservation.getValue();
-        ObservationPersister persister = new ObservationPersister(getGeometryHandler(), this, this.daoFactory,
-                sosObservation, hObservationConstellation, hFeature, codespaceCache, unitCache, hOfferings, session);
+    public void insertObservationSingleValue(Set<ObservationConstellation> hObservationConstellations,
+                                             AbstractFeatureOfInterest hFeature, OmObservation sosObservation,
+                                             Map<String, Codespace> codespaceCache,
+                                             Map<UoM, Unit> unitCache, Session session)
+            throws OwsExceptionReport {
+        SingleObservationValue<?> value
+                = (SingleObservationValue) sosObservation.getValue();
+        ObservationPersister persister = new ObservationPersister(
+                getGeometryHandler(),
+                this,
+                this.daoFactory,
+                sosObservation,
+                hObservationConstellations,
+                hFeature,
+                codespaceCache,
+                unitCache,
+                getOfferings(hObservationConstellations),
+                session
+        );
         value.getValue().accept(persister);
+    }
+
+    private Set<Offering> getOfferings(Set<ObservationConstellation> hObservationConstellations) {
+        Set<Offering> offerings = Sets.newHashSet();
+        for (ObservationConstellation observationConstellation : hObservationConstellations) {
+            offerings.add(observationConstellation.getOffering());
+        }
+        return offerings;
     }
 
     protected ObservationContext createObservationContext() {
@@ -1526,7 +1549,7 @@ public abstract class AbstractObservationDAO
             implements ValueVisitor<Observation<?>, OwsExceptionReport>, ProfileLevelVisitor<Observation<?>> {
         private static final ObservationVisitor<String> SERIES_TYPE_VISITOR = new SeriesTypeVisitor();
 
-        private final ObservationConstellation observationConstellation;
+        private final Set<ObservationConstellation> observationConstellations;
 
         private final AbstractFeatureOfInterest featureOfInterest;
 
@@ -1550,19 +1573,19 @@ public abstract class AbstractObservationDAO
 
         ObservationPersister(
                 GeometryHandler geometryHandler, AbstractObservationDAO observationDao, DaoFactory daoFactory,
-                OmObservation sosObservation, ObservationConstellation hObservationConstellation,
+                OmObservation sosObservation, Set<ObservationConstellation> hObservationConstellations,
                 AbstractFeatureOfInterest hFeature, Map<String, Codespace> codespaceCache, Map<UoM, Unit> unitCache,
                 Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
             this(geometryHandler, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache),
-                    sosObservation, hObservationConstellation, hFeature, null, hOfferings, session, false);
+                    sosObservation, hObservationConstellations, hFeature, null, hOfferings, session, false);
         }
 
         private ObservationPersister(
                 GeometryHandler geometryHandler, DAOs daos, Caches caches, OmObservation observation,
-                ObservationConstellation hObservationConstellation, AbstractFeatureOfInterest hFeature,
+                Set<ObservationConstellation> hObservationConstellations, AbstractFeatureOfInterest hFeature,
                 Geometry samplingGeometry, Set<Offering> hOfferings, Session session, boolean childObservation)
                 throws OwsExceptionReport {
-            this.observationConstellation = hObservationConstellation;
+            this.observationConstellations = hObservationConstellations;
             this.featureOfInterest = hFeature;
             this.caches = caches;
             this.sosObservation = observation;
@@ -1583,7 +1606,7 @@ public abstract class AbstractObservationDAO
              * phenTimeEnd, resultTime, depth/height parameter (same observation
              * different depth/height)
              */
-            daos.observation.checkForDuplicatedObservations(sosObservation, observationConstellation, session);
+            daos.observation.checkForDuplicatedObservations(sosObservation, observationConstellations.iterator().next(), session);
 
         }
 
@@ -1754,7 +1777,7 @@ public abstract class AbstractObservationDAO
 
         private ObservationPersister createChildPersister(ProfileLevel level) throws OwsExceptionReport {
             return new ObservationPersister(geometryHandler, daos, caches, getObservationWithLevelParameter(level),
-                    observationConstellation, featureOfInterest, getSamplingGeometryFromLevel(level), offerings,
+                    observationConstellations, featureOfInterest, getSamplingGeometryFromLevel(level), offerings,
                     session, true);
 
         }
@@ -1766,10 +1789,13 @@ public abstract class AbstractObservationDAO
                     session, true);
         }
 
-        private ObservationConstellation getObservationConstellation(ObservableProperty observableProperty) {
-            return daos.observationConstellation().checkOrInsertObservationConstellation(
-                    observationConstellation.getProcedure(), observableProperty,
-                    observationConstellation.getOffering(), true, session);
+        private Set<ObservationConstellation> getObservationConstellation(ObservableProperty observableProperty) {
+            Set<ObservationConstellation> newObservationConstellations = new HashSet<>(observationConstellations.size());
+            for (ObservationConstellation constellation : observationConstellations) {
+                newObservationConstellations.add(daos.observationConstellation().checkOrInsertObservationConstellation(
+                        constellation.getProcedure(), observableProperty, constellation.getOffering(), true, session));
+            }
+            return newObservationConstellations;
 
         }
 
@@ -1820,27 +1846,31 @@ public abstract class AbstractObservationDAO
             ObservationContext observationContext = daos.observation().createObservationContext();
 
             String observationType = observation.accept(ObservationTypeObservationVisitor.getInstance());
-            if (!isProfileObservation() || (isProfileObservation() && !childObservation)) {
-                if (!daos.observationConstellation().checkObservationType(observationConstellation, observationType,
-                        session)) {
-                    throw new InvalidParameterValueException().withMessage(
-                            "The requested observationType (%s) is invalid for procedure = %s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
-                            observationType, observationConstellation.getProcedure().getIdentifier(),
-                            observationConstellation.getObservableProperty().getIdentifier(),
-                            observationConstellation.getOffering().getIdentifier(),
-                            observationConstellation.getObservationType().getObservationType());
+
+                for (ObservationConstellation oc : observationConstellations) {
+                    if (!isProfileObservation(oc) || (isProfileObservation(oc) && !childObservation)) {
+                    offerings.add(oc.getOffering());
+                    if (!daos.observationConstellation().checkObservationType(oc, observationType, session)) {
+                        throw new InvalidParameterValueException().withMessage(
+                                "The requested observationType (%s) is invalid for procedure = %s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
+                                observationType, observation.getProcedure().getIdentifier(),
+                                oc.getObservableProperty().getIdentifier(), oc.getOffering().getIdentifier(),
+                                oc.getObservationType().getObservationType());
+                    }
+                    }
                 }
-                if (sosObservation.isSetSeriesType()) {
-                    observationContext.setSeriesType(sosObservation.getSeriesType());
-                } else {
-                    observationContext.setSeriesType(observation.accept(SERIES_TYPE_VISITOR));
-                }
+
+            if (sosObservation.isSetSeriesType()) {
+                observationContext.setSeriesType(sosObservation.getSeriesType());
+            } else {
+                observationContext.setSeriesType(observation.accept(SERIES_TYPE_VISITOR));
             }
 
-            if (observationConstellation != null) {
-                observationContext.setObservableProperty(observationConstellation.getObservableProperty());
-                observationContext.setProcedure(observationConstellation.getProcedure());
-                observationContext.setOffering(observationConstellation.getOffering());
+            ObservationConstellation first = Iterables.getFirst(observationConstellations, null);
+            if (first != null) {
+                observationContext.setObservableProperty(first.getObservableProperty());
+                observationContext.setProcedure(first.getProcedure());
+                observationContext.setOffering(first.getOffering());
             }
 
             if (childObservation) {
@@ -1860,7 +1890,7 @@ public abstract class AbstractObservationDAO
             return observation;
         }
 
-        private boolean isProfileObservation() {
+        private boolean isProfileObservation(ObservationConstellation observationConstellation) {
             return observationConstellation.isSetObservationType() && (OmConstants.OBS_TYPE_PROFILE_OBSERVATION
                     .equals(observationConstellation.getObservationType().getObservationType())
                     || GWMLConstants.OBS_TYPE_GEOLOGY_LOG

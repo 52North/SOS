@@ -46,7 +46,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -56,9 +55,6 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.BooleanSettingDefinition;
@@ -66,10 +62,13 @@ import org.n52.faroe.settings.ChoiceSettingDefinition;
 import org.n52.faroe.settings.IntegerSettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.iceland.ds.DatasourceCallback;
+import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.util.SQLConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -101,7 +100,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String DATABASE_CONCEPT_KEY = "sos.database.concept";
 
     protected static final String DATABASE_CONCEPT_DEFAULT_VALUE = DatabaseConcept.SERIES_CONCEPT.name();
-    
+
     protected static final String FEATURE_CONCEPT_TITLE = "Feature concept";
 
     protected static final String FEATURE_CONCEPT_DESCRIPTION = "Select the feature concept this SOS should use";
@@ -117,7 +116,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String TRANSACTIONAL_KEY = "sos.transactional";
 
     protected static final boolean TRANSACTIONAL_DEFAULT_VALUE = true;
-    
+
     protected static final String MULTILINGUALISM_TITLE = "Multilingualism support";
 
     protected static final String MULTILINGUALISM_DESCRIPTION = "Should the database support multilingualism?";
@@ -125,7 +124,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String MULTILINGUALISM_KEY = "sos.language";
 
     protected static final boolean MULTILINGUALISM_DEFAULT_VALUE = false;
-    
+
     protected static final String SERIES_METADATA_TITLE = "Series metadata support";
 
     protected static final String SERIES_METADATA_DESCRIPTION = "Should the database support series metadata? This holds global data for observations of this series.";
@@ -156,7 +155,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private Dialect dialect;
 
     private final ChoiceSettingDefinition databaseConceptDefinition = createDatabaseConceptDefinition();
-    
+
     private final ChoiceSettingDefinition featureConceptDefinition = createFeatureConceptDefinition();
 
     private final BooleanSettingDefinition transactionalDefiniton = createTransactionalDefinition();
@@ -166,7 +165,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private final BooleanSettingDefinition multilingualismDefinition = createMultilingualismDefinition();
 
     private boolean multilingualismDatasource = true;
-    
+
     private final BooleanSettingDefinition seriesMetadataDefiniton = createSeriesMetadataDefinition();
 
     private boolean seriesMetadataDatasource = true;
@@ -217,11 +216,15 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         def.setDefaultValue(DatabaseConcept.SERIES_CONCEPT.name());
         return def;
     }
-    
+
     protected ChoiceSettingDefinition createFeatureConceptDefinition() {
         ChoiceSettingDefinition choiceSettingDefinition = new ChoiceSettingDefinition();
-        choiceSettingDefinition.setTitle(FEATURE_CONCEPT_TITLE).setDescription(FEATURE_CONCEPT_DESCRIPTION)
-                .setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_3).setKey(FEATURE_CONCEPT_KEY);
+        choiceSettingDefinition
+                .setTitle(FEATURE_CONCEPT_TITLE)
+                .setDescription(FEATURE_CONCEPT_DESCRIPTION)
+                .setGroup(ADVANCED_GROUP)
+                .setKey(FEATURE_CONCEPT_KEY)
+                .setOrder(3);
         choiceSettingDefinition.addOption(FeatureConcept.DEFAULT_FEATURE_CONCEPT.name(),
                 FeatureConcept.DEFAULT_FEATURE_CONCEPT.getDisplayName());
         choiceSettingDefinition.addOption(FeatureConcept.EXTENDED_FEATURE_CONCEPT.name(),
@@ -245,7 +248,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         def.setKey(TRANSACTIONAL_KEY);
         return def;
     }
-    
+
     protected BooleanSettingDefinition createMultilingualismDefinition() {
         BooleanSettingDefinition def = new BooleanSettingDefinition();
         def.setDefaultValue(MULTILINGUALISM_DEFAULT_VALUE);
@@ -256,16 +259,21 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         def.setKey(MULTILINGUALISM_KEY);
         return def;
     }
-    
+
     /**
      * Create settings definition for transactional support
      *
      * @return Transactional support settings definition
      */
     protected BooleanSettingDefinition createSeriesMetadataDefinition() {
-        return new BooleanSettingDefinition().setDefaultValue(SERIES_METADATA_DEFAULT_VALUE)
-                .setTitle(SERIES_METADATA_TITLE).setDescription(SERIES_METADATA_DESCRIPTION).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_6).setKey(SERIES_METADATA_KEY);
+        BooleanSettingDefinition def = new BooleanSettingDefinition();
+        def.setDefaultValue(SERIES_METADATA_DEFAULT_VALUE)
+            .setTitle(SERIES_METADATA_TITLE)
+            .setDescription(SERIES_METADATA_DESCRIPTION)
+            .setGroup(ADVANCED_GROUP)
+            .setKey(SERIES_METADATA_KEY);
+        def.setOrder(6);
+        return def;
     }
 
     /**
@@ -284,7 +292,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         def.setKey(PROVIDED_JDBC_DRIVER_KEY);
         return def;
     }
-    
+
     /**
      * Create settings definition for JDBC batch size
      *
@@ -321,13 +329,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
         if (isTransactionalDatasource()) {
             Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
-            if (transactional != null && transactional) {
+            if (transactional != null && transactional.booleanValue()) {
                 config.addDirectory(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
             }
         }
         if (isMultiLanguageDatasource()) {
             Boolean multiLanguage = (Boolean) settings.get(this.multilingualismDefinition.getKey());
-            if (multiLanguage != null && multiLanguage) {
+            if (multiLanguage != null && multiLanguage.booleanValue()) {
                 config.addDirectory(resource(HIBERNATE_MAPPING_I18N_PATH));
             }
         }
@@ -347,21 +355,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         config.buildMappings();
         return config;
     }
-    
+
     protected String getFeatureConceptMappingDirectory(Map<String, Object> settings) {
         String concept = (String)settings.get(this.featureConceptDefinition.getKey());
-
-    /**
-     * Adds concept depending mapping file directories to the
-     * {@link CustomConfiguration}.
-     *
-     * @param config
-     *            Configuration to add mapping directories
-     * @param settings
-     *            Setting to get values from
-     */
-    private void addDatabaseConceptMappingDirectory(CustomConfiguration config, Map<String, Object> settings) {
-        String concept = (String) settings.get(this.databaseConceptDefinition.getKey());
         if (concept == null || concept.isEmpty()) {
             String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
             concept = FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
@@ -375,75 +371,51 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                     concept,
                     featureConceptDefinition.getKey(),
                     concept);
-            String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
-            concept = DatabaseConcept.SERIES_CONCEPT.name();
-            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
-                concept = DatabaseConcept.EREPORTING_CONCEPT.name();
-            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
-                concept = DatabaseConcept.OLD_CONCEPT.name();
-            }
-            LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
-                    + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
-                    databaseConceptDefinition.getKey(),
-                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
-                    concept,
-                    databaseConceptDefinition.getKey(),
-                    concept);
         }
         switch (FeatureConcept.valueOf(concept)) {
         case EXTENDED_FEATURE_CONCEPT:
             return HIBERNATE_MAPPING_FEATURE_PATH;
-        switch (DatabaseConcept.valueOf(concept)) {
-        case SERIES_CONCEPT:
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH));
-            break;
-        case EREPORTING_CONCEPT:
-            config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_VALUE_PATH));
-            break;
-        case OLD_CONCEPT:
-            config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_BASE_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_VALUE_PATH));
-            break;
         default:
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH));
+            return null;
         }
     }
 
-    private String getDatabaseConceptMappingDirectoriesString(Map<String, Object> settings) {
-        String concept = (String) settings.get(this.databaseConceptDefinition.getKey());
-        StringBuilder builder = new StringBuilder();
-        switch (DatabaseConcept.valueOf(concept)) {
-        case SERIES_CONCEPT:
-            builder.append(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH);
-            break;
-        case EREPORTING_CONCEPT:
-            builder.append(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EREPORTING_CONCEPT_VALUE_PATH);
-            break;
-        case OLD_CONCEPT:
-            builder.append(HIBERNATE_MAPPING_OLD_CONCEPT_BASE_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_OLD_CONCEPT_VALUE_PATH);
-            break;
-        default:
-            builder.append(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH);
+    protected Set<String> getDatabaseConceptMappingDirectory(Map<String, Object> settings) {
+//        String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
+//        if (concept == null || concept.isEmpty()) {
+//            String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
+//            concept = DatabaseConcept.SERIES_CONCEPT.name();
+//            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
+//                concept = DatabaseConcept.EREPORTING_CONCEPT.name();
+//            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
+//                concept = DatabaseConcept.OLD_CONCEPT.name();
+//            }
+//            LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
+//                    + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+//                    databaseConceptDefinition.getKey(),
+//                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
+//                    concept,
+//                    databaseConceptDefinition.getKey(),
+//                    concept);
+//        }
+        HashSet<String> mappings = Sets.newHashSet(HIBERNATE_MAPPING_PARAMETER_FEATURE_PATH, HIBERNATE_MAPPING_PARAMETER_OBSERVATION_PATH);
+        switch (getDatabaseConcept(settings)) {
+            case SERIES_CONCEPT:
+                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+                break;
+            case EREPORTING_CONCEPT:
+                mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH);
+                break;
+            case OLD_CONCEPT:
+                mappings.add(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
+                break;
+            default:
+                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+                break;
         }
-        return builder.toString();
+        return mappings;
     }
 
-    
     private DatabaseConcept getDatabaseConcept(Map<String, Object> settings) {
         String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
         if (concept == null || concept.isEmpty()) {
@@ -517,7 +489,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             List<SchemaUpdateScript> upSchema =
                     getConfig(settings).generateSchemaUpdateScriptList(getDialectInternal(), metadata);
-            return checkScriptForDuplicatedEntries(Arrays.asList(SchemaUpdateScript.toStringArray(upSchema)));
+            Set<String> nonDublicated = Sets.newLinkedHashSet(Arrays.asList(SchemaUpdateScript.toStringArray(upSchema)));
+            return nonDublicated.toArray(new String[nonDublicated.size()]);
         } catch (SQLException ex) {
             throw new ConfigurationError(ex);
         } finally {
@@ -532,7 +505,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             conn = openConnection(settings);
             DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             getConfig(settings).validateSchema(getDialectInternal(), metadata);
-        } catch (SQLException | HibernateException ex) {
+        } catch (SQLException ex) {
+            throw new ConfigurationError(ex);
+        } catch (HibernateException ex) {
             throw new ConfigurationError(ex);
         } finally {
             close(conn);
@@ -575,11 +550,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metaData != null) {
             ResultSet rs = metaData.getSchemas();
             while (rs.next()) {
-                if (!Strings.isNullOrEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
+                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
                     return rs.getString("TABLE_SCHEM");
                 }
             }
-            if (!Strings.isNullOrEmpty(schema)) {
+            if (StringHelper.isNotEmpty(schema)) {
                 throw new ConfigurationError(String.format("Requested schema (%s) is not contained in the database!", schema));
             }
         }
@@ -805,7 +780,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
     }
-    
+
     protected ChoiceSettingDefinition getFeatureConceptDefinition() {
         return featureConceptDefinition;
     }
@@ -844,7 +819,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected BooleanSettingDefinition getMulitLanguageDefiniton() {
         return multilingualismDefinition;
     }
-    
+
     /**
      * Check if properties contains series metadata mapping path
      *
@@ -868,7 +843,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     private String[] concat(String[] first, String[]... rest) {
-        int length = first.length;
+                int length = first.length;
         for (int i = 0; i < rest.length; ++i) {
             length += rest[i].length;
         }
@@ -901,7 +876,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected boolean isSetSchema(Map<String, Object> settings) {
         if (settings.containsKey(HibernateConstants.DEFAULT_SCHEMA)) {
-            return !Strings.isNullOrEmpty((String) settings.get(HibernateConstants.DEFAULT_SCHEMA));
+            return StringHelper.isNotEmpty((String) settings.get(HibernateConstants.DEFAULT_SCHEMA));
         }
         return false;
     }
@@ -931,7 +906,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public void setTransactional(boolean transactionalDatasource) {
         this.transactionalDatasource = transactionalDatasource;
     }
-    
+
     /**
      * @return the multi language
      */
@@ -940,7 +915,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     /**
-     * @param multiLanguageDatasource
+     * @param multi
      *            language the multi language to set
      */
     public void setMultiLangugage(boolean multiLanguageDatasource) {
@@ -1011,11 +986,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
         }
         // eliminate duplicated lines while keeping the order
-        return checkScriptForDuplicatedEntries(checkedSchema);
-    }
-
-    protected String[] checkScriptForDuplicatedEntries(List<String> script) {
-        Set<String> nonDublicated = Sets.newLinkedHashSet(script);
+        Set<String> nonDublicated = Sets.newLinkedHashSet(checkedSchema);
         return nonDublicated.toArray(new String[nonDublicated.size()]);
     }
 
@@ -1023,13 +994,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * Create the beginning character of a generated foreign key from a table
      * name hasCode()
      *
-     * @param tableName
+     * @param string
      *            Table name
      * @return Beginning characters of a generated foreign key like
      *         "FK + table name hasCode()"
      */
     private String getGeneratedForeignKeyFor(String tableName) {
-        return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase(Locale.ROOT)).toString();
+        return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase()).toString();
     }
 
     /**
@@ -1056,7 +1027,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
         CustomConfiguration config = getConfig(settings);
         Iterator<Table> tables = config.getTableMappings();
-        List<String> names = new LinkedList<>();
+        List<String> names = new LinkedList<String>();
         while (tables.hasNext()) {
             Table table = tables.next();
             if (table.isPhysicalTable()) {
@@ -1086,23 +1057,21 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     @Override
-    @Deprecated
     public String getConnectionProviderIdentifier() {
         return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
     }
 
     @Override
-    @Deprecated
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
-    
+
     /**
      * Workaround for Java {@link DriverManager} issue with more than one
      * registered drivers. Only the first {@link SQLException} is catched and
      * thrown instead of the {@link SQLException} related to the driver which is
      * valid for the URL.
-     * 
+     *
      * @param url
      *            DB connection URL
      * @param user
@@ -1162,5 +1131,4 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *             If the SQL connection creation fails
      */
     protected abstract Connection openConnection(Map<String, Object> settings) throws SQLException;
-
 }

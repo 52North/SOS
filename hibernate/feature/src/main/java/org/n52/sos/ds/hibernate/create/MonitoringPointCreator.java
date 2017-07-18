@@ -28,37 +28,34 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
-import java.util.Locale;
-
-import org.hibernate.Session;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.series.wml.WmlMonitoringPoint;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.feature.wml.MonitoringPoint;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 public class MonitoringPointCreator extends AbstractMonitoringFeatureCreator<MonitoringPoint> {
 
-    public MonitoringPointCreator(int storageEPSG, int storage3depsg) {
-        super(storageEPSG, storage3depsg);
+    public MonitoringPointCreator(FeatureVisitorContext context) {
+        super(context);
     }
 
     @Override
-    public AbstractFeature create(MonitoringPoint f, Locale i18n, String version, Session s)
+    public AbstractFeature create(MonitoringPoint f)
             throws OwsExceptionReport {
-        AbstractFeature absFeat = createFeature(f, i18n, version, s);
+        AbstractFeature absFeat = createFeature(f);
         if (absFeat instanceof WmlMonitoringPoint) {
             WmlMonitoringPoint mp = (WmlMonitoringPoint)absFeat;
-            addMonitoringFeatureData(mp, f, s);
+            addMonitoringFeatureData(mp, f);
         }
         return absFeat;
     }
-   
+
     @Override
-    public Geometry createGeometry(MonitoringPoint f, Session s) throws OwsExceptionReport {
-        return createGeometryFrom(f, s);
+    public Geometry createGeometry(MonitoringPoint f) throws OwsExceptionReport {
+        return createGeometryFrom(f);
     }
 
     @Override

@@ -56,11 +56,10 @@ import com.google.common.collect.Sets;
  *
  */
 public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStreamingValue {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
+    rivate static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
     protected final AbstractSeriesValueDAO seriesValueDAO;
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
-    protected Set<Long> series = Sets.newHashSet();
-    private boolean duplicated;
+    protected long series;
 
     /**
      * constructor
@@ -71,15 +70,13 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
-     * @param duplicated 
      * @throws CodedException
      */
-    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long series, boolean duplicated) throws OwsExceptionReport {
+    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long series) throws OwsExceptionReport {
         super(connectionProvider, daoFactory, request);
         this.series = series;
         this.seriesValueDAO = daoFactory.getValueDAO();
         this.seriesValueTimeDAO = daoFactory.getValueTimeDAO();
-        this.duplicated = duplicated;
     }
 
     @Override
@@ -116,28 +113,6 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         } finally {
             sessionHolder.returnSession(s);
         }
-    }
-    
-    protected Set<Long> getSeries() {
-        return series;
-    }
-    
-    @Override
-    public void mergeValue(StreamingValue<AbstractValuedLegacyObservation<?>> streamingValue) {
-        if (streamingValue instanceof HibernateSeriesStreamingValue) {
-            series.addAll(((HibernateSeriesStreamingValue) streamingValue).getSeries());
-        }
-    }
-    
-    protected boolean checkValue(AbstractValuedLegacyObservation<?> value) {
-        if (isDuplicated()) {
-            return value.getOfferings() != null && value.getOfferings().size() == 1;
-        }
-        return true;
-     }
-    
-    protected boolean isDuplicated() {
-        return duplicated;
     }
 
 }

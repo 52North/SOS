@@ -34,7 +34,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
@@ -46,12 +45,12 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.om.TimeValuePair;
-import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extensions;
@@ -60,13 +59,14 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.OMHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.util.GmlHelper;
@@ -83,32 +83,34 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.1.0
  *
  */
-public abstract class AbstractHibernateStreamingValue extends StreamingValue<AbstractValuedLegacyObservation<?>> {
+public abstract class AbstractHibernateStreamingValue extends StreamingValue<AbstractValuedObservation<?>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateStreamingValue.class);
     protected final HibernateSessionHolder sessionHolder;
     protected Session session;
     protected final AbstractObservationRequest request;
     protected Criterion temporalFilterCriterion;
+    private final DaoFactory daoFactory;
 
     /**
      * constructor
      *
      * @param request
      *            {@link GetObservationRequest}
+     * @param daoFactory the DAO factory
      * @param connectionProvider the connection provider
      */
-    public AbstractHibernateStreamingValue(ConnectionProvider connectionProvider, AbstractObservationRequest request) {
+    public AbstractHibernateStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request) {
         this.request = request;
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+        this.daoFactory = daoFactory;
     }
 
     @Override
-    public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
-
+    public ObservationStream merge() throws OwsExceptionReport {
         Map<String, OmObservation> observations = Maps.newHashMap();
-        while (hasNextValue()) {
-            AbstractValuedLegacyObservation<?> nextEntity = nextEntity();
+        while (hasNext()) {
+            AbstractValuedObservation<?> nextEntity = nextEntity();
             boolean mergableObservationValue = checkForMergability(nextEntity);
             OmObservation observation = null;
             if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
@@ -125,14 +127,14 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
             nextEntity.mergeValueToObservation(observation, getResponseFormat());
             sessionHolder.getSession().evict(nextEntity);
         }
-        return observations.values();
+        return ObservationStream.of(observations.values());
     }
 
-    private boolean checkForMergability(AbstractValuedLegacyObservation<?> nextEntity) {
-        return !(nextEntity instanceof SweDataArrayValuedLegacyObservation);
+    private boolean checkForMergability(AbstractValuedObservation<?> nextEntity) {
+        return !(nextEntity instanceof SweDataArrayValuedObservation);
     }
 
-    private void addSpecificValuesToObservation(OmObservation observation, AbstractValuedLegacyObservation<?> value, Extensions extensions) {
+    private void addSpecificValuesToObservation(OmObservation observation, AbstractValuedObservation<?> value, Extensions extensions) {
         boolean newSession = false;
         try {
             if (session == null) {
@@ -149,16 +151,6 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         }
     }
 
-//    /**
-//     * Set the observation template which contains all metadata
-//     *
-//     * @param observationTemplate
-//     *            Observation template to set
-//     */
-//    public void setObservationTemplate(OmObservation observationTemplate) {
-//        this.observationTemplate = observationTemplate;
-//    }
-
     /**
      * Set the temporal filter {@link Criterion}
      *
@@ -171,10 +163,10 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     }
 
     /**
-     * Create a {@link TimeValuePair} from {@link AbstractValuedLegacyObservation}
+     * Create a {@link TimeValuePair} from {@link AbstractValuedObservation}
      *
      * @param abstractValue
-     *            {@link AbstractValuedLegacyObservation} to create {@link TimeValuePair} from
+     *            {@link AbstractValueObservation} to create {@link TimeValuePair} from
      * @return resulting {@link TimeValuePair}
      * @throws OwsExceptionReport
      *             If an error occurs when getting the value
@@ -184,12 +176,12 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     }
 
     /**
-     * Add {@link AbstractValuedLegacyObservation} data to {@link OmObservation}
+     * Add {@link AbstractValuedObservation} data to {@link OmObservation}
      *
      * @param observation
      *            {@link OmObservation} to add data
      * @param abstractValue
-     *            {@link AbstractValuedLegacyObservation} to get data from
+     *            {@link AbstractValuedObservation} to get data from
      * @throws OwsExceptionReport
      *             If an error occurs when getting the value
      */
@@ -218,10 +210,10 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     }
 
     /**
-     * Get the observation ids from {@link AbstractValuedLegacyObservation}s
+     * Get the observation ids from {@link AbstractValuedObservation}s
      *
      * @param abstractValuesResult
-     *            {@link AbstractValuedLegacyObservation}s to get ids from
+     *            {@link AbstractValuedObservation}s to get ids from
      * @return Set with ids
      */
     protected Set<Long> getObservationIds(Collection<? extends BaseObservation> abstractValuesResult) {
@@ -233,10 +225,10 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     }
 
     /**
-     * Create the phenomenon time from {@link AbstractValuedLegacyObservation}
+     * Create the phenomenon time from {@link AbstractValuedObservation}
      *
      * @param abstractValue
-     *            {@link AbstractValuedLegacyObservation} for get time from
+     *            {@link AbstractValuedObservation} for get time from
      * @return phenomenon time
      */
     protected Time createPhenomenonTime(TemporalReferencedObservation abstractValue) {
@@ -353,15 +345,15 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     }
 
     /**
-     * Get internal {@link Value} from {@link AbstractValuedLegacyObservation}
+     * Get internal {@link Value} from {@link AbstractValuedObservation}
      *
      * @param abstractValue
-     *            {@link AbstractValuedLegacyObservation} to get {@link Value} from
-     * @return {@link Value} or null if the concrete {@link AbstractValuedLegacyObservation} is
+     *            {@link AbstractValuedObservation} to get {@link Value} from
+     * @return {@link Value} or null if the concrete {@link AbstractValuedObservation} is
      *         not supported
      * @throws OwsExceptionReport
      *             If an error occurs when creating
-     *             {@link org.n52.sos.ogc.om.values.SweDataArrayValue}
+     *             {@link org.n52.shetland.ogc.om.values.SweDataArrayValue}
      *
      * User {@link Observation#accept(org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor)}
      */
@@ -382,9 +374,13 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         namedValue.setName(referenceType);
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
-        namedValue.setValue(new GeometryValue(GeometryHandler.getInstance()
+        namedValue.setValue(new org.n52.shetland.ogc.om.values.GeometryValue(GeometryHandler.getInstance()
                 .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
+    }
+
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
     }
 
 }

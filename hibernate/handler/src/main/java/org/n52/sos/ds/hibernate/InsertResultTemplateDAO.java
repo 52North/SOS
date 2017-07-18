@@ -50,8 +50,9 @@ import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 
@@ -61,13 +62,18 @@ import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
  * @since 4.0.0
  *
  */
-public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler {
+public class InsertResultTemplateDAO
+        extends AbstractInsertResultTemplateHandler {
 
     private HibernateSessionHolder sessionHolder;
+
     private DaoFactory daoFactory;
+
+    private ResultHandlingHelper helper;
 
     public InsertResultTemplateDAO() {
         super(SosConstants.SOS);
+        helper = new ResultHandlingHelper();
     }
 
     @Inject
@@ -95,18 +101,24 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler
             OmObservationConstellation sosObsConst = request.getObservationTemplate();
             ObservationConstellation obsConst = null;
             for (String offeringID : sosObsConst.getOfferings()) {
-                obsConst = daoFactory.getObservationConstellationDAO().checkObservationConstellation(sosObsConst, offeringID,
-                        session, Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
+                obsConst = daoFactory.getObservationConstellationDAO().checkObservationConstellation(sosObsConst,
+                        offeringID, session, Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
                 if (obsConst != null) {
-                    FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
-                    FeatureOfInterest feature = featureOfInterestDAO
-                            .checkOrInsertFeatureOfInterest(sosObsConst.getFeatureOfInterest(), session);
-                    featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(feature,
-                            obsConst.getOffering(), session);
                     // check if result structure elements are supported
                     checkResultStructure(request.getResultStructure(),
                             obsConst.getObservableProperty().getIdentifier());
-                    new ResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, feature, session);
+                    Procedure procedure = null;
+                    AbstractFeatureOfInterest feature = null;
+                    if (sosObsConst.isSetFeatureOfInterest()) {
+                        FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
+                        feature = featureOfInterestDAO.checkOrInsert(sosObsConst.getFeatureOfInterest(), session);
+                        featureOfInterestDAO.checkOrInsertRelatedFeatureRelation(feature, obsConst.getOffering(),
+                                session);
+                    }
+                    if (sosObsConst.isSetProcedure()) {
+                        procedure = obsConst.getProcedure();
+                    }
+                    checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
                 } else {
                     // TODO make better exception.
                     throw new InvalidObservationTypeException(request.getObservationTemplate().getObservationType());
@@ -131,6 +143,11 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler
         return response;
     }
 
+    private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, ObservationConstellation obsConst,
+            Procedure procedure, AbstractFeatureOfInterest feature, Session session) throws OwsExceptionReport {
+        new ResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
+    }
+
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty)
             throws OwsExceptionReport {
         // TODO modify or remove if complex field elements are supported
@@ -145,21 +162,21 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler
                         swefield.getElement().getClass().getName());
             }
         }
-        if (ResultHandlingHelper.hasPhenomenonTime(record) == -1) {
+        if (helper.hasPhenomenonTime(record) == -1) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage("Missing swe:Time or swe:TimeRange with definition %s", OmConstants.PHENOMENON_TIME);
         }
-        if (ResultHandlingHelper.checkFields(record.getFields(), observedProperty) == -1) {
+        if (helper.checkFields(record.getFields(), observedProperty) == -1) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage("Missing swe:field content with element definition %s", observedProperty);
         }
-        if ((ResultHandlingHelper.hasResultTime(record) > -1 && record.getFields().size() > 3)
-                || (ResultHandlingHelper.hasResultTime(record) == -1 && record.getFields().size() > 2)) {
+        if ((helper.hasResultTime(record) > -1 && record.getFields().size() > 3)
+                || (helper.hasResultTime(record) == -1 && record.getFields().size() > 2)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage(
                             "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition %s, "
-                            + " optional swe:Time with element definition %s and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
-                            + "with element definition %s",
+                                    + " optional swe:Time with element definition %s and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
+                                    + "with element definition %s",
                             OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty);
         }
     }

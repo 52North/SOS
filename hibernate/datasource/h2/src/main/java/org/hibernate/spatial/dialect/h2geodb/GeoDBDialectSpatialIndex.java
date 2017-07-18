@@ -48,13 +48,13 @@ public class GeoDBDialectSpatialIndex extends GeoDBDialect implements SpatialInd
         // http://www.h2database.com/html/grammar.html#create_index
         // CREATE SPATIAL INDEX [IF NOT EXISTS] newIndexNamen ON tableName (indexColumn)
         // CALL CreateSpatialIndex(null, 'SPATIAL', 'GEOM', '4326');
-        
+
 //        String name = index.getName();
 //        Table table = index.getTable();
 //        Iterator<Column> columns = index.getColumnIterator();
 //        java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
-//        
-//        
+//
+//
 //        StringBuilder buf = new StringBuilder( "CALL CreateSpatialIndex(null, '" )
 //                        .append( this.qualifyIndexName() ?
 //                                        name :

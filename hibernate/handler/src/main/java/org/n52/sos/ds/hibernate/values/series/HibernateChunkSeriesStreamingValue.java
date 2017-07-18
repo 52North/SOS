@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.values.series;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -36,13 +37,14 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractValuedObservation;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 
 /**
@@ -54,28 +56,34 @@ import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
  */
 public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreamingValue {
 
-    private Iterator<AbstractValuedLegacyObservation<?>> seriesValuesResult;
+    private Iterator<AbstractValuedObservation<?>> seriesValuesResult;
+
     private int chunkSize;
+
     private int currentRow;
+
     private boolean noChunk = false;
+
     private int currentResultSize = 0;
 
     /**
      * constructor
      *
+     * @param connectionProvider the connection provider
+     * @param daoFactory the DAO factory
      * @param request
-     *            {@link GetObservationRequest}
+     *            {@link AbstractObservationRequest}
      * @param series
      *            Datasource series id
-     * @throws OwsExceptionReport
+     * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request, long series, boolean duplicated) throws OwsExceptionReport {
+    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request, long series, boolean duplicated ) throws OwsExceptionReport {
         super(connectionProvider, daoFactory, request, series, duplicated);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 
     @Override
-    public boolean hasNextValue() throws OwsExceptionReport {
+    public boolean hasNext() throws OwsExceptionReport {
         boolean next = false;
         if (seriesValuesResult == null || !seriesValuesResult.hasNext()) {
             if (!noChunk) {
@@ -97,19 +105,16 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     @Override
-    public AbstractValuedLegacyObservation nextEntity() throws OwsExceptionReport {
-        return (AbstractValuedLegacyObservation) seriesValuesResult.next();
+    public AbstractValuedObservation<?> nextEntity() throws OwsExceptionReport {
+        return (AbstractValuedObservation<?>) seriesValuesResult.next();
     }
 
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
-                AbstractValuedLegacyObservation resultObject = nextEntity();
-                TimeValuePair value = null;
-                if (checkValue(resultObject)) {
-                    value = resultObject.createTimeValuePairFrom();
-                }
+            if (hasNext()) {
+                AbstractValuedObservation<?> resultObject = seriesValuesResult.next();
+                TimeValuePair value = resultObject.createTimeValuePairFrom();
                 session.evict(resultObject);
                 return value;
             }
@@ -122,16 +127,13 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     @Override
-    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+    public OmObservation next() throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
-                OmObservation observation = null;
-                AbstractValuedLegacyObservation resultObject = nextEntity();
-                if (checkValue(resultObject)) {
-                    observation = getObservationTemplate().cloneTemplate();
-                    resultObject.addValuesToObservation(observation, getResponseFormat());
-                    checkForModifications(observation);
-                }
+            if (hasNext()) {
+                OmObservation observation = getObservationTemplate().cloneTemplate();
+                AbstractValuedObservation<?> resultObject = seriesValuesResult.next();
+                resultObject.addValuesToObservation(observation, getResponseFormat());
+                checkForModifications(observation);
                 session.evict(resultObject);
                 return observation;
             }
@@ -155,16 +157,14 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         }
         try {
             // query with temporal filter
-            Collection<AbstractValuedLegacyObservation<?>> seriesValuesResult = null;
+            Collection<AbstractValuedObservation<?>> seriesValuesResult = new ArrayList<>();
             if (temporalFilterCriterion != null) {
-                seriesValuesResult =
-                        seriesValueDAO.getStreamingSeriesValuesFor((GetObservationRequest)request, series, temporalFilterCriterion,
-                                chunkSize, currentRow, session);
+                seriesValuesResult.addAll(seriesValueDAO.getStreamingSeriesValuesFor(request, series, temporalFilterCriterion,
+                                chunkSize, currentRow, session));
             }
             // query without temporal or indeterminate filters
             else {
-                seriesValuesResult =
-                        seriesValueDAO.getStreamingSeriesValuesFor((GetObservationRequest)request, series, chunkSize, currentRow, session);
+                seriesValuesResult.addAll(seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, session));
             }
             currentRow += chunkSize;
             checkMaxNumberOfReturnedValues(seriesValuesResult.size());
@@ -177,17 +177,18 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     /**
-     * Check the queried {@link AbstractValuedLegacyObservation}s for null and set them as
+     * Check the queried {@link AbstractValuedObservation}s for null and set them as
      * iterator to local variable.
      *
      * @param seriesValuesResult
-     *            Queried {@link AbstractValuedLegacyObservation}s
+     *            Queried {@link AbstractValuedObservation}s
      */
-    private void setSeriesValuesResult(Collection<AbstractValuedLegacyObservation<?>> seriesValuesResult) {
+    private void setSeriesValuesResult(Collection<AbstractValuedObservation<?>> seriesValuesResult) {
         if (CollectionHelper.isNotEmpty(seriesValuesResult)) {
             this.currentResultSize = seriesValuesResult.size();
             this.seriesValuesResult = seriesValuesResult.iterator();
         }
 
     }
+
 }

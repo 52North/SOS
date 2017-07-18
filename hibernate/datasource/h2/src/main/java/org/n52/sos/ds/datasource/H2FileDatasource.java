@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.joda.time.DateTime;
+import org.n52.faroe.AbstractSettingDefinition;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
@@ -67,7 +68,6 @@ public class H2FileDatasource extends AbstractH2Datasource {
 
     private static final String JDBC_URL_FORMAT = "jdbc:h2:%s";
 
-
     @Override
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
@@ -87,6 +87,9 @@ public class H2FileDatasource extends AbstractH2Datasource {
 
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
+        AbstractSettingDefinition<String> h2Database = createDatabaseDefinition().setDescription(
+                "Set this to the name/path of the database you want to use for SOS.").setDefaultValue(
+                System.getProperty("user.home") + File.separator + "sos");
         return Sets.<SettingDefinition<?>> newHashSet(h2Database, getDatabaseConceptDefinition(), getFeatureConceptDefinition(),
                 getTransactionalDefiniton(), getMulitLanguageDefiniton(), getSeriesMetadataDefiniton());
     }
@@ -151,7 +154,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
             }
         }
     }
-    
+
     private boolean checkTableSize(Map<String, Object> settings) {
         Connection conn = null;
         Statement stmt = null;
@@ -163,13 +166,13 @@ public class H2FileDatasource extends AbstractH2Datasource {
             resultSet.last();
             return resultSet.getRow() <= 1;
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(conn);
             close(stmt);
         }
     }
-    
+
     @Override
     protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
     }

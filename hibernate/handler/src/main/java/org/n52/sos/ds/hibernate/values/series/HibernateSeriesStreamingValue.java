@@ -37,7 +37,7 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractValuedObservation;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
 import org.n52.svalbard.util.GmlHelper;
@@ -70,7 +70,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      * @throws OwsExceptionReport
      */
     public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request, long series, boolean duplicated) throws OwsExceptionReport {
-        super(connectionProvider, request);
+        super(connectionProvider, daoFactory, request);
         this.series = series;
         this.duplicated = duplicated;
         this.seriesValueDAO = daoFactory.getValueDAO();
@@ -113,7 +113,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         }
     }
 
-    protected boolean checkValue(AbstractValuedLegacyObservation value) {
+    protected boolean checkValue(AbstractValuedObservation value) {
         if (isDuplicated()) {
             return value.getOfferings() != null && value.getOfferings().size() == 1;
         }

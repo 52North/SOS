@@ -28,44 +28,39 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.GeometryVisitor;
 import org.n52.sos.ds.hibernate.entities.feature.Specimen;
 import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public class HibernateGeometryVisitor implements GeometryVisitor {
+public class HibernateGeometryVisitor
+        implements GeometryVisitor {
 
-    private Session session;
-    private int storageEPSG;
-    private int storage3DEPSG;
-    
-    public HibernateGeometryVisitor(int storageEPSG, int storage3DEPSG, Session session) {
-        this.session = session;
-        this.storageEPSG = storageEPSG;
-        this.storage3DEPSG = storage3DEPSG;
+    private FeatureVisitorContext context;
+
+    public HibernateGeometryVisitor(FeatureVisitorContext context) {
+        this.context = context;
     }
-    
+
     public Geometry visit(FeatureOfInterest f) throws OwsExceptionReport {
         if (f instanceof Specimen) {
-            return visit((Specimen)f);
+            return visit((Specimen) f);
         } else if (f instanceof EnvironmentalMonitoringFacility) {
-            return visit((EnvironmentalMonitoringFacility)f);
+            return visit((EnvironmentalMonitoringFacility) f);
         }
-        return new FeatureOfInterestCreator(storageEPSG, storage3DEPSG).createGeometry(f, session);
+        return new FeatureOfInterestCreator(context).createGeometry(f);
     }
 
     public Geometry visit(Specimen f) throws OwsExceptionReport {
-        return new SpecimenCreator(storageEPSG, storage3DEPSG).createGeometry(f, session);
+        return new SpecimenCreator(context).createGeometry(f);
     }
 
     public Geometry visit(EnvironmentalMonitoringFacility f) throws OwsExceptionReport {
-        return new EnvironmentalMonitoringFacilityCreator(storageEPSG, storage3DEPSG).createGeometry(f, session);
+        return new EnvironmentalMonitoringFacilityCreator(context)
+                .createGeometry(f);
     }
 
 }

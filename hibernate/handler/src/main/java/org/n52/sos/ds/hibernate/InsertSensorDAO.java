@@ -151,8 +151,8 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                                 }
                             }
                             final Offering hOffering =
-                                    offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getIdentifier(),
-                                            assignedOffering.getOfferingName(), hRelatedFeatures, observationTypes,
+                                    offeringDAO.getAndUpdateOrInsert(new SosOffering(assignedOffering.getIdentifier(),
+                                            assignedOffering.getOfferingName()), hRelatedFeatures, observationTypes,
                                             featureOfInterestTypes, session);
                             for (final ObservableProperty hObservableProperty : hObservableProperties) {
                                 observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,
@@ -264,7 +264,7 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
      *            Procedure description
      * @return SensorDescription String
      */
-    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription procedureDescription ) {
+    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription<?> procedureDescription ) {
         if (procedureDescription.getProcedureDescription() instanceof SensorML) {
             final SensorML sensorML = (SensorML) procedureDescription.getProcedureDescription() ;
             // if SensorML is not a wrapper

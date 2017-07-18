@@ -54,10 +54,10 @@ import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
@@ -109,7 +109,7 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
             session = sessionHolder.getSession();
             Criteria c = getDefaultObservationInfoCriteria(session);
             c.createCriteria(ContextualReferencedObservation.FEATURE_OF_INTEREST).add(
-                    Restrictions.eq(FeatureOfInterest.IDENTIFIER, dataAvailability.getFeatureOfInterest().getHref()));
+                    Restrictions.eq(AbstractFeatureOfInterest.IDENTIFIER, dataAvailability.getFeatureOfInterest().getHref()));
             c.createCriteria(ContextualReferencedObservation.PROCEDURE).add(
                     Restrictions.eq(Procedure.IDENTIFIER, dataAvailability.getProcedure().getHref()));
             c.createCriteria(ContextualReferencedObservation.OBSERVABLE_PROPERTY).add(

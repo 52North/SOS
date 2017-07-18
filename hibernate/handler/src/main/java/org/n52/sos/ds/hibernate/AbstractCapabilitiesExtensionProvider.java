@@ -50,12 +50,6 @@ public abstract class AbstractCapabilitiesExtensionProvider implements OwsCapabi
     }
 
     @Override
-    @Deprecated
-    public OwsCapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return this.key;
-    }
-
-    @Override
     public boolean hasRelatedOperation() {
         return this.operation != null;
     }

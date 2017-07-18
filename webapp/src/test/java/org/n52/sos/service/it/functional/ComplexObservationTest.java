@@ -41,57 +41,41 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.janmayen.http.MediaTypes;
-import org.n52.shetland.ogc.OGCConstants;
-import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.gml.GmlConstants;
-import org.n52.shetland.ogc.gml.time.TimeInstant;
-import org.n52.shetland.ogc.gml.time.TimePeriod;
-import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.iceland.service.ServiceSettings;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.om.OmObservationConstellation;
-import org.n52.shetland.ogc.om.SingleObservationValue;
-import org.n52.shetland.ogc.om.features.SfConstants;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
-import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
-import org.n52.shetland.ogc.sensorML.SensorML;
-import org.n52.shetland.ogc.sensorML.SensorMLConstants;
-import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
-import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
-import org.n52.shetland.ogc.swe.SweSimpleDataRecord;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
-import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.ds.hibernate.H2Configuration;
-import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.SosSettings;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.util.CodingHelper;
-import org.n52.svalbard.util.XmlOptionsHelper;
-
+import org.w3c.dom.Node;
 import com.google.common.base.Joiner;
+
+import net.opengis.ows.x11.ExceptionReportDocument;
+import net.opengis.sos.x20.GetObservationResponseDocument;
+import net.opengis.sos.x20.InsertObservationDocument;
+import net.opengis.sos.x20.InsertObservationResponseDocument;
+import net.opengis.swes.x20.InsertSensorDocument;
+import net.opengis.swes.x20.InsertSensorResponseDocument;
 
 
 public class ComplexObservationTest extends AbstractObservationTest {
@@ -372,7 +356,7 @@ public class ComplexObservationTest extends AbstractObservationTest {
     }
 
     private static void showChildren(boolean show) {
-        changeSetting(ServiceSettings.EXPOSE_CHILD_OBSERVABLE_PROPERTIES, Boolean.toString(show));
+        changeSetting(SosSettings.EXPOSE_CHILD_OBSERVABLE_PROPERTIES, Boolean.toString(show));
     }
 
     private SweDataRecord createSweDataRecord() {

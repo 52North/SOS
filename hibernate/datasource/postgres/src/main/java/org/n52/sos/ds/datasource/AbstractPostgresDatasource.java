@@ -44,11 +44,10 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.postgis.PostgisDialectSpatialIndex;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -57,7 +56,8 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  *
  */
-public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDBDatasource {
+public abstract class AbstractPostgresDatasource
+        extends AbstractHibernateFullDBDatasource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPostgresDatasource.class);
 
@@ -127,10 +127,8 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
             final String schema = (String) settings.get(createSchemaDefinition().getKey());
             final String schemaPrefix = schema == null ? "" : "\"" + schema + "\".";
             final String testTable = schemaPrefix + "sos_installer_test_table";
-            final String command =
-                    String.format("BEGIN; " + "DROP TABLE IF EXISTS %1$s; "
-                            + "CREATE TABLE %1$s (id integer NOT NULL); "
-                            + "DROP TABLE %1$s; " + "END;", testTable);
+            final String command = String.format("BEGIN; " + "DROP TABLE IF EXISTS %1$s; "
+                    + "CREATE TABLE %1$s (id integer NOT NULL); " + "DROP TABLE %1$s; " + "END;", testTable);
             stmt.execute(command);
             return true;
         } catch (SQLException e) {
@@ -191,9 +189,8 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
 
     @Override
     protected String toURL(Map<String, Object> settings) {
-        String url =
-                String.format("jdbc:postgresql://%s:%d/%s", settings.get(HOST_KEY), settings.get(PORT_KEY),
-                        settings.get(DATABASE_KEY));
+        String url = String.format("jdbc:postgresql://%s:%d/%s", settings.get(HOST_KEY), settings.get(PORT_KEY),
+                settings.get(DATABASE_KEY));
         return url;
     }
 
@@ -232,7 +229,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
                 stmt.execute(String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names)));
             }
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(stmt);
             close(conn);
@@ -242,7 +239,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
     @Override
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
-        	Class.forName(getDriverClass());
+            Class.forName(getDriverClass());
             String jdbc = toURL(settings);
             String pass = (String) settings.get(HibernateConstants.CONNECTION_PASSWORD);
             String user = (String) settings.get(HibernateConstants.CONNECTION_USERNAME);
@@ -253,8 +250,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
         }
     }
 
-
-	@Override
+    @Override
     protected String[] checkDropSchema(String[] dropSchema) {
         List<String> checkedSchema = Lists.newLinkedList();
         for (String string : dropSchema) {
@@ -271,6 +267,5 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
         p.put(HibernateConstants.C3P0_PREFERRED_TEST_QUERY, "SELECT 1");
         return p;
     }
-
 
 }

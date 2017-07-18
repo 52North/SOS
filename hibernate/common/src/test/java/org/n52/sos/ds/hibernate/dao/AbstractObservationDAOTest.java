@@ -30,12 +30,9 @@ package org.n52.sos.ds.hibernate.dao;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,12 +54,10 @@ import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesNumericOb
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import net.opengis.swe.x20.TimeIndeterminateValue;
-
 public class AbstractObservationDAOTest {
 
 
-    TestObservationDAO dao = new TestObservationDAO();
+    TestObservationDAO dao = new TestObservationDAO(new DaoFactory());
 
 
     /*
@@ -80,7 +75,7 @@ public class AbstractObservationDAOTest {
 
     @Test
     public void add_phenomenonTime_instant_timeIndeterminatePosition_now() throws OwsExceptionReport {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant phenomenonTime = new TimeInstant(IndeterminateValue.NOW);
         dao.addPhenomenonTimeToObservation(observation, phenomenonTime);
         Assert.assertTrue(observation.getPhenomenonTimeStart() != null);
@@ -89,14 +84,14 @@ public class AbstractObservationDAOTest {
 
     @Test(expected=InvalidParameterValueException.class)
     public void add_phenomenonTime_instant_timeIndeterminatePosition_other() throws OwsExceptionReport {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant phenomenonTime = new TimeInstant(IndeterminateValue.UNKNOWN);
         dao.addPhenomenonTimeToObservation(observation, phenomenonTime);
     }
 
     @Test(expected=MissingParameterValueException.class)
     public void add_phenomenonTime_instant_timeIndeterminatePosition_missing() throws OwsExceptionReport {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant phenomenonTime = new TimeInstant();
         dao.addPhenomenonTimeToObservation(observation, phenomenonTime);
     }
@@ -107,7 +102,7 @@ public class AbstractObservationDAOTest {
 
     @Test
     public void add_resultTime_value() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant(new DateTime());
         dao.addResultTimeToObservation(observation, resultTime, null);
         Assert.assertTrue(observation.getResultTime() != null);
@@ -115,7 +110,7 @@ public class AbstractObservationDAOTest {
 
     @Test
     public void add_resultTime_timeIndeterminatePosition_now() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant(IndeterminateValue.NOW);
         dao.addResultTimeToObservation(observation, resultTime, null);
         Assert.assertTrue(observation.getResultTime() != null);
@@ -123,21 +118,21 @@ public class AbstractObservationDAOTest {
 
     @Test(expected=InvalidParameterValueException.class)
     public void add_resultTime_timeIndeterminatePosition_other() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant(IndeterminateValue.UNKNOWN);
         dao.addResultTimeToObservation(observation, resultTime, null);
     }
 
     @Test(expected=NoApplicableCodeException.class)
     public void add_resultTime_timeIndeterminatePosition_missing() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant();
         dao.addResultTimeToObservation(observation, resultTime, null);
     }
 
     @Test
     public void add_resultTime_value_from_phenomenonTime() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant();
         resultTime.setGmlId("#phenomenonTime");
         TimeInstant phenomeonTime = new TimeInstant(new DateTime());
@@ -147,7 +142,7 @@ public class AbstractObservationDAOTest {
 
     @Test
     public void add_resultTime_from_phenomenonTime_timeIndeterminatePosition_now() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant();
         resultTime.setGmlId("#phenomenonTime");
         TimeInstant phenomeonTime = new TimeInstant(IndeterminateValue.NOW);
@@ -157,7 +152,7 @@ public class AbstractObservationDAOTest {
 
     @Test(expected=InvalidParameterValueException.class)
     public void add_resultTime_from_phenomenonTime_timeIndeterminatePosition_other() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant();
         resultTime.setGmlId("#phenomenonTime");
         TimeInstant phenomeonTime = new TimeInstant(IndeterminateValue.UNKNOWN);
@@ -166,7 +161,7 @@ public class AbstractObservationDAOTest {
 
     @Test(expected=NoApplicableCodeException.class)
     public void add_resultTime_from_phenomenonTime_timeIndeterminatePosition_missing() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant();
         resultTime.setGmlId("#phenomenonTime");
         TimeInstant phenomeonTime = new TimeInstant();
@@ -174,6 +169,10 @@ public class AbstractObservationDAOTest {
     }
 
     public class TestObservationDAO extends AbstractObservationDAO {
+
+        public TestObservationDAO(DaoFactory daoFactory) {
+            super(daoFactory);
+        }
 
         @Override
         protected void addObservationContextToObservation(ObservationContext ctx,
@@ -249,13 +248,6 @@ public class AbstractObservationDAOTest {
 
         @Override
         public Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public ScrollableResults getObservations(Set<String> procedure, Set<String> observableProperty,
-                Set<String> featureOfInterest, Set<String> offering, Criterion filterCriterion, Session session) {
             // TODO Auto-generated method stub
             return null;
         }

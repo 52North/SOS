@@ -48,7 +48,8 @@ import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSe
  * @since 4.0.0
  *
  */
-public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
+public class SeriesObservationTimeDAO
+        extends AbstractObservationTimeDAO {
 
     /**
      * Create criteria for series
@@ -61,8 +62,7 @@ public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
      *            Hibernate session
      * @return Criteria for series
      */
-    private Criteria createCriteriaFor(Class<?> clazz, Series series,
-            Session session) {
+    private Criteria createCriteriaFor(Class<?> clazz, Series series, Session session) {
         final Criteria criteria = session.createCriteria(clazz)
                 .add(Restrictions.eq(AbstractTemporalReferencedObservation.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -94,22 +94,21 @@ public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
         return criteria;
     }
 
-	public Criteria getOfferingMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(
-                Series series, Collection<String> offerings, Session session) {
-        Criteria criteria = createCriteriaFor(TemporalReferencedSeriesObservation.class,
-                        series, session);
+    public Criteria getOfferingMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(Series series,
+            Collection<String> offerings, Session session) {
+        Criteria criteria = createCriteriaFor(TemporalReferencedSeriesObservation.class, series, session);
         if (CollectionHelper.isNotEmpty(offerings)) {
             criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS, "off")
                     .add(Restrictions.in(Offering.IDENTIFIER, offerings));
         } else {
             criteria.createAlias(AbstractObservation.OFFERINGS, "off");
         }
-        criteria.setProjection(Projections.projectionList()
-                    .add(Projections.groupProperty("off." + Offering.IDENTIFIER))
-                    .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
-                    .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
+        criteria.setProjection(
+                Projections.projectionList().add(Projections.groupProperty("off." + Offering.IDENTIFIER))
+                        .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
+                        .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
         return criteria;
-}
+    }
 
     @Override
     protected Class<?> getObservationTimeClass() {

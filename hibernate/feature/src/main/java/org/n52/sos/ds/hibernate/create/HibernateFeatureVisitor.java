@@ -28,54 +28,45 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
-import java.util.Locale;
-
-import org.hibernate.Session;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureVisitor;
 import org.n52.sos.ds.hibernate.entities.feature.Specimen;
 import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
 import org.n52.sos.ds.hibernate.entities.feature.wml.MonitoringPoint;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class HibernateFeatureVisitor implements FeatureVisitor<AbstractFeature> { 
+public class HibernateFeatureVisitor
+        implements FeatureVisitor<AbstractFeature> {
 
-    private Locale i18n;
-    private Session session;
-    private String version;
-    private int storageEPSG;
-    private int storage3DEPSG;
-    
-    public HibernateFeatureVisitor(Locale i18n, String version, int storageEPSG, int storage3DEPSG, Session session) {
-        this.i18n = i18n;
-        this.version = version;
-        this.session = session;
-        this.storageEPSG = storageEPSG;
-        this.storage3DEPSG = storage3DEPSG;
+    private FeatureVisitorContext context;
+
+    public HibernateFeatureVisitor(FeatureVisitorContext context) {
+        this.context = context;
     }
-    
+
     public AbstractFeature visit(FeatureOfInterest f) throws OwsExceptionReport {
         if (f instanceof Specimen) {
-            return visit((Specimen)f);
+            return visit((Specimen) f);
         } else if (f instanceof EnvironmentalMonitoringFacility) {
-            return visit((EnvironmentalMonitoringFacility)f);
+            return visit((EnvironmentalMonitoringFacility) f);
         } else if (f instanceof MonitoringPoint) {
-            return visit((MonitoringPoint)f);
+            return visit((MonitoringPoint) f);
         }
-        return new FeatureOfInterestCreator(storageEPSG, storage3DEPSG).create(f, i18n, version, session);
+        return new FeatureOfInterestCreator(context).create(f);
     }
 
     public AbstractFeature visit(Specimen f) throws OwsExceptionReport {
-        return new SpecimenCreator(storageEPSG, storage3DEPSG).create(f, i18n, version, session);
+        return new SpecimenCreator(context).create(f);
     }
 
     public AbstractFeature visit(EnvironmentalMonitoringFacility f) throws OwsExceptionReport {
-        return new EnvironmentalMonitoringFacilityCreator(storageEPSG, storage3DEPSG).create(f, i18n, version, session);
+        return new EnvironmentalMonitoringFacilityCreator(context)
+                .create(f);
     }
 
     @Override
     public AbstractFeature visit(MonitoringPoint f) throws OwsExceptionReport {
-        return new MonitoringPointCreator(storageEPSG, storage3DEPSG).create(f, i18n, version, session);
+        return new MonitoringPointCreator(context).create(f);
     }
 }

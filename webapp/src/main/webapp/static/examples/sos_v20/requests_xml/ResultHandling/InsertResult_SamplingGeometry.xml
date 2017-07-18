@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sos:InsertResult service="SOS" version="2.0.0" xmlns:sos="http://www.opengis.net/sos/2.0" 
+<sos:InsertResult service="SOS" version="2.0.0" xmlns:sos="http://www.opengis.net/sos/2.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
 	<sos:template>http://www.52north.org/test/procedure/10/template/Glider_Journy_10_1</sos:template>

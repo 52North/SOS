@@ -84,5 +84,6 @@ public class OracleSpatial10gDoubleFloatDialect
         // }
         // buf.append(") INDEXTYPE IS MDSYS.SPATIAL_INDEX");
         // return buf.toString();
+        return "";
     }
 }

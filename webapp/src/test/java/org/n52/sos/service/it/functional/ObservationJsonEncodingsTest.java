@@ -35,9 +35,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.util.http.MediaTypes;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

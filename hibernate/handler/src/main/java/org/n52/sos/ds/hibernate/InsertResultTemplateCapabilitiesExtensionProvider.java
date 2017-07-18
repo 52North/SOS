@@ -56,11 +56,8 @@ public class InsertResultTemplateCapabilitiesExtensionProvider
     @Inject
     private ContentCacheController contentCacheController;
 
-    @Override
-    @Deprecated
-    public OwsCapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return KEY;
-    }
+    @Inject
+    private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
 
     @Override
     public OwsCapabilitiesExtension getExtension() {
@@ -68,7 +65,7 @@ public class InsertResultTemplateCapabilitiesExtensionProvider
         SosContentCache cache = getCache();
         insertionCapabilities.addFeatureOfInterestTypes(cache.getFeatureOfInterestTypes());
         insertionCapabilities.addObservationTypes(cache.getObservationTypes());
-        insertionCapabilities.addProcedureDescriptionFormats(ProcedureDescriptionFormatRepository.getInstance()
+        insertionCapabilities.addProcedureDescriptionFormats(procedureDescriptionFormatRepository
                 .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         // TODO dynamic
         insertionCapabilities.addSupportedEncoding(SweConstants.ENCODING_TEXT);

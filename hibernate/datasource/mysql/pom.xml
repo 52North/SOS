@@ -35,10 +35,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-session-factory</artifactId>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
-        </dependency>
         <!-- Hibernate Core Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -69,10 +65,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <configuration>
                     <usedDependencies>
-                        <usedDependency>${project.groupId}:api</usedDependency>
                         <usedDependency>${project.groupId}:hibernate-common</usedDependency>
-                        <usedDependency>${project.groupId}:hibernate-session-factory</usedDependency>
-                        <usedDependency>mysql:mysql-connector-java</usedDependency>
                     </usedDependencies>
                 </configuration>
             </plugin>

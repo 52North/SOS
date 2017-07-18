@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd 
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd
 			http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
 	<env:Body>
 		<swes:InsertSensor service="SOS" version="2.0.0"
@@ -36,7 +36,7 @@
 			        <sml:capabilities name="offerings">
 		              <sml:CapabilityList>
 				         <!-- Special capabilities used to specify offerings. -->
-				         <!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+				         <!-- Parsed and removed during InsertSensor/UpdateSensorDescription,
 					         added during DescribeSensor. -->
 				         <!-- Offering is generated if not specified. -->
 		                 <sml:capability name="offeringID">
@@ -49,14 +49,14 @@
 		            </sml:capabilities>
                     <sml:capabilities name="metadata">
                         <sml:CapabilityList>
-                            <!-- status indicates, whether sensor is insitu (true) 
+                            <!-- status indicates, whether sensor is insitu (true)
                                 or remote (false) -->
                             <sml:capability name="insitu">
                                 <swe:Boolean definition="insitu">
                                     <swe:value>true</swe:value>
                                 </swe:Boolean>
                             </sml:capability>
-                            <!-- status indicates, whether sensor is mobile (true) 
+                            <!-- status indicates, whether sensor is mobile (true)
                                 or fixed/stationary (false) -->
                             <sml:capability name="mobile">
                                 <swe:Boolean definition="mobile">
@@ -133,4 +133,4 @@
 		</swes:InsertSensor>
 	</env:Body>
 </env:Envelope>
-		
+

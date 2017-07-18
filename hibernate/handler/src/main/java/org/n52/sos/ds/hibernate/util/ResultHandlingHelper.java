@@ -85,9 +85,9 @@ public class ResultHandlingHelper {
     public final String OM_PROCEDURE = "om:procedure";
     public final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
     private final SweHelper helper = new SweHelper();
-    
+
     public ResultHandlingHelper() {
-        
+
     }
 
     /**
@@ -359,11 +359,11 @@ public class ResultHandlingHelper {
                 return writer.write(((GeometryObservation) observation).getValue());
             } else if (observation instanceof BlobObservation) {
                 return String.valueOf(((BlobObservation) observation).getValue());
-            } 
+            }
         }
         return "";
     }
-    
+
     private String getSamplingGeometry(Observation<?> observation, String tokenSeparator, SweAbstractDataComponent sweAbstractDataComponent, String noDataPlaceholder) throws OwsExceptionReport {
         SweVector vector = getVector(sweAbstractDataComponent);
         if (vector != null && vector.isSetCoordinates()) {
@@ -386,7 +386,7 @@ public class ResultHandlingHelper {
                         } else {
                             builder.append(coordinate.y);
                         }
-                    } else if (helper.hasEastingName(definition)) { 
+                    } else if (helper.hasEastingName(definition)) {
                         if (getGeomtryHandler().isNorthingFirstEpsgCode(samplingGeometry.getSRID())) {
                             builder.append(coordinate.y);
                         } else {
@@ -404,7 +404,7 @@ public class ResultHandlingHelper {
         }
         return noDataPlaceholder;
     }
-    
+
     private boolean checkCoordinate(Double value) {
         return value != null;
     }
@@ -442,7 +442,7 @@ public class ResultHandlingHelper {
         }
         return true;
     }
-    
+
     public boolean checkForFeatureOfInterest(SweField swefield) throws CodedException {
         if (isText(swefield) && !checkDefinition(swefield, OM_FEATURE_OF_INTEREST)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
@@ -452,7 +452,7 @@ public class ResultHandlingHelper {
         }
         return true;
     }
-    
+
     public boolean checkForProcedure(SweField swefield) throws CodedException {
         if (isText(swefield) && !checkDefinition(swefield, OM_PROCEDURE)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
@@ -476,14 +476,14 @@ public class ResultHandlingHelper {
         }
         return true;
     }
-    
+
     public boolean checkDefinition(SweField sweField, String definition) {
         if (sweField != null && sweField.getElement().isSetDefinition()) {
             return definition.equals(sweField.getElement().getDefinition());
         }
         return false;
     }
-    
+
     public boolean isDataRecord(SweField sweField) {
         return sweField.getElement() instanceof SweDataRecord;
     }
@@ -497,7 +497,7 @@ public class ResultHandlingHelper {
             return false;
         }
         return true;
-        
+
     }
 
     private GeometryHandler getGeomtryHandler() {

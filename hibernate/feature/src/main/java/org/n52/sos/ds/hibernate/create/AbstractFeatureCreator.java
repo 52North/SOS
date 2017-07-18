@@ -28,95 +28,150 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.hibernate.Session;
+import org.hibernate.id.CompositeNestedGeneratedValueGenerator.GenerationContextLocator;
+import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.iceland.service.ServiceSettings;
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.ds.I18NDAO;
+import org.n52.iceland.i18n.I18NDAO;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.i18n.I18NSettings;
+import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
+import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
+import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
-import org.n52.sos.i18n.I18NDAORepository;
-import org.n52.sos.i18n.LocalizedString;
-import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.operator.Configurable;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.service.SosSettings;
 import org.n52.sos.util.GeometryHandler;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-@Configurable
-public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implements FeatureCreator<T> {
+public abstract class AbstractFeatureCreator<T extends FeatureOfInterest>
+        implements FeatureCreator<T> {
 
-    public static final String CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS = "service.createFeatureGeometryFromSamplingGeometries";
-    
-    private int storageEPSG;
-    private int storage3DEPSG;
-    private boolean createFeatureGeometryFromSamplingGeometries;
-    private boolean updateFeatureGeometry;
+    public static final String CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS =
+            "service.createFeatureGeometryFromSamplingGeometries";
+//
+//    private int storageEPSG;
+//
+//    private int storage3DEPSG;
+//
+//    private boolean createFeatureGeometryFromSamplingGeometries;
+//
+//    private boolean updateFeatureGeometry;
+//
+//    private GeometryHandler geometryHandler;
+//
+//    private DaoFactory daoFactory;
+//
+//    private Locale defaultLanguage;
+//
+//    private boolean showAllLanguages;
 
-    public AbstractFeatureCreator(int storageEPSG, int storage3DEPSG) {
-        this.storageEPSG = storageEPSG;
-        this.storage3DEPSG = storage3DEPSG;
-        
+    private FeatureVisitorContext context;
+
+
+    public AbstractFeatureCreator(FeatureVisitorContext context) {
+        this.context = context;
+//        this.storageEPSG = storageEPSG;
+//        this.storage3DEPSG = storage3DEPSG;
+//        this.geometryHandler = geometryHandler;
+//        this.daoFactory = daoFactory;
+
+    }
+
+    public CodeWithAuthority getIdentifier(IdentifierNameDescriptionEntity entity) {
+        CodeWithAuthority identifier = new CodeWithAuthority(entity.getIdentifier());
+        if (entity.isSetCodespace()) {
+            identifier.setCodeSpace(entity.getCodespace().getCodespace());
+        }
+        return identifier;
     }
 
     protected void addNameAndDescription(Locale requestedLocale, FeatureOfInterest feature,
-            AbstractFeature abstractFeature, FeatureOfInterestDAO featureDAO) throws OwsExceptionReport {
-        I18NDAO<I18NFeatureMetadata> i18nDAO = I18NDAORepository.getInstance().getDAO(I18NFeatureMetadata.class);
+            AbstractFeature abstractFeature) throws OwsExceptionReport {
+        I18NDAO<I18NFeatureMetadata> i18nDAO = getContext().getI18NDAORepository().getDAO(I18NFeatureMetadata.class);
         // set name as human readable identifier if set
         if (feature.isSetName()) {
             abstractFeature.setHumanReadableIdentifier(feature.getName());
         }
         if (i18nDAO == null) {
             // no i18n support
-            abstractFeature.addName(featureDAO.getName(feature));
-            abstractFeature.setDescription(featureDAO.getDescription(feature));
+            abstractFeature.addName(getName(feature));
+            abstractFeature.setDescription(getDescription(feature));
         } else {
-            I18NFeatureMetadata i18n = i18nDAO.getMetadata(feature.getIdentifier());
             if (requestedLocale != null) {
                 // specific locale was requested
-                Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(requestedLocale);
+                I18NFeatureMetadata i18n = i18nDAO.getMetadata(feature.getIdentifier(), requestedLocale);
+                Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
                 if (name.isPresent()) {
-                    abstractFeature.addName(name.get().asCodeType());
+                    abstractFeature.addName(new CodeType(name.get()));
                 }
-                Optional<LocalizedString> description =
-                        i18n.getDescription().getLocalizationOrDefault(requestedLocale);
+                Optional<LocalizedString> description = i18n.getDescription().getLocalization(requestedLocale);
                 if (description.isPresent()) {
                     abstractFeature.setDescription(description.get().getText());
                 }
             } else {
-                if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
-                    for (LocalizedString name : i18n.getName()) {
-                        abstractFeature.addName(name.asCodeType());
-                    }
+                final I18NFeatureMetadata i18n;
+                if (getContext().isShowAllLanguages()) {
+                    // load all names
+                    i18n = i18nDAO.getMetadata(feature.getIdentifier());
                 } else {
-                    Optional<LocalizedString> name = i18n.getName().getDefaultLocalization();
-                    if (name.isPresent()) {
-                        abstractFeature.addName(name.get().asCodeType());
-                    }
+                    // load only name in default locale
+                    i18n = i18nDAO.getMetadata(feature.getIdentifier(), getContext().getDefaultLanguage());
+                }
+                for (LocalizedString name : i18n.getName()) {
+                    // either all or default only
+                    abstractFeature.addName(new CodeType(name));
                 }
                 // choose always the description in the default locale
-                Optional<LocalizedString> description = i18n.getDescription().getDefaultLocalization();
+                Optional<LocalizedString> description = i18n.getDescription().getLocalization(getContext().getDefaultLanguage());
                 if (description.isPresent()) {
                     abstractFeature.setDescription(description.get().getText());
                 }
             }
         }
     }
-    
+
+    protected CodeType getName(IdentifierNameDescriptionEntity entity) throws OwsExceptionReport {
+        if (entity.isSetName()) {
+            CodeType name = new CodeType(entity.getName());
+            if (entity.isSetCodespaceName()) {
+                try {
+                    name.setCodeSpace(new URI(entity.getCodespaceName().getCodespace()));
+                } catch (URISyntaxException e) {
+                    throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'",
+                            entity.getCodespaceName().getCodespace());
+                }
+            }
+            return name;
+        }
+        return null;
+    }
+
+    protected String getDescription(IdentifierNameDescriptionEntity entity) {
+        if (entity.isSetDescription()) {
+            return entity.getDescription();
+        }
+        return null;
+    }
+
     /**
      * Get the geometry from featureOfInterest object.
      *
@@ -124,34 +179,38 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
      * @return geometry
      * @throws OwsExceptionReport
      */
-    protected Geometry createGeometryFrom(FeatureOfInterest feature, Session session) throws OwsExceptionReport {
+    protected Geometry createGeometryFrom(FeatureOfInterest feature) throws OwsExceptionReport {
         if (feature.isSetGeometry()) {
-            return GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeom());
+            return getContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeom());
         } else if (feature.isSetLongLat()) {
-            return getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
-                    new HibernateGeometryCreator(storageEPSG, storage3DEPSG).createGeometry(feature));
+            return getContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
+                    new HibernateGeometryCreator().createGeometry(feature, getContext().getGeometryHandler()));
         } else {
-            if (!feature.isSetUrl() && session != null) {
-                if (createFeatureGeometryFromSamplingGeometries()) {
-                    int srid = getGeometryHandler().getStorageEPSG();
-                    if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).longValue() < 100) {
-                        List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
+            if (!feature.isSetUrl() && getContext().getSession() != null) {
+                if (getContext().createFeatureGeometryFromSamplingGeometries()) {
+                    int srid = getContext().getGeometryHandler().getStorageEPSG();
+                    if (getContext().getDaoFactory().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), getContext().getSession())
+                            .longValue() < 100) {
+                        List<Geometry> geometries =
+                                getContext().getDaoFactory().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), getContext().getSession());
                         if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
                             List<Coordinate> coordinates = Lists.newLinkedList();
                             Geometry lastGeoemtry = null;
                             for (Geometry geometry : geometries) {
                                 if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
-                                        coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                                    coordinates.add(getContext().getGeometryHandler()
+                                            .switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
                                     lastGeoemtry = geometry;
                                     if (geometry.getSRID() != srid) {
                                         srid = geometry.getSRID();
-                                     }
+                                    }
                                 }
                                 if (geometry.getSRID() != srid) {
-                                   srid = geometry.getSRID();
+                                    srid = geometry.getSRID();
                                 }
                                 if (!geometry.equalsTopo(lastGeoemtry)) {
-                                    coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                                    coordinates.add(getContext().getGeometryHandler()
+                                            .switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
                                     lastGeoemtry = geometry;
                                 }
                             }
@@ -159,7 +218,8 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
                             if (coordinates.size() == 1) {
                                 geom = new GeometryFactory().createPoint(coordinates.iterator().next());
                             } else {
-                                geom = new GeometryFactory().createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
+                                geom = new GeometryFactory()
+                                        .createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
                             }
                             geom.setSRID(srid);
                             return geom;
@@ -170,46 +230,8 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
         }
         return null;
     }
-    
-    protected GeometryHandler getGeometryHandler() {
-        return GeometryHandler.getInstance();
-    }
-    
-    protected ContentCache getCache() {
-        return getConfigurator().getCache();
-    }
-    
-    protected Configurator getConfigurator() {
-        return Configurator.getInstance();
-    }
 
-    protected int getStorageEPSG() {
-        return storageEPSG;
-    }
-
-    protected int getStorage3DEPSG() {
-        return storage3DEPSG;
-    }
-    
-    private boolean createFeatureGeometryFromSamplingGeometries() {
-        return isCreateFeatureGeometryFromSamplingGeometries() && !isUpdateFeatureGeometry();
-    }
-    
-    @Setting(CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS)
-    public void setCreateFeatureGeometryFromSamplingGeometries(boolean createFeatureGeometryFromSamplingGeometries) {
-        this.createFeatureGeometryFromSamplingGeometries  = createFeatureGeometryFromSamplingGeometries;
-    }
-
-    protected boolean isCreateFeatureGeometryFromSamplingGeometries() {
-        return createFeatureGeometryFromSamplingGeometries;
-    }
-    
-    @Setting(AbstractObservationDAO.UPDATE_FEATURE_GEOMETRY)
-    public void setUpdateFeatureGeometry(boolean updateFeatureGeometry) {
-        this.updateFeatureGeometry = updateFeatureGeometry;
-    }
-
-    private boolean isUpdateFeatureGeometry() {
-        return this.updateFeatureGeometry;
+    protected FeatureVisitorContext getContext() {
+        return context;
     }
 }

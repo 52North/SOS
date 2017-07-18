@@ -1,6 +1,8 @@
 package org.n52.sos.ds.hibernate;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -12,7 +14,11 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -30,25 +36,41 @@ import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
 
-public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
+public class DeleteObservationDAO
+        extends AbstractDeleteObservationHandler {
 
     private HibernateSessionHolder sessionHolder;
+
+    private OwsServiceMetadataRepository serviceMetadataRepository;
+
     private DaoFactory daoFactory;
-    
+
+    private I18NDAORepository i18NDAORepository;
+
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
 
     @Inject
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
+        this.serviceMetadataRepository = repo;
+    }
+
+    @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
+    @Inject
+    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
+        this.i18NDAORepository = i18NDAORepository;
     }
 
     @Override
@@ -88,7 +110,6 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
                 .setVersion(request.getVersion());
     }
 
-
     private void deleteObservationsByIdentifier(DeleteObservationRequest request, DeleteObservationResponse response,
             Session session) throws OwsExceptionReport, ConverterException {
         Set<String> ids = request.getObservationIdentifiers();
@@ -99,10 +120,12 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
             }
             if (DeleteObservationConstants.NS_SOSDO_1_0.equals(request.getResponseFormat())) {
                 Observation<?> observation = observations.iterator().next();
-                OmObservation so = HibernateObservationUtilities
-                        .createSosObservationsFromObservations(Sets.<Observation<?>>newHashSet(observation), getRequest(request),
-                                null, session)
-                        .iterator().next();
+                Set<Observation<?>> oberservations = Collections.singleton(observation);
+                LocalizedProducer<OwsServiceProvider> serviceProvider =
+                        this.serviceMetadataRepository.getServiceProviderFactory(request.getService());
+                Locale locale = getRequestedLocale(request);
+                OmObservation so = HibernateObservationUtilities.createSosObservationsFromObservations(oberservations,
+                        getRequest(request), serviceProvider, i18NDAORepository, null, daoFactory, session).next();
                 response.setObservationId(request.getObservationIdentifiers().iterator().next());
                 response.setDeletedObservation(so);
             }
@@ -118,24 +141,24 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
             Session session) throws OwsExceptionReport {
         Criterion filter = null;
         if (CollectionHelper.isNotEmpty(request.getTemporalFilters())) {
-            filter = TemporalRestrictions.filter(request.getTemporalFilters());
+            filter = SosTemporalRestrictions.filter(request.getTemporalFilters());
         }
         ScrollableResults result = daoFactory.getObservationDAO().getObservations(request.getProcedures(),
-                request.getObservedProperties(), request.getFeatureIdentifiers(), request.getOfferings(),
-                filter, session);
+                request.getObservedProperties(), request.getFeatureIdentifiers(), request.getOfferings(), filter,
+                session);
         while (result.next()) {
             delete((Observation<?>) result.get()[0], session);
         }
     }
-    
+
     private void delete(Observation<?> observation, Session session) {
         if (observation != null) {
             if (observation instanceof ComplexObservation) {
-                for (Observation<?> o : ((ComplexObservation)observation).getValue()) {
+                for (Observation<?> o : ((ComplexObservation) observation).getValue()) {
                     delete(o, session);
                 }
             } else if (observation instanceof ProfileObservation) {
-                for (Observation<?> o : ((ProfileObservation)observation).getValue()) {
+                for (Observation<?> o : ((ProfileObservation) observation).getValue()) {
                     delete(o, session);
                 }
             }
@@ -148,7 +171,7 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
 
     /**
      * Check if {@link Series} should be updated
-     * 
+     *
      * @param observation
      *            Deleted observation
      * @param session
@@ -157,9 +180,12 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
     private void checkSeriesForFirstLatest(Observation<?> observation, Session session) {
         if (observation instanceof SeriesObservation) {
             Series series = ((SeriesObservation) observation).getSeries();
-            if ((series.isSetFirstTimeStamp() && series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart()))
-                    || (series.isSetLastTimeStamp() && series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd()))) {
-                new SeriesDAO(daoFactory).updateSeriesAfterObservationDeletion(series, (SeriesObservation) observation, session);
+            if ((series.isSetFirstTimeStamp()
+                    && series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart()))
+                    || (series.isSetLastTimeStamp()
+                            && series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd()))) {
+                new SeriesDAO(daoFactory).updateSeriesAfterObservationDeletion(series, (SeriesObservation) observation,
+                        session);
             }
         }
     }

@@ -513,31 +513,6 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     /**
      * Insert or update and get offering
      *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param offeringName
-     *            Offering name
-     * @param relatedFeatures
-     *            Related feature objects
-     * @param observationTypes
-     *            Allowed observation type objects
-     * @param featureOfInterestTypes
-     *            Allowed featureOfInterest type objects
-     * @param session
-     *            Hibernate session
-     * @return Offering object
-     */
-    @Deprecated
-    public Offering getAndUpdateOrInsertNewOffering(final String offeringIdentifier, final String offeringName,
-            final List<RelatedFeature> relatedFeatures, final List<ObservationType> observationTypes,
-            final List<FeatureOfInterestType> featureOfInterestTypes, final Session session) {
-        return getAndUpdateOrInsertNewOffering(new SosOffering(offeringIdentifier, offeringName), relatedFeatures,
-                observationTypes, featureOfInterestTypes, session);
-    }
-
-    /**
-     * Insert or update and get offering
-     *
      * @param assignedOffering
      *            SosOffering to insert, update or get
      * @param relatedFeatures
@@ -550,7 +525,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      *            Hibernate session
      * @return Offering object
      */
-    public Offering getAndUpdateOrInsertNewOffering(SosOffering assignedOffering,
+    public Offering getAndUpdateOrInsert(SosOffering assignedOffering,
             List<RelatedFeature> relatedFeatures, List<ObservationType> observationTypes,
             List<FeatureOfInterestType> featureOfInterestTypes, Session session) {
         TOffering offering = getTOfferingForIdentifier(assignedOffering.getIdentifier(), session);

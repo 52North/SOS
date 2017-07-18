@@ -40,7 +40,10 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
@@ -76,17 +79,15 @@ import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.slf4j.Logger;
@@ -112,6 +113,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
     private FeatureQueryHandler featureQueryHandler;
     private DaoFactory daoFactory;
     private boolean convertComplexProfileToSingleProfiles;
+    ResultHandlingHelper helper  = new ResultHandlingHelper();
 
     public InsertResultDAO() {
         super(SosConstants.SOS);
@@ -141,7 +143,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
         Transaction transaction = null;
 
         Map<String,Codespace> codespaceCache = Maps.newHashMap();
-        Map<String,Unit> unitCache = Maps.newHashMap();
+        Map<UoM,Unit> unitCache = Maps.newHashMap();
 
 
         try {
@@ -234,7 +236,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
      * @throws OwsExceptionReport
      *             If an error occurs during requesting
      */
-    protected AbstractFeature getSosAbstractFeature(final FeatureOfInterest featureOfInterest, final String version,
+    protected AbstractFeature getSosAbstractFeature(final AbstractFeatureOfInterest featureOfInterest, final String version,
             final Session session) throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(session)
             .addFeatureIdentifier(featureOfInterest.getIdentifier())
@@ -295,7 +297,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
                 observationType = obsConst.getObservationType().getObservationType();
             }
         }
-        final SosProcedureDescription procedure = createProcedure(resultTemplate.getProcedure());
+        final SosProcedureDescription<?> procedure = createProcedure(resultTemplate.getProcedure());
         final AbstractPhenomenon observablePropety =
                 new OmObservableProperty(resultTemplate.getObservableProperty().getIdentifier());
         final AbstractFeature feature =
@@ -310,7 +312,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
      *            Procedure entity
      * @return Internal ProcedureDescription
      */
-    private SosProcedureDescription createProcedure(final Procedure hProcedure) {
+    private SosProcedureDescription<?> createProcedure(final Procedure hProcedure) {
         final SensorML procedure = new SensorML();
         procedure.setIdentifier(hProcedure.getIdentifier());
         SosProcedureDescription<AbstractFeature> sosProcedureDescription = new SosProcedureDescription<AbstractFeature>(procedure);
@@ -338,8 +340,8 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
     private OmObservation getObservation(final ResultTemplate resultTemplate, final String[] blockValues,
             final SweAbstractDataComponent resultStructure, final SweAbstractEncoding encoding, final Session session)
             throws OwsExceptionReport {
-        final int resultTimeIndex = ResultHandlingHelper.hasResultTime(resultStructure);
-        final int phenomenonTimeIndex = ResultHandlingHelper.hasPhenomenonTime(resultStructure);
+        final int resultTimeIndex = helper.hasResultTime(resultStructure);
+        final int phenomenonTimeIndex = helper.hasPhenomenonTime(resultStructure);
 
         final SweDataRecord record = setRecordFrom(resultStructure);
 
@@ -493,7 +495,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
     private String[] separateValues(final String values, final String separator) {
         return values.split(separator);
     }
-    
+
     @Setting(CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES)
     public void setConvertComplexProfileToSingleProfiles(boolean convertComplexProfileToSingleProfiles) {
         this.convertComplexProfileToSingleProfiles = convertComplexProfileToSingleProfiles;

@@ -31,9 +31,9 @@ package org.n52.sos.service.it.functional;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 
 import net.opengis.om.x10.ObservationCollectionDocument;
 import net.opengis.sos.x20.GetObservationResponseDocument;

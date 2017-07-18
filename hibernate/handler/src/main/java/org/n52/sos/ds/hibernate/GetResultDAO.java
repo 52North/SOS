@@ -28,9 +28,9 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 import static org.n52.shetland.util.CollectionHelper.isEmpty;
 import static org.n52.shetland.util.CollectionHelper.isNotEmpty;
-import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.util.Collection;
 import java.util.List;
@@ -60,13 +60,12 @@ import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -77,6 +76,7 @@ import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.ConformanceClasses;
 import org.slf4j.Logger;
@@ -97,6 +97,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
     private DaoFactory daoFactory;
+    private ProfileHandler profileHandler;
 
     public GetResultDAO() {
         super(SosConstants.SOS);
@@ -117,6 +118,11 @@ public class GetResultDAO extends AbstractGetResultHandler {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
+    }
+
     @Override
     public GetResultResponse getResult(final GetResultRequest request) throws OwsExceptionReport {
         Session session = null;
@@ -133,14 +139,9 @@ public class GetResultDAO extends AbstractGetResultHandler {
                 final SosResultStructure sosResultStructure =
                         new SosResultStructure(resultTemplates.get(0).getResultStructure());
                 final List<Observation<?>> observations;
-                if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
                     observations = querySeriesObservation(request, featureIdentifier, session);
-                } else {
-                    observations = queryObservation(request, featureIdentifier, session);
-                }
-
-                response.setResultValues(ResultHandlingHelper.createResultValuesFromObservations(observations,
-                        sosResultEncoding, sosResultStructure));
+                response.setResultValues(new ResultHandlingHelper().createResultValuesFromObservations(observations,
+                        sosResultEncoding, sosResultStructure, profileHandler.getActiveProfile().getResponseNoDataPlaceholder()));
             }
             return response;
         } catch (final HibernateException he) {
@@ -165,53 +166,6 @@ public class GetResultDAO extends AbstractGetResultHandler {
             }
         }
         return super.getConformanceClasses(service, version);
-    }
-
-    /**
-     * Query observations from database depending on requested filters
-     *
-     * @param request
-     *            GetObservation request
-     * @param featureIdentifiers
-     *            Set of feature identifiers. If <tt>null</tt>, query filter
-     *            will not be added. If <tt>empty</tt>, <tt>null</tt> will be
-     *            returned.
-     * @param session
-     *            Hibernate session
-     * @return List of Observation objects
-     *
-     *
-     * @throws OwsExceptionReport
-     *             If an error occurs.
-     */
-    @SuppressWarnings("unchecked")
-    protected List<Observation<?>> queryObservation(final GetResultRequest request,
-            final Set<String> featureIdentifiers, final Session session) throws OwsExceptionReport {
-        final Criteria c = createCriteriaFor(AbstractLegacyObservation.class, session);
-        addSpatialFilteringProfileRestrictions(c, request, session);
-
-        if (isEmpty(featureIdentifiers)) {
-            return null; // because no features where found regarding the
-                         // filters
-        } else if (isNotEmpty(featureIdentifiers)) {
-            c.createCriteria(AbstractLegacyObservation.FEATURE_OF_INTEREST).add(
-                    Restrictions.in(FeatureOfInterest.IDENTIFIER, featureIdentifiers));
-        }
-        if (request.isSetObservedProperty()) {
-            c.createCriteria(AbstractLegacyObservation.OBSERVABLE_PROPERTY).add(
-                    Restrictions.eq(ObservableProperty.IDENTIFIER, request.getObservedProperty()));
-        }
-        if (request.isSetOffering()) {
-            addOfferingRestriction(c, request.getOffering());
-        }
-        if (request.getTemporalFilter() != null && !request.getTemporalFilter().isEmpty()) {
-            addTemporalFilter(c, request.getTemporalFilter());
-        }
-        c.addOrder(Order.asc(AbstractLegacyObservation.PHENOMENON_TIME_START));
-
-        LOGGER.debug("QUERY queryObservation(request, featureIdentifiers): {}", HibernateHelper.getSqlString(c));
-        return c.list();
-
     }
 
     /**
@@ -318,8 +272,8 @@ public class GetResultDAO extends AbstractGetResultHandler {
     @SuppressWarnings("rawtypes")
     private Criteria createCriteriaFor(Class clazz, Session session) {
         return session.createCriteria(clazz).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq(AbstractLegacyObservation.DELETED, false))
-                .addOrder(Order.asc(AbstractLegacyObservation.PHENOMENON_TIME_START));
+                .add(Restrictions.eq(AbstractObservation.DELETED, false))
+                .addOrder(Order.asc(AbstractObservation.PHENOMENON_TIME_START));
     }
 
     /**

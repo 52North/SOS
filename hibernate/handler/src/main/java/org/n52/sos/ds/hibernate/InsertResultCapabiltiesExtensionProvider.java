@@ -57,23 +57,20 @@ public class InsertResultCapabiltiesExtensionProvider
     @Inject
     private ContentCacheController contentCacheController;
 
+    @Inject
+    private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+
     @Override
     public OwsCapabilitiesExtension getExtension() {
         SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
         SosContentCache cache = getCache();
         insertionCapabilities.addFeatureOfInterestTypes(cache.getFeatureOfInterestTypes());
         insertionCapabilities.addObservationTypes(cache.getObservationTypes());
-        insertionCapabilities.addProcedureDescriptionFormats(ProcedureDescriptionFormatRepository.getInstance()
+        insertionCapabilities.addProcedureDescriptionFormats(procedureDescriptionFormatRepository
                         .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         // TODO dynamic
         insertionCapabilities.addSupportedEncoding(SweConstants.ENCODING_TEXT);
         return insertionCapabilities;
-    }
-
-    @Override
-    @Deprecated
-    public OwsCapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return KEY;
     }
 
     @Override

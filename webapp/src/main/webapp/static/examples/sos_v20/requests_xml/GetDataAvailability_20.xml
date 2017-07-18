@@ -25,7 +25,7 @@
 			</gml:TimePeriod>
 		</fes:During>
 	</swes:extension> -->
-	<!-- 
+	<!--
 	<swes:extension xsi:type="swe:BooleanPropertyType">
 		<swe:Boolean>
 			<swe:identifier>returnHumanReadableIdentifier</swe:identifier>

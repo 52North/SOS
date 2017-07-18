@@ -57,8 +57,11 @@ import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.om.features.samplingFeatures.InvalidSridException;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
@@ -105,7 +108,22 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             response.setService(request.getService());
             response.setVersion(request.getVersion());
 
+            if (isSos100(request)) {
+                // sos 1.0.0 either or
+                if (isMixedFeatureIdentifierAndSpatialFilters(request)) {
+                    throw new NoApplicableCodeException()
+                            .withMessage("Only one out of featureofinterestid or location possible.");
+                } else if (isFeatureIdentifierRequest(request) || isSpatialFilterRequest(request)) {
+                    response.setAbstractFeature(getFeatures(request, session));
+                } else {
+                    throw new CompositeOwsException(new MissingParameterValueException(
+                            Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID),
+                            new MissingParameterValueException(Sos1Constants.GetFeatureOfInterestParams.location));
+                }
+            } else // SOS 2.0
+            {
             response.setAbstractFeature(getFeatures(request, session));
+            }
             return response;
         } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he)
@@ -244,6 +262,51 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
        array[0] = x;
        array[1] = y;
        return array;
+    }
+
+    /**
+     * Check if the request contains spatial filters
+     *
+     * @param request
+     *            GetFeatureOfInterest request to check
+     * @return <code>true</code>, if the request contains spatial filters
+     */
+    private boolean isSpatialFilterRequest(final GetFeatureOfInterestRequest request) {
+        return request.getSpatialFilters() != null && !request.getSpatialFilters().isEmpty();
+    }
+
+    /**
+     * Check if the request contains feature identifiers
+     *
+     * @param request
+     *            GetFeatureOfInterest request to check
+     * @return <code>true</code>, if the request contains feature identifiers
+     */
+    private boolean isFeatureIdentifierRequest(final GetFeatureOfInterestRequest request) {
+        return request.getFeatureIdentifiers() != null && !request.getFeatureIdentifiers().isEmpty();
+    }
+
+    /**
+     * Check if the request contains spatial filters and feature identifiers
+     *
+     * @param request
+     *            GetFeatureOfInterest request to check
+     * @return <code>true</code>, if the request contains spatial filters and
+     *         feature identifiers
+     */
+    private boolean isMixedFeatureIdentifierAndSpatialFilters(final GetFeatureOfInterestRequest request) {
+        return isFeatureIdentifierRequest(request) && isSpatialFilterRequest(request);
+    }
+
+    /**
+     * Check if the requested version is SOS 1.0.0
+     *
+     * @param request
+     *            GetFeatureOfInterest request to check
+     * @return <code>true</code>, if the requested version is SOS 1.0.0
+     */
+    private boolean isSos100(final GetFeatureOfInterestRequest request) {
+        return request.getVersion().equals(Sos1Constants.SERVICEVERSION);
     }
 
     protected GeometryHandler getGeometryHandler() {

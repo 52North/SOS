@@ -40,19 +40,20 @@ import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.sos.ds.AbstractGetResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservablePropertyCombination;
 
 /**
  * Implementation of the abstract class AbstractGetResultTemplateHandler
+ *
  * @since 4.0.0
  *
  */
-public class GetResultTemplateDAO extends AbstractGetResultTemplateHandler {
+public class GetResultTemplateDAO
+        extends AbstractGetResultTemplateHandler {
     private HibernateSessionHolder sessionHolder;
-    private DaoFactory daoFactory;
 
+    private DaoFactory daoFactory;
 
     public GetResultTemplateDAO() {
         super(SosConstants.SOS);
@@ -73,24 +74,21 @@ public class GetResultTemplateDAO extends AbstractGetResultTemplateHandler {
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            ResultTemplate resultTemplate =
-                    new ResultTemplateDAO().getResultTemplateObject(request.getOffering(),
-                            request.getObservedProperty(), session);
+            ResultTemplate resultTemplate = daoFactory.getResultTemplateDAO()
+                    .getResultTemplateObject(request.getOffering(), request.getObservedProperty(), session);
             if (resultTemplate != null) {
                 GetResultTemplateResponse response = new GetResultTemplateResponse();
                 response.setService(request.getService());
                 response.setVersion(request.getVersion());
-                response.setResultEncoding(createSosResultEncoding(resultTemplate
-                        .getResultEncoding()));
-                response.setResultStructure(createSosResultStructure(resultTemplate
-                        .getResultStructure()));
+                response.setResultEncoding(createSosResultEncoding(resultTemplate.getResultEncoding()));
+                response.setResultStructure(createSosResultStructure(resultTemplate.getResultStructure()));
                 return response;
             }
             throw new NoSweCommonEncodingForOfferingObservablePropertyCombination(request.getOffering(),
                     request.getObservedProperty());
         } catch (HibernateException he) {
-            throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "Error while querying data result template data!");
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while querying data result template data!");
         } finally {
             sessionHolder.returnSession(session);
         }

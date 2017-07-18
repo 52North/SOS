@@ -40,7 +40,7 @@ import org.n52.sos.ds.datasource.SpatialIndexDialect;
 public class PostgisDialectSpatialIndex extends PostgisDialect implements SpatialIndexDialect {
 
     private static final long serialVersionUID = 1L;
-    
+
     public PostgisDialectSpatialIndex() {
         super();
     }

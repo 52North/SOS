@@ -93,7 +93,7 @@
                         </swe:field>
                     </swe:SimpleDataRecord>
                 </sml:capabilities>
-		
+
 							<sml:position name="sensorPosition">
 								<swe:Position referenceFrame="urn:ogc:def:crs:EPSG::4326">
 									<swe:location>

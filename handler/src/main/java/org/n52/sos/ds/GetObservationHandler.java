@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.hibernate.Session;
+import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.io.geojson.old.GeojsonPoint;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
@@ -46,10 +47,12 @@ import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.sos.ds.dao.GetObservationDao;
+import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +81,13 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
 
     @Override
     public GetObservationResponse getObservation(GetObservationRequest request) throws OwsExceptionReport {
+        if (request.getVersion().equals(Sos1Constants.SERVICEVERSION) &&
+                request.getObservedProperties().isEmpty()) {
+           throw new MissingObservedPropertyParameterException();
+       }
+       if (request.isSetResultFilter()) {
+           throw new NotYetSupportedException("result filtering");
+       }
         Session session = sessionStore.getSession();
         try {
             GetObservationResponse response = new GetObservationResponse();

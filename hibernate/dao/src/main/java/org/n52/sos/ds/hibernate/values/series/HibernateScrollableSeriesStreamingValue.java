@@ -58,12 +58,12 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      * @param daoFactory         the DAO factory
      * @param request            {@link GetObservationRequest}
      * @param series             Datasource series id
-     * @param duplicated 
+     *
      * @throws OwsExceptionReport
      */
     public HibernateScrollableSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
-                                                   GetObservationRequest request, long series, boolean duplicated) throws OwsExceptionReport {
-        super(connectionProvider, daoFactory, request, series, duplicated);
+                                                   GetObservationRequest request, long series) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, series);
     }
 
     @Override
@@ -86,22 +86,14 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     @Override
     public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
         checkMaxNumberOfReturnedValues(1);
-        AbstractValuedLegacyObservation<?> resultObject = (AbstractValuedLegacyObservation<?>) scrollableResult.get()[0];
-        if (checkValue(resultObject)) {
-            return resultObject;
-        }
-        session.evict(resultObject);
-        return null;
+        return (AbstractValuedLegacyObservation<?>) scrollableResult.get()[0];
     }
 
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
-            TimeValuePair value = null;
-            if (checkValue(resultObject)) {
-                value = resultObject.createTimeValuePairFrom();
-            }
+            TimeValuePair value = resultObject.createTimeValuePairFrom();
             session.evict(resultObject);
             return value;
         } catch (final HibernateException he) {
@@ -112,15 +104,16 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     }
 
     @Override
-    public OmObservation next(boolean withIdentifierNameDesription) throws OwsExceptionReport {
+    public OmObservation next() throws OwsExceptionReport {
         try {
             OmObservation observation = getObservationTemplate().cloneTemplate();
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
-            if (checkValue(resultObject)) {
-                observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
-                resultObject.addValuesToObservation(observation, getResponseFormat());
-                checkForModifications(observation);
-            }
+            resultObject.addValuesToObservation(observation, getResponseFormat());
+//            addValuesToObservation(observation, resultObject);
+//            if (resultObject.hasSamplingGeometry()) {
+//                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
+//            }
+            checkForModifications(observation);
             session.evict(resultObject);
             return observation;
         } catch (final HibernateException he) {
@@ -165,6 +158,6 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      */
     private void setScrollableResult(ScrollableResults scrollableResult) {
         this.scrollableResult = scrollableResult;
-    }
+}
 
 }

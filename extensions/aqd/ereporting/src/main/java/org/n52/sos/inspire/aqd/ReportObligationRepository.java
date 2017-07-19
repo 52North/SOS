@@ -37,13 +37,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.inject.Inject;
 
+import org.n52.shetland.aqd.EReportObligationRepository;
 import org.n52.shetland.aqd.EReportingHeader;
 import org.n52.shetland.aqd.ReportObligation;
 import org.n52.shetland.aqd.ReportObligationType;
-import org.n52.shetland.inspire.RelatedParty;
+import org.n52.shetland.inspire.base2.RelatedParty;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.aqd.EReportObligationRepository;
 import org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager;
 
 public class ReportObligationRepository implements EReportObligationRepository {
@@ -59,6 +59,7 @@ public class ReportObligationRepository implements EReportObligationRepository {
         this.obligations = new EnumMap<>(ReportObligationType.class);
     }
 
+    @Override
     public RelatedParty getReportingAuthority() {
         Lock read = this.reportingAuthorityLock.readLock();
         Lock write = this.reportingAuthorityLock.writeLock();
@@ -82,6 +83,7 @@ public class ReportObligationRepository implements EReportObligationRepository {
         }
     }
 
+    @Override
     public ReportObligation getReportObligation(ReportObligationType type) {
         Lock read = this.obligationsLock.readLock();
         Lock write = this.obligationsLock.writeLock();

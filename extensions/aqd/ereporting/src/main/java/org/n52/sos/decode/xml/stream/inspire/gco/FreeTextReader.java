@@ -32,6 +32,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.n52.shetland.iso.GcoConstants;
+import org.n52.shetland.iso.gmd.LocalisedCharacterString;
+import org.n52.shetland.iso.gmd.PT_FreeText;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.decode.xml.stream.XmlReader;
 
@@ -40,7 +42,7 @@ import org.n52.sos.decode.xml.stream.XmlReader;
  *
  * @author Christian Autermann
  */
-public class FreeTextReader extends XmlReader<String> {
+public class FreeTextReader extends XmlReader<PT_FreeText> {
 
     private String string;
 
@@ -55,9 +57,9 @@ public class FreeTextReader extends XmlReader<String> {
     }
 
     @Override
-    protected String finish()
+    protected PT_FreeText finish()
             throws OwsExceptionReport {
-        return string;
+        return new PT_FreeText().addTextGroup(new LocalisedCharacterString(string));
     }
 
 }

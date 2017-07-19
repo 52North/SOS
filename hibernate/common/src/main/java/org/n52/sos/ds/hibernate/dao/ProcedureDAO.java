@@ -876,9 +876,13 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      */
     public Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,
             SosProcedureDescription<?> procedureDescription, boolean isType, Session session) {
+
+        List<String> parents = procedureDescription.isSetParentProcedure()
+                               ? Collections.singletonList(procedureDescription.getParentProcedure().getHref())
+                               : Collections.emptyList();
         return getOrInsertProcedure(identifier, procedureDescriptionFormat,
-                procedureDescription.getParentProcedures(), procedureDescription.getTypeOf(), isType,
-                procedureDescription.isAggregation(), session);
+                                    parents, procedureDescription.getTypeOf(), isType,
+                                    procedureDescription.isAggregation(), session);
     }
 
     private Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,

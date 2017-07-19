@@ -28,13 +28,14 @@
  */
 package org.n52.sos.decode.xml.stream.inspire.gco;
 
+import org.n52.shetland.iso.gmd.PT_FreeText;
 import org.n52.sos.decode.xml.stream.NillableReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
 
-public class NillableFreeTextReader extends NillableReader<String> {
+public class NillableFreeTextReader extends NillableReader<PT_FreeText> {
 
     @Override
-    public XmlReader<String> getDelegate() {
+    public XmlReader<PT_FreeText> getDelegate() {
         return new FreeTextReader();
     }
 

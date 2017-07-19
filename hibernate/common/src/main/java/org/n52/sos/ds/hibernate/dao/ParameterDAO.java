@@ -54,6 +54,7 @@ import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.TimeRangeValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.XmlValue;
 import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -187,6 +188,11 @@ public class ParameterDAO {
             session.saveOrUpdate(parameter);
             session.flush();
             return null;
+        }
+
+        @Override
+        public ValuedParameter<?> visit(XmlValue<?> value) throws OwsExceptionReport {
+            throw notSupported(value);
         }
 
         @Override

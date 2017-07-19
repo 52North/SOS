@@ -32,7 +32,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.n52.shetland.aqd.AqdConstants;
-import org.n52.shetland.inspire.Contact;
+import org.n52.shetland.inspire.base2.Contact;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.decode.xml.stream.NillableStringReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
@@ -52,21 +52,17 @@ public class ContactReader extends XmlReader<Contact> {
     protected void read(QName name)
             throws XMLStreamException, OwsExceptionReport {
         if (name.equals(AqdConstants.QN_BASE2_ADDRESS)) {
-            this.contact.setAddressRepresentation(delegate(new AddressReader()));
+            this.contact.setAddress(delegate(new AddressReader()));
         } else if (name.equals(AqdConstants.QN_BASE2_CONTACT_INSTRUCTIONS)) {
-            this.contact
-                    .setContactInstructions(delegate(new NillableFreeTextReader()));
+            this.contact.setContactInstructions(delegate(new NillableFreeTextReader()));
         } else if (name.equals(AqdConstants.QN_BASE2_ELECTRONIC_MAIL_ADDRESS)) {
-            this.contact
-                    .setElectronicMailAddressRepresentation(delegate(new NillableStringReader()));
+            this.contact.setElectronicMailAddress(delegate(new NillableStringReader()));
         } else if (name.equals(AqdConstants.QN_BASE2_HOURS_OF_SERVICE)) {
-            this.contact
-                    .setHoursOfService(delegate(new NillableFreeTextReader()));
+            this.contact.setHoursOfService(delegate(new NillableFreeTextReader()));
         } else if (name.equals(AqdConstants.QN_BASE2_WEBSITE)) {
             this.contact.setWebsite(delegate(new NillableStringReader()));
         } else if (name.equals(AqdConstants.QN_BASE2_TELEPHONE_FACSIMILE)) {
-            this.contact
-                    .addTelephoneFacsimile(delegate(new NillableStringReader()));
+            this.contact.addTelephoneFacsimile(delegate(new NillableStringReader()));
         } else if (name.equals(AqdConstants.QN_BASE2_TELEPHONE_VOICE)) {
             this.contact.addTelephoneVoice(delegate(new NillableStringReader()));
         } else {

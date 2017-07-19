@@ -31,7 +31,7 @@ package org.n52.sos.decode.xml.stream.inspire.aqd;
 import javax.xml.namespace.QName;
 
 import org.n52.shetland.aqd.AqdConstants;
-import org.n52.shetland.inspire.RelatedParty;
+import org.n52.shetland.inspire.base2.RelatedParty;
 import org.n52.sos.decode.xml.stream.SubtagReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
 import org.n52.sos.decode.xml.stream.inspire.base2.RelatedPartyReader;

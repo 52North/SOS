@@ -85,6 +85,7 @@ import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.TimeRangeValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.XmlValue;
 import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -1526,6 +1527,16 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             throw notSupported(value);
         }
 
+        @Override
+        public Observation<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(XmlValue<?> value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
         private Set<Observation<?>> persistChildren(SweAbstractDataRecord dataRecord)
                 throws HibernateException, OwsExceptionReport {
             Set<Observation<?>> children = new HashSet<>(dataRecord.getFields().size());
@@ -1625,11 +1636,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 daos.parameter().insertParameter(sosObservation.getParameter(), observation.getObservationId(), caches.units, session);
             }
             return observation;
-        }
-
-        @Override
-        public Observation<?> visit(TimeRangeValue value) throws OwsExceptionReport {
-            throw notSupported(value);
         }
 
         private  static Geometry getSamplingGeometry(GeometryHandler geometryHandler, OmObservation sosObservation) throws OwsExceptionReport {

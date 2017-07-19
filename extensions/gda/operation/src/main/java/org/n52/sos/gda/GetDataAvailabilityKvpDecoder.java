@@ -54,6 +54,6 @@ public class GetDataAvailabilityKvpDecoder extends AbstractSosKvpDecoder<GetData
         builder.add(GetDataAvailabilityConstants.GetDataAvailabilityParams.featureOfInterest,
                     decodeList(GetDataAvailabilityRequest::setFeatureOfInterest));
         builder.add(GetDataAvailabilityConstants.GetDataAvailabilityParams.offering,
-                    decodeList(GetDataAvailabilityRequest::setOffering));
+                    decodeList(GetDataAvailabilityRequest::setOfferings));
     }
 }

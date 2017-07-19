@@ -28,10 +28,10 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.inspire.Contact;
+import org.n52.shetland.inspire.base2.Contact;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.util.AQDJSONConstants;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -51,9 +51,9 @@ public class ContactJSONEncoder extends JSONEncoder<Contact> {
     public JsonNode encodeJSON(Contact t)
             throws EncodingException {
         ObjectNode j = nodeFactory().objectNode();
-        j.set(AQDJSONConstants.ADDRESS, encodeObjectToJson(t.getAddressRepresentation()));
+        j.set(AQDJSONConstants.ADDRESS, encodeObjectToJson(t.getAddress()));
         j.set(AQDJSONConstants.CONTACT_INSTRUCTIONS, encodeObjectToJson(t.getContactInstructions()));
-        j.set(AQDJSONConstants.ELECTRONIC_MAIL_ADDRESS, encodeObjectToJson(t.getElectronicMailAddressRepresentation()));
+        j.set(AQDJSONConstants.ELECTRONIC_MAIL_ADDRESS, encodeObjectToJson(t.getElectronicMailAddress()));
         j.set(AQDJSONConstants.HOURS_OF_SERVICE, encodeObjectToJson(t.getHoursOfService()));
         j.set(AQDJSONConstants.TELEPHONE_FACSIMILE, encodeObjectToJson(t.getTelephoneFacsimile()));
         j.set(AQDJSONConstants.TELEPHONE_VOICE, encodeObjectToJson(t.getTelephoneVoice()));

@@ -28,10 +28,10 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.inspire.InspireID;
+import org.n52.shetland.inspire.base.Identifier;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.util.AQDJSONConstants;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -41,14 +41,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  *
  * @author Christian Autermann
  */
-public class InspireIdJSONEncoder extends JSONEncoder<InspireID> {
+public class InspireIdJSONEncoder extends JSONEncoder<Identifier> {
 
     public InspireIdJSONEncoder() {
-        super(InspireID.class);
+        super(Identifier.class);
     }
 
     @Override
-    public JsonNode encodeJSON(InspireID t)
+    public JsonNode encodeJSON(Identifier t)
             throws EncodingException {
         ObjectNode j = nodeFactory().objectNode();
         j.put(AQDJSONConstants.LOCAL_ID, t.getLocalId());

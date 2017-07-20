@@ -110,12 +110,13 @@ public class ProfileObservation extends AbstractInspireObservation {
             double heightDepth = 0;
             if (isSetHeightDepthParameter()) {
                 heightDepth = getHeightDepthParameter().getValue().getValue();
+                removeParameter(getHeightDepthParameter());
             }
             RectifiedGridCoverage rectifiedGridCoverage = new RectifiedGridCoverage(getObservationID());
             rectifiedGridCoverage.setUnit(value.getValue().getUnit());
             rectifiedGridCoverage.addValue(heightDepth, value.getValue());
             super.setValue(new SingleObservationValue<>(value.getPhenomenonTime(), rectifiedGridCoverage));
-            removeParameter(getHeightDepthParameter());
+            
         }
     }
     

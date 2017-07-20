@@ -31,7 +31,9 @@ package org.n52.sos.decode.json.impl;
 
 import org.n52.shetland.inspire.base2.Contact;
 import org.n52.shetland.inspire.base2.RelatedParty;
-import org.n52.sos.coding.json.AQDJSONConstants;
+import org.n52.shetland.iso.gmd.LocalisedCharacterString;
+import org.n52.shetland.iso.gmd.PT_FreeText;
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -48,16 +50,17 @@ public class RelatedPartyJSONDecoder extends AbstractJSONDecoder<RelatedParty> {
         RelatedParty relatedParty = new RelatedParty();
         relatedParty.setContact(decodeJsonToNillable(node
                 .path(AQDJSONConstants.CONTACT), Contact.class));
-        relatedParty.setIndividualName(parseNillablePTFreeText(node
-                .path(AQDJSONConstants.INDIVIDUAL_NAME)));
-        relatedParty.setOrganisationName(parseNillablePTFreeText(node
-                .path(AQDJSONConstants.ORGANISATION_NAME)));
-        relatedParty.setPositionName(parseNillablePTFreeText(node
-                .path(AQDJSONConstants.POSITION_NAME)));
+        relatedParty.setIndividualName(parseNillableString(node.path(AQDJSONConstants.INDIVIDUAL_NAME)).transform(this::parseFreeText));
+        relatedParty.setOrganisationName(parseNillableString(node.path(AQDJSONConstants.ORGANISATION_NAME)).transform(this::parseFreeText));
+        relatedParty.setPositionName(parseNillableString(node.path(AQDJSONConstants.POSITION_NAME)).transform(this::parseFreeText));
         for (JsonNode n : node.path(AQDJSONConstants.ROLES)) {
             relatedParty.addRole(parseNillableReference(n));
         }
         return relatedParty;
+    }
+
+    private PT_FreeText parseFreeText(String s) {
+        return new PT_FreeText().addTextGroup(new LocalisedCharacterString(s));
     }
 
 }

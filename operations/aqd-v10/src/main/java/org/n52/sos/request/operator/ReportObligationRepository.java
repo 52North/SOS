@@ -59,6 +59,7 @@ public class ReportObligationRepository implements EReportObligationRepository {
         this.obligations = new EnumMap<>(ReportObligationType.class);
     }
 
+    @Override
     public RelatedParty getReportingAuthority() {
         Lock read = this.reportingAuthorityLock.readLock();
         Lock write = this.reportingAuthorityLock.writeLock();
@@ -82,6 +83,7 @@ public class ReportObligationRepository implements EReportObligationRepository {
         }
     }
 
+    @Override
     public ReportObligation getReportObligation(ReportObligationType type) {
         Lock read = this.obligationsLock.readLock();
         Lock write = this.obligationsLock.writeLock();

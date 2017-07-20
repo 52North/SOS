@@ -29,8 +29,8 @@
 package org.n52.sos.encode.json.impl;
 
 import org.n52.shetland.inspire.base.Identifier;
-import org.n52.sos.coding.json.AQDJSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -41,9 +41,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  *
  * @author Christian Autermann
  */
-public class IdentifierJSONEncoder extends JSONEncoder<Identifier> {
+public class InspireIdJSONEncoder extends JSONEncoder<Identifier> {
 
-    public IdentifierJSONEncoder() {
+    public InspireIdJSONEncoder() {
         super(Identifier.class);
     }
 

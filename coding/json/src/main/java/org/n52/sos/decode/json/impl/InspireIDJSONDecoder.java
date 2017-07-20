@@ -30,26 +30,22 @@ package org.n52.sos.decode.json.impl;
 
 import org.n52.faroe.Validation;
 import org.n52.shetland.inspire.base.Identifier;
-import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.sos.coding.json.AQDJSONConstants;
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class InspireIDJSONDecoder
-        extends AbstractJSONDecoder<Identifier> {
+public class InspireIDJSONDecode extends AbstractJSONDecoder<Identifier> {
 
-    public InspireIDJSONDecoder() {
+    public InspireIDJSONDecode() {
         super(Identifier.class);
     }
 
     @Override
     public Identifier decodeJSON(JsonNode node, boolean validate) throws DecodingException {
-        CodeWithAuthority cwa = new CodeWithAuthority(getLocalId(node));
-        cwa.setCodeSpace(getNamespace(node));
-        Identifier Identifier = new Identifier(cwa);
-        Identifier.setVersionId(parseNillableString(node.path(AQDJSONConstants.VERSION_ID)));
-        return Identifier;
+        Identifier inspireID = new Identifier(getLocalId(node), getNamespace(node));
+        inspireID.setVersionId(parseNillableString(node.path(AQDJSONConstants.VERSION_ID)));
+        return inspireID;
     }
 
     private String getNamespace(JsonNode node) throws DecodingException {

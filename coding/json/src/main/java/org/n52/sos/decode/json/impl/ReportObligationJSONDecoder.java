@@ -31,7 +31,7 @@ package org.n52.sos.decode.json.impl;
 import org.n52.shetland.aqd.EReportingChange;
 import org.n52.shetland.aqd.ReportObligation;
 import org.n52.shetland.inspire.base.Identifier;
-import org.n52.sos.coding.json.AQDJSONConstants;
+import org.n52.sos.util.AQDJSONConstants;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;

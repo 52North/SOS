@@ -29,6 +29,8 @@
 package org.n52.sos.cache.ctrl.action;
 
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.iso.gmd.LocalisedCharacterString;
+import org.n52.shetland.iso.gmd.PT_FreeText;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.CacheFeederHandler;
 

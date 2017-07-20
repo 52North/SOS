@@ -35,6 +35,7 @@ import org.n52.shetland.inspire.base2.RelatedParty;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.sos.coding.json.AQDJSONConstants;
 import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

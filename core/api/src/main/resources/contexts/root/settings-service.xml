@@ -96,4 +96,12 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
+    <bean class="org.n52.faroe.settings.FileSettingDefinition">
+        <property name="key" value="service.cacheFileFolder" />
+        <property name="title" value="Cache file folder" />
+        <property name="description" value="The path to a folder where the cache file should be stored. Default is the webapp folder. &lt;span class='text-warning'&gt;If you define a path, then grant the necessary rights (&lt;strong&gt;write and read permission&lt;/strong&gt;) to the &lt;strong&gt;application server user&lt;/strong&gt;!" />
+        <property name="order" value="19.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="optional" value="true" />
+    </bean>
 </beans>

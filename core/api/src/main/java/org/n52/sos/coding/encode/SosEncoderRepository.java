@@ -48,7 +48,7 @@ public class SosEncoderRepository extends EncoderRepository {
     private final Set<Producer<ObservationEncoder<?, ?>>> observationEncoders
             = Sets.newHashSet();
 
-    private float order = Float.MAX_VALUE;
+    private final float order = Float.MAX_VALUE;
 
     @Override
     public void init() {

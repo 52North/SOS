@@ -26,50 +26,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.coding.encode;
+package org.n52.sos.ds.hibernate.util;
 
-import java.util.Set;
+import java.util.List;
 
-import org.n52.janmayen.Producer;
-import org.n52.janmayen.Producers;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderRepository;
-import org.n52.svalbard.encode.ObservationEncoder;
-
-import com.google.common.collect.Sets;
+import org.hibernate.transform.ResultTransformer;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class SosEncoderRepository extends EncoderRepository {
-    //TODO move to SOS
-    private final Set<Producer<ObservationEncoder<?, ?>>> observationEncoders
-            = Sets.newHashSet();
-
-    private final float order = Float.MAX_VALUE;
+@FunctionalInterface
+@SuppressWarnings("serial")
+public interface DefaultResultTransfomer<T> extends ResultTransformer {
 
     @Override
-    public void init() {
-        super.init();
-        this.observationEncoders.clear();
-        getComponentProviders().forEach(producer -> {
-            Encoder<?, ?> encoder = producer.get();
-            if (encoder instanceof ObservationEncoder) {
-                this.observationEncoders.add(asObservationEncoderProducer(producer));
-            }
-        });
+    @SuppressWarnings("rawtypes")
+    default List transformList(List collection) {
+        return collection;
     }
 
-    public Set<ObservationEncoder<?, ?>> getObservationEncoders() {
-        return Producers.produce(this.observationEncoders);
+    @Override
+    default T transformTuple(Object[] tuple, String[] aliases) {
+        return transform(tuple);
     }
 
-    @SuppressWarnings("unchecked")
-    private static Producer<ObservationEncoder<?, ?>> asObservationEncoderProducer(
-            Producer<? extends Encoder<?, ?>> producer) {
-        return (Producer<ObservationEncoder<?, ?>>) producer;
-    }
+    T transform(Object[] tuple);
 
 }

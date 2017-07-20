@@ -26,50 +26,27 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.coding.encode;
+package org.n52.sos.ds.hibernate.util;
 
-import java.util.Set;
+import static java.util.stream.Collectors.joining;
 
-import org.n52.janmayen.Producer;
-import org.n52.janmayen.Producers;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderRepository;
-import org.n52.svalbard.encode.ObservationEncoder;
-
-import com.google.common.collect.Sets;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class SosEncoderRepository extends EncoderRepository {
-    //TODO move to SOS
-    private final Set<Producer<ObservationEncoder<?, ?>>> observationEncoders
-            = Sets.newHashSet();
-
-    private final float order = Float.MAX_VALUE;
-
-    @Override
-    public void init() {
-        super.init();
-        this.observationEncoders.clear();
-        getComponentProviders().forEach(producer -> {
-            Encoder<?, ?> encoder = producer.get();
-            if (encoder instanceof ObservationEncoder) {
-                this.observationEncoders.add(asObservationEncoderProducer(producer));
-            }
-        });
+public final class PropertyPath {
+    private PropertyPath() {
     }
 
-    public Set<ObservationEncoder<?, ?>> getObservationEncoders() {
-        return Producers.produce(this.observationEncoders);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Producer<ObservationEncoder<?, ?>> asObservationEncoderProducer(
-            Producer<? extends Encoder<?, ?>> producer) {
-        return (Producer<ObservationEncoder<?, ?>>) producer;
+    public static String of(String first, String... path) {
+        return Stream.concat(Stream.of(first), Arrays.stream(path))
+                .filter(Objects::nonNull)
+                .collect(joining("."));
     }
 
 }

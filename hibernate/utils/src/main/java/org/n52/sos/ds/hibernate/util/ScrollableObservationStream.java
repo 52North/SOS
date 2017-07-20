@@ -26,50 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.coding.encode;
+package org.n52.sos.ds.hibernate.util;
 
-import java.util.Set;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 
-import org.n52.janmayen.Producer;
-import org.n52.janmayen.Producers;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderRepository;
-import org.n52.svalbard.encode.ObservationEncoder;
-
-import com.google.common.collect.Sets;
+import org.n52.janmayen.function.ThrowingFunction;
+import org.n52.shetland.ogc.om.ObservationStream;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class SosEncoderRepository extends EncoderRepository {
-    //TODO move to SOS
-    private final Set<Producer<ObservationEncoder<?, ?>>> observationEncoders
-            = Sets.newHashSet();
+public class ScrollableObservationStream
+        extends ThrowingScrollableResultsIterator<OmObservation, OwsExceptionReport>
+        implements ObservationStream {
 
-    private final float order = Float.MAX_VALUE;
-
-    @Override
-    public void init() {
-        super.init();
-        this.observationEncoders.clear();
-        getComponentProviders().forEach(producer -> {
-            Encoder<?, ?> encoder = producer.get();
-            if (encoder instanceof ObservationEncoder) {
-                this.observationEncoders.add(asObservationEncoderProducer(producer));
-            }
-        });
-    }
-
-    public Set<ObservationEncoder<?, ?>> getObservationEncoders() {
-        return Producers.produce(this.observationEncoders);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Producer<ObservationEncoder<?, ?>> asObservationEncoderProducer(
-            Producer<? extends Encoder<?, ?>> producer) {
-        return (Producer<ObservationEncoder<?, ?>>) producer;
+    public ScrollableObservationStream(
+            ScrollableResults results, Session session,
+            ThrowingFunction<ScrollableResults, OmObservation, OwsExceptionReport> extractor) {
+        super(results, session, extractor);
     }
 
 }

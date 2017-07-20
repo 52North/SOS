@@ -821,17 +821,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      */
     public Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,
             SosProcedureDescription<?> procedureDescription, boolean isType, Session session) {
-
-        List<String> parents = procedureDescription.isSetParentProcedure()
-                               ? Collections.singletonList(procedureDescription.getParentProcedure().getHref())
-                               : Collections.emptyList();
-        return getOrInsertProcedure(identifier, procedureDescriptionFormat,
-                                    parents, procedureDescription.getTypeOf(), isType,
-                                    procedureDescription.isAggregation(), session);
-    }
-
-    private Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,
-            SosProcedureDescription<?> procedureDescription, ReferenceType typeOf, boolean isType, boolean isAggregation, Session session) {
         Procedure procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
         if (procedure == null) {
             final TProcedure tProcedure = new TProcedure();
@@ -843,20 +832,20 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                     tProcedure.setName(af.getFirstName().getValue());
                 }
                 if (af.isSetDescription()) {
-                    procedure.setDescription(af.getDescription());
+                    tProcedure.setDescription(af.getDescription());
                 }
             }
             if (procedureDescription.isSetParentProcedure()) {
                 tProcedure.setParents(Sets.newHashSet(getProcedureForIdentifier(procedureDescription.getParentProcedure().getHref(), session)));
             }
-            if (typeOf != null && !tProcedure.isSetTypeOf()) {
-                Procedure typeOfProc = getProcedureForIdentifier(typeOf.getTitle(), session);
+            if (procedureDescription.getTypeOf() != null && !tProcedure.isSetTypeOf()) {
+                Procedure typeOfProc = getProcedureForIdentifier(procedureDescription.getTypeOf().getTitle(), session);
                 if (typeOfProc != null) {
                     tProcedure.setTypeOf(typeOfProc);
                 }
             }
             tProcedure.setIsType(isType);
-            tProcedure.setIsAggregation(isAggregation);
+            tProcedure.setIsAggregation(procedureDescription.isAggregation());
             if (procedureDescription.getProcedureDescription() instanceof AbstractSensorML) {
                 AbstractSensorML sml = (AbstractSensorML) procedureDescription.getProcedureDescription();
                 if (sml.isSetMobile()) {

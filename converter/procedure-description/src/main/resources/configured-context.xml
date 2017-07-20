@@ -3,8 +3,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <bean class="org.n52.sos.convert.AbstractInspireOmpr30SensorMLConverter"/>
-    <bean class="org.n52.sos.convert.AbstractWaterMLv20SensorMLConverter"/>
     <bean class="org.n52.sos.convert.InspireOmpr30SensorML101Converter"/>
     <bean class="org.n52.sos.convert.InspireOmpr30SensorML20Converter"/>
     <bean class="org.n52.sos.convert.SensorML20SensorML101Converter"/>

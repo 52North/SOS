@@ -62,7 +62,7 @@
     <bean class="org.n52.sos.encode.json.impl.GetObservationResponseEncoder"/>
     <bean class="org.n52.sos.encode.json.impl.GetResultResponseEncoder"/>
     <bean class="org.n52.sos.encode.json.impl.GetResultTemplateResponseEncoder"/>
-    <bean class="org.n52.sos.encode.json.impl.IdentifierJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.InspireIDJSONEncoder"/>
     <bean class="org.n52.sos.encode.json.impl.InsertObservationResponseEncoder"/>
     <bean class="org.n52.sos.encode.json.impl.InsertResultResponseEncoder"/>
     <bean class="org.n52.sos.encode.json.impl.InsertResultTemplateResponseEncoder"/>

@@ -73,9 +73,12 @@ import org.n52.svalbard.util.CodingHelper;
 import org.n52.svalbard.util.XmlHelper;
 
 import com.google.common.collect.ImmutableSet;
+import com.siemens.ct.exi.CodingMode;
 import com.siemens.ct.exi.EXIFactory;
+import com.siemens.ct.exi.GrammarFactory;
 import com.siemens.ct.exi.api.sax.EXISource;
 import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.grammars.Grammars;
 
 /**
  * Binding implementation for EXI - Efficient XML Interchange See See <a
@@ -99,11 +102,26 @@ public class EXIBinding extends SimpleBinding {
             .add(new MediaTypeBindingKey(MediaTypes.APPLICATION_EXI))
             .build();
 
-    private final EXIUtils exiUtils;
+    private boolean isSchemaLessGrammar;
+    private boolean isXSBaseTypeGrammar;
+    private boolean isSOS20Schema;
+    private boolean isSOS10Schema;
+    private CodingMode alignment = CodingMode.BIT_PACKED;
+    private boolean isStrict;
+    private boolean isDefault;
+    private boolean preserveComments;
+    private boolean preserveProcessingInstructions;
+    private boolean preserveDTD;
+    private boolean preservePrefixes;
+    private boolean preserveLexicalValue;
+    private final GrammarFactory grammarFactory = GrammarFactory.newInstance();
+    private final Grammars grammarSchemaLess = grammarFactory.createSchemaLessGrammars();
+    private Grammars grammarSos20;
+    private Grammars grammarSos10;
+    private Grammars grammarBaseTypes;
 
     @Inject
-    public EXIBinding(EXIUtils exiUtils) {
-        this.exiUtils = exiUtils;
+    public EXIBinding() {
     }
 
     @Override

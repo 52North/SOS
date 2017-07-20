@@ -33,7 +33,7 @@ import org.n52.shetland.inspire.base2.Contact;
 import org.n52.shetland.inspire.base2.RelatedParty;
 import org.n52.shetland.iso.gmd.LocalisedCharacterString;
 import org.n52.shetland.iso.gmd.PT_FreeText;
-import org.n52.sos.util.AQDJSONConstants;
+import org.n52.sos.coding.json.AQDJSONConstants;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;

@@ -208,11 +208,6 @@ public class ParameterDAO {
         }
 
         @Override
-        public ValuedParameter<?> visit(XmlValue<?> value) throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
         public ValuedParameter<?> visit(BooleanValue value) throws OwsExceptionReport {
             return persist(parameterFactory.truth(), value);
         }

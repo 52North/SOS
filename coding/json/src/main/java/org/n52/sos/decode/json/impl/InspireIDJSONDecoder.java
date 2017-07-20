@@ -30,14 +30,14 @@ package org.n52.sos.decode.json.impl;
 
 import org.n52.faroe.Validation;
 import org.n52.shetland.inspire.base.Identifier;
-import org.n52.sos.util.AQDJSONConstants;
+import org.n52.sos.coding.json.AQDJSONConstants;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class InspireIDJSONDecode extends AbstractJSONDecoder<Identifier> {
+public class InspireIDJSONDecoder extends AbstractJSONDecoder<Identifier> {
 
-    public InspireIDJSONDecode() {
+    public InspireIDJSONDecoder() {
         super(Identifier.class);
     }
 

@@ -144,6 +144,13 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.allowTemplateWithoutProcedureAndFeature" />
+        <property name="title" value="Should this SOS allow the insertion of procedure and featureOfInterest via InsertResult values?" />
+        <property name="description" value="Whether the SOS should allow to reference the procedure and featureOfInterest in the values of the InsertResult operation instead in the observationTemplate!" />
+        <property name="order" value="24.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
 
 </beans>

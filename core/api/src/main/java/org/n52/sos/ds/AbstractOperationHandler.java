@@ -234,7 +234,11 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     }
 
     protected OwsDomain getOfferingParameter(String service, String version) {
-        return getOfferingParameter(service, version, getCache().getOfferings());
+        if (checkListOnlyParentOfferings()){
+            return getOfferingParameter(service, version, getCache().getParentOfferings(getCache().getOfferings(), false, false));
+        } else {
+            return getOfferingParameter(service, version, getCache().getOfferings());
+        }
     }
 
     protected OwsDomain getOfferingParameter(String service, String version, Collection<String> offerings) {

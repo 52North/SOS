@@ -1,14 +1,3 @@
-//            new BooleanSettingDefinition()
-//                    .setGroup(MiscSettings.GROUP)
-//                    .setOrder(ORDER_0)
-//                    .setKey(OBSERVATION_ONLINE_RESOURCE)
-//                    .setTitle("Should the SOS encode CI_OnlineResource in observations?")
-//                    .setOptional(true)
-//                    .setDescription("Activate/Deactivate whether the service should encode "
-//                            + "<tt>CI_OnlineResource</tt> in observations.")
-//                    .setDefaultValue(false);
-
-
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -18,9 +7,9 @@
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.observation.onlineResource" />
         <property name="title" value="Should the SOS encode CI_OnlineResource in observations?" />
-        <property name="description" value="Activate/Deactivate whether the service should encode <tt>CI_OnlineResource</tt> in observations." />
+        <property name="description" value="Activate/Deactivate whether the service should encode &lt;tt&gt;CI_OnlineResource&lt;/tt&gt; in observations." />
         <property name="order" value="0.0" />
-        <property name="group" ref="miscSettingDefinitionGroup" />
+        <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
 

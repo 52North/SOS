@@ -62,7 +62,6 @@ import org.n52.faroe.settings.ChoiceSettingDefinition;
 import org.n52.faroe.settings.IntegerSettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -401,16 +400,15 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         HashSet<String> mappings = Sets.newHashSet(HIBERNATE_MAPPING_PARAMETER_FEATURE_PATH, HIBERNATE_MAPPING_PARAMETER_OBSERVATION_PATH);
         switch (getDatabaseConcept(settings)) {
             case SERIES_CONCEPT:
-                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH);
+                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH);
                 break;
             case EREPORTING_CONCEPT:
-                mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH);
-                break;
-            case OLD_CONCEPT:
-                mappings.add(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
+                mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH);
+                mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_VALUE_PATH);
                 break;
             default:
-                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+                mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH);
                 break;
         }
         return mappings;
@@ -421,10 +419,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (concept == null || concept.isEmpty()) {
             String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
             concept = DatabaseConcept.SERIES_CONCEPT.name();
-            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
+            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH)) {
                 concept = DatabaseConcept.EREPORTING_CONCEPT.name();
-            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
-                concept = DatabaseConcept.OLD_CONCEPT.name();
             }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
                     + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
@@ -550,11 +546,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metaData != null) {
             ResultSet rs = metaData.getSchemas();
             while (rs.next()) {
-                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
+                if (!Strings.isNullOrEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
                     return rs.getString("TABLE_SCHEM");
                 }
             }
-            if (StringHelper.isNotEmpty(schema)) {
+            if (!Strings.isNullOrEmpty(schema)) {
                 throw new ConfigurationError(String.format("Requested schema (%s) is not contained in the database!", schema));
             }
         }
@@ -876,7 +872,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected boolean isSetSchema(Map<String, Object> settings) {
         if (settings.containsKey(HibernateConstants.DEFAULT_SCHEMA)) {
-            return StringHelper.isNotEmpty((String) settings.get(HibernateConstants.DEFAULT_SCHEMA));
+            return !Strings.isNullOrEmpty((String) settings.get(HibernateConstants.DEFAULT_SCHEMA));
         }
         return false;
     }
@@ -968,7 +964,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 Sets.newHashSet(getGeneratedForeignKeyFor("observationHasOffering"),
                         getGeneratedForeignKeyFor("relatedFeatureHasRole"),
                         getGeneratedForeignKeyFor("offeringAllowedFeatureType"),
-                        getGeneratedForeignKeyFor("offeringAllowedObservationType"));
+                        getGeneratedForeignKeyFor("offeringAllowedObservationType"),
+                        getGeneratedForeignKeyFor("observationhasoffering"),
+                        getGeneratedForeignKeyFor("relatedfeaturehasrole"),
+                        getGeneratedForeignKeyFor("offeringallowedfeaturetype"),
+                        getGeneratedForeignKeyFor("offeringallowedobservationtype"));
         List<String> checkedSchema = Lists.newLinkedList();
         for (String string : script) {
             if (string.startsWith("alter table")) {

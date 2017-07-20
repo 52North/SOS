@@ -5,6 +5,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.observation.BooleanValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter"
+        entity-name="BooleanValuedObservationParameter"
         table="booleanparametervalue" check="value in ('T','F')">
         <comment>Value table for boolean parameter</comment>
         <key foreign-key="parameterBooleanValueFk">
@@ -22,6 +23,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.observation.CategoryValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter"
+        entity-name="CategoryValuedObservationParameter"
         table="categoryparametervalue">
         <comment>Value table for category parameter</comment>
         <key foreign-key="parameterCategoryValueFk">
@@ -46,6 +48,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.observation.CountValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter"
+        entity-name="CountValuedObservationParameter"
         table="countparametervalue">
         <comment>Value table for count parameter</comment>
         <key foreign-key="parameterCountValueFk">
@@ -63,6 +66,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.observation.QuantityValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter"
+        entity-name="QuantityValuedObservationParameter"
         table="numericparametervalue">
         <comment>Value table for numeric/Measurment parameter</comment>
         <key foreign-key="parameterNumericValueFk">
@@ -87,6 +91,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.observation.TextValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter"
+        entity-name="TextValuedObservationParameter"
         table="textparametervalue">
         <comment>Value table for text parameter</comment>
         <key foreign-key="parameterTextValueFk">
@@ -104,6 +109,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.observation.XmlValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter"
+        entity-name="XmlValuedObservationParameter"
         table="xmlparametervalue">
         <comment>Value table for XML parameter</comment>
         <key foreign-key="parameterXmlValueFk">

@@ -77,6 +77,25 @@
                             <overWriteReleases>false</overWriteReleases>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>rest-api</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem> 
+                                 <groupId>org.n52.series-api.db</groupId> 
+                                 <artifactId>mappings</artifactId> 
+                                 <includes>hbm/sos/v44/*.hbm.xml</includes>
+                                 <outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly/</outputDirectory> 
+                                 <overWrite>true</overWrite>
+                                </artifactItem> 
+                             </artifactItems>
+                            <overWriteReleases>false</overWriteReleases>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
              <plugin>

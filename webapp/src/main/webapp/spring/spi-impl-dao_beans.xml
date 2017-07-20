@@ -12,7 +12,6 @@
     <mvc:annotation-driven />
     <ctx:annotation-config />
 
-
     <bean name="serviceRepository" class="org.n52.series.db.da.ServiceRepository" />
     <bean name="categoryRepository" class="org.n52.series.db.da.CategoryRepository" />
     <bean name="featureRepository" class="org.n52.series.db.da.FeatureRepository" />
@@ -60,5 +59,20 @@
         <constructor-arg index="0">
             <bean class="org.n52.io.extension.parents.HierarchicalParameterRepository" />
         </constructor-arg>
+    </bean>
+
+
+    <!-- ########################################################## -->
+    <!-- ################# LEGACY BEAN INJECTIONS ################# -->
+    <!-- ########################################################## -->
+
+    <bean id="timeseriesRepository" class="org.n52.series.db.da.TimeseriesRepository" />
+    <bean id="stationRepository" class="org.n52.series.db.da.StationRepository" />
+
+    <bean id="stationParameterService" class="org.n52.series.srv.AccessService">
+        <constructor-arg index="0" ref="stationRepository" />
+    </bean>
+    <bean id="timeseriesService" class="org.n52.series.srv.TimeseriesAccessService">
+        <constructor-arg index="0" ref="timeseriesRepository" />
     </bean>
 </beans>

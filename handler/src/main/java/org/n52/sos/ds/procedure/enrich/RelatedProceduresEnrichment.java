@@ -87,10 +87,7 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
     }
 
     /**
-     * Add parent procedures to a procedure
-     *
-     * @param procID
-     *            procedure identifier to add parent procedures to
+     * Get parent procedures
      *
      * @throws OwsExceptionReport
      */

@@ -144,7 +144,7 @@ class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGe
      *
      * @param procedure
      *            Hibernate procedure entity
-     * @param list
+     * @param observableProperties
      *            Properties observed by the procedure
      *
      * @return SenbsorML ProcessModel
@@ -158,7 +158,7 @@ class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGe
      *
      * @param procedure
      *            Hibernate procedure entity
-     * @param treeSet
+     * @param observableProperties
      *            Properties observed by the procedure
      *
      * @return SensorML RulesDefinition

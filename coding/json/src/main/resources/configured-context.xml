@@ -80,13 +80,13 @@
     <bean class="org.n52.sos.encode.json.impl.UpdateSensorResponseEncoder"/>
 
      <bean id="reportingHeaderSQLiteManager"
-          class="org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager">
+          class="org.n52.sos.config.sqlite.ReportingHeaderSQLiteManager">
         <property name="sessionFactory">
             <bean class="org.n52.sos.config.sqlite.SQLiteSessionFactory">
                 <property name="databaseName" value="eReportingHeader" />
                 <property name="annotatedClasses">
                     <array>
-                        <value>org.n52.sos.inspire.aqd.persistence.JSONFragment</value>
+                        <value>org.n52.sos.config.sqlite.entities.JSONFragment</value>
                     </array>
                 </property>
             </bean>
@@ -94,6 +94,6 @@
     </bean>
 
     <bean id="reportObligationRepository"
-          class="org.n52.sos.inspire.aqd.ReportObligationRepository" />
+          class="org.n52.sos.request.operator.ReportObligationRepository" />
 
 </beans>

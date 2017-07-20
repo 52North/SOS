@@ -105,6 +105,14 @@
         <property name="defaultValue" value="false" />
     </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.capabilities.listOnlyParentOfferings" />
+        <property name="title" value="Should the service list only parent offerings in service capabilities?" />
+        <property name="description" value="The service would list only parent offerings in the serivce capabilites. Lower level offerings would be referenced in extension elements of related ObservationOfferings." />
+        <property name="order" value="18.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.createFeatureGeometryFromSamplingGeometries" />
         <property name="title" value="Should this SOS create the featureOfInterest geometry from samplingGeometries?" />
         <property name="description" value="Whether the SOS should create the featureOfInterest geometry from samplingGeometries." />
@@ -115,7 +123,7 @@
     <bean class="org.n52.faroe.settings.FileSettingDefinition">
         <property name="key" value="service.cacheFileFolder" />
         <property name="title" value="Cache file folder" />
-        <property name="description" value="The path to a folder where the cache file should be stored. Default is the webapp folder. <span class='text-warning'>If you define a path, then grant the necessary rights (lt;code&gt;write and read permission&lt;/code&gt;) to the &lt;code&gt;application server user&lt;/code&gt;!"
+        <property name="description" value="The path to a folder where the cache file should be stored. Default is the webapp folder. &lt;span class='text-warning'&gt;If you define a path, then grant the necessary rights (lt;code&gt;write and read permission&lt;/code&gt;) to the &lt;code&gt;application server user&lt;/code&gt;!" />
         <property name="order" value="21.0" />
         <property name="optional" value="true" />
         <property name="group" ref="serviceSettingDefintionGroup" />
@@ -136,4 +144,6 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
+
+
 </beans>

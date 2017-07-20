@@ -11,7 +11,7 @@
     <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="uvf.default.crs" />
         <property name="title" value="The default CRS EPSG code used in UVF response" />
-        <property name="description" value="String.format("The default CRS EPSG code that is used if no swe extension is present in the request that specifies one. Allowed values are: <tt>31466, 31467, 31468</tt>." />
+        <property name="description" value="The default CRS EPSG code that is used if no swe extension is present in the request that specifies one. Allowed values are: &lt;tt&gt;31466, 31467, 31468&lt;/tt&gt;." />
         <property name="order" value="1.0" />
         <property name="group" ref="uvfSettingDefinitionGroup" />
         <property name="defaultValue" value="31466" />
@@ -19,7 +19,7 @@
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="uvf.timeZone" />
         <property name="title" value="Returned Time zone for the UVF encoding" />
-        <property name="description" value="Define the time zone in which the time should be encoded in the UVF responce Valid values are see <a href='http://docs.oracle.com/javase/8/docs/api/java/util/TimeZone.html' target='_blank'>Java TimeZone</a>. Default is CET." />
+        <property name="description" value="Define the time zone in which the time should be encoded in the UVF responce Valid values are see &lt;a href='http://docs.oracle.com/javase/8/docs/api/java/util/TimeZone.html' target='_blank'&gt;Java TimeZone&lt;/a&gt;. Default is CET." />
         <property name="order" value="2.0" />
         <property name="group" ref="uvfSettingDefinitionGroup" />
         <property name="defaultValue" value="CET" />
@@ -34,7 +34,7 @@
         <property name="defaultValue" value="Unix" />
         <property name="options">
             <map>
-                <entry key="Windows" value="Windows" >
+                <entry key="Windows" value="Windows" />
                 <entry key="Unix" value="Unix" />
                 <entry key="Mac" value="Mac" />
             </map>

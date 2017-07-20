@@ -47,7 +47,7 @@ import org.n52.iceland.binding.AbstractXmlBinding;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.MediaTypeBindingKey;
 import org.n52.iceland.binding.PathBindingKey;
-import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.coding.SupportedTypeRepository;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
@@ -76,7 +76,6 @@ import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.util.OMHelper;
-import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.exception.swes.InvalidRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,16 +105,8 @@ public class RegisterBinding
     private static final Set<BindingKey> KEYS = ImmutableSet.<BindingKey> builder()
             .add(new PathBindingKey(URL_PATTERN)).add(new MediaTypeBindingKey(MediaTypes.APPLICATION_XML)).build();
 
-    private ContentCacheController contentCacheController;
-
-    protected ContentCacheController getCacheController() {
-        return this.contentCacheController;
-    }
-
     @Inject
-    public void setCacheController(ContentCacheController contentCacheController) {
-        this.contentCacheController = contentCacheController;
-    }
+    private SupportedTypeRepository supportedTypeRepository;
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
@@ -222,7 +213,7 @@ public class RegisterBinding
                 if (!featureOfInterestTypes.isEmpty()) {
                     metadata.setFeatureOfInterestTypes(featureOfInterestTypes);
                 } else {
-                    metadata.setFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
+                    metadata.setFeatureOfInterestTypes(supportedTypeRepository.getFeatureOfInterestTypesAsString());
                 }
                 List<String> observationTypes = checkForObservationTypeParameter(procDesc, parameters);
                 if (!observationTypes.isEmpty()) {
@@ -242,7 +233,7 @@ public class RegisterBinding
                     }
                     metadata.setObservationTypes(obsTyp);
                 } else {
-                    metadata.setObservationTypes(getCache().getObservationTypes());
+                    metadata.setObservationTypes(supportedTypeRepository.getObservationTypesAsString());
                 }
                 request.setMetadata(metadata);
             }
@@ -268,14 +259,14 @@ public class RegisterBinding
         return version;
     }
 
-    private void checkForProcedureParameter(SosProcedureDescription procDesc, Map<String, String> map) {
+    private void checkForProcedureParameter(SosProcedureDescription<?> procDesc, Map<String, String> map) {
         final String procedure = getParameterValue(PROCEDURE, map);
         if (!Strings.isNullOrEmpty(procedure)) {
             procDesc.setIdentifier(new CodeWithAuthority(procedure));
         }
     }
 
-    private void checkForOfferingParameter(SosProcedureDescription procDesc, Map<String, String> map)
+    private void checkForOfferingParameter(SosProcedureDescription<?> procDesc, Map<String, String> map)
             throws OwsExceptionReport {
         final String offerings = getParameterValue(OFFERING, map);
         if (!Strings.isNullOrEmpty(offerings)) {
@@ -286,7 +277,7 @@ public class RegisterBinding
         }
     }
 
-    private List<String> checkForObservablePropertyParameter(SosProcedureDescription procDesc, Map<String, String> map)
+    private List<String> checkForObservablePropertyParameter(SosProcedureDescription<?> procDesc, Map<String, String> map)
             throws OwsExceptionReport {
         final String offering = getParameterValue(Sos2Constants.InsertSensorParams.observableProperty, map);
         if (!Strings.isNullOrEmpty(offering)) {
@@ -295,7 +286,7 @@ public class RegisterBinding
         return Collections.emptyList();
     }
 
-    private List<String> checkForObservationTypeParameter(SosProcedureDescription procDesc, Map<String, String> map)
+    private List<String> checkForObservationTypeParameter(SosProcedureDescription<?> procDesc, Map<String, String> map)
             throws OwsExceptionReport {
         final String offering = getParameterValue(Sos2Constants.InsertSensorParams.observationType, map);
         if (!Strings.isNullOrEmpty(offering)) {
@@ -304,7 +295,7 @@ public class RegisterBinding
         return Collections.emptyList();
     }
 
-    private List<String> checkForFeatureOfInterestTypeParameter(SosProcedureDescription procDesc,
+    private List<String> checkForFeatureOfInterestTypeParameter(SosProcedureDescription<?> procDesc,
             Map<String, String> map) throws OwsExceptionReport {
         final String offering = getParameterValue(Sos2Constants.InsertSensorParams.featureOfInterestType, map);
         if (!Strings.isNullOrEmpty(offering)) {
@@ -405,7 +396,4 @@ public class RegisterBinding
         return checkParameterMultipleValues(values, name.name());
     }
 
-    protected SosContentCache getCache() {
-        return (SosContentCache) getCacheController().getCache();
-    }
 }

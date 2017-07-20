@@ -41,7 +41,7 @@ import org.n52.sos.ds.datasource.SpatialIndexDialect;
 public class SqlServer2008SpatialDialectSpatialIndex extends SqlServer2008SpatialDialect implements SpatialIndexDialect {
 
     private static final long serialVersionUID = 1L;
-    
+
     public SqlServer2008SpatialDialectSpatialIndex() {
         super();
     }
@@ -56,8 +56,8 @@ public class SqlServer2008SpatialDialectSpatialIndex extends SqlServer2008Spatia
 //        Table table = index.getTable();
 //        Iterator<Column> columns = index.getColumnIterator();
 //        java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
-//        
-//        
+//
+//
 //        StringBuilder buf = new StringBuilder( "create" )
 //                        .append( " spatial index " )
 //                        .append( this.qualifyIndexName() ?

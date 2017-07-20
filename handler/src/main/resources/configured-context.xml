@@ -15,7 +15,7 @@
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactorySml101"/>
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactorySml20"/>
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryWml20"/>
-    <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryInpsireOmpr30"/>
+    <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryInspireOmpr30"/>
 
     <bean id="gdcs" class="org.n52.sos.ds.procedure.create.GeneratedDescriptionCreationStrategy"/>
 

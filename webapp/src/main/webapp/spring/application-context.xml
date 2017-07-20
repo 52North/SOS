@@ -10,16 +10,27 @@
 
     <import resource="property-placeholder-config.xml" />
 
-    <import resource="spi-impl-dao_common.xml"/>
+    <bean class="org.n52.series.db.beans.ServiceEntity">
+        <property name="pkid" value="1" />
+        <property name="version" value="2.0" />
+        <property name="name" value="My RESTful Dataset Service" />
+        <property name="noDataValues" value="-9999.0,99999,NO_DATA" />
+    </bean>
 
-    <!-- api controller bindings -->
-    <import resource="spi-impl-dao_v1_beans.xml"/>
-    <import resource="spi-impl-dao_v1_beans_legacy.xml"/>
+    <bean class="org.n52.series.db.dao.DefaultDbQueryFactory">
+        <property name="databaseSrid" value="EPSG:4326" />
+    </bean>
 
+    <bean class="org.n52.series.db.da.EntityCounter" />
+    <bean id="metadataService" class="org.n52.series.srv.CountingMetadataAccessService" />
+    <bean id="searchService" class="org.n52.series.srv.Search" />
 
+    <bean class="org.n52.series.db.da.DefaultDataRepositoryFactory" />
+    <bean class="org.n52.io.DefaultIoFactory" />
+
+    <import resource="spi-impl-dao_beans.xml"/>
     <import resource="spi-impl-dao_tasks.xml" />
 
-    <!-- For SOS Bundles (instead of extra database config) -->
     <bean class="org.n52.series.db.da.sos.SOSHibernateSessionHolder" destroy-method="shutdown" />
 
 </beans>

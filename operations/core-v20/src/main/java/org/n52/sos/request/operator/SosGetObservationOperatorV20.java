@@ -180,7 +180,7 @@ public class SosGetObservationOperatorV20 extends
             if (!sosRequest.isSetResponseFormat()) {
                 sosRequest.setResponseFormat(getActiveProfile().getObservationResponseFormat());
             }
-            SosHelper.checkResponseFormat(sosRequest.getResponseFormat(), sosRequest.getService(),
+            checkResponseFormat(sosRequest.getResponseFormat(), sosRequest.getService(),
                     sosRequest.getVersion());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);

@@ -35,7 +35,6 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
-import org.n52.sos.util.SosHelper;
 
 public class AqdDescribeSensorOperatorV10
         extends AbstractAqdRequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
@@ -74,7 +73,7 @@ public class AqdDescribeSensorOperatorV10
             exceptions.add(owse);
         }
         try {
-            SosHelper.checkProcedureDescriptionFormat(
+            checkProcedureDescriptionFormat(
                     request.getProcedureDescriptionFormat(),
                     SosConstants.SOS, Sos2Constants.SERVICEVERSION);
         } catch (OwsExceptionReport owse) {

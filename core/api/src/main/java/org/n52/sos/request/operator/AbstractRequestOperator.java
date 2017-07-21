@@ -76,6 +76,7 @@ import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
@@ -84,8 +85,11 @@ import org.n52.shetland.ogc.swes.SwesExtensions;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
+import org.n52.sos.coding.encode.ResponseFormatRepository;
+import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
+import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.slf4j.Logger;
@@ -133,6 +137,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     private boolean includeChildObservableProperties;
     private String service;
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+    private ResponseFormatRepository responseFormatRepository;
     private ConverterRepository converterRepository;
 
     public AbstractRequestOperator(String service,
@@ -214,6 +219,15 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     public ProcedureDescriptionFormatRepository getProcedureDescriptionFormatRepository() {
         return procedureDescriptionFormatRepository;
+    }
+
+    @Inject
+    public void setResponseFormatRepository(ResponseFormatRepository responseFormatRepository) {
+        this.responseFormatRepository = responseFormatRepository;
+    }
+
+    public ResponseFormatRepository getResponseFormatRepository() {
+        return responseFormatRepository;
     }
 
     @Inject
@@ -917,6 +931,95 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             throw new MissingParameterValueException(parameterName);
         } else if (!getCache().hasObservationType(observationType)) {
             throw new InvalidParameterValueException(parameterName, observationType);
+        }
+    }
+
+    /**
+     * help method to check the result format parameter. If the application/zip
+     * result format is set, true is returned. If not and the value is text/xml;
+     * subtype="OM" false is returned. If neither zip nor OM is set, a
+     * ServiceException with InvalidParameterValue as its code is thrown.
+     *
+     * @param responseFormat
+     *            String containing the value of the result format parameter
+     * @param service
+     * @param version
+     *
+     * @throws OwsExceptionReport
+     *             * if the parameter value is incorrect
+     */
+    protected void checkResponseFormat(final String responseFormat, final String service, final String version)
+            throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(responseFormat)) {
+            throw new MissingResponseFormatParameterException();
+        } else {
+            final Collection<String> supportedResponseFormats =
+                    getResponseFormatRepository().getSupportedResponseFormats(service, version);
+            if (!supportedResponseFormats.contains(responseFormat)) {
+                throw new InvalidResponseFormatParameterException(responseFormat);
+            }
+        }
+    }
+
+    /**
+     * checks whether the value of procedureDescriptionFormat parameter is valid
+     *
+     * @param procedureDescriptionFormat
+     *            the procedureDecriptionFormat parameter which should be
+     *            checked
+     * @param service
+     *            Service
+     * @param version
+     *            Service version
+     * @throws OwsExceptionReport
+     *             if the value of the procedureDecriptionFormat is incorrect
+     */
+    protected void checkProcedureDescriptionFormat(final String procedureDescriptionFormat, final String service,
+            final String version) throws OwsExceptionReport {
+        checkFormat(procedureDescriptionFormat, new OwsServiceKey(service, version),
+                Sos2Constants.DescribeSensorParams.procedureDescriptionFormat);
+    }
+
+    /**
+     * checks whether the value of outputFormat parameter is valid
+     *
+     * @param checkOutputFormat
+     *            the outputFormat parameter which should be checked
+     * @param service
+     *            Service
+     * @param version
+     *            Service version
+     * @throws OwsExceptionReport
+     *             if the value of the outputFormat is incorrect
+     */
+    protected void checkOutputFormat(final String checkOutputFormat, final String service, final String version)
+            throws OwsExceptionReport {
+        checkFormat(checkOutputFormat, new OwsServiceKey(service, version),
+                Sos1Constants.DescribeSensorParams.outputFormat);
+    }
+
+    /**
+     * checks whether the value of procedure format parameter is valid
+     *
+     * @param format
+     *            the procedure format parameter which should be checked
+     * @param serviceOperatorKey
+     *            Service and version
+     * @param parameter
+     *            name of the checked parameter
+     * @throws OwsExceptionReport
+     *             if the value of the procedure format is incorrect
+     */
+    private void checkFormat(final String format, OwsServiceKey serviceOperatorKey, Enum<?> parameter)
+            throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(format)) {
+            throw new MissingParameterValueException(parameter);
+        } else {
+            final Collection<String> supportedFormats =
+                    getProcedureDescriptionFormatRepository().getSupportedProcedureDescriptionFormats(serviceOperatorKey);
+            if (!supportedFormats.contains(format)) {
+                throw new InvalidParameterValueException(parameter, format);
+            }
         }
     }
 

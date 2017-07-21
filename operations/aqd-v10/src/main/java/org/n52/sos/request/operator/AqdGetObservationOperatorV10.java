@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-
 import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
@@ -53,7 +52,6 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
-import org.n52.sos.request.operator.CoreProfileOperatorSettings;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
@@ -64,7 +62,6 @@ import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.util.SosHelper;
 
 import com.google.common.collect.Lists;
 
@@ -212,7 +209,7 @@ public class AqdGetObservationOperatorV10 extends
             if (request.getResponseFormat() == null) {
                 request.setResponseFormat(AqdConstants.NS_AQD);
             } else {
-                SosHelper.checkResponseFormat(request.getResponseFormat(), request.getService(), request.getVersion());
+                checkResponseFormat(request.getResponseFormat(), request.getService(), request.getVersion());
                 if (!AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
                     throw new InvalidResponseFormatParameterException(request.getResponseFormat());
                 }

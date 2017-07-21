@@ -50,20 +50,10 @@ import org.n52.shetland.util.AqdHelper;
 public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
 
-    private AqdHelper aqdHelper;
     private EReportObligationRepository reportObligationRepository;
 
     public AbstractAqdRequestOperator(String operationName, Class<Q> requestType) {
         super(AqdConstants.AQD, AqdConstants.VERSION, operationName, requestType);
-    }
-
-    public AqdHelper getAqdHelper() {
-        return aqdHelper;
-    }
-
-    @Inject
-    public void setAqdHelper(AqdHelper helper) {
-        this.aqdHelper = helper;
     }
 
     public EReportObligationRepository getReportObligationRepository() {

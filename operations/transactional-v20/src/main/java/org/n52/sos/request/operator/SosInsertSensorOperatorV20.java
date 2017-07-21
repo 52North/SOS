@@ -73,7 +73,6 @@ import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 import org.n52.svalbard.ConformanceClasses;
@@ -136,7 +135,7 @@ public class SosInsertSensorOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            SosHelper.checkProcedureDescriptionFormat(request.getProcedureDescriptionFormat(), request.getService(),
+            checkProcedureDescriptionFormat(request.getProcedureDescriptionFormat(), request.getService(),
                     request.getVersion());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);

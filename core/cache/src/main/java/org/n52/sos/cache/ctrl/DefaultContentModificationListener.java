@@ -35,6 +35,7 @@ import javax.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCacheUpdate;
+import org.n52.iceland.coding.SupportedTypeRepository;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.janmayen.event.Event;
 import org.n52.janmayen.event.EventListener;
@@ -83,7 +84,7 @@ public class DefaultContentModificationListener implements EventListener {
 
     private CacheFeederHandler handler;
     private ContentCacheController controller;
-
+    private SupportedTypeRepository supportedTypeRepository;
     private ConverterRepository converterRepository;
 
     @Override
@@ -115,7 +116,7 @@ public class DefaultContentModificationListener implements EventListener {
             ResultTemplatesDeletion e = (ResultTemplatesDeletion) event;
             handle(new ResultTemplateDeletionUpdate(e.getResponse()));
         } else if (event instanceof UpdateCache) {
-            handle(new CompleteCacheUpdate(this.handler));
+            handle(new CompleteCacheUpdate(this.handler, this.supportedTypeRepository));
         } else if (event instanceof DeleteObservationEvent) {
             handle(new DeleteObservationUpdate(handler, ((DeleteObservationEvent) event).getDeletedObservation()));
         } else {
@@ -145,5 +146,10 @@ public class DefaultContentModificationListener implements EventListener {
     @Inject
     public void setConverterRepository(ConverterRepository converterRepository) {
         this.converterRepository = converterRepository;
+    }
+
+    @Inject
+    public void setSupportedTypeRepository(SupportedTypeRepository supportedTypeRepository) {
+        this.supportedTypeRepository = supportedTypeRepository;
     }
 }

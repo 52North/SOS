@@ -30,6 +30,7 @@ package org.n52.sos.cache;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.iceland.coding.SupportedTypeRepository;
 
 
 public class WriteableCacheTest {
@@ -70,7 +71,7 @@ public class WriteableCacheTest {
 
     @Before
     public void init() {
-        cache = new InMemoryCacheImpl();
+        cache = new InMemoryCacheImpl(new SupportedTypeRepository());
         cache.addFeatureOfInterestIdentifierHumanReadableName(feature, featureName);
         cache.addProcedureIdentifierHumanReadableName(procedure, procedureName);
         cache.addObservablePropertyIdentifierHumanReadableName(observedProperty, observedPropertyName);

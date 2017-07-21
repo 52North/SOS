@@ -102,26 +102,11 @@ public class EXIBinding extends SimpleBinding {
             .add(new MediaTypeBindingKey(MediaTypes.APPLICATION_EXI))
             .build();
 
-    private boolean isSchemaLessGrammar;
-    private boolean isXSBaseTypeGrammar;
-    private boolean isSOS20Schema;
-    private boolean isSOS10Schema;
-    private CodingMode alignment = CodingMode.BIT_PACKED;
-    private boolean isStrict;
-    private boolean isDefault;
-    private boolean preserveComments;
-    private boolean preserveProcessingInstructions;
-    private boolean preserveDTD;
-    private boolean preservePrefixes;
-    private boolean preserveLexicalValue;
-    private final GrammarFactory grammarFactory = GrammarFactory.newInstance();
-    private final Grammars grammarSchemaLess = grammarFactory.createSchemaLessGrammars();
-    private Grammars grammarSos20;
-    private Grammars grammarSos10;
-    private Grammars grammarBaseTypes;
+    private final EXIUtils exiUtils;
 
     @Inject
-    public EXIBinding() {
+    public EXIBinding(EXIUtils exiUtils) {
+        this.exiUtils = exiUtils;
     }
 
     @Override

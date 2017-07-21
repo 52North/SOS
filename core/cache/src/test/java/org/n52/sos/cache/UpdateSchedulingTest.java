@@ -32,9 +32,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.iceland.coding.SupportedTypeRepository;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.janmayen.GroupedAndNamedThreadFactory;
 
@@ -46,13 +48,20 @@ import org.n52.janmayen.GroupedAndNamedThreadFactory;
 public class UpdateSchedulingTest extends AbstractCacheControllerTest {
 
     private static final long TIMEOUT = 100 * 5;
-
     private static final long PAUSE = 50;
+    private SupportedTypeRepository supportedTypeRepository;
+
+    @Before
+    public void initInstance() {
+        supportedTypeRepository = new SupportedTypeRepository();
+        supportedTypeRepository.init();
+    }
+
 
     @Test
     public void test() throws InterruptedException {
         final TestableInMemoryCacheController ue = new TestableInMemoryCacheController();
-        ue.setCache(new InMemoryCacheImpl());
+        ue.setCache(new InMemoryCacheImpl(supportedTypeRepository));
         ExecutorService e = Executors.newFixedThreadPool(10, new GroupedAndNamedThreadFactory("test"));
 
         e.execute(new BlockingCacheUpdate(ue, "complete0", TIMEOUT));

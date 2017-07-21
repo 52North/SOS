@@ -455,6 +455,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>extensions-v20</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>profile-coding</artifactId>
                 <version>${project.version}</version>
             </dependency>

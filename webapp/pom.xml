@@ -575,6 +575,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>extensions-v20</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>request-response-coordinate-transformer</artifactId>
             <scope>runtime</scope>
         </dependency>

@@ -96,6 +96,33 @@
                             <overWriteReleases>false</overWriteReleases>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>svalbard</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <includes>svalbard-*-context.xml</includes>
+                            <outputDirectory>${project.build.outputDirectory}/contexts/configured/</outputDirectory>
+                            <overWrite>true</overWrite>
+                            <overWriteReleases>false</overWriteReleases>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.n52.svalbard</groupId>
+                                    <artifactId>svalbard</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.svalbard</groupId>
+                                    <artifactId>svalbard-xmlbeans</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.svalbard</groupId>
+                                    <artifactId>svalbard-xmlstream</artifactId>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
              <plugin>

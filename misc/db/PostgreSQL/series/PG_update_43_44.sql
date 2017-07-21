@@ -123,4 +123,5 @@ alter table public.xmlparametervalue add constraint parameterXmlValueFk foreign 
 ALTER TABLE public.featureofinterest ALTER hibernatediscriminator TYPE character varying(255);
 ALTER TABLE public.featureofinterest ALTER hibernatediscriminator DROP NOT NULL;
 UPDATE public.featureofinterest SET hibernatediscriminator = null;
+ALTER TABLE public.observableproperty DROP COLUMN hibernatediscriminator;
 create sequence public.relatedObservationId_seq

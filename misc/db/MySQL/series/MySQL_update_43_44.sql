@@ -123,4 +123,5 @@ alter table sos.xmlparametervalue add constraint parameterXmlValueFk foreign key
 ALTER TABLE sos.featureofinterest ALTER hibernatediscriminator TYPE character varying(255);
 ALTER TABLE sos.featureofinterest ALTER hibernatediscriminator DROP NOT NULL;
 UPDATE sos.featureofinterest SET hibernatediscriminator = null;
+ALTER TABLE sos.observableproperty DROP COLUMN hibernatediscriminator;
 call CreateSequence('sos.relatedObservationId_seq', 1, 1)

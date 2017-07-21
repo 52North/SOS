@@ -123,4 +123,5 @@ alter table dbo.xmlparametervalue add constraint parameterXmlValueFk foreign key
 ALTER TABLE dbo.featureofinterest ALTER hibernatediscriminator TYPE character varying(255);
 ALTER TABLE dbo.featureofinterest ALTER hibernatediscriminator DROP NOT NULL;
 UPDATE dbo.featureofinterest SET hibernatediscriminator = null;
+ALTER TABLE dbo.observableproperty DROP COLUMN hibernatediscriminator;
 create sequence dbo.relatedObservationId_seq

@@ -123,4 +123,5 @@ alter table oracle.xmlparametervalue add constraint parameterXmlValueFk foreign 
 ALTER TABLE oracle.featureofinterest ALTER hibernatediscriminator TYPE character varying(255);
 ALTER TABLE oracle.featureofinterest ALTER hibernatediscriminator DROP NOT NULL;
 UPDATE oracle.featureofinterest SET hibernatediscriminator = null;
+ALTER TABLE oracle.observableproperty DROP COLUMN hibernatediscriminator;
 create sequence oracle.relatedObservationId_seq

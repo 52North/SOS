@@ -34,6 +34,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
@@ -101,7 +102,15 @@ public class UpdateSensorRequestDecoder extends AbstractSosRequestDecoder<Update
                                             "The requested %s is not supported!",
                                             JSONConstants.PROCEDURE_DESCRIPTION_FORMAT);
             }
-            return (SosProcedureDescription) decoder.decode(xb);
+            Object decode = decoder.decode(xb);;
+            if (decode instanceof SosProcedureDescription<?>) {
+                return (SosProcedureDescription<?>)decode;
+            } else if (decode instanceof AbstractFeature) {
+                return new SosProcedureDescription<AbstractFeature>((AbstractFeature)decode);
+            } else {
+                throw new DecodingException("The decoded element {} is not of type {}!",
+                        decode.getClass().getName(), AbstractFeature.class.getName());
+            }
         } catch (XmlException xmle) {
             throw new DecodingException("Error while parsing procedure description of InsertSensor request!", xmle);
         }

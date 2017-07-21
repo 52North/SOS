@@ -125,7 +125,15 @@ public class InsertSensorRequestDecoder extends AbstractSosRequestDecoder<Insert
                                             "The requested %s is not supported!",
                                             PROCEDURE_DESCRIPTION_FORMAT);
             }
-            return (SosProcedureDescription) decoder.decode(xb);
+            Object decode = decoder.decode(xb);;
+            if (decode instanceof SosProcedureDescription<?>) {
+                return (SosProcedureDescription<?>)decode;
+            } else if (decode instanceof AbstractFeature) {
+                return new SosProcedureDescription<AbstractFeature>((AbstractFeature)decode);
+            } else {
+                throw new DecodingException("The decoded element {} is not of type {}!",
+                        decode.getClass().getName(), AbstractFeature.class.getName());
+            }
         } catch (final XmlException xmle) {
             throw new DecodingException("Error while parsing procedure description of InsertSensor request!", xmle);
         }

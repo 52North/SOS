@@ -34,20 +34,21 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import javax.inject.Inject;
+
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.OwsDomainMetadata;
 import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos1Constants.RegisterSensorParams;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants.InsertSensorParams;
-import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 
 /**
  * Renamed, in version 4.x called AbstractInsertSensorDAO
@@ -57,17 +58,20 @@ import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
  */
 public abstract class AbstractInsertSensorHandler extends AbstractOperationHandler {
 
+    private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+
     public AbstractInsertSensorHandler(String service) {
         super(service, Sos2Constants.Operations.InsertSensor.name());
     }
 
-    private ProcedureDescriptionFormatRepository getProcedureDescriptionFormatRepository() {
-        return ProcedureDescriptionFormatRepository.getInstance();
+
+    @Inject
+    public void setProcedureDescriptionFormatRepository(ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
+        this.procedureDescriptionFormatRepository = procedureDescriptionFormatRepository;
     }
 
-    @Deprecated
-    protected CodingRepository getCodingRepository() {
-        return CodingRepository.getInstance();
+    public ProcedureDescriptionFormatRepository getProcedureDescriptionFormatRepository() {
+        return procedureDescriptionFormatRepository;
     }
 
     public abstract InsertSensorResponse insertSensor(InsertSensorRequest request) throws OwsExceptionReport;

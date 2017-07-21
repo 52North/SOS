@@ -41,7 +41,6 @@ import javax.inject.Inject;
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
@@ -95,6 +94,7 @@ public class SosDescribeSensorOperatorV20 extends
         AbstractV2RequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
     private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
     private PostProcessor postProcessor;
+    private BindingRepository bindingRepository;
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_CORE_PROFILE);
@@ -102,6 +102,15 @@ public class SosDescribeSensorOperatorV20 extends
     public SosDescribeSensorOperatorV20() {
         super(OPERATION_NAME, DescribeSensorRequest.class);
         postProcessor = new PostProcessor();
+    }
+
+    public BindingRepository getBindingRepository() {
+        return bindingRepository;
+    }
+
+    @Inject
+    public void setBindingRepository(BindingRepository bindingRepository) {
+        this.bindingRepository = bindingRepository;
     }
 
     @Override
@@ -511,12 +520,12 @@ public class SosDescribeSensorOperatorV20 extends
                 final SmlComponent component = new SmlComponent("component" + childCount);
                 component.setTitle(childProcedure.getIdentifier());
 
-                if (procedureRequestSettingProvider.getInstance().isEncodeFullChildrenInDescribeSensor()) {
+                if (procedureRequestSettingProvider.isEncodeFullChildrenInDescribeSensor()) {
                     component.setProcess(childProcedure);
                 } else {
-                    if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
+                    if (getBindingRepository().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
                         try {
-                            String version = ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
+                            String version = getServiceOperatorRepository().getSupportedVersions(SosConstants.SOS)
                                             .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
                                             : Sos1Constants.SERVICEVERSION;
                             String serviceURL = ServiceConfiguration.getInstance().getServiceURL();

@@ -58,8 +58,6 @@ public class ProcedureDescriptionFormatRepository
         implements ActivationManager<ProcedureDescriptionFormatKey>,
         ActivationSource<ProcedureDescriptionFormatKey> {
 
-    @Deprecated
-    private static ProcedureDescriptionFormatRepository instance;
     private final ActivationListeners<ProcedureDescriptionFormatKey> activation = new ActivationListeners<>(true);
     private final Map<String, Map<String, Set<String>>> procedureDescriptionFormats = Maps.newHashMap();
     private final Set<ProcedureDescriptionFormatKey> keys = new HashSet<>();
@@ -76,7 +74,6 @@ public class ProcedureDescriptionFormatRepository
      */
     public void init(ServiceOperatorRepository serviceOperatorRepository,
               EncoderRepository encoderRepository) {
-        ProcedureDescriptionFormatRepository.instance = this;
         this.serviceOperatorRepository = Objects.requireNonNull(serviceOperatorRepository);
         this.encoderRepository = Objects.requireNonNull(encoderRepository);
 
@@ -262,10 +259,5 @@ public class ProcedureDescriptionFormatRepository
     @Override
     public Set<ProcedureDescriptionFormatKey> getKeys() {
         return Collections.unmodifiableSet(this.keys);
-    }
-
-    @Deprecated
-    public static ProcedureDescriptionFormatRepository getInstance() {
-        return instance;
     }
 }

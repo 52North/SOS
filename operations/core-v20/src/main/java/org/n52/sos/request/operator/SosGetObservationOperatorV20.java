@@ -77,16 +77,6 @@ public class SosGetObservationOperatorV20 extends
             new TimeInstant(ExtendedIndeterminateTime.LATEST), "phenomenonTime");
 
     private boolean blockRequestsWithoutRestriction;
-    private ResponseFormatRepository responseFormatRepository;
-
-    @Inject
-    public void setResponseFormatRepository(ResponseFormatRepository responseFormatRepository) {
-        this.responseFormatRepository = responseFormatRepository;
-    }
-
-    protected ResponseFormatRepository getResponseFormatRepository() {
-        return this.responseFormatRepository;
-    }
 
     public SosGetObservationOperatorV20() {
         super(SosConstants.Operations.GetObservation.name(), GetObservationRequest.class);

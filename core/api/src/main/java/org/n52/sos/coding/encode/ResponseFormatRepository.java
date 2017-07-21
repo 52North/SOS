@@ -58,8 +58,6 @@ import com.google.common.collect.Maps;
  * @author Christian Autermann
  */
 public class ResponseFormatRepository implements ActivationManager<ResponseFormatKey> {
-    @Deprecated
-    private static ResponseFormatRepository instance;
     private final Map<String, Map<String, Set<String>>> responseFormats = Maps.newHashMap();
     private final ActivationListeners<ResponseFormatKey> activation = new ActivationListeners<>(true);
 
@@ -75,7 +73,6 @@ public class ResponseFormatRepository implements ActivationManager<ResponseForma
      */
     void init(ServiceOperatorRepository serviceOperatorRepository,
               EncoderRepository encoderRepository) {
-        ResponseFormatRepository.instance = this;
         this.encoderRepository = encoderRepository;
         this.serviceOperatorRepository = serviceOperatorRepository;
         generateResponseFormatMaps();
@@ -167,11 +164,6 @@ public class ResponseFormatRepository implements ActivationManager<ResponseForma
     @Override
     public boolean isActive(ResponseFormatKey key) {
         return this.activation.isActive(key);
-    }
-
-    @Deprecated
-    public static ResponseFormatRepository getInstance() {
-        return instance;
     }
 
 }

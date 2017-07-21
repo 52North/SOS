@@ -41,14 +41,25 @@ import org.n52.iceland.coding.SupportedTypeRepository;
 public abstract class AbstractStaticSosContentCache extends AbstractContentCache implements SosContentCache {
     private static final long serialVersionUID = -3494345412582194615L;
 
+    private SupportedTypeRepository supportedTypeRepository;
+
+    public AbstractStaticSosContentCache(SupportedTypeRepository supportedTypeRepository) {
+        this.supportedTypeRepository = supportedTypeRepository;
+    }
+
+
+    public SupportedTypeRepository getSupportedTypeRepository() {
+        return supportedTypeRepository;
+    }
+
     @Override
     public Set<String> getObservationTypes() {
-        return SupportedTypeRepository.getInstance().getObservationTypesAsString();
+        return getSupportedTypeRepository().getObservationTypesAsString();
     }
 
     @Override
     public Set<String> getFeatureOfInterestTypes() {
-        return SupportedTypeRepository.getInstance().getFeatureOfInterestTypesAsString();
+        return getSupportedTypeRepository().getFeatureOfInterestTypesAsString();
     }
 
 }

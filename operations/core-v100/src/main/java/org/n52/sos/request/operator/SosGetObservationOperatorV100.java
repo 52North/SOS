@@ -34,8 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -51,7 +49,6 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.OMHelper;
-import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
@@ -82,19 +79,8 @@ public class SosGetObservationOperatorV100 extends
     private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(FilterConstants.TimeOperator.TM_Equals,
             new TimeInstant(ExtendedIndeterminateTime.LATEST), "phenomenonTime");
 
-    private ResponseFormatRepository responseFormatRepository;
-
     public SosGetObservationOperatorV100() {
         super(OPERATION_NAME, GetObservationRequest.class);
-    }
-
-    private ResponseFormatRepository getResponseFormatRepository() {
-        return this.responseFormatRepository;
-    }
-
-    @Inject
-    public void setResponseFormatRepository(ResponseFormatRepository responseFormatRepository) {
-        this.responseFormatRepository = responseFormatRepository;
     }
 
     @Override

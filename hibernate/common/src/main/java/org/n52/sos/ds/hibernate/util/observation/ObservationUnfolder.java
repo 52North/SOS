@@ -34,7 +34,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import org.n52.sos.ds.hibernate.dao.observation.ValueCreatingSweDataComponentVisitor;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -104,12 +108,13 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class ObservationUnfolder {
     private final OmObservation multiObservation;
+
     private final SweHelper helper = new SweHelper();
 
     public ObservationUnfolder(OmObservation multiObservation) {
         this.multiObservation = multiObservation;
     }
-    
+
     public List<OmObservation> unfold() throws OwsExceptionReport {
         return unfold(false);
     }
@@ -200,8 +205,7 @@ public class ObservationUnfolder {
                             } else if (dataComponent instanceof SweText
                                     && dataComponent.getDefinition().contains("om:procedure")) {
                                 procedure = token;
-                            } else if (dataComponent instanceof SweQuantity
-                                    && checkDefinitionForDephtHeight(field)) {
+                            } else if (dataComponent instanceof SweQuantity && checkDefinitionForDephtHeight(field)) {
                                 parseFieldAsParameter(field, token, parameterHolder);
                             } else {
                                 observedValue = parseSweAbstractSimpleType(dataComponent, token);
@@ -209,10 +213,11 @@ public class ObservationUnfolder {
                         } else if (dataComponent instanceof SweDataRecord) {
                             try {
                                 if (dataComponent.getDefinition().contains(OmConstants.OM_PARAMETER)) {
-                                    parseDataRecordAsParameter((SweDataRecord)dataComponent, block, tokenIndex, parameterHolder);
+                                    parseDataRecordAsParameter((SweDataRecord) dataComponent, block, tokenIndex,
+                                            parameterHolder);
                                 } else {
-                                    observedValue =
-                                            parseSweDataRecord(((SweDataRecord) dataComponent).clone(), block, tokenIndex, parameterHolder);
+                                    observedValue = parseSweDataRecord(((SweDataRecord) dataComponent).clone(), block,
+                                            tokenIndex, parameterHolder);
                                 }
                             } catch (CloneNotSupportedException e) {
                                 throw new NoApplicableCodeException().causedBy(e).withMessage(
@@ -236,29 +241,30 @@ public class ObservationUnfolder {
                             observedValues.add(observedValue);
                             observedValue = null;
                         }
-                       tokenIndex.incrementAndGet();
+                        tokenIndex.incrementAndGet();
                     }
                     for (final Value<?> iValue : observedValues) {
                         List<OmObservation> newObservations = new ArrayList<>();
                         if (isProfileObservations(parameterHolder)) {
                             if (iValue instanceof ComplexValue && complexToSingleProfiles) {
-                                complex  = true;
+                                complex = true;
                                 for (SweField field : ((ComplexValue) iValue).getValue().getFields()) {
                                     if (!checkDefinitionForDephtHeight(field)) {
                                         String definition = field.getElement().getDefinition();
-                                        newObservations.add(createSingleValueObservation(multiObservation, phenomenonTime,
-                                                resultTime, definition,
-                                                convertToProfileValue(
-                                                        field.accept(ValueCreatingSweDataComponentVisitor.getInstance()),
-                                                        samplingGeometry,
-                                                        phenomenonTime,
-                                                        parameterHolder)));
+                                        newObservations
+                                                .add(createSingleValueObservation(multiObservation, phenomenonTime,
+                                                        resultTime, definition,
+                                                        convertToProfileValue(
+                                                                field.accept(ValueCreatingSweDataComponentVisitor
+                                                                        .getInstance()),
+                                                                samplingGeometry, phenomenonTime, parameterHolder)));
                                     }
                                 }
 
                             } else {
                                 newObservations.add(createSingleValueObservation(multiObservation, phenomenonTime,
-                                        resultTime, convertToProfileValue(iValue, samplingGeometry, phenomenonTime, parameterHolder)));
+                                        resultTime, convertToProfileValue(iValue, samplingGeometry, phenomenonTime,
+                                                parameterHolder)));
                             }
                             if (parameterHolder.isSetHeightDepthParameter()) {
                                 parameterHolder.removeParameter(parameterHolder.getHeightDepthParameter());
@@ -267,7 +273,7 @@ public class ObservationUnfolder {
                                 parameterHolder.removeParameter(parameterHolder.getFromParameter());
                                 parameterHolder.removeParameter(parameterHolder.getToParameter());
                             }
-                            
+
                         } else {
                             newObservations.add(createSingleValueObservation(multiObservation, phenomenonTime,
                                     resultTime, iValue));
@@ -302,13 +308,48 @@ public class ObservationUnfolder {
             }
             if (isProfileObservations()) {
                 if (complex) {
-                    return new ObservationMerger().mergeObservations(observationCollection, ObservationMergeIndicator.defaultObservationMergerIndicator());
+                    List<OmObservation> observations = new ArrayList<>();
+                    for (List<OmObservation> list : getProfileLists(observationCollection)) {
+                        observations.addAll(new ObservationMerger().mergeObservations(list,
+                                ObservationMergeIndicator.defaultObservationMergerIndicator()));
+                    }
+                    return observations;
                 } else {
-                    return new ObservationMerger().mergeObservations(observationCollection, ObservationMergeIndicator.defaultObservationMergerIndicator().setPhenomenonTime(true));
+                    return new ObservationMerger().mergeObservations(observationCollection,
+                            ObservationMergeIndicator.defaultObservationMergerIndicator().setPhenomenonTime(true));
                 }
             }
             return observationCollection;
         }
+    }
+
+    private List<List<OmObservation>> getProfileLists(List<OmObservation> observationCollection) {
+        List<List<OmObservation>> list = new ArrayList<>();
+        Map<DateTime, OmObservation> map = getMap(observationCollection);
+        DateTime currentTime = null;
+        List<OmObservation> currentObservations = new ArrayList<>();
+        for (Entry<DateTime, OmObservation> entry : map.entrySet()) {
+            if (currentTime != null && Minutes.minutesBetween(currentTime, entry.getKey()).getMinutes() > 5) {
+                list.add(Lists.newArrayList(currentObservations));
+                currentObservations.clear();
+            }
+            currentObservations.add(entry.getValue());
+            currentTime = entry.getKey();
+        }
+        list.add(Lists.newArrayList(currentObservations));
+        return list;
+    }
+
+    private Map<DateTime, OmObservation> getMap(List<OmObservation> observationCollection) {
+        Map<DateTime, OmObservation> map = new TreeMap<>();
+        for (OmObservation omObservation : observationCollection) {
+            if (omObservation.getPhenomenonTime() instanceof TimeInstant) {
+                map.put(((TimeInstant) omObservation.getPhenomenonTime()).getValue(), omObservation);
+            } else if (omObservation.getPhenomenonTime() instanceof TimePeriod) {
+                map.put(((TimePeriod) omObservation.getPhenomenonTime()).getStart(), omObservation);
+            }
+        }
+        return map;
     }
 
     private Value<?> parseSweAbstractSimpleType(SweAbstractDataComponent dataComponent, String token)
@@ -333,8 +374,8 @@ public class ObservationUnfolder {
         return observedValue;
     }
 
-    private Value<?> parseSweDataRecord(SweDataRecord record, List<String> block, IncDecInteger tokenIndex, ParameterHolder parameterHolder)
-            throws CodedException {
+    private Value<?> parseSweDataRecord(SweDataRecord record, List<String> block, IncDecInteger tokenIndex,
+            ParameterHolder parameterHolder) throws CodedException {
         boolean tokenIndexIncreased = false;
         for (SweField field : record.getFields()) {
             String token = block.get(tokenIndex.get());
@@ -368,9 +409,10 @@ public class ObservationUnfolder {
 
     private OmObservation createSingleValueObservation(final OmObservation multiObservation, final Time phenomenonTime,
             TimeInstant resultTime, final Value<?> iValue) throws CodedException {
-        return createSingleValueObservation(multiObservation, phenomenonTime, resultTime, getObservationConstellation(multiObservation), iValue);
+        return createSingleValueObservation(multiObservation, phenomenonTime, resultTime,
+                getObservationConstellation(multiObservation), iValue);
     }
-    
+
     private OmObservation createSingleValueObservation(final OmObservation multiObservation, final Time phenomenonTime,
             TimeInstant resultTime, String observedProperty, final Value<?> iValue) throws CodedException {
         /*
@@ -384,13 +426,13 @@ public class ObservationUnfolder {
         return createSingleValueObservation(multiObservation, phenomenonTime, resultTime, obsConst, iValue);
     }
 
-    private OmObservationConstellation getObservationConstellation(OmObservation multiObservation2) throws CodedException {
+    private OmObservationConstellation getObservationConstellation(OmObservation multiObservation2)
+            throws CodedException {
         try {
             return multiObservation.getObservationConstellation().clone();
         } catch (CloneNotSupportedException e) {
-            throw new NoApplicableCodeException()
-                .causedBy(e)
-                .withMessage("Error while cloning %s!", OmObservationConstellation.class.getName());
+            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while cloning %s!",
+                    OmObservationConstellation.class.getName());
         }
     }
 
@@ -421,7 +463,7 @@ public class ObservationUnfolder {
         newObservation.setValue(value);
         return newObservation;
     }
-    
+
     private void parseSweVectorAsGeometry(SweVector sweVector, List<String> block, IncDecInteger tokenIndex,
             GeometryHolder holder) throws OwsExceptionReport {
         if (OmConstants.PARAM_NAME_SAMPLING_GEOMETRY.equals(sweVector.getDefinition())) {
@@ -455,7 +497,8 @@ public class ObservationUnfolder {
         }
     }
 
-    private void parseDataRecordAsParameter(SweDataRecord record, List<String> block, IncDecInteger tokenIndex, ParameterHolder parameterHolder) throws CodedException {
+    private void parseDataRecordAsParameter(SweDataRecord record, List<String> block, IncDecInteger tokenIndex,
+            ParameterHolder parameterHolder) throws CodedException {
         boolean tokenIndexIncreased = false;
         for (SweField field : record.getFields()) {
             String token = block.get(tokenIndex.get());
@@ -468,8 +511,9 @@ public class ObservationUnfolder {
             tokenIndex.decrementAndGet();
         }
     }
-    
-    private boolean parseFieldAsParameter(SweField field, String token, ParameterHolder parameterHolder) throws CodedException {
+
+    private boolean parseFieldAsParameter(SweField field, String token, ParameterHolder parameterHolder)
+            throws CodedException {
         Value<?> value = null;
         ReferenceType name = new ReferenceType(field.getElement().getDefinition());
         if (field.getElement() instanceof SweQuantity) {
@@ -490,7 +534,8 @@ public class ObservationUnfolder {
         return true;
     }
 
-    private Value<?> convertToProfileValue(Value<?> value, GeometryHolder samplingGeometry, Time phenomenonTime, ParameterHolder parameterHolder) throws OwsExceptionReport {
+    private Value<?> convertToProfileValue(Value<?> value, GeometryHolder samplingGeometry, Time phenomenonTime,
+            ParameterHolder parameterHolder) throws OwsExceptionReport {
         ProfileLevel profileLevel = new ProfileLevel();
         profileLevel.setLocation(samplingGeometry.getGeometry());
         profileLevel.setPhenomenonTime(phenomenonTime);
@@ -511,7 +556,8 @@ public class ObservationUnfolder {
         if (parameterHolder.isSetHeightDepthParameter()) {
             if (parameterHolder.isSetHeightParameter()) {
                 profileLevel.setLevelStart(toQuantityValue(parameterHolder.getHeightParameter()));
-            } if (parameterHolder.isSetDepthParameter()) {
+            }
+            if (parameterHolder.isSetDepthParameter()) {
                 profileLevel.setLevelStart(toQuantityValue(parameterHolder.getDepthParameter()));
             }
         } else if (parameterHolder.isSetFromToParameter()) {
@@ -522,30 +568,32 @@ public class ObservationUnfolder {
     }
 
     private QuantityValue toQuantityValue(NamedValue<Double> parameter) {
-        QuantityValue value = (QuantityValue)parameter.getValue();
+        QuantityValue value = (QuantityValue) parameter.getValue();
         value.setDefinition(parameter.getName().getHref());
         return value;
     }
-    
+
     private boolean isProfileObservations() {
-        return multiObservation.getObservationConstellation().isSetObservationType() 
-                && multiObservation.getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
+        return multiObservation.getObservationConstellation().isSetObservationType() && multiObservation
+                .getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
     }
 
     private boolean isProfileObservations(ParameterHolder parameterHolder) {
-        if(isProfileObservations()
+        if (isProfileObservations()
                 || (multiObservation.getObservationConstellation().isSetObservationType()
-                        && multiObservation.getObservationConstellation().getObservationType().equals(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION)
+                        && multiObservation.getObservationConstellation().getObservationType()
+                                .equals(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION)
                         && parameterHolder.isSetHeightDepthParameter())) {
-            multiObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
+            multiObservation.getObservationConstellation()
+                    .setObservationType(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
             return true;
         }
         return false;
     }
 
     private boolean checkDefinitionForDephtHeight(SweField field) {
-        return field != null && field.getElement().isSetDefinition() &&
-                (field.getElement().getDefinition().contains("depth")
+        return field != null && field.getElement().isSetDefinition()
+                && (field.getElement().getDefinition().contains("depth")
                         || field.getElement().getDefinition().contains("height")
                         || field.getElement().getDefinition().equalsIgnoreCase("from")
                         || field.getElement().getDefinition().equalsIgnoreCase("to"));
@@ -553,13 +601,13 @@ public class ObservationUnfolder {
 
     private ReferenceType getParameterName(ReferenceType name) {
         if (name.getHref().contains("depth")) {
-            return (ReferenceType)new ReferenceType().setHref("depth");
+            return (ReferenceType) new ReferenceType().setHref("depth");
         } else if (name.getHref().contains("height")) {
-            return (ReferenceType)new ReferenceType().setHref("height");
+            return (ReferenceType) new ReferenceType().setHref("height");
         } else if (name.getHref().equalsIgnoreCase("from")) {
-            return (ReferenceType)new ReferenceType().setHref("from");
+            return (ReferenceType) new ReferenceType().setHref("from");
         } else if (name.getHref().equalsIgnoreCase("to")) {
-            return (ReferenceType)new ReferenceType().setHref("to");
+            return (ReferenceType) new ReferenceType().setHref("to");
         }
         return name;
     }

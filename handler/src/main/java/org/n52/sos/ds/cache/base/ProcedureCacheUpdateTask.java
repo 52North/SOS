@@ -30,20 +30,16 @@ package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
-import org.n52.proxy.db.dao.ProxyOfferingDao;
-import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
@@ -81,6 +77,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
         if (datasets != null) {
             String identifier = procedure.getDomainId();
             getCache().addProcedure(identifier);
+            getCache().addPublishedProcedure(identifier);
             if (procedure.isSetName()) {
                 getCache().addProcedureIdentifierHumanReadableName(identifier, procedure.getName());
             }
@@ -90,8 +87,11 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
                     .getAllObservablePropertyIdentifiersFromDatasets(datasets));
 
             if (procedure.hasParents()) {
-                getCache().addParentProcedures(identifier, getParents(procedure));
+                Collection<String> parents = getParents(procedure);
+                getCache().addParentProcedures(identifier, parents);
+                getCache().addPublishedProcedures(parents);
             }
+
             TimePeriod phenomenonTime = new TimePeriod();
             for (DatasetEntity dataset : datasets) {
                 OfferingEntity offering = dataset.getOffering();

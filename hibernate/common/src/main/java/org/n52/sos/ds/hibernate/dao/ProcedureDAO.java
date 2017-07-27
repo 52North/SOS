@@ -50,7 +50,6 @@ import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -836,7 +835,10 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 }
             }
             if (procedureDescription.isSetParentProcedure()) {
-                tProcedure.setParents(Sets.newHashSet(getProcedureForIdentifier(procedureDescription.getParentProcedure().getHref(), session)));
+                Procedure parent = getProcedureForIdentifier(procedureDescription.getParentProcedure().getHref(), session);
+                if (parent != null) {
+                    tProcedure.setParents(Sets.newHashSet(parent));
+                }
             }
             if (procedureDescription.getTypeOf() != null && !tProcedure.isSetTypeOf()) {
                 Procedure typeOfProc = getProcedureForIdentifier(procedureDescription.getTypeOf().getTitle(), session);

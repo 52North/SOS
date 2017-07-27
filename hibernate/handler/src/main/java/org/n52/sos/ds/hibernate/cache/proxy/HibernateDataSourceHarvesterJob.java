@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.cache.proxy;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.Set;
 
@@ -45,6 +46,7 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
@@ -53,6 +55,7 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
 import org.n52.sos.event.events.UpdateCache;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -63,6 +66,8 @@ import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
@@ -129,17 +134,27 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
             LOGGER.info(context.getJobDetail().getKey() + " execution ends.");
             getServiceEventBus().submit(new UpdateCache());
         } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(HibernateDataSourceHarvesterJob.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("Error while harvesting cache!", ex);
         } finally {
             getConnectionProvider().returnSession(session);
         }
     }
 
-    private void harvestOfferings(ServiceEntity service, Session session) {
+    private void harvestOfferings(ServiceEntity service, Session session) throws OwsExceptionReport {
+        Map<String, OfferingTimeExtrema> offeringTimeExtremas = daoFactory.getOfferingDAO().getOfferingTimeExtrema(null, session);
         for (Offering offering : daoFactory.getOfferingDAO().getOfferings(session)) {
             OfferingEntity offferingEntity = EntityBuilder.createOffering(offering, service, true, true);
-            // TODO add phenTime, ResultTime, ...
-
+            if (offeringTimeExtremas.containsKey(offering.getIdentifier())) {
+                OfferingTimeExtrema offeringTimeExtrema = offeringTimeExtremas.get(offering.getIdentifier());
+                offferingEntity.setPhenomenonTimeStart(offeringTimeExtrema.getMinPhenomenonTime().toDate());
+                offferingEntity.setPhenomenonTimeEnd(offeringTimeExtrema.getMaxPhenomenonTime().toDate());
+                offferingEntity.setResultTimeStart(offeringTimeExtrema.getMinResultTime().toDate());
+                offferingEntity.setResultTimeEnd(offeringTimeExtrema.getMaxResultTime().toDate());
+            }
+            ReferencedEnvelope spatialFilteringProfileEnvelope = daoFactory.getObservationDAO().getSpatialFilteringProfileEnvelopeForOfferingId(offering.getIdentifier(), session);
+            if (spatialFilteringProfileEnvelope != null && spatialFilteringProfileEnvelope.isSetEnvelope()) {
+                offferingEntity.setEnvelope(new GeometryFactory().toGeometry(spatialFilteringProfileEnvelope.getEnvelope()));
+            }
             insertRepository.insertOffering(offferingEntity);
         }
     }

@@ -53,8 +53,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.joda.time.DateTime;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
@@ -62,9 +60,13 @@ import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.cache.ctrl.CompleteCacheUpdateFactory;
 import org.n52.iceland.cache.ctrl.ContentCacheFactory;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.cache.AbstractStaticSosContentCache;
+import org.n52.sos.cache.ContentCacheFactoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class SosContentCacheControllerImpl implements ContentCacheController, Constructable, Destroyable {
@@ -105,6 +107,11 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
         Optional<WritableContentCache> optionalCache = persistenceStrategy.load();
         if (optionalCache.isPresent()) {
             setCache(optionalCache.get());
+            if (getCache() instanceof AbstractStaticSosContentCache
+                    && this.cacheFactory instanceof ContentCacheFactoryImpl) {
+                ((AbstractStaticSosContentCache) getCache()).setSupportedTypeRepository(
+                        ((ContentCacheFactoryImpl) this.cacheFactory).getSupportedTypeRepository());
+            }
         } else {
             // cache file doesn't exist, try to load cache from datasource
             setCache(this.cacheFactory.get());

@@ -57,6 +57,7 @@ import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesNumericObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
 
 /**
  * The class <code>HibernateObservationUtilitiesTest</code> contains tests for
@@ -89,7 +90,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     @Test
     public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
         ObservationStream resultList =
-                HibernateObservationUtilities.createSosObservationFromObservationConstellation(null, null, null, null, null, null, null, null, null);
+                HibernateObservationUtilities.createSosObservationFromObservationConstellation(null, null, null, null, null, null, null);
         assertThat("result is null", resultList, is(not(nullValue())));
         assertThat("elements in list", resultList.hasNext(), is(false));
     }
@@ -159,7 +160,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             // CALL
             ObservationStream resultList =
                     HibernateObservationUtilities.createSosObservationsFromObservations(observationsFromDataBase,
-                            request, null, Locale.ENGLISH, null, null, new DaoFactory(), session);
+                            request, Locale.ENGLISH, null, new OmObservationCreatorContext(null, null, null, null, null, null, null, null, null, null), session);
             // TEST RESULTS
             assertThat(resultList, is(notNullValue()));
             assertThat(resultList.hasNext(), is(true));

@@ -55,7 +55,6 @@ import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.sensorML.SensorML;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.JSONValidator;

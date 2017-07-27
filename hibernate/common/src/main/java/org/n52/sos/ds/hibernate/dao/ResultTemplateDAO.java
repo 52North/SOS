@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -82,13 +80,8 @@ public class ResultTemplateDAO {
     private EncoderRepository encoderRepository;
     private XmlOptionsHelper xmlOptionsHelper;
 
-    @Inject
-    public void setEncoderRepository(EncoderRepository encoderRepository) {
+    public ResultTemplateDAO(EncoderRepository encoderRepository, XmlOptionsHelper xmlOptionsHelper) {
         this.encoderRepository = encoderRepository;
-    }
-
-    @Inject
-    public void setXmlOptionsHelper(XmlOptionsHelper xmlOptionsHelper) {
         this.xmlOptionsHelper = xmlOptionsHelper;
     }
 

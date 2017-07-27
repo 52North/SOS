@@ -149,7 +149,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
         try {
             session = sessionHolder.getSession();
             final ResultTemplate resultTemplate =
-                    new ResultTemplateDAO().getResultTemplateObject(request.getTemplateIdentifier(), session);
+                    daoFactory.getResultTemplateDAO().getResultTemplateObject(request.getTemplateIdentifier(), session);
             transaction = session.beginTransaction();
             final OmObservation o =
                     getSingleObservationFromResultValues(response.getVersion(), resultTemplate,

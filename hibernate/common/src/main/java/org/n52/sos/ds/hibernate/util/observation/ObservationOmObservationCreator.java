@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,8 +39,6 @@ import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.time.Time;
@@ -54,14 +51,11 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.Value;
-import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.shetland.util.StringHelper;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.parameter.SeriesParameterDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -74,11 +68,11 @@ import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterAdder;
 import org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameterAdder;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
-import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -96,18 +90,14 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private final Map<Long, List<Parameter>> seriesParameter = Maps.newHashMap();
     private List<OmObservation> observationCollection;
 
-    private HashSet<Object> set;
-
     public ObservationOmObservationCreator(
             Collection<? extends Observation<?>> observations,
             AbstractObservationRequest request,
-            LocalizedProducer<OwsServiceProvider> serviceProvider,
-            Locale language,
-            I18NDAORepository i18nr,
+            Locale i18n,
             String pdf,
-            DaoFactory daoFactory,
+            OmObservationCreatorContext creatorContext,
             Session session) {
-        super(request, language, serviceProvider, i18nr, pdf, daoFactory, session);
+        super(request, i18n, pdf, creatorContext, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -183,9 +173,9 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             sosObservation = createNewObservation(obsConst, hObservation, value);
             // add SpatialFilteringProfile
             if (hObservation.hasSamplingGeometry()) {
-                sosObservation.addSpatialFilteringProfileParameter(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(hObservation.getSamplingGeometry()));
+                sosObservation.addSpatialFilteringProfileParameter(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(hObservation.getSamplingGeometry()));
             } else if (hObservation.isSetLongLat()) {
-                sosObservation.addSpatialFilteringProfileParameter(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(new HibernateGeometryCreator().createGeometry(hObservation)));
+                sosObservation.addSpatialFilteringProfileParameter(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(new HibernateGeometryCreator().createGeometry(hObservation)));
             }
             addRelatedObservations(sosObservation, hObservation);
             addParameter(sosObservation, hObservation);
@@ -316,7 +306,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             return observationConstellations.get(obsConst.hashCode());
         }
         int hashCode = obsConst.hashCode();
-        if (StringHelper.isNotEmpty(getResultModel())) {
+        if (!Strings.isNullOrEmpty(getResultModel())) {
             obsConst.setObservationType(getResultModel());
         }
         final ObservationConstellationDAO dao = getDaoFactory().getObservationConstellationDAO();

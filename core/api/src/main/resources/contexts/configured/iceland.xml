@@ -17,6 +17,7 @@
 	<bean id="bindingRepository" class="org.n52.iceland.binding.BindingRepository" />
 	<bean id="codingRepository" class="org.n52.iceland.coding.CodingRepository" />
 	<bean id="supportedTypeRepository" class="org.n52.iceland.coding.SupportedTypeRepository" />
+    <bean id="supportedTypeRepositoryInitializer" class="org.n52.iceland.coding.SupportedTypeRepositoryInitializer" />
 	<bean id="owsOperationMetadataExtensionProviderRepository" class="org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderRepository" />
 	<bean id="sosObservationOfferingExtensionRepository" class="org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository" />
 	<bean id="owsCapabilitiesExtensionRepository" class="org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionRepository" />

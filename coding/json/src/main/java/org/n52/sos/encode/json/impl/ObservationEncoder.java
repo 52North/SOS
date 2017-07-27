@@ -179,7 +179,6 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
 
     private JsonNode encodeResult(OmObservation o) throws EncodingException {
         Value<?> value = o.getValue().getValue();
-        String type = getObservationType(o);
         if (value instanceof TVPValue) {
 //            if (type.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
                 return encodeTVPValue(o);

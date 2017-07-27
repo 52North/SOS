@@ -1103,7 +1103,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     private String getBaseGetUrl() {
         final StringBuilder url = new StringBuilder();
         // service URL
-        url.append(getServiceConfiguration().getServiceURL());
+        url.append(getServiceURL());
         // ?
         url.append('?');
         // service

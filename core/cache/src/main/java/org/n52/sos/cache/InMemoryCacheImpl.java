@@ -44,7 +44,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.coding.SupportedTypeRepository;
 import org.n52.janmayen.function.Functions;
 import org.n52.janmayen.function.Predicates;
 import org.n52.janmayen.function.Suppliers;
@@ -134,10 +133,6 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     private Set<String> publishedProcedure= newSynchronizedSet();
     private Set<String> publishedOffering = newSynchronizedSet();
     private Set<String> publishedObservableProperty = newSynchronizedSet();
-
-    public InMemoryCacheImpl(SupportedTypeRepository supportedTypeRepository) {
-        super(supportedTypeRepository);
-    }
 
     @Override
     public DateTime getLastUpdateTime() {
@@ -2456,7 +2451,6 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
                 .collect(toSet());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Set<String> getTransactionalObservationProcedures() {
         return CollectionHelper.union(

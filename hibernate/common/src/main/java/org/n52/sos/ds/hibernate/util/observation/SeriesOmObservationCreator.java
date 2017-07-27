@@ -34,8 +34,6 @@ import java.util.Locale;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -45,12 +43,10 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.NilTemplateValue;
-import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.parameter.SeriesParameterDAO;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -74,8 +70,14 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
 
     protected final Series series;
 
-    public SeriesOmObservationCreator(Series series, AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, I18NDAORepository i18nr, String pdf, DaoFactory daoFactory, Session session) {
-        super(request, language, serviceProvider, i18nr, pdf, daoFactory, session);
+    public SeriesOmObservationCreator(
+            Series series,
+            AbstractObservationRequest request,
+            Locale i18n,
+            String pdf,
+            OmObservationCreatorContext creatorContext,
+            Session session) {
+        super(request, i18n, pdf, creatorContext, session);
         this.series = series;
     }
 

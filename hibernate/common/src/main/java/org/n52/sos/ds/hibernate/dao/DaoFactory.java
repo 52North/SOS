@@ -35,6 +35,8 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -63,6 +65,8 @@ import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObserv
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * Hibernate data access factory.
@@ -76,6 +80,8 @@ public class DaoFactory {
 
     private Set<Integer> validityFlags;
     private Set<Integer> verificationFlags;
+    private EncoderRepository encoderRepository;
+    private XmlOptionsHelper xmlOptionsHelper;
 
     @Setting(value = EReportingSetting.EREPORTING_VALIDITY_FLAGS, required = false)
     public void setValidityFlags(String validityFlags) {
@@ -87,6 +93,16 @@ public class DaoFactory {
     public void setVerificationFlags(String verificationFlags) {
         this.verificationFlags = Optional.ofNullable(verificationFlags).map(s -> Arrays.stream(s.split(","))
                 .map(Integer::parseInt).collect(toSet())).orElseGet(Collections::emptySet);
+    }
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
+    @Inject
+    public void setXmlOptionsHelper(XmlOptionsHelper xmlOptionsHelper) {
+        this.xmlOptionsHelper = xmlOptionsHelper;
     }
 
     public AbstractSeriesDAO getSeriesDAO() throws OwsExceptionReport {
@@ -190,7 +206,7 @@ public class DaoFactory {
     }
 
     public ResultTemplateDAO getResultTemplateDAO() {
-        return new ResultTemplateDAO();
+        return new ResultTemplateDAO(encoderRepository, xmlOptionsHelper);
     }
 
     public RelatedFeatureRoleDAO getRelatedFeatureRoleDAO() {

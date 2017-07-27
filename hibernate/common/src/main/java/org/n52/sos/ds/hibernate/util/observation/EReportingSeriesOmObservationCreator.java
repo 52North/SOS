@@ -32,23 +32,20 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.om.ObservationStream;
-import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 
 public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
 
     public EReportingSeriesOmObservationCreator(EReportingSeries series,
                                                 AbstractObservationRequest request,
-                                                LocalizedProducer<OwsServiceProvider> serviceProvider,
-                                                Locale language, I18NDAORepository i18nr, String pdf,
-                                                DaoFactory daoFactory, Session session) {
-        super(series, request, serviceProvider, language, i18nr, pdf, daoFactory, session);
+                                                Locale i18n,
+                                                String pdf,
+                                                OmObservationCreatorContext creatorContext,
+                                                Session session) {
+        super(series, request, i18n, pdf, creatorContext, session);
     }
 
     @Override

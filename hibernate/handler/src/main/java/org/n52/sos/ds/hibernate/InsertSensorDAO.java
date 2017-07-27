@@ -40,7 +40,10 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.PhenomenonNameDescriptionProvider;
 import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -56,7 +59,6 @@ import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
-import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
@@ -134,13 +136,13 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                                     .getFeatureOfInterestTypes(), session);
                     if (observationTypes != null && featureOfInterestTypes != null) {
                         final List<ObservableProperty> hObservableProperties =
-                                getOrInsertNewObservableProperties(request.getObservableProperty(), session);
-                        final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO(daoFactory);
-                        final OfferingDAO offeringDAO = new OfferingDAO(daoFactory);
+                                getOrInsertNewObservableProperties(request.getObservableProperty(), request.getProcedureDescription(), session);
+                        final ObservationConstellationDAO observationConstellationDAO = daoFactory.getObservationConstellationDAO();
+                        final OfferingDAO offeringDAO = daoFactory.getOfferingDAO();
                         for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
                             final List<RelatedFeature> hRelatedFeatures = new LinkedList<RelatedFeature>();
                             if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
-                                final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO(daoFactory);
+                                final RelatedFeatureDAO relatedFeatureDAO = daoFactory.getRelatedFeatureDAO();
                                 final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
                                 for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
                                     final List<RelatedFeatureRole> relatedFeatureRoles =
@@ -244,17 +246,36 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
      *
      * @param obsProps
      *            observableProperty identifiers
+     * @param sosProcedureDescription
      * @param session
      *            Hibernate Session
      * @return ObservableProperty entities
      */
     private List<ObservableProperty> getOrInsertNewObservableProperties(final List<String> obsProps,
-            final Session session) {
-        final List<OmObservableProperty> observableProperties = new ArrayList<>(obsProps.size());
+            SosProcedureDescription<?> sosProcedureDescription, final Session session) {
+        final List<AbstractPhenomenon> observableProperties = new ArrayList<>(obsProps.size());
         for (final String observableProperty : obsProps) {
-            observableProperties.add(new OmObservableProperty(observableProperty));
+            AbstractPhenomenon omObservableProperty;
+            if (sosProcedureDescription.hasPhenomenonFor(observableProperty)) {
+                omObservableProperty = sosProcedureDescription.getPhenomenonFor(observableProperty);
+            } else {
+                omObservableProperty = new OmObservableProperty(observableProperty);
+            }
+            if (sosProcedureDescription.getProcedureDescription() instanceof PhenomenonNameDescriptionProvider) {
+                PhenomenonNameDescriptionProvider app =
+                        (PhenomenonNameDescriptionProvider) sosProcedureDescription.getProcedureDescription();
+                if (app.isSetObservablePropertyName(observableProperty) && !omObservableProperty.isSetName()) {
+                    omObservableProperty.setName(new CodeType(app.getObservablePropertyName(observableProperty)));
+                }
+                if (app.isSetObservablePropertyDescription(observableProperty)
+                        && !omObservableProperty.isSetDescription()) {
+                    omObservableProperty.setDescription(app.getObservablePropertyDescription(observableProperty));
+                }
+            }
+            observableProperties.add(omObservableProperty);
         }
-        return new ObservablePropertyDAO(daoFactory).getOrInsertObservableProperty(observableProperties, false, session);
+        return daoFactory.getObservablePropertyDAO().getOrInsertObservableProperty(observableProperties, false,
+                session);
     }
 
     /**

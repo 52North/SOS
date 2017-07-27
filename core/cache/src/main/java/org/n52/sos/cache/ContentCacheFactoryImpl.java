@@ -49,9 +49,13 @@ public class ContentCacheFactoryImpl implements ContentCacheFactory {
         this.supportedTypeRepository = supportedTypeRepository;
     }
 
+    public SupportedTypeRepository getSupportedTypeRepository() {
+        return supportedTypeRepository;
+    }
+
     @Override
     public WritableContentCache get() {
-        return new InMemoryCacheImpl(supportedTypeRepository);
+        return (InMemoryCacheImpl) new InMemoryCacheImpl().setSupportedTypeRepository(getSupportedTypeRepository());
     }
 
 }

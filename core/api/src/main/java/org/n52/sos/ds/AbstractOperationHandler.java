@@ -37,10 +37,8 @@ import javax.inject.Inject;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.request.handler.OperationHandlerKey;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.om.ObservationType;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
@@ -52,7 +50,6 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.request.operator.AbstractRequestOperator;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.SosSettings;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
@@ -70,7 +67,8 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
-public abstract class AbstractOperationHandler extends org.n52.iceland.request.handler.AbstractOperationHandler {
+public abstract class AbstractOperationHandler
+        extends org.n52.iceland.request.handler.AbstractOperationHandler {
 
     private final OperationHandlerKey key;
     private ContentCacheController contentCacheController;
@@ -131,23 +129,6 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     protected boolean checkListOnlyParentOfferings() {
         return listOnlyParentOfferings;
     }
-    @Deprecated
-    protected Configurator getConfigurator() {
-        // FIXME use @Inject
-        return Configurator.getInstance();
-    }
-
-    @Deprecated
-    protected BindingRepository getBindingRepository() {
-        // FIXME use @Inject
-        return BindingRepository.getInstance();
-    }
-
-    @Deprecated
-    protected ServiceConfiguration getServiceConfiguration() {
-        // FIXME use @Inject
-        return ServiceConfiguration.getInstance();
-    }
 
     // TODO check if necessary in feature
     @Override
@@ -165,7 +146,7 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     }
 
     protected String getServiceUrl(String service) {
-        return getServiceConfiguration().getServiceURL();
+        return super.getServiceURL().toString();
     }
 
     protected SosContentCache getCache() {
@@ -177,9 +158,8 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     }
 
     protected OwsDomain getProcedureParameter(String service, String version, Collection<String> procedures) {
-        return createDomain(SosConstants.GetObservationParams.procedure,
-                            procedures,
-                            getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
+        return createDomain(SosConstants.GetObservationParams.procedure, procedures,
+                getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
     }
 
     protected OwsDomain getQueryableProcedureParameter(String service, String version) {
@@ -191,19 +171,19 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
     }
 
     protected OwsDomain getFeatureOfInterestParameter(String service, String version) {
-        return getFeatureOfInterestParameter(service, version, SosHelper.getFeatureIDs(getCache()
-                                             .getFeaturesOfInterest(), version));
+        return getFeatureOfInterestParameter(service, version,
+                SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
     }
 
     protected OwsDomain getPublishedFeatureOfInterestParameter(String service, String version) {
-        return getFeatureOfInterestParameter(service, version, SosHelper.getFeatureIDs(getCache().getPublishedFeatureOfInterest(), version));
+        return getFeatureOfInterestParameter(service, version,
+                SosHelper.getFeatureIDs(getCache().getPublishedFeatureOfInterest(), version));
     }
 
     protected OwsDomain getFeatureOfInterestParameter(String service, String version,
-                                                      Collection<String> featuresOfInterest) {
-        return createDomain(SosConstants.GetObservationParams.featureOfInterest,
-                            featuresOfInterest,
-                            getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
+            Collection<String> featuresOfInterest) {
+        return createDomain(SosConstants.GetObservationParams.featureOfInterest, featuresOfInterest,
+                getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
     }
 
     protected OwsDomain getPublishedObservablePropertyParameter(String service, String version) {
@@ -219,39 +199,37 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
         if (isIncludeChildObservableProperties()) {
             Set<String> compositePhenomenons = getCache().getCompositePhenomenons();
             observableProperties.removeAll(compositePhenomenons);
-            compositePhenomenons.stream()
-                    .map(getCache()::getObservablePropertiesForCompositePhenomenon)
+            compositePhenomenons.stream().map(getCache()::getObservablePropertiesForCompositePhenomenon)
                     .flatMap(Set::stream).forEach(observableProperties::add);
         }
         return observableProperties;
     }
 
     protected OwsDomain getObservablePropertyParameter(String service, String version,
-                                                       Collection<String> observedProperties) {
-        return createDomain(SosConstants.GetObservationParams.observedProperty,
-                            observedProperties,
-                            getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
+            Collection<String> observedProperties) {
+        return createDomain(SosConstants.GetObservationParams.observedProperty, observedProperties,
+                getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
     }
 
     protected OwsDomain getOfferingParameter(String service, String version) {
-        if (checkListOnlyParentOfferings()){
-            return getOfferingParameter(service, version, getCache().getParentOfferings(getCache().getOfferings(), false, false));
+        if (checkListOnlyParentOfferings()) {
+            return getOfferingParameter(service, version,
+                    getCache().getParentOfferings(getCache().getOfferings(), false, false));
         } else {
             return getOfferingParameter(service, version, getCache().getOfferings());
         }
     }
 
     protected OwsDomain getOfferingParameter(String service, String version, Collection<String> offerings) {
-        return createDomain(SosConstants.GetObservationParams.offering,
-                            offerings,
-                            getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
+        return createDomain(SosConstants.GetObservationParams.offering, offerings,
+                getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
     }
 
-    protected OwsDomain createDomain(Enum<?> name, Collection<String> procedures, boolean show) {
-        if (procedures == null || procedures.isEmpty()) {
+    protected OwsDomain createDomain(Enum<?> name, Collection<String> values, boolean show) {
+        if (values == null || values.isEmpty()) {
             return new OwsDomain(name, OwsNoValues.instance());
         } else if (show) {
-            return new OwsDomain(name, new OwsAllowedValues(procedures.stream().map(OwsValue::new)));
+            return new OwsDomain(name, new OwsAllowedValues(values.stream().map(OwsValue::new)));
         } else {
             return new OwsDomain(name, OwsAnyValue.instance());
         }
@@ -261,20 +239,23 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
         if (featureIDs != null && !featureIDs.isEmpty()) {
             ReferencedEnvelope envelope = getCache().getGlobalEnvelope();
             if (envelope != null && envelope.isSetEnvelope()) {
-                return new OwsDomain(name, new OwsAllowedValues(SosHelper
-                                     .getOwsRangeFromEnvelope(envelope.getEnvelope())));
+                return new OwsDomain(name,
+                        new OwsAllowedValues(SosHelper.getOwsRangeFromEnvelope(envelope.getEnvelope())));
             }
         }
         return new OwsDomain(name, OwsAnyValue.instance());
     }
 
-    protected Set<String> getResponseFormatsForObservationType(String observationType, String service, String version) {
+    protected Set<String> getResponseFormatsForObservationType(String observationType, String service,
+            String version) {
         Set<String> responseFormats = Sets.newHashSet();
         for (Encoder<?, ?> e : getEncoderRepository().getEncoders()) {
             if (e instanceof ObservationEncoder) {
                 final ObservationEncoder<?, ?> oe = (ObservationEncoder<?, ?>) e;
-                Map<String, Set<SupportedType>> supportedResponseFormatObservationTypes = oe.getSupportedResponseFormatObservationTypes();
-                if (supportedResponseFormatObservationTypes != null && !supportedResponseFormatObservationTypes.isEmpty()) {
+                Map<String, Set<SupportedType>> supportedResponseFormatObservationTypes =
+                        oe.getSupportedResponseFormatObservationTypes();
+                if (supportedResponseFormatObservationTypes != null
+                        && !supportedResponseFormatObservationTypes.isEmpty()) {
                     for (final String responseFormat : supportedResponseFormatObservationTypes.keySet()) {
                         for (SupportedType st : supportedResponseFormatObservationTypes.get(responseFormat)) {
                             if (st instanceof ObservationType) {

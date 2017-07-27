@@ -43,10 +43,6 @@ public class TestableInMemoryCacheController extends ContentCacheControllerImpl 
     private static File tempFile;
 
     public TestableInMemoryCacheController() {
-        tempFile = new File(directory, "cache.tmp");
-        ImmediatePersistenceStrategy ps = new ImmediatePersistenceStrategy();
-        ps.setConfigLocationProvider(directory::getAbsolutePath);
-        ps.init();
         setUpdateInterval(Integer.MAX_VALUE);
     }
 
@@ -67,6 +63,10 @@ public class TestableInMemoryCacheController extends ContentCacheControllerImpl 
 
     public static void setUp() {
         directory = Files.createTempDir();
+        tempFile = new File(directory, "cache.tmp");
+        ImmediatePersistenceStrategy ps = new ImmediatePersistenceStrategy();
+        ps.setConfigLocationProvider(directory::getAbsolutePath);
+        ps.init();
     }
 
     public static void deleteTempFile() {

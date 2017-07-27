@@ -487,7 +487,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     /**
      * checks whether the requested sensor ID is valid
      *
-     * @param procedureID
+     * @param procedure
      *            the sensor ID which should be checked
      * @param parameterName
      *            the parameter name
@@ -495,30 +495,30 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
      * @throws OwsExceptionReport
      *             * if the value of the sensor ID parameter is incorrect
      */
-    protected void checkProcedure(String procedureID, Enum<?> parameterName) throws OwsExceptionReport {
-        checkProcedure(procedureID, parameterName.name());
+    protected void checkProcedure(String procedure, Enum<?> parameterName) throws OwsExceptionReport {
+        checkProcedure(procedure, parameterName.name());
     }
 
-    protected void checkTransactionalProcedureID(String procedureID, String parameterName) throws OwsExceptionReport {
-        if (Strings.isNullOrEmpty(procedureID)) {
+    protected void checkTransactionalProcedureID(String procedure, String parameterName) throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(procedure)) {
             throw new MissingProcedureParameterException();
-        } else if (!getCache().hasTransactionalObservationProcedure(procedureID)) {
-            throw new InvalidParameterValueException(parameterName, procedureID);
+        } else if (!getCache().hasTransactionalObservationProcedure(procedure)) {
+            throw new InvalidParameterValueException(parameterName, procedure);
         }
     }
 
-    protected void checkQueryableProcedureID(String procedureID, String parameterName) throws OwsExceptionReport {
-        if (Strings.isNullOrEmpty(procedureID)) {
+    protected void checkQueryableProcedureID(String procedure, String parameterName) throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(procedure)) {
             throw new MissingProcedureParameterException();
-        } else if (!getCache().hasQueryableProcedure(procedureID)) {
-            throw new InvalidParameterValueException(parameterName, procedureID);
+        } else if (!getCache().hasQueryableProcedure(procedure)) {
+            throw new InvalidParameterValueException(parameterName, procedure);
         }
     }
 
     /**
      * checks whether the requested sensor ID is valid
      *
-     * @param procedureID
+     * @param procedure
      *            the sensor ID which should be checked
      * @param parameterName
      *            the parameter name
@@ -527,19 +527,19 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
      * @throws OwsExceptionReport
      *             * if the value of the sensor ID parameter is incorrect
      */
-    protected void checkProcedure(String procedureID, String parameterName) throws OwsExceptionReport {
-        if (Strings.isNullOrEmpty(procedureID)) {
+    protected void checkProcedure(String procedure, String parameterName) throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(procedure)) {
             throw new MissingProcedureParameterException();
-        } else if (!getCache().getPublishedProcedures().contains(procedureID)) {
-            throw new InvalidParameterValueException(parameterName, procedureID);
+        } else if (!getCache().getPublishedProcedures().contains(procedure)) {
+            throw new InvalidParameterValueException(parameterName, procedure);
         }
     }
 
-    protected void checkProcedures(Collection<String> procedureIDs, String parameterName)
+    protected void checkProcedures(Collection<String> procedures, String parameterName)
             throws OwsExceptionReport {
-        if (procedureIDs != null) {
+        if (procedures != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
-            procedureIDs.forEach(id -> {
+            procedures.forEach(id -> {
                 try {
                     checkProcedure(id, parameterName);
                 } catch (OwsExceptionReport owse) {
@@ -550,19 +550,19 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkTransactionalProcedure(String procedureID, String parameterName) throws OwsExceptionReport {
-        if (Strings.isNullOrEmpty(procedureID)) {
+    protected void checkTransactionalProcedure(String procedure, String parameterName) throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(procedure)) {
             throw new MissingProcedureParameterException();
-        } else if (!getCache().hasTransactionalObservationProcedure(procedureID)) {
-            throw new InvalidParameterValueException(parameterName, procedureID);
+        } else if (!getCache().hasTransactionalObservationProcedure(procedure)) {
+            throw new InvalidParameterValueException(parameterName, procedure);
         }
     }
 
-    protected void checkTransactionalProcedures(Collection<String> procedureIDs, String parameterName)
+    protected void checkTransactionalProcedures(Collection<String> procedures, String parameterName)
             throws OwsExceptionReport {
-        if (procedureIDs != null) {
+        if (procedures != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
-            procedureIDs.forEach(id -> {
+            procedures.forEach(id -> {
                 try {
                     checkTransactionalProcedureID(id, parameterName);
                 } catch (OwsExceptionReport owse) {
@@ -573,19 +573,19 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkQueryableProcedure(String procedureID, String parameterName) throws OwsExceptionReport {
-        if (Strings.isNullOrEmpty(procedureID)) {
+    protected void checkQueryableProcedure(String procedure, String parameterName) throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(procedure)) {
             throw new MissingProcedureParameterException();
-        } else if (!getCache().hasQueryableProcedure(procedureID)) {
-            throw new InvalidParameterValueException(parameterName, procedureID);
+        } else if (!getCache().hasQueryableProcedure(procedure)) {
+            throw new InvalidParameterValueException(parameterName, procedure);
         }
     }
 
-    protected void checkQueryableProcedures(Collection<String> procedureIDs, String parameterName)
+    protected void checkQueryableProcedures(Collection<String> procedures, String parameterName)
             throws OwsExceptionReport {
-        if (procedureIDs != null) {
+        if (procedures != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
-            procedureIDs.forEach(id -> {
+            procedures.forEach(id -> {
                 try {
                     checkQueryableProcedureID(id, parameterName);
                 } catch (OwsExceptionReport owse) {

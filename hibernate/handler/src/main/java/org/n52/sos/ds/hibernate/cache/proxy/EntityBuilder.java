@@ -181,6 +181,7 @@ public class EntityBuilder {
     public static DatasetEntity createDataset(Series series, ServiceEntity service) {
         DatasetEntity dataset = createDataset(series.getSeriesType());
         if (dataset != null) {
+            dataset.setService(service);
             setIdentifierNameDesxription(series, dataset);
             dataset.setPublished(series.isPublished());
             dataset.setDeleted(series.isDeleted());
@@ -210,7 +211,7 @@ public class EntityBuilder {
             return null;
         }
         switch (seriesType.toLowerCase(Locale.ROOT)) {
-        case "measurement":
+        case "quantity":
             return new QuantityDatasetEntity();
         case "text":
             return new TextDatasetEntity();

@@ -71,7 +71,7 @@ public class WriteableCacheTest {
 
     @Before
     public void init() {
-        cache = new InMemoryCacheImpl(new SupportedTypeRepository());
+        cache = new InMemoryCacheImpl();
         cache.addFeatureOfInterestIdentifierHumanReadableName(feature, featureName);
         cache.addProcedureIdentifierHumanReadableName(procedure, procedureName);
         cache.addObservablePropertyIdentifierHumanReadableName(observedProperty, observedPropertyName);

@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate;
 
 import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
-import static org.n52.shetland.util.CollectionHelper.isEmpty;
 import static org.n52.shetland.util.CollectionHelper.isNotEmpty;
 
 import java.util.Collection;
@@ -58,12 +57,8 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractGetResultHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
-import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
@@ -76,7 +71,6 @@ import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
-import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.ConformanceClasses;
 import org.slf4j.Logger;
@@ -97,7 +91,6 @@ public class GetResultDAO extends AbstractGetResultHandler {
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
     private DaoFactory daoFactory;
-    private ProfileHandler profileHandler;
 
     public GetResultDAO() {
         super(SosConstants.SOS);
@@ -118,11 +111,6 @@ public class GetResultDAO extends AbstractGetResultHandler {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
-    @Inject
-    public void setProfileHandler(ProfileHandler profileHandler) {
-        this.profileHandler = profileHandler;
-    }
-
     @Override
     public GetResultResponse getResult(final GetResultRequest request) throws OwsExceptionReport {
         Session session = null;
@@ -141,7 +129,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
                 final List<Observation<?>> observations;
                     observations = querySeriesObservation(request, featureIdentifier, session);
                 response.setResultValues(new ResultHandlingHelper().createResultValuesFromObservations(observations,
-                        sosResultEncoding, sosResultStructure, profileHandler.getActiveProfile().getResponseNoDataPlaceholder()));
+                        sosResultEncoding, sosResultStructure, getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder()));
             }
             return response;
         } catch (final HibernateException he) {
@@ -222,7 +210,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
     private List<ResultTemplate> queryResultTemplate(final GetResultRequest request,
             final Set<String> featureIdentifier, final Session session) {
         final List<ResultTemplate> resultTemplates =
-                new ResultTemplateDAO().getResultTemplateObject(request.getOffering(), request.getObservedProperty(),
+                daoFactory.getResultTemplateDAO().getResultTemplateObject(request.getOffering(), request.getObservedProperty(),
                         featureIdentifier, session);
         return resultTemplates;
     }

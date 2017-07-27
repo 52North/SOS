@@ -48,6 +48,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.n52.iceland.coding.SupportedTypeRepository;
 import org.n52.shetland.util.ReferencedEnvelope;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.encode.EncoderRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,13 +65,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class InMemoryCacheImplTest {
     private static final String OFFERING_IDENTIFIER = "test-offering";
     private static InMemoryCacheImpl instance;
-    private SupportedTypeRepository supportedTypeRepository;
 
     @Before
     public void initInstance() {
-        supportedTypeRepository = new SupportedTypeRepository();
-        supportedTypeRepository.init();
-        instance = new InMemoryCacheImpl(supportedTypeRepository);
+        instance = new InMemoryCacheImpl();
+        SupportedTypeRepository supportedTypeRepository = new SupportedTypeRepository();
+        supportedTypeRepository.init(new DecoderRepository(), new EncoderRepository());
+        instance.setSupportedTypeRepository(supportedTypeRepository);
     }
 
     @After
@@ -86,7 +88,7 @@ public class InMemoryCacheImplTest {
 
     @Test
     public void equalsWithNewInstances() {
-        InMemoryCacheImpl anotherInstance = new InMemoryCacheImpl(supportedTypeRepository);
+        InMemoryCacheImpl anotherInstance = new InMemoryCacheImpl();
         assertEquals("equals failed", instance, anotherInstance);
     }
 
@@ -107,9 +109,9 @@ public class InMemoryCacheImplTest {
 
     @Test
     public void should_return_different_hashCodes_for_different_instances() {
-        InMemoryCacheImpl cache = new InMemoryCacheImpl(supportedTypeRepository);
+        InMemoryCacheImpl cache = new InMemoryCacheImpl();
         cache.setProcedures(Collections.singleton("p_1"));
-        assertNotEquals("hashCode() of different caches are equal", cache.hashCode(), new InMemoryCacheImpl(supportedTypeRepository));
+        assertNotEquals("hashCode() of different caches are equal", cache.hashCode(), new InMemoryCacheImpl());
     }
 
     @Test
@@ -130,7 +132,7 @@ public class InMemoryCacheImplTest {
 
     @Test
     public void should_return_true_if_min_resulttime_for_offering_is_available() {
-        final InMemoryCacheImpl cache = new InMemoryCacheImpl(supportedTypeRepository);
+        final InMemoryCacheImpl cache = new InMemoryCacheImpl();
         cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, new DateTime(52l));
 
         assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(TRUE));
@@ -138,11 +140,11 @@ public class InMemoryCacheImplTest {
 
     @Test
     public void should_return_false_if_min_resulttime_for_offering_is_null() {
-        final InMemoryCacheImpl readCache = new InMemoryCacheImpl(supportedTypeRepository);
+        final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
 
         assertThat(readCache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(FALSE));
 
-        final InMemoryCacheImpl cache = new InMemoryCacheImpl(supportedTypeRepository);
+        final InMemoryCacheImpl cache = new InMemoryCacheImpl();
         cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, null);
 
         assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(FALSE));
@@ -150,7 +152,7 @@ public class InMemoryCacheImplTest {
 
     @Test
     public void should_return_false_if_relatedFeature_has_no_children() {
-        final InMemoryCacheImpl readCache = new InMemoryCacheImpl(supportedTypeRepository);
+        final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
         final String relatedFeature = "test-feature";
         ((SosWritableContentCache) readCache).addRelatedFeatureForOffering("test-offering", relatedFeature);
 
@@ -161,7 +163,7 @@ public class InMemoryCacheImplTest {
 
     @Test
     public void should_return_true_if_relatedFeature_has_one_or_more_children() {
-        final InMemoryCacheImpl readCache = new InMemoryCacheImpl(supportedTypeRepository);
+        final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
         final String relatedFeature = "test-feature";
         final String relatedFeature2 = "test-feature-2";
         final String offering = "test-offering";

@@ -150,7 +150,7 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     protected <T, X extends Exception> void encodeListChecked(ObjectNode json, String name, Collection<T> collection, ThrowingFunction<T, JsonNode, X> encoder) throws CompositeException {
         if (!collection.isEmpty()) {
             CompositeException exceptions = new CompositeException();
-            json.set(name, collection.stream().map(exceptions.wrap(encoder)).map(o -> o.orElseGet(nodeFactory()::nullNode)).collect(toJsonArray()));
+            json.set(name, collection.stream().map(exceptions.wrapFunction(encoder)).map(o -> o.orElseGet(nodeFactory()::nullNode)).collect(toJsonArray()));
             if (!exceptions.isEmpty()) {
                 throw exceptions;
             }

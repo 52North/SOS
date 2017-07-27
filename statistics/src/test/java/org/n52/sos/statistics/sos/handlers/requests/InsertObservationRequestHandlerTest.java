@@ -36,7 +36,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
@@ -49,7 +49,7 @@ public class InsertObservationRequestHandlerTest extends HandlerBaseTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void validateAllFields() {
+    public void validateAllFields() throws OwsExceptionReport {
         InsertObservationRequest request = new InsertObservationRequest();
         request.addObservation(omObservation);
         request.setAssignedSensorId("sensorId");

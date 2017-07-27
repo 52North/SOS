@@ -44,8 +44,6 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.filter.BinaryLogicFilter;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.Filter;
@@ -55,7 +53,6 @@ import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -71,6 +68,7 @@ import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.XmlEncoderKey;
@@ -189,33 +187,33 @@ public class HibernateGetObservationHelper {
 
     public static ObservationStream toSosObservation(Collection<Observation<?>> observations,
                                                        AbstractObservationRequest request,
-                                                       LocalizedProducer<OwsServiceProvider> serviceProvider,
                                                        Locale language,
-                                                       I18NDAORepository i18nr,
                                                        String pdf,
-                                                       DaoFactory daoFactory,
+                                                       OmObservationCreatorContext observationCreatorContext,
                                                        Session session) throws OwsExceptionReport, ConverterException {
         if (observations.isEmpty()) {
             return ObservationStream.empty();
         }
         final long startProcess = System.currentTimeMillis();
         ObservationStream sosObservations = HibernateObservationUtilities.createSosObservationsFromObservations(
-                new HashSet<>(observations), request, serviceProvider, language, i18nr, pdf, daoFactory, session);
+                new HashSet<>(observations), request, language, pdf, observationCreatorContext, session);
 
         LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
                                                                      (System.currentTimeMillis() - startProcess));
         return sosObservations;
     }
 
-    public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request,
-                                                 LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language,
-                                                 I18NDAORepository i18nr,
-                                                 String pdf, DaoFactory daoFactory, Session session)
+    public static OmObservation toSosObservation(Observation<?> observation,
+                                                 AbstractObservationRequest request,
+                                                 Locale language,
+                                                 String pdf,
+                                                 OmObservationCreatorContext observationCreatorContext,
+                                                 Session session)
             throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();
             OmObservation sosObservation = HibernateObservationUtilities
-                    .createSosObservationFromObservation(observation, request, serviceProvider, language, i18nr, pdf, daoFactory, session);
+                    .createSosObservationFromObservation(observation, request, language, pdf, observationCreatorContext, session);
             LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));
             return sosObservation;
         }

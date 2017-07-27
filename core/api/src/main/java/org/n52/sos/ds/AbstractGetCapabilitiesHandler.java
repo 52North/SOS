@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
@@ -59,6 +61,9 @@ import org.n52.shetland.ogc.sos.SosConstants;
  * @since 5.0.0
  */
 public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHandler {
+
+    @Inject
+    private ServiceOperatorRepository serviceOperatorRepository;
 
     public AbstractGetCapabilitiesHandler(String service) {
         super(service, SosConstants.Operations.GetCapabilities.name());
@@ -89,6 +94,10 @@ public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHa
                 .collect(toSet());
     }
 
+    protected ServiceOperatorRepository getServiceOperatorRepository() {
+        return serviceOperatorRepository;
+    }
+
     private OwsDomain getSectionsParameter(String service, String version) throws OwsExceptionReport {
         // set param Sections
         List<String> sections = new LinkedList<>();
@@ -111,9 +120,9 @@ public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHa
         return new OwsDomain(name, new OwsAllowedValues(SosConstants.ACCEPT_FORMATS.stream().map(OwsValue::new)));
     }
 
-    private static OwsDomain getAcceptVersionsParameter(String service, String version) {
+    private OwsDomain getAcceptVersionsParameter(String service, String version) {
         GetCapabilitiesParams name = OWSConstants.GetCapabilitiesParams.AcceptVersions;
-        Set<String> versions = ServiceOperatorRepository.getInstance().getSupportedVersions(service);
+        Set<String> versions = getServiceOperatorRepository().getSupportedVersions(service);
         return new OwsDomain(name, new OwsAllowedValues(versions.stream().map(OwsValue::new)));
     }
 

@@ -90,7 +90,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         // procedure relations
         cache.addProcedure(procedure);
         if (request.getProcedureDescription().isSetParentProcedure()) {
-        cache.addPublishedProcedure(procedure);
+            cache.addPublishedProcedure(procedure);
             cache.addParentProcedures(procedure, Sets.newHashSet(request.getProcedureDescription().getParentProcedure().getTitleOrFromHref()));
             cache.addPublishedProcedure(request.getProcedureDescription().getParentProcedure().getHref());
         }
@@ -155,17 +155,6 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
                 }
                 cache.addPublishedObservableProperty(observableProperty);
-            }
-        }
-
-        // observable property relations
-        cache.addPublishedObservableProperties(request.getObservableProperty());
-        for (String observableProperty : request.getObservableProperty()) {
-            cache.addProcedureForObservableProperty(observableProperty, procedure);
-            cache.addObservablePropertyForProcedure(procedure, observableProperty);
-            for (SosOffering sosOffering : request.getAssignedOfferings()) {
-                cache.addOfferingForObservableProperty(observableProperty, sosOffering.getIdentifier());
-                cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
             }
         }
 

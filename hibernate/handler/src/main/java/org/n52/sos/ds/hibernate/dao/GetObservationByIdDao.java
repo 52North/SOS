@@ -41,12 +41,9 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
-import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -58,6 +55,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
 import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
 import org.n52.svalbard.encode.Encoder;
@@ -79,7 +77,7 @@ public class GetObservationByIdDao
 
     private OwsServiceMetadataRepository serviceMetadataRepository;
 
-    private I18NDAORepository i18NDAORepository;
+    private OmObservationCreatorContext observationCreatorContext;
 
     private DaoFactory daoFactory;
 
@@ -106,8 +104,8 @@ public class GetObservationByIdDao
     }
 
     @Inject
-    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
-        this.i18NDAORepository = i18NDAORepository;
+    public void setOmObservationCreatorContext(OmObservationCreatorContext observationCreatorContext) {
+        this.observationCreatorContext = observationCreatorContext;
     }
 
     @Override
@@ -120,8 +118,7 @@ public class GetObservationByIdDao
             HibernateObservationUtilities
                     .createSosObservationsFromObservations(
                             checkObservations(queryObservation(request, session), request), request,
-                            getLocalizedProducer(request.getService()), i18NDAORepository,
-                            getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session)
+                            getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext, session)
                     .forEachRemaining(omObservations::add);
             return omObservations;
 
@@ -194,8 +191,7 @@ public class GetObservationByIdDao
         for (Series series : serieses) {
             ObservationStream createSosObservationFromSeries =
                     HibernateObservationUtilities.createSosObservationFromSeries(series, request,
-                            getLocalizedProducer(request.getService()), i18NDAORepository,
-                            getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session);
+                            getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext, session);
             OmObservation observationTemplate = createSosObservationFromSeries.next();
             HibernateSeriesStreamingValue streamingValue =
                     new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
@@ -207,10 +203,6 @@ public class GetObservationByIdDao
         }
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         return result;
-    }
-
-    private LocalizedProducer<OwsServiceProvider> getLocalizedProducer(String service) {
-        return this.serviceMetadataRepository.getServiceProviderFactory(service);
     }
 
     private String getProcedureDescriptionFormat(String responseFormat) {

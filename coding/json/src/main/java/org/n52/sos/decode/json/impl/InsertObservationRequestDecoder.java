@@ -35,6 +35,7 @@ import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
@@ -48,10 +49,11 @@ import com.fasterxml.jackson.databind.JsonNode;
  *
  * @since 4.0.0
  */
-public class InsertObservationRequestDecoder extends AbstractSosRequestDecoder<InsertObservationRequest> {
+public class InsertObservationRequestDecoder
+        extends AbstractSosRequestDecoder<InsertObservationRequest> {
     public InsertObservationRequestDecoder() {
         super(InsertObservationRequest.class, SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-              SosConstants.Operations.InsertObservation);
+                SosConstants.Operations.InsertObservation);
     }
 
     @Override
@@ -60,7 +62,8 @@ public class InsertObservationRequestDecoder extends AbstractSosRequestDecoder<I
     }
 
     @Override
-    public InsertObservationRequest decodeRequest(JsonNode node) throws DecodingException {
+    public InsertObservationRequest decodeRequest(JsonNode node)
+            throws DecodingException {
         InsertObservationRequest r = new InsertObservationRequest();
         r.setObservation(decodeJsonToObjectList(node.path(OBSERVATION), OmObservation.class));
         r.setOfferings(parseStringOrStringList(node.path(OFFERING)));

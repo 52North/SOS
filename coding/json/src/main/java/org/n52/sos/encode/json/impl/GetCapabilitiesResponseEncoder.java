@@ -30,29 +30,6 @@ package org.n52.sos.encode.json.impl;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Beyond;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Contains;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Crosses;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.DWithin;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Disjoint;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Equals;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Intersects;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Overlaps;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Touches;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Within;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_After;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Before;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Begins;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_BegunBy;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Contains;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_During;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_EndedBy;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Ends;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Equals;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Meets;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_MetBy;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_OverlappedBy;
-import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Overlaps;
 import static org.n52.sos.encode.json.impl.GeoJSONEncoder.SRID_LINK_PREFIX;
 
 import java.util.Objects;
@@ -61,9 +38,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 
 import javax.xml.namespace.QName;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.i18n.MultilingualString;
@@ -105,6 +79,8 @@ import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

@@ -39,7 +39,8 @@ import org.n52.sos.ds.CacheFeederHandler;
  *
  * @since 4.0.0
  */
-public class CompleteCacheUpdate extends CacheFeederDAOCacheUpdate {
+public class CompleteCacheUpdate
+        extends CacheFeederDAOCacheUpdate {
 
     private SupportedTypeRepository supportedTypeRepository;
 
@@ -51,7 +52,8 @@ public class CompleteCacheUpdate extends CacheFeederDAOCacheUpdate {
     @Override
     public void execute() {
         try {
-            SosWritableContentCache cache = new InMemoryCacheImpl(supportedTypeRepository);
+            SosWritableContentCache cache = (SosWritableContentCache) new InMemoryCacheImpl()
+                    .setSupportedTypeRepository(supportedTypeRepository);
             getCacheFeederDAO().updateCache(cache);
             setCache(cache);
         } catch (OwsExceptionReport ex) {

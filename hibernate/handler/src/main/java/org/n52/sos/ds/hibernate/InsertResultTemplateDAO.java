@@ -145,7 +145,7 @@ public class InsertResultTemplateDAO
 
     private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, ObservationConstellation obsConst,
             Procedure procedure, AbstractFeatureOfInterest feature, Session session) throws OwsExceptionReport {
-        new ResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
+        daoFactory.getResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
     }
 
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty)

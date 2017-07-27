@@ -29,4 +29,6 @@
     <bean class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
     <bean class="org.n52.sos.ds.hibernate.entities.EntitiyHelper" />
 
+    <bean class="org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext" />
+
 </beans>

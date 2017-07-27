@@ -34,8 +34,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -124,7 +128,7 @@ public class ObservationUnfolder {
         } else {
             final List<OmObservation> observationCollection = new ArrayList<OmObservation>();
             Map<String, AbstractFeature> features = new HashMap<>();
-            Map<String, SosProcedureDescription> procedures = new HashMap<>();
+            Map<String, SosProcedureDescription<?>> procedures = new HashMap<>();
             boolean complex = false;
             if (((MultiObservationValues<?>) multiObservation.getValue()).getValue() instanceof SweDataArrayValue) {
                 final SweDataArrayValue arrayValue =
@@ -297,7 +301,11 @@ public class ObservationUnfolder {
             }
             if (isProfileObservations()) {
                 if (complex) {
-                    return toList(ObservationStream.of(observationCollection).merge(ObservationMergeIndicator.sameObservationConstellation()));
+                    List<OmObservation> observations = new ArrayList<>();
+                    for (ObservationStream stream : getProfileLists(observationCollection)) {
+                        observations.addAll(toList(stream.merge(ObservationMergeIndicator.sameObservationConstellation())));
+                    }
+                    return observations;
                 } else {
                     return toList(ObservationStream.of(observationCollection).merge(ObservationMergeIndicator.sameObservationConstellation().setPhenomenonTime(true)));
                 }
@@ -314,20 +322,20 @@ public class ObservationUnfolder {
         return observations;
     }
 
-    private List<List<OmObservation>> getProfileLists(List<OmObservation> observationCollection) {
-        List<List<OmObservation>> list = new ArrayList<>();
+    private List<ObservationStream> getProfileLists(List<OmObservation> observationCollection) {
+        List<ObservationStream> list = new ArrayList<>();
         Map<DateTime, OmObservation> map = getMap(observationCollection);
         DateTime currentTime = null;
         List<OmObservation> currentObservations = new ArrayList<>();
         for (Entry<DateTime, OmObservation> entry : map.entrySet()) {
             if (currentTime != null && Minutes.minutesBetween(currentTime, entry.getKey()).getMinutes() > 5) {
-                list.add(Lists.newArrayList(currentObservations));
+                list.add(ObservationStream.of(currentObservations));
                 currentObservations.clear();
             }
             currentObservations.add(entry.getValue());
             currentTime = entry.getKey();
         }
-        list.add(Lists.newArrayList(currentObservations));
+        list.add(ObservationStream.of(currentObservations));
         return list;
     }
 

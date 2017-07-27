@@ -5,9 +5,9 @@
 
 ## Description
 
-**Standardized, web-based upload and download of sensor data and sensor metadata**
+### Standardized, web-based upload and download of sensor data and sensor metadata
 
-*The 52°North Sensor Observation Service (SOS) provides an interoperable web-based interface for inserting and querying sensor data and sensor descriptions. It aggregates observations from live in-situ sensors as well as historical data sets (time series data).*
+**The 52°North Sensor Observation Service (SOS) provides an interoperable web-based interface for inserting and querying sensor data and sensor descriptions. It aggregates observations from live in-situ sensors as well as historical data sets (time series data).**
 
 The 52°North SOS is a reference implementation of the
 [OGC Sensor Observation Service specification (version 2.0)](https://portal.opengeospatial.org/files/?artifact_id=47599), an interoperable interface for publishing and querying sensor data and metadata. 

@@ -1,6 +1,6 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
 
     <bean id="exceptionLogger" class="org.n52.iceland.service.ExceptionLogger" />
@@ -40,8 +40,9 @@
 		<description>Used to decouple EventListener and EventBus creation.</description>
 	</bean>
 
+    <!-- ResponseWriterFactory implementations from coding/json -->
+    <bean id="jsonResponseWriterFactory" class="org.n52.iceland.response.JSONResponseWriterFactory"/>
     <bean id="xmlResponseWriterFactory" class="org.n52.iceland.response.XmlResponseWriterFactory" />
-
     <bean id="exiResponseWriterFactory" class="org.n52.iceland.response.EXIResponseWriterFactory"/>
     <bean id="exiUtils" class="org.n52.iceland.binding.exi.EXIUtils" />
 

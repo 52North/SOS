@@ -33,6 +33,7 @@ import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -43,7 +44,9 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.i18n.I18NSettings;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.om.NamedValue;
@@ -72,10 +75,16 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDao.class);
     private HibernateSessionHolder sessionHolder;
+    private Locale defaultLanguage;
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
+    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
+    public void setDefaultLanguage(String defaultLanguage) {
+        this.defaultLanguage = new Locale(defaultLanguage);
     }
 
     @Override
@@ -183,5 +192,10 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
             }
         }
         return null;
+    }
+
+    @Override
+    public Locale getDefaultLanguage() {
+        return defaultLanguage;
     }
 }

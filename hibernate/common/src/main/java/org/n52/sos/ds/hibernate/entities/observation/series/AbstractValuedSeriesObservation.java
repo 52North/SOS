@@ -126,6 +126,7 @@ public abstract class AbstractValuedSeriesObservation<T>
         addRelatedObservation(observation);
         addParameter(observation);
         addValueSpecificDataToObservation(observation, responseFormat);
+        addObservationValueToObservation(observation, value, responseFormat);
         return observation;
     }
 

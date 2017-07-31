@@ -39,14 +39,15 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
-import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -79,6 +80,7 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
     private I18NDAORepository i18NDAORepository;
     private DaoFactory daoFactory;
     private HibernateProcedureDescriptionGeneratorFactoryRepository descriptionGeneratorFactoryRepository;
+    private Locale defaultLanguage;
 
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
@@ -114,6 +116,11 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
         this.i18NDAORepository = i18NDAORepository;
+    }
+
+    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
+    public void setDefaultLanguage(String defaultLanguage) {
+        this.defaultLanguage = new Locale(defaultLanguage);
     }
 
     @Override
@@ -171,7 +178,7 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
         return procedureConverter.createSosProcedureDescription(procedure,
                                                                 request.getProcedureDescriptionFormat(),
                                                                 request.getVersion(),
-                                                                LocaleHelper.decode(request.getRequestedLanguage()),
+                                                                getRequestedLocale(request),
                                                                 i18NDAORepository,
                                                                 session);
     }
@@ -203,7 +210,7 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
                                 request.getProcedureDescriptionFormat(),
                                 validProcedureTime,
                                 request.getVersion(),
-                                LocaleHelper.decode(request.getRequestedLanguage()),
+                                getRequestedLocale(request),
                                 i18NDAORepository,
                                 session);
                 list.add(convertProcedureDescription(sosProcedureDescription, request));
@@ -287,6 +294,11 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
             }
         }
         return procedureDescription;
+    }
+
+    @Override
+    public Locale getDefaultLanguage() {
+        return defaultLanguage;
     }
 
 }

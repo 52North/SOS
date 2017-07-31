@@ -104,6 +104,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // since they are performed once per offering
 
         getCache().addOffering(identifier);
+        getCache().addPublishedOffering(identifier);
         addOfferingNamesAndDescriptionsToCache(identifier, session);
         // only check once, check flag in other methods
         // Procedures

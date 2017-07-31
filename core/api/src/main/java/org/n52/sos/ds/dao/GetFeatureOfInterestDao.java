@@ -34,7 +34,7 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 
-public interface GetFeatureOfInterestDao {
+public interface GetFeatureOfInterestDao extends DefaultDao {
 
     Map<String, AbstractFeature> getFeatureOfInterest(GetFeatureOfInterestRequest request) throws OwsExceptionReport;
 }

@@ -42,7 +42,7 @@ import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability
  * @since 5.0.0
  *
  */
-public interface GetDataAvailabilityDao {
+public interface GetDataAvailabilityDao extends DefaultDao {
 
     List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request) throws OwsExceptionReport;
 

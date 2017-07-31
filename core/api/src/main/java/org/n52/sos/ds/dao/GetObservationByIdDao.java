@@ -39,7 +39,7 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
  * @since 5.0.0
  *
  */
-public interface GetObservationByIdDao {
+public interface GetObservationByIdDao extends DefaultDao {
 
     Collection<OmObservation> queryObservationsById(GetObservationByIdRequest request) throws OwsExceptionReport;
 

@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.dao;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -39,8 +40,10 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -83,6 +86,8 @@ public class GetObservationByIdDao
 
     private EncoderRepository encoderRepository;
 
+    private Locale defaultLanguage;
+
     @Inject
     public void setEncoderRepository(EncoderRepository encoderRepository) {
         this.encoderRepository = encoderRepository;
@@ -106,6 +111,11 @@ public class GetObservationByIdDao
     @Inject
     public void setOmObservationCreatorContext(OmObservationCreatorContext observationCreatorContext) {
         this.observationCreatorContext = observationCreatorContext;
+    }
+
+    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
+    public void setDefaultLanguage(String defaultLanguage) {
+        this.defaultLanguage = new Locale(defaultLanguage);
     }
 
     @Override
@@ -212,5 +222,10 @@ public class GetObservationByIdDao
             return ((ObservationEncoder<?, ?>) encoder).getProcedureEncodingNamspace();
         }
         return null;
+    }
+
+    @Override
+    public Locale getDefaultLanguage() {
+        return defaultLanguage;
     }
 }

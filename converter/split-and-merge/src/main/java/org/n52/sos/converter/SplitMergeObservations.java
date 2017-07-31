@@ -352,13 +352,15 @@ public class SplitMergeObservations
             while (observationStream.hasNext()) {
                 OmObservation observation = observationStream.next();
                 if (observation.getValue() instanceof AbstractStreaming) {
-                    ((AbstractStreaming) observation.getValue()).setObservationMergeIndicator(ObservationMergeIndicator
-                            .sameObservationConstellation().setResultTime(includeResultTimeForMerging));
+                    ObservationStream valueStream = ((AbstractStreaming) observation.getValue()).merge(indicator);
+                    while (valueStream.hasNext()) {
+                        processed.add(valueStream.next());
+                    }
+                } else {
+                    processed.add(observation);
                 }
-                processed.add(observation);
             }
             response.setObservationCollection(ObservationStream.of(processed));
-            response.setMergeObservations(true);
         }
         return response;
     }

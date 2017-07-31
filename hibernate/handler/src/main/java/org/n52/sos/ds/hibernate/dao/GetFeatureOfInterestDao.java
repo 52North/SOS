@@ -28,16 +28,18 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -54,6 +56,8 @@ public class GetFeatureOfInterestDao implements org.n52.sos.ds.dao.GetFeatureOfI
 
     private FeatureQueryHandler featureQueryHandler;
 
+    private Locale defaultLanguage;
+
     @Inject
     public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
@@ -69,6 +73,11 @@ public class GetFeatureOfInterestDao implements org.n52.sos.ds.dao.GetFeatureOfI
         this.featureQueryHandler = featureQueryHandler;
     }
 
+    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
+    public void setDefaultLanguage(String defaultLanguage) {
+        this.defaultLanguage = new Locale(defaultLanguage);
+    }
+
     @Override
     public Map<String, AbstractFeature> getFeatureOfInterest(GetFeatureOfInterestRequest request) throws OwsExceptionReport {
         Session session = null;
@@ -76,7 +85,7 @@ public class GetFeatureOfInterestDao implements org.n52.sos.ds.dao.GetFeatureOfI
             session = sessionHolder.getSession();
             FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(session)
                     .setFeatures(request.getFeatureIdentifiers()).setVersion(request.getVersion())
-                    .setI18N(LocaleHelper.decode(request.getRequestedLanguage()));
+                    .setI18N(getRequestedLocale(request));
             return featureQueryHandler.getFeatures(queryObject);
         } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
@@ -84,6 +93,11 @@ public class GetFeatureOfInterestDao implements org.n52.sos.ds.dao.GetFeatureOfI
         } finally {
             sessionHolder.returnSession(session);
         }
+    }
+
+    @Override
+    public Locale getDefaultLanguage() {
+        return defaultLanguage;
     }
 
 }

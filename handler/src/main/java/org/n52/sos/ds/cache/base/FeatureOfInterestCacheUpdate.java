@@ -67,6 +67,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
             ProxyProcedureDao procedureDao = new ProxyProcedureDao(getSession());
             for (FeatureEntity featureEntity : features) {
                 String identifier = featureEntity.getDomainId();
+                getCache().addPublishedFeatureOfInterest(identifier);
                 getCache().addFeatureOfInterest(identifier);
                 if (featureEntity.isSetName()) {
                         getCache().addFeatureOfInterestIdentifierHumanReadableName(identifier, featureEntity.getName());

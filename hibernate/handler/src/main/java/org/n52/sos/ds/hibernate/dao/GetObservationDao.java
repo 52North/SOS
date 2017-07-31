@@ -384,7 +384,8 @@ public class GetObservationDao
         return null;
     }
 
-    protected Locale getRequestedLocale(OwsServiceRequest request) {
-        return LocaleHelper.decode(request.getRequestedLanguage(), defaultLanguage);
+    @Override
+    public Locale getDefaultLanguage() {
+        return defaultLanguage;
     }
 }

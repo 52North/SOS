@@ -61,8 +61,10 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
         try {
             List<PhenomenonEntity> observableProperties =
                     new ProxyPhenomenonDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+
             for (PhenomenonEntity observableProperty : observableProperties) {
                 String identifier = observableProperty.getDomainId();
+                getCache().addPublishedObservableProperty(identifier);
                 if (observableProperty.isSetName()) {
                     getCache().addObservablePropertyIdentifierHumanReadableName(identifier,
                             observableProperty.getName());

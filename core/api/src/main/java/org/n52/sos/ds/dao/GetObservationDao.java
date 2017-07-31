@@ -37,7 +37,7 @@ import org.n52.shetland.ogc.sos.response.GetObservationResponse;
  * @since 5.0.0
  *
  */
-public interface GetObservationDao {
+public interface GetObservationDao extends DefaultDao {
 
     GetObservationResponse queryObservationData(GetObservationRequest request, GetObservationResponse response) throws OwsExceptionReport;
 

@@ -320,11 +320,6 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>procedure-description-converter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>coding-json</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -492,11 +487,6 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>request-response-coordinate-transformer</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>common-controller</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -567,6 +557,35 @@
                 <artifactId>aqd-v10</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <!-- CONVERTER -->
+            
+            <!-- Split and Merge observatioons -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>split-and-merge</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>procedure-description-converter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>request-response-coordinate-transformer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>observation-converter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>seriestype</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- flexible identifiers -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -592,12 +611,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-related-offering</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <!-- Split and Merge observatioons -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>split-and-merge</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Statistics -->
@@ -663,17 +676,6 @@
 	                </exclusion>
             	</exclusions>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>2.8.47</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>hamcrest-core</artifactId>
-                        <groupId>org.hamcrest</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>

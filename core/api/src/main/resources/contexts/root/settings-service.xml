@@ -136,6 +136,15 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
+
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.includeResultTimeForMerging" />
+        <property name="title" value="Should this SOS include the resultTime for merging?" />
+        <property name="description" value="Whether the SOS should include the resultTime as inidcator when merging observations!" />
+        <property name="order" value="23.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
 	<bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="misc.convertComplexProfileToSingleProfiles" />
         <property name="title" value="Should the SOS convert complex profiles to single profiles?" />

@@ -40,6 +40,7 @@ import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.exception.DecodingException;
@@ -111,8 +112,9 @@ public abstract class AbstractResultHandlingHandler extends AbstractOperationHan
         try {
             XmlObject xmlObject = XmlHelper.parseXmlString(xml);
             DecoderKey decoderKey = CodingHelper.getDecoderKey(xmlObject);
-            if (decoderKey != null) {
-                return decodingRepository.getDecoder(decoderKey).decode(xmlObject);
+            Decoder<Object, Object> decoder = decodingRepository.getDecoder(decoderKey);
+            if (decoder != null) {
+                return decoder.decode(xmlObject);
             } else {
                 throw new NoApplicableCodeException().withMessage("No decoder found for %s", xmlObject.getClass().getName());
             }

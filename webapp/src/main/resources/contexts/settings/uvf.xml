@@ -8,7 +8,7 @@
         <property name="title" value="UVF Encoding" />
         <property name="order" value="10.0" />
     </bean>
-    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="uvf.default.crs" />
         <property name="title" value="The default CRS EPSG code used in UVF response" />
         <property name="description" value="The default CRS EPSG code that is used if no swe extension is present in the request that specifies one. Allowed values are: &lt;tt&gt;31466, 31467, 31468&lt;/tt&gt;." />

@@ -49,6 +49,8 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.uvf.UVFConstants;
@@ -57,22 +59,19 @@ import org.n52.shetland.uvf.UVFSettingsProvider;
 import com.google.common.collect.Sets;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
+ *         J&uuml;rrens</a>
  *
  */
 @Configurable
-public class UVFRequestModifier extends AbstractRequestResponseModifier {
-
+public class UVFRequestModifier
+        extends AbstractRequestResponseModifier {
 
     private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = Sets.newHashSet(
-            new RequestResponseModifierKey(
-                    SosConstants.SOS,
-                    Sos2Constants.SERVICEVERSION,
-                    new GetObservationRequest()),
-            new RequestResponseModifierKey(
-                    SosConstants.SOS,
-                    Sos2Constants.SERVICEVERSION,
-                    new GetObservationByIdRequest()));
+            new RequestResponseModifierKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                    GetObservationRequest.class),
+            new RequestResponseModifierKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                    GetObservationByIdRequest.class));
 
     private String defaultCRS;
 
@@ -82,16 +81,19 @@ public class UVFRequestModifier extends AbstractRequestResponseModifier {
     }
 
     @Override
-    public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
+    public OwsServiceRequest modifyRequest(OwsServiceRequest request)
+            throws OwsExceptionReport {
         if ((request.getRequestContext().getAcceptType().isPresent()
                 && request.getRequestContext().getAcceptType().get().contains(UVFConstants.CONTENT_TYPE_UVF))
-                || (request instanceof ResponseFormat
-                        && ((ResponseFormat) request).isSetResponseFormat()
-                        && ((ResponseFormat) request).getResponseFormat().contains(UVFConstants.CONTENT_TYPE_UVF.getSubtype())
-                        && UVFConstants.CONTENT_TYPE_UVF.isCompatible(MediaType.parse(((ResponseFormat) request).getResponseFormat())))) {
+                || (request instanceof ResponseFormat && ((ResponseFormat) request).isSetResponseFormat()
+                        && ((ResponseFormat) request).getResponseFormat()
+                                .contains(UVFConstants.CONTENT_TYPE_UVF.getSubtype())
+                        && UVFConstants.CONTENT_TYPE_UVF
+                                .isCompatible(MediaType.parse(((ResponseFormat) request).getResponseFormat())))) {
             if (request.hasExtension(OWSConstants.AdditionalRequestParams.crs)
                     && request.getExtension(OWSConstants.AdditionalRequestParams.crs).isPresent()
-                    && request.getExtension(OWSConstants.AdditionalRequestParams.crs).get().getValue() instanceof SweText) {
+                    && request.getExtension(OWSConstants.AdditionalRequestParams.crs).get()
+                            .getValue() instanceof SweText) {
                 String requestedCRS =
                         ((SweText) request.getExtension(OWSConstants.AdditionalRequestParams.crs).get().getValue())
                                 .getValue();
@@ -107,7 +109,8 @@ public class UVFRequestModifier extends AbstractRequestResponseModifier {
             // add default CRS as swe text extension
             SweText crsExtension = (SweText) new SweText().setValue(getDefaultCRS())
                     .setIdentifier(OWSConstants.AdditionalRequestParams.crs.name());
-            request.addExtension(new SwesExtension<SweText>().setValue(crsExtension));
+            request.addExtension(new SwesExtension<SweText>().setValue(crsExtension)
+                    .setIdentifier(OWSConstants.AdditionalRequestParams.crs.name()));
         }
         return request;
     }
@@ -117,25 +120,24 @@ public class UVFRequestModifier extends AbstractRequestResponseModifier {
     }
 
     @Setting(UVFSettingsProvider.DEFAULT_CRS_SETTING_KEY)
-    public void setDefaultCRS(String defaultCRS) throws ConfigurationException {
+    public void setDefaultCRS(String defaultCRS)
+            throws ConfigurationException {
         Validation.notNullOrEmpty(UVFSettingsProvider.DEFAULT_CRS_SETTING_KEY, defaultCRS);
         final int minimum = UVFConstants.MINIMUM_EPSG_CODE;
         final int maximum = UVFConstants.MAXIMUM_EPSG_CODE;
         try {
             final int newDefaultCRS = Integer.parseInt(defaultCRS);
             if (newDefaultCRS < minimum || newDefaultCRS > maximum) {
-                throw new ConfigurationException(String.format("Setting with key '%s': '%s' outside allowed interval "
-                        + "]%s, %s[.",
-                        UVFSettingsProvider.DEFAULT_CRS_SETTING_KEY, defaultCRS, minimum, maximum));
+                throw new ConfigurationException(
+                        String.format("Setting with key '%s': '%s' outside allowed interval " + "]%s, %s[.",
+                                UVFSettingsProvider.DEFAULT_CRS_SETTING_KEY, defaultCRS, minimum, maximum));
             }
         } catch (NumberFormatException e) {
             throw new ConfigurationException(String.format("Could not parse given new default CRS EPSG code '%s'. "
-                    + "Choose an integer of the interval ]%d, %d[.",
-                    defaultCRS, minimum, maximum));
+                    + "Choose an integer of the interval ]%d, %d[.", defaultCRS, minimum, maximum));
         }
         this.defaultCRS = defaultCRS;
     }
-
 
     @Override
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)

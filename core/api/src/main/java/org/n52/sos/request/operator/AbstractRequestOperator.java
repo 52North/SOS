@@ -57,6 +57,7 @@ import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.janmayen.event.EventBus;
 import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -1051,7 +1052,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         if (Strings.isNullOrEmpty(format)) {
             throw new MissingParameterValueException(parameter);
         } else {
-            if (!mimeTypeAllowed && new MediaType(format) != null) {
+            if (!mimeTypeAllowed && !format.startsWith("http://")) {
                 throw new InvalidParameterValueException(parameter, format);
             }
             return getCache().hasRequestableProcedureDescriptionFormat(format) ? true : hasPossibleProcedureDescriptionFormats(format, mimeTypeAllowed);

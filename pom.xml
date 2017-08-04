@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.2-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
@@ -77,13 +77,13 @@
         <config.logger.history.max>10</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
-        <postgresql.version>42.0.0</postgresql.version>
+        <postgresql.version>42.1.3</postgresql.version>
         <postgis.version>2.2.1</postgis.version>
         <logback.version>1.1.3</logback.version>
-        <slf4j.version>1.7.21</slf4j.version>
+        <slf4j.version>1.7.25</slf4j.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
         <hibernate.spatial.version>4.3.2-52N</hibernate.spatial.version>
-        <sqlite.version>3.8.11.2</sqlite.version>
+        <sqlite.version>3.19.3</sqlite.version>
         <c3p0.version>0.9.5.2</c3p0.version>
         <geotools.version>14.1</geotools.version>
         <jackson.version>2.8.5</jackson.version>
@@ -105,7 +105,7 @@
         <org.springframework.security.version>4.2.3.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.3.10.RELEASE</org.springframework.version>
         <aspectj.version>1.8.9</aspectj.version>
-        <saxon.version>9.1.0.8</saxon.version>
+        <saxon.version>9.8.0-3</saxon.version>
         <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
     </properties>
     <dependencyManagement>
@@ -735,7 +735,7 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.9.4</version>
+                <version>2.9.9</version>
             </dependency>
             <!-- Hibernate Core Dependencies -->
             <dependency>
@@ -1041,21 +1041,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>net.sourceforge.saxon</groupId>
-                <artifactId>saxon</artifactId>
+                <groupId>net.sf.saxon</groupId>
+                <artifactId>Saxon-HE</artifactId>
                 <version>${saxon.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.saxon</groupId>
-                <artifactId>saxon</artifactId>
-                <version>${saxon.version}</version>
-                <classifier>xpath</classifier>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.saxon</groupId>
-                <artifactId>saxon</artifactId>
-                <version>${saxon.version}</version>
-                <classifier>dom</classifier>
             </dependency>
             <!-- Spring -->
             <dependency>
@@ -1399,12 +1387,12 @@
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>1.4.190</version>
+                <version>1.4.196</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>5.1.38</version>
+                <version>6.0.6</version>
             </dependency>
             <dependency>
                 <groupId>com.github.fge</groupId>
@@ -1468,6 +1456,12 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>20.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.google.code.findbugs</groupId>
+                        <artifactId>jsr305</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>se.jiderhamn</groupId>

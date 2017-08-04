@@ -47,10 +47,8 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
+
 import org.n52.iceland.binding.Binding;
-import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
@@ -80,7 +78,6 @@ import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.service.Configurator;
-import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.encode.Encoder;
 
 import com.google.common.base.Joiner;
@@ -120,6 +117,14 @@ public class SosHelper {
         url.append(serviceURL);
         // URL pattern for KVP
         url.append(urlPattern);
+        // ?
+        url.append('?');
+        return url.toString();
+    }
+    private static String getBaseGetUrl(String serviceURL) {
+        final StringBuilder url = new StringBuilder();
+        // service URL
+        url.append(serviceURL);
         // ?
         url.append('?');
         return url.toString();
@@ -187,8 +192,7 @@ public class SosHelper {
     }
 
     public static URL getGetObservationKVPRequest(String version) throws MalformedURLException {
-        SosQueryBuilder b = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL(),
-                BindingConstants.KVP_BINDING_ENDPOINT));
+        SosQueryBuilder b = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL()));
         b.addService();
         b.addVersion(version);
         b.addGetObservationRequest();
@@ -196,8 +200,7 @@ public class SosHelper {
     }
 
     public static URL getGetCapabilitiesKVPRequest() throws MalformedURLException {
-        SosQueryBuilder builder = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL(),
-                                                    BindingConstants.KVP_BINDING_ENDPOINT));
+        SosQueryBuilder builder = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL()));
         builder.addGetCapabilitiesRequest();
         builder.addService();
         return builder.build();

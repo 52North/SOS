@@ -34,7 +34,6 @@ import java.util.Set;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.binding.Binding;
-import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.request.operator.RequestOperator;
@@ -42,6 +41,7 @@ import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.Producer;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.sos.request.operator.WSDLAwareRequestOperator;
 import org.n52.sos.service.Configurator;
@@ -73,15 +73,17 @@ public class WSDLFactory implements Producer<String> {
             final Set<RequestOperatorKey> requestOperators = repo.getActiveRequestOperatorKeys();
             final String serviceUrl = getServiceURL();
 
-            if (bindings.containsKey(BindingConstants.SOAP_BINDING_ENDPOINT)) {
-                builder.setSoapEndpoint(URI.create(serviceUrl + BindingConstants.SOAP_BINDING_ENDPOINT));
-                final Binding b = bindings.get(BindingConstants.SOAP_BINDING_ENDPOINT);
+            Binding binding;
+
+            binding = getBindingRepository().getBinding(MediaTypes.APPLICATION_SOAP_XML);
+            if (binding != null) {
+                builder.setSoapEndpoint(URI.create(serviceUrl));
                 for (final RequestOperatorKey o : requestOperators) {
                     final RequestOperator op = repo.getRequestOperator(o);
                     if (op instanceof WSDLAwareRequestOperator) {
                         final WSDLAwareRequestOperator wop = (WSDLAwareRequestOperator) op;
                         if (wop.getSosOperationDefinition() != null) {
-                            if (isHttpPostSupported(b, wop)) {
+                            if (isHttpPostSupported(binding, wop)) {
                                 builder.addSoapOperation(wop.getSosOperationDefinition());
                             }
                             addAdditionalPrefixes(wop, builder);
@@ -90,15 +92,16 @@ public class WSDLFactory implements Producer<String> {
                     }
                 }
             }
-            if (bindings.containsKey(BindingConstants.POX_BINDING_ENDPOINT)) {
-                builder.setPoxEndpoint(URI.create(serviceUrl + BindingConstants.POX_BINDING_ENDPOINT));
-                final Binding b = bindings.get(BindingConstants.POX_BINDING_ENDPOINT);
+
+            binding = getBindingRepository().getBinding(MediaTypes.APPLICATION_XML);
+            if (binding != null) {
+                builder.setPoxEndpoint(URI.create(serviceUrl));
                 for (final RequestOperatorKey o : requestOperators) {
                     final RequestOperator op = repo.getRequestOperator(o);
                     if (op instanceof WSDLAwareRequestOperator) {
                         final WSDLAwareRequestOperator wop = (WSDLAwareRequestOperator) op;
                         if (wop.getSosOperationDefinition() != null) {
-                            if (isHttpPostSupported(b, wop)) {
+                            if (isHttpPostSupported(binding, wop)) {
                                 builder.addPoxOperation(wop.getSosOperationDefinition());
                             }
                             addAdditionalPrefixes(wop, builder);
@@ -107,15 +110,16 @@ public class WSDLFactory implements Producer<String> {
                     }
                 }
             }
-            if (bindings.containsKey(BindingConstants.KVP_BINDING_ENDPOINT)) {
-                builder.setKvpEndpoint(URI.create(serviceUrl + BindingConstants.KVP_BINDING_ENDPOINT + "?"));
-                final Binding b = bindings.get(BindingConstants.KVP_BINDING_ENDPOINT);
+            
+            binding = getBindingRepository().getBinding(MediaTypes.APPLICATION_KVP);
+            if (binding != null) {
+                builder.setKvpEndpoint(URI.create(serviceUrl + "?"));
                 for (final RequestOperatorKey o : requestOperators) {
                     final RequestOperator op = repo.getRequestOperator(o);
                     if (op instanceof WSDLAwareRequestOperator) {
                         final WSDLAwareRequestOperator wop = (WSDLAwareRequestOperator) op;
                         if (wop.getSosOperationDefinition() != null) {
-                            if (isHttpGetSupported(b, wop)) {
+                            if (isHttpGetSupported(binding, wop)) {
                                 builder.addKvpOperation(wop.getSosOperationDefinition());
                             }
                             addAdditionalPrefixes(wop, builder);

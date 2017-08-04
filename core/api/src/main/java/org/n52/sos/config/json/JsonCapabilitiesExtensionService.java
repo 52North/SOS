@@ -45,12 +45,14 @@ import org.n52.faroe.json.AbstractJsonDao;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.config.json.JsonConstants;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
+import org.n52.janmayen.function.Consumers;
+import org.n52.janmayen.function.Functions;
 import org.n52.shetland.ogc.ows.extension.DisableableExtension;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.shetland.ogc.ows.extension.StringBasedExtension;
 import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
-import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.exception.NoSuchExtensionException;
@@ -66,9 +68,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
  *
  * @author Christian Autermann
  */
-public class JsonCapabilitiesExtensionService
-        extends AbstractJsonDao
-        implements CapabilitiesExtensionService {
+public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements CapabilitiesExtensionService {
 
     private ContentCacheController contentCacheController;
 
@@ -101,8 +101,7 @@ public class JsonCapabilitiesExtensionService
     }
 
     @Override
-    public void saveOfferingExtension(String offering, String identifier,
-                                      String value)
+    public void saveOfferingExtension(String offering, String identifier, String value)
             throws NoSuchOfferingException {
         writeLock().lock();
         try {
@@ -130,8 +129,8 @@ public class JsonCapabilitiesExtensionService
     }
 
     @Override
-    public void disableOfferingExtension(String offering, String identifier, boolean disabled) throws
-            NoSuchExtensionException, NoSuchOfferingException {
+    public void disableOfferingExtension(String offering, String identifier, boolean disabled)
+            throws NoSuchExtensionException, NoSuchOfferingException {
         writeLock().lock();
         try {
             checkOfferingName(offering);
@@ -191,15 +190,11 @@ public class JsonCapabilitiesExtensionService
     }
 
     private Stream<SosObservationOfferingExtension> offeringExtensionStream() {
-        return createEntryStream(getConfiguration().with(JsonConstants.OFFERING_EXTENSIONS))
-                .flatMap(entry -> {
-                    return createEntryStream(entry.getValue())
-                            .map(this::decodeOfferingExtension)
-                            .map(oe -> {
-                                oe.setOfferingName(entry.getKey());
-                                return oe;
-                            });
-                });
+        return createEntryStream(getConfiguration().with(JsonConstants.OFFERING_EXTENSIONS)).flatMap(entry
+                -> createEntryStream(entry.getValue())
+                        .map(this::decodeOfferingExtension)
+                        .map(Functions.mutate(Consumers
+                                .currySecond(SosObservationOfferingExtensionImpl::setOfferingName, entry.getKey()))));
     }
 
     private SosObservationOfferingExtensionImpl decodeOfferingExtension(Entry<String, JsonNode> entry) {
@@ -439,9 +434,14 @@ public class JsonCapabilitiesExtensionService
 
     }
 
-    private static abstract class AbstractSwesExtension extends SwesExtension<String>
-            implements DisableableExtension, StringBasedExtension {
+    private static abstract class AbstractSwesExtension implements Extension<String>,
+                                                                   DisableableExtension,
+                                                                   StringBasedExtension {
         private boolean disabled = false;
+        private String value;
+        private String identifier;
+        private String definition;
+        private String namespace = SweConstants.NS_SWE_20;
 
         public void setDisabled(boolean disabled) {
             this.disabled = disabled;
@@ -452,13 +452,57 @@ public class JsonCapabilitiesExtensionService
             return this.disabled;
         }
 
-        public void setExtension(String extension) {
-            setValue(extension);
+        public void setExtension(String value) {
+            setValue(value);
         }
 
         @Override
         public String getExtension() {
             return getValue();
+        }
+
+        @Override
+        public String getIdentifier() {
+            return this.identifier;
+        }
+
+        @Override
+        public String getDefinition() {
+            return this.definition;
+        }
+
+        @Override
+        public String getValue() {
+            return this.value;
+        }
+
+        @Override
+        public String getNamespace() {
+            return this.namespace;
+        }
+
+        @Override
+        public AbstractSwesExtension setNamespace(String namespace) {
+            this.namespace = namespace;
+            return this;
+        }
+
+        @Override
+        public AbstractSwesExtension setIdentifier(String identifier) {
+            this.identifier = identifier;
+            return this;
+        }
+
+        @Override
+        public AbstractSwesExtension setDefinition(String definition) {
+            this.definition = definition;
+            return this;
+        }
+
+        @Override
+        public AbstractSwesExtension setValue(String value) {
+            this.value = value;
+            return this;
         }
 
         @Override
@@ -497,8 +541,7 @@ public class JsonCapabilitiesExtensionService
         }
     }
 
-    private static class CapabilitiesExtensionImpl
-            extends AbstractSwesExtension
+    private static class CapabilitiesExtensionImpl extends AbstractSwesExtension
             implements StringBasedCapabilitiesExtension {
 
         @Override

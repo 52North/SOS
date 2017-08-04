@@ -930,6 +930,11 @@
             <artifactId>coding-oceansites</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-datasource-sqlserver</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -938,16 +943,6 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-oracle</artifactId>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>sqlserver</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-datasource-sqlserver</artifactId>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

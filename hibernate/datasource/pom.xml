@@ -16,6 +16,7 @@
         <module>h2</module>
         <module>mysql</module>
         <module>common</module>
+        <module>sqlserver</module>
     </modules>
     <dependencies>
         <dependency>
@@ -40,12 +41,6 @@
             <id>oracle</id>
             <modules>
                 <module>oracle</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>sqlserver</id>
-            <modules>
-                <module>sqlserver</module>
             </modules>
         </profile>
     </profiles>

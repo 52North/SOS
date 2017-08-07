@@ -103,6 +103,7 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.exception.VersionNegotiationFailedException;
+import org.n52.shetland.ogc.ows.extension.CapabilitiesExtension;
 import org.n52.shetland.ogc.ows.extension.MergableExtension;
 import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
@@ -114,7 +115,6 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosObservationOffering;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
-import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.OMHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
@@ -610,7 +610,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
                                     for (SosObservationOfferingExtension offeringExtension : extensions
                                             .get(sosObservationOffering.getOffering().getIdentifier())) {
                                         sosObservationOffering.addExtension(
-                                                new SwesExtension<SosObservationOfferingExtension>().setValue(offeringExtension));
+                                                new CapabilitiesExtension<SosObservationOfferingExtension>().setValue(offeringExtension));
                                     }
                                 }
 

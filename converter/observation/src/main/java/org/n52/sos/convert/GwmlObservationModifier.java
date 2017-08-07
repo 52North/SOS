@@ -29,6 +29,7 @@
 package org.n52.sos.convert;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -37,6 +38,7 @@ import java.util.Set;
 import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.shetland.ogc.gwml.GWMLConstants;
 import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
@@ -95,8 +97,10 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier {
     }
 
     private OwsServiceResponse checkGetObservationByIdResponse(GetObservationByIdResponse response) throws NoSuchElementException, OwsExceptionReport {
+        List<OmObservation> observations = new LinkedList<OmObservation>();
         while (response.getObservationCollection().hasNext()) {
             OmObservation o = response.getObservationCollection().next();
+            observations.add(o);
             if (o.getObservationConstellation().isSetObservationType()
                     && (GWMLConstants.OBS_TYPE_GEOLOGY_LOG.equals(o.getObservationConstellation().getObservationType())
                     || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE.equals(o.getObservationConstellation().getObservationType())
@@ -124,7 +128,7 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier {
                 }
             }
         }
-        return response;
+        return response.setObservationCollection(ObservationStream.of(observations));
     }
 
 }

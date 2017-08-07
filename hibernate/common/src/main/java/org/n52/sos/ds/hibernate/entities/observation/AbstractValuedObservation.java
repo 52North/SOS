@@ -67,7 +67,7 @@ import org.n52.sos.util.GeometryHandler;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * Abstract implementation of {@link ValuedLegacyObservation}.
+ * Abstract implementation of {@code ValuedLegacyObservation}.
  *
  * @param <T> the value type
  *
@@ -147,9 +147,9 @@ public abstract class AbstractValuedObservation<T>
     }
 
     /**
-     * Create a {@link TimeValuePair}
+     * Create a {@code TimeValuePair}
      *
-     * @return resulting {@link TimeValuePair}
+     * @return resulting {@code TimeValuePair}
      * @throws OwsExceptionReport
      *             If an error occurs when getting the value
      */
@@ -158,10 +158,10 @@ public abstract class AbstractValuedObservation<T>
     }
 
     /**
-     * Add {@link AbstractValue} data to {@link OmObservation}
+     * Add {@code AbstractValue} data to {@code OmObservation}
      *
      * @param observation
-     *            {@link OmObservation} to add data
+     *            {@code OmObservation} to add data
      * @param responseFormat
      * @throws OwsExceptionReport
      *             If an error occurs when getting the value
@@ -216,10 +216,10 @@ public abstract class AbstractValuedObservation<T>
     }
 
     /**
-     * Create result time from {@link Date}
+     * Create result time from {@code Date}
      *
      * @param date
-     *            {@link Date} to create result time from
+     *            {@code Date} to create result time from
      * @return result time
      */
     protected TimeInstant createResutlTime(Date date) {
@@ -228,13 +228,13 @@ public abstract class AbstractValuedObservation<T>
     }
 
     /**
-     * Create {@link TimePeriod} from {@link Date}s
+     * Create {@code TimePeriod} from {@code Date}s
      *
      * @param start
-     *            Start {@link Date}
+     *            Start {@code Date}
      * @param end
-     *            End {@link Date}
-     * @return {@link TimePeriod} or null if {@link Date}s are null
+     *            End {@code Date}
+     * @return {@code TimePeriod} or null if {@code Date}s are null
      */
     protected TimePeriod createValidTime(Date start, Date end) {
         // create time element

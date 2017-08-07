@@ -58,7 +58,7 @@ public abstract class ProcedureDescriptionEnrichment {
     private SosProcedureDescription<?> description;
     private String version;
     private String identifier;
-    private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
+    private Locale locale;
     private boolean showAllLanguageValues = ServiceConfiguration.getInstance().isShowAllLanguageValues();
     private Session session;
 
@@ -69,6 +69,7 @@ public abstract class ProcedureDescriptionEnrichment {
     protected SosContentCache getCache() {
         return Configurator.getInstance().getCache();
     }
+
 
     protected Collection<SosOffering> getSosOfferings() throws CodedException {
 

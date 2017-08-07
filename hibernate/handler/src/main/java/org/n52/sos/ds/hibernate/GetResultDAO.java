@@ -42,8 +42,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -71,6 +72,7 @@ import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
+import org.n52.sos.service.SosSettings;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.ConformanceClasses;
 import org.slf4j.Logger;
@@ -84,6 +86,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
+@Configurable
 public class GetResultDAO extends AbstractGetResultHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetResultDAO.class);
@@ -91,6 +94,9 @@ public class GetResultDAO extends AbstractGetResultHandler {
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
     private DaoFactory daoFactory;
+    private GeometryHandler geometryHandler;
+
+    private boolean strictSpatialFilteringProfile;
 
     public GetResultDAO() {
         super(SosConstants.SOS);
@@ -111,6 +117,16 @@ public class GetResultDAO extends AbstractGetResultHandler {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
+
+    @Setting(SosSettings.STRICT_SPATIAL_FILTERING_PROFILE)
+    public void setStrictSpatialFilteringProfile(final boolean strictSpatialFilteringProfile) {
+        this.strictSpatialFilteringProfile = strictSpatialFilteringProfile;
+    }
+
     @Override
     public GetResultResponse getResult(final GetResultRequest request) throws OwsExceptionReport {
         Session session = null;
@@ -122,13 +138,11 @@ public class GetResultDAO extends AbstractGetResultHandler {
             final Set<String> featureIdentifier = QueryHelper.getFeatures(this.featureQueryHandler, request, session);
             final List<ResultTemplate> resultTemplates = queryResultTemplate(request, featureIdentifier, session);
             if (isNotEmpty(resultTemplates)) {
-                final SosResultEncoding sosResultEncoding =
-                        new SosResultEncoding(resultTemplates.get(0).getResultEncoding());
-                final SosResultStructure sosResultStructure =
-                        new SosResultStructure(resultTemplates.get(0).getResultStructure());
+                final SosResultEncoding sosResultEncoding = createSosResultEncoding(resultTemplates.get(0).getResultEncoding());
+                final SosResultStructure sosResultStructure = createSosResultStructure(resultTemplates.get(0).getResultStructure());
                 final List<Observation<?>> observations;
                     observations = querySeriesObservation(request, featureIdentifier, session);
-                response.setResultValues(new ResultHandlingHelper().createResultValuesFromObservations(observations,
+                response.setResultValues(new ResultHandlingHelper(geometryHandler).createResultValuesFromObservations(observations,
                         sosResultEncoding, sosResultStructure, getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder()));
             }
             return response;
@@ -145,7 +159,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
         if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             try {
                 Session session = sessionHolder.getSession();
-                if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
+                if (strictSpatialFilteringProfile) {
                     return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
                 }
                 sessionHolder.returnSession(session);
@@ -281,7 +295,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
                 criteria.add(SpatialRestrictions.filter(
                         AbstractObservation.SAMPLING_GEOMETRY,
                         request.getSpatialFilter().getOperator(),
-                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                        geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
                                 request.getSpatialFilter().getGeometry())));
         }
     }

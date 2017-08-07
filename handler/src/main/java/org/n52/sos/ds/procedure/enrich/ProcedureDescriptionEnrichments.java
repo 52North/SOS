@@ -51,7 +51,6 @@ public class ProcedureDescriptionEnrichments extends AbstractProcedureDescriptio
             .setConverter(getConverter())
             .setProcedure(getProcedure())
             .setProcedureDescriptionFormat(getProcedureDescriptionFormat())
-            .setI18NDAORepository(getI18NDAORepository())
             .setValidTime(getValidTime()));
     }
 

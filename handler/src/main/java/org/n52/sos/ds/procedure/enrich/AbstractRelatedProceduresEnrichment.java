@@ -30,8 +30,13 @@ package org.n52.sos.ds.procedure.enrich;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.n52.iceland.i18n.I18NDAORepository;
+import java.util.Set;
+
+import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.procedure.AbstractProcedureConverter;
 
 public abstract class AbstractRelatedProceduresEnrichment<T>
@@ -43,8 +48,6 @@ public abstract class AbstractRelatedProceduresEnrichment<T>
     private AbstractProcedureConverter<T> converter;
 
     private TimePeriod validTime;
-
-    private I18NDAORepository i18NDAORepository;
 
     public AbstractRelatedProceduresEnrichment<T> setProcedure(T procedure) {
         this.procedure = procedure;
@@ -66,15 +69,6 @@ public abstract class AbstractRelatedProceduresEnrichment<T>
         return this;
     }
 
-    /**
-     * @param i18ndaoRepository
-     *            the i18NDAORepository to set
-     */
-    public AbstractRelatedProceduresEnrichment<T> setI18NDAORepository(I18NDAORepository i18ndaoRepository) {
-        this.i18NDAORepository = i18ndaoRepository;
-        return this;
-    }
-
     public T getProcedure() {
         return procedure;
     }
@@ -93,15 +87,25 @@ public abstract class AbstractRelatedProceduresEnrichment<T>
         return validTime;
     }
 
-    /**
-     * @return the i18NDAORepository
-     */
-    public I18NDAORepository getI18NDAORepository() {
-        return i18NDAORepository;
-    }
-
     public AbstractProcedureConverter<T> getConverter() {
         return converter;
     }
+
+    @Override
+    public void enrich()
+            throws OwsExceptionReport {
+        Set<String> parentProcedures = getParentProcedures();
+        if (CollectionHelper.isNotEmpty(parentProcedures)) {
+            getDescription().setParentProcedure(new ReferenceType(parentProcedures.iterator().next()));
+        }
+        Set<AbstractSensorML> childProcedures = getChildProcedures();
+        if (CollectionHelper.isNotEmpty(childProcedures)) {
+            getDescription().addChildProcedures(childProcedures);
+        }
+    }
+
+    protected abstract Set<AbstractSensorML> getChildProcedures() throws OwsExceptionReport;
+
+    protected abstract  Set<String> getParentProcedures() throws OwsExceptionReport;
 
 }

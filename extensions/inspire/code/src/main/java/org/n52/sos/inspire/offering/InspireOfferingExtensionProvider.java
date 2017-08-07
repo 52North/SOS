@@ -34,10 +34,11 @@ import java.util.stream.Stream;
 
 import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.inspire.InspireConstants;
+import org.n52.shetland.inspire.InspireObject;
+import org.n52.shetland.ogc.ows.extension.CapabilitiesExtension;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.inspire.AbstractInspireProvider;
 import org.n52.sos.inspire.settings.InspireSettings;
 import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
@@ -72,7 +73,7 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider
     @Override
     public Extensions getOfferingExtensions(String identifier) {
         return Stream.of(getSupportedLanguages(), getSupportedCRS())
-                .map(o -> new SwesExtension<>(o)
+                .map(o -> new CapabilitiesExtension<InspireObject>(o)
                         .setNamespace(InspireConstants.NS_INSPIRE_COMMON))
                 .collect(Extensions::new,
                          Extensions::addExtension,

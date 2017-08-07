@@ -30,8 +30,6 @@ package org.n52.sos.ds.procedure.create;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-
 import org.hibernate.Session;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -47,9 +45,8 @@ public class GeneratedDescriptionCreationStrategy implements
 
     private ProcedureDescriptionGeneratorFactoryRepository factoryRepository;
 
-    @Inject
-    public void setProcedureDescriptionGeneratorFactoryRepository(ProcedureDescriptionGeneratorFactoryRepository procedureDescriptionGeneratorFactoryRepository) {
-        this.factoryRepository = procedureDescriptionGeneratorFactoryRepository;
+    public GeneratedDescriptionCreationStrategy(ProcedureDescriptionGeneratorFactoryRepository factoryRepository) {
+        this.factoryRepository = factoryRepository;
     }
 
     @Override

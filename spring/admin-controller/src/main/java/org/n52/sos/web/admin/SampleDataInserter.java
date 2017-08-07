@@ -59,6 +59,7 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.shetland.ogc.sensorML.v20.PhysicalSystem;
@@ -130,7 +131,7 @@ public class SampleDataInserter implements Sos2Constants {
                 (cal.get(GregorianCalendar.MONTH)+1));
     }
 
-    private final SwesExtension<?> extension;
+    private final Extension<?> extension;
     private final CompositeOwsException exceptions;
     private final OwsServiceRequestContext requestContext;
 
@@ -142,10 +143,10 @@ public class SampleDataInserter implements Sos2Constants {
             DecoderRepository decoderRepository,
             RequestOperatorRepository requestOperatorRepository) throws IOException {
         extension = new SwesExtension<>()
-                .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name())
                 .setValue((SweBoolean) new SweBoolean()
                         .setValue(true)
-                        .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name()));
+                        .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name()))
+                .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
         sampleDataProperties.load(this.getClass().getResourceAsStream(PROPERTY_FILE));
         exceptions = new CompositeOwsException();
         this.requestContext = owsServiceRequestContext;

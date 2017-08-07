@@ -38,6 +38,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
 import org.n52.janmayen.net.IPAddress;
 import org.n52.shetland.ogc.ows.extension.Extensions;
@@ -64,10 +65,10 @@ public class AbstractSosRequestHandlerTest extends HandlerBaseTest {
         request.setRequestContext(requestContext);
 
         Extensions extensions = new Extensions();
-        SwesExtension<String> ext = new SwesExtension<>("value1");
+        SwesExtension<SweText> ext = new SwesExtension<>(new SweText().setValue("value1"));
         extensions.addExtension(ext);
 
-        SwesExtension<String> ext2 = new SwesExtension<>("value2");
+        SwesExtension<SweText> ext2 = new SwesExtension<>(new SweText().setValue("value2"));
         ext2.setDefinition("def2");
         ext2.setIdentifier("id2");
         extensions.addExtension(ext2);

@@ -29,9 +29,12 @@
 package org.n52.sos.convert;
 
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.n52.iceland.convert.RequestResponseModifierKey;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -71,22 +74,23 @@ public class WaterMLv20SeriesMetadataModifier
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
         if (isWaterMLResponse(response) && response instanceof AbstractObservationResponse) {
+            List<OmObservation> observations = new LinkedList<OmObservation>();
             while (((AbstractObservationResponse) response).getObservationCollection().hasNext()) {
-                OmObservation omObservation =
-                        ((AbstractObservationResponse) response).getObservationCollection().next();
-                if (!omObservation.isSetValue()) {
+                OmObservation o = ((AbstractObservationResponse) response).getObservationCollection().next();
+                observations.add(o);
+                if (!o.isSetValue()) {
                     continue;
                 }
-                if (omObservation.getObservationConstellation().isSetDefaultPointMetadata()) {
-                    omObservation.getValue().setDefaultPointMetadata(
-                            omObservation.getObservationConstellation().getDefaultPointMetadata());
+                if (o.getObservationConstellation().isSetDefaultPointMetadata()) {
+                    o.getValue().setDefaultPointMetadata(o.getObservationConstellation().getDefaultPointMetadata());
                 }
-                if (omObservation.getObservationConstellation().isSetMetadata()) {
-                    omObservation.getValue().setMetadata(omObservation.getObservationConstellation().getMetadata());
+                if (o.getObservationConstellation().isSetMetadata()) {
+                    o.getValue().setMetadata(o.getObservationConstellation().getMetadata());
                 }
             }
+            return ((AbstractObservationResponse) response).setObservationCollection(ObservationStream.of(observations));
         }
-        return super.modifyResponse(request, response);
+        return response;
     }
 
     private boolean isWaterMLResponse(OwsServiceResponse response) {

@@ -56,8 +56,6 @@ import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.janmayen.event.EventBus;
-import org.n52.janmayen.http.MediaType;
-import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimePeriod;

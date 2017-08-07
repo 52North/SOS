@@ -44,17 +44,11 @@ import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
-import org.n52.iceland.util.LocalizedProducer;
-import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
@@ -64,33 +58,24 @@ import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-
-public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, Constructable {
+public class DescribeSensorDao
+        implements org.n52.sos.ds.dao.DescribeSensorDao {
 
     private HibernateSessionHolder sessionHolder;
-    private OwsServiceMetadataRepository serviceMetadataRepository;
     private HibernateProcedureConverter procedureConverter;
     private ConverterRepository converterRepository;
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
-    private I18NDAORepository i18NDAORepository;
     private DaoFactory daoFactory;
-    private HibernateProcedureDescriptionGeneratorFactoryRepository descriptionGeneratorFactoryRepository;
     private Locale defaultLanguage;
 
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
-    @Inject
-    public void setDescriptionGeneratorFactoryRepository(
-            HibernateProcedureDescriptionGeneratorFactoryRepository descriptionGeneratorFactoryRepository) {
-        this.descriptionGeneratorFactoryRepository = descriptionGeneratorFactoryRepository;
-}
 
     @Inject
     public void setConverterRepository(ConverterRepository repo) {
@@ -98,14 +83,8 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
     }
 
     @Inject
-    public void setProcedureDescriptionFormatRepository(
-            ProcedureDescriptionFormatRepository repo) {
+    public void setProcedureDescriptionFormatRepository(ProcedureDescriptionFormatRepository repo) {
         this.procedureDescriptionFormatRepository = repo;
-    }
-
-    @Inject
-    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
-        this.serviceMetadataRepository = repo;
     }
 
     @Inject
@@ -114,8 +93,8 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
     }
 
     @Inject
-    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
-        this.i18NDAORepository = i18NDAORepository;
+    public void setHibernateProcedureConverter(HibernateProcedureConverter procedureConverter) {
+        this.procedureConverter = procedureConverter;
     }
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
@@ -124,29 +103,22 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
     }
 
     @Override
-    public void init() {
-        LocalizedProducer<OwsServiceProvider> serviceProvider
-                = this.serviceMetadataRepository.getServiceProviderFactory(SosConstants.SOS);
-        this.procedureConverter = new HibernateProcedureConverter(serviceProvider, daoFactory, converterRepository, descriptionGeneratorFactoryRepository);
-    }
-
-
-
-    @Override
-    public List<SosProcedureDescription<?>> querySensorDescriptions(DescribeSensorRequest request) throws OwsExceptionReport {
+    public List<SosProcedureDescription<?>> querySensorDescriptions(DescribeSensorRequest request)
+            throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionHolder.getSession();
             return queryDescriptions(request, session);
         } catch (final HibernateException he) {
-            throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "Error while querying data for DescribeSensor document!");
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while querying data for DescribeSensor document!");
         } finally {
             sessionHolder.returnSession(session);
         }
     }
 
-    private List<SosProcedureDescription<?>> queryDescriptions(DescribeSensorRequest request, Session session) throws OwsExceptionReport {
+    private List<SosProcedureDescription<?>> queryDescriptions(DescribeSensorRequest request, Session session)
+            throws OwsExceptionReport {
         List<SosProcedureDescription<?>> descriptions = new LinkedList<SosProcedureDescription<?>>();
         if (HibernateHelper.isEntitySupported(ValidProcedureTime.class)) {
             descriptions.addAll(getProcedureDescriptions(request, session));
@@ -169,18 +141,15 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
      */
     private SosProcedureDescription<?> getProcedureDescription(DescribeSensorRequest request, Session session)
             throws OwsExceptionReport {
-        final Procedure procedure = new ProcedureDAO(daoFactory).getProcedureForIdentifier(request.getProcedure(), session);
+        final Procedure procedure =
+                new ProcedureDAO(daoFactory).getProcedureForIdentifier(request.getProcedure(), session);
         if (procedure == null) {
-            throw new NoApplicableCodeException().causedBy(
-                    new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
-                            INTERNAL_SERVER_ERROR);
+            throw new NoApplicableCodeException()
+                    .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))
+                    .setStatus(INTERNAL_SERVER_ERROR);
         }
-        return procedureConverter.createSosProcedureDescription(procedure,
-                                                                request.getProcedureDescriptionFormat(),
-                                                                request.getVersion(),
-                                                                getRequestedLocale(request),
-                                                                i18NDAORepository,
-                                                                session);
+        return procedureConverter.createSosProcedureDescription(procedure, request.getProcedureDescriptionFormat(),
+                request.getVersion(), getRequestedLocale(request), session);
     }
 
     /**
@@ -192,27 +161,22 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private List<SosProcedureDescription<?>> getProcedureDescriptions(DescribeSensorRequest request, Session session) throws OwsExceptionReport {
+    private List<SosProcedureDescription<?>> getProcedureDescriptions(DescribeSensorRequest request, Session session)
+            throws OwsExceptionReport {
         Set<String> possibleProcedureDescriptionFormats =
                 getPossibleProcedureDescriptionFormats(request.getProcedureDescriptionFormat());
-        final TProcedure procedure =
-                new ProcedureDAO(daoFactory).getTProcedureForIdentifier(request.getProcedure(),
-                                                              possibleProcedureDescriptionFormats, request.getValidTime(), session);
+        final TProcedure procedure = new ProcedureDAO(daoFactory).getTProcedureForIdentifier(request.getProcedure(),
+                possibleProcedureDescriptionFormats, request.getValidTime(), session);
         List<SosProcedureDescription<?>> list = Lists.newLinkedList();
         if (procedure != null) {
             List<ValidProcedureTime> validProcedureTimes =
-                    new ValidProcedureTimeDAO(daoFactory).getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats,
-                                                                                  request.getValidTime(), session);
+                    new ValidProcedureTimeDAO(daoFactory).getValidProcedureTimes(procedure,
+                            possibleProcedureDescriptionFormats, request.getValidTime(), session);
             for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
-                SosProcedureDescription<?> sosProcedureDescription
-                        = procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(
-                                procedure,
-                                request.getProcedureDescriptionFormat(),
-                                validProcedureTime,
-                                request.getVersion(),
-                                getRequestedLocale(request),
-                                i18NDAORepository,
-                                session);
+                SosProcedureDescription<?> sosProcedureDescription =
+                        procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure,
+                                request.getProcedureDescriptionFormat(), validProcedureTime, request.getVersion(),
+                                getRequestedLocale(request), session);
                 list.add(convertProcedureDescription(sosProcedureDescription, request));
             }
         } else {
@@ -221,9 +185,9 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
                 list.add(procedureDescription);
             } else {
                 if (!request.isSetValidTime()) {
-                    throw new NoApplicableCodeException().causedBy(
-                            new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
-                                    INTERNAL_SERVER_ERROR);
+                    throw new NoApplicableCodeException()
+                            .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))
+                            .setStatus(INTERNAL_SERVER_ERROR);
                 }
             }
         }
@@ -262,31 +226,30 @@ public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao, 
         return procedureDescriptionFormat.toLowerCase(Locale.ROOT).replaceAll("\\s", "");
     }
 
-
     private Set<String> checkForUrlVsMimeType(String procedureDescriptionFormat) {
         Set<String> possibleFormats = Sets.newHashSet();
         possibleFormats.add(procedureDescriptionFormat);
         if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE.equalsIgnoreCase(procedureDescriptionFormat)) {
             possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL);
-         } else if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL.equalsIgnoreCase(procedureDescriptionFormat)) {
-             possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE);
-         }
+        } else if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL.equalsIgnoreCase(procedureDescriptionFormat)) {
+            possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE);
+        }
         return possibleFormats;
     }
 
-    private SosProcedureDescription<?> convertProcedureDescription(
-            SosProcedureDescription<?> procedureDescription,
-                                                                DescribeSensorRequest request)
+    private SosProcedureDescription<?> convertProcedureDescription(SosProcedureDescription<?> procedureDescription,
+            DescribeSensorRequest request)
             throws CodedException {
-        if (!checkForUrlVsMimeType(procedureDescription.getDescriptionFormat()).contains(request.getProcedureDescriptionFormat())) {
-            Converter<SosProcedureDescription, SosProcedureDescription> converter =
-                    converterRepository.getConverter(procedureDescription.getDescriptionFormat(), request.getProcedureDescriptionFormat());
+        if (!checkForUrlVsMimeType(procedureDescription.getDescriptionFormat())
+                .contains(request.getProcedureDescriptionFormat())) {
+            Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> converter = converterRepository.getConverter(
+                    procedureDescription.getDescriptionFormat(), request.getProcedureDescriptionFormat());
             if (converter != null) {
                 try {
                     return converter.convert(procedureDescription);
                 } catch (ConverterException e) {
-                    throw new NoApplicableCodeException().causedBy(e).withMessage(
-                            "Error while converting procedureDescription!");
+                    throw new NoApplicableCodeException().causedBy(e)
+                            .withMessage("Error while converting procedureDescription!");
                 }
             } else {
                 throw new NoApplicableCodeException().withMessage("No converter (%s -> %s) found!",

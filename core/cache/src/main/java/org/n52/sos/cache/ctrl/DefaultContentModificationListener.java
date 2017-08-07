@@ -68,7 +68,8 @@ import com.google.common.collect.Sets;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
-public class DefaultContentModificationListener implements EventListener {
+public class DefaultContentModificationListener
+        implements EventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultContentModificationListener.class);
 
     @SuppressWarnings("unchecked")
@@ -108,7 +109,8 @@ public class DefaultContentModificationListener implements EventListener {
             handle(new SensorDeletionUpdate(this.handler, e.getRequest()));
         } else if (event instanceof ResultInsertion) {
             ResultInsertion e = (ResultInsertion) event;
-            handle(new ResultInsertionUpdate(e.getRequest().getTemplateIdentifier(), e.getResponse().getObservation()));
+            handle(new ResultInsertionUpdate(e.getRequest().getTemplateIdentifier(),
+                    e.getResponse().getObservations()));
         } else if (event instanceof FeatureInsertion) {
             FeatureInsertion e = (FeatureInsertion) event;
             handle(new FeatureInsertionUpdate(e.getRequest()));

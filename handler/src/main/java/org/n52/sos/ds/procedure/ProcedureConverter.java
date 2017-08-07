@@ -29,7 +29,6 @@
 package org.n52.sos.ds.procedure;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -37,12 +36,8 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.convert.ConverterRepository;
-import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
@@ -54,11 +49,12 @@ import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.procedure.create.DescriptionCreationStrategy;
+import org.n52.sos.ds.procedure.create.GeneratedDescriptionCreationStrategy;
 import org.n52.sos.ds.procedure.enrich.ProcedureDescriptionEnrichments;
-import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike
@@ -72,54 +68,35 @@ import com.google.common.base.Optional;
  *        TODO - apply description enrichment to all types of procedures
  *        (creates, file, or database) - use setting switches for code flow
  */
-public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEntity> implements Constructable {
+public class ProcedureConverter
+        extends AbstractProcedureConverter<ProcedureEntity> {
 
     private LocalizedProducer<OwsServiceProvider> serviceProvider;
-    private List<DescriptionCreationStrategy> creationStrategies = new ArrayList<>();
-    private OwsServiceMetadataRepository serviceMetadataRepository;
-    private GeometryHandler geometryHandler;
+    private ProcedureCreationContext ctx;
 
     @Inject
-    public void setGeometryHandler(GeometryHandler geometryHandler) {
-        this.geometryHandler = geometryHandler;
-    }
-
-    @Inject
-    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
-        this.serviceMetadataRepository = repo;
-    }
-
-    @Inject
-    public void setCreationStrategies(List<DescriptionCreationStrategy> creationStrategies) {
-        if (creationStrategies != null) {
-            this.creationStrategies.addAll(creationStrategies);
-        }
+    public ProcedureConverter(
+            ProcedureCreationContext ctx) {
+        this.ctx = ctx;
+        this.serviceProvider = ctx.getServiceMetadataRepository().getServiceProviderFactory(SosConstants.SOS);
     }
 
     @Override
-    public void init() {
-        serviceProvider = this.serviceMetadataRepository.getServiceProviderFactory(SosConstants.SOS);
-    }
-
-    @Override
-    public SosProcedureDescription<?> createSosProcedureDescription(
-            ProcedureEntity procedure,
-            String requestedDescriptionFormat,
-            String requestedServiceVersion,
-            Locale i18n,
-            I18NDAORepository i18nDaoRepository,
-            Session session) throws OwsExceptionReport {
+    public SosProcedureDescription<?> createSosProcedureDescription(ProcedureEntity procedure,
+            String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n,
+            Session session)
+            throws OwsExceptionReport {
         if (procedure == null) {
-            throw new NoApplicableCodeException().causedBy(
-                    new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
-                    HTTPStatus.INTERNAL_SERVER_ERROR);
+            throw new NoApplicableCodeException()
+                    .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))
+                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
         checkOutputFormatWithDescriptionFormat(procedure.getDomainId(), requestedDescriptionFormat);
         SosProcedureDescription<?> desc = create(procedure, requestedDescriptionFormat, i18n, session).orNull();
         if (desc != null) {
             addHumanReadableName(desc, procedure);
             enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null, i18n,
-                    i18nDaoRepository, geometryHandler, session);
+                    ctx.getGeometryHandler(), session);
             if (!requestedDescriptionFormat.equals(desc.getDescriptionFormat())) {
                 desc = convert(desc.getDescriptionFormat(), requestedDescriptionFormat, desc);
                 desc.setDescriptionFormat(requestedDescriptionFormat);
@@ -134,7 +111,9 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
         }
     }
 
-    private Optional<SosProcedureDescription<?>> create(ProcedureEntity procedure, String descriptionFormat, Locale i18n, Session session) throws OwsExceptionReport {
+    private Optional<SosProcedureDescription<?>> create(ProcedureEntity procedure, String descriptionFormat,
+            Locale i18n, Session session)
+            throws OwsExceptionReport {
         Optional<DescriptionCreationStrategy> strategy = getCreationStrategy(procedure);
         if (strategy.isPresent()) {
             return Optional.fromNullable(strategy.get().create(procedure, descriptionFormat, i18n, session));
@@ -152,13 +131,14 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
         return Optional.absent();
     }
 
-    protected List<DescriptionCreationStrategy> getCreationStrategies() {
-        return creationStrategies;
+    protected ArrayList<DescriptionCreationStrategy> getCreationStrategies() {
+        return Lists.newArrayList(new GeneratedDescriptionCreationStrategy(ctx.getFactoryRepository()));
     }
 
     /**
      * Checks the requested procedureDescriptionFormat with the datasource
      * procedureDescriptionFormat.
+     *
      * @param identifier
      *
      * @param identifier
@@ -169,19 +149,19 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
      * @throws OwsExceptionReport
      *             If procedureDescriptionFormats are invalid
      */
-    private boolean checkOutputFormatWithDescriptionFormat(String identifier,
-            String requestedFormat) throws OwsExceptionReport {
-       if (existsGenerator(requestedFormat)) {
+    private boolean checkOutputFormatWithDescriptionFormat(String identifier, String requestedFormat)
+            throws OwsExceptionReport {
+        if (existsGenerator(requestedFormat)) {
             return true;
         }
-        throw new InvalidParameterValueException()
-                .at(SosConstants.DescribeSensorParams.procedure)
+        throw new InvalidParameterValueException().at(SosConstants.DescribeSensorParams.procedure)
                 .withMessage("The value of the output format is wrong and has to be %s for procedure %s",
-                        requestedFormat, identifier).setStatus(HTTPStatus.BAD_REQUEST);
+                        requestedFormat, identifier)
+                .setStatus(HTTPStatus.BAD_REQUEST);
     }
 
     private boolean existsGenerator(String descriptionFormat) {
-        return ProcedureDescriptionGeneratorFactoryRepository.getInstance()
+        return ctx.getFactoryRepository()
                 .hasProcedureDescriptionGeneratorFactory(descriptionFormat);
     }
 
@@ -208,27 +188,30 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
      *             if the enrichment fails
      */
     private void enrich(SosProcedureDescription<?> desc, ProcedureEntity procedure, String version, String format,
-            TimePeriod validTime, Locale language, I18NDAORepository i18ndaoRepository, GeometryHandler geometryHandler, Session session)
+            TimePeriod validTime, Locale language,
+            GeometryHandler geometryHandler, Session session)
             throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
                 new ProcedureDescriptionEnrichments(language, serviceProvider, geometryHandler);
-            enrichments.setIdentifier(procedure.getDomainId())
-                        .setProcedure(procedure)
-                        .setVersion(version)
-                        .setDescription(desc)
-                        .setProcedureDescriptionFormat(format)
-                        .setSession(session)
-                        .setValidTime(validTime)
-                        .setI18NDAORepository(i18ndaoRepository)
-                        .setConverter(this);
-//        if (procedure.isSetTypeOf() && desc.getProcedureDescription() instanceof AbstractProcessV20) {
-//            Procedure typeOf = procedure.getTypeOf();
-//            enrichments.setTypeOfIdentifier(typeOf.getDomainId()).setTypeOfFormat(format);
-//        }
-        if (desc.getProcedureDescription() instanceof SensorML && ((SensorML) desc.getProcedureDescription()).isWrapper()) {
+        enrichments.setIdentifier(procedure.getDomainId())
+                    .setProcedure(procedure)
+                    .setVersion(version)
+                    .setDescription(desc)
+                    .setProcedureDescriptionFormat(format)
+                    .setSession(session)
+                    .setValidTime(validTime)
+                    .setConverter(this);
+        // if (procedure.isSetTypeOf() && desc.getProcedureDescription()
+        // instanceof AbstractProcessV20) {
+        // Procedure typeOf = procedure.getTypeOf();
+        // enrichments.setTypeOfIdentifier(typeOf.getDomainId()).setTypeOfFormat(format);
+        // }
+        if (desc.getProcedureDescription() instanceof SensorML
+                && ((SensorML) desc.getProcedureDescription()).isWrapper()) {
             enrichments.setDescription(desc).createValidTimeEnrichment().enrich();
             for (AbstractProcess abstractProcess : ((SensorML) desc.getProcedureDescription()).getMembers()) {
-                SosProcedureDescription<AbstractProcess> sosProcedureDescription = new SosProcedureDescription<>(abstractProcess);
+                SosProcedureDescription<AbstractProcess> sosProcedureDescription =
+                        new SosProcedureDescription<>(abstractProcess);
                 enrichments.setDescription(sosProcedureDescription).enrichAll();
             }
         } else {
@@ -251,19 +234,20 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
      * @throws OwsExceptionReport
      *             if conversion fails
      */
-    private SosProcedureDescription<?> convert(String fromFormat, String toFormat, SosProcedureDescription<?> description)
+    private SosProcedureDescription<?> convert(String fromFormat, String toFormat,
+            SosProcedureDescription<?> description)
             throws OwsExceptionReport {
         try {
             Converter<SosProcedureDescription<?>, Object> converter =
-                    ConverterRepository.getInstance().getConverter(fromFormat, toFormat);
+                    ctx.getConverterRepository().getConverter(fromFormat, toFormat);
             if (converter != null) {
                 return converter.convert(description);
             }
-            throw new ConverterException(String.format("No converter available to convert from '%s' to '%s'",
-                    fromFormat, toFormat));
+            throw new ConverterException(
+                    String.format("No converter available to convert from '%s' to '%s'", fromFormat, toFormat));
         } catch (ConverterException ce) {
-            throw new NoApplicableCodeException().causedBy(ce).withMessage(
-                    "Error while processing data for DescribeSensor document!");
+            throw new NoApplicableCodeException().causedBy(ce)
+                    .withMessage("Error while processing data for DescribeSensor document!");
         }
     }
 }

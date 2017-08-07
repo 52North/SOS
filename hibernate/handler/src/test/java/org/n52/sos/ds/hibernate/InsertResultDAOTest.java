@@ -41,7 +41,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 
 import com.google.common.collect.Sets;
 
-public class InsertResultDAOTest extends HibernateTestCase {
+public class InsertResultDAOTest
+        extends HibernateTestCase {
 
     private static final String OBS_PROP_1 = "obsProp_1";
     private static final String OBS_PROP_2 = "obsProp_2";
@@ -50,21 +51,29 @@ public class InsertResultDAOTest extends HibernateTestCase {
     private InsertResultDAO insertResultDAO = new InsertResultDAO();
 
     @Test
-    public void test_getIndexForObservedPropertyAndUnit_SimpleObservation() throws CodedException {
+    public void test_getIndexForObservedPropertyAndUnit_SimpleObservation()
+            throws CodedException {
         final SweDataRecord record = createRecordWithSimpleObservation();
         final Map<Integer, String> observedProperties = new HashMap<Integer, String>(record.getFields().size() - 1);
         final Map<Integer, String> units = new HashMap<Integer, String>(record.getFields().size() - 1);
-        insertResultDAO.getIndexForObservedPropertyAndUnit(record, 0, observedProperties, units, Sets.newHashSet(0));
+        final Map<Integer, String> featureOfInterests = new HashMap<Integer, String>(record.getFields().size() - 1);
+        final Map<Integer, String> procedures = new HashMap<Integer, String>(record.getFields().size() - 1);
+        insertResultDAO.getIndexFor(record, 0, observedProperties, units, featureOfInterests, procedures,
+                Sets.newHashSet(0));
         assertThat(observedProperties.size(), is(1));
         assertThat(observedProperties.get(1).equals(OBS_PROP_1), is(true));
     }
 
     @Test
-    public void test_getIndexForObservedPropertyAndUnit_ComplexObservation() throws CodedException {
+    public void test_getIndexForObservedPropertyAndUnit_ComplexObservation()
+            throws CodedException {
         final SweDataRecord record = createRecordWithComplexObservation();
         final Map<Integer, String> observedProperties = new HashMap<Integer, String>(record.getFields().size() - 1);
         final Map<Integer, String> units = new HashMap<Integer, String>(record.getFields().size() - 1);
-        insertResultDAO.getIndexForObservedPropertyAndUnit(record, 0, observedProperties, units, Sets.newHashSet(0));
+        final Map<Integer, String> featureOfInterests = new HashMap<Integer, String>(record.getFields().size() - 1);
+        final Map<Integer, String> procedures = new HashMap<Integer, String>(record.getFields().size() - 1);
+        insertResultDAO.getIndexFor(record, 0, observedProperties, units, featureOfInterests, procedures,
+                Sets.newHashSet(0));
         assertThat(observedProperties.size(), is(3));
         assertThat(observedProperties.get(1).equals(OBS_PROP_1), is(true));
         assertThat(observedProperties.get(2).equals(OBS_PROP_2), is(true));
@@ -73,7 +82,8 @@ public class InsertResultDAOTest extends HibernateTestCase {
 
     private SweDataRecord createRecord() {
         SweDataRecord record = new SweDataRecord();
-        record.addField(new SweField("phenomenonTime", new SweTimeRange().setUom("test").setDefinition(OmConstants.PHENOMENON_TIME)));
+        record.addField(new SweField("phenomenonTime",
+                new SweTimeRange().setUom("test").setDefinition(OmConstants.PHENOMENON_TIME)));
         return record;
     }
 
@@ -90,11 +100,11 @@ public class InsertResultDAOTest extends HibernateTestCase {
     }
 
     private SweDataRecord createComplexObservationRecord() {
-       SweDataRecord record = new SweDataRecord();
-       record.setDefinition("complexObservation");
-       record.addField(new SweField(OBS_PROP_1, new SweQuantity().setUom("test").setDefinition(OBS_PROP_1)));
-       record.addField(new SweField(OBS_PROP_2, new SweQuantity().setUom("test").setDefinition(OBS_PROP_2)));
-       record.addField(new SweField(OBS_PROP_3, new SweQuantity().setUom("test").setDefinition(OBS_PROP_3)));
-       return record;
+        SweDataRecord record = new SweDataRecord();
+        record.setDefinition("complexObservation");
+        record.addField(new SweField(OBS_PROP_1, new SweQuantity().setUom("test").setDefinition(OBS_PROP_1)));
+        record.addField(new SweField(OBS_PROP_2, new SweQuantity().setUom("test").setDefinition(OBS_PROP_2)));
+        record.addField(new SweField(OBS_PROP_3, new SweQuantity().setUom("test").setDefinition(OBS_PROP_3)));
+        return record;
     }
 }

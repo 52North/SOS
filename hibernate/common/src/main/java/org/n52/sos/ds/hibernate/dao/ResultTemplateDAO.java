@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -46,7 +47,9 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosResultEncoding;
 import org.n52.shetland.ogc.sos.SosResultStructure;
 import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -56,12 +59,22 @@ import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
+import org.n52.svalbard.decode.exception.XmlDecodingException;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.EncodingContext;
+import org.n52.svalbard.encode.XmlBeansEncodingFlags;
 import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
+import org.n52.svalbard.util.CodingHelper;
 import org.n52.svalbard.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,11 +91,13 @@ public class ResultTemplateDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultTemplateDAO.class);
     private EncoderRepository encoderRepository;
+    private DecoderRepository decoderRepository;
     private XmlOptionsHelper xmlOptionsHelper;
 
-    public ResultTemplateDAO(EncoderRepository encoderRepository, XmlOptionsHelper xmlOptionsHelper) {
+    public ResultTemplateDAO(EncoderRepository encoderRepository, XmlOptionsHelper xmlOptionsHelper, DecoderRepository decoderRepository) {
         this.encoderRepository = encoderRepository;
         this.xmlOptionsHelper = xmlOptionsHelper;
+        this.decoderRepository = decoderRepository;
     }
 
     /**
@@ -206,8 +221,9 @@ public class ResultTemplateDAO {
             rtc.createAlias(ResultTemplate.FEATURE_OF_INTEREST, "foi", JoinType.LEFT_OUTER_JOIN);
             rtc.add(Restrictions.or(Restrictions.isNull(ResultTemplate.FEATURE_OF_INTEREST),
                     Restrictions.in("foi." + FeatureOfInterest.IDENTIFIER, featureOfInterest)));
-//            rtc.createCriteria(ResultTemplate.FEATURE_OF_INTEREST).add(
-//                    Restrictions.in(FeatureOfInterest.IDENTIFIER, featureOfInterest));
+            // rtc.createCriteria(ResultTemplate.FEATURE_OF_INTEREST).add(
+            // Restrictions.in(FeatureOfInterest.IDENTIFIER,
+            // featureOfInterest));
         }
         LOGGER.debug("QUERY getResultTemplateObject(offering, observedProperty, featureOfInterest): {}",
                 HibernateHelper.getSqlString(rtc));
@@ -230,54 +246,56 @@ public class ResultTemplateDAO {
      *             If the requested structure/encoding is invalid
      */
     public void checkOrInsertResultTemplate(InsertResultTemplateRequest request,
-                                            ObservationConstellation observationConstellation,
-                                            Procedure procedure,
-                                            AbstractFeatureOfInterest featureOfInterest,
-                                            Session session) throws OwsExceptionReport {
+            ObservationConstellation observationConstellation,
+            Procedure procedure,
+            AbstractFeatureOfInterest featureOfInterest,
+            Session session)
+            throws OwsExceptionReport {
         try {
             String offering = observationConstellation.getOffering().getIdentifier();
             String observableProperty = observationConstellation.getObservableProperty().getIdentifier();
 
-            List<ResultTemplate> resultTemplates = getResultTemplateObject(offering, observableProperty, null, session);
+            List<ResultTemplate> resultTemplates =
+                    getResultTemplateObject(offering, observableProperty, null, session);
             if (CollectionHelper.isEmpty(resultTemplates)) {
                 createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest, session);
             } else {
                 List<String> storedIdentifiers = new ArrayList<>(0);
 
-
                 for (ResultTemplate storedResultTemplate : resultTemplates) {
-                        storedIdentifiers.add(storedResultTemplate.getIdentifier());
-                        SosResultStructure storedStructure = new SosResultStructure(storedResultTemplate.getResultStructure());
-                        SosResultEncoding storedEncoding = new SosResultEncoding(storedResultTemplate.getResultEncoding());
+                    storedIdentifiers.add(storedResultTemplate.getIdentifier());
+                    SosResultStructure storedStructure =
+                            createSosResultStructure(storedResultTemplate.getResultStructure());
+                    SosResultEncoding storedEncoding =
+                            createSosResultEncoding(storedResultTemplate.getResultEncoding());
 
-                        if (!storedStructure.equals(request.getResultStructure())) {
-                            throw new InvalidParameterValueException()
-                                    .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
-                                    .withMessage("The requested resultStructure is different from already inserted result template for procedure (%s) observedProperty (%s) and offering (%s)!",
-                                                 procedure.getIdentifier(), observableProperty, offering);
-                        }
+                    if (!storedStructure.equals(request.getResultStructure())) {
+                        throw new InvalidParameterValueException()
+                                .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
+                                .withMessage(
+                                        "The requested resultStructure is different from already inserted result template for procedure (%s) observedProperty (%s) and offering (%s)!",
+                                        procedure.getIdentifier(), observableProperty, offering);
+                    }
 
-
-                        if (!storedEncoding.equals(request.getResultEncoding())) {
-                            throw new InvalidParameterValueException()
-                                    .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
-                                    .withMessage("The requested resultEncoding is different from already inserted result template for procedure (%s) observedProperty (%s) and offering (%s)!",
-                                                 procedure.getIdentifier(), observableProperty, offering);
-                        }
+                    if (!storedEncoding.equals(request.getResultEncoding())) {
+                        throw new InvalidParameterValueException()
+                                .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
+                                .withMessage(
+                                        "The requested resultEncoding is different from already inserted result template for procedure (%s) observedProperty (%s) and offering (%s)!",
+                                        procedure.getIdentifier(), observableProperty, offering);
+                    }
                 }
                 if (request.getIdentifier() != null && !storedIdentifiers.contains(request.getIdentifier())) {
                     /* save it only if the identifier is different */
-                    createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest, session);
+                    createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest,
+                            session);
                 }
 
             }
-        } catch (EncodingException ex) {
+        } catch (EncodingException | DecodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex);
         }
     }
-
-
-
 
     /**
      * Insert result template
@@ -294,8 +312,10 @@ public class ResultTemplateDAO {
      * @throws OwsExceptionReport
      */
     private void createAndSaveResultTemplate(final InsertResultTemplateRequest request,
-            final ObservationConstellation observationConstellation, Procedure procedure, final AbstractFeatureOfInterest featureOfInterest,
-            final Session session) throws EncodingException {
+            final ObservationConstellation observationConstellation, Procedure procedure,
+            final AbstractFeatureOfInterest featureOfInterest,
+            final Session session)
+            throws EncodingException {
         final ResultTemplate resultTemplate = new ResultTemplate();
         resultTemplate.setIdentifier(request.getIdentifier().getValue());
         resultTemplate.setObservableProperty(observationConstellation.getObservableProperty());
@@ -307,36 +327,75 @@ public class ResultTemplateDAO {
             resultTemplate.setFeatureOfInterest(featureOfInterest);
         }
 
-        if (request.getResultEncoding().isEncoded()) {
+        if (request.getResultEncoding().getXml().isPresent()) {
             resultTemplate.setResultEncoding(request.getResultEncoding().getXml().get());
         } else {
-            resultTemplate.setResultEncoding(encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultEncoding().get().get()));
+            resultTemplate.setResultEncoding(
+                    encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultEncoding().get().get()));
         }
-        if (request.getResultStructure().isEncoded()) {
+        if (request.getResultStructure().getXml().isPresent()) {
             resultTemplate.setResultStructure(request.getResultStructure().getXml().get());
         } else {
-            resultTemplate.setResultStructure(encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultStructure().get().get()));
+            resultTemplate.setResultStructure(
+                    encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultStructure().get().get()));
         }
 
         session.save(resultTemplate);
         session.flush();
     }
 
-    public String encodeObjectToXmlText(String namespace, Object object) throws EncodingException {
+    private SosResultEncoding createSosResultEncoding(String resultEncoding)
+            throws DecodingException {
+        return new SosResultEncoding((SweAbstractEncoding) decodeXmlObject(resultEncoding), resultEncoding);
+    }
+
+    private SosResultStructure createSosResultStructure(String resultStructure)
+            throws DecodingException {
+        return new SosResultStructure((SweAbstractDataComponent) decodeXmlObject(resultStructure), resultStructure);
+    }
+
+    private String encodeObjectToXmlText(String namespace, Object object)
+            throws EncodingException {
         return encodeObjectToXml(namespace, object).xmlText(this.xmlOptionsHelper.getXmlOptions());
     }
 
-    private XmlObject encodeObjectToXml(String namespace, Object object) throws EncodingException {
-        return getEncoder(namespace, object).encode(object);
+    private XmlObject encodeObjectToXml(String namespace, Object object)
+            throws EncodingException {
+        return getEncoder(namespace, object).encode(object, EncodingContext.of(XmlBeansEncodingFlags.DOCUMENT, true));
     }
 
-    private <T> Encoder<XmlObject, T> getEncoder(String namespace, T o) throws EncodingException {
+    private <T> Encoder<XmlObject, T> getEncoder(String namespace, T o)
+            throws EncodingException {
         EncoderKey key = new XmlEncoderKey(namespace, o.getClass());
         Encoder<XmlObject, T> encoder = encoderRepository.getEncoder(key);
         if (encoder == null) {
             throw new NoEncoderForKeyException(key);
         }
         return encoder;
+    }
+
+    private <T> T decodeXmlObject(XmlObject xbObject)
+            throws DecodingException {
+        DecoderKey key = CodingHelper.getDecoderKey(xbObject);
+        Decoder<T, XmlObject> decoder = decoderRepository.getDecoder(key);
+        if (decoder == null) {
+            DecoderKey schemaTypeKey = new XmlNamespaceDecoderKey(xbObject.schemaType().getName().getNamespaceURI(),
+                    xbObject.getClass());
+            decoder = decoderRepository.getDecoder(schemaTypeKey);
+        }
+        if (decoder == null) {
+            throw new NoDecoderForKeyException(key);
+        }
+        return decoder.decode(xbObject);
+    }
+
+    private Object decodeXmlObject(String xmlString)
+            throws DecodingException {
+        try {
+            return decodeXmlObject(XmlObject.Factory.parse(xmlString));
+        } catch (final XmlException e) {
+            throw new XmlDecodingException("XML string", xmlString, e);
+        }
     }
 
 }

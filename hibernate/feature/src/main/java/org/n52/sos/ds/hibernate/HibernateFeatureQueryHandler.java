@@ -156,6 +156,7 @@ public class HibernateFeatureQueryHandler
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Collection<String> getFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
         final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());

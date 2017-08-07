@@ -31,7 +31,6 @@ package org.n52.sos.ds.procedure.enrich;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
@@ -68,8 +67,6 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
     private String typeOfIdentifier;
 
     private String typeOfFormat;
-
-    private I18NDAORepository i18ndaoRepository;
 
     private GeometryHandler geometryHandler;
 
@@ -138,11 +135,6 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
         return this;
     }
 
-    public AbstractProcedureDescriptionEnrichments<T> setI18NDAORepository(I18NDAORepository i18ndaoRepository) {
-        this.i18ndaoRepository = i18ndaoRepository;
-        return this;
-    }
-
     public T getProcedure() {
         return procedure;
     }
@@ -157,10 +149,6 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
 
     public AbstractProcedureConverter<T> getConverter() {
         return (AbstractProcedureConverter<T>) converter;
-    }
-
-    public I18NDAORepository getI18NDAORepository() {
-        return i18ndaoRepository;
     }
 
     public Locale getLocale() {

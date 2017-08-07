@@ -34,8 +34,8 @@ import org.hibernate.Session;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGenerator;
-import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -43,16 +43,15 @@ import com.google.common.base.Strings;
 /**
  * Strategy to generate a description.
  */
-public class GeneratedDescriptionCreationStrategy implements DescriptionCreationStrategy {
-
-    private final HibernateProcedureDescriptionGeneratorFactoryRepository factoryRepository =
-            HibernateProcedureDescriptionGeneratorFactoryRepository.getInstance();
+public class GeneratedDescriptionCreationStrategy
+        implements DescriptionCreationStrategy {
 
     @Override
-    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
+    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n,
+            HibernateProcedureCreationContext ctx, Session s)
             throws OwsExceptionReport {
-        SosProcedureDescription<?> desc = getFactory(descriptionFormat).generateProcedureDescription(p, i18n, s);
-        desc.setDescriptionFormat(descriptionFormat);
+        SosProcedureDescription<?> desc =
+                getFactory(descriptionFormat, ctx).generateProcedureDescription(p, i18n, s);
         return desc;
     }
 
@@ -62,7 +61,8 @@ public class GeneratedDescriptionCreationStrategy implements DescriptionCreation
     }
 
     @VisibleForTesting
-    HibernateProcedureDescriptionGenerator getFactory(String descriptionFormat) {
-        return factoryRepository.getFactory(descriptionFormat);
+    HibernateProcedureDescriptionGenerator getFactory(String descriptionFormat,
+            HibernateProcedureCreationContext ctx) {
+        return ctx.getFactoryRepository().getFactory(descriptionFormat);
     }
 }

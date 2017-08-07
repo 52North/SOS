@@ -28,26 +28,19 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.n52.iceland.convert.ConverterException;
-import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -55,47 +48,13 @@ import com.google.common.collect.Sets;
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrichment<Procedure> {
+public class RelatedProceduresEnrichment
+        extends AbstractRelatedProceduresEnrichment<Procedure> {
 
-    private final DaoFactory daoFactory;
-
-    public RelatedProceduresEnrichment(
-            DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+    public RelatedProceduresEnrichment() {
     }
 
-    @Override
-    public void enrich() throws OwsExceptionReport {
-        Set<String> parentProcedures = getParentProcedures();
-        if (parentProcedures != null) {
-            getDescription().setParentProcedure(new ReferenceType(parentProcedures.iterator().next()));
-        }
-        Set<AbstractSensorML> childProcedures = getChildProcedures();
-        if (CollectionHelper.isNotEmpty(childProcedures)) {
-            getDescription().addChildProcedures(childProcedures);
-        }
-    }
-
-    /**
-     * Add a collection of child procedures to a procedure
-     *
-     * @param procedure
-     *            Parent procedure identifier
-     * @param outputFormat
-     *            Procedure description format
-     * @param version
-     *            Service version
-     * @param cache
-     *            Loaded procedure map
-     * @param session
-     *            Hibernate session
-     * @return Set with child procedure descriptions
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     * @throws ConverterException
-     *             If creation of child procedure description fails
-     */
-    private Set<AbstractSensorML> getChildProcedures()
+    protected Set<AbstractSensorML> getChildProcedures()
             throws OwsExceptionReport {
 
         if (!getProcedure().hasChilds()) {
@@ -105,27 +64,26 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
         Set<AbstractSensorML> childProcedures = Sets.newHashSet();
         for (Procedure child : getProcedure().getChilds()) {
 
-            //if child has valid vpts, use the most recent one within
-            //the validTime to create the child procedure
+            // if child has valid vpts, use the most recent one within
+            // the validTime to create the child procedure
             ValidProcedureTime childVpt = null;
             if (child instanceof TProcedure) {
                 TProcedure tChild = (TProcedure) child;
                 for (ValidProcedureTime cvpt : tChild.getValidProcedureTimes()) {
-                    TimePeriod thisCvptValidTime = new TimePeriod(cvpt.getStartTime(),
-                            cvpt.getEndTime());
+                    TimePeriod thisCvptValidTime = new TimePeriod(cvpt.getStartTime(), cvpt.getEndTime());
 
                     if (getValidTime() != null && !getValidTime().isSetEnd() && !thisCvptValidTime.isSetEnd()) {
                         childVpt = cvpt;
                     } else {
-                        //make sure this child's validtime is within the parent's valid time,
-                        //if parent has one
-                        if (getValidTime() != null && !thisCvptValidTime.isWithin(getValidTime())){
+                        // make sure this child's validtime is within the
+                        // parent's valid time,
+                        // if parent has one
+                        if (getValidTime() != null && !thisCvptValidTime.isWithin(getValidTime())) {
                             continue;
                         }
 
-                        if (childVpt == null || cvpt.getEndTime() == null ||
-                                (cvpt.getEndTime() != null && childVpt.getEndTime() != null &&
-                                cvpt.getEndTime().after(childVpt.getEndTime()))) {
+                        if (childVpt == null || cvpt.getEndTime() == null || (cvpt.getEndTime() != null
+                                && childVpt.getEndTime() != null && cvpt.getEndTime().after(childVpt.getEndTime()))) {
                             childVpt = cvpt;
                         }
                     }
@@ -133,48 +91,34 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
             }
 
             if (childVpt != null) {
-                //matching child validProcedureTime was found, use it to build procedure description
-                SosProcedureDescription<?> childDescription =
-                        ((HibernateProcedureConverter)getConverter()).createSosProcedureDescriptionFromValidProcedureTime(
-                                child, getProcedureDescriptionFormat(), childVpt, getVersion(), getLocale(), getI18NDAORepository(), getSession());
+                // matching child validProcedureTime was found, use it to build
+                // procedure description
+                SosProcedureDescription<?> childDescription = ((HibernateProcedureConverter) getConverter())
+                        .createSosProcedureDescriptionFromValidProcedureTime(child, getProcedureDescriptionFormat(),
+                                childVpt, getVersion(), getLocale(), getSession());
                 if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
-                    childProcedures.add((AbstractSensorML)childDescription.getProcedureDescription());
+                    childProcedures.add((AbstractSensorML) childDescription.getProcedureDescription());
                 }
-            } else  if  (child != null) {
-                //no matching child validProcedureTime, generate the procedure description
-                SosProcedureDescription<?> childDescription = getConverter().createSosProcedureDescription(
-                        child, getProcedureDescriptionFormat(), getVersion(), getLocale(), getI18NDAORepository(), getSession());
+            } else if (child != null) {
+                // no matching child validProcedureTime, generate the procedure
+                // description
+                SosProcedureDescription<?> childDescription = getConverter().createSosProcedureDescription(child,
+                        getProcedureDescriptionFormat(), getVersion(), getLocale(), getSession());
                 // TODO check if call is necessary because it is also called in
                 // createSosProcedureDescription()
                 // addValuesToSensorDescription(childProcID,childProcedureDescription,
                 // version, outputFormat, session);
                 if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
-                    childProcedures.add((AbstractSensorML)childDescription.getProcedureDescription());
+                    childProcedures.add((AbstractSensorML) childDescription.getProcedureDescription());
                 }
             }
         }
         return childProcedures;
     }
 
-    private Map<String, Procedure> createProcedureCache() {
-        Set<String> identifiers = getCache().getChildProcedures(getIdentifier(), true, false);
-        List<Procedure> children = daoFactory.getProcedureDAO().getProceduresForIdentifiers(identifiers, getSession());
-        Map<String, Procedure> cache = Maps.newHashMapWithExpectedSize(children.size());
-        for (Procedure child : children) {
-            cache.put(child.getIdentifier(), child);
-        }
-        return cache;
-    }
-
-     /**
-     * Add parent procedures to a procedure
-     *
-     * @param procID
-     *            procedure identifier to add parent procedures to
-     *
-     * @throws OwsExceptionReport
-     */
-    private Set<String> getParentProcedures() throws OwsExceptionReport {
+    protected Set<String> getParentProcedures()
+            throws OwsExceptionReport {
         return getCache().getParentProcedures(getIdentifier(), false, false);
     }
+
 }

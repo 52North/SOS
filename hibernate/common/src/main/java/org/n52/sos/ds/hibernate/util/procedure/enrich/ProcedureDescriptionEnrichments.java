@@ -32,7 +32,6 @@ import java.util.Locale;
 
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.procedure.enrich.AbstractProcedureDescriptionEnrichments;
 import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
@@ -43,21 +42,21 @@ import org.n52.sos.util.GeometryHandler;
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class ProcedureDescriptionEnrichments extends AbstractProcedureDescriptionEnrichments<Procedure>  {
+public class ProcedureDescriptionEnrichments
+        extends AbstractProcedureDescriptionEnrichments<Procedure> {
 
-    private final DaoFactory daoFactory;
-
-    public ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, DaoFactory daoFactory, GeometryHandler geometryHandler) {
+    public ProcedureDescriptionEnrichments(
+            Locale locale,
+            LocalizedProducer<OwsServiceProvider> serviceProvider,
+            GeometryHandler geometryHandler) {
         super(locale, serviceProvider, geometryHandler);
-        this.daoFactory = daoFactory;
     }
 
     public AbstractRelatedProceduresEnrichment<Procedure> createRelatedProceduresEnrichment() {
-        return setValues(new RelatedProceduresEnrichment(daoFactory))
+        return setValues(new RelatedProceduresEnrichment())
                 .setConverter(getConverter())
                 .setProcedure(getProcedure())
                 .setProcedureDescriptionFormat(getProcedureDescriptionFormat())
-                .setValidTime(getValidTime())
-                .setI18NDAORepository(getI18NDAORepository());
+                .setValidTime(getValidTime());
     }
 }

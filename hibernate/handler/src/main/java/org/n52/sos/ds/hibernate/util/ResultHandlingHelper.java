@@ -85,9 +85,10 @@ public class ResultHandlingHelper {
     public final String OM_PROCEDURE = "om:procedure";
     public final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
     private final SweHelper helper = new SweHelper();
+    private GeometryHandler geometryHandler;
 
-    public ResultHandlingHelper() {
-
+    public ResultHandlingHelper(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
     }
 
     /**
@@ -501,7 +502,7 @@ public class ResultHandlingHelper {
     }
 
     private GeometryHandler getGeomtryHandler() {
-        return GeometryHandler.getInstance();
+        return geometryHandler;
     }
 
 }

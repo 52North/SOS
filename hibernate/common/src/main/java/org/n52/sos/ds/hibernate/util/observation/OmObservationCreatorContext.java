@@ -21,10 +21,12 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.CodingSettings;
+import org.n52.svalbard.decode.DecoderRepository;
 
 @Configurable
 public class OmObservationCreatorContext {
@@ -44,6 +46,8 @@ public class OmObservationCreatorContext {
     private GeometryHandler geometryHandler;
     private Locale defaultLanguage;
     private URI serviceURL;
+    private DecoderRepository decoderRepository;
+    private HibernateProcedureConverter procedureConverter;
 
     @Inject
     public OmObservationCreatorContext(
@@ -56,7 +60,9 @@ public class OmObservationCreatorContext {
             FeatureQueryHandler featureQueryHandler,
             ConverterRepository converterRepository,
             HibernateProcedureDescriptionGeneratorFactoryRepository procedureDescriptionGeneratorFactoryRepository,
-            GeometryHandler geometryHandler) {
+            GeometryHandler geometryHandler,
+            DecoderRepository decoderRepository,
+            HibernateProcedureConverter procedureConverter) {
         super();
         this.serviceMetadataRepository = serviceMetadataRepository;
         this.i18nr = i18nr;
@@ -68,6 +74,8 @@ public class OmObservationCreatorContext {
         this.converterRepository = converterRepository;
         this.procedureDescriptionGeneratorFactoryRepository = procedureDescriptionGeneratorFactoryRepository;
         this.geometryHandler = geometryHandler;
+        this.decoderRepository = decoderRepository;
+        this.procedureConverter = procedureConverter;
     }
 
     @Setting(CodingSettings.TOKEN_SEPARATOR)
@@ -217,6 +225,20 @@ public class OmObservationCreatorContext {
      */
     public URI getServiceURL() {
         return serviceURL;
+    }
+
+    /**
+     * @return the decoderRepository
+     */
+    public DecoderRepository getDecoderRepository() {
+        return decoderRepository;
+    }
+
+    /**
+     * @return the procedureConverter
+     */
+    public HibernateProcedureConverter getProcedureConverter() {
+        return procedureConverter;
     }
 
 }

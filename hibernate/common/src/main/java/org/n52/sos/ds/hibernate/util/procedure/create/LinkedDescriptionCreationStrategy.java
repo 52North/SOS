@@ -41,6 +41,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.XmlHelper;
 import org.slf4j.Logger;
@@ -48,23 +49,27 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-public class LinkedDescriptionCreationStrategy implements DescriptionCreationStrategy {
+public class LinkedDescriptionCreationStrategy
+        implements DescriptionCreationStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkedDescriptionCreationStrategy.class);
 
     @Override
     public boolean apply(Procedure p) {
-        return !Strings.isNullOrEmpty(p.getDescriptionFile()) &&
-                (p.getDescriptionFile().startsWith("http"));
+        return !Strings.isNullOrEmpty(p.getDescriptionFile()) && (p.getDescriptionFile().startsWith("http"));
     }
 
     @Override
-    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s) throws OwsExceptionReport {
+    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n,
+            HibernateProcedureCreationContext ctx, Session s)
+            throws OwsExceptionReport {
         String xml = loadDescriptionFromHttp(p.getDescriptionFile());
-        return new SosProcedureDescriptionUnknownType(p.getIdentifier(), p.getProcedureDescriptionFormat().getProcedureDescriptionFormat(), xml);
+        return new SosProcedureDescriptionUnknownType(p.getIdentifier(),
+                p.getProcedureDescriptionFormat().getProcedureDescriptionFormat(), xml);
     }
 
-    private String loadDescriptionFromHttp(String descriptionFile) throws OwsExceptionReport {
+    private String loadDescriptionFromHttp(String descriptionFile)
+            throws OwsExceptionReport {
         InputStream is = null;
         Scanner scanner = null;
         try {
@@ -73,11 +78,12 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
             request1.setRequestMethod("GET");
             request1.connect();
             is = request1.getInputStream();
-            scanner = new Scanner(is,"UTF-8");
+            scanner = new Scanner(is, "UTF-8");
             String inputStreamString = scanner.useDelimiter("\\A").next();
             return checkXml(inputStreamString);
-        } catch (IOException|DecodingException e) {
-           throw new NoApplicableCodeException().causedBy(e).withMessage("Error while querying sensor description from:{}", descriptionFile);
+        } catch (IOException | DecodingException e) {
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while querying sensor description from:{}", descriptionFile);
         } finally {
             if (scanner != null) {
                 scanner.close();
@@ -86,16 +92,17 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
                 try {
                     is.close();
                 } catch (IOException ioe) {
-                   LOGGER.error("Error while closing inputStream", ioe);
+                    LOGGER.error("Error while closing inputStream", ioe);
                 }
             }
         }
     }
 
-    private String checkXml(String xml) throws DecodingException {
+    private String checkXml(String xml)
+            throws DecodingException {
         XmlHelper.parseXmlString(xml);
         if (xml.startsWith("<?xml")) {
-            return xml.substring(xml.indexOf(">")+1);
+            return xml.substring(xml.indexOf(">") + 1);
         }
         return xml;
     }

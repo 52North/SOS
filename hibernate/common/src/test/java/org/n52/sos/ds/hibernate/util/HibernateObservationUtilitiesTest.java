@@ -44,7 +44,6 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -69,7 +68,8 @@ import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
  * @since 4.0.0
  *
  */
-public class HibernateObservationUtilitiesTest extends HibernateTestCase {
+public class HibernateObservationUtilitiesTest
+        extends HibernateTestCase {
     private static final String PROCEDURE = "junit_test_procedure_id";
 
     /*
@@ -88,9 +88,10 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     public static final String CODESPACE = "junit_codespace";
 
     @Test
-    public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
-        ObservationStream resultList =
-                HibernateObservationUtilities.createSosObservationFromObservationConstellation(null, null, null, null, null, null, null);
+    public void returnEmptyCollectionIfCalledWithoutAnyParameters()
+            throws OwsExceptionReport, ConverterException {
+        ObservationStream resultList = HibernateObservationUtilities
+                .createSosObservationFromObservationConstellation(null, null, null, null, null, null, null);
         assertThat("result is null", resultList, is(not(nullValue())));
         assertThat("elements in list", resultList.hasNext(), is(false));
     }
@@ -99,8 +100,8 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     @Ignore
     // FIXME this one fails: SWE Array is only returned if a result template is
     // present
-    public void createSubObservationOfSweArrayObservationViaGetObservationById() throws OwsExceptionReport,
-            ConnectionProviderException, ConverterException {
+    public void createSubObservationOfSweArrayObservationViaGetObservationById()
+            throws OwsExceptionReport, ConnectionProviderException, ConverterException {
         // PREPARE
         Session session = getSession();
         try {
@@ -158,9 +159,10 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             ArrayList<Observation<?>> observationsFromDataBase = new ArrayList<>();
             observationsFromDataBase.add(hObservation);
             // CALL
-            ObservationStream resultList =
-                    HibernateObservationUtilities.createSosObservationsFromObservations(observationsFromDataBase,
-                            request, Locale.ENGLISH, null, new OmObservationCreatorContext(null, null, null, null, null, null, null, null, null, null), session);
+            ObservationStream resultList = HibernateObservationUtilities.createSosObservationsFromObservations(
+                    observationsFromDataBase, request, Locale.ENGLISH, null, new OmObservationCreatorContext(null,
+                            null, null, null, null, null, null, null, null, null, null, null),
+                    session);
             // TEST RESULTS
             assertThat(resultList, is(notNullValue()));
             assertThat(resultList.hasNext(), is(true));

@@ -88,7 +88,7 @@
         <geotools.version>14.1</geotools.version>
         <jackson.version>2.8.5</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
-        <sqljdbc4.version>4.0</sqljdbc4.version>
+        <sqljdbc.version>6.2.1.jre8</sqljdbc.version>
 
         <!-- 52N dependency versions -->
         <iceland.version>2-SNAPSHOT</iceland.version>
@@ -1485,9 +1485,9 @@
                 <version>${ojdbc6.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.microsoft</groupId>
-                <artifactId>sqljdbc4</artifactId>
-                <version>${sqljdbc4.version}</version>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>${sqljdbc.version}</version>
             </dependency>
             <!-- geotools -->
             <dependency>

@@ -45,6 +45,7 @@ import org.n52.faroe.json.AbstractJsonDao;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.config.json.JsonConstants;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
+import org.n52.shetland.ogc.ows.extension.AbstractExtension;
 import org.n52.shetland.ogc.ows.extension.DisableableExtension;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
@@ -404,8 +405,8 @@ public class JsonCapabilitiesExtensionService
         private String identifier;
 
         StaticCapabilitiesImpl(String identifier, String document) {
-            this.identifier = identifier;
-            this.document = document;
+            setIdentifier(identifier);
+            setDocument(document);
         }
 
         @Override
@@ -439,9 +440,10 @@ public class JsonCapabilitiesExtensionService
 
     }
 
-    private static abstract class AbstractSwesExtension extends SwesExtension<String>
+    private static abstract class AbstractDisableableExtension extends AbstractExtension<String>
             implements DisableableExtension, StringBasedExtension {
         private boolean disabled = false;
+        private String value;
 
         public void setDisabled(boolean disabled) {
             this.disabled = disabled;
@@ -452,13 +454,25 @@ public class JsonCapabilitiesExtensionService
             return this.disabled;
         }
 
-        public void setExtension(String extension) {
+        public AbstractDisableableExtension setExtension(String extension) {
             setValue(extension);
+            return this;
         }
 
         @Override
         public String getExtension() {
             return getValue();
+        }
+
+        @Override
+        public AbstractDisableableExtension setValue(String value) {
+            this.value = value;
+            return this;
+        }
+
+        @Override
+        public String getValue() {
+            return value;
         }
 
         @Override
@@ -476,7 +490,7 @@ public class JsonCapabilitiesExtensionService
         }
     }
 
-    private static class SosObservationOfferingExtensionImpl extends AbstractSwesExtension
+    private static class SosObservationOfferingExtensionImpl extends AbstractDisableableExtension
             implements SosObservationOfferingExtension {
 
         private String offeringName;
@@ -498,7 +512,7 @@ public class JsonCapabilitiesExtensionService
     }
 
     private static class CapabilitiesExtensionImpl
-            extends AbstractSwesExtension
+            extends AbstractDisableableExtension
             implements StringBasedCapabilitiesExtension {
 
         @Override

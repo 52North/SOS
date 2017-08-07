@@ -34,14 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import org.hibernate.Session;
-import org.hibernate.id.CompositeNestedGeneratedValueGenerator.GenerationContextLocator;
-import org.n52.faroe.Validation;
-import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.i18n.I18NDAO;
-import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -50,12 +43,9 @@ import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
-import org.n52.sos.service.SosSettings;
-import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -67,33 +57,10 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest>
 
     public static final String CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS =
             "service.createFeatureGeometryFromSamplingGeometries";
-//
-//    private int storageEPSG;
-//
-//    private int storage3DEPSG;
-//
-//    private boolean createFeatureGeometryFromSamplingGeometries;
-//
-//    private boolean updateFeatureGeometry;
-//
-//    private GeometryHandler geometryHandler;
-//
-//    private DaoFactory daoFactory;
-//
-//    private Locale defaultLanguage;
-//
-//    private boolean showAllLanguages;
-
     private FeatureVisitorContext context;
-
 
     public AbstractFeatureCreator(FeatureVisitorContext context) {
         this.context = context;
-//        this.storageEPSG = storageEPSG;
-//        this.storage3DEPSG = storage3DEPSG;
-//        this.geometryHandler = geometryHandler;
-//        this.daoFactory = daoFactory;
-
     }
 
     public CodeWithAuthority getIdentifier(IdentifierNameDescriptionEntity entity) {

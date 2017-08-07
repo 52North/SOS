@@ -258,8 +258,8 @@ public abstract class AbstractOperationHandler
                         && !supportedResponseFormatObservationTypes.isEmpty()) {
                     for (final String responseFormat : supportedResponseFormatObservationTypes.keySet()) {
                         for (SupportedType st : supportedResponseFormatObservationTypes.get(responseFormat)) {
-                            if (st instanceof ObservationType) {
-                                responseFormats.add(((ObservationType) st).getValue());
+                            if (st instanceof ObservationType && observationType.equals(((ObservationType) st).getValue())) {
+                                responseFormats.add(responseFormat);
                             }
                         }
                     }

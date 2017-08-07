@@ -41,8 +41,9 @@ import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -60,7 +61,6 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.AbstractInsertObservationHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -68,7 +68,9 @@ import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.service.SosSettings;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -76,7 +78,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 
-
+@Configurable
 public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     private static final int FLUSH_THRESHOLD = 50;
     private static final String CONSTRAINT_OBSERVATION_IDENTITY = "observationIdentity";
@@ -84,6 +86,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
 
     private HibernateSessionHolder sessionHolder;
     private DaoFactory daoFactory;
+    private boolean strictSpatialFilteringProfile;
 
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
@@ -93,6 +96,11 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
+    @Setting(SosSettings.STRICT_SPATIAL_FILTERING_PROFILE)
+    public void setStrictSpatialFilteringProfile(final boolean strictSpatialFilteringProfile) {
+        this.strictSpatialFilteringProfile = strictSpatialFilteringProfile;
     }
 
     /**
@@ -126,7 +134,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
 
             for (final OmObservation sosObservation : request.getObservations()) {
                 // check strict spatial filtering profile
-                if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
+                if (strictSpatialFilteringProfile
                         && !sosObservation.isSetSpatialFilteringProfileParameter()) {
                     throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
                             .withMessage("The sampling geometry definition is missing in the observation because"
@@ -234,7 +242,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     protected void checkSpatialFilteringProfile(OmObservation sosObservation)
             throws CodedException {
         // checkConstellation
-        if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
+        if (strictSpatialFilteringProfile
             && !sosObservation.isSetSpatialFilteringProfileParameter()) {
             throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
                     .withMessage("The sampling geometry definition is missing in the observation because"
@@ -271,14 +279,14 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     }
 
     private void checkEqualsAndThrow(String constraintName, HibernateException he) throws OwsExceptionReport {
-        if (StringHelper.isNotEmpty(constraintName)) {
+        if (!Strings.isNullOrEmpty(constraintName)) {
             String exceptionMsg = null;
             if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTITY)) {
                 exceptionMsg = "Observation with same values already contained in database";
             } else if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY)) {
                 exceptionMsg = "Observation identifier already contained in database";
             }
-            if(StringHelper.isNotEmpty(exceptionMsg)) {
+            if(!Strings.isNullOrEmpty(exceptionMsg)) {
                 throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
                 .setStatus(HTTPStatus.BAD_REQUEST);
             }
@@ -286,14 +294,14 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     }
 
     private void checkContainsAndThrow(String message, HibernateException he) throws OwsExceptionReport {
-        if (StringHelper.isNotEmpty(message)) {
+        if (!Strings.isNullOrEmpty(message)) {
             String exceptionMsg = null;
             if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase())) {
                 exceptionMsg = "Observation with same values already contained in database";
             } else if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY.toLowerCase())) {
                 exceptionMsg = "Observation identifier already contained in database";
             }
-            if (StringHelper.isNotEmpty(exceptionMsg)) {
+            if (!Strings.isNullOrEmpty(exceptionMsg)) {
                 throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
                 .setStatus(HTTPStatus.BAD_REQUEST);
             }
@@ -388,10 +396,10 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
             this.relatedFeatureCheckedMap.put(feature, offering);
         }
         public void putFeature(AbstractFeature sfeature, AbstractFeatureOfInterest hfeature) {
-            this.featureCache.put(sfeature, hfeature);
+            getFeatureCache().put(sfeature, hfeature);
         }
         public AbstractFeatureOfInterest getFeature(AbstractFeature sfeature) {
-            return this.featureCache.get(sfeature);
+            return getFeatureCache().get(sfeature);
         }
         public Map<AbstractFeature, AbstractFeatureOfInterest> getFeatureCache() {
             return featureCache;

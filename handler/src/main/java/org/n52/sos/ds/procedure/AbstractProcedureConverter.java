@@ -31,7 +31,6 @@ package org.n52.sos.ds.procedure;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
@@ -59,7 +58,6 @@ public abstract class AbstractProcedureConverter<T> {
             String requestedDescriptionFormat,
             String requestedServiceVersion,
             Locale i18n,
-            I18NDAORepository i18nDaoRepository,
             Session session) throws OwsExceptionReport;
 
     /**
@@ -83,10 +81,9 @@ public abstract class AbstractProcedureConverter<T> {
             T procedure,
             String requestedDescriptionFormat,
             String requestedServiceVersion,
-            I18NDAORepository i18nDaoRepository,
             Session session)
             throws OwsExceptionReport {
         // child hierarchy procedures haven't been queried yet, pass null
-        return createSosProcedureDescription(procedure, requestedDescriptionFormat, requestedServiceVersion, null, i18nDaoRepository, session);
+        return createSosProcedureDescription(procedure, requestedDescriptionFormat, requestedServiceVersion, null, session);
     }
 }

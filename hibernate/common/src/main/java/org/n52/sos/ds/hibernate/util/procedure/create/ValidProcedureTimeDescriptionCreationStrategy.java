@@ -35,23 +35,26 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 
 /**
  * Strategy to create the {@link SosProcedureDescription} from a
  * {@link ValidProcedureTime}.
  */
-public class ValidProcedureTimeDescriptionCreationStrategy extends XmlStringDescriptionCreationStrategy {
+public class ValidProcedureTimeDescriptionCreationStrategy
+        extends XmlStringDescriptionCreationStrategy {
     final ValidProcedureTime vpt;
 
-    public ValidProcedureTimeDescriptionCreationStrategy(
-            ValidProcedureTime validProcedureTime) {
+    public ValidProcedureTimeDescriptionCreationStrategy(ValidProcedureTime validProcedureTime) {
         this.vpt = validProcedureTime;
     }
 
     @Override
-    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
+    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n,
+            HibernateProcedureCreationContext ctx, Session s)
             throws OwsExceptionReport {
-        SosProcedureDescription<?> desc = new SosProcedureDescription<>(readXml(vpt.getDescriptionXml()));
+        SosProcedureDescription<?> desc =
+                new SosProcedureDescription<>(readXml(vpt.getDescriptionXml(), ctx));
         desc.setIdentifier(p.getIdentifier());
         desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
         return desc;

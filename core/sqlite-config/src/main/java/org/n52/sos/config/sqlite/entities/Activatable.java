@@ -34,8 +34,8 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import org.n52.shetland.ogc.swes.SwesExtension;
-
+import org.n52.shetland.ogc.ows.extension.AbstractExtension;
+import org.n52.shetland.ogc.ows.extension.Extension;
 
 /**
  * @param <K> the key type
@@ -45,7 +45,7 @@ import org.n52.shetland.ogc.swes.SwesExtension;
  */
 @MappedSuperclass
 public class Activatable<K extends Serializable, T extends Activatable<K, T>>
-        extends SwesExtension<String> implements Serializable {
+        extends AbstractExtension<String> implements Serializable {
     private static final long serialVersionUID = -1470828735015412115L;
 
     public static final String ACTIVE = "active";
@@ -56,6 +56,8 @@ public class Activatable<K extends Serializable, T extends Activatable<K, T>>
 
     @Column(name = ACTIVE)
     private boolean active;
+
+    private String value;
 
     public Activatable(final K key) {
         this.key = key;
@@ -79,6 +81,17 @@ public class Activatable<K extends Serializable, T extends Activatable<K, T>>
     public T setKey(final K encodingKey) {
         this.key = encodingKey;
         return (T) this;
+    }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public Activatable<?, ?> setValue(String value) {
+        this.value = value;
+        return this;
     }
 
     @Override

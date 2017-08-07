@@ -93,6 +93,7 @@ public class EntityBuilder {
             }
             procedure.setChildren(childs);
         }
+        procedure.setProcedureDescriptionFormat(sosProc.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
         return procedure;
     }
 

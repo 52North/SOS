@@ -37,12 +37,8 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
-import org.n52.iceland.util.LocalizedProducer;
 import org.n52.io.request.IoParameters;
 import org.n52.io.request.RequestSimpleParameterSet;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.proxy.db.dao.ProxyProcedureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
@@ -50,7 +46,6 @@ import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsDomain;
-import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -61,14 +56,13 @@ import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.ds.dao.DescribeSensorDao;
 import org.n52.sos.ds.procedure.ProcedureConverter;
 
-public class DescribeSensorHandler extends AbstractDescribeSensorHandler implements Constructable {
+public class DescribeSensorHandler
+        extends AbstractDescribeSensorHandler {
 
     private HibernateSessionStore sessionStore;
     private DescribeSensorDao dao;
 
-    private OwsServiceMetadataRepository serviceMetadataRepository;
     private ProcedureConverter procedureConverter;
-    private I18NDAORepository i18NDAORepository;
 
     public DescribeSensorHandler() {
         super(SosConstants.SOS);
@@ -78,7 +72,8 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
     protected Set<OwsDomain> getOperationParameters(String service, String version) {
         Set<OwsDomain> operationParameters = super.getOperationParameters(service, version);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            operationParameters.add(new OwsDomain(Sos2Constants.DescribeSensorParams.validTime, OwsAnyValue.instance()));
+            operationParameters
+                    .add(new OwsDomain(Sos2Constants.DescribeSensorParams.validTime, OwsAnyValue.instance()));
         }
         return operationParameters;
     }
@@ -91,29 +86,13 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
     }
 
     @Inject
-    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
-        this.serviceMetadataRepository = repo;
-    }
-
-    @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
         this.sessionStore = sessionStore;
     }
 
     @Inject
-    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
-        this.i18NDAORepository = i18NDAORepository;
-    }
-
-    @Inject
     public void setProcedureConverter(ProcedureConverter procedureConverter) {
         this.procedureConverter = procedureConverter;
-    }
-
-    @Override
-    public void init() {
-        LocalizedProducer<OwsServiceProvider> serviceProvider
-                = this.serviceMetadataRepository.getServiceProviderFactory(SosConstants.SOS);
     }
 
     @Override
@@ -127,11 +106,12 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
             response.setVersion(request.getVersion());
             response.setOutputFormat(request.getProcedureDescriptionFormat());
 
-            ProcedureEntity entity = new ProxyProcedureDao(session).getInstance(request.getProcedure(), createDbQuery(request));
+            ProcedureEntity entity =
+                    new ProxyProcedureDao(session).getInstance(request.getProcedure(), createDbQuery(request));
             if (entity == null) {
-                throw new NoApplicableCodeException().causedBy(
-                        new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
-                                INTERNAL_SERVER_ERROR);
+                throw new NoApplicableCodeException()
+                        .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))
+                        .setStatus(INTERNAL_SERVER_ERROR);
             }
             if (dao != null) {
                 response.setSensorDescriptions(dao.querySensorDescriptions(request));
@@ -140,20 +120,18 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
             }
             return response;
         } catch (final HibernateException | DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e).withMessage(
-                    "Error while querying data for DescribeSensor document!");
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while querying data for DescribeSensor document!");
         } finally {
             sessionStore.returnSession(session);
         }
     }
 
-    private SosProcedureDescription<?> createSensorDescription(ProcedureEntity procedure, DescribeSensorRequest request, Session session) throws OwsExceptionReport {
-        return procedureConverter.createSosProcedureDescription(procedure,
-                request.getProcedureDescriptionFormat(),
-                request.getVersion(),
-                getRequestedLocale(request),
-                i18NDAORepository,
-                session);
+    private SosProcedureDescription<?> createSensorDescription(ProcedureEntity procedure,
+            DescribeSensorRequest request, Session session)
+            throws OwsExceptionReport {
+        return procedureConverter.createSosProcedureDescription(procedure, request.getProcedureDescriptionFormat(),
+                request.getVersion(), getRequestedLocale(request), session);
     }
 
     private DbQuery createDbQuery(DescribeSensorRequest req) {

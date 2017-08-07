@@ -72,7 +72,6 @@ import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.GeometryHandler;
@@ -102,10 +101,7 @@ public abstract class AbstractOmObservationCreator {
     private final OmObservationCreatorContext creatorContext;
 
     public AbstractOmObservationCreator(
-            AbstractObservationRequest request,
-            Locale i18n,
-            String pdf,
-            OmObservationCreatorContext creatorContext,
+            AbstractObservationRequest request, Locale i18n, String pdf, OmObservationCreatorContext creatorContext,
             Session session) {
         this.creatorContext = creatorContext;
         this.request = request;
@@ -179,12 +175,12 @@ public abstract class AbstractOmObservationCreator {
         addMetadata(o);
     }
 
-    public abstract ObservationStream create() throws OwsExceptionReport, ConverterException;
+    public abstract ObservationStream create()
+            throws OwsExceptionReport, ConverterException;
 
     private void addMetadata(OmObservation o) {
         if (MetaDataConfigurations.getInstance().isShowCiOnlineReourceInObservations()) {
-            CiOnlineResource ciOnlineResource =
-                    new CiOnlineResource(getServiceURL());
+            CiOnlineResource ciOnlineResource = new CiOnlineResource(getServiceURL());
             ciOnlineResource.setProtocol("OGC:SOS-2.0.0");
             o.addMetaDataProperty(new GenericMetaData(ciOnlineResource));
         }
@@ -287,9 +283,8 @@ public abstract class AbstractOmObservationCreator {
         String pdf = !Strings.isNullOrEmpty(this.pdf) ? this.pdf
                 : hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
         if (getActiveProfile().isEncodeProcedureInObservation()) {
-            return new HibernateProcedureConverter(getServiceProvider(), getDaoFactory(), getConverterRepository(),
-                    getProcedureDescriptionGeneratorFactoryRepository()).createSosProcedureDescription(hProcedure, pdf,
-                            getVersion(), i18n, getI18NDAORepository(), getSession());
+            return getCreatorContext().getProcedureConverter().createSosProcedureDescription(hProcedure, pdf,
+                    getVersion(), i18n, getSession());
         } else {
             SosProcedureDescriptionUnknownType sosProcedure =
                     new SosProcedureDescriptionUnknownType(hProcedure.getIdentifier(), pdf, null);
@@ -345,7 +340,8 @@ public abstract class AbstractOmObservationCreator {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected AbstractFeature createFeatureOfInterest(AbstractFeatureOfInterest foi) throws OwsExceptionReport {
+    protected AbstractFeature createFeatureOfInterest(AbstractFeatureOfInterest foi)
+            throws OwsExceptionReport {
         if (getActiveProfile().isEncodeFeatureOfInterestInObservations()) {
             FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
             queryObject.addFeatureIdentifier(foi.getIdentifier()).setVersion(getVersion());
@@ -386,7 +382,8 @@ public abstract class AbstractOmObservationCreator {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected AbstractFeature createFeatureOfInterest(String featureOfInterest) throws OwsExceptionReport {
+    protected AbstractFeature createFeatureOfInterest(String featureOfInterest)
+            throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
         queryObject.setFeatureObject(featureOfInterest).setVersion(getVersion());
         final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);

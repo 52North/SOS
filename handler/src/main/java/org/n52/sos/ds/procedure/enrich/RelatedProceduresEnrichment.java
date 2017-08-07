@@ -33,11 +33,9 @@ import java.util.Set;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.collect.Sets;
 
@@ -48,18 +46,6 @@ import com.google.common.collect.Sets;
  */
 public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrichment<ProcedureEntity> {
 
-    @Override
-    public void enrich() throws OwsExceptionReport {
-        Set<String> parentProcedures = getParentProcedures();
-        if (CollectionHelper.isNotEmpty(parentProcedures)) {
-            getDescription().setParentProcedure(new ReferenceType(parentProcedures.iterator().next()));
-        }
-        Set<AbstractSensorML> childProcedures = getChildProcedures();
-        if (CollectionHelper.isNotEmpty(childProcedures)) {
-            getDescription().addChildProcedures(childProcedures);
-        }
-    }
-
     /**
      * Add a collection of child procedures to a procedure
      *
@@ -69,7 +55,7 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
      * @throws ConverterException
      *             If creation of child procedure description fails
      */
-    private Set<AbstractSensorML> getChildProcedures() throws OwsExceptionReport {
+    protected Set<AbstractSensorML> getChildProcedures() throws OwsExceptionReport {
 
         if (!getProcedure().hasChildren()) {
             return Sets.newHashSet();
@@ -78,7 +64,7 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
         Set<AbstractSensorML> childProcedures = Sets.newHashSet();
         for (ProcedureEntity child : getProcedure().getChildren()) {
             SosProcedureDescription<?> childDescription = getConverter().createSosProcedureDescription(child,
-                    getProcedureDescriptionFormat(), getVersion(), getLocale(), getI18NDAORepository(), getSession());
+                    getProcedureDescriptionFormat(), getVersion(), getLocale(), getSession());
             if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
                 childProcedures.add((AbstractSensorML) childDescription.getProcedureDescription());
             }
@@ -91,7 +77,7 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
      *
      * @throws OwsExceptionReport
      */
-    private Set<String> getParentProcedures() throws OwsExceptionReport {
+    protected Set<String> getParentProcedures() throws OwsExceptionReport {
         Set<String> parents = new HashSet<>();
         if (getProcedure().hasParents()) {
             for (ProcedureEntity parent : getProcedure().getParents()) {

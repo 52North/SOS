@@ -33,9 +33,12 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -49,12 +52,13 @@ import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
+import org.n52.sos.service.SosSettings;
+import org.n52.sos.util.GeometryHandler;
 
 /**
  * Implementation of the abstract class AbstractInsertResultTemplateDAO
@@ -63,17 +67,17 @@ import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
  *
  */
 public class InsertResultTemplateDAO
-        extends AbstractInsertResultTemplateHandler {
+        extends AbstractInsertResultTemplateHandler
+        implements Constructable {
 
     private HibernateSessionHolder sessionHolder;
-
     private DaoFactory daoFactory;
-
     private ResultHandlingHelper helper;
+    private GeometryHandler geometryHandler;
+    private boolean allowTemplateWithoutProcedureAndFeature;
 
     public InsertResultTemplateDAO() {
         super(SosConstants.SOS);
-        helper = new ResultHandlingHelper();
     }
 
     @Inject
@@ -84,6 +88,21 @@ public class InsertResultTemplateDAO
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
+
+    @Setting(SosSettings.ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE)
+    public void setAllowTemplateWithoutProcedureAndFeature(boolean allowTemplateWithoutProcedureAndFeature) {
+        this.allowTemplateWithoutProcedureAndFeature = allowTemplateWithoutProcedureAndFeature;
+    }
+
+    @Override
+    public void init() {
+        helper = new ResultHandlingHelper(geometryHandler);
     }
 
     @Override
@@ -106,7 +125,7 @@ public class InsertResultTemplateDAO
                 if (obsConst != null) {
                     // check if result structure elements are supported
                     checkResultStructure(request.getResultStructure(),
-                            obsConst.getObservableProperty().getIdentifier());
+                            obsConst.getObservableProperty().getIdentifier(), sosObsConst);
                     Procedure procedure = null;
                     AbstractFeatureOfInterest feature = null;
                     if (sosObsConst.isSetFeatureOfInterest()) {
@@ -144,23 +163,26 @@ public class InsertResultTemplateDAO
     }
 
     private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, ObservationConstellation obsConst,
-            Procedure procedure, AbstractFeatureOfInterest feature, Session session) throws OwsExceptionReport {
+            Procedure procedure, AbstractFeatureOfInterest feature, Session session)
+            throws OwsExceptionReport {
         daoFactory.getResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
     }
 
-    private void checkResultStructure(SosResultStructure resultStructure, String observedProperty)
+    private void checkResultStructure(SosResultStructure resultStructure, String observedProperty,
+            OmObservationConstellation sosObsConst)
             throws OwsExceptionReport {
         // TODO modify or remove if complex field elements are supported
         final SweDataRecord record = setRecordFrom(resultStructure.get().get());
 
         for (final SweField swefield : record.getFields()) {
-
-            if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>)
-                    || (swefield.getElement() instanceof SweDataRecord))) {
+            if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>) || helper.isDataRecord(swefield)
+                    || helper.isVector(swefield))) {
                 throw new NoApplicableCodeException().withMessage(
                         "The swe:Field element of type %s is not yet supported!",
                         swefield.getElement().getClass().getName());
             }
+            helper.checkDataRecordForObservedProperty(swefield, observedProperty);
+            helper.checkVectorForSamplingGeometry(swefield);
         }
         if (helper.hasPhenomenonTime(record) == -1) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
@@ -170,15 +192,59 @@ public class InsertResultTemplateDAO
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage("Missing swe:field content with element definition %s", observedProperty);
         }
-        if ((helper.hasResultTime(record) > -1 && record.getFields().size() > 3)
-                || (helper.hasResultTime(record) == -1 && record.getFields().size() > 2)) {
+        if (allowTemplateWithoutProcedureAndFeature) {
+            if (sosObsConst.getNillableFeatureOfInterest().isNil()
+                    && helper.checkFields(record.getFields(), helper.OM_FEATURE_OF_INTEREST) == -1) {
+                throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                        .withMessage(
+                                "Missing swe:field content with element definition '%s' because the featureOfInterest is not defined in the observationTemplate!",
+                                helper.OM_FEATURE_OF_INTEREST);
+            }
+            if (sosObsConst.getNillableProcedure().isNil()
+                    && helper.checkFields(record.getFields(), helper.OM_PROCEDURE) == -1) {
+                throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                        .withMessage(
+                                "Missing swe:field content with element definition '%s' because the procdure is not defined in the observationTemplate!",
+                                helper.OM_PROCEDURE);
+            }
+        }
+        if (record.getFields().size() > getAllowedSize(record)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage(
-                            "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition %s, "
-                                    + " optional swe:Time with element definition %s and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
-                                    + "with element definition %s",
-                            OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty);
+                            "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition '%s', "
+                                    + " optional swe:Time with element definition '%s' and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
+                                    + "with element definition '%s' or swe:Vector with element defintion '%s' or swe:Text with element definitions "
+                                    + "'%s' and '%s' and swe:DataRecord with element definition '%s'!",
+                            OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty,
+                            OmConstants.PARAM_NAME_SAMPLING_GEOMETRY, helper.OM_FEATURE_OF_INTEREST,
+                            helper.OM_PROCEDURE, OmConstants.OM_PARAMETER);
         }
+    }
+
+    private int getAllowedSize(SweDataRecord record)
+            throws CodedException {
+        int allowedSize = 2;
+        if (helper.hasResultTime(record) > -1) {
+            allowedSize++;
+        }
+        int additionalValues = 0;
+        for (final SweField swefield : record.getFields()) {
+            if (helper.isVector(swefield) && helper.checkVectorForSamplingGeometry(swefield)) {
+                additionalValues++;
+            }
+            if (allowTemplateWithoutProcedureAndFeature) {
+                if (helper.isText(swefield) && helper.checkDefinition(swefield, helper.OM_FEATURE_OF_INTEREST)) {
+                    additionalValues++;
+                }
+                if (helper.isText(swefield) && helper.checkDefinition(swefield, helper.OM_PROCEDURE)) {
+                    additionalValues++;
+                }
+            }
+            if (helper.checkDataRecordForParameter(swefield)) {
+                additionalValues++;
+            }
+        }
+        return allowedSize + additionalValues;
     }
 
 }

@@ -65,6 +65,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObserv
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.util.XmlOptionsHelper;
 
@@ -81,6 +82,7 @@ public class DaoFactory {
     private Set<Integer> validityFlags;
     private Set<Integer> verificationFlags;
     private EncoderRepository encoderRepository;
+    private DecoderRepository decoderRepository;
     private XmlOptionsHelper xmlOptionsHelper;
 
     @Setting(value = EReportingSetting.EREPORTING_VALIDITY_FLAGS, required = false)
@@ -98,6 +100,11 @@ public class DaoFactory {
     @Inject
     public void setEncoderRepository(EncoderRepository encoderRepository) {
         this.encoderRepository = encoderRepository;
+    }
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
     }
 
     @Inject
@@ -206,7 +213,7 @@ public class DaoFactory {
     }
 
     public ResultTemplateDAO getResultTemplateDAO() {
-        return new ResultTemplateDAO(encoderRepository, xmlOptionsHelper);
+        return new ResultTemplateDAO(encoderRepository, xmlOptionsHelper, decoderRepository);
     }
 
     public RelatedFeatureRoleDAO getRelatedFeatureRoleDAO() {

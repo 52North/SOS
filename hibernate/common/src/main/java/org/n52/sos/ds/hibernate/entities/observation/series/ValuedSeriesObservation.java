@@ -32,7 +32,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.HibernateSeriesRelations.HasSeries;
 
 /**
- * Extension of {@link ValuedLegacyObservation} that adds a {@link Series}.
+ * Extension of {@link ValuedLegacyObservation} that adds a {@code Series}.
  *
  * @param <T> the value type
  *

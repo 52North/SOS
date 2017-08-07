@@ -30,8 +30,6 @@ package org.n52.sos.ds.hibernate.util.procedure.create;
 
 import java.util.Locale;
 
-import javax.inject.Inject;
-
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -39,6 +37,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.CodingHelper;
@@ -52,17 +51,11 @@ import com.google.common.base.Strings;
 public class XmlStringDescriptionCreationStrategy
         implements DescriptionCreationStrategy {
 
-    private DecoderRepository decoderRepository;
-
-    @Inject
-    public void setDecoderRepository(DecoderRepository decoderRepository) {
-        this.decoderRepository = decoderRepository;
-    }
-
     @Override
-    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
+    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n,
+            HibernateProcedureCreationContext ctx, Session s)
             throws OwsExceptionReport {
-        SosProcedureDescription<?> desc = new SosProcedureDescription<>(readXml(p.getDescriptionFile()));
+        SosProcedureDescription<?> desc = new SosProcedureDescription<>(readXml(p.getDescriptionFile(), ctx));
         desc.setIdentifier(p.getIdentifier());
         desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
         return desc;
@@ -70,17 +63,17 @@ public class XmlStringDescriptionCreationStrategy
 
     @Override
     public boolean apply(Procedure p) {
-        return !Strings.isNullOrEmpty(p.getDescriptionFile()) &&
-               p.getDescriptionFile().startsWith("<");
+        return !Strings.isNullOrEmpty(p.getDescriptionFile()) && p.getDescriptionFile().startsWith("<");
     }
 
-    protected AbstractFeature readXml(String xml)
+    protected AbstractFeature readXml(String xml, HibernateProcedureCreationContext ctx)
             throws OwsExceptionReport {
         try {
             XmlObject parsed = XmlHelper.parseXmlString(xml);
-            return (AbstractFeature) decoderRepository.getDecoder(CodingHelper.getDecoderKey(parsed)).decode(parsed);
+            return (AbstractFeature) ctx.getDecoderRepository().getDecoder(CodingHelper.getDecoderKey(parsed)).decode(parsed);
         } catch (DecodingException e) {
-           throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating procedure description from XML string");
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while creating procedure description from XML string");
         }
 
     }

@@ -38,6 +38,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.procedure.AbstractProcedureConverter;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
 public abstract class AbstractRelatedProceduresEnrichment<T>
         extends ProcedureDescriptionEnrichment {
@@ -48,6 +49,10 @@ public abstract class AbstractRelatedProceduresEnrichment<T>
     private AbstractProcedureConverter<T> converter;
 
     private TimePeriod validTime;
+
+    public AbstractRelatedProceduresEnrichment(AbstractProcedureCreationContext ctx) {
+        super(ctx);
+    }
 
     public AbstractRelatedProceduresEnrichment<T> setProcedure(T procedure) {
         this.procedure = procedure;

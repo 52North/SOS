@@ -34,6 +34,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.elements.SmlClassifier;
 import org.n52.shetland.ogc.sensorML.elements.SmlClassifierPredicates;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
 import com.google.common.base.Strings;
 
@@ -42,29 +43,34 @@ import com.google.common.base.Strings;
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class ClassifierEnrichment extends SensorMLEnrichment {
+public class ClassifierEnrichment
+        extends
+        SensorMLEnrichment {
+
+    public ClassifierEnrichment(AbstractProcedureCreationContext ctx) {
+        super(ctx);
+    }
 
     @Override
-    protected void enrich(AbstractSensorML description) throws OwsExceptionReport {
+    protected void enrich(AbstractSensorML description)
+            throws OwsExceptionReport {
         addIntendedApplicationClassifier(description);
         addProcedureTypeClassification(description);
     }
 
-
     private void addIntendedApplicationClassifier(AbstractSensorML description) {
         addClassifier(description, SmlClassifier.INTENDED_APPLICATION,
-                      procedureSettings().getClassifierIntendedApplicationDefinition(),
-                      procedureSettings().getClassifierIntendedApplicationValue());
+                procedureSettings().getClassifierIntendedApplicationDefinition(),
+                procedureSettings().getClassifierIntendedApplicationValue());
     }
 
     private void addProcedureTypeClassification(AbstractSensorML description) {
         addClassifier(description, SmlClassifier.PROCEDURE_TYPE,
-                      procedureSettings().getClassifierProcedureTypeDefinition(),
-                      procedureSettings().getClassifierProcedureTypeValue());
+                procedureSettings().getClassifierProcedureTypeDefinition(),
+                procedureSettings().getClassifierProcedureTypeValue());
     }
 
-    private void addClassifier(AbstractSensorML description,
-                               String name, String definition, String value) {
+    private void addClassifier(AbstractSensorML description, String name, String definition, String value) {
         if (!Strings.isNullOrEmpty(value)) {
             Predicate<SmlClassifier> p = SmlClassifierPredicates.name(name);
             if (!description.findClassifier(p).isPresent()) {
@@ -76,6 +82,7 @@ public class ClassifierEnrichment extends SensorMLEnrichment {
 
     @Override
     public boolean isApplicable() {
-        return super.isApplicable() && procedureSettings().isGenerateClassification() && procedureSettings().isEnrichWithDiscoveryInformation();
+        return super.isApplicable() && procedureSettings().isGenerateClassification()
+                && procedureSettings().isEnrichWithDiscoveryInformation();
     }
 }

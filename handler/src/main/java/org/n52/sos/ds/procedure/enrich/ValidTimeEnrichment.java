@@ -32,7 +32,7 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ds.procedure.enrich.SensorMLEnrichment;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
 /**
  * TODO JavaDoc
@@ -40,7 +40,12 @@ import org.n52.sos.ds.procedure.enrich.SensorMLEnrichment;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class ValidTimeEnrichment extends SensorMLEnrichment {
+
     private TimePeriod validTime;
+
+    public ValidTimeEnrichment(AbstractProcedureCreationContext ctx) {
+        super(ctx);
+    }
 
     @Override
     protected void enrich(AbstractSensorML description)

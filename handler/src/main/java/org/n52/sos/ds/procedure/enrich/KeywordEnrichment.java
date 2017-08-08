@@ -36,6 +36,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -46,6 +47,11 @@ import com.google.common.collect.Sets;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class KeywordEnrichment extends SensorMLEnrichment {
+
+    public KeywordEnrichment(AbstractProcedureCreationContext ctx) {
+        super(ctx);
+    }
+
     @Override
     protected void enrich(AbstractSensorML description) throws OwsExceptionReport {
         List<String> keywords = createKeywordsList(description);

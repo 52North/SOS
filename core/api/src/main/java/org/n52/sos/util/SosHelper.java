@@ -46,7 +46,6 @@ import java.util.Stack;
 import java.util.stream.Stream;
 
 import org.n52.iceland.binding.Binding;
-import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
@@ -122,6 +121,14 @@ public class SosHelper {
         url.append('?');
         return url.toString();
     }
+    private static String getBaseGetUrl(String serviceURL) {
+        final StringBuilder url = new StringBuilder();
+        // service URL
+        url.append(serviceURL);
+        // ?
+        url.append('?');
+        return url.toString();
+    }
 
     /**
      * Creates a HTTP-Get URL from FOI identifier and service URL for SOS
@@ -185,8 +192,7 @@ public class SosHelper {
     }
 
     public static URL getGetObservationKVPRequest(String version) throws MalformedURLException {
-        SosQueryBuilder b = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL(),
-                BindingConstants.KVP_BINDING_ENDPOINT));
+        SosQueryBuilder b = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL()));
         b.addService();
         b.addVersion(version);
         b.addGetObservationRequest();
@@ -194,8 +200,7 @@ public class SosHelper {
     }
 
     public static URL getGetCapabilitiesKVPRequest() throws MalformedURLException {
-        SosQueryBuilder builder = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL(),
-                                                    BindingConstants.KVP_BINDING_ENDPOINT));
+        SosQueryBuilder builder = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL()));
         builder.addGetCapabilitiesRequest();
         builder.addService();
         return builder.build();

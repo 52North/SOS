@@ -247,7 +247,7 @@ public class HibernateProcedureConverter
     }
 
     private boolean existsGenerator(String descriptionFormat) {
-        return ctx.getFactoryRepository().hasHibernateProcedureDescriptionGeneratorFactory(descriptionFormat);
+        return ctx.getFactoryRepository().hasProcedureDescriptionGeneratorFactory(descriptionFormat);
     }
 
     private Optional<SosProcedureDescription<?>> create(Procedure procedure, String descriptionFormat,
@@ -304,7 +304,7 @@ public class HibernateProcedureConverter
             TimePeriod validTime, Locale language, Session session)
             throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
-                new ProcedureDescriptionEnrichments(language, serviceProvider, ctx.getGeometryHandler());
+                new ProcedureDescriptionEnrichments(language, serviceProvider, ctx);
         enrichments.setIdentifier(procedure.getIdentifier()).setProcedure(procedure).setVersion(version)
                 .setDescription(desc).setProcedureDescriptionFormat(format).setSession(session).setValidTime(validTime)
                 .setConverter(this);

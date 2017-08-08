@@ -44,23 +44,28 @@ import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweEnvelope;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.util.ReferencedEnvelope;
-import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
 /**
  * TODO JavaDoc
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class BoundingBoxEnrichment extends SensorMLEnrichment {
+public class BoundingBoxEnrichment
+        extends
+        SensorMLEnrichment {
     public static final Predicate<SmlCapabilities> BBOX_PREDICATE =
             SmlCapabilitiesPredicates.name(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX);
 
+    public BoundingBoxEnrichment(AbstractProcedureCreationContext ctx) {
+        super(ctx);
+    }
+
     @Override
-    public void enrich(final AbstractSensorML description) throws OwsExceptionReport {
-        final Optional<SmlCapabilities> existingCapabilities =
-                description.findCapabilities(BBOX_PREDICATE);
-        final Optional<SmlCapabilities> newCapabilities =
-                createCapabilities(existingCapabilities);
+    public void enrich(final AbstractSensorML description)
+            throws OwsExceptionReport {
+        final Optional<SmlCapabilities> existingCapabilities = description.findCapabilities(BBOX_PREDICATE);
+        final Optional<SmlCapabilities> newCapabilities = createCapabilities(existingCapabilities);
 
         if (newCapabilities.isPresent()) {
             if (existingCapabilities.isPresent()) {
@@ -70,7 +75,8 @@ public class BoundingBoxEnrichment extends SensorMLEnrichment {
         }
     }
 
-    private Optional<SmlCapabilities> createCapabilities(final Optional<SmlCapabilities> existing) throws OwsExceptionReport {
+    private Optional<SmlCapabilities> createCapabilities(final Optional<SmlCapabilities> existing)
+            throws OwsExceptionReport {
         final ReferencedEnvelope sosEnv = createEnvelopeForOfferings();
         if (existing.isPresent()) {
             final DataRecord dataRecord = existing.get().getDataRecord();
@@ -91,18 +97,20 @@ public class BoundingBoxEnrichment extends SensorMLEnrichment {
      * @return merged sosEnvelope
      * @throws CodedException
      */
-    protected ReferencedEnvelope createEnvelopeForOfferings() throws CodedException {
+    protected ReferencedEnvelope createEnvelopeForOfferings()
+            throws CodedException {
         final ReferencedEnvelope mergedEnvelope = new ReferencedEnvelope();
         for (final SosOffering offering : getSosOfferings()) {
             mergedEnvelope.expandToInclude(getEnvelope(offering));
         }
-        return mergedEnvelope.setSrid(GeometryHandler.getInstance().getStorageEPSG());
+        return mergedEnvelope.setSrid(getProcedureCreationContext().getGeometryHandler().getStorageEPSG());
     }
 
     /**
      * Get the sosEnvelope for the given offering.
      *
-     * @param offering the offering
+     * @param offering
+     *            the offering
      *
      * @return the sosEnvelope (may be <code>null</code>)
      */
@@ -113,11 +121,11 @@ public class BoundingBoxEnrichment extends SensorMLEnrichment {
     private Optional<SmlCapabilities> createCapabilities(final ReferencedEnvelope bbox) {
         if (bbox.isSetEnvelope()) {
             // add merged bbox to capabilities as swe:envelope
-            final SweEnvelope envelope = new SweEnvelope(bbox, procedureSettings().getLatLongUom(), GeometryHandler.getInstance().isNorthingFirstEpsgCode(bbox.getSrid()));
+            final SweEnvelope envelope = new SweEnvelope(bbox, procedureSettings().getLatLongUom(),
+                    getProcedureCreationContext().getGeometryHandler().isNorthingFirstEpsgCode(bbox.getSrid()));
             envelope.setDefinition(SensorMLConstants.OBSERVED_BBOX_DEFINITION_URN);
             final SweField field = new SweField(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX, envelope);
-            return Optional.of(new SmlCapabilities()
-                    .setName(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX)
+            return Optional.of(new SmlCapabilities().setName(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX)
                     .setDataRecord(new SweDataRecord().addField(field)));
         } else {
             return Optional.empty();

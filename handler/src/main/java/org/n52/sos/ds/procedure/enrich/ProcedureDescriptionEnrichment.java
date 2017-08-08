@@ -34,13 +34,12 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.cache.SosContentCache;
-import org.n52.sos.service.Configurator;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.I18NHelper;
 
@@ -56,31 +55,34 @@ public abstract class ProcedureDescriptionEnrichment {
 
     private static final IsApplicable IS_APPLICABLE = new IsApplicable();
     private SosProcedureDescription<?> description;
-    private String version;
     private String identifier;
     private Locale locale;
-    private boolean showAllLanguageValues = ServiceConfiguration.getInstance().isShowAllLanguageValues();
     private Session session;
+    private final AbstractProcedureCreationContext ctx;
+    private String version;
+
+    public ProcedureDescriptionEnrichment(AbstractProcedureCreationContext ctx) {
+        this.ctx = ctx;
+    }
 
     protected ProcedureDescriptionSettings procedureSettings() {
-        return ProcedureDescriptionSettings.getInstance();
+        return getProcedureCreationContext().getProcedureSettings();
     }
 
     protected SosContentCache getCache() {
-        return Configurator.getInstance().getCache();
+        return getProcedureCreationContext().getCache();
     }
 
+    protected Collection<SosOffering> getSosOfferings()
+            throws CodedException {
 
-    protected Collection<SosOffering> getSosOfferings() throws CodedException {
-
-        Collection<String> identifiers = getCache()
-                .getOfferingsForProcedure(getIdentifier());
-        Collection<SosOffering> offerings = Lists
-                .newArrayListWithCapacity(identifiers.size());
+        Collection<String> identifiers = getCache().getOfferingsForProcedure(getIdentifier());
+        Collection<SosOffering> offerings = Lists.newArrayListWithCapacity(identifiers.size());
         for (String offering : identifiers) {
             SosOffering sosOffering = new SosOffering(offering, false);
             // add offering name
-            I18NHelper.addOfferingNames(getCache(), sosOffering, getLocale(), getLocale(), showAllLanguageValues);
+            I18NHelper.addOfferingNames(getCache(), sosOffering, getLocale(), getLocale(),
+                    getProcedureCreationContext().isShowAllLanguageValues());
             // add offering description
             I18NHelper.addOfferingDescription(sosOffering, getLocale(), getLocale(), getCache());
             // add to list
@@ -129,6 +131,10 @@ public abstract class ProcedureDescriptionEnrichment {
         return this;
     }
 
+    public AbstractProcedureCreationContext getProcedureCreationContext() {
+        return ctx;
+    }
+
     public ProcedureDescriptionEnrichment setSession(Session session) {
         this.session = checkNotNull(session);
         return this;
@@ -142,17 +148,19 @@ public abstract class ProcedureDescriptionEnrichment {
         return true;
     }
 
-    public abstract void enrich() throws OwsExceptionReport;
+    public abstract void enrich()
+            throws OwsExceptionReport;
 
     public static Predicate<ProcedureDescriptionEnrichment> predicate() {
         return IS_APPLICABLE;
     }
 
-    private static class IsApplicable implements
+    private static class IsApplicable
+            implements
             Predicate<ProcedureDescriptionEnrichment> {
         @Override
         public boolean apply(ProcedureDescriptionEnrichment input) {
             return input.isApplicable();
         }
-}
+    }
 }

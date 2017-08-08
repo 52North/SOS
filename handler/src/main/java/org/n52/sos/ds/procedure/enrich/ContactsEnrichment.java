@@ -31,10 +31,6 @@ package org.n52.sos.ds.procedure.enrich;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Locale;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.iso.CodeList;
@@ -48,6 +44,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.Role;
 import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -58,20 +55,21 @@ import com.google.common.collect.Iterables;
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class ContactsEnrichment extends SensorMLEnrichment {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContactsEnrichment.class);
-
+public class ContactsEnrichment
+        extends
+        SensorMLEnrichment {
     private final LocalizedProducer<OwsServiceProvider> serviceProvider;
-    private final Locale locale;
 
-    public ContactsEnrichment(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider) {
+    public ContactsEnrichment(
+            LocalizedProducer<OwsServiceProvider> serviceProvider,
+            AbstractProcedureCreationContext ctx) {
+        super(ctx);
         this.serviceProvider = serviceProvider;
-        this.locale = locale;
     }
 
-
     @Override
-    protected void enrich(AbstractSensorML description) throws OwsExceptionReport {
+    protected void enrich(AbstractSensorML description)
+            throws OwsExceptionReport {
         // set contacts --> take from service information
         if (!description.isSetContact()) {
             Optional<SmlResponsibleParty> contact = createContactFromServiceContact();
@@ -115,17 +113,21 @@ public class ContactsEnrichment extends SensorMLEnrichment {
         serviceContact.getIndividualName().ifPresent(rp::setIndividualName);
         serviceContact.getOrganisationName().ifPresent(rp::setOrganizationName);
         serviceContact.getPositionName().ifPresent(rp::setPositionName);
-        contactInfo.flatMap(OwsContact::getOnlineResource).flatMap(OwsOnlineResource::getHref).map(URI::toString).map(Collections::singletonList).ifPresent(rp::setOnlineResource);
+        contactInfo.flatMap(OwsContact::getOnlineResource).flatMap(OwsOnlineResource::getHref).map(URI::toString)
+                .map(Collections::singletonList).ifPresent(rp::setOnlineResource);
         address.flatMap(OwsAddress::getAdministrativeArea).ifPresent(rp::setAdministrativeArea);
         address.flatMap(OwsAddress::getCity).ifPresent(rp::setCity);
         address.flatMap(OwsAddress::getCountry).ifPresent(rp::setCountry);
         address.flatMap(OwsAddress::getPostalCode).ifPresent(rp::setPostalCode);
-        address.map(OwsAddress::getElectronicMailAddress).map(it -> Iterables.getFirst(it, null)).ifPresent(rp::setEmail);
+        address.map(OwsAddress::getElectronicMailAddress).map(it -> Iterables.getFirst(it, null))
+                .ifPresent(rp::setEmail);
         address.map(OwsAddress::getDeliveryPoint).ifPresent(rp::setDeliveryPoint);
         contactInfo.flatMap(OwsContact::getContactInstructions).ifPresent(rp::setContactInstructions);
         contactInfo.flatMap(OwsContact::getHoursOfService).ifPresent(rp::setHoursOfService);
-        contactInfo.flatMap(OwsContact::getPhone).map(OwsPhone::getFacsimile).map(ArrayList::new).ifPresent(rp::setPhoneFax);
-        contactInfo.flatMap(OwsContact::getPhone).map(OwsPhone::getVoice).map(ArrayList::new).ifPresent(rp::setPhoneVoice);
+        contactInfo.flatMap(OwsContact::getPhone).map(OwsPhone::getFacsimile).map(ArrayList::new)
+                .ifPresent(rp::setPhoneFax);
+        contactInfo.flatMap(OwsContact::getPhone).map(OwsPhone::getVoice).map(ArrayList::new)
+                .ifPresent(rp::setPhoneVoice);
         rp.setRole(createRole());
         return Optional.of(rp);
     }

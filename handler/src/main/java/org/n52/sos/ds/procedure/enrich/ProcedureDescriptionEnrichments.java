@@ -33,25 +33,28 @@ import java.util.Locale;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
-import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.ds.procedure.ProcedureCreationContext;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann <c.autermann@52north.org>
  */
-public class ProcedureDescriptionEnrichments extends AbstractProcedureDescriptionEnrichments<ProcedureEntity> {
+public class ProcedureDescriptionEnrichments
+        extends
+        AbstractProcedureDescriptionEnrichments<ProcedureEntity> {
 
-    public ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, GeometryHandler geometryHandler) {
-        super(locale, serviceProvider, geometryHandler);
+    public ProcedureDescriptionEnrichments(
+            Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, ProcedureCreationContext ctx) {
+        super(locale, serviceProvider, ctx);
     }
 
     public AbstractRelatedProceduresEnrichment<ProcedureEntity> createRelatedProceduresEnrichment() {
-    return setValues(new RelatedProceduresEnrichment()
-            .setConverter(getConverter())
-            .setProcedure(getProcedure())
-            .setProcedureDescriptionFormat(getProcedureDescriptionFormat())
-            .setValidTime(getValidTime()));
+        return setValues(new RelatedProceduresEnrichment(getProcedureCreationContext())
+                .setConverter(getConverter())
+                .setProcedure(getProcedure())
+                .setProcedureDescriptionFormat(getProcedureDescriptionFormat())
+                .setValidTime(getValidTime()));
     }
 
 }

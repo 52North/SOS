@@ -51,7 +51,7 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.procedure.create.DescriptionCreationStrategy;
 import org.n52.sos.ds.procedure.create.GeneratedDescriptionCreationStrategy;
 import org.n52.sos.ds.procedure.enrich.ProcedureDescriptionEnrichments;
-import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -95,8 +95,7 @@ public class ProcedureConverter
         SosProcedureDescription<?> desc = create(procedure, requestedDescriptionFormat, i18n, session).orNull();
         if (desc != null) {
             addHumanReadableName(desc, procedure);
-            enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null, i18n,
-                    ctx.getGeometryHandler(), session);
+            enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null, i18n, session);
             if (!requestedDescriptionFormat.equals(desc.getDescriptionFormat())) {
                 desc = convert(desc.getDescriptionFormat(), requestedDescriptionFormat, desc);
                 desc.setDescriptionFormat(requestedDescriptionFormat);
@@ -132,7 +131,7 @@ public class ProcedureConverter
     }
 
     protected ArrayList<DescriptionCreationStrategy> getCreationStrategies() {
-        return Lists.newArrayList(new GeneratedDescriptionCreationStrategy(ctx.getFactoryRepository()));
+        return Lists.newArrayList(new GeneratedDescriptionCreationStrategy((ProcedureDescriptionGeneratorFactoryRepository)ctx.getFactoryRepository()));
     }
 
     /**
@@ -189,10 +188,10 @@ public class ProcedureConverter
      */
     private void enrich(SosProcedureDescription<?> desc, ProcedureEntity procedure, String version, String format,
             TimePeriod validTime, Locale language,
-            GeometryHandler geometryHandler, Session session)
+            Session session)
             throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
-                new ProcedureDescriptionEnrichments(language, serviceProvider, geometryHandler);
+                new ProcedureDescriptionEnrichments(language, serviceProvider, ctx);
         enrichments.setIdentifier(procedure.getDomainId())
                     .setProcedure(procedure)
                     .setVersion(version)

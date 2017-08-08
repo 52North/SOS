@@ -118,14 +118,8 @@ public class RegisterBinding
         return Collections.unmodifiableSet(KEYS);
     }
 
-    @Override
     public String getUrlPattern() {
         return URL_PATTERN;
-    }
-
-    @Override
-    public Set<MediaType> getSupportedEncodings() {
-        return Collections.singleton(MediaTypes.APPLICATION_XML);
     }
 
     @Override

@@ -34,7 +34,7 @@ import java.net.URISyntaxException;
 import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.janmayen.NcNameResolver;
+import org.n52.janmayen.NcName;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -134,7 +134,7 @@ public class SweAbstractDataComponentCreator
     protected String getFieldName(Observation<?> sub) {
         String name = sub.getObservableProperty().getName();
         if (name != null && !name.isEmpty()) { return name; }
-        return NcNameResolver.fixNcName(sub.getObservableProperty().getIdentifier());
+        return NcName.makeValid(sub.getObservableProperty().getIdentifier());
     }
 
     @Override

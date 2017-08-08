@@ -34,12 +34,6 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.HTTPException;
@@ -47,10 +41,15 @@ import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.janmayen.http.HTTPMethods;
 import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
-import org.n52.shetland.ogc.ows.service.OwsOperationKey;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Objects;
 
@@ -60,7 +59,9 @@ import com.google.common.base.Objects;
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.CLIENT)
-public class ClientController extends AbstractController {
+public class ClientController
+        extends
+        AbstractController {
     public static final String BINDINGS = "bindings";
     public static final String VERSIONS = "versions";
     public static final String OPERATIONS = "operations";
@@ -90,35 +91,28 @@ public class ClientController extends AbstractController {
             final String version = rokt.getServiceOperatorKey().getVersion();
             final String operation = rokt.getOperationName();
             final OwsOperationKey ok = new OwsOperationKey(service, version, operation);
-            for (Entry<String, Binding> b : this.bindingRepository.getBindingsByPath().entrySet()) {
+            for (Entry<MediaType, Binding> b : this.bindingRepository.getAllBindingsByMediaType().entrySet()) {
                 try {
                     final Binding binding = b.getValue();
                     if (binding.checkOperationHttpDeleteSupported(ok)) {
-                        for (MediaType contentType : binding.getSupportedEncodings()) {
-                            ops.add(new AvailableOperation(service, version, operation, contentType.toString(), HTTPMethods.DELETE));
-                        }
+                        ops.add(new AvailableOperation(service, version, operation, b.getKey().toString(),
+                                HTTPMethods.DELETE));
                     }
                     if (binding.checkOperationHttpGetSupported(ok)) {
-                        for (MediaType contentType : binding.getSupportedEncodings()) {
-                            ops.add(new AvailableOperation(service, version, operation, contentType.toString(), HTTPMethods.GET));
-                        }
+                        ops.add(new AvailableOperation(service, version, operation, b.getKey().toString(),
+                                HTTPMethods.GET));
                     }
                     if (binding.checkOperationHttpOptionsSupported(ok)) {
-                        for (MediaType contentType : binding.getSupportedEncodings()) {
-                            ops.add(new AvailableOperation(service, version, operation, contentType.toString(), HTTPMethods.OPTIONS));
-                        }
+                        ops.add(new AvailableOperation(service, version, operation, b.getKey().toString(),
+                                HTTPMethods.OPTIONS));
                     }
                     if (binding.checkOperationHttpPostSupported(ok)) {
-                        for (MediaType contentType : binding.getSupportedEncodings()) {
-                            ops.add(new AvailableOperation(service, version, operation, contentType.toString(), HTTPMethods.POST));
-                        }
+                        ops.add(new AvailableOperation(service, version, operation, b.getKey().toString(),
+                                HTTPMethods.POST));
                     }
                     if (binding.checkOperationHttpPutSupported(ok)) {
-                        for (MediaType contentType : binding.getSupportedEncodings()) {
-                            ops.add(new AvailableOperation(
-                                    service, version, operation,
-                                    contentType.toString(), HTTPMethods.PUT));
-                        }
+                        ops.add(new AvailableOperation(service, version, operation, b.getKey().toString(),
+                                HTTPMethods.PUT));
                     }
                 } catch (HTTPException ex) {
                     /* ignore */
@@ -135,7 +129,8 @@ public class ClientController extends AbstractController {
         private final String contentType;
         private final String method;
 
-        public AvailableOperation(String service, String version, String operation, String contentType, String method) {
+        public AvailableOperation(
+                String service, String version, String operation, String contentType, String method) {
             this.service = service;
             this.version = version;
             this.operation = operation;
@@ -178,8 +173,7 @@ public class ClientController extends AbstractController {
         public boolean equals(Object obj) {
             if (obj instanceof AvailableOperation) {
                 AvailableOperation other = (AvailableOperation) obj;
-                return Objects.equal(getMethod(), other.getMethod())
-                        && Objects.equal(getService(), other.getService())
+                return Objects.equal(getMethod(), other.getMethod()) && Objects.equal(getService(), other.getService())
                         && Objects.equal(getVersion(), other.getVersion())
                         && Objects.equal(getOperation(), other.getOperation())
                         && Objects.equal(getContentType(), other.getContentType());

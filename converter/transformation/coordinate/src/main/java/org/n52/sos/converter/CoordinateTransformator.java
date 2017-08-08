@@ -39,11 +39,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -146,17 +147,24 @@ public class CoordinateTransformator
 
     private static final int NOT_SET_EPSG = -1;
 
-    private static final String EPSG = "EPSG";
-
-    private static final String EPSG_PREFIX = EPSG + ":";
-
-    private static final String EPSG_PREFIX_DOUBLE_COLON = EPSG + "::";
-
     private Set<String> northingNames = Collections.emptySet();
 
     private Set<String> eastingNames = Collections.emptySet();
 
     private Set<String> altitudeNames = Collections.emptySet();
+
+    private ProcedureDescriptionSettings procedureSettings;
+    private GeometryHandler geometryHandler;
+
+    @Inject
+    public void setProcedureDescriptionSettings(ProcedureDescriptionSettings procedureSettings) {
+        this.procedureSettings = procedureSettings;
+    }
+
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
 
     private void checkResponseObservation(OmObservation omObservation, int targetCRS) throws OwsExceptionReport {
 
@@ -605,9 +613,9 @@ public class CoordinateTransformator
                 y = coordinate.y;
             }
             return Stream
-                    .of(new SweCoordinate<>(northingName, createSweQuantity(y, SweConstants.Y_AXIS, getLatLongUOM())),
+                    .of(new SweCoordinate<>(northingName, createSweQuantity(y, SweConstants.Y_AXIS, procedureSettings.getLatLongUom())),
                             new SweCoordinate<>(eastingName,
-                                    createSweQuantity(x, SweConstants.X_AXIS, getLatLongUOM())),
+                                    createSweQuantity(x, SweConstants.X_AXIS, procedureSettings.getLatLongUom())),
                             altitude)
                     .filter(Objects::nonNull).collect(toList());
         }
@@ -707,7 +715,7 @@ public class CoordinateTransformator
                                         .transformEnvelope(envelope.toEnvelope(), sourceCrs, targetCrs);
                                 SweEnvelope newEnvelope =
                                         new SweEnvelope(new ReferencedEnvelope(transformEnvelope, targetCrs),
-                                                getLatLongUOM(), northingFirst);
+                                                procedureSettings.getLatLongUom(), northingFirst);
                                 newEnvelope.setReferenceFrame(
                                         transformReferenceFrame(envelope.getReferenceFrame(), sourceCrs, targetCrs));
                                 field.setElement(newEnvelope);
@@ -1014,11 +1022,7 @@ public class CoordinateTransformator
     }
 
     private GeometryHandler getGeomtryHandler() {
-        return GeometryHandler.getInstance();
-    }
-
-    private ServiceConfiguration getConfiguration() {
-        return ServiceConfiguration.getInstance();
+        return geometryHandler;
     }
 
     /**
@@ -1124,10 +1128,6 @@ public class CoordinateTransformator
 
     @Override
     public void init() {
-    }
-
-    private static String getLatLongUOM() {
-        return ProcedureDescriptionSettings.getInstance().getLatLongUom();
     }
 
 }

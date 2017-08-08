@@ -41,6 +41,8 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.n52.janmayen.function.Consumers;
+import org.n52.janmayen.function.Functions;
 import org.n52.faroe.json.AbstractJsonDao;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.config.json.JsonConstants;
@@ -67,9 +69,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
  *
  * @author Christian Autermann
  */
-public class JsonCapabilitiesExtensionService
-        extends AbstractJsonDao
-        implements CapabilitiesExtensionService {
+public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements CapabilitiesExtensionService {
 
     private ContentCacheController contentCacheController;
 
@@ -102,8 +102,7 @@ public class JsonCapabilitiesExtensionService
     }
 
     @Override
-    public void saveOfferingExtension(String offering, String identifier,
-                                      String value)
+    public void saveOfferingExtension(String offering, String identifier, String value)
             throws NoSuchOfferingException {
         writeLock().lock();
         try {
@@ -131,8 +130,8 @@ public class JsonCapabilitiesExtensionService
     }
 
     @Override
-    public void disableOfferingExtension(String offering, String identifier, boolean disabled) throws
-            NoSuchExtensionException, NoSuchOfferingException {
+    public void disableOfferingExtension(String offering, String identifier, boolean disabled)
+            throws NoSuchExtensionException, NoSuchOfferingException {
         writeLock().lock();
         try {
             checkOfferingName(offering);
@@ -192,15 +191,11 @@ public class JsonCapabilitiesExtensionService
     }
 
     private Stream<SosObservationOfferingExtension> offeringExtensionStream() {
-        return createEntryStream(getConfiguration().with(JsonConstants.OFFERING_EXTENSIONS))
-                .flatMap(entry -> {
-                    return createEntryStream(entry.getValue())
-                            .map(this::decodeOfferingExtension)
-                            .map(oe -> {
-                                oe.setOfferingName(entry.getKey());
-                                return oe;
-                            });
-                });
+        return createEntryStream(getConfiguration().with(JsonConstants.OFFERING_EXTENSIONS)).flatMap(entry
+                -> createEntryStream(entry.getValue())
+                        .map(this::decodeOfferingExtension)
+                        .map(Functions.mutate(Consumers
+                                .currySecond(SosObservationOfferingExtensionImpl::setOfferingName, entry.getKey()))));
     }
 
     private SosObservationOfferingExtensionImpl decodeOfferingExtension(Entry<String, JsonNode> entry) {

@@ -63,6 +63,6 @@ public class GeneratedDescriptionCreationStrategy
     @VisibleForTesting
     HibernateProcedureDescriptionGenerator getFactory(String descriptionFormat,
             HibernateProcedureCreationContext ctx) {
-        return ctx.getFactoryRepository().getFactory(descriptionFormat);
+        return (HibernateProcedureDescriptionGenerator)ctx.getFactoryRepository().getFactory(descriptionFormat);
     }
 }

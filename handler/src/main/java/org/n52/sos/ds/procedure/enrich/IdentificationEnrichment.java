@@ -32,15 +32,14 @@ import java.util.Locale;
 import java.util.Optional;
 
 import org.n52.iceland.i18n.I18NDAO;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
 /**
  * TODO JavaDoc
@@ -51,13 +50,17 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
 
     private I18NProcedureMetadata i18n = null;
 
+    public IdentificationEnrichment(AbstractProcedureCreationContext ctx) {
+        super(ctx);
+    }
+
     @Override
     protected void enrich(AbstractSensorML description) throws OwsExceptionReport {
         enrichUniqueId(description);
 
         if (isSetLocale()) {
             I18NDAO<I18NProcedureMetadata> dao
-                    = I18NDAORepository.getInstance().getDAO(I18NProcedureMetadata.class);
+                    = getProcedureCreationContext().getI18nr().getDAO(I18NProcedureMetadata.class);
             if (dao != null) {
                 i18n = dao.getMetadata(getIdentifier());
             }
@@ -164,7 +167,7 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
     }
 
     private Locale getDefaultLocale() {
-        return ServiceConfiguration.getInstance().getDefaultLanguage();
+        return getProcedureCreationContext().getDefaultLocale();
     }
 
 }

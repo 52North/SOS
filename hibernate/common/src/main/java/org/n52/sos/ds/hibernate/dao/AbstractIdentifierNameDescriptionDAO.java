@@ -141,9 +141,9 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         return null;
     }
 
-    public void insertNames(FeatureOfInterest feature, List<CodeType> name, Session session) {
+    public void insertNames(FeatureOfInterest feature, List<CodeType> name, I18NDAORepository i18nr, Session session) {
         CodespaceDAO codespaceDAO = new CodespaceDAO();
-        I18NDAO<I18NFeatureMetadata> dao = I18NDAORepository.getInstance().getDAO(I18NFeatureMetadata.class);
+        I18NDAO<I18NFeatureMetadata> dao = i18nr.getDAO(I18NFeatureMetadata.class);
         for (CodeType codeType : name) {
             Codespace codespace = codespaceDAO.getOrInsertCodespace(codeType.getCodeSpace().toString(), session);
 //            i18ndao.insertI18N(feature, new I18NInsertionObject(codespace, codeType.getValue()), session);

@@ -37,6 +37,7 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.procedure.AbstractProcedureConverter;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.collect.Iterables;
@@ -68,13 +69,13 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
 
     private String typeOfFormat;
 
-    private GeometryHandler geometryHandler;
+    private AbstractProcedureCreationContext ctx;
 
     public AbstractProcedureDescriptionEnrichments(
-            Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, GeometryHandler geometryHandler) {
+            Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, AbstractProcedureCreationContext ctx) {
         this.serviceProvider = serviceProvider;
         this.locale = locale;
-        this.geometryHandler = geometryHandler;
+        this.ctx = ctx;
     }
 
     public abstract AbstractRelatedProceduresEnrichment<T> createRelatedProceduresEnrichment();
@@ -103,12 +104,6 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
         this.procedureDescriptionFormat = pdf;
         return this;
     }
-
-    // public ProcedureDescriptionEnrichments setProcedureCache(
-    // Map<String, ProcedureEntity> procedureCache) {
-    // this.procedureCache = procedureCache;
-    // return this;
-    // }
 
     public AbstractProcedureDescriptionEnrichments<T> setSession(Session session) {
         this.session = session;
@@ -172,7 +167,7 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
     }
 
     public GeometryHandler getGeometryHandler() {
-        return geometryHandler;
+        return ctx.getGeometryHandler();
     }
 
     public Session getSession() {
@@ -181,6 +176,10 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
 
     public String getVersion() {
         return version;
+    }
+
+    public AbstractProcedureCreationContext getProcedureCreationContext() {
+        return ctx;
     }
 
     public Iterable<ProcedureDescriptionEnrichment> createAll() {
@@ -200,47 +199,50 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
     }
 
     public BoundingBoxEnrichment createBoundingBoxEnrichment() {
-        return setValues(new BoundingBoxEnrichment());
+        return setValues(new BoundingBoxEnrichment(ctx));
     }
 
     public ClassifierEnrichment createClassifierEnrichment() {
-        return setValues(new ClassifierEnrichment());
+        return setValues(new ClassifierEnrichment(ctx));
     }
 
     public IdentificationEnrichment createIdentificationEnrichment() {
-        return setValues(new IdentificationEnrichment());
+        return setValues(new IdentificationEnrichment(ctx));
     }
 
     public ContactsEnrichment createContactsEnrichment() {
-        return setValues(new ContactsEnrichment(this.locale, this.serviceProvider));
+        return setValues(new ContactsEnrichment(this.serviceProvider, ctx));
     }
 
     public KeywordEnrichment createKeywordEnrichment() {
-        return setValues(new KeywordEnrichment());
+        return setValues(new KeywordEnrichment(ctx));
     }
 
     public FeatureOfInterestEnrichment createFeatureOfInterestEnrichment() {
-        return setValues(new FeatureOfInterestEnrichment()).setGeometryHandler(geometryHandler);
+        return setValues(new FeatureOfInterestEnrichment(ctx));
     }
 
     public ValidTimeEnrichment createValidTimeEnrichment() {
-        return setValues(new ValidTimeEnrichment()).setValidTime(validTime);
+        return setValues(new ValidTimeEnrichment(ctx)).setValidTime(validTime);
     }
 
     public OfferingEnrichment createOfferingEnrichment() {
-        return setValues(new OfferingEnrichment());
+        return setValues(new OfferingEnrichment(ctx));
     }
 
     public ObservablePropertyEnrichment createObservablePropertyEnrichment() {
-        return setValues(new ObservablePropertyEnrichment());
+        return setValues(new ObservablePropertyEnrichment(ctx));
     }
 
     public TypeOfEnrichment createTypeOfEnrichmentEnrichment() {
-        return setValues(new TypeOfEnrichment()).setTypeOfIdentifier(typeOfIdentifier).setTypeOfFormat(typeOfFormat);
+        return setValues(new TypeOfEnrichment(ctx)).setTypeOfIdentifier(typeOfIdentifier).setTypeOfFormat(typeOfFormat);
     }
 
     protected <S extends ProcedureDescriptionEnrichment> S setValues(S enrichment) {
-        enrichment.setDescription(description).setIdentifier(identifier).setVersion(version).setLocale(locale)
+        enrichment.setDescription(description)
+                .setIdentifier(identifier)
+                .setVersion(version)
+                .setLocale(locale)
                 .setSession(session);
         return enrichment;
     }

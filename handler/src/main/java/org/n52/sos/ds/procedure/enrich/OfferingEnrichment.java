@@ -31,8 +31,9 @@ package org.n52.sos.ds.procedure.enrich;
 import java.util.Collection;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
 /**
  * TODO JavaDoc
@@ -40,6 +41,10 @@ import org.n52.shetland.ogc.sos.SosOffering;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class OfferingEnrichment extends ProcedureDescriptionEnrichment {
+
+    public OfferingEnrichment(AbstractProcedureCreationContext ctx) {
+        super(ctx);
+    }
 
     @Override
     public void enrich() throws OwsExceptionReport {

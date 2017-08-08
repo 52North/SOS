@@ -33,9 +33,9 @@ import java.util.Locale;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.ds.procedure.enrich.AbstractProcedureDescriptionEnrichments;
 import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
-import org.n52.sos.util.GeometryHandler;
 
 /**
  * TODO JavaDoc
@@ -48,12 +48,12 @@ public class ProcedureDescriptionEnrichments
     public ProcedureDescriptionEnrichments(
             Locale locale,
             LocalizedProducer<OwsServiceProvider> serviceProvider,
-            GeometryHandler geometryHandler) {
-        super(locale, serviceProvider, geometryHandler);
+            AbstractProcedureCreationContext ctx) {
+        super(locale, serviceProvider, ctx);
     }
 
     public AbstractRelatedProceduresEnrichment<Procedure> createRelatedProceduresEnrichment() {
-        return setValues(new RelatedProceduresEnrichment())
+        return setValues(new RelatedProceduresEnrichment(getProcedureCreationContext()))
                 .setConverter(getConverter())
                 .setProcedure(getProcedure())
                 .setProcedureDescriptionFormat(getProcedureDescriptionFormat())

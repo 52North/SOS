@@ -50,7 +50,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.ProxyQueryHelper;
-import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Strings;
@@ -63,7 +63,9 @@ import com.google.common.collect.Sets;
  */
 public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment implements ProxyQueryHelper {
 
-    private GeometryHandler geometryHandler;
+    public FeatureOfInterestEnrichment(AbstractProcedureCreationContext ctx) {
+        super(ctx);
+    }
 
     @Override
     public void enrich() throws OwsExceptionReport {
@@ -141,8 +143,8 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
             sampFeat.setDescription(feature.getDescription());
         }
         if (feature.isSetGeometry()) {
-            if (geometryHandler != null) {
-            sampFeat.setGeometry(geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometry()));
+            if (getProcedureCreationContext().getGeometryHandler() != null) {
+            sampFeat.setGeometry(getProcedureCreationContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometry()));
             } else {
                 sampFeat.setGeometry(feature.getGeometry());
             }
@@ -158,8 +160,4 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
         return sampFeat;
     }
 
-    public FeatureOfInterestEnrichment setGeometryHandler(GeometryHandler geometryHandler) {
-        this.geometryHandler = geometryHandler;
-        return this;
-    }
 }

@@ -29,6 +29,7 @@
 package org.n52.sos.request.operator;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -38,9 +39,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.binding.BindingConstants;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.service.ServiceSettings;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
@@ -95,6 +99,7 @@ public class SosDescribeSensorOperatorV20 extends
     private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
     private PostProcessor postProcessor;
     private BindingRepository bindingRepository;
+    private String serviceURL;
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_CORE_PROFILE);
@@ -104,13 +109,27 @@ public class SosDescribeSensorOperatorV20 extends
         postProcessor = new PostProcessor();
     }
 
-    public BindingRepository getBindingRepository() {
+    private BindingRepository getBindingRepository() {
         return bindingRepository;
     }
 
     @Inject
     public void setBindingRepository(BindingRepository bindingRepository) {
         this.bindingRepository = bindingRepository;
+    }
+
+    @Setting(ServiceSettings.SERVICE_URL)
+    public void setServiceURL(final URI serviceURL) throws ConfigurationError {
+        Validation.notNull("Service URL", serviceURL);
+        String url = serviceURL.toString();
+        if (url.contains("?")) {
+            url = url.split("[?]")[0];
+        }
+        this.serviceURL = url;
+    }
+
+    private String getServiceURL() {
+        return serviceURL;
     }
 
     @Override
@@ -523,15 +542,14 @@ public class SosDescribeSensorOperatorV20 extends
                 if (procedureRequestSettingProvider.isEncodeFullChildrenInDescribeSensor()) {
                     component.setProcess(childProcedure);
                 } else {
-                    if (getBindingRepository().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
+                    if (getBindingRepository().isBindingSupported(MediaTypes.APPLICATION_KVP)) {
                         try {
                             String version = getServiceOperatorRepository().getSupportedVersions(SosConstants.SOS)
                                             .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
                                             : Sos1Constants.SERVICEVERSION;
-                            String serviceURL = ServiceConfiguration.getInstance().getServiceURL();
                             String pdf = childProcedure.getDefaultElementEncoding();
-                            component.setHref(SosHelper.getDescribeSensorUrl(version, serviceURL, childProcedure.getIdentifier(),
-                                    BindingConstants.KVP_BINDING_ENDPOINT, pdf).toString());
+                            component.setHref(SosHelper.getDescribeSensorUrl(version, getServiceURL(), childProcedure.getIdentifier(),
+                                    MediaTypes.APPLICATION_KVP.toString(), pdf).toString());
                         } catch (MalformedURLException uee) {
                             component.setHref(childProcedure.getIdentifier());
                         }

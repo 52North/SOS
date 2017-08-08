@@ -46,10 +46,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.binding.MediaTypeBindingKey;
 import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.janmayen.Json;
+import org.n52.janmayen.http.MediaType;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.JSONConstants;
 
@@ -95,13 +97,13 @@ public class AdminBindingController extends AbstractAdminController {
     }
 
     protected ArrayNode getBindings() {
-        Map<String, Binding> bindings = bindingRepository.getAllBindingsByPath();
+        Map<MediaType, Binding> bindings = bindingRepository.getAllBindingsByMediaType();
         ArrayNode a = Json.nodeFactory().arrayNode();
-        for (Entry<String, Binding> e : bindings.entrySet()) {
-            String path = e.getKey();
+        for (Entry<MediaType, Binding> e : bindings.entrySet()) {
+            MediaType mediaType = e.getKey();
             a.addObject()
-                    .put(JSONConstants.BINDING_KEY, path)
-                    .put(JSONConstants.ACTIVE_KEY, this.bindingRepository.isActive(new PathBindingKey(path)));
+                    .put(JSONConstants.BINDING_KEY, mediaType.toString())
+                    .put(JSONConstants.ACTIVE_KEY, this.bindingRepository.isActive(new MediaTypeBindingKey(mediaType)));
         }
         return a;
     }

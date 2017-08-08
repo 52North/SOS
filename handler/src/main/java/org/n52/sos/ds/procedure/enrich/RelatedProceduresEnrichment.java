@@ -36,6 +36,7 @@ import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
 import com.google.common.collect.Sets;
 
@@ -44,7 +45,13 @@ import com.google.common.collect.Sets;
  *
  * @author Christian Autermann <c.autermann@52north.org>
  */
-public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrichment<ProcedureEntity> {
+public class RelatedProceduresEnrichment
+        extends
+        AbstractRelatedProceduresEnrichment<ProcedureEntity> {
+
+    public RelatedProceduresEnrichment(AbstractProcedureCreationContext ctx) {
+        super(ctx);
+    }
 
     /**
      * Add a collection of child procedures to a procedure
@@ -55,7 +62,8 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
      * @throws ConverterException
      *             If creation of child procedure description fails
      */
-    protected Set<AbstractSensorML> getChildProcedures() throws OwsExceptionReport {
+    protected Set<AbstractSensorML> getChildProcedures()
+            throws OwsExceptionReport {
 
         if (!getProcedure().hasChildren()) {
             return Sets.newHashSet();
@@ -77,7 +85,8 @@ public class RelatedProceduresEnrichment extends AbstractRelatedProceduresEnrich
      *
      * @throws OwsExceptionReport
      */
-    protected Set<String> getParentProcedures() throws OwsExceptionReport {
+    protected Set<String> getParentProcedures()
+            throws OwsExceptionReport {
         Set<String> parents = new HashSet<>();
         if (getProcedure().hasParents()) {
             for (ProcedureEntity parent : getProcedure().getParents()) {

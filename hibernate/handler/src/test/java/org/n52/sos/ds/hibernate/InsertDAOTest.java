@@ -280,7 +280,7 @@ public class InsertDAOTest
         converterRepository.init();
         factotyRepository.init();
         ctx = new HibernateProcedureCreationContext(serviceMetadataRepository, decoderRepository, factotyRepository, i18NDAORepository, daoFactory,
-                converterRepository, null);
+                converterRepository, null, null, null, null, null);
 
         Session session = getSession();
         insertSensor(PROCEDURE1, OFFERING1, OBSPROP1, null);

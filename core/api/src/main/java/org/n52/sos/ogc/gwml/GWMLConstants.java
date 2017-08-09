@@ -33,15 +33,29 @@ import org.n52.sos.w3c.SchemaLocation;
 
 public interface GWMLConstants {
 
-    String NS_GWML_22  = "http://www.opengis.net/gwml/2.2";
+    String NS_GWML_22 = "http://www.opengis.net/gwml/2.2";
+    
+    String NS_GWML_WELL_22 = "http://www.opengis.net/gwml-well/2.2";
     
     String NS_GWML_2_PREFIX = "gwml2";
     
-    String SCHEMA_LOCATION_URL_GWML_22 = "http://ngwd-bdnes.cits.nrcan.gc.ca/service/gwml/schemas/2.2/gwml2.xsd";
+    String NS_GWML_WELL_2_PREFIX = "gwml2w";
+    
+    String SCHEMA_LOCATION_URL_GWML_22 = "http://schemas.opengis.net/gwml/2.2/gwml2.xsd";
+    
+    String SCHEMA_LOCATION_URL_GWML_WELL_22 = "http://schemas.opengis.net/gwml/2.2/gwml2-well.xsd";
 
     SchemaLocation GWML_22_SCHEMA_LOCATION = new SchemaLocation(NS_GWML_22, SCHEMA_LOCATION_URL_GWML_22);
+    
+    SchemaLocation GWML_WELL_22_SCHEMA_LOCATION = new SchemaLocation(NS_GWML_WELL_22, SCHEMA_LOCATION_URL_GWML_WELL_22);
 
     String OBS_TYPE_GEOLOGY_LOG = "http://www.opengis.net/def/observationType/OGC-GWML/2.2/GW_GeologyLog";
     
+    String OBS_TYPE_GEOLOGY_LOG_COVERAGE = "http://www.opengis.net/def/observationType/OGC-GWML/2.2/GW_GeologyLogCoverage";
+    
     MediaType CONTENT_TYPE_GWML_22 = new MediaType("text", "xml", "subtype", "gwml/2.2");
+    
+    String PARAM_FROM_DEPTH = "fromDepth";
+    
+    String PARAM_TO_DEPTH = "toDepth";
 }

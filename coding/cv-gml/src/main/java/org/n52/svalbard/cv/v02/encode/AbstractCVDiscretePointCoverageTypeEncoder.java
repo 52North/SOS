@@ -129,7 +129,11 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
             throws UnsupportedEncoderInputException, OwsExceptionReport {
         CVPointValuePairType cvpvpt = CVPointValuePairType.Factory.newInstance(getXmlOptions());
         cvpvpt.setGeometry(encodeGeometry(value.getPoint(), JavaHelper.generateID(value.toString())));
-        cvpvpt.setValue(encodeValue(value.getValue()));
+        if (value.isSetValue()) {
+            cvpvpt.setValue(encodeValue(value.getValue()));
+        } else {
+            cvpvpt.addNewValue();
+        }
         return cvpvpt;
     }
 

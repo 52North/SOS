@@ -210,8 +210,8 @@ public final class StringHelper {
     }
 
     public static String convertStreamToString(InputStream is, String charset) throws OwsExceptionReport {
+        Scanner scanner = null;
         try {
-            Scanner scanner;
             if (isNotEmpty(charset)) {
                 scanner = new Scanner(is, charset);
             } else {
@@ -224,8 +224,13 @@ public final class StringHelper {
         } catch (NoSuchElementException nsee) {
             throw new NoApplicableCodeException().causedBy(nsee).withMessage(
                     "Error while reading content of HTTP request: %s", nsee.getMessage());
+        } finally {
+            if (scanner != null) {
+                scanner.close();
+            }
         }
-        return "";
+        throw new NoApplicableCodeException().withMessage(
+                "Error while reading content of HTTP request. Please check if you have set the Content-Type!");
     }
 
     public static String convertStreamToString(InputStream is) throws OwsExceptionReport {

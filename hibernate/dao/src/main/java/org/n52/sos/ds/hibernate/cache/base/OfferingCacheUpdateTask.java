@@ -302,6 +302,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             observationTypes.add(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
         } else if (observationDAO.checkSweDataArrayObservationsFor(offeringId, session)) {
             observationTypes.add(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+        } else if (observationDAO.checkComplexObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+        } else if (observationDAO.checkProfileObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
         }
         return observationTypes;
     }

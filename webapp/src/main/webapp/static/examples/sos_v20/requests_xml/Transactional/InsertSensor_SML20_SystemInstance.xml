@@ -85,7 +85,7 @@
 				 <!-- Offering is generated if not specified. -->
 		         <sml:capability name="offeringID">
 		            <swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
-		               <swe:label>offeringID</swe:label>
+		               <swe:label>Example Hydrophone 1 Offering</swe:label>
 		               <swe:value>ExampleHydrophone1Offering</swe:value>
 		            </swe:Text>
 		         </sml:capability>

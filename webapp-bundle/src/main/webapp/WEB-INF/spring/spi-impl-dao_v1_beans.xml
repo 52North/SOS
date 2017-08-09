@@ -12,6 +12,7 @@
     <mvc:annotation-driven />
     <ctx:annotation-config />
 
+
     <bean name="serviceRepository" class="org.n52.series.db.da.ServiceRepository" />
     <bean name="categoryRepository" class="org.n52.series.db.da.CategoryRepository" />
     <bean name="featureRepository" class="org.n52.series.db.da.FeatureRepository" />
@@ -20,9 +21,7 @@
     <bean name="offeringRepository" class="org.n52.series.db.da.OfferingRepository" />
     <bean name="platformRepository" class="org.n52.series.db.da.PlatformRepository" />
     <bean name="datasetRepository" class="org.n52.series.db.da.DatasetRepository" />
-    <bean name="geometriesRepository" class="org.n52.series.db.da.GeometriesRepository">
-        <property name="databaseSrid" value="${database.srid}" />
-    </bean>
+    <bean name="geometriesRepository" class="org.n52.series.db.da.GeometriesRepository" />
 
     <bean id="serviceParameterService" class="org.n52.series.srv.AccessService">
         <constructor-arg index="0" ref="serviceRepository" />

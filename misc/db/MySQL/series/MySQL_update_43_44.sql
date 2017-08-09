@@ -120,4 +120,8 @@ alter table sos.textfeatparamvalue add constraint featParamTextValueFk foreign k
 alter table sos.textparametervalue add constraint parameterTextValueFk foreign key (parameterId) references sos.parameter;
 alter table sos.xmlfeatparamvalue add constraint featParamXmlValueFk foreign key (parameterId) references sos.featureparameter;
 alter table sos.xmlparametervalue add constraint parameterXmlValueFk foreign key (parameterId) references sos.parameter;
+ALTER TABLE sos.featureofinterest ALTER hibernatediscriminator TYPE character varying(255);
+ALTER TABLE sos.featureofinterest ALTER hibernatediscriminator DROP NOT NULL;
+UPDATE sos.featureofinterest SET hibernatediscriminator = null;
+ALTER TABLE sos.observableproperty DROP COLUMN hibernatediscriminator;
 call CreateSequence('sos.relatedObservationId_seq', 1, 1)

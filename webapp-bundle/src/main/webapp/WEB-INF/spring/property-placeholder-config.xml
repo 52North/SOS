@@ -11,8 +11,7 @@
     <!-- these properties do override default settings 
     <ctx:property-placeholder location="${local.configFile}"
         ignore-resource-not-found="true" ignore-unresolvable="true" order="0" />
-    -->
-    
+-->
     <!-- default settings -->
     <ctx:property-placeholder location="classpath:/application.properties"
         ignore-resource-not-found="false" ignore-unresolvable="false" order="1" />

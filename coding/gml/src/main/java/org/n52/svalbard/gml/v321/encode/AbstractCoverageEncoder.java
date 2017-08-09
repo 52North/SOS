@@ -37,6 +37,7 @@ import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.DiscreteCoverage;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -121,8 +122,16 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
             }
             monrlt.setListValue(list);
             rst.set(qld);
-        } else {
-            rst.setNil();
+        } else if (value instanceof TextValue) {
+            CategoryListDocument cld = CategoryListDocument.Factory.newInstance();
+            CodeOrNilReasonListType conrlt = cld.addNewCategoryList();
+            if (discreteCoverage.isSetUnit()) {
+                conrlt.setCodeSpace(discreteCoverage.getUnit());
+            } else if (value.isSetUnit()) {
+                conrlt.setCodeSpace(value.getUnit());
+            }
+            conrlt.setListValue(list);
+            rst.set(cld);
         }
     }
 

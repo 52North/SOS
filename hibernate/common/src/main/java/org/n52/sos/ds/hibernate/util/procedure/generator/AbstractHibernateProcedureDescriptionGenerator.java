@@ -28,10 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -223,10 +224,10 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
 
     @VisibleForTesting
     String[] getObservablePropertiesForProcedure(String identifier) {
-        Set<String> props = new HashSet<>();
+        SortedSet<String> props = new TreeSet<>();
         Set<String> obsProps = getCache().getObservablePropertiesForProcedure(identifier);
         for (String obsProp : obsProps) {
-            if (getCache().getPublishedObservableProperties().contains(obsProps)) {
+            if (getCache().getPublishedObservableProperties().contains(obsProp)) {
                 props.add(obsProp);
             }
         }

@@ -169,6 +169,22 @@ public class HibernateObservationUtilities {
     public static List<OmObservation> unfoldObservation(OmObservation o) throws OwsExceptionReport {
         return new ObservationUnfolder(o).unfold();
     }
+    
+    /**
+     * Unfold observation with MultiObservationValue to multiple observations
+     * with SingleObservationValue
+     *
+     * @param o
+     *            OmObservation to unfold
+     * @param complexToSingleProfiles
+     *            If a complex value should be converted to single profile observations.
+     * @return OmObservation list
+     * @throws OwsExceptionReport
+     *             If unfolding fails
+     */
+    public static List<OmObservation> unfoldObservation(OmObservation o, boolean complexToSingleProfiles) throws OwsExceptionReport {
+        return new ObservationUnfolder(o).unfold(complexToSingleProfiles);
+    }
 
     /**
      * Get observation ids from observation objects

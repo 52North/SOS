@@ -76,6 +76,7 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
@@ -1113,5 +1114,21 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         public List transformList(List collection) {
             return collection;
         }
+    }
+
+    public Procedure updateProcedure(Procedure procedure, SosProcedureDescription procedureDescription, Session session) {
+        if (procedureDescription.isSetProcedureName()) {
+            if (!procedure.isSetName() || (procedure.isSetName() && !procedureDescription.getProcedureName().equals(procedure.getName()))) {
+                procedure.setName(procedureDescription.getProcedureName());
+            }
+            if (procedureDescription.isSetDescription() && !procedureDescription.getDescription().equals(procedure.getDescription())) {
+                procedure.setDescription(procedureDescription.getDescription());
+            }
+        }
+        session.saveOrUpdate(procedure);
+        session.flush();
+        session.refresh(procedure);
+        return procedure;
+        
     }
 }

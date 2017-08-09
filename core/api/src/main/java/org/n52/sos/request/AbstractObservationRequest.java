@@ -59,7 +59,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
     
     private boolean mergeObservationValues = false;
     
-    private boolean checkForDuplicity = true;
+    private boolean checkForDuplicity = false;
 
     /**
      * Get response format

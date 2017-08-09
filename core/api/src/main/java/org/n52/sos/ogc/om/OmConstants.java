@@ -214,6 +214,10 @@ public interface OmConstants {
     String PARAMETER_NAME_FROM_ELEVATION = "fromEelvation";
     
     String PARAMETER_NAME_TO_ELEVATION = "toElevation";
+    
+    String PARAMETER = "parameter";
+    
+    String OM_PARAMETER = "om:parameter";
 
     // observation types
     String OBS_TYPE_MEASUREMENT = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement";
@@ -242,6 +246,8 @@ public interface OmConstants {
 
     // no Definition in O&M and not in Lightweight Profile
     String OBS_TYPE_TEXT_OBSERVATION = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation";
+    
+    String OBS_TYPE_PROFILE_OBSERVATION = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ProfileObservation";
 
     String OBS_TYPE_UNKNOWN = OGCConstants.UNKNOWN;
 
@@ -308,7 +314,8 @@ public interface OmConstants {
             OBS_TYPE_GEOMETRY_OBSERVATION,
             OBS_TYPE_TEXT_OBSERVATION,
             OBS_TYPE_TRUTH_OBSERVATION,
-            OBS_TYPE_SWE_ARRAY_OBSERVATION
+            OBS_TYPE_SWE_ARRAY_OBSERVATION,
+            OBS_TYPE_PROFILE_OBSERVATION
     );
 
 }

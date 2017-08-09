@@ -161,6 +161,8 @@ public class ServiceConfiguration {
     private File cacheFileFolder;
 
     private boolean createFeatureGeometryFromSamplingGeometries = false;
+    
+    private boolean convertComplexProfileToSingleProfiles = true;
 
     /**
      * Returns the default token seperator for results.
@@ -514,6 +516,15 @@ public class ServiceConfiguration {
 
     public boolean isCreateFeatureGeometryFromSamplingGeometries() {
         return createFeatureGeometryFromSamplingGeometries;
+    }
+    
+    @Setting(MiscSettings.CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES)
+    public void setConvertComplexProfileToSingleProfiles(boolean convertComplexProfileToSingleProfiles) {
+        this.convertComplexProfileToSingleProfiles = convertComplexProfileToSingleProfiles;
+    }
+
+    public boolean isConvertComplexProfileToSingleProfiles() {
+        return this.convertComplexProfileToSingleProfiles;
     }
 
     /*

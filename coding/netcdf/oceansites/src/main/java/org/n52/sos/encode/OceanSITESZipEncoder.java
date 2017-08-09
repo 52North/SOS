@@ -40,8 +40,6 @@ import java.util.zip.ZipOutputStream;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.sos.encode.EncoderKey;
-import org.n52.sos.encode.OperationEncoderKey;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 import org.n52.sos.netcdf.oceansites.OceanSITESConstants;

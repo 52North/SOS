@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>52n-sos</artifactId>
 		<groupId>org.n52.sensorweb.sos</groupId>
-		 <version>4.4.0-SNAPSHOT</version>
+		 <version>4.4.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>webapp-bundle</artifactId>
@@ -30,13 +30,6 @@
 						</goals>
 						<configuration>
 							<artifactItems>
-								<artifactItem>
-									<groupId>org.n52.series-api</groupId>
-									<artifactId>rest</artifactId>
-									<includes>api-doc/**</includes>
-									<outputDirectory>${project.build.directory}/${project.build.finalName}/static/doc</outputDirectory>
-									<overWrite>false</overWrite>
-								</artifactItem>
                 <artifactItem> 
                  <groupId>org.n52.series-api.db</groupId> 
                  <artifactId>mappings</artifactId> 

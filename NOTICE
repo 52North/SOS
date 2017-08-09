@@ -125,12 +125,17 @@ This project includes:
   AOP alliance under Public Domain
   Apache Commons Codec under Apache License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
+  Apache HttpClient Mime under Apache License, Version 2.0
+  Apache HttpCore under Apache License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
   API interfaces under GNU Lesser General Public License (LGPL) version 2.1
   AspectJ tools under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
   Avalon Framework API under The Apache Software License, Version 2.0
   Avalon Framework Implementation under The Apache Software License, Version 2.0
+  AWS Java SDK for Amazon S3 under Apache License, Version 2.0
+  AWS Java SDK for AWS KMS under Apache License, Version 2.0
+  AWS SDK for Java - Core under Apache License, Version 2.0
   Batik animation engine under The Apache Software License, Version 2.0
   Batik AWT utilities under The Apache Software License, Version 2.0
   Batik bridge classes under The Apache Software License, Version 2.0
@@ -146,19 +151,18 @@ This project includes:
   Batik SVG transcoder classes under The Apache Software License, Version 2.0
   Batik utility library under The Apache Software License, Version 2.0
   Batik XML utility library under The Apache Software License, Version 2.0
-  Berkeley DB Java Edition under Sleepycat License
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
+  cdm under (MIT-style) netCDF C library license
   cf4j under GNU Lesser General Public License
   ClassLoader leak prevention under Apache 2
-  Codec under The Apache Software License, Version 1.1
   Commons Codec under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
+  Commons Logging under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License
   CORS Filter under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
-  Ehcache Core under The Apache Software License, Version 2.0
   EJML under The Apache Software License, Version 2.0
   EPSG Authority Service using HSQL database under GNU Lesser General Public License (LGPL) version 2.1
   EXIficient under GNU General Public License (GPL), Version 2.0
@@ -176,6 +180,7 @@ This project includes:
   Hibernate/c3p0 Integration under GNU Lesser General Public License
   HttpClient under Apache License
   HttpCore under Apache License
+  httpservices under (MIT-style) netCDF C library license
   HyperSQL Database under HSQLDB License, a BSD open source license
   INSPIRE Addresses schema (spec. v4.0) under The Apache Software License, Version 2.0
   INSPIRE Administrative Units schema (spec. v4.0) under The Apache Software License, Version 2.0
@@ -194,8 +199,10 @@ This project includes:
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0
+  Jackson-dataformat-CBOR under The Apache Software License, Version 2.0
   Java Annotation Indexer under AL 2.0
   Java implementation of GeographicLib under The MIT License(MIT)
+  Java Native Access under LGPL, version 2.1 or ASL, version 2
   Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
   Java Property Utility under The Apache Software License, Version 2.0
   Java Servlet API under CDDL 1.1 or GPL2 w/ CPE
@@ -206,11 +213,12 @@ This project includes:
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging I18n Annotations under Public Domain
   JCL 1.1.1 implemented over SLF4J under MIT License
+  JCommander under The Apache Software License, Version 2.0
   JCommon under GNU Lesser General Public Licence
   JDOM under Similar to Apache License but with the acknowledgment clause removed
   JFreeChart under GNU Lesser General Public Licence
   jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
-  JNA under GNU Lesser General Public License, version 3.0 (LGPLv3)
+  JMES Path Query library under Apache License, Version 2.0
   Joda-Time under Apache 2
   JOpt Simple under The MIT License
   jsp-api under CDDL 1.1 or GPL2 w/ CPE
@@ -229,7 +237,7 @@ This project includes:
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL Connector/J under The GNU General Public License, Version 2
-  NetCDF-Java Library under (MIT-style) netCDF C library license
+  netcdf4 under (MIT-style) netCDF C library license
   null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0
   OASIS WS-Resources specification schemas v1.2 under The Apache Software License, Version 2.0
@@ -267,7 +275,6 @@ This project includes:
   PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
   Protocol Buffer Java API under New BSD license
   quartz under The Apache Software License, Version 2.0
-  Quartz Enterprise Job Scheduler under Apache 2.0
   Referencing services under GNU Lesser General Public License (LGPL) version 2.1
   Reflections under WTFPL
   SaxonB under Mozilla Public License Version 1.0
@@ -279,6 +286,7 @@ This project includes:
   Series REST API - SPI module under GNU General Public License, Version 2.0
   servlet-api under CDDL 1.1 or GPL2 w/ CPE
   SLF4J API Module under MIT License
+  software.amazon.ion:ion-java under The Apache License, Version 2.0
   Spring AOP under The Apache Software License, Version 2.0
   Spring Aspects under The Apache Software License, Version 2.0
   Spring Beans under The Apache Software License, Version 2.0

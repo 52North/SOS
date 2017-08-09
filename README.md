@@ -16,6 +16,8 @@ and tested to be compliant to this specification within the [OGC CITE testing](h
 
 The 52°North SOS enables the user to:
 
+* Master: [![Master Build Status](https://travis-ci.org/52North/sos.png?branch=master)](https://travis-ci.org/52North/sos)
+* Develop: [![Develop Build Status](https://travis-ci.org/52North/sos.png?branch=develop)](https://travis-ci.org/52North/sos)
  - insert and retrieve georeferenced observation data
  - access georeferenced measurement data in a standardized format (ISO/OGC Observation and Measurement - O&M 2.0, OGC WaterML 2.0)
  - insert and retrieve sensor descriptions (encoded according to the OGC SensorML standard - SML 1.0.1, SML 2.0)

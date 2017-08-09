@@ -11,8 +11,8 @@ in December of 2012.
 
 ## Build Status
 
-* Master: [![Master Build Status](https://travis-ci.org/52North/SOS.png?branch=master)](https://travis-ci.org/52North/SOS)
-* Develop: [![Develop Build Status](https://travis-ci.org/52North/SOS.png?branch=develop)](https://travis-ci.org/52North/SOS)
+* Master: [![Master Build Status](https://travis-ci.org/52North/sos.png?branch=master)](https://travis-ci.org/52North/sos)
+* Develop: [![Develop Build Status](https://travis-ci.org/52North/sos.png?branch=develop)](https://travis-ci.org/52North/sos)
 
 ## Branches
 

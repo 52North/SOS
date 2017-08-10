@@ -112,9 +112,9 @@ The development the 52°North Sensor Observation Service implementations was con
 
 The development the 52°North Sensor Observation Service implementations was contributed by several organizations
 
-||
-| :-------------: |
-| <a target="_blank" href="http://52north.org"><img alt="52N" align="middle" width="286" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/52n-logo-220x80.png" /></a> |
+-> <a target="_blank" href="http://52north.org"><img alt="52N" align="middle" width="286" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/52n-logo-220x80.png" /></a> <-
+
+
 | | | | |
 | :-------------: | :-------------: | :-------------: | :-------------: |
 | <a target="_blank" href="http://52north.org"><img alt="52N" align="middle" width="286" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/52n-logo-220x80.png" /></a> |

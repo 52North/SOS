@@ -112,13 +112,12 @@ The development the 52°North Sensor Observation Service implementations was con
 
 The development the 52°North Sensor Observation Service implementations was contributed by several organizations
 
-<p align="center">
-<a target="_blank" href="http://52north.org"><img alt="52N" align="middle" width="286" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/52n-logo-220x80.png" /></a>
+<p align="center"><a target="_blank" href="http://52north.org"><img alt="52N" align="middle" width="286" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/52n-logo-220x80.png" /></a></p>
 | | | | |
 | :-------------: | :-------------: | :-------------: | :-------------: |
 | <a target="_blank" href="http://www.uni-muenster.de/Geoinformatics/en/index.html"><img alt="IfGI"  align="middle" width="200" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/logo_ifgi.png"/></a> | <a target="_blank" href="http://www.axiomdatascience.com"><img alt="Axiom Data Science"  align="middle" width="85" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/axiom.png"/></a> | <a target="_blank" href="http://geomati.co"><img alt="geomati.co"  align="middle" width="85" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/logo_geomatico_256.png"/></a> | <a target="_blank" href="http://www.itg.es/"><img alt="ITG"  align="middle" width="104" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/Logo_ITG_vectorizado.png"/></a> |
 | <a target="_blank" href="http://www.zgis.at"><img alt="ZIGS"  align="middle" width="128" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/UniSalzburgZGIS_1.jpg"/></a> | <a href="http://52north.org/about/licensing/cla-guidelines">Your logo?!<br/>Get involved!</a> | <img alt="Placeholder" align="middle" width="85" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/placeholder.png"/> | <img alt="Placeholder" align="middle" width="85" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/placeholder.png"/> |
-</p>
+
 
 ### Funding organizations/projects
 

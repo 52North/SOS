@@ -92,6 +92,8 @@ A link to the contributors license agreement and further explanations are availa
 
 ### Contributors
 
+The development the 52°North Sensor Observation Service implementations was contributed by
+
 | Name | Organisation |
 | ------------- | :-------------: |
 | [Carsten Hollmann](http://52north.org/about/52-north-team/25-carsten-hollmann) | [52&deg;North](http://52north.org) |
@@ -108,15 +110,22 @@ A link to the contributors license agreement and further explanations are availa
 
 ### Contributing organizations
 
-|  | | | |
+The development the 52°North Sensor Observation Service implementations was contributed by several organizations
+
+||
+| :-------------: |
+| <a target="_blank" href="http://52north.org"><img alt="52N" align="middle" width="286" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/52n-logo-220x80.png" /></a> |
+| | | | |
 | :-------------: | :-------------: | :-------------: | :-------------: |
-| <a target="_blank" href="http://52north.org"><img alt="52N" align="middle" width="286" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images//52n-logo-220x80.png" /></a> |
+| <a target="_blank" href="http://52north.org"><img alt="52N" align="middle" width="286" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/52n-logo-220x80.png" /></a> |
 | <a target="_blank" href="http://www.uni-muenster.de/Geoinformatics/en/index.html"><img alt="IfGI"  align="middle" width="200" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/logo_ifgi.png"/></a> | <a target="_blank" href="http://www.axiomdatascience.com"><img alt="Axiom Data Science"  align="middle" width="85" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/axiom.png"/></a> | <a target="_blank" href="http://geomati.co"><img alt="geomati.co"  align="middle" width="85" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/logo_geomatico_256.png"/></a> | <a target="_blank" href="http://www.itg.es/"><img alt="ITG"  align="middle" width="104" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/Logo_ITG_vectorizado.png"/></a> |
 | <a target="_blank" href="http://www.zgis.at"><img alt="ZIGS"  align="middle" width="128" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/UniSalzburgZGIS_1.jpg"/></a> | <a href="http://52north.org/about/licensing/cla-guidelines">Your logo?!<br/>Get involved!</a> | <img alt="Placeholder" align="middle" width="85" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/placeholder.png"/> | <img alt="Placeholder" align="middle" width="85" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/contribution/placeholder.png"/> |
 
 ### Funding organizations/projects
 
-|        Project/Logo     | Description |
+The development the 52°North Sensor Observation Service implementations was supported by several organizations and projects. Among other we would like to thank the following organisations and project
+
+| Project/Logo | Description |
 | :-------------: | :------------- |
 | <a target="_blank" href="http://www.nexosproject.eu/"><img alt="NeXOS - Next generation, Cost-effective, Compact, Multifunctional Web Enabled Ocean Sensor Systems Empowering Marine, Maritime and Fisheries Management" align="middle" width="172" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/funding/logo_nexos.png" /></a> | The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a target="_blank" href="http://www.nexosproject.eu/">NeXOS</a> (co-funded by the European Commission under the grant agreement n&deg;614102) |
 | <a target="_blank" href="http://www.eo2heaven.org/"><img alt="EO2HEAVEN - Earth Observation and ENVironmental Modeling for the Mitigation of HEAlth Risks" align="middle" width="172" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/funding/logo_eo2heaven_200px.png"/></a> | The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a target="_blank" href="http://www.eo2heaven.org/">EO2HEAVEN</a> (co-funded by the European Commission under the grant agreement n&deg;244100) |

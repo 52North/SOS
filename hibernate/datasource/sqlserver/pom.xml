@@ -24,9 +24,8 @@
 			<artifactId>hibernate-datasource-common</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.microsoft</groupId>
-			<artifactId>sqljdbc4</artifactId>
-			<scope>provided</scope>
+			<groupId>com.microsoft.sqlserver</groupId>
+      <artifactId>mssql-jdbc</artifactId>
 		</dependency>
 		<!-- Hibernate Core Dependencies -->
 		<dependency>

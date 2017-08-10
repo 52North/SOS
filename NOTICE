@@ -234,6 +234,7 @@ This project includes:
   Main module under GNU Lesser General Public License (LGPL) version 2.1
   mchange-commons-java under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Metadata under GNU Lesser General Public License (LGPL) version 2.1
+  Microsoft JDBC Driver for SQL Server under MIT License
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL Connector/J under The GNU General Public License, Version 2
@@ -307,7 +308,6 @@ This project includes:
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
   SQLite JDBC under The Apache Software License, Version 2.0
-  sqljdbc4 under MICROSOFT SOFTWARE LICENSE TERMS, http://download.microsoft.com/download/0/2/A/02AAE597-3865-456C-AE7F-613F99F850A8/license.txt
   StAX API under The Apache Software License, Version 2.0
   udunits under (MIT-style) netCDF C library license
   vecmath under GPL 2.0 license w/ CPE

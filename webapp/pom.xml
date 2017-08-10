@@ -299,10 +299,14 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-mysql</artifactId>
         </dependency>
-            <dependency>
+        <dependency>
     		    <groupId>${project.groupId}</groupId>
     		    <artifactId>hibernate-datasource-h2</artifactId>
     		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-datasource-sqlserver</artifactId>
+        </dependency>
 
         <!-- BINDINGS -->
 
@@ -620,15 +624,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>sqlserver</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-datasource-sqlserver</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>assembly</id>
             <build>
                 <plugins>
@@ -654,10 +649,6 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-oracle</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-datasource-sqlserver</artifactId>
                 </dependency>
             </dependencies>
         </profile>

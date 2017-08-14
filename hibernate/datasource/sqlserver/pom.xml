@@ -54,10 +54,6 @@
             <artifactId>hibernate-c3p0</artifactId>
             <scope>runtime</scope>
         </dependency>
-		<dependency>
-			<groupId>com.microsoft.sqlserver</groupId>
-      <artifactId>mssql-jdbc</artifactId>
-		</dependency>
 		<!-- Hibernate Core Dependencies -->
 		<dependency>
 			<groupId>org.hibernate</groupId>

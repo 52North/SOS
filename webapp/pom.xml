@@ -677,6 +677,14 @@
             <artifactId>hibernate-datasource-common</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+    		    <groupId>${project.groupId}</groupId>
+    		    <artifactId>hibernate-datasource-h2</artifactId>
+    		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-datasource-sqlserver</artifactId>
+        </dependency>
 
         <!-- BINDINGS -->
 

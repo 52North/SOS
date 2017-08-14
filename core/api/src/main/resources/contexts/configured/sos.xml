@@ -85,6 +85,4 @@
         </property>
     </bean>
 
-    <bean id="reportObligationRepository"
-          class="org.n52.sos.request.operator.ReportObligationRepository" />
 </beans>

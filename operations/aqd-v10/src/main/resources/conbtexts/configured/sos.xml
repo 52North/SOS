@@ -14,4 +14,10 @@
         <constructor-arg value="1.0.0" />
     </bean>
 
+    <bean id="reportObligationRepository"
+      class="org.n52.sos.request.operator.ReportObligationRepository" />
+
+
+    <bean id="reportObligationRepository"
+          class="org.n52.sos.web.admin.AdminEReportingHeaderController" />
 </beans>

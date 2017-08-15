@@ -17,6 +17,8 @@
         <property name="noDataValues" value="-9999.0,99999,NO_DATA" />
     </bean>
 
+    <import resource="../classes/contexts/configured/sessionFactory.xml"/>
+
     <bean class="org.n52.series.db.dao.DefaultDbQueryFactory">
         <property name="databaseSrid" value="EPSG:4326" />
     </bean>

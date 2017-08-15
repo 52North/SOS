@@ -123,20 +123,19 @@
 		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a target="_blank" href="http://www.nexosproject.eu/">NeXOS</a> (co-funded by the European Commission under the grant agreement n&deg;614102)</td>
 	</tr>
 	<tr>
-    <td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://colabis.de/"><img alt="COLABIS - Collaborative Early Warning Information Systems for Urban Infrastructures" align="middle" width="172" src="<c:url value="/static/images/funding/colabis.png"/>"/></a></td>
-    <td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://www.bmbf.de"> German Federal Ministry of Education and Research</a> research project <a target="_blank" href="https://colabis.de/">COLABIS</a> (co-funded by the German Federal Ministry of Education and Research, programme Geotechnologien, under grant agreement no. 03G0852A)</td>
-  </tr>
-	<tr>
-		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.eo2heaven.org/"><img alt="EO2HEAVEN - Earth Observation and ENVironmental Modeling for the Mitigation of HEAlth Risks" align="middle" width="172" src="<c:url value="/static/images/funding/logo_eo2heaven_200px.png"/>"/></a></td>
-		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a target="_blank" href="http://www.eo2heaven.org/">EO2HEAVEN</a> (co-funded by the European Commission under the grant agreement n&deg;244100)</td>
+		<td align="center" style="padding:3px;width:30%;">
+			<a target="_blank" href="https://www.bmbf.de/"><img alt="BMBF" align="middle" width="90" src="static/images/funding/bmbf_logo_en.png" /></a>
+			<a target="_blank" href="https://colabis.de/"><img alt="COLABIS - Collaborative Early Warning Information Systems for Urban Infrastructures" width="90" src="<c:url value="/static/images/funding/colabis.png"/>"/></a>
+		</td>
+    	<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://www.bmbf.de"> German Federal Ministry of Education and Research</a> research project <a target="_blank" href="https://colabis.de/">COLABIS</a> (co-funded by the German Federal Ministry of Education and Research, programme Geotechnologien, under grant agreement no. 03G0852A)</td>
+    </tr>
+    <tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://www.seadatanet.org/About-us/SeaDataCloud/"><img alt="SeaDataCloud" align="middle" width="156" src="/static/images/funding/logo_seadatanet.png"/></a></td>
+		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://ec.europa.eu/programmes/horizon2020/">Horizon 2020</a> research project <a target="_blank" href="https://www.seadatanet.org/About-us/SeaDataCloud/">SeaDataCloud</a> (co-funded by the European Commission under the grant agreement n&deg;730960)</td>
 	</tr>
-	<tr>
-		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.geowow.eu/"><img alt="GEOWOW - GEOSS interoperability for Weather, Ocean and Water" align="middle" width="172" src="<c:url value="/static/images/funding/logo_geowow.png"/>"/></a></td>
-		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a href="http://www.geowow.eu/" title="GEOWOW">GEOWOW</a> (co-funded by the European Commission under the grant agreement n&deg;282915)</td>
-	</tr>
-	<tr>
-		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.geoviqua.org/"><img alt="GeoViQua - QUAlity aware VIsualization for the Global Earth Observation System of Systems" align="middle" width="172" src="<c:url value="/static/images/funding/logo_geoviqua.png"/>"/></a></td>
-		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a href="http://www.geoviqua.org/" title="GeoViQua">GeoViQua</a> (co-funded by the European Commission under the grant agreement n&deg;265178)</td>
+    <tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.odip.org/"><img alt="ODIP II - Ocean Data Interoperability Platform" align="middle" width="156" src="/static/images/funding/odip-logo.png"/></a></td>
+		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://ec.europa.eu/programmes/horizon2020/">Horizon 2020</a> research project <a target="_blank" href="http://www.odip.org/">ODIP II</a> (co-funded by the European Commission under the grant agreement n&deg;654310)</td>
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;">
@@ -189,6 +188,18 @@
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"></td>
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.rijkswaterstaat.nl/en/">Rijkswaterstaat</a> - Dutch Ministry of Infrastructure and the Environment (The Netherlands)</td>
+	</tr>
+	<tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.eo2heaven.org/"><img alt="EO2HEAVEN - Earth Observation and ENVironmental Modeling for the Mitigation of HEAlth Risks" align="middle" width="172" src="<c:url value="/static/images/funding/logo_eo2heaven_200px.png"/>"/></a></td>
+		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a target="_blank" href="http://www.eo2heaven.org/">EO2HEAVEN</a> (co-funded by the European Commission under the grant agreement n&deg;244100)</td>
+	</tr>
+	<tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.geoviqua.org/"><img alt="GeoViQua - QUAlity aware VIsualization for the Global Earth Observation System of Systems" align="middle" width="172" src="<c:url value="/static/images/funding/logo_geoviqua.png"/>"/></a></td>
+		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a href="http://www.geoviqua.org/" title="GeoViQua">GeoViQua</a> (co-funded by the European Commission under the grant agreement n&deg;265178)</td>
+	</tr>
+	<tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.geowow.eu/"><img alt="GEOWOW - GEOSS interoperability for Weather, Ocean and Water" align="middle" width="172" src="<c:url value="/static/images/funding/logo_geowow.png"/>"/></a></td>
+		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a href="http://www.geowow.eu/" title="GEOWOW">GEOWOW</a> (co-funded by the European Commission under the grant agreement n&deg;282915)</td>
 	</tr>
 </table>
 

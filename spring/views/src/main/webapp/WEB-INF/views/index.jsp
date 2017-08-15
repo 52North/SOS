@@ -125,7 +125,7 @@
 	<tr>
 		<td align="center" style="padding:3px;width:30%;">
 			<a target="_blank" href="https://www.bmbf.de/"><img alt="BMBF" align="middle" width="90" src="static/images/funding/bmbf_logo_en.png" /></a>
-			<a target="_blank" href="https://colabis.de/"><img alt="COLABIS - Collaborative Early Warning Information Systems for Urban Infrastructures" width="90" src="<c:url value="/static/images/funding/colabis.png"/>"/></a>
+			<a target="_blank" href="https://colabis.de/"><img alt="COLABIS - Collaborative Early Warning Information Systems for Urban Infrastructures" width="90" src="/static/images/funding/colabis.png"/></a>
 		</td>
     	<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://www.bmbf.de"> German Federal Ministry of Education and Research</a> research project <a target="_blank" href="https://colabis.de/">COLABIS</a> (co-funded by the German Federal Ministry of Education and Research, programme Geotechnologien, under grant agreement no. 03G0852A)</td>
     </tr>
@@ -159,7 +159,7 @@
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.irceline.be/en"><img alt="Belgian Interregional Environment Agency (IRCEL - CELINE)" align="middle" width="130" src="<c:url value="/static/images/funding/logo_irceline_no_text.png"/>"/></a></td>
-		<td style="padding:3px;width:70%;">The <a href="http://www.irceline.be/en" target="_blank" title="Belgian Interregional Environment Agency (IRCEL - CELINE)">Belgian Interregional Environment Agency (IRCEL - CELINE)</a> is primarily active with the domain of air quality (modelling, forecasts, informing the public on the state of their air quality, e-reporting to the EU under the air quality directives, participating in scientific research on air quality, etc.). IRCEL – CELINE is a permanent cooperation between three regional environment agencies: <a href="http://www.awac.be/" title="Agence wallonne de l&#39Air et du Climat (AWAC)">Agence wallonne de l&#39Air et du Climat (AWAC)</a>, <a href="http://www.ibgebim.be/" title="Bruxelles Environnement - Leefmilieu Brussel">Bruxelles Environnement - Leefmilieu Brussel</a> and <a href="http://www.vmm.be/" title="Vlaamse Milieumaatschappij (VMM)">Vlaamse Milieumaatschappij (VMM)</a>.</td>
+		<td style="padding:3px;width:70%;">The <a href="http://www.irceline.be/en" target="_blank" title="Belgian Interregional Environment Agency (IRCEL - CELINE)">Belgian Interregional Environment Agency (IRCEL - CELINE)</a> is active in the domain of air quality (modelling, forecasts, informing the public on the state of their air quality, e-reporting to the EU under the air quality directives, participating in scientific research on air quality, etc.). IRCEL – CELINE is a permanent cooperation between three regional environment agencies: <a href="http://www.awac.be/" title="Agence wallonne de l&#39Air et du Climat (AWAC)">Agence wallonne de l&#39Air et du Climat (AWAC)</a>, <a href="http://www.ibgebim.be/" title="Bruxelles Environnement - Leefmilieu Brussel">Bruxelles Environnement - Leefmilieu Brussel</a> and <a href="http://www.vmm.be/" title="Vlaamse Milieumaatschappij (VMM)">Vlaamse Milieumaatschappij (VMM)</a>.</td>
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.ivl.se/english"><img alt="IVL Swedish Environmental Research Institute" align="middle" width="196" src="<c:url value="/static/images/funding/ivl_eng_rgb_70mm.png"/>"/></a></td>
@@ -174,8 +174,9 @@
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.smart-project.info">SMART</a> Project, funded by the <a target="_blank" href="http://www.msi.govt.nz/">Ministry of Business, Innovation and Employment</a> (07/2011 &ndash; 06/2017): <br/> Experts in the Smart Project will develop, apply, and validate pioneering new techniques for understanding New Zealand&lsquo;s groundwater resources. Satellite and airborne remote sensing techniques and Sensor Observation Services including seismic signals from earthquakes are used for rapid and costeffective characterisation and mapping of New Zealand&lsquo;s aquifer systems. Together with a stakeholder network the research team will use new methods to overcome the current time- and resourceconsuming challenges of in-time data acquisition. Special spatial skills in hydrogeology, geology, satellite remote sensing, geophysics, seismology, uncertainty mathematics and spatial information technology will be developed to assist with improvement of New Zealand&lsquo;s freshwater management.</td>
 	</tr>
 	<tr>
-		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.dlz-it.de/cln_008/DE/Home/home_node.html"><img alt="DLZ-IT" align="middle" width="140" src="<c:url value="/static/images/funding/dlz-it-logo.jpg"/>"/></a></td>
-		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.dlz-it.de/">DLZ-IT</a> BMVBS Information Technology Services Centre of Federal Ministry of Transport, Building and Urban Development (Germany)</td>
+	| <a target="_blank" href="https://www.itzbund.de"><img alt="ITZBund" align="middle" width="140" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/funding/itzbund.png"/></a>| The <a target="_blank" href="https://www.itzbund.de">ITZBund</a> Information Technology Services Centre of the Federal Government (Germany) |
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://www.itzbund.de/"><img alt="ITZBund" align="middle" width="140" src="<c:url value="/static/images/funding/itzbund.png"/>"/></a></td>
+		<td style="padding:3px;width:70%;">The <a target="_blank" href="https://www.itzbund.de">ITZBund</a> Information Technology Services Centre of the Federal Government (Germany)</td>
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"></td>
@@ -187,7 +188,7 @@
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"></td>
-		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.rijkswaterstaat.nl/en/">Rijkswaterstaat</a> - Dutch Ministry of Infrastructure and the Environment (The Netherlands)</td>
+		<td style="padding:3px;width:70%;"><a target="_blank" href="http://www.rijkswaterstaat.nl/en/">Rijkswaterstaat</a> - Dutch Ministry of Infrastructure and the Environment (The Netherlands)</td>
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.eo2heaven.org/"><img alt="EO2HEAVEN - Earth Observation and ENVironmental Modeling for the Mitigation of HEAlth Risks" align="middle" width="172" src="<c:url value="/static/images/funding/logo_eo2heaven_200px.png"/>"/></a></td>

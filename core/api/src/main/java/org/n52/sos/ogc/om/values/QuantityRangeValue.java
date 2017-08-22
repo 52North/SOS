@@ -32,57 +32,42 @@ import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.RangeValue;
+import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.sos.util.Comparables;
 
-/**
- * Quantity measurement representation for observation
- *
- * @since 4.0.0
- *
- */
-public class QuantityValue extends SweQuantity implements QuantityValued<Double, QuantityValue> {
+public class QuantityRangeValue extends SweQuantityRange implements QuantityValued<RangeValue<Double>, QuantityRangeValue> {
     /**
      * serial number
      */
-    private static final long serialVersionUID = -1422892416601346312L;
-
-    /**
-     * constructor
-     *
-     * @param value
-     *              Measurement value
-     */
-    public QuantityValue(Double value) {
-        super();
-        super.setValue(value);
-    }
-
-    /**
-     * constructor
-     *
-     * @param value
-     *              Measurement value
-     * @param unit
-     *              Unit of measure
-     */
-    public QuantityValue(Double value, String unit) {
-        super(value, unit);
-    }
+    private static final long serialVersionUID = 9192378261383584604L;
     
     /**
      * constructor
      *
      * @param value
      *              Measurement value
+     */
+    public QuantityRangeValue(Double rangeStart, Double rangeEnd) {
+        super();
+        super.setValue(new RangeValue<Double>(rangeStart, rangeEnd));
+    }
+
+    /**
+     * constructor
+     *
+     * @param value
+     *              Measurement value
      * @param unit
      *              Unit of measure
      */
-    public QuantityValue(Double value, UoM unit) {
-        super(value, unit);
+    public QuantityRangeValue(Double rangeStart, Double rangeEnd, String unit) {
+        this(rangeStart, rangeEnd);
+        this.setUnit(unit);
     }
-
+    
     @Override
-    public QuantityValue setValue(final Double value) {
+    public QuantityRangeValue setValue(RangeValue<Double> value) {
         super.setValue(value);
         return this;
     }
@@ -129,9 +114,9 @@ public class QuantityValue extends SweQuantity implements QuantityValued<Double,
             throws OwsExceptionReport {
         visitor.visit(this);
     }
-
+    
     @Override
-    public int compareTo(QuantityValue o) {
+    public int compareTo(QuantityRangeValue o) {
         if (o == null) {
             throw new NullPointerException();
         }
@@ -141,6 +126,10 @@ public class QuantityValue extends SweQuantity implements QuantityValued<Double,
         if (getValue() == null && o.getValue() == null) {
             return 0;
         }
-        return getValue().compareTo(o.getValue());
+        return Comparables.chain(o).compare(getValue(), o.getValue()).result();
     }
+
+  
+
+    
 }

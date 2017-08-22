@@ -34,6 +34,7 @@ import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.QuantityRangeValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
@@ -110,5 +111,8 @@ public interface ValueVisitor<T> {
             throws OwsExceptionReport;
 
     T visit(XmlValue value)
+            throws OwsExceptionReport;
+
+    T visit(QuantityRangeValue value)
             throws OwsExceptionReport;
 }

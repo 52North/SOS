@@ -122,8 +122,9 @@ import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.ProfileLevel;
-import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.ProfileLevelVisitor;
+import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.QuantityRangeValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
@@ -135,7 +136,6 @@ import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
-import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
@@ -1520,6 +1520,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             return setUnitAndPersist(observationFactory.numeric(), value);
         }
 
+
+        @Override
+        public Observation<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
 
         @Override
         public Observation<?> visit(TextValue value)

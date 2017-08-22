@@ -38,10 +38,8 @@ import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataComponentVisitor;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Geometry;

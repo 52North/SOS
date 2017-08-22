@@ -40,6 +40,7 @@ import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.values.ProfileLevel;
 import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.QuantityRangeValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferencableGridCoverage;
 import org.n52.sos.util.CollectionHelper;
@@ -89,10 +90,16 @@ public class ProfileObservation extends AbstractInspireObservation {
             ProfileValue profile = (ProfileValue) value.getValue();
             RectifiedGridCoverage rectifiedGridCoverage = new RectifiedGridCoverage(getObservationID());
             rectifiedGridCoverage.setUnit(value.getValue().getUnit());
+            rectifiedGridCoverage.setRangeParameters(getObservationConstellation().getObservablePropertyIdentifier());
             List<Coordinate> coordinates = Lists.newArrayList();
             int srid = 0;
             for (ProfileLevel level : profile.getValue()) {
-                rectifiedGridCoverage.addValue(level.getLevelStart().getValue(), level.getSimpleValue());
+                if (level.isSetLevelEnd()) {
+                    rectifiedGridCoverage.addValue(new QuantityRangeValue(level.getLevelStart().getValue(),
+                            level.getLevelEnd().getValue(), level.getLevelStart().getUnit()), level.getSimpleValue());
+                } else {
+                    rectifiedGridCoverage.addValue(level.getLevelStart().getValue(), level.getSimpleValue());
+                }
                 if (level.isSetLocation()) {
                     Coordinate coordinate = level.getLocation().getCoordinate();
                     coordinate.z = level.getLevelStart().getValue();

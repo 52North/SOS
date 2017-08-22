@@ -38,7 +38,6 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
-import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyDatasetDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
@@ -127,21 +126,21 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     }
 
     private DbQuery createDbQuery(GetDataAvailabilityRequest req) {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
+        Map<String, String> map = Maps.newHashMap();
         if (req.isSetFeaturesOfInterest()) {
-            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(listToString(req.getFeaturesOfInterest())));
+            map.put(IoParameters.FEATURES, listToString(req.getFeaturesOfInterest()));
         }
         if (req.isSetProcedures()) {
-            rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(listToString(req.getProcedures())));
+            map.put(IoParameters.PROCEDURES, listToString(req.getProcedures()));
         }
         if (req.isSetObservedProperties()) {
-            rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(listToString(req.getObservedProperties())));
+            map.put(IoParameters.PHENOMENA, listToString(req.getObservedProperties()));
         }
         if (req.isSetOfferings()) {
-            rsps.setParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(listToString(req.getOfferings())));
+            map.put(IoParameters.OFFERINGS, listToString(req.getOfferings()));
         }
-        rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
-        return new DbQuery(IoParameters.createFromQuery(rsps));
+        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private DataAvailability defaultProcessDataAvailability(DatasetEntity<?> entity, GDARequestContext context, Session session) throws OwsExceptionReport {

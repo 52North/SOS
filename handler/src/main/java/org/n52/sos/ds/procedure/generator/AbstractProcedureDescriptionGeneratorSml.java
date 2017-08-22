@@ -29,6 +29,7 @@
 package org.n52.sos.ds.procedure.generator;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
@@ -74,6 +75,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -85,22 +87,20 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.2.0
  *
  */
-public abstract class AbstractProcedureDescriptionGeneratorSml extends
-        AbstractProcedureDescriptionGenerator {
+public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractProcedureDescriptionGenerator {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(AbstractProcedureDescriptionGeneratorSml.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProcedureDescriptionGeneratorSml.class);
 
     protected static final String POSITION_NAME = "sensorPosition";
+
     private GeometryHandler geometryHandler;
+
     private String srsNamePrefix;
+
     private ProfileHandler profileHandler;
 
-    public AbstractProcedureDescriptionGeneratorSml(ProfileHandler profileHandler,
-            GeometryHandler geometryHandler,
-            I18NDAORepository i18NDAORepository,
-            ContentCacheController cacheController,
-            String srsNamePrefix) {
+    public AbstractProcedureDescriptionGeneratorSml(ProfileHandler profileHandler, GeometryHandler geometryHandler,
+            I18NDAORepository i18NDAORepository, ContentCacheController cacheController, String srsNamePrefix) {
         super(i18NDAORepository, cacheController);
         this.geometryHandler = geometryHandler;
         this.srsNamePrefix = srsNamePrefix;
@@ -130,8 +130,8 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
         abstractProcess.setIdentifications(createIdentifications(identifier));
 
         // 7 set inputs/outputs --> observableProperties
-        if (ProcedureRequestSettingProvider.getInstance().isAddOutputsToSensorML() && !"hydrology"
-                .equalsIgnoreCase(profileHandler.getActiveProfile().getIdentifier())) {
+        if (ProcedureRequestSettingProvider.getInstance().isAddOutputsToSensorML()
+                && !"hydrology".equalsIgnoreCase(profileHandler.getActiveProfile().getIdentifier())) {
             abstractProcess.setInputs(createInputs(getIdentifierList(observableProperties)));
             abstractProcess.setOutputs(createOutputs(procedure, observableProperties, session));
         }
@@ -161,18 +161,17 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private List<SmlIo> createOutputs(ProcedureEntity procedure, List<PhenomenonEntity> observableProperties, Session session)
-            throws OwsExceptionReport {
+    private List<SmlIo> createOutputs(ProcedureEntity procedure, List<PhenomenonEntity> observableProperties,
+            Session session) throws OwsExceptionReport {
         try {
             final List<SmlIo> outputs = Lists.newArrayListWithExpectedSize(observableProperties.size());
             int i = 1;
-                for (PhenomenonEntity observableProperty : observableProperties) {
-                    final SmlIo output  =
-                                createOutputFromDatasets(procedure, observableProperty, session);
-                    if (output != null) {
-                        output.setIoName("output#" + i++);
-                        outputs.add(output);
-                    }
+            for (PhenomenonEntity observableProperty : observableProperties) {
+                final SmlIo output = createOutputFromDatasets(procedure, observableProperty, session);
+                if (output != null) {
+                    output.setIoName("output#" + i++);
+                    outputs.add(output);
+                }
             }
             return outputs;
         } catch (final HibernateException | DataAccessException he) {
@@ -192,8 +191,8 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
     }
 
     @SuppressWarnings("rawtypes")
-    private SmlIo createOutputFromDatasets(ProcedureEntity procedure, PhenomenonEntity observableProperty, Session session)
-            throws DataAccessException {
+    private SmlIo createOutputFromDatasets(ProcedureEntity procedure, PhenomenonEntity observableProperty,
+            Session session) throws DataAccessException {
         DatasetDao<DatasetEntity> datasetDao = new DatasetDao<>(session);
         List<DatasetEntity> allInstances = datasetDao.getAllInstances(createDbQuery(procedure, observableProperty));
         if (allInstances == null) {
@@ -207,7 +206,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
             if (dataset.getUnit() != null) {
                 quantity.setUom(dataset.getUnit().getName());
             }
-            simpleType =  quantity;
+            simpleType = quantity;
             break;
         case "truth":
             simpleType = new SweBoolean();
@@ -242,18 +241,17 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
         return null;
     }
 
-
     private DbQuery createDbQuery(ProcedureEntity procedure, PhenomenonEntity observableProperty) {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
-        rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(observableProperty.getPkid()));
-        return new DbQuery(IoParameters.createFromQuery(rsps));
+        Map<String, String> map = Maps.newHashMap();
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getPkid()));
+        map.put(IoParameters.PHENOMENA, Long.toString(observableProperty.getPkid()));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private DbQuery createDbQuery(ProcedureEntity procedure) {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
-        return new DbQuery(IoParameters.createFromQuery(rsps));
+        Map<String, String> map = Maps.newHashMap();
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getPkid()));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     protected boolean isStation(ProcedureEntity procedure, Session session) throws DataAccessException {
@@ -291,11 +289,10 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
                     position.setPosition(createCoordinatesForPosition(c.y, c.x, c.z));
                 }
             }
-            position.setReferenceFrame(srsNamePrefix  + srid);
+            position.setReferenceFrame(srsNamePrefix + srid);
             return position;
         } catch (Exception e) {
-            throw new NoApplicableCodeException().causedBy(e).withMessage(
-                    "Error while creating sensor position!");
+            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating sensor position!");
         }
 
     }
@@ -313,13 +310,13 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends
      * @return List with SWE Coordinate
      */
     @SuppressWarnings("unchecked")
-    private List<SweCoordinate<Double>> createCoordinatesForPosition(Object longitude, Object latitude, Object altitude) {
+    private List<SweCoordinate<Double>> createCoordinatesForPosition(Object longitude, Object latitude,
+            Object altitude) {
         SweQuantity yq = createSweQuantity(latitude, SweConstants.Y_AXIS, procedureSettings().getLatLongUom());
         SweQuantity xq = createSweQuantity(longitude, SweConstants.X_AXIS, procedureSettings().getLatLongUom());
         SweQuantity zq = createSweQuantity(altitude, SweConstants.Z_AXIS, procedureSettings().getAltitudeUom());
         // TODO add Integer: Which SweSimpleType to use?
-        return Lists.<SweCoordinate<Double>> newArrayList(
-                new SweCoordinate<>(SweCoordinateNames.NORTHING, yq),
+        return Lists.<SweCoordinate<Double>> newArrayList(new SweCoordinate<>(SweCoordinateNames.NORTHING, yq),
                 new SweCoordinate<>(SweCoordinateNames.EASTING, xq),
                 new SweCoordinate<>(SweCoordinateNames.ALTITUDE, zq));
     }

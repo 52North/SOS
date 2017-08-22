@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 
 import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -38,7 +39,6 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
-import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyProcedureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
@@ -55,6 +55,8 @@ import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.ds.dao.DescribeSensorDao;
 import org.n52.sos.ds.procedure.ProcedureConverter;
+
+import com.google.common.collect.Maps;
 
 public class DescribeSensorHandler
         extends AbstractDescribeSensorHandler {
@@ -135,11 +137,11 @@ public class DescribeSensorHandler
     }
 
     private DbQuery createDbQuery(DescribeSensorRequest req) {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
+        Map<String, String> map = Maps.newHashMap();
         if (req.isSetProcedure()) {
-            rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(req.getProcedure()));
+            map.put(IoParameters.PROCEDURES, req.getProcedure());
         }
-        rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
-        return new DbQuery(IoParameters.createFromQuery(rsps));
+        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 }

@@ -30,6 +30,7 @@ package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
@@ -46,6 +47,7 @@ import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -115,9 +117,9 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     }
 
     private DbQuery createDatasetDbQuery(ProcedureEntity procedure) {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
-        return new DbQuery(IoParameters.createFromQuery(rsps));
+        Map<String, String> map = Maps.newHashMap();
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getPkid()));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     @Override

@@ -65,7 +65,6 @@ import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.io.request.IoParameters;
-import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.janmayen.Comparables;
 import org.n52.janmayen.function.Functions;
 import org.n52.janmayen.i18n.LocaleHelper;
@@ -861,11 +860,12 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
     protected void setUpPhenomenaForOffering(OfferingEntity offering, ProcedureEntity procedure,
             SosObservationOffering sosOffering, Session session) throws DataAccessException {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.setParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(offering.getPkid()));
-        rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
+        Map<String, String> map = Maps.newHashMap();
+        map.put(IoParameters.OFFERINGS, Long.toString(offering.getPkid()));
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getPkid()));
+
         List<PhenomenonEntity> observableProperties =
-                new PhenomenonDao(session).getAllInstances(new DbQuery(IoParameters.createFromQuery(rsps)));
+                new PhenomenonDao(session).getAllInstances(new DbQuery(IoParameters.createFromSingleValueMap(map)));
 
         Collection<String> phenomenons = new LinkedList<>();
         Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
@@ -1028,10 +1028,10 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
     private Collection<ProcedureEntity> getProceduresForOffering(final OfferingEntity offering, Session session)
             throws OwsExceptionReport, DataAccessException {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.setParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(offering.getPkid()));
+        Map<String, String> map = Maps.newHashMap();
+        map.put(IoParameters.OFFERINGS, Long.toString(offering.getPkid()));
         List<ProcedureEntity> procedures =
-                new ProcedureDao(session).getAllInstances(new DbQuery(IoParameters.createFromQuery(rsps)));
+                new ProcedureDao(session).getAllInstances(new DbQuery(IoParameters.createFromSingleValueMap(map)));
         // if (procedures.isEmpty()) {
         // throw new NoApplicableCodeException().withMessage(
         // "No procedures are contained in the database for the offering '%s'!
@@ -1862,7 +1862,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
 //        rsps.addParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(offering.getPkid()));
 //        rsps.addParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
-//        List<PhenomenonEntity> observableProperties = new PhenomenonDao(session).getAllInstances(new DbQuery(IoParameters.createFromQuery(rsps)));
+//        List<PhenomenonEntity> observableProperties = new PhenomenonDao(session).getAllInstances(new DbQuery(rsps.toParameters()));
 //
 //        Collection<String> phenomenons = new LinkedList<>();
 //        Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
@@ -1962,7 +1962,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
 //        rsps.addParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(offering.getPkid()));
 //        List<ProcedureEntity> procedures =
-//                new ProcedureDao(session).getAllInstances(new DbQuery(IoParameters.createFromQuery(rsps)));
+//                new ProcedureDao(session).getAllInstances(new DbQuery(rsps.toParameters()));
 //        // if (procedures.isEmpty()) {
 //        // throw new NoApplicableCodeException().withMessage(
 //        // "No procedures are contained in the database for the offering '%s'!

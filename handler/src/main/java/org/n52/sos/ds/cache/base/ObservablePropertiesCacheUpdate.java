@@ -29,6 +29,7 @@
 package org.n52.sos.ds.cache.base;
 
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
@@ -44,6 +45,8 @@ import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Maps;
 
 /**
  *
@@ -95,8 +98,8 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
     }
 
     private DbQuery createDatasetDbQuery(PhenomenonEntity observableProperty) {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(observableProperty.getPkid()));
-        return new DbQuery(IoParameters.createFromQuery(rsps));
+        Map<String, String> map = Maps.newHashMap();
+        map.put(IoParameters.PHENOMENA, Long.toString(observableProperty.getPkid()));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 }

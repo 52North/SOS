@@ -54,6 +54,7 @@ import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -117,12 +118,12 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
     }
 
     private DbQuery createDbQuery(Collection<String> featureOfInterestIDs) {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
+        Map<String, String> map = Maps.newHashMap();
         if (featureOfInterestIDs != null && !featureOfInterestIDs.isEmpty()) {
-            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(listToString(featureOfInterestIDs)));
+            map.put(IoParameters.FEATURES, listToString(featureOfInterestIDs));
         }
-        rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
-        return new DbQuery(IoParameters.createFromQuery(rsps));
+        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private Map<String, AbstractFeature> createFeatures(Set<FeatureEntity> featureEntities) throws InvalidSridException, OwsExceptionReport {

@@ -30,6 +30,7 @@ package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,7 @@ import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -93,9 +95,9 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
     }
 
     private DbQuery createProcedureDbQuery(FeatureEntity featureEntity) {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(featureEntity.getPkid()));
-        return new DbQuery(IoParameters.createFromQuery(rsps));
+        Map<String, String> map = Maps.newHashMap();
+        map.put(IoParameters.FEATURES, Long.toString(featureEntity.getPkid()));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private Collection<String> getParents(FeatureEntity featureEntity) {

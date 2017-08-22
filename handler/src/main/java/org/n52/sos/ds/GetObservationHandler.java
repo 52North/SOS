@@ -29,16 +29,14 @@
 package org.n52.sos.ds;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.io.geojson.old.GeojsonPoint;
 import org.n52.io.request.IoParameters;
-import org.n52.io.request.RequestSimpleParameterSet;
-import org.n52.io.response.BBox;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
@@ -56,6 +54,9 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Envelope;
 
 public class GetObservationHandler extends AbstractGetObservationHandler implements ProxyQueryHelper {
@@ -111,42 +112,38 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
     }
 
     private DbQuery createDbQuery(GetObservationRequest request) {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
+        Map<String, String> map = Maps.newHashMap();
         if (request.isSetFeatureOfInterest()) {
-            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(listToString(request.getFeatureIdentifiers())));
+            map.put(IoParameters.FEATURES, listToString(request.getFeatureIdentifiers()));
         }
         if (request.isSetSpatialFilter() && !request.hasSpatialFilteringProfileSpatialFilter()) {
             if (SpatialOperator.BBOX.equals(request.getSpatialFilter().getOperator())) {
                 if (request.getSpatialFilter().getGeometry().isGeometry() && request.getSpatialFilter().getGeometry().getGeometry().isPresent()) {
                     Envelope envelope = request.getSpatialFilter().getGeometry().getGeometry().get().getEnvelopeInternal();
                     if (envelope != null) {
-                        BBox bbox = new BBox();
-                        GeojsonPoint ll = new GeojsonPoint();
-                        ll.setCoordinates(toArray(envelope.getMinX(), envelope.getMinY()));
-                        bbox.setLl(ll);
-                        GeojsonPoint ur = new GeojsonPoint();
-                        ur.setCoordinates(toArray(envelope.getMaxX(), envelope.getMaxY()));
-                        bbox.setUr(ur);
-                        rsps.setParameter(IoParameters.BBOX, IoParameters.getJsonNodeFrom(bbox));
+                        List<Double> bbox = Lists.newArrayList();
+                        bbox.add(envelope.getMinX());
+                        bbox.add(envelope.getMinY());
+                        bbox.add(envelope.getMaxX());
+                        bbox.add(envelope.getMaxY());
+                        map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
                     }
                 } else if (request.getSpatialFilter().getGeometry().isEnvelope() && request.getSpatialFilter().getGeometry().getEnvelope().isPresent()){
                     Envelope envelope = request.getSpatialFilter().getGeometry().getEnvelope().get().getEnvelope();
                     if (envelope != null) {
-                        BBox bbox = new BBox();
-                        GeojsonPoint ll = new GeojsonPoint();
-                        ll.setCoordinates(toArray(envelope.getMinX(), envelope.getMinY()));
-                        bbox.setLl(ll);
-                        GeojsonPoint ur = new GeojsonPoint();
-                        ur.setCoordinates(toArray(envelope.getMaxX(), envelope.getMaxY()));
-                        bbox.setUr(ur);
-                        rsps.setParameter(IoParameters.BBOX, IoParameters.getJsonNodeFrom(bbox));
+                        List<Double> bbox = Lists.newArrayList();
+                        bbox.add(envelope.getMinX());
+                        bbox.add(envelope.getMinY());
+                        bbox.add(envelope.getMaxX());
+                        bbox.add(envelope.getMaxY());
+                        map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
                     }
                 }
 
             }
         }
-        rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
-        return new DbQuery(IoParameters.createFromQuery(rsps));
+        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private Double[] toArray(double x, double y) {

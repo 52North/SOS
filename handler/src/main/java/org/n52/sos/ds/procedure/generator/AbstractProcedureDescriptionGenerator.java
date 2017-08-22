@@ -31,6 +31,7 @@ package org.n52.sos.ds.procedure.generator;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TreeSet;
 
@@ -63,6 +64,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -235,9 +237,9 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
     }
 
     private DbQuery createDbQuery(ProcedureEntity procedure) {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
-        rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(procedure.getPkid()));
-        return new DbQuery(IoParameters.createFromQuery(rsps));
+        Map<String, String> map = Maps.newHashMap();
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getPkid()));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     @VisibleForTesting

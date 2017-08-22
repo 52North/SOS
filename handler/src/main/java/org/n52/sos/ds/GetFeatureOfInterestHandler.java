@@ -41,10 +41,7 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.io.geojson.old.GeojsonPoint;
 import org.n52.io.request.IoParameters;
-import org.n52.io.request.RequestSimpleParameterSet;
-import org.n52.io.response.BBox;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
@@ -69,7 +66,10 @@ import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.sos.ds.dao.GetFeatureOfInterestDao;
 import org.n52.sos.util.GeometryHandler;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Envelope;
 
 public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHandler implements ProxyQueryHelper {
@@ -209,15 +209,15 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     }
 
     private DbQuery createDbQuery(GetFeatureOfInterestRequest req) {
-        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
+        Map<String, String> map = Maps.newHashMap();
         if (req.isSetFeatureOfInterestIdentifiers()) {
-            rsps.setParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(listToString(req.getFeatureIdentifiers())));
+            map.put(IoParameters.FEATURES, listToString(req.getFeatureIdentifiers()));
         }
         if (req.isSetProcedures()) {
-            rsps.setParameter(IoParameters.PROCEDURES, IoParameters.getJsonNodeFrom(listToString(req.getProcedures())));
+            map.put(IoParameters.PROCEDURES, listToString(req.getProcedures()));
         }
         if (req.isSetObservableProperties()) {
-            rsps.setParameter(IoParameters.PHENOMENA, IoParameters.getJsonNodeFrom(listToString(req.getObservedProperties())));
+            map.put(IoParameters.PHENOMENA, listToString(req.getObservedProperties()));
         }
         if (req.isSetSpatialFilters()) {
             Envelope envelope = null;
@@ -234,18 +234,16 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
                 }
             }
             if (envelope != null) {
-                BBox bbox = new BBox();
-                GeojsonPoint ll = new GeojsonPoint();
-                ll.setCoordinates(toArray(envelope.getMinX(), envelope.getMinY()));
-                bbox.setLl(ll);
-                GeojsonPoint ur = new GeojsonPoint();
-                ur.setCoordinates(toArray(envelope.getMaxX(), envelope.getMaxY()));
-                bbox.setUr(ur);
-                rsps.setParameter(IoParameters.BBOX, IoParameters.getJsonNodeFrom(bbox));
+                List<Double> bbox = Lists.newArrayList();
+                bbox.add(envelope.getMinX());
+                bbox.add(envelope.getMinY());
+                bbox.add(envelope.getMaxX());
+                bbox.add(envelope.getMaxY());
+                map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
             }
         }
-        rsps.setParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
-        return new DbQuery(IoParameters.createFromQuery(rsps));
+        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private Envelope getEnvelope(EnvelopeOrGeometry geometry) {

@@ -158,6 +158,11 @@ public class FeatureParameterFactory implements ValueVisitor<ValuedParameter<?>,
     }
 
     @Override
+    public ValuedParameter<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
     public ValuedParameter<?> visit(ReferenceValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }

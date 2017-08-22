@@ -307,6 +307,11 @@ public class ParameterDAO {
             throw notSupported(value);
         }
 
+        @Override
+        public ValuedParameter<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
         private OwsExceptionReport notSupported(Value<?> value)
                 throws OwsExceptionReport {
             throw new NoApplicableCodeException()

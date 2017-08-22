@@ -1636,7 +1636,13 @@ public abstract class AbstractObservationDAO
         }
 
         @Override
-        public Observation<?> visit(TextValue value) throws OwsExceptionReport {
+        public Observation<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(TextValue value)
+                throws OwsExceptionReport {
             return setUnitAndPersist(observationFactory.text(), value);
         }
 

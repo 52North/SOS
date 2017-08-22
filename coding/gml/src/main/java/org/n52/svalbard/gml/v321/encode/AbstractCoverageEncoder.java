@@ -30,12 +30,8 @@ package org.n52.svalbard.gml.v321.encode;
 
 import java.util.List;
 
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlString;
 import org.n52.sos.encode.AbstractSpecificXmlEncoder;
 import org.n52.sos.encode.Encoder;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.CountValue;
@@ -44,17 +40,11 @@ import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swes.SwesConstants;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 import net.opengis.gml.x32.BooleanListDocument;
-import net.opengis.gml.x32.CategoryListDocument;
-import net.opengis.gml.x32.CodeOrNilReasonListType;
 import net.opengis.gml.x32.CoordinatesType;
 import net.opengis.gml.x32.CountListDocument;
 import net.opengis.gml.x32.DataBlockType;
@@ -62,8 +52,6 @@ import net.opengis.gml.x32.DiscreteCoverageType;
 import net.opengis.gml.x32.MeasureOrNilReasonListType;
 import net.opengis.gml.x32.QuantityListDocument;
 import net.opengis.gml.x32.RangeSetType;
-import net.opengis.gml.x32.ReferenceType;
-import net.opengis.gml.x32.ValueArrayType;
 
 /**
  * Abstract {@link Encoder} implementation for {@link DiscreteCoverage}
@@ -115,8 +103,7 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
             DataBlockType dbt = rst.addNewDataBlock();
             dbt.addNewRangeParameters().setHref(discreteCoverage.getRangeParameters());
             CoordinatesType ct = dbt.addNewTupleList();
-            ct.setCs("#");
-            ct.setTs(",");
+            ct.setCs(",");
             ct.setStringValue(Joiner.on(",").join(list));
         } else if (value instanceof CountValue) {
             CountListDocument cld = CountListDocument.Factory.newInstance(getXmlOptions());
@@ -133,10 +120,6 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
             monrlt.setListValue(list);
             rst.set(qld);
         }
-    }
-
-    private XmlObject getValue(Value<?> value) throws UnsupportedEncoderInputException, OwsExceptionReport {
-        return CodingHelper.encodeObjectToXmlDocument(SweConstants.NS_SWE_20, value);
     }
 
     private List<?> getList(DiscreteCoverage<?> discreteCoverage) {

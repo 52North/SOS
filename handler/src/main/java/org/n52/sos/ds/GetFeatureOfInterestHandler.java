@@ -174,8 +174,8 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         if (!Strings.isNullOrEmpty(feature.getDescription())) {
             sampFeat.setDescription(feature.getDescription());
         }
-        if (feature.isSetGeometry()) {
-            sampFeat.setGeometry(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometry()));
+        if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
+            sampFeat.setGeometry(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometryEntity().getGeometry()));
         }
         final Set<FeatureEntity> parentFeatures = feature.getParents();
         if (parentFeatures != null && !parentFeatures.isEmpty()) {

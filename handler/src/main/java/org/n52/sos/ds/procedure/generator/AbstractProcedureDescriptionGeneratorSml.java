@@ -282,8 +282,8 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
             int srid = GeometryHandler.getInstance().getDefaultResponseEPSG();
             if (features != null && features.size() == 1) {
                 FeatureEntity feature = features.iterator().next();
-                if (feature.isSetGeometry()) {
-                    Geometry geometry = feature.getGeometry(Integer.toString(srid));
+                if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
+                    Geometry geometry = feature.getGeometryEntity().getGeometry();
                     // 8.2 set position from geometry
                     Coordinate c = geometry.getCoordinate();
                     position.setPosition(createCoordinatesForPosition(c.y, c.x, c.z));

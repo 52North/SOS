@@ -238,11 +238,11 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             Envelope e = new Envelope();
             int srid = -1;
             for (DatasetEntity de : datasets) {
-                if (de.getFeature().isSetGeometry()) {
+                if (de.getFeature().isSetGeometry() && !de.getFeature().getGeometryEntity().isEmpty()) {
                     if (srid < 0 ) {
-                        srid = de.getFeature().getGeometry().getSRID();
+                        srid = de.getFeature().getGeometryEntity().getGeometry().getSRID();
                     }
-                    e.expandToInclude(de.getFeature().getGeometry().getEnvelopeInternal());
+                    e.expandToInclude(de.getFeature().getGeometryEntity().getGeometry().getEnvelopeInternal());
                 }
             }
             return new ReferencedEnvelope(e, srid);

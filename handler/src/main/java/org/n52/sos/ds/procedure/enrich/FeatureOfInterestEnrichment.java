@@ -143,11 +143,11 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
         if (!Strings.isNullOrEmpty(feature.getDescription())) {
             sampFeat.setDescription(feature.getDescription());
         }
-        if (feature.isSetGeometry()) {
+        if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
             if (getProcedureCreationContext().getGeometryHandler() != null) {
-            sampFeat.setGeometry(getProcedureCreationContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometry()));
+            sampFeat.setGeometry(getProcedureCreationContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometryEntity().getGeometry()));
             } else {
-                sampFeat.setGeometry(feature.getGeometry());
+                sampFeat.setGeometry(feature.getGeometryEntity().getGeometry());
             }
         }
         final Set<FeatureEntity> parentFeatures = feature.getParents();

@@ -39,11 +39,11 @@
 	<jsp:param name="leadParagraph" value="Documentation of the 52&deg;North Sensor Observation Service" />
 </jsp:include>
 <hr/>
-<p>The 52&deg;North SOS documentation is available in the <a href="https://52north.org/twiki/bin/view/Main/WebHome" target="_blank" title="52&deg;North Wiki">52&deg;North Wiki</a>.</p>
+<p>The 52&deg;North SOS documentation is available in the <a href="https://wiki.52north.org/" target="_blank" title="52&deg;North Wiki">52&deg;North Wiki</a>.</p>
 
-<p>The user guide, including installation and configuration documentation, can be found <a href="https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation" target="_blank" title="User guide">here</a>.</p>
+<p>The user guide, including installation and configuration documentation, can be found <a href="https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation" target="_blank" title="User guide">here</a>.</p>
 
-<p>The developer guide can be found <a href="https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceDeveloperGuide" target="_blank" title="Developer guide">here</a>.</p>
+<p>The developer guide can be found <a href="https://wiki.52north.org/SensorWeb/SensorObservationServiceDeveloperGuide" target="_blank" title="Developer guide">here</a>.</p>
 
 <h4>Other Documentations</h4>
 

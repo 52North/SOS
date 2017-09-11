@@ -46,7 +46,7 @@ An extension accommodates additional INSPIRE Directive requirements, thus ensuri
 
 ## Quick Start
 
- Get started - the [installation guide](https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Installation) helps you install and configure the 52°North SOS.
+ Get started - the [installation guide](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#Installation) helps you install and configure the 52°North SOS.
 
 ## User Guide
 
@@ -174,6 +174,6 @@ The latest release of 52°North SOS can be downloaded from this website:
   * `README` :               This file
   * `RELEASE-NOTES` :        The release notes of the 52°North SOS
 
-No printer friendly documentation exist for this release. Instead, refer to the [wiki documentation](https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation).
+No printer friendly documentation exist for this release. Instead, refer to the [wiki documentation](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation).
 
 52°North Inititative for Geospatial Open Source Software GmbH, Germany

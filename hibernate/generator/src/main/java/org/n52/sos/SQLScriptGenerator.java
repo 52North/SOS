@@ -81,7 +81,7 @@ public class SQLScriptGenerator {
                 printToScreen("To execute the SQL script generator for Oracle you have to uncomment the dependency in the pom.xml.");
                 printToScreen("If the Oracle JDBC driver is not installed in your local Maven repository, ");
                 printToScreen("follow the first steps describes here: ");
-                printToScreen("https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Oracle_support.");
+                printToScreen("https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#Oracle_support.");
                 throw new MissingDriverException();
             }
 

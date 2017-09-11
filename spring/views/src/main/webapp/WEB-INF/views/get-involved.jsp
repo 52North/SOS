@@ -43,7 +43,7 @@
 <hr/>
 
 <h4>Tell the world!</h4>
-<p>If your SOS instance is publicly available please consider informing <a class="telltheworld" href="mailto:sos-installation@52north.org">us</a> or the community on <a class="telltheworld" href="mailto:swe@52north.org" target="_blank">swe@52north.org</a> or use our <a href="http://sensorweb.forum.52north.org/">forums</a> so that many people can profit from your hard work. If you like, your SOS can also be listed in our <a href="https://wiki.52north.org/bin/view/SensorWeb/SosExampleServices">Wiki</a> as an example.</p>
+<p>If your SOS instance is publicly available please consider informing <a class="telltheworld" href="mailto:sos-installation@52north.org">us</a> or the community on <a class="telltheworld" href="mailto:swe@52north.org" target="_blank">swe@52north.org</a> or use our <a href="http://sensorweb.forum.52north.org/">forums</a> so that many people can profit from your hard work. If you like, your SOS can also be listed in our <a href="https://wiki.52north.org/SensorWeb/SosExampleServices">Wiki</a> as an example.</p>
 
 <h4>Code development/ bug fixing</h4>
 <p>The best way to get to know a software is to use it! Implement features that you yourself need - new software, code snippets, adaptations, extensions, etc.  Help others solve their problems. Fix bugs and enhance the existing software. There are many ways to get started!</p>

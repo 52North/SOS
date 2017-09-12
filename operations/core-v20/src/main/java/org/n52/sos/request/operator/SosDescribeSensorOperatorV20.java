@@ -38,10 +38,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
@@ -514,15 +514,14 @@ public class SosDescribeSensorOperatorV20 extends
                 if (procedureRequestSettingProvider.getInstance().isEncodeFullChildrenInDescribeSensor()) {
                     component.setProcess(childProcedure);
                 } else {
-                    if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
+                    if (BindingRepository.getInstance().isBindingSupported(MediaTypes.APPLICATION_KVP)) {
                         try {
                             String version = ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
                                             .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
                                             : Sos1Constants.SERVICEVERSION;
                             String serviceURL = ServiceConfiguration.getInstance().getServiceURL();
                             String pdf = childProcedure.getDefaultElementEncoding();
-                            component.setHref(SosHelper.getDescribeSensorUrl(version, serviceURL, childProcedure.getIdentifier(),
-                                    BindingConstants.KVP_BINDING_ENDPOINT, pdf).toString());
+                            component.setHref(SosHelper.getDescribeSensorUrl(version, serviceURL, childProcedure.getIdentifier(), pdf).toString());
                         } catch (MalformedURLException uee) {
                             component.setHref(childProcedure.getIdentifier());
                         }

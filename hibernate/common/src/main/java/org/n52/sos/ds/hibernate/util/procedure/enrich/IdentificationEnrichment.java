@@ -48,8 +48,12 @@ import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class IdentificationEnrichment extends SensorMLEnrichment {
-
+    private final I18NDAORepository i18NDAORepository;
     private I18NProcedureMetadata i18n = null;
+
+    public IdentificationEnrichment(I18NDAORepository i18NDAORepository) {
+        this.i18NDAORepository = i18NDAORepository;
+    }
 
     @Override
     protected void enrich(AbstractSensorML description) throws OwsExceptionReport {
@@ -57,7 +61,7 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
 
         if (isSetLocale()) {
             I18NDAO<I18NProcedureMetadata> dao
-                    = I18NDAORepository.getInstance().getDAO(I18NProcedureMetadata.class);
+                    = i18NDAORepository.getDAO(I18NProcedureMetadata.class);
             if (dao != null) {
                 i18n = dao.getMetadata(getIdentifier());
             }

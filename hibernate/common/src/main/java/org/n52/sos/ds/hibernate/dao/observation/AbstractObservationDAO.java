@@ -75,6 +75,7 @@ import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.MultiPointCoverage;
 import org.n52.shetland.ogc.om.values.NilTemplateValue;
 import org.n52.shetland.ogc.om.values.ProfileValue;
+import org.n52.shetland.ogc.om.values.QuantityRangeValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
@@ -150,16 +151,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     private static final String SQL_QUERY_OBSERVATION_TIME_EXTREMA = "getObservationTimeExtrema";
 
-    private final DaoFactory daoFactory;
-
     public AbstractObservationDAO(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+        super(daoFactory);
     }
-
-    protected DaoFactory getDaoFactory() {
-        return daoFactory;
-    }
-
 
     /**
      * Add observation identifier (procedure, observableProperty,
@@ -605,7 +599,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         ObservationPersister persister = new ObservationPersister(
                 getGeometryHandler(),
                 this,
-                this.daoFactory,
+                getDaoFactory(),
                 sosObservation,
                 hObservationConstellations,
                 hFeature,
@@ -1461,6 +1455,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
 
         @Override
+        public Observation<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
+              throw notSupported(value);
+        }
+
+        @Override
         public Observation<?> visit(BooleanValue value) throws OwsExceptionReport {
             return setUnitAndPersist(observationFactory.truth(), value);
         }
@@ -1633,7 +1632,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             session.saveOrUpdate(observation);
 
             if (sosObservation.isSetParameter()) {
-                daos.parameter().insertParameter(sosObservation.getParameter(), observation.getObservationId(), caches.units, session);
+                daos.parameter().insertParameter(sosObservation.getParameter(), observation.getObservationId(), caches.units(), session);
             }
             return observation;
         }

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.legacy.full;
 
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
@@ -35,7 +36,6 @@ import org.n52.sos.ds.hibernate.entities.observation.VoidObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * Implementation of a full {@link Observation} for the legacy observation
@@ -56,18 +56,8 @@ public class LegacyBooleanObservation
     }
 
     @Override
-    public boolean isSetValue() {
-        return this.value;
-    }
-
-    @Override
     public void setValue(Boolean value) {
         this.value = value;
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
     }
 
     @Override

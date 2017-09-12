@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import com.google.common.base.Strings;
-
 /**
  * @since 4.0.0
  *
@@ -55,11 +53,6 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public boolean isSetIdentifier() {
-        return !Strings.isNullOrEmpty(getIdentifier());
-    }
-
-    @Override
     public Codespace getCodespace() {
         return this.codespace;
     }
@@ -67,11 +60,6 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     @Override
     public void setCodespace(Codespace codespace) {
         this.codespace = codespace;
-    }
-
-    @Override
-    public boolean isSetCodespace() {
-        return getCodespace() != null && getCodespace().isSetCodespace();
     }
 
     @Override
@@ -85,11 +73,6 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public boolean isSetName() {
-        return !Strings.isNullOrEmpty(name);
-    }
-
-    @Override
     public Codespace getCodespaceName() {
         return codespaceName;
     }
@@ -100,11 +83,6 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public boolean isSetCodespaceName() {
-        return getCodespaceName() != null && getCodespaceName().isSetCodespace();
-    }
-
-    @Override
     public String getDescription() {
         return decription;
     }
@@ -112,11 +90,6 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     @Override
     public void setDescription(String description) {
         this.decription = description;
-    }
-
-    @Override
-    public boolean isSetDescription() {
-        return !Strings.isNullOrEmpty(getDescription());
     }
 
     @Override

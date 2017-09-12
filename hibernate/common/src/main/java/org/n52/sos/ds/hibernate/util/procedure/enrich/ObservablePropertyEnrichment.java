@@ -45,11 +45,16 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment {
 
+    private final I18NDAORepository i18NDAORepository;
+
+    public ObservablePropertyEnrichment(I18NDAORepository i18NDAORepository) {
+        this.i18NDAORepository = i18NDAORepository;
+    }
+
     @Override
     public void enrich() throws OwsExceptionReport {
         if (isSetLocale()) {
-            I18NDAO<I18NObservablePropertyMetadata> dao = I18NDAORepository.
-                    getInstance().getDAO(I18NObservablePropertyMetadata.class);
+            I18NDAO<I18NObservablePropertyMetadata> dao = i18NDAORepository.getDAO(I18NObservablePropertyMetadata.class);
             if (dao != null) {
                 Set<String> ids = getCache().getObservablePropertiesForProcedure(getIdentifier());
                 Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(ids);

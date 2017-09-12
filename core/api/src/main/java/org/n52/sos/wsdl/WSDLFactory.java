@@ -110,7 +110,7 @@ public class WSDLFactory implements Producer<String> {
                     }
                 }
             }
-            
+
             binding = getBindingRepository().getBinding(MediaTypes.APPLICATION_KVP);
             if (binding != null) {
                 builder.setKvpEndpoint(URI.create(serviceUrl + "?"));

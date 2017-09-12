@@ -29,9 +29,9 @@
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasAssessmentType;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasNetwork;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasStation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasAssessmentType;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasNetwork;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasStation;
 
 /**
  * Entity for AQD e-Reporting SamplingPoint
@@ -48,11 +48,8 @@ public class EReportingSamplingPoint extends AbstractIdentifierNameDescriptionEn
     public static final String ID = "samplingPointId";
 
     private Long samplingPointId;
-
     private EReportingAssessmentType assessmentType;
-
     private EReportingStation station;
-
     private EReportingNetwork network;
 
     /**
@@ -81,25 +78,13 @@ public class EReportingSamplingPoint extends AbstractIdentifierNameDescriptionEn
     }
 
     @Override
-    public boolean isSetAssessmentType() {
-        return getAssessmentType() != null &&
-               getAssessmentType().isSetAssessmentType();
-    }
-
-    @Override
     public EReportingNetwork getNetwork() {
         return network;
     }
 
     @Override
-    public HasNetwork setNetwork(EReportingNetwork network) {
+    public void setNetwork(EReportingNetwork network) {
         this.network = network;
-        return this;
-    }
-
-    @Override
-    public boolean isSetNetwork() {
-        return getNetwork() != null;
     }
 
     @Override
@@ -108,14 +93,8 @@ public class EReportingSamplingPoint extends AbstractIdentifierNameDescriptionEn
     }
 
     @Override
-    public HasStation setStation(EReportingStation station) {
+    public void setStation(EReportingStation station) {
         this.station = station;
-        return this;
-    }
-
-    @Override
-    public boolean isSetStation() {
-        return getStation() != null;
     }
 
 }

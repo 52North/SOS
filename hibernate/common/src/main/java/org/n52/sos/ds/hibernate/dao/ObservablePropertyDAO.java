@@ -66,10 +66,8 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservablePropertyDAO.class);
 
-    private final DaoFactory daoFactory;
-
     public ObservablePropertyDAO(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+        super(daoFactory);
     }
 
     /**
@@ -115,7 +113,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
                             session)));
             c.setProjection(Projections.distinct(Projections.property(ObservableProperty.IDENTIFIER)));
         } else {
-            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
+            AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
             c = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 Criteria seriesCriteria = c.createCriteria(ContextualReferencedSeriesObservation.SERIES);
@@ -126,7 +124,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
                 c.createCriteria(AbstractObservation.OBSERVABLE_PROPERTY).setProjection(
                         Projections.distinct(Projections.property(ObservableProperty.IDENTIFIER)));
             }
-            new OfferingDAO(daoFactory).addOfferingRestricionForObservation(c, offeringIdentifier);
+            getDaoFactory().getOfferingDAO().addOfferingRestricionForObservation(c, offeringIdentifier);
         }
         LOGGER.debug(
                 "QUERY getProcedureIdentifiersForOffering(offeringIdentifier) using ObservationContellation entitiy ({}): {}",

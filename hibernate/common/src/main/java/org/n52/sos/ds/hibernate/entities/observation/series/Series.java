@@ -50,18 +50,13 @@ public class Series
         implements HasWriteableObservationContext,
                    HasDeletedFlag,
                    HasHiddenChildFlag,
-                   HasUnit, HasPublishedFlag {
+                   HasUnit,
+                   HasPublishedFlag {
 
-    private static final long serialVersionUID = 7838379468605356753L;
-
-    public static String ID = "seriesId";
-
-    public static String FIRST_TIME_STAMP = "firstTimeStamp";
-
-    public static String LAST_TIME_STAMP = "lastTimeStamp";
-
+    public static final String ID = "seriesId";
+    public static final String FIRST_TIME_STAMP = "firstTimeStamp";
+    public static final String LAST_TIME_STAMP = "lastTimeStamp";
     public static final String ALIAS = "s";
-
     public static final String ALIAS_DOT = ALIAS + ".";
 
     private long seriesId;
@@ -141,9 +136,8 @@ public class Series
     }
 
     @Override
-    public Series setPublished(final boolean published) {
+    public void setPublished(final boolean published) {
         this.published = published;
-        return this;
     }
 
     @Override
@@ -252,11 +246,6 @@ public class Series
     @Override
     public void setUnit(Unit unit) {
         this.unit = unit;
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return getUnit() != null && getUnit().isSetUnit();
     }
 
     @Override

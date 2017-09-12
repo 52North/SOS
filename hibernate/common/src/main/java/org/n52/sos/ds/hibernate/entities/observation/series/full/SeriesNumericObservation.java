@@ -63,16 +63,6 @@ public class SeriesNumericObservation
     }
 
     @Override
-    public boolean isSetValue() {
-        return value != null;
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
-
-    @Override
     public void accept(VoidObservationVisitor visitor)
             throws OwsExceptionReport {
         visitor.visit(this);

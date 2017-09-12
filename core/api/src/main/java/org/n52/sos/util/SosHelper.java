@@ -168,16 +168,13 @@ public class SosHelper {
      * @param procedureDescriptionFormat
      *            The procedureDescriptionFormat for the DescribeSensor request
      *
-     * @param urlPattern
-     *            the url pattern (e.g. /kvp)
-     *
      * @return Get-URL as String
      *
      * @throws MalformedURLException
      */
-    public static URL getDescribeSensorUrl(String version, String serviceURL, String procedureId, String urlPattern,
+    public static URL getDescribeSensorUrl(String version, String serviceURL, String procedureId,
                                            String procedureDescriptionFormat) throws MalformedURLException {
-        SosQueryBuilder b = new SosQueryBuilder(urlPattern);
+        SosQueryBuilder b = new SosQueryBuilder(serviceURL);
         b.addService();
         b.addVersion(version);
         b.addDescribeSensorRequest();

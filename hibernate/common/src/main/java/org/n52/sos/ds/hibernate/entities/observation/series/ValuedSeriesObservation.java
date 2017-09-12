@@ -38,7 +38,4 @@ import org.n52.sos.ds.hibernate.entities.observation.series.HibernateSeriesRelat
  *
  * @author Christian Autermann
  */
-public interface ValuedSeriesObservation<T>
-        extends ValuedLegacyObservation<T>,
-                HasSeries {
-}
+public interface ValuedSeriesObservation<T> extends ValuedLegacyObservation<T>, HasSeries {}

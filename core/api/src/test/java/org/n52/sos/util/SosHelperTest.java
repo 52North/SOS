@@ -71,7 +71,7 @@ public class SosHelperTest extends SosHelper {
 
     public static final String SERVICE_URL = "http://localhos:8080/SOS";
 
-    public static final String URL_PATTERN = "/kvp";
+    public static final String URL_PATTERN = "/service";
 
     @Test
     @Deprecated
@@ -100,10 +100,10 @@ public class SosHelperTest extends SosHelper {
     @Test
     public void shouldValidHttpGetDescribeSensorRequest() throws MalformedURLException, UnsupportedEncodingException {
         assertThat(
-                getDescribeSensorUrl(VERSION_1, SERVICE_URL, PROC_ID, URL_PATTERN,
+                getDescribeSensorUrl(VERSION_1, SERVICE_URL, PROC_ID,
                         SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), is(getProcDesc100Url()));
         assertThat(
-                getDescribeSensorUrl(VERSION_2, SERVICE_URL, PROC_ID, URL_PATTERN,
+                getDescribeSensorUrl(VERSION_2, SERVICE_URL, PROC_ID,
                         SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL), is(getProcDesc200Url()));
     }
 

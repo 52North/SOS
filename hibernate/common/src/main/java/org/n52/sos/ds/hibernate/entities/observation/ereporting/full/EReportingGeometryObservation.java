@@ -57,11 +57,6 @@ public class EReportingGeometryObservation
     }
 
     @Override
-    public boolean isSetValue() {
-        return value != null;
-    }
-
-    @Override
     public String getValueAsString() {
         return getValue().toText();
     }

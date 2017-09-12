@@ -37,6 +37,7 @@ import org.junit.Test;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -159,7 +160,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             // CALL
             ObservationStream resultList =
                     HibernateObservationUtilities.createSosObservationsFromObservations(observationsFromDataBase,
-                            request, null, null, null, new DaoFactory(), session);
+                            request, null, null, null, new DaoFactory(new I18NDAORepository()), session);
             // TEST RESULTS
             assertThat(resultList, is(notNullValue()));
             assertThat(resultList.hasNext(), is(true));

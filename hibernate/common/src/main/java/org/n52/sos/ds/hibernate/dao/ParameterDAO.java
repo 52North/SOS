@@ -44,6 +44,7 @@ import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.MultiPointCoverage;
 import org.n52.shetland.ogc.om.values.NilTemplateValue;
 import org.n52.shetland.ogc.om.values.ProfileValue;
+import org.n52.shetland.ogc.om.values.QuantityRangeValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
@@ -137,6 +138,12 @@ public class ParameterDAO {
             this.daos = daos;
             this.namedValue = namedValue;
             this.parameterFactory = daos.parameter.getParameterFactory();
+        }
+
+        @Override
+        public ValuedParameter<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
+            /* TODO implement org.n52.sos.ds.hibernate.dao.ParameterDAO.ParameterPersister.visit() */
+            throw new UnsupportedOperationException("org.n52.sos.ds.hibernate.dao.ParameterDAO.ParameterPersister.visit() not yet implemented");
         }
 
         private static class Caches {

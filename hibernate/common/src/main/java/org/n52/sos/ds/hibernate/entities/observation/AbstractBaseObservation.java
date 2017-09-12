@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.entities.observation;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
@@ -92,11 +91,6 @@ public abstract class AbstractBaseObservation
     }
 
     @Override
-    public boolean hasSamplingGeometry() {
-        return getSamplingGeometry() != null && !getSamplingGeometry().isEmpty();
-    }
-
-    @Override
     public boolean isDeleted() {
         return deleted;
     }
@@ -139,11 +133,6 @@ public abstract class AbstractBaseObservation
         } else {
             getParameters().add((Parameter) parameters);
         }
-    }
-
-    @Override
-    public boolean hasParameters() {
-        return CollectionHelper.isNotEmpty(getParameters());
     }
 
 }

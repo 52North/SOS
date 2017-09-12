@@ -60,11 +60,6 @@ public class BlobValuedLegacyObservation
     }
 
     @Override
-    public boolean isSetValue() {
-        return getValue() != null;
-    }
-
-    @Override
     public void accept(VoidValuedObservationVisitor visitor)
             throws OwsExceptionReport {
         visitor.visit(this);

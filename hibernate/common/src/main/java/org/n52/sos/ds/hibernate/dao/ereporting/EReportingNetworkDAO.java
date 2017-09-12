@@ -31,11 +31,13 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
  * DAO class for entity {@link EReportingNetwork}
@@ -47,6 +49,10 @@ import org.slf4j.LoggerFactory;
 public class EReportingNetworkDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EReportingNetworkDAO.class);
+
+    public EReportingNetworkDAO(DaoFactory daoFactory) {
+        super(daoFactory);
+    }
 
     /**
      * Get default Hibernate Criteria for querying network

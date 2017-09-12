@@ -47,16 +47,6 @@ public class BooleanValuedParameter extends Parameter<Boolean> {
     }
 
     @Override
-    public boolean isSetValue() {
-        return value != null;
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
-
-    @Override
     public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }

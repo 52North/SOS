@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasEReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 
 public class ContextualReferencedEReportingObservation
@@ -45,11 +45,6 @@ public class ContextualReferencedEReportingObservation
     @Override
     public void setEReportingSeries(EReportingSeries series) {
         setSeries(series);
-    }
-
-    @Override
-    public boolean hasEReportingSeries() {
-        return getSeries() instanceof EReportingSeries;
     }
 
 }

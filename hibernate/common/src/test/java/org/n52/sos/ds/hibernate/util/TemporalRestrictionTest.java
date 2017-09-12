@@ -35,6 +35,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -42,6 +43,7 @@ import org.hibernate.criterion.Projections;
 import org.junit.After;
 import org.junit.Before;
 
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
@@ -64,12 +66,12 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            ScrollableIterable<Observation<?>> i =
-                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()));
-            for (Observation<?> o : i) {
-                session.delete(o);
+            Criteria criteria = session.createCriteria(getObservationClass());
+            try (ScrollableIterable<Observation<?>> iterable = ScrollableIterable.fromCriteria(criteria)) {
+                for (Observation<?> o : iterable) {
+                    session.delete(o);
+                }
             }
-            i.close();
             session.flush();
             transaction.commit();
         } catch (HibernateException he) {
@@ -95,7 +97,7 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     protected abstract Time createScenario(Session session) throws OwsExceptionReport;
 
     protected HibernateObservationBuilder getBuilder(Session session) throws OwsExceptionReport {
-        return new HibernateObservationBuilder(session, new DaoFactory());
+        return new HibernateObservationBuilder(session, new DaoFactory(new I18NDAORepository()));
     }
 
     @SuppressWarnings("unchecked")

@@ -33,12 +33,11 @@ import java.net.MalformedURLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.gml.ReferenceType;
-import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -110,22 +109,33 @@ public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
         return !Strings.isNullOrEmpty(getTypeOfFormat());
     }
 
-    private String createKvpDescribeSensorOrReturnIdentifier(String identifier, String format) throws CodedException {
-        String href = identifier;
-        if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
-            final String version =
-                    ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
-                            .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
-                            : Sos1Constants.SERVICEVERSION;
-            try {
-                href =
-                        SosHelper.getDescribeSensorUrl(version, ServiceConfiguration.getInstance().getServiceURL(),
-                                identifier, BindingConstants.KVP_BINDING_ENDPOINT, format).toString();
-            } catch (MalformedURLException murle) {
-               LOGGER.error("Error while encoding DescribeSensor URL!", murle);
-            }
+    private String createKvpDescribeSensorOrReturnIdentifier(String identifier, String format) {
+        if (!getBindingRepository().isBindingSupported(MediaTypes.APPLICATION_KVP)) {
+            return identifier;
         }
-        return href;
+        try {
+            String version = getServiceOperatorRepository().isVersionSupported(SosConstants.SOS,
+                                                                               Sos2Constants.SERVICEVERSION)
+                                     ? Sos2Constants.SERVICEVERSION
+                                     : Sos1Constants.SERVICEVERSION;
+
+            return SosHelper.getDescribeSensorUrl(version, getServiceURL(), identifier, format).toString();
+        } catch (MalformedURLException murle) {
+            LOGGER.error("Error while encoding DescribeSensor URL!", murle);
+            return identifier;
+        }
+    }
+
+    private static BindingRepository getBindingRepository() {
+        return BindingRepository.getInstance();
+    }
+
+    private static ServiceOperatorRepository getServiceOperatorRepository() {
+        return ServiceOperatorRepository.getInstance();
+    }
+
+    private static String getServiceURL() {
+        return ServiceConfiguration.getInstance().getServiceURL();
     }
 
 }

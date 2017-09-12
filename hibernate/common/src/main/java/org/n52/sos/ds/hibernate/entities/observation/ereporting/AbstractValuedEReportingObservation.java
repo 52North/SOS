@@ -45,30 +45,21 @@ import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingQualityDAO;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingQuality;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
-
-import com.google.common.base.Strings;
 
 public abstract class AbstractValuedEReportingObservation<T>
         extends AbstractValuedSeriesObservation<T>
         implements ValuedEReportingObservation<T>, EReportingValues {
 
     private static final long serialVersionUID = 996063222630981539L;
-
     private Integer validation = EReportingValues.DEFAULT_VALIDATION;
-
     private Integer verification = EReportingValues.DEFAULT_VERIFICATION;
-
     private String primaryObservation = EReportingValues.DEFAULT_PRIMARY_OBSERVATION;
-
     private Boolean timeCoverageFlag;
-
     private Boolean dataCaptureFlag;
-
     private Double dataCapture;
-
     private Double uncertaintyEstimation;
 
     @Override
@@ -82,11 +73,6 @@ public abstract class AbstractValuedEReportingObservation<T>
     }
 
     @Override
-    public boolean hasEReportingSeries() {
-        return getSeries() instanceof EReportingSeries;
-    }
-
-    @Override
     public Integer getVerification() {
         return verification;
     }
@@ -94,11 +80,6 @@ public abstract class AbstractValuedEReportingObservation<T>
     @Override
     public void setVerification(Integer verification) {
         this.verification = verification;
-    }
-
-    @Override
-    public boolean isSetVerification() {
-        return getVerification() != null;
     }
 
     @Override
@@ -112,11 +93,6 @@ public abstract class AbstractValuedEReportingObservation<T>
     }
 
     @Override
-    public boolean isSetValidation() {
-        return getValidation() != null;
-    }
-
-    @Override
     public String getPrimaryObservation() {
         return primaryObservation;
     }
@@ -124,11 +100,6 @@ public abstract class AbstractValuedEReportingObservation<T>
     @Override
     public void setPrimaryObservation(String primaryObservation) {
         this.primaryObservation = primaryObservation;
-    }
-
-    @Override
-    public boolean isSetPrimaryObservation() {
-        return !Strings.isNullOrEmpty(getPrimaryObservation());
     }
 
     @Override
@@ -142,11 +113,6 @@ public abstract class AbstractValuedEReportingObservation<T>
     }
 
     @Override
-    public boolean isSetDataCaptureFlag() {
-        return this.dataCaptureFlag != null;
-    }
-
-    @Override
     public Double getDataCapture() {
         return this.dataCapture;
     }
@@ -154,11 +120,6 @@ public abstract class AbstractValuedEReportingObservation<T>
     @Override
     public void setDataCapture(Double dataCapture) {
         this.dataCapture = dataCapture;
-    }
-
-    @Override
-    public boolean isSetDataCapture() {
-        return this.dataCapture != null;
     }
 
     @Override
@@ -172,11 +133,6 @@ public abstract class AbstractValuedEReportingObservation<T>
     }
 
     @Override
-    public boolean isSetTimeCoverageFlag() {
-        return this.timeCoverageFlag != null;
-    }
-
-    @Override
     public Double getUncertaintyEstimation() {
         return this.uncertaintyEstimation;
     }
@@ -184,11 +140,6 @@ public abstract class AbstractValuedEReportingObservation<T>
     @Override
     public void setUncertaintyEstimation(Double uncertaintyEstimation) {
         this.uncertaintyEstimation = uncertaintyEstimation;
-    }
-
-    @Override
-    public boolean isSetUncertaintyEstimation() {
-        return this.uncertaintyEstimation != null;
     }
 
     @Override

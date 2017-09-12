@@ -159,7 +159,7 @@ public class ProcedureDescriptionEnrichments {
     }
 
     public IdentificationEnrichment createIdentificationEnrichment() {
-        return setValues(new IdentificationEnrichment());
+        return setValues(new IdentificationEnrichment(this.daoFactory.getI18NDAORepository()));
     }
 
     public ContactsEnrichment createContactsEnrichment() {
@@ -190,7 +190,7 @@ public class ProcedureDescriptionEnrichments {
     }
 
     private ObservablePropertyEnrichment createObservablePropertyEnrichment() {
-        return setValues(new ObservablePropertyEnrichment());
+        return setValues(new ObservablePropertyEnrichment(this.daoFactory.getI18NDAORepository()));
     }
 
     private TypeOfEnrichment createTypeOfEnrichmentEnrichment() {

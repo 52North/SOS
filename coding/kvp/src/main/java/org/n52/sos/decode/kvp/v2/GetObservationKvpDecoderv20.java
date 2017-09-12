@@ -41,6 +41,8 @@ import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 import org.n52.svalbard.decode.Decoder;
@@ -164,8 +166,10 @@ public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObserv
         Object obj = decoder.decode(xml);
         if (obj instanceof Extension) {
             return (Extension<?>) obj;
+        } else if (obj instanceof SweAbstractDataComponent) {
+            return new SwesExtension<>().setValue((SweAbstractDataComponent)obj);
         } else {
-            return new SwesExtension<>().setValue(obj);
+            return new SwesExtension<>().setValue(new SweText().setValue(value));
         }
     }
 

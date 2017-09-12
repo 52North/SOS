@@ -85,7 +85,7 @@
         <jackson.version>2.8.5</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc4.version>4.0</sqljdbc4.version>
-        <exificient.version>0.9.5</exificient.version>
+        <exificient.version>0.9.6</exificient.version>
 
         <!-- 52N dependency versions -->
         <iceland.version>2-SNAPSHOT</iceland.version>

@@ -1658,14 +1658,6 @@
             </snapshots>
         </repository>
         <repository>
-            <id>refractions</id>
-            <name>Refractions repository</name>
-            <url>http://lists.refractions.net/m2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>hibernate-spatial</id>
             <url>http://www.hibernatespatial.org/repository</url>
             <snapshots>

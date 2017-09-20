@@ -37,7 +37,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.n52.shetland.ogc.ows.OWSConstants;
@@ -156,11 +155,6 @@ public class SosHelperTest extends SosHelper {
         builder.append("&").append(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat.name()).append("=")
                 .append(URLEncoder.encode(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, "UTF-8"));
         return new URL(builder.toString());
-    }
-
-    @BeforeClass
-    public static void setUp() {
-        setConfiguration(new Configuration());
     }
 
 }

@@ -131,22 +131,41 @@ public class SosHelper {
     }
 
     /**
-     * Creates a HTTP-Get URL from FOI identifier and service URL for SOS
+     * Creates a HTTP-Get URL from FOI identifier and service URL for SOS version.
+     *
+     * @param foiId FeatureOfInterst identifier
+     * @param version SOS version
+     * @param serviceURL Service URL
+     * @param urlPattern ignored
+     *
+     * @return HTTP-Get request for featureOfInterst identifier
+     *
+     * @throws java.net.MalformedURLException if the service url is invalid
+     * @deprecated use {@link #createFoiGetUrl(java.lang.String, java.lang.String, java.lang.String)}
+     */
+    @Deprecated
+    public static URL createFoiGetUrl(String foiId, String version, String serviceURL, String urlPattern)
+            throws MalformedURLException {
+        return createFoiGetUrl(foiId, version, serviceURL);
+    }
+
+    /**
+     * Creates a HTTP-Get URL from FOI identifier and service URL for SOS.
      * version
      *
-     * @param foiId
-     *            FeatureOfInterst identifier
-     * @param version
-     *            SOS version
-     * @param serviceURL
-     *            Service URL
+     * @param foiId      FeatureOfInterst identifier
+     * @param version    SOS version
+     * @param serviceURL Service URL
+     *
      * @return HTTP-Get request for featureOfInterst identifier
+     *
+     * @throws java.net.MalformedURLException if the service url is invalid
      */
-    public static URL createFoiGetUrl(final String foiId, final String version, final String serviceURL,
-            final String urlPattern) throws MalformedURLException {
-
-        SosQueryBuilder b = new SosQueryBuilder(getBaseGetUrl(serviceURL, urlPattern));
-        b.addService().addVersion(version);
+    public static URL createFoiGetUrl(String foiId, String version, String serviceURL)
+            throws MalformedURLException {
+        SosQueryBuilder b = new SosQueryBuilder(serviceURL);
+        b.addService();
+        b.addVersion(version);
         b.addGetFeatureOfInterestRequest();
         if (version.equalsIgnoreCase(Sos1Constants.SERVICEVERSION)) {
             b.addFeatureOfInterestId(foiId);
@@ -434,7 +453,7 @@ public class SosHelper {
      * @return the {@code MinMax} describing the envelope
      */
     @Deprecated
-    public static MinMax<String> getMinMaxFromEnvelope(final Envelope envelope) {
+    public static MinMax<String> getMinMaxFromEnvelope(Envelope envelope) {
         // TODO for full 3D support add minz to parameter in setStringValue
         return new MinMax<String>()
                 .setMaximum(Joiner.on(' ').join(envelope.getMaxX(), envelope.getMaxY()))

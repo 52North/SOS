@@ -264,7 +264,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     }
     
     protected Criteria getDefaultCriteria(final Session session) {
-        return session.createCriteria(FeatureOfInterest.class);
+        return session.createCriteria(FeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     /**
@@ -573,10 +573,17 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     public Criteria getPublishedFeatureOfInterestCriteria(Session session) throws CodedException {
         Criteria c = getDefaultCriteria(session);
         if (HibernateHelper.isEntitySupported(Series.class)) {
-            c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            c.add(Subqueries.propertyIn(FeatureOfInterest.ID, getDetachedCriteriaSeries(session)));
+            c.add(Subqueries.propertyNotIn(FeatureOfInterest.ID, getPublishedDetachedCriteriaSeries(session)));
         }
         return c;
+    }
+    
+    private DetachedCriteria getPublishedDetachedCriteriaSeries(Session session) throws CodedException {
+        final DetachedCriteria detachedCriteria =
+                DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
+        detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(Series.DELETED, true), Restrictions.eq(Series.PUBLISHED, false)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.FEATURE_OF_INTEREST)));
+        return detachedCriteria;
     }
 
     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {

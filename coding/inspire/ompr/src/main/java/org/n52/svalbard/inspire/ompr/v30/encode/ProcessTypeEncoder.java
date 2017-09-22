@@ -99,6 +99,8 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>
     private static final Set<EncoderKey> ENCODER_KEYS = union(
             encoderKeysForElements(InspireOMPRConstants.NS_OMPR_30, SosProcedureDescription.class, Process.class),
             encoderKeysForElements(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE, SosProcedureDescription.class,
+                    Process.class),
+            encoderKeysForElements("http://inspire.ec.europa.eu/featureconcept/Process", SosProcedureDescription.class,
                     Process.class));
 
     public ProcessTypeEncoder() {

@@ -53,7 +53,9 @@ public class GeneratedDescriptionCreationStrategy implements
     public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
         SosProcedureDescription desc = getFactory(descriptionFormat).create(p, i18n, s);
-        desc.setDescriptionFormat(descriptionFormat);
+        if (Strings.isNullOrEmpty(desc.getDescriptionFormat())) {
+            desc.setDescriptionFormat(descriptionFormat);
+        }
         return desc;
     }
 

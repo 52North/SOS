@@ -166,7 +166,7 @@ public class Contact {
      *            the telephoneFacsimile to add
      */
     public Contact addTelephoneFacsimile(String telephoneFacsimile) {
-        if (this.telephoneFacsimile.isAbsent()) {
+        if (this.telephoneFacsimile.isAbsent() || this.telephoneFacsimile.isNil()) {
             this.telephoneFacsimile = Nillable.of((List<String>)Lists.<String>newArrayList());
         }
         this.telephoneFacsimile.get().add(Preconditions.checkNotNull(telephoneFacsimile));
@@ -202,7 +202,7 @@ public class Contact {
      *            the telephoneVoice to add
      */
     public Contact addTelephoneVoice(String telephoneVoice) {
-        if (this.telephoneVoice.isAbsent()) {
+        if (this.telephoneVoice.isAbsent() || this.telephoneVoice.isNil()) {
             this.telephoneVoice = Nillable.of((List<String>)Lists.<String>newArrayList());
         }
         this.telephoneVoice.get().add(Preconditions.checkNotNull(telephoneVoice));

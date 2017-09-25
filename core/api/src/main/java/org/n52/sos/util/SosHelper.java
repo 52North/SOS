@@ -45,9 +45,6 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Stream;
 
-import org.n52.iceland.binding.Binding;
-import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.NcName;
 import org.n52.shetland.ogc.gml.CodeType;
@@ -55,9 +52,7 @@ import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.OwsRange;
 import org.n52.shetland.ogc.ows.OwsValue;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
-import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.shetland.ogc.sensorML.elements.SmlIo;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -69,14 +64,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.MinMax;
-import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.shetland.util.SosQueryBuilder;
-import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
-import org.n52.sos.coding.encode.ResponseFormatRepository;
-import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
-import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
-import org.n52.sos.service.Configurator;
-import org.n52.svalbard.encode.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,58 +83,52 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class SosHelper {
 
-    private static Configuration config = new Configuration();
-
     private static final Logger LOGGER = LoggerFactory.getLogger(SosHelper.class);
 
     private static final int KILO_BYTE = 1024;
-
     private static final int KILO_BYTES_256 = 256 * KILO_BYTE;
 
-    protected static Configuration getConfiguration() {
-        return config;
-    }
-
-    protected static void setConfiguration(final Configuration config) {
-        SosHelper.config = config;
-    }
-
-    private static String getBaseGetUrl(String serviceURL, String urlPattern) {
-        final StringBuilder url = new StringBuilder();
-        // service URL
-        url.append(serviceURL);
-        // URL pattern for KVP
-        url.append(urlPattern);
-        // ?
-        url.append('?');
-        return url.toString();
-    }
-    private static String getBaseGetUrl(String serviceURL) {
-        final StringBuilder url = new StringBuilder();
-        // service URL
-        url.append(serviceURL);
-        // ?
-        url.append('?');
-        return url.toString();
+    /**
+     * Hide utility constructor
+     */
+    protected SosHelper() {
     }
 
     /**
-     * Creates a HTTP-Get URL from FOI identifier and service URL for SOS
-     * version
+     * Creates a HTTP-Get URL from FOI identifier and service URL for SOS version.
      *
-     * @param foiId
-     *            FeatureOfInterst identifier
-     * @param version
-     *            SOS version
-     * @param serviceURL
-     *            Service URL
+     * @param foiId      FeatureOfInterst identifier
+     * @param version    SOS version
+     * @param serviceURL Service URL
+     * @param urlPattern ignored
+     *
      * @return HTTP-Get request for featureOfInterst identifier
+     *
+     * @throws java.net.MalformedURLException if the service url is invalid
+     * @deprecated use {@link #createFoiGetUrl(java.lang.String, java.lang.String, java.lang.String)}
      */
-    public static URL createFoiGetUrl(final String foiId, final String version, final String serviceURL,
-            final String urlPattern) throws MalformedURLException {
+    @Deprecated
+    public static URL createFoiGetUrl(String foiId, String version, String serviceURL, String urlPattern)
+            throws MalformedURLException {
+        return createFoiGetUrl(foiId, version, serviceURL);
+    }
 
-        SosQueryBuilder b = new SosQueryBuilder(getBaseGetUrl(serviceURL, urlPattern));
-        b.addService().addVersion(version);
+    /**
+     * Creates a HTTP-Get URL from FOI identifier and service URL for SOS. version
+     *
+     * @param foiId      FeatureOfInterst identifier
+     * @param version    SOS version
+     * @param serviceURL Service URL
+     *
+     * @return HTTP-Get request for featureOfInterst identifier
+     *
+     * @throws java.net.MalformedURLException if the service url is invalid
+     */
+    public static URL createFoiGetUrl(String foiId, String version, String serviceURL)
+            throws MalformedURLException {
+        SosQueryBuilder b = new SosQueryBuilder(serviceURL);
+        b.addService();
+        b.addVersion(version);
         b.addGetFeatureOfInterestRequest();
         if (version.equalsIgnoreCase(Sos1Constants.SERVICEVERSION)) {
             b.addFeatureOfInterestId(foiId);
@@ -159,25 +141,18 @@ public class SosHelper {
     /**
      * creates a HTTP-GET string for DescribeSensor.
      *
-     * @param version
-     *            the version of the request
-     * @param serviceURL
-     *            the service url
-     * @param procedureId
-     *            The procedureId for the DescribeSensor request
-     * @param procedureDescriptionFormat
-     *            The procedureDescriptionFormat for the DescribeSensor request
-     *
-     * @param urlPattern
-     *            the url pattern (e.g. /kvp)
+     * @param version                    the version of the request
+     * @param serviceURL                 the service url
+     * @param procedureId                The procedureId for the DescribeSensor request
+     * @param procedureDescriptionFormat The procedureDescriptionFormat for the DescribeSensor request
      *
      * @return Get-URL as String
      *
      * @throws MalformedURLException
      */
-    public static URL getDescribeSensorUrl(String version, String serviceURL, String procedureId, String urlPattern,
+    public static URL getDescribeSensorUrl(String version, String serviceURL, String procedureId,
                                            String procedureDescriptionFormat) throws MalformedURLException {
-        SosQueryBuilder b = new SosQueryBuilder(getBaseGetUrl(serviceURL, urlPattern));
+        SosQueryBuilder b = new SosQueryBuilder(serviceURL);
         b.addService();
         b.addVersion(version);
         b.addDescribeSensorRequest();
@@ -191,27 +166,43 @@ public class SosHelper {
         return b.build();
     }
 
+    @Deprecated
     public static URL getGetObservationKVPRequest(String version) throws MalformedURLException {
-        SosQueryBuilder b = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL()));
+        return getGetObservationKVPRequest(ServiceConfiguration.getInstance().getServiceURL(), version);
+    }
+
+    public static URL getGetObservationKVPRequest(String serviceURL, String version) throws MalformedURLException {
+        return getGetObservationKVPRequest(new URL(serviceURL), version);
+    }
+
+    public static URL getGetObservationKVPRequest(URL serviceURL, String version) {
+        SosQueryBuilder b = new SosQueryBuilder(serviceURL);
         b.addService();
         b.addVersion(version);
         b.addGetObservationRequest();
         return b.build();
     }
 
+    @Deprecated
     public static URL getGetCapabilitiesKVPRequest() throws MalformedURLException {
-        SosQueryBuilder builder = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL()));
+        return getGetCapabilitiesKVPRequest(ServiceConfiguration.getInstance().getServiceURL());
+    }
+
+    public static URL getGetCapabilitiesKVPRequest(URL serviceURL) {
+        SosQueryBuilder builder = new SosQueryBuilder(serviceURL);
         builder.addGetCapabilitiesRequest();
         builder.addService();
         return builder.build();
     }
 
+    public static URL getGetCapabilitiesKVPRequest(String serviceURL) throws MalformedURLException {
+        return getGetCapabilitiesKVPRequest(new URL(serviceURL));
+    }
 
     /**
      * Checks the free memory size.
      *
-     * @throws OwsExceptionReport
-     *             If no free memory size.
+     * @throws OwsExceptionReport If no free memory size.
      */
     public static void checkFreeMemory() throws OwsExceptionReport {
         Runtime runtime = Runtime.getRuntime();
@@ -222,20 +213,19 @@ public class SosHelper {
         if ((runtime.totalMemory() == runtime.maxMemory()) && (freeMem < KILO_BYTES_256)) {
             // accords to 256 kB create service exception
             throw new ResponseExceedsSizeLimitException().withMessage(
-                    "The observation response is to big for the maximal heap size of %d Byte of the "
-                            + "virtual machine! Please either refine your getObservation request to reduce the "
-                            + "number of observations in the response or ask the administrator of this SOS to "
-                            + "increase the maximum heap size of the virtual machine!", runtime.maxMemory());
+                    "The observation response is to big for the maximal heap size of %d Byte of the " +
+                    "virtual machine! Please either refine your getObservation request to reduce the " +
+                    "number of observations in the response or ask the administrator of this SOS to " +
+                    "increase the maximum heap size of the virtual machine!", runtime.maxMemory());
         }
     }
 
     /**
      * Returns an Envelope that contains the Geometry
      *
-     * @param envelope
-     *            Current envelope
-     * @param geometry
-     *            Geometry to include
+     * @param envelope Current envelope
+     * @param geometry Geometry to include
+     *
      * @return Envelope that includes the Geometry
      */
     public static Envelope checkEnvelope(final Envelope envelope, final Geometry geometry) {
@@ -248,38 +238,33 @@ public class SosHelper {
         return checkedEnvelope;
     }
 
-
     /**
      * Checks if the FOI identifier was generated by SOS
      *
-     * @param featureOfInterestIdentifier
-     *            FOI identifier from database
-     * @param version
-     *            SOS version
+     * @param featureOfInterestIdentifier FOI identifier from database
+     * @param version                     SOS version
+     *
      * @return True if the FOI identifier was generated
      */
     public static boolean checkFeatureOfInterestIdentifierForSosV2(final String featureOfInterestIdentifier,
-            final String version) {
+                                                                   final String version) {
         return !(Sos2Constants.SERVICEVERSION.equals(version) && featureOfInterestIdentifier
-                .startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX));
+                 .startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX));
     }
 
     /**
      * get collection of hierarchy values for a key
      *
-     * @param hierarchy
-     *            map to example
-     * @param key
-     *            start key
-     * @param fullHierarchy
-     *            whether to traverse down the full hierarchy
-     * @param includeStartKey
-     *            whether to include the passed key in the result collection
+     * @param hierarchy       map to example
+     * @param key             start key
+     * @param fullHierarchy   whether to traverse down the full hierarchy
+     * @param includeStartKey whether to include the passed key in the result collection
+     *
      * @return collection of the full hierarchy
      */
     // FIXME move to ReadableCache
     public static Set<String> getHierarchy(final Map<String, Set<String>> hierarchy, final String key,
-            final boolean fullHierarchy, final boolean includeStartKey) {
+                                           final boolean fullHierarchy, final boolean includeStartKey) {
 
         Set<String> hierarchyValues = Sets.newHashSet();
         if (includeStartKey) {
@@ -302,14 +287,10 @@ public class SosHelper {
     /**
      * get collection of hierarchy values for a set of keys
      *
-     * @param hierarchy
-     *            map to example
-     * @param keys
-     *            start key
-     * @param fullHierarchy
-     *            whether to traverse down the full hierarchy
-     * @param includeStartKeys
-     *            whether to include the passed keys in the result collection
+     * @param hierarchy        map to example
+     * @param keys             start key
+     * @param fullHierarchy    whether to traverse down the full hierarchy
+     * @param includeStartKeys whether to include the passed keys in the result collection
      *
      * @return collection of the full hierarchy
      */
@@ -324,10 +305,9 @@ public class SosHelper {
     /**
      * Get valid FOI identifiers for SOS 2.0
      *
-     * @param featureIDs
-     *            FOI identifiers to test
-     * @param version
-     *            SOS version
+     * @param featureIDs FOI identifiers to test
+     * @param version    SOS version
+     *
      * @return valid FOI identifiers
      */
     public static Collection<String> getFeatureIDs(final Collection<String> featureIDs, final String version) {
@@ -340,51 +320,39 @@ public class SosHelper {
     }
 
     /**
-     * Creates the minimum and maximum values of this envelope in the default
-     * EPSG.
+     * Creates the minimum and maximum values of this envelope in the default EPSG.
      *
-     * @param envelope
-     *            the envelope
+     * @param envelope the envelope
+     *
      * @return the {@code MinMax} describing the envelope
      */
     @Deprecated
-    public static MinMax<String> getMinMaxFromEnvelope(final Envelope envelope) {
+    public static MinMax<String> getMinMaxFromEnvelope(Envelope envelope) {
         return new MinMax<String>()
                 .setMaximum(Joiner.on(' ').join(envelope.getMaxX(), envelope.getMaxY()))
                 .setMinimum(Joiner.on(' ').join(envelope.getMinX(), envelope.getMinY()));
     }
 
-    public static MinMax<String> getMinMaxFromEnvelope(final ReferencedEnvelope envelope) {
-        if (envelope.isSetEnvelope() && !envelope.getEnvelope().isNull()) {
-            return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(), envelope.getEnvelope().getMaxY()))
-                    .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY()));
-        }
-        return getMinMaxFromEnvelope(envelope.getEnvelope());
-
-    }
-
-     /**
-     * Creates the minimum and maximum values of this envelope in the default
-     * EPSG.
+    /**
+     * Creates the minimum and maximum values of this envelope in the default EPSG.
      *
-     * @param envelope
-     *            the envelope
+     * @param envelope the envelope
+     *
      * @return the {@code MinMax} describing the envelope
      */
     public static OwsRange getOwsRangeFromEnvelope(Envelope envelope) {
         Joiner joiner = Joiner.on(' ');
         // TODO for full 3D support add minz to parameter in setStringValue
         return new OwsRange(
-            new OwsValue(joiner.join(envelope.getMaxX(), envelope.getMaxY())),
-            new OwsValue(joiner.join(envelope.getMinX(), envelope.getMinY())));
+                new OwsValue(joiner.join(envelope.getMaxX(), envelope.getMaxY())),
+                new OwsValue(joiner.join(envelope.getMinX(), envelope.getMinY())));
     }
 
     /**
-     * Creates the minimum and maximum values of this envelope in the default
-     * EPSG as list.
+     * Creates the minimum and maximum values of this envelope in the default EPSG as list.
      *
-     * @param envelope
-     *            the envelope
+     * @param envelope the envelope
+     *
      * @return the {@code MinMax} describing the envelope
      */
     public static MinMax<List<String>> getMinMaxFromEnvelopeAsList(final Envelope envelope) {
@@ -402,46 +370,46 @@ public class SosHelper {
         String unit = null;
         String valueType = SosConstants.NOT_DEFINED;
         switch (ioValue.getDataComponentType()) {
-        case Boolean:
-            valueType = SweConstants.VT_BOOLEAN;
-            break;
-        case Category:
-            valueType = SweConstants.VT_CATEGORY;
-            break;
-        case Count:
-            valueType = SweConstants.VT_COUNT;
-            break;
-        case CountRange:
-            valueType = SweConstants.VT_COUNT_RANGE;
-            break;
-        case ObservableProperty:
-            valueType = SweConstants.VT_OBSERVABLE_PROPERTY;
-            break;
-        case Quantity:
-            unit = ((SweQuantity) ioValue).getUom();
-            valueType = SweConstants.VT_QUANTITY;
-            break;
-        case QuantityRange:
-            valueType = SweConstants.VT_QUANTITY_RANGE;
-            break;
-        case Text:
-            valueType = SweConstants.VT_TEXT;
-            break;
-        case Time:
-            unit = ((SweTime) ioValue).getUom();
-            valueType = SweConstants.VT_TIME;
-            break;
-        case TimeRange:
-            valueType = SweConstants.VT_TIME_RANGE;
-            break;
-        case DataArray:
-            valueType = SweConstants.VT_DATA_ARRAY;
-            break;
-        case DataRecord:
-            valueType = SweConstants.VT_DATA_RECORD;
-            break;
-        default:
-            break;
+            case Boolean:
+                valueType = SweConstants.VT_BOOLEAN;
+                break;
+            case Category:
+                valueType = SweConstants.VT_CATEGORY;
+                break;
+            case Count:
+                valueType = SweConstants.VT_COUNT;
+                break;
+            case CountRange:
+                valueType = SweConstants.VT_COUNT_RANGE;
+                break;
+            case ObservableProperty:
+                valueType = SweConstants.VT_OBSERVABLE_PROPERTY;
+                break;
+            case Quantity:
+                unit = ((SweQuantity) ioValue).getUom();
+                valueType = SweConstants.VT_QUANTITY;
+                break;
+            case QuantityRange:
+                valueType = SweConstants.VT_QUANTITY_RANGE;
+                break;
+            case Text:
+                valueType = SweConstants.VT_TEXT;
+                break;
+            case Time:
+                unit = ((SweTime) ioValue).getUom();
+                valueType = SweConstants.VT_TIME;
+                break;
+            case TimeRange:
+                valueType = SweConstants.VT_TIME_RANGE;
+                break;
+            case DataArray:
+                valueType = SweConstants.VT_DATA_ARRAY;
+                break;
+            case DataRecord:
+                valueType = SweConstants.VT_DATA_RECORD;
+                break;
+            default:
+                break;
         }
         if ((unit == null) || unit.isEmpty()) {
             unit = SosConstants.NOT_DEFINED;
@@ -485,33 +453,6 @@ public class SosHelper {
             }
         }
         return names;
-    }
-
-    /**
-     * Hide utility constructor
-     */
-    protected SosHelper() {
-    }
-
-    /**
-     * Class to encapsulate all calls to the {@link Configurator}. Can be
-     * overwritten by tests.
-     *
-     * @see SosHelper#setConfiguration(org.n52.sos.util.SosHelper.Configuration)
-     */
-    protected static class Configuration {
-
-        protected Collection<String> getObservationTypes() {
-            return Configurator.getInstance().getCache().getObservationTypes();
-        }
-
-        protected Set<Encoder<?, ?>> getEncoders() {
-            return CodingRepository.getInstance().getEncoders();
-        }
-
-        protected Collection<Binding> getBindings() {
-            return BindingRepository.getInstance().getBindings().values();
-        }
     }
 
     public static Map<String, String> getNcNameResolvedOfferings(Collection<String> offerings) {

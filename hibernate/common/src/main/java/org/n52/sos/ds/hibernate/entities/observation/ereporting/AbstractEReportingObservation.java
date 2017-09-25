@@ -28,10 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-
-import com.google.common.base.Strings;
 
 public abstract class AbstractEReportingObservation<T>
         extends AbstractSeriesObservation<T>
@@ -40,17 +38,11 @@ public abstract class AbstractEReportingObservation<T>
     private static final long serialVersionUID = 2878044983511090422L;
 
     private Integer validation = EReportingValues.DEFAULT_VALIDATION;
-
     private Integer verification = EReportingValues.DEFAULT_VERIFICATION;
-
     private String primaryObservation = EReportingValues.DEFAULT_PRIMARY_OBSERVATION;
-
     private Boolean timeCoverageFlag;
-
     private Boolean dataCaptureFlag;
-
     private Double dataCapture;
-
     private Double uncertaintyEstimation;
 
     @Override
@@ -64,11 +56,6 @@ public abstract class AbstractEReportingObservation<T>
     }
 
     @Override
-    public boolean hasEReportingSeries() {
-        return getSeries() instanceof EReportingSeries;
-    }
-
-    @Override
     public Integer getVerification() {
         return verification;
     }
@@ -76,11 +63,6 @@ public abstract class AbstractEReportingObservation<T>
     @Override
     public void setVerification(Integer verification) {
         this.verification = verification;
-    }
-
-    @Override
-    public boolean isSetVerification() {
-        return getVerification() != null;
     }
 
     @Override
@@ -106,11 +88,6 @@ public abstract class AbstractEReportingObservation<T>
     @Override
     public void setPrimaryObservation(String primaryObservation) {
         this.primaryObservation = primaryObservation;
-    }
-
-    @Override
-    public boolean isSetPrimaryObservation() {
-        return !Strings.isNullOrEmpty(getPrimaryObservation());
     }
 
     @Override

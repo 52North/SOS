@@ -15,6 +15,10 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>api</artifactId>
 		</dependency>
+        <dependency>
+			<groupId>org.n52.janmayen</groupId>
+			<artifactId>janmayen</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.n52.iceland</groupId>
 			<artifactId>iceland</artifactId>

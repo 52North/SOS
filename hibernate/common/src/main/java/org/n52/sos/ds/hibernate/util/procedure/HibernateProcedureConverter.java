@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -270,10 +270,12 @@ public class HibernateProcedureConverter
         return Optional.absent();
     }
 
-    protected ArrayList<DescriptionCreationStrategy> getCreationStrategies(ValidProcedureTime vpt) {
+    protected List<DescriptionCreationStrategy> getCreationStrategies(ValidProcedureTime vpt) {
         return Lists.newArrayList(new ValidProcedureTimeDescriptionCreationStrategy(vpt),
-                new LinkedDescriptionCreationStrategy(), new XmlStringDescriptionCreationStrategy(),
-                new FileDescriptionCreationStrategy(), new GeneratedDescriptionCreationStrategy());
+                                  new LinkedDescriptionCreationStrategy(),
+                                  new XmlStringDescriptionCreationStrategy(),
+                                  new FileDescriptionCreationStrategy(),
+                                  new GeneratedDescriptionCreationStrategy());
     }
 
     /**

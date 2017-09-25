@@ -56,6 +56,7 @@ import static org.n52.sos.util.builder.SweDataArrayBuilder.aSweDataArray;
 import static org.n52.sos.util.builder.SweDataArrayValueBuilder.aSweDataArrayValue;
 import static org.n52.sos.util.builder.SweTimeBuilder.aSweTime;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.joda.time.DateTime;
@@ -799,7 +800,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
                                                 .addBlock("2013-02-06T10:28:00", "2.5").build()).build())
                         .setIdentifier(CODESPACE, OBSERVATION_ID).build();
 
-        controller.update(new ResultInsertionUpdate(RESULT_TEMPLATE_IDENTIFIER, observation));
+        controller.update(new ResultInsertionUpdate(RESULT_TEMPLATE_IDENTIFIER, Arrays.asList(observation)));
     }
 
     private void insertResultTemplateResponse(String resultTemplateIdentifier) {

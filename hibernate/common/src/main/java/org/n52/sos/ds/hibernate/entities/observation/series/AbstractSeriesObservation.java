@@ -57,11 +57,6 @@ public abstract class AbstractSeriesObservation<T>
     }
 
     @Override
-    public boolean isSetSeries() {
-        return getSeries() != null;
-    }
-
-    @Override
     public AbstractFeatureOfInterest getFeatureOfInterest() {
         return isSetSeries() ? getSeries().getFeatureOfInterest() : null;
     }

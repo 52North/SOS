@@ -36,8 +36,6 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasLocale;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
 
-import com.google.common.base.Strings;
-
 /**
  * Abstract feature I18N entity
  *
@@ -45,8 +43,10 @@ import com.google.common.base.Strings;
  * @since 4.2.0
  *
  */
-public abstract class AbstractHibernateI18NMetadata implements Serializable, HasName,
-                                                      HasDescription, HasLocale {
+public abstract class AbstractHibernateI18NMetadata implements Serializable,
+                                                               HasName,
+                                                               HasDescription,
+                                                               HasLocale {
 
     private static final long serialVersionUID = 6284817322541256323L;
 
@@ -69,8 +69,7 @@ public abstract class AbstractHibernateI18NMetadata implements Serializable, Has
     /**
      * Set the object id
      *
-     * @param id
-     *           the id to set
+     * @param id the id to set
      */
     public void setId(long id) {
         this.id = id;
@@ -88,8 +87,7 @@ public abstract class AbstractHibernateI18NMetadata implements Serializable, Has
     /**
      * Set the related object
      *
-     * @param objectId
-     *                 Related object
+     * @param objectId Related object
      */
     public void setObjectId(AbstractIdentifierNameDescriptionEntity objectId) {
         this.objectId = objectId;
@@ -106,11 +104,6 @@ public abstract class AbstractHibernateI18NMetadata implements Serializable, Has
     }
 
     @Override
-    public boolean isSetName() {
-        return !Strings.isNullOrEmpty(getName());
-    }
-
-    @Override
     public String getDescription() {
         return description;
     }
@@ -118,17 +111,6 @@ public abstract class AbstractHibernateI18NMetadata implements Serializable, Has
     @Override
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public boolean isSetDescription() {
-        return !Strings.isNullOrEmpty(getDescription());
-    }
-
-    @Override
-    public boolean isSetLocale() {
-        return getLocale() !=
-               null;
     }
 
     @Override

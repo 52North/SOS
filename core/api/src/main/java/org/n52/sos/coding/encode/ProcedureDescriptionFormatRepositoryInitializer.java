@@ -35,7 +35,7 @@ import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.svalbard.encode.EncoderRepository;
 
 /**
- * Separate initializer for {@link ProcedureDescritionFormatRepository}
+ * Separate initializer for {@link ProcedureDescriptionFormatRepository}
  *
  * @see ProcedureDescriptionFormatRepository#init(org.n52.iceland.service.operator.ServiceOperatorRepository,
  * org.n52.svalbard.encode.EncoderRepository)

@@ -51,4 +51,5 @@ public abstract class DescriptionXmlEntity extends AbstractIdentifierNameDescrip
     public void setDescriptionXml(String descriptionXml) {
         this.descriptionXml = descriptionXml;
     }
+
 }

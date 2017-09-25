@@ -57,11 +57,6 @@ public class SeriesBooleanObservation
     }
 
     @Override
-    public boolean isSetValue() {
-        return this.value;
-    }
-
-    @Override
     public void setValue(Boolean value) {
         this.value = value;
     }

@@ -62,11 +62,6 @@ public class SeriesBlobObservation
     }
 
     @Override
-    public boolean isSetValue() {
-        return value != null;
-    }
-
-    @Override
     public void accept(VoidObservationVisitor visitor)
             throws OwsExceptionReport {
         visitor.visit(this);

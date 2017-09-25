@@ -125,7 +125,6 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -177,15 +176,10 @@ public abstract class AbstractObservationDAO
 
     private static final String SQL_QUERY_OBSERVATION_TIME_EXTREMA = "getObservationTimeExtrema";
 
-    private final DaoFactory daoFactory;
-
     public AbstractObservationDAO(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+        super(daoFactory);
     }
 
-    protected DaoFactory getDaoFactory() {
-        return daoFactory;
-    }
 
     /**
      * Add observation identifier (procedure, observableProperty,
@@ -660,7 +654,7 @@ public abstract class AbstractObservationDAO
         ObservationPersister persister = new ObservationPersister(
                 getGeometryHandler(),
                 this,
-                this.daoFactory,
+                getDaoFactory(),
                 sosObservation,
                 hObservationConstellations,
                 hFeature,

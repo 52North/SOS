@@ -39,6 +39,7 @@ import javax.inject.Inject;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -84,6 +85,12 @@ public class DaoFactory {
     private EncoderRepository encoderRepository;
     private DecoderRepository decoderRepository;
     private XmlOptionsHelper xmlOptionsHelper;
+    private I18NDAORepository i18NDAORepository;
+
+    @Inject
+    public DaoFactory(I18NDAORepository i18NDAORepository) {
+        this.i18NDAORepository = i18NDAORepository;
+    }
 
     @Setting(value = EReportingSetting.EREPORTING_VALIDITY_FLAGS, required = false)
     public void setValidityFlags(String validityFlags) {
@@ -238,6 +245,10 @@ public class DaoFactory {
 
     public ProcedureDescriptionFormatDAO getProcedureDescriptionFormatDAO() {
         return new ProcedureDescriptionFormatDAO();
+    }
+
+    public I18NDAORepository getI18NDAORepository() {
+        return i18NDAORepository;
     }
 
 }

@@ -68,7 +68,6 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     public static String LAST_TIME_STAMP = "lastTimeStamp";
 
     public static final String ALIAS = "s";
-
     public static final String ALIAS_DOT = ALIAS + ".";
 
     private long seriesId;
@@ -158,9 +157,8 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public Series setPublished(final boolean published) {
+    public void setPublished(final boolean published) {
         this.published = published;
-        return this;
     }
 
     @Override
@@ -269,11 +267,6 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     @Override
     public void setUnit(Unit unit) {
         this.unit = unit;
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return getUnit() != null && getUnit().isSetUnit();
     }
 
     @Override

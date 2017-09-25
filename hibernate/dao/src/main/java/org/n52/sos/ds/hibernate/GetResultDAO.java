@@ -49,7 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -208,16 +207,8 @@ public class GetResultDAO extends AbstractGetResultHandler {
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
-            try {
-                Session session = sessionHolder.getSession();
-                if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
-                    return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
-                }
-                sessionHolder.returnSession(session);
-            } catch (OwsExceptionReport owse) {
-                LOGGER.error("Error while getting Spatial Filtering Profile conformance class!", owse);
-            }
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
         }
         return super.getConformanceClasses(service, version);
     }

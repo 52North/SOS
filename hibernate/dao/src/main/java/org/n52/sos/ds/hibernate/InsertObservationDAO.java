@@ -41,8 +41,8 @@ import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.MultiObservationValues;
@@ -51,7 +51,6 @@ import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
-import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -125,13 +124,12 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
 
             for (final OmObservation sosObservation : request.getObservations()) {
                 // check strict spatial filtering profile
-                if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
-                        && !sosObservation.isSetSpatialFilteringProfileParameter()) {
-                    throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
-                            .withMessage("The sampling geometry definition is missing in the observation because"
-                                    + " the Spatial Filtering Profile is specification conformant. To use a less"
-                                    + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
-                }
+//                if (!sosObservation.isSetSpatialFilteringProfileParameter()) {
+//                    throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
+//                            .withMessage("The sampling geometry definition is missing in the observation because"
+//                                    + " the Spatial Filtering Profile is specification conformant. To use a less"
+//                                    + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
+//                }
                 if (sosObservation.isSetIdentifier()) {
                     if (DaoFactory.getInstance().getObservationDAO()
                             .isIdentifierContained(sosObservation.getIdentifier(), session)) {
@@ -251,14 +249,12 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
 
     protected void checkSpatialFilteringProfile(OmObservation sosObservation)
             throws CodedException {
-        // checkConstellation
-        if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
-            && !sosObservation.isSetSpatialFilteringProfileParameter()) {
-            throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
-                    .withMessage("The sampling geometry definition is missing in the observation because"
-                            + " the Spatial Filtering Profile is specification conformant. To use a less"
-                            + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
-        }
+//        if (!sosObservation.isSetSpatialFilteringProfileParameter()) {
+//            throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
+//                    .withMessage("The sampling geometry definition is missing in the observation because"
+//                            + " the Spatial Filtering Profile is specification conformant. To use a less"
+//                            + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
+//        }
     }
 
     protected void handleHibernateException(HibernateException he)

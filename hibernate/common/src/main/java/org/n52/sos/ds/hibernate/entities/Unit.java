@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 
 import com.google.common.base.Strings;

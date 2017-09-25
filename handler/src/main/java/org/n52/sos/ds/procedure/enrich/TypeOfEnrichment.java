@@ -121,12 +121,22 @@ public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
             try {
                 href =
                         SosHelper.getDescribeSensorUrl(version, getProcedureCreationContext().getServiceURL(),
-                                identifier, MediaTypes.APPLICATION_KVP.toString(), format).toString();
+                                identifier, format).toString();
             } catch (MalformedURLException murle) {
                LOGGER.error("Error while encoding DescribeSensor URL!", murle);
             }
         }
-        return href;
+        try {
+            String version = getProcedureCreationContext().getServiceOperatorRepository().isVersionSupported(SosConstants.SOS,
+                                                                               Sos2Constants.SERVICEVERSION)
+                                     ? Sos2Constants.SERVICEVERSION
+                                     : Sos1Constants.SERVICEVERSION;
+
+            return SosHelper.getDescribeSensorUrl(version, getProcedureCreationContext().getServiceURL(), identifier, format).toString();
+        } catch (MalformedURLException murle) {
+            LOGGER.error("Error while encoding DescribeSensor URL!", murle);
+            return identifier;
+        }
     }
 
 }

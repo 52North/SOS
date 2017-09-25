@@ -52,11 +52,6 @@ public class QuantityValuedParameter extends Parameter<Double> implements org.n5
     }
 
     @Override
-    public boolean isSetValue() {
-        return getValue() != null;
-    }
-
-    @Override
     public String getValueAsString() {
         return getValue().toString();
     }

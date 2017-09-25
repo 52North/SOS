@@ -57,7 +57,7 @@ import com.vividsolutions.jts.geom.Geometry;
 public class AbstractObservationDAOTest {
 
 
-    TestObservationDAO dao = new TestObservationDAO(new DaoFactory());
+    TestObservationDAO dao = new TestObservationDAO(new DaoFactory(null));
 
 
     /*

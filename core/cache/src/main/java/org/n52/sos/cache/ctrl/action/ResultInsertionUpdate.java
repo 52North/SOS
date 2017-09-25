@@ -38,21 +38,21 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.cache.InMemoryCacheImpl;
+import org.n52.sos.cache.SosWritableContentCache;
 
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
- * When executing this &auml;ction (see {@link Action}), the following relations
- * are added, settings are updated in cache:
+ * When executing this &auml;ction (see {@link Action}), the following relations are added, settings are updated in
+ * cache:
  * <ul>
  * <li>'Result template identifier' &rarr; 'observable property' relation</li>
  * <li>'Result template identifier' &rarr; 'feature of interest' relation</li>
  * </ul>
  * TODO update list above
  *
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @since 4.0.0
  */
 public class ResultInsertionUpdate extends InMemoryCacheUpdate {
@@ -61,18 +61,6 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
     private final List<OmObservation> observations;
 
     private final String templateIdentifier;
-
-    public ResultInsertionUpdate(String templateIdentifier, OmObservation observation) {
-        if (observation == null || templateIdentifier == null || templateIdentifier.isEmpty()) {
-            String msg =
-                    String.format("Missing argument: '%s': %s; template identifier: '%s'",
-                            OmObservation.class.getName(), observation, templateIdentifier);
-            LOGGER.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        this.observations = Lists.newArrayList(observation);
-        this.templateIdentifier = templateIdentifier;
-    }
 
     public ResultInsertionUpdate(String templateIdentifier, List<OmObservation> observations) {
         if (observations == null || observations.isEmpty() || templateIdentifier == null || templateIdentifier.isEmpty()) {
@@ -110,21 +98,18 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
             List<AbstractSamplingFeature> observedFeatures =
                     sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
 
-            final Envelope envelope = createEnvelopeFrom(observedFeatures);
+            Envelope envelope = createEnvelopeFrom(observedFeatures);
 
             cache.updateGlobalEnvelope(envelope);
 
-            for (AbstractSamplingFeature sosSamplingFeature : observedFeatures) {
-                final String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
+            observedFeatures.stream().map(AbstractSamplingFeature::getIdentifier).forEach(featureOfInterest -> {
                 cache.addFeatureOfInterest(featureOfInterest);
-            cache.addPublishedFeatureOfInterest(featureOfInterest);
                 cache.addFeatureOfInterestForResultTemplate(templateIdentifier, featureOfInterest);
                 cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);
-                for (String offering : observation.getObservationConstellation().getOfferings()) {
-                    cache.addFeatureOfInterestForOffering(offering, featureOfInterest);
-                }
-            }
-            for (String offering : observation.getObservationConstellation().getOfferings()) {
+                observation.getObservationConstellation().getOfferings()
+                        .forEach(offering -> cache.addFeatureOfInterestForOffering(offering, featureOfInterest));
+            });
+            observation.getObservationConstellation().getOfferings().stream().forEach(offering -> {
                 cache.addOffering(offering);
                 if (!cache.getHiddenChildProceduresForOffering(offering).contains(procedure)) {
                     cache.addProcedureForOffering(offering, procedure);
@@ -138,7 +123,7 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
                 cache.addObservablePropertyForOffering(offering, observableProperty);
                 // observation type
                 cache.addObservationTypesForOffering(offering, observationType);
-            }
+            });
         }
     }
 }

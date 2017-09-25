@@ -52,16 +52,6 @@ public class FeatureQuantityValuedParameter extends FeatureParameter<Double> imp
     }
 
     @Override
-    public boolean isSetValue() {
-        return getValue() != null;
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
-
-    @Override
     public Unit getUnit() {
         return unit;
     }

@@ -48,6 +48,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.ProfileGeneratorSplitter;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
@@ -69,7 +70,6 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObserva
 import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.CodingHelper;

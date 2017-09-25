@@ -41,9 +41,6 @@ import java.util.Set;
 import net.opengis.sensorML.x101.SystemDocument;
 import net.opengis.swe.x20.DataRecordDocument;
 import net.opengis.swe.x20.TextEncodingDocument;
-import net.opengis.sensorML.x101.SystemDocument;
-import net.opengis.swe.x20.DataRecordDocument;
-import net.opengis.swe.x20.TextEncodingDocument;
 
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
@@ -59,6 +56,7 @@ import org.mockito.Mockito;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.OwsServiceProviderFactory;
 import org.n52.janmayen.event.EventBus;
 import org.n52.shetland.ogc.filter.FilterConstants;
@@ -81,6 +79,7 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.SweDataArrayValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.System;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -120,26 +119,19 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
-import org.n52.sos.request.RequestContext;
 import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
 import org.n52.sos.service.Configurator;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.util.CodingHelper;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
  * Test various Insert*DAOs using a common set of test data with hierarchical
@@ -343,14 +335,14 @@ public class InsertDAOTest extends HibernateTestCase {
             String offeringId, String featureId, String obsType, Session session) throws OwsExceptionReport,
             ConverterException {
         OmObservationConstellation obsConst = new OmObservationConstellation();
-        Procedure procedure = new ProcedureDAO(new DaoFactory()).getProcedureForIdentifier(procedureId, session);
+        DaoFactory daoFactory = new DaoFactory(new I18NDAORepository());
+
+        ProcedureDAO dao = daoFactory.getProcedureDAO();
+        Procedure procedure = dao.getProcedureForIdentifier(procedureId, session);
         OwsServiceProviderFactory serviceProviderFactory = Mockito.mock(OwsServiceProviderFactory.class);
 
-
         SosProcedureDescription<?> spd
-                = new HibernateProcedureConverter(serviceProviderFactory, new DaoFactory(), ConverterRepository
-                                                  .getInstance(), HibernateProcedureDescriptionGeneratorFactoryRepository
-                                                          .getInstance())
+                = new HibernateProcedureConverter(new HibernateProcedureCreationContext(null, null, null, null, null, null, null, null, null, null, null))
                         .createSosProcedureDescription(procedure, SensorMLConstants.NS_SML,
                         Sos2Constants.SERVICEVERSION, session);
         obsConst.setProcedure(spd);
@@ -595,7 +587,7 @@ public class InsertDAOTest extends HibernateTestCase {
         obsVal.setValue(sweDataArrayValue);
         obs.setValue(obsVal);
         req.setObservation(Lists.newArrayList(obs))
-            .setRequestContext(new RequestContext());
+            .setRequestContext(new OwsServiceRequestContext());
         insertObservationOperatorv2.receiveRequest(req);
         assertInsertionAftermathBeforeAndAfterCacheReload();
 

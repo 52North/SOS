@@ -30,11 +30,10 @@ package org.n52.sos.web.client;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.request.operator.RequestOperatorKey;
@@ -50,8 +49,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.google.common.base.Objects;
 
 /**
  * @since 4.0.0
@@ -86,38 +83,35 @@ public class ClientController
 
     private List<AvailableOperation> getAvailableOperations() {
         final List<AvailableOperation> ops = new LinkedList<>();
+
+
+
         for (RequestOperatorKey rokt : this.requestOperatorRepository.getActiveRequestOperatorKeys()) {
-            final String service = rokt.getServiceOperatorKey().getService();
-            final String version = rokt.getServiceOperatorKey().getVersion();
-            final String operation = rokt.getOperationName();
-            final OwsOperationKey ok = new OwsOperationKey(service, version, operation);
-            for (Entry<MediaType, Binding> b : this.bindingRepository.getAllBindingsByMediaType().entrySet()) {
+            String service = rokt.getServiceOperatorKey().getService();
+            String version = rokt.getServiceOperatorKey().getVersion();
+            String operation = rokt.getOperationName();
+            OwsOperationKey ok = new OwsOperationKey(service, version, operation);
+            this.bindingRepository.getBindingsByMediaType().forEach((mediaType, binding) -> {
                 try {
-                    final Binding binding = b.getValue();
                     if (binding.checkOperationHttpDeleteSupported(ok)) {
-                        ops.add(new AvailableOperation(service, version, operation, b.getKey().toString(),
-                                HTTPMethods.DELETE));
+                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.DELETE));
                     }
                     if (binding.checkOperationHttpGetSupported(ok)) {
-                        ops.add(new AvailableOperation(service, version, operation, b.getKey().toString(),
-                                HTTPMethods.GET));
+                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.GET));
                     }
                     if (binding.checkOperationHttpOptionsSupported(ok)) {
-                        ops.add(new AvailableOperation(service, version, operation, b.getKey().toString(),
-                                HTTPMethods.OPTIONS));
+                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.OPTIONS));
                     }
                     if (binding.checkOperationHttpPostSupported(ok)) {
-                        ops.add(new AvailableOperation(service, version, operation, b.getKey().toString(),
-                                HTTPMethods.POST));
+                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.POST));
                     }
                     if (binding.checkOperationHttpPutSupported(ok)) {
-                        ops.add(new AvailableOperation(service, version, operation, b.getKey().toString(),
-                                HTTPMethods.PUT));
+                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.PUT));
                     }
                 } catch (HTTPException ex) {
                     /* ignore */
                 }
-            }
+            });
         }
         return ops;
     }
@@ -136,6 +130,14 @@ public class ClientController
             this.operation = operation;
             this.contentType = contentType;
             this.method = method;
+        }
+
+        public AvailableOperation(String service, String version, String operation, MediaType contentType, String method) {
+            this(service, version, operation, contentType.toString(), method);
+        }
+
+        public AvailableOperation(OwsOperationKey key, MediaType contentType, String method) {
+            this(key.getService(), key.getVersion(), key.getOperation(), contentType.toString(), method);
         }
 
         public String getService() {
@@ -166,17 +168,18 @@ public class ClientController
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(getMethod(), getService(), getVersion(), getOperation(), getContentType());
+            return Objects.hash(getMethod(), getService(), getVersion(), getOperation(), getContentType());
         }
 
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof AvailableOperation) {
                 AvailableOperation other = (AvailableOperation) obj;
-                return Objects.equal(getMethod(), other.getMethod()) && Objects.equal(getService(), other.getService())
-                        && Objects.equal(getVersion(), other.getVersion())
-                        && Objects.equal(getOperation(), other.getOperation())
-                        && Objects.equal(getContentType(), other.getContentType());
+                return Objects.equals(getMethod(), other.getMethod())
+                        && Objects.equals(getService(), other.getService())
+                        && Objects.equals(getVersion(), other.getVersion())
+                        && Objects.equals(getOperation(), other.getOperation())
+                        && Objects.equals(getContentType(), other.getContentType());
             }
             return false;
         }

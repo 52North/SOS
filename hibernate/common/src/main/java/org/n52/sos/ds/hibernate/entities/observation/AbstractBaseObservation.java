@@ -103,11 +103,6 @@ public abstract class AbstractBaseObservation
     }
 
     @Override
-    public boolean hasSamplingGeometry() {
-        return getSamplingGeometry() != null && !getSamplingGeometry().isEmpty();
-    }
-
-    @Override
     public Object getLongitude() {
         return longitude;
     }
@@ -158,9 +153,8 @@ public abstract class AbstractBaseObservation
     }
 
     @Override
-    public AbstractBaseObservation setSrid(final int srid) {
+    public void setSrid(final int srid) {
         this.srid = srid;
-        return this;
     }
 
     public boolean isSetSrid() {
@@ -210,11 +204,6 @@ public abstract class AbstractBaseObservation
         } else {
             getParameters().add((Parameter) parameters);
         }
-    }
-
-    @Override
-    public boolean hasParameters() {
-        return CollectionHelper.isNotEmpty(getParameters());
     }
 
     @Override

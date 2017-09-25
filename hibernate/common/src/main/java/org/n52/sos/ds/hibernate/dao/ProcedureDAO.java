@@ -115,10 +115,9 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     private final ProcedureTimeTransformer transformer = new ProcedureTimeTransformer();
 
-    private final DaoFactory daoFactory;
 
     public ProcedureDAO(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+        super(daoFactory);
     }
 
     /**
@@ -387,7 +386,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                             session)));
             c.setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
         } else {
-            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
+            AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
             c = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 Criteria seriesCriteria = c.createCriteria(ContextualReferencedSeriesObservation.SERIES);
@@ -398,7 +397,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 c.createCriteria(AbstractObservation.PROCEDURE)
                         .setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
             }
-            new OfferingDAO(daoFactory).addOfferingRestricionForObservation(c, offeringIdentifier);
+            getDaoFactory().getOfferingDAO().addOfferingRestricionForObservation(c, offeringIdentifier);
         }
         LOGGER.debug(
                 "QUERY getProcedureIdentifiersForOffering(offeringIdentifier) using ObservationContellation entitiy ({}): {}",
@@ -626,7 +625,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (isProcedureTimeExtremaNamedQuerySupported(session)) {
             return getProcedureTimeExtremaFromNamedQuery(session, procedureIdentifier);
         }
-        AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
+        AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
         Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
             criteria.createAlias(ContextualReferencedSeriesObservation.SERIES, "s");
             criteria.createAlias("s." + Series.PROCEDURE, "p");
@@ -654,7 +653,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             namedQuery.setResultTransformer(transformer);
             results = namedQuery.list();
         } else {
-            AbstractSeriesDAO seriesDAO = daoFactory.getSeriesDAO();
+            AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
             if (seriesDAO != null) {
                 Criteria c = seriesDAO.getDefaultSeriesCriteria(session);
                 c.createAlias(Series.PROCEDURE, "p");
@@ -667,7 +666,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 results = c.list();
             }
             if (checkHasNoProcedureTimeResult(results)) {
-                AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
+                AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
                 Criteria criteria = observationDAO.getDefaultObservationTimeCriteria(session);
                 String alias = observationDAO.addProcedureAlias(criteria);
                 criteria.setProjection(
@@ -729,7 +728,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                     SQL_QUERY_GET_MIN_DATE_FOR_PROCEDURE);
             min = namedQuery.uniqueResult();
         } else {
-            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
+            AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
             Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 addProcedureRestrictionForSeries(criteria, procedure);
@@ -767,7 +766,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             maxStart = namedQuery.uniqueResult();
             maxEnd = maxStart;
         } else {
-            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
+            AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
             Criteria cstart = observationDAO.getDefaultObservationInfoCriteria(session);
             Criteria cend = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
@@ -880,7 +879,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     private DetachedCriteria getDetachedCriteriaProceduresForFeatureOfInterestFromSeries(
             FeatureOfInterest featureOfInterest, Session session) throws OwsExceptionReport {
         final DetachedCriteria detachedCriteria =
-                DetachedCriteria.forClass(daoFactory.getSeriesDAO().getClass());
+                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
         detachedCriteria.add(Restrictions.eq(Series.FEATURE_OF_INTEREST, featureOfInterest));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.PROCEDURE)));
@@ -921,7 +920,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     private DetachedCriteria getDetachedCriteriaProceduresForObservablePropertyFromSeries(
             String observablePropertyIdentifier, Session session) throws OwsExceptionReport {
         final DetachedCriteria detachedCriteria =
-                DetachedCriteria.forClass(daoFactory.getSeriesDAO().getClass());
+                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
+
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
         detachedCriteria.createCriteria(Series.OBSERVABLE_PROPERTY)
                 .add(Restrictions.eq(ObservableProperty.IDENTIFIER, observablePropertyIdentifier));
@@ -994,7 +994,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     public Map<String, String> getProcedureFormatMap(Session session) {
         if (HibernateHelper.isEntitySupported(TProcedure.class)) {
             // get the latest validProcedureTimes' procedureDescriptionFormats
-            return new ValidProcedureTimeDAO(daoFactory).getTProcedureFormatMap(session);
+            return getDaoFactory().getValidProcedureTimeDAO().getTProcedureFormatMap(session);
         } else {
             Criteria criteria = getDefaultCriteria(session);
             criteria.createAlias(Procedure.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
@@ -1017,19 +1017,19 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     @SuppressWarnings("unchecked")
     public List<Procedure> getPublishedProcedure(Session session) throws OwsExceptionReport {
         if (HibernateHelper.isEntitySupported(Series.class)) {
-            Criteria c = session.createCriteria(Procedure.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            c.add(Subqueries.propertyIn(Procedure.ID, getDetachedCriteriaSeries(session)));
+            Criteria c = getDefaultCriteria(session);
+            c.add(Subqueries.propertyNotIn(Procedure.ID, getDetachedCriteriaSeries(session)));
             return c.list();
         }
         return getProcedureObjects(session);
      }
 
      private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
-         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(daoFactory.getSeriesDAO().getSeriesClass());
-         detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
+         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
+         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(Series.DELETED, true), Restrictions.eq(Series.PUBLISHED, false)));
          detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.PROCEDURE)));
          return detachedCriteria;
-     }
+}
 
     /**
      * Procedure time extrema {@link ResultTransformer}

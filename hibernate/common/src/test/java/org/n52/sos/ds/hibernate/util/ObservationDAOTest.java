@@ -38,6 +38,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
@@ -61,7 +62,7 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
 
     private AbstractObservationDAO observationDAO = null;
 
-    private final DaoFactory daoFactory = new DaoFactory();
+    private final DaoFactory daoFactory = new DaoFactory(new I18NDAORepository());
     private final OfferingDAO offeringDAO = new OfferingDAO(daoFactory);
 
     @Before

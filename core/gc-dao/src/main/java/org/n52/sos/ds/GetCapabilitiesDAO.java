@@ -55,7 +55,6 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
-import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
@@ -65,7 +64,6 @@ import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderRe
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.Comparables;
 import org.n52.janmayen.function.Functions;
@@ -161,13 +159,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     @Inject
     private ProfileHandler profileHandler;
     @Inject
-    private BindingRepository bindingRepository;
-    @Inject
     private OwsServiceMetadataRepository serviceMetadataRepository;
     @Inject
     private RequestOperatorRepository requestOperatorRepository;
-    @Inject
-    private ServiceOperatorRepository serviceOperatorRepository;
     @Inject
     private ResponseFormatRepository responseFormatRepository;
     @Inject
@@ -195,7 +189,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
         if (capabilitiesId == null && this.capabilitiesExtensionService.isStaticCapabilitiesActive()) {
             createStaticCapabilities(request, response);
-        } else if (capabilitiesId != null && !capabilitiesId.equals(GetCapabilitiesParams.DYNAMIC_CAPABILITIES_IDENTIFIER)) {
+        } else if (capabilitiesId != null && !capabilitiesId
+                   .equals(GetCapabilitiesParams.DYNAMIC_CAPABILITIES_IDENTIFIER)) {
             createStaticCapabilitiesWithId(request, response);
         } else {
             createDynamicCapabilities(request, response);
@@ -212,12 +207,12 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
             if (request.isSetAcceptVersions()) {
                 version = request.getAcceptVersions().stream()
-                        .filter(v -> this.serviceOperatorRepository.isVersionSupported(service, v))
+                        .filter(v -> getServiceOperatorRepository().isVersionSupported(service, v))
                         .findFirst()
                         .orElseThrow(this::versionNegotiationFailed);
             } else {
-                version = this.serviceOperatorRepository.getSupportedVersions(service).stream()
-                        .max(Comparables.version()).orElseThrow(() ->  new InvalidServiceParameterException(service));
+                version = getServiceOperatorRepository().getSupportedVersions(service).stream()
+                        .max(Comparables.version()).orElseThrow(() -> new InvalidServiceParameterException(service));
             }
             request.setVersion(version);
             return version;
@@ -227,15 +222,13 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     private OwsExceptionReport versionNegotiationFailed() {
         return new VersionNegotiationFailedException()
                 .withMessage("The requested '%s' values are not supported by this service!",
-                OWSConstants.GetCapabilitiesParams.AcceptVersions);
+                             OWSConstants.GetCapabilitiesParams.AcceptVersions);
     }
 
     private void addSectionSpecificContent(SectionSpecificContentObject sectionSpecificContentObject,
                                            GetCapabilitiesRequest request) throws OwsExceptionReport {
         String verion = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
         String service = sectionSpecificContentObject.getGetCapabilitiesResponse().getService();
-
-
 
         if (isServiceIdentificationSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             sectionSpecificContentObject.getSosCapabilities()
@@ -254,7 +247,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         }
         if (isContentsSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             if (isV2(sectionSpecificContentObject.getGetCapabilitiesResponse())) {
-                sectionSpecificContentObject.getSosCapabilities().setContents(getContentsForSosV2(sectionSpecificContentObject));
+                sectionSpecificContentObject.getSosCapabilities()
+                        .setContents(getContentsForSosV2(sectionSpecificContentObject));
             } else {
                 sectionSpecificContentObject.getSosCapabilities().setContents(getContents(sectionSpecificContentObject));
             }
@@ -324,11 +318,11 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
     private Set<URI> getProfiles(String service, String version) {
 
-        Set<URI> profiles = Stream.of(this.bindingRepository.getBindings().values(),
-                                         this.requestOperatorRepository.getRequestOperators(),
-                                         this.decoderRepository.getDecoders(),
-                                         this.encoderRepository.getEncoders(),
-                                         this.operationHandlerRepository.getOperationHandlers().values())
+        Set<URI> profiles = Stream.of(getBindingRepository().getBindings().values(),
+                                      this.requestOperatorRepository.getRequestOperators(),
+                                      this.decoderRepository.getDecoders(),
+                                      this.encoderRepository.getEncoders(),
+                                      this.operationHandlerRepository.getOperationHandlers().values())
                 .flatMap(Collection::stream)
                 .filter(c -> c instanceof ConformanceClass)
                 .map(c -> (ConformanceClass) c)
@@ -368,7 +362,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         * service and check if this provider provides OwsExtendedCapabilities
         * for the request
          */
-        OwsOperationMetadataExtensionProvider provider = owsExtendedCapabilitiesProviderRepository.getExtendedCapabilitiesProvider(service, version);
+        OwsOperationMetadataExtensionProvider provider = owsExtendedCapabilitiesProviderRepository
+                .getExtendedCapabilitiesProvider(service, version);
         if (provider != null && provider.hasExtendedCapabilitiesFor(request)) {
             owsExtendedCapabilities = provider.getOwsExtendedCapabilities(request);
         }
@@ -378,8 +373,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     /**
      * Get the FilterCapabilities
      *
-     * @param version
-     *                Requested service version
+     * @param version Requested service version
      *
      * @return FilterCapabilities
      */
@@ -402,34 +396,47 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         OwsValue trueValue = new OwsValue("true");
         OwsValue falseValue = new OwsValue("false");
         OwsNoValues noValues = OwsNoValues.instance();
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsQuery, noValues, falseValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsAdHocQuery, noValues, falseValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsFunctions, noValues, falseValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsResourceld, noValues, falseValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinStandardFilter, noValues, falseValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsStandardFilter, noValues, falseValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinSpatialFilter, noValues, trueValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsSpatialFilter, noValues, trueValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinTemporalFilter, noValues, trueValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsTemporalFilter, noValues, trueValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsVersionNav, noValues, falseValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsSorting, noValues, falseValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsExtendedOperators, noValues, falseValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinimumXPath, noValues, falseValue));
-        filterCapabilities.addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsSchemaElementFunc, noValues, falseValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsQuery, noValues, falseValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsAdHocQuery, noValues, falseValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsFunctions, noValues, falseValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsResourceld, noValues, falseValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinStandardFilter, noValues, falseValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsStandardFilter, noValues, falseValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinSpatialFilter, noValues, trueValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsSpatialFilter, noValues, trueValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinTemporalFilter, noValues, trueValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsTemporalFilter, noValues, trueValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsVersionNav, noValues, falseValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsSorting, noValues, falseValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsExtendedOperators, noValues, falseValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsMinimumXPath, noValues, falseValue));
+        filterCapabilities
+                .addConformance(new OwsDomain(ConformanceClassConstraintNames.ImplementsSchemaElementFunc, noValues, falseValue));
     }
 
     /**
      * Get the contents for SOS 1.0.0 capabilities
      *
-     * @param sectionSpecificContentObject
-     *                Requested service version
+     * @param sectionSpecificContentObject Requested service version
      *
      * @return Offerings for contents
      *
      *
-     * @throws OwsExceptionReport
-     *             * If an error occurs
+     * @throws OwsExceptionReport * If an error occurs
      */
     private List<SosObservationOffering> getContents(SectionSpecificContentObject sectionSpecificContentObject) throws
             OwsExceptionReport {
@@ -507,23 +514,23 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         return sosEnvelope;
     }
 
-    private boolean checkOfferingValues(final ReferencedEnvelope envelopeForOffering, final Set<String> featuresForOffering,
+    private boolean checkOfferingValues(final ReferencedEnvelope envelopeForOffering,
+                                        final Set<String> featuresForOffering,
                                         final Collection<String> responseFormats) {
-        return ReferencedEnvelope.isNotNullOrEmpty(envelopeForOffering) && CollectionHelper.isNotEmpty(featuresForOffering) &&
-                 CollectionHelper.isNotEmpty(responseFormats);
+        return ReferencedEnvelope.isNotNullOrEmpty(envelopeForOffering) && CollectionHelper
+               .isNotEmpty(featuresForOffering) &&
+               CollectionHelper.isNotEmpty(responseFormats);
     }
 
     /**
      * Get the contents for SOS 2.0 capabilities
      *
-     * @param sectionSpecificContentObject
-     *                Requested service version
+     * @param sectionSpecificContentObject Requested service version
      *
      * @return Offerings for contents
      *
      *
-     * @throws OwsExceptionReport
-     *             * If an error occurs
+     * @throws OwsExceptionReport * If an error occurs
      */
     private List<SosObservationOffering> getContentsForSosV2(SectionSpecificContentObject sectionSpecificContentObject)
             throws OwsExceptionReport {
@@ -685,10 +692,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     /**
      * Set SpatialFilterCapabilities to FilterCapabilities
      *
-     * @param filterCapabilities
-     *                           FilterCapabilities
-     * @param version
-     *                           SOS version
+     * @param filterCapabilities FilterCapabilities
+     * @param version SOS version
      */
     private void getSpatialFilterCapabilities(final FilterCapabilities filterCapabilities, final String version) {
 
@@ -726,10 +731,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     /**
      * Set TemporalFilterCapabilities to FilterCapabilities
      *
-     * @param filterCapabilities
-     *                           FilterCapabilities
-     * @param version
-     *                           SOS version
+     * @param filterCapabilities FilterCapabilities
+     * @param version SOS version
      */
     private void getTemporalFilterCapabilities(FilterCapabilities filterCapabilities, String version) {
 
@@ -776,8 +779,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     /**
      * Set ScalarFilterCapabilities to FilterCapabilities
      *
-     * @param filterCapabilities
-     *                           FilterCapabilities
+     * @param filterCapabilities FilterCapabilities
      */
     private void getScalarFilterCapabilities(final FilterCapabilities filterCapabilities) {
         // TODO PropertyIsNil, PropertyIsNull? better:
@@ -797,20 +799,18 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     /**
      * Get FOIs contained in an offering
      *
-     * @param offering
-     *                 Offering identifier
+     * @param offering Offering identifier
      *
      * @return FOI identifiers
      *
      *
-     * @throws OwsExceptionReport
-     *             * If an error occurs
+     * @throws OwsExceptionReport * If an error occurs
      */
     private Set<String> getFOI4offering(final String offering) throws OwsExceptionReport {
         final Set<String> featureIDs = new HashSet<>(0);
         final Set<String> features = getCache().getFeaturesOfInterestForOffering(offering);
         if (!this.profileHandler.getActiveProfile().isListFeatureOfInterestsInOfferings() ||
-                 features == null) {
+            features == null) {
             featureIDs.add(OGCConstants.UNKNOWN);
         } else {
             featureIDs.addAll(features);
@@ -880,7 +880,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                         } else {
                             extensions.add(extension);
                         }
-            });
+                    });
             extensions.addAll(map.values());
         }
         Map<String, StringBasedCapabilitiesExtension> activeCapabilitiesExtensions
@@ -891,7 +891,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         return extensions;
     }
 
-    private Collection<OwsCapabilitiesExtension> getExtensions(Set<String> requestedExtensionSections, String service, String version)
+    private Collection<OwsCapabilitiesExtension> getExtensions(Set<String> requestedExtensionSections, String service,
+                                                               String version)
             throws OwsExceptionReport {
         return getAndMergeExtensions(service, version).stream()
                 .filter(e -> requestedExtensionSections.contains(e.getSectionName()))
@@ -930,7 +931,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         }
     }
 
-    private boolean isHiddenChildProcedureObservableProperty(String offering, Set<String> proceduresForObservableProperty) {
+    private boolean isHiddenChildProcedureObservableProperty(String offering,
+                                                             Set<String> proceduresForObservableProperty) {
         return getCache().getHiddenChildProceduresForOffering(offering).stream()
                 .anyMatch(proceduresForObservableProperty::contains);
     }
@@ -1122,19 +1124,17 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         return this.requestOperatorRepository;
     }
 
-    protected ServiceOperatorRepository getServiceOperatorRepository() {
-        return this.serviceOperatorRepository;
-    }
-
     protected ResponseFormatRepository getResponseFormatRepository() {
         return this.responseFormatRepository;
     }
 
-    private void createStaticCapabilities(GetCapabilitiesRequest request, GetCapabilitiesResponse response) throws OwsExceptionReport {
+    private void createStaticCapabilities(GetCapabilitiesRequest request, GetCapabilitiesResponse response) throws
+            OwsExceptionReport {
         response.setXmlString(this.capabilitiesExtensionService.getActiveStaticCapabilitiesDocument());
     }
 
-    private void createStaticCapabilitiesWithId(GetCapabilitiesRequest request, GetCapabilitiesResponse response) throws OwsExceptionReport{
+    private void createStaticCapabilitiesWithId(GetCapabilitiesRequest request, GetCapabilitiesResponse response) throws
+            OwsExceptionReport {
         StaticCapabilities sc = this.capabilitiesExtensionService.getStaticCapabilities(request.getCapabilitiesId());
         if (sc == null) {
             throw new InvalidParameterValueException(GetCapabilitiesParams.CapabilitiesId, request.getCapabilitiesId());
@@ -1142,12 +1142,15 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         response.setXmlString(sc.getDocument());
     }
 
-    private void createDynamicCapabilities(GetCapabilitiesRequest request, GetCapabilitiesResponse response) throws OwsExceptionReport {
+    private void createDynamicCapabilities(GetCapabilitiesRequest request, GetCapabilitiesResponse response) throws
+            OwsExceptionReport {
         Set<String> availableExtensionSections = getExtensionSections(response.getService(), response.getVersion());
         Set<String> requestedExtensionSections = new HashSet<>(availableExtensionSections.size());
-        int requestedSections = identifyRequestedSections(request, response, availableExtensionSections, requestedExtensionSections);
+        int requestedSections
+                = identifyRequestedSections(request, response, availableExtensionSections, requestedExtensionSections);
 
-        SosCapabilities sosCapabilities = new SosCapabilities(request.getService(), request.getVersion(), null, null, null, null, null, null, null, null);
+        SosCapabilities sosCapabilities
+                = new SosCapabilities(request.getService(), request.getVersion(), null, null, null, null, null, null, null, null);
 
         SectionSpecificContentObject sectionSpecificContentObject = new SectionSpecificContentObject()
                 .setRequest(request)

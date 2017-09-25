@@ -29,29 +29,14 @@
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.hibernate.Session;
 import org.n52.faroe.SettingsService;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.shetland.inspire.base2.Contact;
-import org.n52.shetland.inspire.base2.RelatedParty;
-import org.n52.shetland.inspire.ompr.InspireOMPRConstants;
-import org.n52.shetland.iso.gmd.LocalisedCharacterString;
-import org.n52.shetland.iso.gmd.PT_FreeText;
-import org.n52.shetland.ogc.ows.OwsAddress;
-import org.n52.shetland.ogc.ows.OwsContact;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.service.Configurator;
 
 /**
  * Generator class for WaterML 2.0 procedure descriptions

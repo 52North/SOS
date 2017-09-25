@@ -226,6 +226,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     protected ObservationContext fillObservationContext(
             ObservationContext ctx, OmObservation sosObservation, Session session) {
         if (ctx instanceof EReportingObservationContext) {
+            EReportingObservationContext ectx = (EReportingObservationContext) ctx;
             if (sosObservation.isSetParameter()) {
                 AqdSamplingPoint samplingPoint = new AqdSamplingPoint();
                 List<NamedValue<?>> remove = Lists.newArrayList();
@@ -239,8 +240,9 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
                     }
                 }
                 sosObservation.getParameter().removeAll(remove);
-                ((EReportingObservationContext) ctx)
-                        .setSamplingPoint(new EReportingSamplingPointDAO().getOrInsert(samplingPoint, session));
+                EReportingSamplingPointDAO dao = new EReportingSamplingPointDAO(getDaoFactory());
+
+                ectx.setSamplingPoint(dao.getOrInsert(samplingPoint, session));
             }
         }
         return ctx;

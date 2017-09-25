@@ -29,32 +29,50 @@
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
 import org.n52.shetland.aqd.AqdConstants;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.GetStringValue;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingStation;
 import org.n52.sos.ds.hibernate.entities.observation.series.HibernateSeriesRelations;
 
-public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
+import com.google.common.base.Strings;
+
+public interface HibernateEReportingRelations {
 
     interface HasEReportingSamplingPoint {
         String SAMPLING_POINT = "samplingPoint";
+
         EReportingSamplingPoint getSamplingPoint();
+
         void setSamplingPoint(EReportingSamplingPoint samplingPoint);
-        boolean hasSamplingPoint();
+
+        default boolean hasSamplingPoint() {
+            return getSamplingPoint() != null;
+        }
     }
 
     interface HasInspireId {
         String INSPIRE_ID = "inspireId";
+
         String getInspireId();
+
         void setInspireId(String inspireId);
-        boolean isSetInspireId();
+
+        default boolean isSetInspireId() {
+            return getInspireId() != null;
+        }
     }
 
-    interface HasEReportingSeries extends HasSeries {
+    interface HasEReportingSeries extends HibernateSeriesRelations.HasSeries {
         EReportingSeries getEReportingSeries();
+
         void setEReportingSeries(EReportingSeries series);
-        boolean hasEReportingSeries();
+
+        default boolean hasEReportingSeries() {
+            return getSeries() instanceof EReportingSeries;
+        }
     }
 
     interface HasValidation {
@@ -62,18 +80,28 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
         Integer DEFAULT_VALIDATION = -1;
 
         String VALIDATION = "validation";
+
         Integer getValidation();
+
         void setValidation(Integer validation);
-        boolean isSetValidation();
+
+        default boolean isSetValidation() {
+            return getValidation() != null;
+        }
     }
 
     interface HasVerification {
 
         Integer DEFAULT_VERIFICATION = 3;
         String VERIFICATION = "verification";
+
         Integer getVerification();
+
         void setVerification(Integer verification);
-        boolean isSetVerification();
+
+        default boolean isSetVerification() {
+            return getVerification() != null;
+        }
     }
 
     interface HasPrimaryObservation {
@@ -86,7 +114,9 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
 
         void setPrimaryObservation(String primaryObservation);
 
-        boolean isSetPrimaryObservation();
+        default boolean isSetPrimaryObservation() {
+            return !Strings.isNullOrEmpty(getPrimaryObservation());
+        }
     }
 
     interface HasTimeCoverageFlag {
@@ -96,7 +126,9 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
 
         void setTimeCoverageFlag(Boolean timeCoverageFlag);
 
-        boolean isSetTimeCoverageFlag();
+        default boolean isSetTimeCoverageFlag() {
+            return getTimeCoverageFlag() != null;
+        }
     }
 
     interface HasDataCaptureFlag {
@@ -106,7 +138,9 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
 
         void setDataCaptureFlag(Boolean dataCaptureFlag);
 
-        boolean isSetDataCaptureFlag();
+        default boolean isSetDataCaptureFlag() {
+            return getDataCaptureFlag() != null;
+        }
     }
 
     interface HasDataCapture {
@@ -117,7 +151,9 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
 
         void setDataCapture(Double dataCapture);
 
-        boolean isSetDataCapture();
+        default boolean isSetDataCapture() {
+            return getDataCapture() != null;
+        }
     }
 
     interface HasUncertaintyEstimation {
@@ -127,7 +163,9 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
 
         void setUncertaintyEstimation(Double uncertaintyEstimation);
 
-        boolean isSetUncertaintyEstimation();
+        default boolean isSetUncertaintyEstimation() {
+            return getUncertaintyEstimation() != null;
+        }
     }
 
     interface EReportingQualityData extends HasTimeCoverageFlag, HasDataCaptureFlag, HasUncertaintyEstimation {
@@ -135,7 +173,7 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
     }
 
     interface EReportingValues extends EReportingValuesTime, HasDataCapture, EReportingQualityData, HasUnit,
-            GetStringValue {
+                                       GetStringValue {
 
         String getPrimaryObservation();
 
@@ -156,12 +194,13 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
         EReportingAssessmentType getAssessmentType();
 
         /**
-         * @param assessmentType
-         *            the assessmentType to set
+         * @param assessmentType the assessmentType to set
          */
         void setAssessmentType(EReportingAssessmentType assessmentType);
 
-        boolean isSetAssessmentType();
+        default boolean isSetAssessmentType() {
+            return getAssessmentType() != null && !getAssessmentType().isSetAssessmentType();
+        }
     }
 
     /**
@@ -180,16 +219,16 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
         EReportingStation getStation();
 
         /**
-         * @param station
-         *            the station to set
-         * @return this
+         * @param station the station to set
          */
-        HasStation setStation(EReportingStation station);
+        void setStation(EReportingStation station);
 
         /**
          * @return <code>true</code>, if station is not null
          */
-        boolean isSetStation();
+        default boolean isSetStation() {
+            return getStation() != null;
+        }
     }
 
     /**
@@ -208,15 +247,15 @@ public interface HiberanteEReportingRelations extends HibernateSeriesRelations {
         EReportingNetwork getNetwork();
 
         /**
-         * @param network
-         *            the network to set
-         * @return this
+         * @param network the network to set
          */
-        HasNetwork setNetwork(EReportingNetwork network);
+        void setNetwork(EReportingNetwork network);
 
         /**
          * @return <code>true</code>, if network is not null
          */
-        boolean isSetNetwork();
+        default boolean isSetNetwork() {
+            return getNetwork() != null;
+        }
     }
 }

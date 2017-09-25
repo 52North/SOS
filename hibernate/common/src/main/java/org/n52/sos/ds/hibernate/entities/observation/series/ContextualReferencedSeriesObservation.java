@@ -77,10 +77,4 @@ public class ContextualReferencedSeriesObservation
     public void setSeries(Series series) {
         this.series = series;
     }
-
-    @Override
-    public boolean isSetSeries() {
-        return getSeries() != null;
-    }
-
 }

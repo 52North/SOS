@@ -57,7 +57,8 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
+    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws
+            OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(features)) {
             List<Series> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
@@ -78,7 +79,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
-            Collection<String> features, Session session) {
+                                  Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
             List<Series> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
@@ -144,7 +145,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public Class <?>getSeriesClass() {
+    public Class<?> getSeriesClass() {
         return Series.class;
     }
 
@@ -152,6 +153,5 @@ public class SeriesDAO extends AbstractSeriesDAO {
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) {
         // nothing to add
     }
-
 
 }

@@ -56,6 +56,10 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO implements HibernateSqlQueryConstants {
 
+    public AbstractFeatureOfInterestDAO(DaoFactory daoFactory) {
+        super(daoFactory);
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFeatureOfInterestDAO.class);
 
     public abstract AbstractFeatureOfInterest insertFeature(AbstractFeature samplingFeature, Session session) throws OwsExceptionReport;

@@ -94,10 +94,6 @@ public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHa
                 .collect(toSet());
     }
 
-    protected ServiceOperatorRepository getServiceOperatorRepository() {
-        return serviceOperatorRepository;
-    }
-
     private OwsDomain getSectionsParameter(String service, String version) throws OwsExceptionReport {
         // set param Sections
         List<String> sections = new LinkedList<>();
@@ -115,7 +111,16 @@ public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHa
         return  new OwsDomain(name, new OwsAllowedValues(sections.stream().map(OwsValue::new)));
     }
 
-    private static OwsDomain getAcceptFormatsParameter(String service, String version) {
+    public ServiceOperatorRepository getServiceOperatorRepository() {
+        return serviceOperatorRepository;
+    }
+
+    @Inject
+    public void setServiceOperatorRepository(ServiceOperatorRepository serviceOperatorRepository) {
+        this.serviceOperatorRepository = serviceOperatorRepository;
+    }
+
+    private OwsDomain getAcceptFormatsParameter(String service, String version) {
         GetCapabilitiesParams name = OWSConstants.GetCapabilitiesParams.AcceptFormats;
         return new OwsDomain(name, new OwsAllowedValues(SosConstants.ACCEPT_FORMATS.stream().map(OwsValue::new)));
     }
@@ -126,7 +131,7 @@ public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHa
         return new OwsDomain(name, new OwsAllowedValues(versions.stream().map(OwsValue::new)));
     }
 
-    private static OwsDomain getUpdateSequenceParameter(String service, String version) {
+    private OwsDomain getUpdateSequenceParameter(String service, String version) {
         GetCapabilitiesParams name = OWSConstants.GetCapabilitiesParams.updateSequence;
         return new OwsDomain(name, OwsNoValues.instance());
     }

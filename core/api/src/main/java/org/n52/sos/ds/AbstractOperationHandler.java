@@ -126,6 +126,7 @@ public abstract class AbstractOperationHandler
         this.listOnlyParentOfferings = listOnlyParentOfferings;
     }
 
+
     protected boolean checkListOnlyParentOfferings() {
         return listOnlyParentOfferings;
     }

@@ -59,8 +59,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingQualityData;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.EReportingQualityData;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.EReportingValues;
 import org.n52.svalbard.util.SweHelper;
 
 import com.google.common.collect.Lists;

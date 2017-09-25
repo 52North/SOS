@@ -67,11 +67,6 @@ public abstract class AbstractValuedSeriesObservation<T>
         this.series = series;
     }
 
-    @Override
-    public boolean isSetSeries() {
-        return getSeries() != null;
-    }
-
     /**
      * Add {@link AbstractValue} data to {@link OmObservation}
      *

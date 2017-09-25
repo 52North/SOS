@@ -47,7 +47,6 @@ import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class IdentificationEnrichment extends SensorMLEnrichment {
-
     private I18NProcedureMetadata i18n = null;
 
     public IdentificationEnrichment(AbstractProcedureCreationContext ctx) {

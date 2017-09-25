@@ -49,6 +49,12 @@ import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 
 public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
 
+    private final DaoFactory daoFactory;
+
+    public AbstractIdentifierNameDescriptionDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     public void addIdentifierNameDescription(AbstractGML abstractFeature,
                                              IdentifierNameDescriptionEntity entity,
                                              Session session) {
@@ -160,5 +166,9 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
 //
 //        AbstractI18NDAO<?, ?> i18ndao = DaoFactory.getInstance().getI18NDAO(feature, session);
 //        featureOfInterestDAO.addIdentifierNameDescription(samplingFeature, feature, session);
+    }
+
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
     }
 }

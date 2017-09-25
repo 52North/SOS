@@ -85,16 +85,6 @@ HasDescriptionXml, HasUrl, HasCoordinate, HasParentChilds<AbstractFeatureOfInter
     }
 
     @Override
-    public boolean isSetCodespace() {
-        return getCodespace() != null && getCodespace().isSetCodespace();
-    }
-
-    @Override
-    public boolean isSetCodespaceName() {
-        return getCodespaceName() != null && getCodespaceName().isSetCodespace();
-    }
-
-    @Override
     public String getUrl() {
         return this.url;
     }

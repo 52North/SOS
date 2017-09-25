@@ -53,7 +53,6 @@ import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
-import org.n52.sos.ogc.om.values.XmlValue;
 
 public class SeriesParameterFactory implements ValueVisitor<ValuedParameter<?>, OwsExceptionReport> {
 

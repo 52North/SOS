@@ -42,7 +42,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
@@ -147,7 +147,7 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
     }
 
     protected Map<String, ObservableProperty> save(List<AbstractPhenomenon> abstractPhenomenons, Session session) {
-        ObservablePropertyDAO dao = new ObservablePropertyDAO(new DaoFactory());
+        ObservablePropertyDAO dao = new DaoFactory(new I18NDAORepository()).getObservablePropertyDAO();
         Collection<ObservableProperty> savedObservableProperties
                 = dao.getOrInsertObservableProperty(abstractPhenomenons, false, session);
         return asMap(savedObservableProperties);

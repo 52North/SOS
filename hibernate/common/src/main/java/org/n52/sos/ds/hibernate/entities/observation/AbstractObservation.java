@@ -28,9 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation;
 
-import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.om.values.Value;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -106,15 +103,6 @@ public abstract class AbstractObservation<T>
         this.unit = unit;
     }
 
-    @Override
-    public boolean isSetUnit() {
-        return getUnit() != null && getUnit().isSetUnit();
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
 
     @Override
     public String getDiscriminator() {

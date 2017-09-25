@@ -249,7 +249,7 @@ public class InsertDAOTest
     private final GetObservationDao getObsDAO = new GetObservationDao();
     private final SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
     private final I18NDAORepository i18NDAORepository = new I18NDAORepository();
-    private final DaoFactory daoFactory = new DaoFactory();
+    private final DaoFactory daoFactory = new DaoFactory(null);
     private final EncoderRepository encoderRepository = new EncoderRepository();
     private final DecoderRepository decoderRepository = new DecoderRepository();
     private final ConverterRepository converterRepository = new ConverterRepository();

@@ -28,31 +28,19 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingQualityData;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
-
-import com.google.common.base.Strings;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.EReportingQualityData;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasPrimaryObservation;
 
 public class EReportingQuality implements HasPrimaryObservation, EReportingQualityData {
-
     public static final String YEAR = "year";
-
     public static final String SERIES = "series";
 
-    public static final String PRIMARY_OBSERVATION = "primaryObservation";
-
     private long id;
-
     private int year;
-
     private long series;
-
     private String primaryObservation;
-
     private Boolean timeCoverageFlag;
-
     private Boolean dataCaptureFlag;
-
     private Double uncertaintyEstimation;
 
 
@@ -110,11 +98,6 @@ public class EReportingQuality implements HasPrimaryObservation, EReportingQuali
     }
 
     @Override
-    public boolean isSetPrimaryObservation() {
-        return !Strings.isNullOrEmpty(getPrimaryObservation());
-    }
-
-    @Override
     public Boolean getDataCaptureFlag() {
         return this.dataCaptureFlag;
     }
@@ -122,11 +105,6 @@ public class EReportingQuality implements HasPrimaryObservation, EReportingQuali
     @Override
     public void setDataCaptureFlag(Boolean dataCaptureFlag) {
         this.dataCaptureFlag = dataCaptureFlag;
-    }
-
-    @Override
-    public boolean isSetDataCaptureFlag() {
-        return this.dataCaptureFlag != null;
     }
 
     @Override
@@ -152,11 +130,6 @@ public class EReportingQuality implements HasPrimaryObservation, EReportingQuali
     @Override
     public void setUncertaintyEstimation(Double uncertaintyEstimation) {
         this.uncertaintyEstimation = uncertaintyEstimation;
-    }
-
-    @Override
-    public boolean isSetUncertaintyEstimation() {
-        return this.uncertaintyEstimation != null;
     }
 
 }

@@ -51,6 +51,8 @@ import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.FeatureWith.FeatureWithFeatureType;
+import org.n52.shetland.ogc.gml.FeatureWith.FeatureWithGeometry;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
@@ -62,11 +64,6 @@ import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.gml.FeatureWith;
-import org.n52.shetland.ogc.gml.FeatureWith.FeatureWithFeatureType;
-import org.n52.shetland.ogc.gml.FeatureWith.FeatureWithEncode;
-import org.n52.shetland.ogc.gml.FeatureWith.FeatureWithGeometry;
-import org.n52.shetland.ogc.gml.FeatureWith.FeatureWithUrl;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
@@ -113,10 +110,8 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     private static final String SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OBSERVATION_CONSTELLATION =
             "getFeatureOfInterestIdentifiersForObservationConstellation";
 
-    private final DaoFactory daoFactory;
-
     public FeatureOfInterestDAO(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+        super(daoFactory);
     }
 
     @Override
@@ -171,7 +166,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                     SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OBSERVATION_CONSTELLATION);
             return namedQuery.list();
         } else {
-            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
+            AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
             Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 Criteria seriesCriteria = criteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
@@ -213,7 +208,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                     SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING);
             return namedQuery.list();
         } else {
-            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
+            AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
             Criteria c = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 c.createCriteria(ContextualReferencedSeriesObservation.SERIES)
@@ -225,7 +220,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                     .setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
             }
 
-            daoFactory.getOfferingDAO().addOfferingRestricionForObservation(c, offering);
+            getDaoFactory().getOfferingDAO().addOfferingRestricionForObservation(c, offering);
             LOGGER.debug("QUERY getFeatureOfInterestIdentifiersForOffering(offeringIdentifiers): {}",
                     HibernateHelper.getSqlString(c));
             return c.list();
@@ -385,9 +380,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      *            Hibernate session
      */
     public void checkOrInsertRelatedFeatureRelation(AbstractFeatureOfInterest featureOfInterest, Offering offering, Session session) {
-        daoFactory.getRelatedFeatureDAO()
-                .getRelatedFeatureForOffering(offering.getIdentifier(), session)
-                .stream()
+        getDaoFactory().getRelatedFeatureDAO().getRelatedFeatureForOffering(offering.getIdentifier(), session).stream()
                 .filter(relatedFeature -> !featureOfInterest.getIdentifier().equals(relatedFeature.getFeatureOfInterest().getIdentifier()))
                 .forEachOrdered(relatedFeature -> insertRelationship(relatedFeature.getFeatureOfInterest(), featureOfInterest, session));
 
@@ -571,15 +564,22 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     public Criteria getPublishedFeatureOfInterestCriteria(Session session) throws OwsExceptionReport {
         Criteria c = getDefaultCriteria(session);
         if (HibernateHelper.isEntitySupported(Series.class)) {
-            c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            c.add(Subqueries.propertyIn(FeatureOfInterest.ID, getDetachedCriteriaSeries(session)));
+            c.add(Subqueries.propertyNotIn(FeatureOfInterest.ID, getPublishedDetachedCriteriaSeries(session)));
         }
         return c;
     }
 
+    private DetachedCriteria getPublishedDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
+        final DetachedCriteria detachedCriteria =
+                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
+        detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(Series.DELETED, true), Restrictions.eq(Series.PUBLISHED, false)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.FEATURE_OF_INTEREST)));
+        return detachedCriteria;
+}
+
     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
         final DetachedCriteria detachedCriteria =
-                DetachedCriteria.forClass(daoFactory.getSeriesDAO().getSeriesClass());
+                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.FEATURE_OF_INTEREST)));
         return detachedCriteria;

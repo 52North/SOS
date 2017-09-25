@@ -45,6 +45,7 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.service.ServiceSettings;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
@@ -549,7 +550,7 @@ public class SosDescribeSensorOperatorV20 extends
                                             : Sos1Constants.SERVICEVERSION;
                             String pdf = childProcedure.getDefaultElementEncoding();
                             component.setHref(SosHelper.getDescribeSensorUrl(version, getServiceURL(), childProcedure.getIdentifier(),
-                                    MediaTypes.APPLICATION_KVP.toString(), pdf).toString());
+                                    pdf).toString());
                         } catch (MalformedURLException uee) {
                             component.setHref(childProcedure.getIdentifier());
                         }

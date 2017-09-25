@@ -40,7 +40,6 @@ import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.values.GeometryValue;
-import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterAdder;
@@ -117,11 +116,6 @@ public abstract class AbstractTemporalReferencedObservation
     @Override
     public void setValidTimeEnd(Date validTimeEnd) {
         this.validTimeEnd = validTimeEnd;
-    }
-
-    @Override
-    public boolean isSetValidTime() {
-        return getValidTimeStart() != null && getValidTimeEnd() != null;
     }
 
     /**

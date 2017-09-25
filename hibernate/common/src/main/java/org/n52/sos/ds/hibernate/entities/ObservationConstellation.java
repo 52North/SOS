@@ -162,12 +162,6 @@ public class ObservationConstellation
     }
 
     @Override
-    public boolean isSetObservationType() {
-        return getObservationType() != null &&
-               getObservationType().isSetObservationType();
-    }
-
-    @Override
     public String toString() {
         return String
                 .format("ObservationConstellation [observationConstellationId=%s, observableProperty=%s, procedure=%s, "

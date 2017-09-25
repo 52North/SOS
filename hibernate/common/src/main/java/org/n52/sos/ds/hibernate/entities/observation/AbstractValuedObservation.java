@@ -51,7 +51,6 @@ import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extensions;
-import org.n52.shetland.ogc.swes.SwesExtensions;
 import org.n52.shetland.util.OMHelper;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -94,11 +93,6 @@ public abstract class AbstractValuedObservation<T>
     @Override
     public void setUnit(final Unit unit) {
         this.unit = unit;
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return getUnit() != null && getUnit().isSetUnit();
     }
 
     @Override
@@ -149,9 +143,9 @@ public abstract class AbstractValuedObservation<T>
     /**
      * Create a {@code TimeValuePair}
      *
-     * @return resulting {@code TimeValuePair}
-     * @throws OwsExceptionReport
-     *             If an error occurs when getting the value
+     * @return resulting {@link TimeValuePair}
+     *
+     * @throws OwsExceptionReport If an error occurs when getting the value
      */
     public TimeValuePair createTimeValuePairFrom() throws OwsExceptionReport {
         return new TimeValuePair(createPhenomenonTime(), accept(new ObservationValueCreator()));
@@ -160,11 +154,10 @@ public abstract class AbstractValuedObservation<T>
     /**
      * Add {@code AbstractValue} data to {@code OmObservation}
      *
-     * @param observation
-     *            {@code OmObservation} to add data
+     * @param observation {@link OmObservation} to add data
      * @param responseFormat
-     * @throws OwsExceptionReport
-     *             If an error occurs when getting the value
+     *
+     * @throws OwsExceptionReport If an error occurs when getting the value
      */
     public OmObservation addValuesToObservation(OmObservation observation, String responseFormat)
             throws OwsExceptionReport {
@@ -218,23 +211,21 @@ public abstract class AbstractValuedObservation<T>
     /**
      * Create result time from {@code Date}
      *
-     * @param date
-     *            {@code Date} to create result time from
+     * @param date {@link Date} to create result time from
+     *
      * @return result time
      */
     protected TimeInstant createResutlTime(Date date) {
-        DateTime dateTime = new DateTime(date, DateTimeZone.UTC);
-        return new TimeInstant(dateTime);
+        return new TimeInstant(new DateTime(date, DateTimeZone.UTC));
     }
 
     /**
      * Create {@code TimePeriod} from {@code Date}s
      *
-     * @param start
-     *            Start {@code Date}
-     * @param end
-     *            End {@code Date}
-     * @return {@code TimePeriod} or null if {@code Date}s are null
+     * @param start Start {@link Date}
+     * @param end End {@link Date}
+     *
+     * @return {@link TimePeriod} or null if {@link Date}s are null
      */
     protected TimePeriod createValidTime(Date start, Date end) {
         // create time element
@@ -248,8 +239,8 @@ public abstract class AbstractValuedObservation<T>
 
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
             throws OwsExceptionReport {
-        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-        final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
+        NamedValue<Geometry> namedValue = new NamedValue<>();
+        ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
         namedValue.setName(referenceType);
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
@@ -258,7 +249,8 @@ public abstract class AbstractValuedObservation<T>
         return namedValue;
     }
 
-    public OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
+    public OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws
+            OwsExceptionReport {
         if (!observation.isSetValue()) {
             addValuesToObservation(observation, responseFormat);
         } else {
@@ -272,6 +264,7 @@ public abstract class AbstractValuedObservation<T>
         }
         return observation;
     }
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private SingleObservationValue getSingleObservationValue(Value<?> value) throws OwsExceptionReport {
         return new SingleObservationValue(createPhenomenonTime(), value);
@@ -285,7 +278,8 @@ public abstract class AbstractValuedObservation<T>
         new ParameterAdder(observation, this).add();
     }
 
-    public void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
+    public void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws
+            OwsExceptionReport {
         // nothing to do
     }
 

@@ -51,8 +51,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.om.OmObservationConstellation;
-import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
@@ -93,6 +91,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     public AbstractSeriesObservationDAO(DaoFactory daoFactory) {
         super(daoFactory);
     }
+
 
     @Override
     protected void addObservationContextToObservation(ObservationContext ctx,

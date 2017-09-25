@@ -48,6 +48,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
@@ -185,7 +186,7 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            HibernateObservationBuilder b = new HibernateObservationBuilder(session, new DaoFactory());
+            HibernateObservationBuilder b = new HibernateObservationBuilder(session, new DaoFactory(new I18NDAORepository()));
             DateTime begin = new DateTime();
             int numObs = 10000;
             for (int i = 0; i < numObs; ++i) {

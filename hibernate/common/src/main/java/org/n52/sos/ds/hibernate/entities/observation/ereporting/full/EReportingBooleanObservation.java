@@ -54,11 +54,6 @@ public class EReportingBooleanObservation
     }
 
     @Override
-    public boolean isSetValue() {
-        return this.value;
-    }
-
-    @Override
     public void accept(VoidObservationVisitor visitor)
             throws OwsExceptionReport {
         visitor.visit(this);

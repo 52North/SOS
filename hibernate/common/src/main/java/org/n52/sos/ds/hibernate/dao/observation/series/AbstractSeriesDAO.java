@@ -69,10 +69,8 @@ public abstract class AbstractSeriesDAO
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesDAO.class);
 
-    private final DaoFactory daoFactory;
-
     public AbstractSeriesDAO(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+        super(daoFactory);
     }
 
     public abstract Class<?> getSeriesClass();
@@ -574,7 +572,7 @@ public abstract class AbstractSeriesDAO
      */
     public void updateSeriesAfterObservationDeletion(Series series, SeriesObservation<?> observation,
             Session session) {
-        SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO(daoFactory);
+        SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO(getDaoFactory());
         if (series.isSetFirstTimeStamp() && series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
             SeriesObservation<?> firstObservation = seriesObservationDAO.getFirstObservationFor(series, session);
             if (firstObservation != null) {
@@ -692,10 +690,6 @@ public abstract class AbstractSeriesDAO
             addProcedureToCriteria(c, procedure);
         }
         return c;
-    }
-
-    public DaoFactory getDaoFactory() {
-        return daoFactory;
     }
 
     protected boolean isIncludeChildObservableProperties() {

@@ -28,32 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collection;
-
-import org.junit.Test;
-
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sensorML.AbstractSensorML;
-import org.n52.shetland.ogc.sensorML.SensorML;
-import org.n52.shetland.ogc.sensorML.SensorMLConstants;
-import org.n52.shetland.ogc.sensorML.System;
-import org.n52.shetland.ogc.swe.SweEnvelope;
-import org.n52.shetland.util.ReferencedEnvelope;
-import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.sos.service.ProcedureDescriptionSettings;
-
-import com.google.common.collect.Lists;
-import com.vividsolutions.jts.geom.Envelope;
-
-
 public class BoundingBoxEnrichmentTest {
 
 //    @Test public void

@@ -1641,6 +1641,19 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Reference.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertObservation",
+			"title":"ReferenceObservation",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Parameter.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -2361,6 +2374,19 @@
 			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"ComplexObservation",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Reference.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertObservation",
+			"title":"ReferenceObservation",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"
@@ -3491,7 +3517,8 @@
 					"http://www.52north.org/test/observableProperty/9_3",
 					"http://www.52north.org/test/observableProperty/9_4",
 					"http://www.52north.org/test/observableProperty/9_5",
-					"http://www.52north.org/test/observableProperty/9_6"
+					"http://www.52north.org/test/observableProperty/9_6",
+					"http://www.52north.org/test/observableProperty/9_9"
 				],
 				"observationType":[
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3499,7 +3526,8 @@
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation",
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation",
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation",
-					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation"
+					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation",
+					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ReferenceObservation"
 				],
 				"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 			}
@@ -3528,7 +3556,8 @@
 					"http://www.52north.org/test/observableProperty/9_3",
 					"http://www.52north.org/test/observableProperty/9_4",
 					"http://www.52north.org/test/observableProperty/9_5",
-					"http://www.52north.org/test/observableProperty/9_6"
+					"http://www.52north.org/test/observableProperty/9_6",
+					"http://www.52north.org/test/observableProperty/9_9"
 				],
 				"observationType":[
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3536,7 +3565,8 @@
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation",
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation",
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation",
-					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation"
+					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation",
+					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ReferenceObservation"
 				],
 				"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 			}
@@ -3565,7 +3595,8 @@
 					"http://www.52north.org/test/observableProperty/9_3",
 					"http://www.52north.org/test/observableProperty/9_4",
 					"http://www.52north.org/test/observableProperty/9_5",
-					"http://www.52north.org/test/observableProperty/9_6"
+					"http://www.52north.org/test/observableProperty/9_6",
+					"http://www.52north.org/test/observableProperty/9_9"
 				],
 				"observationType":[
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
@@ -3573,7 +3604,8 @@
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation",
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation",
 					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation",
-					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation"
+					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation",
+					"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ReferenceObservation"
 				],
 				"featureOfInterestType":"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
 			}
@@ -3647,7 +3679,7 @@
 				}
 
 			},
-					{
+			{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
@@ -3729,6 +3761,65 @@
 
 			},
 			{
+			"service":"SOS",
+			"version":"2.0.0",
+			"method":"POST",
+			"binding": "application/json",
+			"headers":{
+				"Accept":"application/json",
+				"Content-Type":"application/json"
+			},
+			"operation":"InsertObservation",
+			"title": "ReferenceObservation",
+			"request":{
+				"request":"InsertObservation",
+				"service":"SOS",
+				"version":"2.0.0",
+				"offering":"http://www.52north.org/test/offering/9",
+				"observation":
+					{
+						"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ReferenceObservation",
+						"procedure":"http://www.52north.org/test/procedure/9",
+						"observedProperty":"http://www.52north.org/test/observableProperty/9_9",
+						"featureOfInterest":{
+							"identifier":{
+								"value":"http://www.52north.org/test/featureOfInterest/9",
+								"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
+							},
+							"name":[
+								{
+									"value":"52°North",
+									"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
+								}
+							],
+							"sampledFeature":[
+								"http://www.52north.org/test/featureOfInterest/world"
+							],
+							"geometry":{
+								"type":"Point",
+								"coordinates":[
+									51.935101100104916,
+									7.651968812254194
+								],
+								"crs":{
+									"type":"name",
+									"properties":{
+										"name":"EPSG:4326"
+									}
+								}
+							}
+						},
+						"phenomenonTime":"2012-11-19T17:45:15+00:00",
+						"resultTime":"2012-11-19T17:45:15+00:00",
+						"result":{
+							"href":"test_reference",
+							"title":"test_title",
+							"role":"test_role"
+						}
+					}
+				}
+			},
+			{
 				"service":"SOS",
 				"version":"2.0.0",
 				"method":"POST",
@@ -3745,7 +3836,6 @@
 					"offering":"http://www.52north.org/test/offering/6",
 					"observedProperty":"http://www.52north.org/test/observableProperty/6"
 				}
-
 			},
 			{
 				"service":"SOS",
@@ -3765,7 +3855,6 @@
 					"offering":"http://www.52north.org/test/offering/6",
 					"observedProperty":"http://www.52north.org/test/observableProperty/6"
 				}
-
 			},
 			{
 				"service":"SOS",

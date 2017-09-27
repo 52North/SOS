@@ -42,6 +42,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ReferenceObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 
@@ -125,6 +126,13 @@ public abstract class ObservationFactory {
         return instantiate(profileClass());
     }
 
+    public abstract Class<? extends ReferenceObservation> referenceClass();
+
+    public ReferenceObservation reference()
+            throws OwsExceptionReport {
+        return instantiate(referenceClass());
+    }
+
     private <T extends Observation<?>> T instantiate(Class<T> c)
             throws OwsExceptionReport {
         try {
@@ -156,6 +164,8 @@ public abstract class ObservationFactory {
                     return complexClass();
                 case OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION:
                     return sweDataArrayClass();
+                case OmConstants.OBS_TYPE_REFERENCE_OBSERVATION:
+                    return referenceClass();
                 case OmConstants.OBS_TYPE_UNKNOWN:
                     return blobClass();
                 default:

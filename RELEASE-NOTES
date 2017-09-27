@@ -376,12 +376,12 @@ RELEASE NOTES
       * Primary validated assessment data -modelled (E1b)
       * Primary up-to-date assessment data - measurements (E2a)
       * More information about AQD e-Reporting: http://www.eionet.europa.eu/aqportal
-	  * Documentation: https://wiki.52north.org/bin/view/SensorWeb/AqdEReporting
+	  * Documentation: https://wiki.52north.org/SensorWeb/AqdEReporting
 	* Flexible identifier
 	  * The flexible identifier extension offers the possibility to return human readable names
 	    as identifiers instead of the sometimes cryptic identifiers.
 	  * Affects offering, procedure, observableProperty and featureOfInterest.
-	  * Documentation: https://wiki.52north.org/bin/view/SensorWeb/FlexibleIdentifier
+	  * Documentation: https://wiki.52north.org/SensorWeb/FlexibleIdentifier
     * Add core and custom datasources for Oracle (#228)
     * Support clear datasource for SQL Server (#199)
     * Add webapp-bundle module which builds a 52N SOS war including
@@ -412,15 +412,15 @@ RELEASE NOTES
  --- New features ---
 
     * INSPIRE SOS:
-      * Details: https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#INSPIRE_Download_Service_extensi
+      * Details: https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#INSPIRE_Download_Service_extensi
       * Multilingualism:
         * Name/description of offering, procedure, observableProperty, and featureOfInterest can be defined in different languages
         * Define/Change via the admin interface, insertion via transactional operations is not yet supported.
-        * Details: https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Multilingualism_support
+        * Details: https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#Multilingualism_support
       * Coordinate transformation:
         * Requested coordinates are transformed to the defined database CRS
         * Coordinates in the responses are transformed to the requested or defined response CRS
-        *Details: https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#CRS_support
+        *Details: https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#CRS_support
       *https://github.com/52North/SOS/pull/131
     * Support for transactional feature relation insertion
       * Insert valid sampledFeature feature and add relation to database

@@ -52,7 +52,6 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.TObservableProperty;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -257,7 +256,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
      */
     @SuppressWarnings("unchecked")
     @Deprecated
-    public List<TObservableProperty> getTObservablePropertyObjects(final Session session) {
+    public List<ObservableProperty> getTObservablePropertyObjects(final Session session) {
         Criteria criteria = session.createCriteria(ObservableProperty.class);
         LOGGER.debug("QUERY getTObservablePropertyObjects(): {}", HibernateHelper
                      .getSqlString(criteria));

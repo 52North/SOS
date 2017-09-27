@@ -21,7 +21,7 @@ The 52°North SOS enables the user to:
  - insert and retrieve sensor descriptions (encoded according to the OGC SensorML standard - SML 1.0.1, SML 2.0)
  - publish measurement data (near real-time, as well as archived data) 
 
-An extension accomodates additional INSPIRE Directive requirements, thus ensuring interoperable exchange of any kind of observation data across political, administrative and organizational boundaries. Client applications, such as [Helgoland](http://www-neu.52north.org/software/software-projects/helgoland/) enable analysis and visualization of the measurement data provided via the SOS server.
+An extension accommodates additional INSPIRE Directive requirements, thus ensuring interoperable exchange of any kind of observation data across political, administrative and organizational boundaries. Client applications, such as [Helgoland](http://www-neu.52north.org/software/software-projects/helgoland/) enable analysis and visualization of the measurement data provided via the SOS server.
  
 ### Features
 
@@ -46,7 +46,7 @@ An extension accomodates additional INSPIRE Directive requirements, thus ensurin
 
 ## Quick Start
 
- Get started - the [installation guide](https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Installation) helps you install and configure the 52°North SOS.
+ Get started - the [installation guide](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#Installation) helps you install and configure the 52°North SOS.
 
 ## User Guide
 
@@ -174,6 +174,6 @@ The latest release of 52°North SOS can be downloaded from this website:
   * `README` :               This file
   * `RELEASE-NOTES` :        The release notes of the 52°North SOS
 
-No printer friendly documentation exist for this release. Instead, refer to the [wiki documentation](https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation).
+No printer friendly documentation exist for this release. Instead, refer to the [wiki documentation](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation).
 
 52°North Inititative for Geospatial Open Source Software GmbH, Germany

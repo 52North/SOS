@@ -37,6 +37,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservati
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.ReferenceValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
 
@@ -66,6 +67,9 @@ public abstract class VoidValuedObservationVisitor implements ValuedObservationV
     protected abstract void _visit(SweDataArrayValuedObservation o) throws OwsExceptionReport;
 
     protected abstract void _visit(ProfileValuedObservation o)
+            throws OwsExceptionReport;
+
+    protected abstract void _visit(ReferenceValuedObservation o)
             throws OwsExceptionReport;
 
     @Override
@@ -124,6 +128,12 @@ public abstract class VoidValuedObservationVisitor implements ValuedObservationV
 
     @Override
     public Void visit(ProfileValuedObservation o)
+            throws OwsExceptionReport {
+        _visit(o);
+        return null;
+    }
+
+    public Void visit(ReferenceValuedObservation o)
             throws OwsExceptionReport {
         _visit(o);
         return null;

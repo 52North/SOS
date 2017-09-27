@@ -84,7 +84,7 @@
             "#service_transactionalallowedips > div.controls > span.help-block",
             1000,
             "<br /><span class='alert alert-info'>" +
-            "Consider entering the IP of our machine: " +
+            "Consider entering the IP of your machine: " +
             "<code>" +
             "<c:out value="${clientIp}" escapeXml="false"/>" +
             "</code>" +

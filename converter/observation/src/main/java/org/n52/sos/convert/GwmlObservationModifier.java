@@ -56,7 +56,10 @@ import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -68,6 +71,7 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
         Map<OwsServiceRequest, OwsServiceResponse> requestResponseMap = Maps.newHashMap();
+        requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
         requestResponseMap.put(new GetObservationByIdRequest(), new GetObservationByIdResponse());
         Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
@@ -90,13 +94,13 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier {
     @Override
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
-       if (response instanceof GetObservationByIdResponse) {
-           return checkGetObservationByIdResponse((GetObservationByIdResponse)response);
+       if (response instanceof AbstractObservationResponse) {
+           return checkGetObservationResponse((AbstractObservationResponse)response);
        }
        return super.modifyResponse(request, response);
     }
 
-    private OwsServiceResponse checkGetObservationByIdResponse(GetObservationByIdResponse response) throws NoSuchElementException, OwsExceptionReport {
+    private OwsServiceResponse checkGetObservationResponse(AbstractObservationResponse response) throws NoSuchElementException, OwsExceptionReport {
         List<OmObservation> observations = new LinkedList<OmObservation>();
         while (response.getObservationCollection().hasNext()) {
             OmObservation o = response.getObservationCollection().next();
@@ -105,6 +109,11 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier {
                     && (GWMLConstants.OBS_TYPE_GEOLOGY_LOG.equals(o.getObservationConstellation().getObservationType())
                     || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE.equals(o.getObservationConstellation().getObservationType())
                     || OmConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(o.getObservationConstellation().getObservationType()))) {
+                if (OmConstants.NS_OM_2.equals(response.getResponseFormat())
+                        || GWMLConstants.NS_GWML_22.equals(response.getResponseFormat())
+                        || GWMLConstants.NS_GWML_WELL_22.equals(response.getResponseFormat())) {
+                    o.getObservationConstellation().setObservationType(GWMLConstants.OBS_TYPE_GEOLOGY_LOG);
+                }
                 if (o.isSetValue() && o.getValue() instanceof SingleObservationValue) {
                     if (o.getValue().getValue() instanceof BooleanValue || o.getValue().getValue() instanceof CategoryValue
                             || o.getValue().getValue() instanceof CountValue || o.getValue().getValue() instanceof QuantityValue

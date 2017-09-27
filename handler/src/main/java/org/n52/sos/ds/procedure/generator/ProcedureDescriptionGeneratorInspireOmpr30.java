@@ -37,7 +37,6 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.inspire.base2.Contact;
-import org.n52.shetland.inspire.base2.RelatedParty;
 import org.n52.shetland.inspire.ompr.InspireOMPRConstants;
 import org.n52.shetland.inspire.ompr.Process;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -46,15 +45,15 @@ import org.n52.shetland.ogc.ows.OwsContact;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 
 public class ProcedureDescriptionGeneratorInspireOmpr30 extends AbstractProcedureDescriptionGenerator {
 
     public static final Set<ProcedureDescriptionGeneratorKey> GENERATOR_KEY_TYPES =
-            CollectionHelper.set(new ProcedureDescriptionGeneratorKey(
-                    InspireOMPRConstants.NS_OMPR_30));
+            CollectionHelper.set(
+                    new ProcedureDescriptionGeneratorKey(InspireOMPRConstants.NS_OMPR_30),
+                    new ProcedureDescriptionGeneratorKey(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS));
     private ProfileHandler profileHandler;
     private GeometryHandler geometryHandler;
 

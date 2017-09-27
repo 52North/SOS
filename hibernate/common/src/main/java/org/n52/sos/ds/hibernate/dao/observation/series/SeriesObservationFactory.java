@@ -37,6 +37,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ReferenceObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
@@ -52,6 +53,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesCountObse
 import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesGeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesNumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesProfileObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesReferenceObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesSweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesTextObservation;
 
@@ -128,6 +130,11 @@ public class SeriesObservationFactory extends ObservationFactory {
     @Override
     public Class<? extends ProfileObservation> profileClass() {
         return SeriesProfileObservation.class;
+    }
+
+    @Override
+    public Class<? extends ReferenceObservation> referenceClass() {
+        return SeriesReferenceObservation.class;
     }
 
     public Series series() {

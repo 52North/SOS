@@ -268,7 +268,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     }
 
     protected Criteria getDefaultCriteria(final Session session) {
-        return session.createCriteria(FeatureOfInterest.class);
+        return session.createCriteria(FeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     /**
@@ -575,7 +575,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(Series.DELETED, true), Restrictions.eq(Series.PUBLISHED, false)));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.FEATURE_OF_INTEREST)));
         return detachedCriteria;
-}
+    }
 
     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
         final DetachedCriteria detachedCriteria =

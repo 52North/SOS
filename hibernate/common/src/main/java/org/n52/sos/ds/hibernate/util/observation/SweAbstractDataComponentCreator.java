@@ -63,6 +63,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservati
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.ReferenceValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
 import org.n52.svalbard.decode.DecoderRepository;
@@ -166,6 +167,17 @@ public class SweAbstractDataComponentCreator
     @Override
     public SweAbstractDataComponent visit(ProfileValuedObservation o) throws OwsExceptionReport {
         return ProfileGeneratorSplitter.createValue(o);
+    }
+
+    @Override
+    public SweCategory visit(ReferenceValuedObservation o) throws OwsExceptionReport {
+        SweCategory component = new SweCategory();
+        if (o.isSetHref()) {
+            component.setValue(o.getHref());
+        } else if (o.isSetTitle()) {
+            component.setValue(o.getTitle());
+        }
+        return setCommonValues(component, o);
     }
 
     protected <T extends SweAbstractDataComponent> T setCommonValues(

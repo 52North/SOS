@@ -100,6 +100,8 @@ public interface OmConstants {
     String EN_COUNT_OBSERVATION = "CountObservation";
 
     String EN_TEXT_OBSERVATION = "TextObservation";
+    
+    String EN_REFERENCE_OBSERVATION = "ReferenceObservation";
 
     String EN_TRUTH_OBSERVATION = "TruthObservation";
 
@@ -253,6 +255,9 @@ public interface OmConstants {
 
     String OBS_TYPE_SWE_ARRAY_OBSERVATION =
             "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation";
+    
+    String OBS_TYPE_REFERENCE_OBSERVATION =
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ReferenceObservation";
 
     String OBS_RESULT_TYPE_OBSERVATION = "http://www.opengis.net/sensorML/2.0/DataArray";
 
@@ -275,6 +280,8 @@ public interface OmConstants {
     QName RESULT_MODEL_TRUTH_OBSERVATION = new QName(NS_OM, EN_TRUTH_OBSERVATION, NS_OM_PREFIX);
 
     QName RESULT_MODEL_TEXT_OBSERVATION = new QName(NS_OM, EN_TEXT_OBSERVATION, NS_OM_PREFIX);
+    
+    QName RESULT_MODEL_REFERENCE_OBSERVATION = new QName(NS_OM, EN_REFERENCE_OBSERVATION, NS_OM_PREFIX);
 
     /**
      * Array of constants for result models.

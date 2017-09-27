@@ -37,6 +37,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ReferenceObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.ogc.gwml.GWMLConstants;
@@ -101,6 +102,12 @@ public class ObservationTypeObservationVisitor implements ObservationVisitor<Str
     @Override
     public String visit(ProfileObservation o) throws OwsExceptionReport {
         return OmConstants.OBS_TYPE_PROFILE_OBSERVATION;
+    }
+
+    @Override
+    public String visit(ReferenceObservation o)
+            throws OwsExceptionReport {
+        return OmConstants.OBS_TYPE_REFERENCE_OBSERVATION;
     }
 
     public static ObservationTypeObservationVisitor getInstance() {

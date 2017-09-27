@@ -84,6 +84,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ReferenceObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter;
@@ -461,7 +462,20 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public boolean checkSweDataArrayObservationsFor(String offeringIdentifier, Session session) {
         return checkObservationFor(getObservationFactory().sweDataArrayClass(), offeringIdentifier, session);
     }
-
+    
+    /**
+     * Check if there are referenced observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkReferenceObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getObservationFactory().referenceClass(), offeringIdentifier, session);
+    }
+    
     /**
      * Get Hibernate Criteria for result model
      *
@@ -1567,7 +1581,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         @Override
         public Observation<?> visit(ReferenceValue value)
                 throws OwsExceptionReport {
-            throw notSupported(value);
+            return persist(observationFactory.reference(), value.getValue());
         }
 
         @Override
@@ -1621,6 +1635,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 throws OwsExceptionReport {
             throw notSupported(value);
         }
+        
+        
 
         private Set<Observation<?>> persistChildren(SweAbstractDataRecord dataRecord)
                 throws HibernateException, OwsExceptionReport {
@@ -1921,6 +1937,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                     }
                 }
                 return "profile";
+            }
+
+            @Override
+            public String visit(ReferenceObservation o)
+                    throws OwsExceptionReport {
+                return "reference";
             }
         }
     }

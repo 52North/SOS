@@ -115,4 +115,5 @@ public interface ValueVisitor<T> {
 
     T visit(QuantityRangeValue value)
             throws OwsExceptionReport;
+    
 }

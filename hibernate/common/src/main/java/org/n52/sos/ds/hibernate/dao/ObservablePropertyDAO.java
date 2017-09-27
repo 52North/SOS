@@ -47,7 +47,6 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.TObservableProperty;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
@@ -263,7 +262,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
      */
     @SuppressWarnings("unchecked")
     @Deprecated
-    public List<TObservableProperty> getTObservablePropertyObjects(final Session session) {
+    public List<ObservableProperty> getTObservablePropertyObjects(final Session session) {
         Criteria criteria = session.createCriteria(ObservableProperty.class);
         LOGGER.debug("QUERY getTObservablePropertyObjects(): {}", HibernateHelper
                      .getSqlString(criteria));
@@ -475,8 +474,8 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     @SuppressWarnings("unchecked")
     public List<ObservableProperty> getPublishedObservableProperty(Session session) throws CodedException {
         if (HibernateHelper.isEntitySupported(Series.class)) {
-            Criteria c = session.createCriteria(ObservableProperty.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            c.add(Subqueries.propertyIn(ObservableProperty.ID, getDetachedCriteriaSeries(session)));
+            Criteria c = getDefaultCriteria(session);
+            c.add(Subqueries.propertyNotIn(ObservableProperty.ID, getDetachedCriteriaSeries(session)));
             return c.list();
         } 
         return getObservablePropertyObjects(session);
@@ -484,7 +483,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
      
      private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
          final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
-         detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
+         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(Series.DELETED, true), Restrictions.eq(Series.PUBLISHED, false)));
          detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.OBSERVABLE_PROPERTY)));
          return detachedCriteria;
      }

@@ -746,7 +746,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     public List<Offering> getPublishedOffering(Collection<String> identifiers, Session session) throws CodedException {
         if (HibernateHelper.isEntitySupported(Series.class)) {
             Criteria c = getDefaultCriteria(session);
-            c.add(Subqueries.propertyIn(Offering.ID, getDetachedCriteriaSeries(session)));
+            c.add(Subqueries.propertyNotIn(Offering.ID, getDetachedCriteriaSeries(session)));
             return c.list();
         } 
         return getOfferingObjectsForCacheUpdate(identifiers, session);
@@ -754,7 +754,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
 
     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
          final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
-         detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
+         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(Series.DELETED, true), Restrictions.eq(Series.PUBLISHED, false)));
          detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.OFFERING)));
          return detachedCriteria;
      }

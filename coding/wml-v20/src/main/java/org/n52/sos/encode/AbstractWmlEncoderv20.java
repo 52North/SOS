@@ -392,7 +392,10 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                 } else {
                     observationProcess.setId("process." + JavaHelper.generateID(procedure.toString()));
                 }
-
+                if (procedure.isSetIdentifier()) {
+                    observationProcess.addNewIdentifier()
+                            .set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, procedure.getIdentifierCodeWithAuthority()));
+                }
                 if (procedure.isSetName()) {
                     for (final CodeType sosName : procedure.getName()) {
                         observationProcess.addNewName()

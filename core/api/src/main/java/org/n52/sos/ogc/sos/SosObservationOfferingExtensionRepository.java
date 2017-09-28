@@ -77,10 +77,8 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     @Override
     public void init() {
         SosObservationOfferingExtensionRepository.instance = this;
-        Map<SosObservationOfferingExtensionKey, Producer<SosObservationOfferingExtensionProvider>> implementations
-                = getUniqueProviders(this.components, this.componentFactories);
         this.offeringExtensionProviders.clear();
-        this.offeringExtensionProviders.putAll(implementations);
+        this.offeringExtensionProviders.putAll(getUniqueProviders(this.components, this.componentFactories));
     }
 
     @Override
@@ -132,18 +130,19 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     }
 
     /**
-     * Get the loaded {@link SosObservationOfferingExtensionProvider} implementation for the
-     * specific service and version
+     * Get the loaded {@link SosObservationOfferingExtensionProvider} implementation for the specific service and
+     * version
      *
-     * @param message
-     *            The {@link OwsServiceCommunicationObject} with service
-     *            and version
+     * @param message The {@link OwsServiceCommunicationObject} with service and version
+     *
      * @return loaded {@link SosObservationOfferingExtensionProvider} implementation
      */
-    public Set<SosObservationOfferingExtensionProvider> getOfferingExtensionProvider(OwsServiceCommunicationObject message) {
+    public Set<SosObservationOfferingExtensionProvider> getOfferingExtensionProvider(
+            OwsServiceCommunicationObject message) {
         Set<SosObservationOfferingExtensionProvider> providers = Sets.newHashSet();
         for (String name : getDomains()) {
-            SosObservationOfferingExtensionKey key = new SosObservationOfferingExtensionKey(message.getService(), message.getVersion(), name);
+            SosObservationOfferingExtensionKey key
+                    = new SosObservationOfferingExtensionKey(message.getService(), message.getVersion(), name);
             SosObservationOfferingExtensionProvider provider = getOfferingExtensionProvider(key);
             if (provider != null) {
                 providers.add(provider);
@@ -153,11 +152,11 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     }
 
     /**
-     * Get the loaded {@link SosObservationOfferingExtensionProvider} implementation for the
-     * specific {@link SosObservationOfferingExtensionKey}
+     * Get the loaded {@link SosObservationOfferingExtensionProvider} implementation for the specific
+     * {@link SosObservationOfferingExtensionKey}
      *
-     * @param key
-     *            The related {@link SosObservationOfferingExtensionKey}
+     * @param key The related {@link SosObservationOfferingExtensionKey}
+     *
      * @return loaded {@link SosObservationOfferingExtensionProvider} implementation
      */
     public SosObservationOfferingExtensionProvider getOfferingExtensionProvider(
@@ -166,13 +165,13 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     }
 
     /**
-     * Check if a {@link SosObservationOfferingExtensionProvider} implementation is loaded for
-     * the specific {@link SosObservationOfferingExtensionKey}
+     * Check if a {@link SosObservationOfferingExtensionProvider} implementation is loaded for the specific
+     * {@link SosObservationOfferingExtensionKey}
      *
-     * @param key
-     *            The related {@link SosObservationOfferingExtensionKey} to check for
-     * @return <code>true</code>, if a {@link SosObservationOfferingExtensionProvider}
-     *         implementation is loaded for the specific service
+     * @param key The related {@link SosObservationOfferingExtensionKey} to check for
+     *
+     * @return <code>true</code>, if a {@link SosObservationOfferingExtensionProvider} implementation is loaded for the
+     *         specific service
      */
     public boolean hasOfferingExtensionProviderFor(SosObservationOfferingExtensionKey key) {
         return getOfferingExtensionProviders().containsKey(key);
@@ -181,10 +180,9 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     /**
      * Check if a provider is available for the requested service and version
      *
-     * @param message
-     *            request object with service and version
-     * @return <code>true</code>, if a {@link SosObservationOfferingExtensionProvider} is
-     *         available
+     * @param message request object with service and version
+     *
+     * @return <code>true</code>, if a {@link SosObservationOfferingExtensionProvider} is available
      */
     public boolean hasOfferingExtensionProviderFor(OwsServiceCommunicationObject message) {
         boolean hasProvider;
@@ -200,13 +198,11 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     }
 
     /**
-     * Change the status of the {@link SosObservationOfferingExtensionProvider} which relates
-     * to the requested {@link SosObservationOfferingExtensionKey}
+     * Change the status of the {@link SosObservationOfferingExtensionProvider} which relates to the requested
+     * {@link SosObservationOfferingExtensionKey}
      *
-     * @param oekt
-     *            the {@link SosObservationOfferingExtensionKey} to change the status for
-     * @param active
-     *            the new status
+     * @param oekt the {@link SosObservationOfferingExtensionKey} to change the status for
+     * @param active the new status
      */
     @Override
     public void setActive(final SosObservationOfferingExtensionKey oekt, final boolean active) {
@@ -240,6 +236,7 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
      * For singleton use
      *
      * @return The single instance
+     *
      * @deprecated use injection
      */
     @Deprecated

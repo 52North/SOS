@@ -28,6 +28,7 @@
  */
 package org.n52.sos.coding.encode;
 
+
 import java.util.Set;
 
 import org.n52.janmayen.Producer;
@@ -44,11 +45,8 @@ import com.google.common.collect.Sets;
  * @author Christian Autermann
  */
 public class SosEncoderRepository extends EncoderRepository {
-    //TODO move to SOS
     private final Set<Producer<ObservationEncoder<?, ?>>> observationEncoders
             = Sets.newHashSet();
-
-    private final float order = Float.MAX_VALUE;
 
     @Override
     public void init() {

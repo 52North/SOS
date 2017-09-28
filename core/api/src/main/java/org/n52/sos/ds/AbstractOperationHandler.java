@@ -34,9 +34,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.cache.ContentCacheController;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.request.handler.OperationHandlerKey;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;

@@ -47,7 +47,7 @@ The Data Access Objects (DAO) layer would also be harmonized to provide a single
 
 In the [Sensor Web Suite database project](https://github.com/52North/series-hibernate) the harmonized database model and the DAO layer would be provided as a separate project that would be use in the future 52N SOS and 52N Sensor WEB REST-API implementations. Additionally the [52N SOS Proxy](https://github.com/52North/series-sos-proxy) will also use this project to persist the metadata of the harvested SOS services. 
 
-https://github.com/52North/SOS/misc/pics/sensor_web_db_dao.PNG
+![Image of Sensor Web Suite](https://github.com/52North/SOS/misc/pics/sensor_web_db_dao.PNG)
 
 This figure shows the future relation between the 52N Sensor Web Suite database project, the SOS and the Sensor WEB REST-API.
 

@@ -129,6 +129,10 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         super(SosConstants.SOS);
     }
 
+    public GetObservationDAO(String service) {
+        super(service);
+    }
+
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;

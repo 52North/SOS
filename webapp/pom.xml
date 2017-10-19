@@ -378,7 +378,7 @@
             <artifactId>rest-xml</artifactId>
             <scope>runtime</scope>
         </dependency>
-
+        
         <!-- GET DATA AVAILABILITY -->
 
         <dependency>
@@ -599,6 +599,18 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-oceansites</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- STA extension -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sta-operations</artifactId>
+            <version>5.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sta-dao</artifactId>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

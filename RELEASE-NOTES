@@ -21,6 +21,27 @@ RELEASE NOTES
   
       * 
 
+   Release 52n-sensorweb-sos-4.4.1
+====================================
+ 
+  --- New features ---
+
+      * Support for ReferencedObservation
+      * Support for insertion of profile observations via InsertResult/Template operations
+  
+  --- Changes ---
+  
+      * Load Microsoft SQL Server JDBC from Maven repository
+      * Improvements on cache serialization
+  
+  --- Fixed issues ---
+  
+      * Issue #566: Reload Capabilities Cache leads to severe error
+      * Issue #571: Sensors disappear (same as #566)
+      * Fix resetting of HIBERNATE_DIRECTORY config on save
+      * Fix the deletion of child observations
+      * Fix issue with not correct observation type for GWML GeologyLogCoverage
+
    Release 52n-sensorweb-sos-4.4.0
 ====================================
  

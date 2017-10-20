@@ -68,7 +68,7 @@ public abstract class AbstractSeriesDAO {
         this.daoFactory = daoFactory;
     }
 
-    protected abstract Class<?> getSeriesClass();
+    public abstract Class<?> getSeriesClass();
 
     /**
      * Get series for GetObservation request and featuresOfInterest

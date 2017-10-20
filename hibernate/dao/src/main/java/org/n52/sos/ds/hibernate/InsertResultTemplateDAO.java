@@ -101,8 +101,8 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler
                 if (obsConst != null) {
                     FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO(daoFactory);
                     FeatureOfInterest feature = featureOfInterestDAO
-                            .checkOrInsertFeatureOfInterest(sosObsConst.getFeatureOfInterest(), session);
-                    featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(feature,
+                            .checkOrInsert(sosObsConst.getFeatureOfInterest(), session);
+                    featureOfInterestDAO.checkOrInsertRelatedFeatureRelation(feature,
                             obsConst.getOffering(), session);
                     // check if result structure elements are supported
                     checkResultStructure(request.getResultStructure(),

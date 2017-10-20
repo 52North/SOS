@@ -35,10 +35,14 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.EReportingSetting;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationDAO;
@@ -63,7 +67,6 @@ import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObserv
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.shetland.util.EReportingSetting;
 
 /**
  * Hibernate data access factory.
@@ -77,6 +80,12 @@ public class DaoFactory {
 
     private Set<Integer> validityFlags;
     private Set<Integer> verificationFlags;
+    private I18NDAORepository i18NDAORepository;
+
+    @Inject
+    public DaoFactory(I18NDAORepository i18NDAORepository) {
+        this.i18NDAORepository = i18NDAORepository;
+    }
 
     @Setting(value = EReportingSetting.EREPORTING_VALIDITY_FLAGS, required = false)
     public void setValidityFlags(String validityFlags) {
@@ -207,6 +216,10 @@ public class DaoFactory {
 
     public ProcedureDescriptionFormatDAO getProcedureDescriptionFormatDAO() {
         return new ProcedureDescriptionFormatDAO();
+    }
+
+    public I18NDAORepository getI18NDAORepository() {
+        return i18NDAORepository;
     }
 
 }

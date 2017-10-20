@@ -31,7 +31,7 @@ package org.n52.sos.decode;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
-import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
@@ -61,9 +61,8 @@ public class DeleteObservationJsonDecoder
 
     @Override
     protected DeleteObservationRequest decodeRequest(JsonNode node)  {
-        DeleteObservationRequest req = new DeleteObservationRequest();
-        req.setObservationIdentifier(node.path(JSONConstants.OBSERVATION)
-                .textValue());
+        DeleteObservationRequest req = new DeleteObservationRequest(DeleteObservationConstants.NS_SOSDO_1_0);
+        req.addObservationIdentifier(node.path(JSONConstants.OBSERVATION).textValue());
         return req;
     }
 }

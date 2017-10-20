@@ -28,10 +28,10 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.inspire.Contact;
+import org.n52.shetland.inspire.base2.Contact;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.util.AQDJSONConstants;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

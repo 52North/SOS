@@ -29,7 +29,7 @@
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasEReportingSamplingPoint;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasEReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
 public class EReportingSeries
@@ -47,11 +47,6 @@ public class EReportingSeries
     @Override
     public void setSamplingPoint(EReportingSamplingPoint samplingPoint) {
         this.samplingPoint = samplingPoint;
-    }
-
-    @Override
-    public boolean hasSamplingPoint() {
-        return getSamplingPoint() != null;
     }
 
 }

@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.util;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -56,6 +55,7 @@ import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
@@ -67,6 +67,7 @@ import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
@@ -178,9 +179,9 @@ public class HibernateGetObservationHelper {
                                                             DaoFactory  daoFactory,
                                                             Session session)
             throws OwsExceptionReport {
-        final List<String> featuresForConstellation = daoFactory.getFeatureOfInterestDAO()
-                .getFeatureOfInterestIdentifiersForObservationConstellation(
-                        observationConstellation, session);
+        FeatureOfInterestDAO dao = daoFactory.getFeatureOfInterestDAO();
+        final List<String> featuresForConstellation = dao
+                .getIdentifiers(observationConstellation, session);
         if (featureIdentifier == null) {
             return featuresForConstellation;
         } else {
@@ -188,24 +189,23 @@ public class HibernateGetObservationHelper {
         }
     }
 
-    public static List<OmObservation> toSosObservation(Collection<Observation<?>> observations,
+    public static ObservationStream toSosObservation(Collection<Observation<?>> observations,
                                                        AbstractObservationRequest request,
                                                        LocalizedProducer<OwsServiceProvider> serviceProvider,
                                                        Locale language,
                                                        String pdf,
                                                        DaoFactory daoFactory,
                                                        Session session) throws OwsExceptionReport, ConverterException {
-        if (!observations.isEmpty()) {
-            final long startProcess = System.currentTimeMillis();
-            List<OmObservation> sosObservations = HibernateObservationUtilities.createSosObservationsFromObservations(
-                    new HashSet<>(observations), request, serviceProvider, language, pdf, daoFactory, session);
-
-            LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
-                         (System.currentTimeMillis() - startProcess));
-            return sosObservations;
-        } else {
-            return Collections.emptyList();
+        if (observations.isEmpty()) {
+            return ObservationStream.empty();
         }
+        final long startProcess = System.currentTimeMillis();
+        ObservationStream sosObservations = HibernateObservationUtilities.createSosObservationsFromObservations(
+                new HashSet<>(observations), request, serviceProvider, language, pdf, daoFactory, session);
+
+        LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
+                                                                     (System.currentTimeMillis() - startProcess));
+        return sosObservations;
     }
 
     public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request,

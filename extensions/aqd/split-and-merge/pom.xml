@@ -19,13 +19,5 @@
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
         </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
 	</dependencies>
 </project>

@@ -36,15 +36,12 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.service.Configurator;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 
 /**
@@ -52,8 +49,7 @@ import com.google.common.base.Strings;
  */
 public class FileDescriptionCreationStrategy extends XmlStringDescriptionCreationStrategy {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(FileDescriptionCreationStrategy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileDescriptionCreationStrategy.class);
 
     @Override
     public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
@@ -69,18 +65,9 @@ public class FileDescriptionCreationStrategy extends XmlStringDescriptionCreatio
     }
 
     private InputStream getDocumentAsStream(String filename) {
-        final StringBuilder builder = new StringBuilder();
-        // check if filename contains placeholder for configured
-        // sensor directory
-        if (filename.startsWith("standard")) {
-            filename = filename.replace("standard", "");
-            builder.append(getServiceConfig().getSensorDir());
-            builder.append("/");
-        }
-        builder.append(filename);
+        // check if filename contains placeholder for configured sensor directory
         LOGGER.debug("Procedure description file name '{}'!", filename);
-        return Configurator.getInstance().getClass().
-                getResourceAsStream(builder.toString());
+        return FileDescriptionCreationStrategy.class.getResourceAsStream(filename);
     }
 
     private String read(String path)
@@ -92,10 +79,5 @@ public class FileDescriptionCreationStrategy extends XmlStringDescriptionCreatio
     @Override
     public boolean apply(Procedure p) {
         return !Strings.isNullOrEmpty(p.getDescriptionFile());
-    }
-
-    @VisibleForTesting
-    ServiceConfiguration getServiceConfig() {
-        return ServiceConfiguration.getInstance();
     }
 }

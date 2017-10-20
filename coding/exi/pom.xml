@@ -36,18 +36,16 @@
             <artifactId>janmayen</artifactId>
         </dependency>
         <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>stax</groupId>
-                    <artifactId>stax-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -62,12 +60,16 @@
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.siemens.ct.exi</groupId>
             <artifactId>exificient</artifactId>
+        </dependency>
+         <dependency>
+            <groupId>com.siemens.ct.exi</groupId>
+            <artifactId>exificient-grammars</artifactId>
+        </dependency>
+         <dependency>
+            <groupId>com.siemens.ct.exi</groupId>
+            <artifactId>exificient-core</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

@@ -51,6 +51,7 @@ import org.n52.shetland.ogc.swe.SweSimpleDataRecord;
 import org.n52.shetland.ogc.swe.SweVector;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCategoryRange;
 import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweCountRange;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
@@ -59,6 +60,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweQuantityRange;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
+import org.n52.shetland.ogc.swe.stream.StreamingSweDataArray;
 
 /**
  * TODO JavaDoc
@@ -111,6 +113,11 @@ public class ValueCreatingSweDataComponentVisitor implements SweDataComponentVis
     @Override
     public Value<?> visit(SweCategory component) {
         return new CategoryValue(component.getValue(), component.getUom());
+    }
+
+    @Override
+    public Value<?> visit(SweCategoryRange component) throws OwsExceptionReport {
+        throw notSupported(component);
     }
 
     @Override
@@ -178,6 +185,11 @@ public class ValueCreatingSweDataComponentVisitor implements SweDataComponentVis
 
     @Override
     public Value<?> visit(SmlFeatureOfInterest component) throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(StreamingSweDataArray component) throws OwsExceptionReport {
         throw notSupported(component);
     }
 

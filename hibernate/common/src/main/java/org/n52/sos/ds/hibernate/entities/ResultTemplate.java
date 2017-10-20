@@ -38,33 +38,21 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultEncoding;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultStructure;
 
-import com.google.common.base.Strings;
-
 /**
  * @since 4.0.0
  *
  */
 public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure, HasObservableProperty, HasOffering,
         HasFeatureOfInterest, HasResultStructure, HasResultEncoding {
-
     private static final long serialVersionUID = -8847952458819368733L;
-
     public static final String ID = "resultTemplateId";
-
     private long resultTemplateId;
-
     private Offering offering;
-
     private ObservableProperty observableProperty;
-
     private Procedure procedure;
-
     private FeatureOfInterest featureOfInterest;
-
     private String identifier;
-
     private String resultStructure;
-
     private String resultEncoding;
 
     public ResultTemplate() {
@@ -129,18 +117,8 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
     }
 
     @Override
-    public boolean isSetIdentifier() {
-        return !Strings.isNullOrEmpty(getIdentifier());
-    }
-
-    @Override
     public String getResultStructure() {
         return resultStructure;
-    }
-
-    @Override
-    public boolean isSetResultStructure() {
-        return !Strings.isNullOrEmpty(resultStructure);
     }
 
     @Override
@@ -151,11 +129,6 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
     @Override
     public String getResultEncoding() {
         return this.resultEncoding;
-    }
-
-    @Override
-    public boolean isSetResultEncoding() {
-        return !Strings.isNullOrEmpty(resultEncoding);
     }
 
     @Override

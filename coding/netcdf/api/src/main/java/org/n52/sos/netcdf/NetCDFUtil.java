@@ -64,7 +64,6 @@ import org.n52.sos.netcdf.data.subsensor.PointProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import org.n52.sos.netcdf.feature.FeatureUtil;
 import org.n52.sos.netcdf.om.NetCDFObservation;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.encode.exception.EncodingException;
 
@@ -77,6 +76,8 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
 import ucar.nc2.constants.CF;
+
+import org.n52.shetland.ogc.om.ObservationStream;
 
 /**
  * Utility class for netCDF encoding.
@@ -96,8 +97,8 @@ public class NetCDFUtil {
      * @return List&lt;NetCDFObservation&gt; ready for encoding
      * @throws EncodingException
      */
-    public static List<NetCDFObservation> createNetCDFSosObservations(List<OmObservation> omObservations)
-            throws EncodingException {
+    public static List<NetCDFObservation> createNetCDFSosObservations(ObservationStream omObservations)
+            throws EncodingException, OwsExceptionReport {
         // the main map of observation value strings by asset, time, phenomenon,
         // and subsensor (height, profile bin, etc)
         Map<String, Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>>> obsValuesMap = new HashMap<>();
@@ -113,7 +114,9 @@ public class NetCDFUtil {
         SetMultimap<String, Double> sensorLats = HashMultimap.create();
         SetMultimap<String, Double> sensorHeights = HashMultimap.create();
 
-        for (OmObservation sosObs : omObservations) {
+        while(omObservations.hasNext()) {
+            OmObservation sosObs = omObservations.next();
+
             OmObservationConstellation obsConst = sosObs.getObservationConstellation();
 
             // first, resolve the procId to an asset type

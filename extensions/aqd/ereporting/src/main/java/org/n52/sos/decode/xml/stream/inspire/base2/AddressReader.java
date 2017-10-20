@@ -31,12 +31,12 @@ package org.n52.sos.decode.xml.stream.inspire.base2;
 import javax.xml.namespace.QName;
 
 import org.n52.shetland.aqd.AqdConstants;
-import org.n52.shetland.inspire.Address;
+import org.n52.shetland.inspire.ad.AddressRepresentation;
 import org.n52.sos.decode.xml.stream.NillableSubtagReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
 import org.n52.sos.decode.xml.stream.inspire.ad.AddressRepresentationReader;
 
-public class AddressReader extends NillableSubtagReader<Address> {
+public class AddressReader extends NillableSubtagReader<AddressRepresentation> {
 
     @Override
     protected QName getSubtagName() {
@@ -44,7 +44,7 @@ public class AddressReader extends NillableSubtagReader<Address> {
     }
 
     @Override
-    public XmlReader<Address> getSubtagDelegate() {
+    public XmlReader<AddressRepresentation> getSubtagDelegate() {
         return new AddressRepresentationReader();
     }
 

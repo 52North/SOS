@@ -28,14 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasValidation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasVerification;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.EReportingValues;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasEReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasPrimaryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasValidation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasVerification;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
-
-import com.google.common.base.Strings;
 
 public class TemporalReferencedEReportingObservation
         extends TemporalReferencedSeriesObservation
@@ -44,9 +42,7 @@ public class TemporalReferencedEReportingObservation
     private static final long serialVersionUID = -5055301771550925701L;
 
     private Integer validation = EReportingValues.DEFAULT_VALIDATION;
-
     private Integer verification = EReportingValues.DEFAULT_VERIFICATION;
-
     private String primaryObservation = EReportingValues.DEFAULT_PRIMARY_OBSERVATION;
 
     @Override
@@ -60,11 +56,6 @@ public class TemporalReferencedEReportingObservation
     }
 
     @Override
-    public boolean hasEReportingSeries() {
-        return getSeries() instanceof EReportingSeries;
-    }
-
-    @Override
     public Integer getVerification() {
         return verification;
     }
@@ -72,11 +63,6 @@ public class TemporalReferencedEReportingObservation
     @Override
     public void setVerification(Integer verification) {
         this.verification = verification;
-    }
-
-    @Override
-    public boolean isSetVerification() {
-        return getVerification() != null;
     }
 
     @Override
@@ -90,11 +76,6 @@ public class TemporalReferencedEReportingObservation
     }
 
     @Override
-    public boolean isSetValidation() {
-        return getValidation() != null;
-    }
-
-    @Override
     public String getPrimaryObservation() {
         return primaryObservation;
     }
@@ -102,11 +83,6 @@ public class TemporalReferencedEReportingObservation
     @Override
     public void setPrimaryObservation(String primaryObservation) {
         this.primaryObservation = primaryObservation;
-    }
-
-    @Override
-    public boolean isSetPrimaryObservation() {
-        return !Strings.isNullOrEmpty(getPrimaryObservation());
     }
 
 }

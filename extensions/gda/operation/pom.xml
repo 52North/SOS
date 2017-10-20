@@ -23,6 +23,11 @@
             <artifactId>svalbard</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard-xmlbeans</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
         </dependency>
@@ -42,86 +47,5 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-json-common</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-sosgda-v10</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.xmlbeans</groupId>
-            <artifactId>xmlbeans-xpath</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.sf.saxon</groupId>
-                    <artifactId>saxon</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.xmlbeans</groupId>
-                    <artifactId>xmlbeans</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.saxon</groupId>
-            <artifactId>saxon</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.saxon</groupId>
-            <artifactId>saxon</artifactId>
-            <classifier>xpath</classifier>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.saxon</groupId>
-            <artifactId>saxon</artifactId>
-            <classifier>dom</classifier>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                    <usedDependencies>
-                        <usedDependency>org.n52.sensorweb:52n-xml-sosgda-v10</usedDependency>
-                        <usedDependency>org.apache.xmlbeans:xmlbeans-xpath</usedDependency>
-                    </usedDependencies>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    <repositories>
-        <repository>
-            <id>Apache</id>
-            <name>Apache repository</name>
-            <url>http://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>n52-releases</id>
-            <name>52n Releases</name>
-            <url>http://52north.org/maven/repo/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>n52s</id>
-            <name>52n Snapshots</name>
-            <url>http://52north.org/maven/repo/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>

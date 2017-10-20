@@ -31,10 +31,18 @@
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard</artifactId>
         </dependency>
+         <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard-xmlstream</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard-xmlbeans</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.shetland</groupId>
@@ -43,10 +51,6 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -71,10 +75,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

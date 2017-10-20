@@ -35,7 +35,6 @@ import java.util.List;
 import org.hibernate.Session;
 
 import org.n52.iceland.i18n.I18NDAO;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.AbstractGML;
@@ -49,6 +48,12 @@ import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
 
 public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
+
+    private final DaoFactory daoFactory;
+
+    public AbstractIdentifierNameDescriptionDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     public void addIdentifierNameDescription(AbstractGML abstractFeature,
                                              IdentifierNameDescriptionEntity entity,
@@ -144,7 +149,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
 
     public void insertNames(FeatureOfInterest feature, List<CodeType> name, Session session) {
         CodespaceDAO codespaceDAO = new CodespaceDAO();
-        I18NDAO<I18NFeatureMetadata> dao = I18NDAORepository.getInstance().getDAO(I18NFeatureMetadata.class);
+        I18NDAO<I18NFeatureMetadata> dao = this.daoFactory.getI18NDAORepository().getDAO(I18NFeatureMetadata.class);
         for (CodeType codeType : name) {
             Codespace codespace = codespaceDAO.getOrInsertCodespace(codeType.getCodeSpace().toString(), session);
 //            i18ndao.insertI18N(feature, new I18NInsertionObject(codespace, codeType.getValue()), session);
@@ -161,5 +166,9 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
 //
 //        AbstractI18NDAO<?, ?> i18ndao = DaoFactory.getInstance().getI18NDAO(feature, session);
 //        featureOfInterestDAO.addIdentifierNameDescription(samplingFeature, feature, session);
+    }
+
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
     }
 }

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.legacy.full;
 
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
@@ -35,7 +36,6 @@ import org.n52.sos.ds.hibernate.entities.observation.VoidObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * Implementation of a full {@link Observation} for the legacy observation
@@ -58,11 +58,6 @@ public class LegacyCountObservation
     @Override
     public void setValue(Integer value) {
         this.value = value;
-    }
-
-    @Override
-    public boolean isSetValue() {
-        return value != null;
     }
 
     @Override

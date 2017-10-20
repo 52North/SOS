@@ -28,19 +28,17 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.PARAMETER_NAME;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
-import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
-import org.n52.shetland.ogc.sos.response.DeleteObservationResponse;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
 import org.n52.sos.ds.AbstractOperationHandler;
 
 /**
@@ -62,7 +60,7 @@ public abstract class AbstractDeleteObservationHandler extends AbstractOperation
 
     @Override
     protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
-        return new HashSet<>(Arrays.asList(new OwsDomain(PARAMETER_NAME, OwsAnyValue.instance())));
+        return new HashSet<>(Arrays.asList(new OwsDomain(DeleteObservationConstants.PARAM_OBSERVATION, OwsAnyValue.instance())));
     }
 
 

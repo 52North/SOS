@@ -619,7 +619,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      * @return <code>true</code>, if optional count should be added
      */
     private boolean isShowCount(GetDataAvailabilityRequest request) {
-        return request.getExtensions().isBooleanExtensionSet(SHOW_COUNT);
+        return request.getBooleanExtension(SHOW_COUNT);
     }
 
     /**
@@ -630,7 +630,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      * @return <code>true</code>, if result times should be added
      */
     private boolean isIncludeResultTime(GetDataAvailabilityRequest request) {
-        return request.getExtensions().isBooleanExtensionSet(INCLUDE_RESULT_TIMES)
+        return request.getBooleanExtension(INCLUDE_RESULT_TIMES)
                 || hasPhenomenonTimeFilter(request.getExtensions());
     }
 

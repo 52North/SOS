@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.entities.observation.legacy.full;
 
 
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
@@ -36,7 +37,6 @@ import org.n52.sos.ds.hibernate.entities.observation.VoidObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * Implementation of a full {@link Observation} for the legacy observation
@@ -62,36 +62,22 @@ public class LegacyNumericObservation
     }
 
     @Override
-    public boolean isSetValue() {
-        return value != null;
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
-
-    @Override
-    public void accept(VoidObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void accept(VoidObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

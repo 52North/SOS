@@ -44,6 +44,7 @@ import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.MultiPointCoverage;
 import org.n52.shetland.ogc.om.values.NilTemplateValue;
 import org.n52.shetland.ogc.om.values.ProfileValue;
+import org.n52.shetland.ogc.om.values.QuantityRangeValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
@@ -51,8 +52,10 @@ import org.n52.shetland.ogc.om.values.SweDataArrayValue;
 import org.n52.shetland.ogc.om.values.TLVTValue;
 import org.n52.shetland.ogc.om.values.TVPValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.TimeRangeValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.XmlValue;
 import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -137,6 +140,12 @@ public class ParameterDAO {
             this.parameterFactory = daos.parameter.getParameterFactory();
         }
 
+        @Override
+        public ValuedParameter<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
+            /* TODO implement org.n52.sos.ds.hibernate.dao.ParameterDAO.ParameterPersister.visit() */
+            throw new UnsupportedOperationException("org.n52.sos.ds.hibernate.dao.ParameterDAO.ParameterPersister.visit() not yet implemented");
+        }
+
         private static class Caches {
             private final Map<String, Unit> units;
 
@@ -186,6 +195,11 @@ public class ParameterDAO {
             session.saveOrUpdate(parameter);
             session.flush();
             return null;
+        }
+
+        @Override
+        public ValuedParameter<?> visit(XmlValue<?> value) throws OwsExceptionReport {
+            throw notSupported(value);
         }
 
         @Override
@@ -246,6 +260,11 @@ public class ParameterDAO {
         @Override
         public ValuedParameter<?> visit(TextValue value) throws OwsExceptionReport {
             return persist(parameterFactory.text(), value);
+        }
+
+        @Override
+        public ValuedParameter<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+            throw notSupported(value);
         }
 
         @Override

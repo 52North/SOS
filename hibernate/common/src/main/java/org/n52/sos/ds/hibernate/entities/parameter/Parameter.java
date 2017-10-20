@@ -33,18 +33,12 @@ import java.io.Serializable;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 
-import com.google.common.base.Strings;
-
 public abstract class Parameter<T> implements Serializable, HasObservationId, HasName, ValuedParameter<T> {
 
     private static final long serialVersionUID = -1927879842082507108L;
     private long parameterId;
     private long observationId;
     private String name;
-
-    public Parameter() {
-        super();
-    }
 
     /**
      * @return the parameterId
@@ -88,10 +82,4 @@ public abstract class Parameter<T> implements Serializable, HasObservationId, Ha
     public void setName(String name) {
         this.name = name;
     }
-
-    @Override
-    public boolean isSetName() {
-        return !Strings.isNullOrEmpty(getName());
-    }
-
 }

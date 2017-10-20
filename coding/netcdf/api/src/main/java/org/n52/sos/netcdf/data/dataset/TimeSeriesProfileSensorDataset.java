@@ -35,12 +35,11 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import ucar.nc2.constants.CF;
 
 /**
- * Implementation of {@link AbstractStringSensorDataset} for time series profile
+ * Implementation of {@link AbstractSensorDataset} for time series profile
  * sensor datasets
  *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>

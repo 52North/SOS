@@ -38,6 +38,7 @@ import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.MultiPointCoverage;
 import org.n52.shetland.ogc.om.values.NilTemplateValue;
 import org.n52.shetland.ogc.om.values.ProfileValue;
+import org.n52.shetland.ogc.om.values.QuantityRangeValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
@@ -45,8 +46,10 @@ import org.n52.shetland.ogc.om.values.SweDataArrayValue;
 import org.n52.shetland.ogc.om.values.TLVTValue;
 import org.n52.shetland.ogc.om.values.TVPValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.TimeRangeValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.XmlValue;
 import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -193,6 +196,21 @@ public class ParameterFactory implements ValueVisitor<ValuedParameter<?>, OwsExc
 
     @Override
     public ValuedParameter<?> visit(ProfileValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(XmlValue<?> value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 

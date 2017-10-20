@@ -37,92 +37,91 @@ import org.n52.iceland.util.action.Action;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.cache.InMemoryCacheImpl;
+import org.n52.sos.cache.SosWritableContentCache;
 
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
- * When executing this &auml;ction (see {@link Action}), the following relations
- * are added, settings are updated in cache:
+ * When executing this &auml;ction (see {@link Action}), the following relations are added, settings are updated in
+ * cache:
  * <ul>
  * <li>'Result template identifier' &rarr; 'observable property' relation</li>
  * <li>'Result template identifier' &rarr; 'feature of interest' relation</li>
  * </ul>
  * TODO update list above
  *
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @since 4.0.0
  */
 public class ResultInsertionUpdate extends InMemoryCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultInsertionUpdate.class);
 
-    private final OmObservation observation;
+    private final List<OmObservation> observations;
 
     private final String templateIdentifier;
 
-    public ResultInsertionUpdate(String templateIdentifier, OmObservation observation) {
-        if (observation == null || templateIdentifier == null || templateIdentifier.isEmpty()) {
-            String msg =
-                    String.format("Missing argument: '%s': %s; template identifier: '%s'",
-                            OmObservation.class.getName(), observation, templateIdentifier);
+    public ResultInsertionUpdate(String templateIdentifier, List<OmObservation> observations) {
+        if (observations == null || templateIdentifier == null || templateIdentifier.isEmpty()) {
+            String msg = String.format("Missing argument: '%s': %s; template identifier: '%s'",
+                                       OmObservation.class.getName(), observations, templateIdentifier);
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
-        this.observation = observation;
+        this.observations = observations;
         this.templateIdentifier = templateIdentifier;
     }
 
     @Override
     public void execute() {
         // TODO remove not required updates and adjust test accordingly
-        final InMemoryCacheImpl cache = (InMemoryCacheImpl) getCache();
-        final String observationType = observation.getObservationConstellation().getObservationType();
-        final String procedure = observation.getObservationConstellation().getProcedure().getIdentifier();
-        final String observableProperty = observation.getObservationConstellation().getObservableProperty().getIdentifier();
-        final Time phenomenonTime = observation.getPhenomenonTime();
-        final Time resultTime = observation.getResultTime();
+        final SosWritableContentCache cache = getCache();
+        for (OmObservation observation : observations) {
+            String observationType = observation.getObservationConstellation().getObservationType();
+            String procedure = observation.getObservationConstellation().getProcedure().getIdentifier();
+            String observableProperty = observation.getObservationConstellation().getObservableProperty()
+                    .getIdentifier();
+            Time phenomenonTime = observation.getPhenomenonTime();
+            Time resultTime = observation.getResultTime();
 
-        cache.updatePhenomenonTime(phenomenonTime);
-        cache.updateResultTime(resultTime);
+            cache.updatePhenomenonTime(phenomenonTime);
+            cache.updateResultTime(resultTime);
 
-        cache.addProcedure(procedure);
-        cache.updatePhenomenonTimeForProcedure(procedure, phenomenonTime);
+            cache.addProcedure(procedure);
+            cache.updatePhenomenonTimeForProcedure(procedure, phenomenonTime);
 
-        cache.addProcedureForObservableProperty(observableProperty, procedure);
-        cache.addObservablePropertyForResultTemplate(templateIdentifier, observableProperty);
-        cache.addObservablePropertyForProcedure(procedure, observableProperty);
+            cache.addProcedureForObservableProperty(observableProperty, procedure);
+            cache.addObservablePropertyForResultTemplate(templateIdentifier, observableProperty);
+            cache.addObservablePropertyForProcedure(procedure, observableProperty);
 
-        List<SamplingFeature> observedFeatures =
-                sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
+            List<SamplingFeature> observedFeatures = sosFeaturesToList(observation.getObservationConstellation()
+                    .getFeatureOfInterest());
 
-        final Envelope envelope = createEnvelopeFrom(observedFeatures);
+            Envelope envelope = createEnvelopeFrom(observedFeatures);
 
-        cache.updateGlobalEnvelope(envelope);
+            cache.updateGlobalEnvelope(envelope);
 
-        for (SamplingFeature sosSamplingFeature : observedFeatures) {
-            final String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
-            cache.addFeatureOfInterest(featureOfInterest);
-            cache.addFeatureOfInterestForResultTemplate(templateIdentifier, featureOfInterest);
-            cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);
-            for (String offering : observation.getObservationConstellation().getOfferings()) {
-                cache.addFeatureOfInterestForOffering(offering, featureOfInterest);
-            }
-        }
-        for (String offering : observation.getObservationConstellation().getOfferings()) {
-            cache.addOffering(offering);
-            if (!cache.getHiddenChildProceduresForOffering(offering).contains(procedure)) {
-                cache.addProcedureForOffering(offering, procedure);
-            }
-            cache.addOfferingForProcedure(procedure, offering);
-            cache.updateEnvelopeForOffering(offering, envelope);
-            cache.updatePhenomenonTimeForOffering(offering, phenomenonTime);
-            cache.updateResultTimeForOffering(offering, resultTime);
-            // observable property
-            cache.addOfferingForObservableProperty(observableProperty, offering);
-            cache.addObservablePropertyForOffering(offering, observableProperty);
-            // observation type
-            cache.addObservationTypesForOffering(offering, observationType);
+            observedFeatures.stream().map(SamplingFeature::getIdentifier).forEach(featureOfInterest -> {
+                cache.addFeatureOfInterest(featureOfInterest);
+                cache.addFeatureOfInterestForResultTemplate(templateIdentifier, featureOfInterest);
+                cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);
+                observation.getObservationConstellation().getOfferings()
+                        .forEach(offering -> cache.addFeatureOfInterestForOffering(offering, featureOfInterest));
+            });
+            observation.getObservationConstellation().getOfferings().stream().forEach(offering -> {
+                cache.addOffering(offering);
+                if (!cache.getHiddenChildProceduresForOffering(offering).contains(procedure)) {
+                    cache.addProcedureForOffering(offering, procedure);
+                }
+                cache.addOfferingForProcedure(procedure, offering);
+                cache.updateEnvelopeForOffering(offering, envelope);
+                cache.updatePhenomenonTimeForOffering(offering, phenomenonTime);
+                cache.updateResultTimeForOffering(offering, resultTime);
+                // observable property
+                cache.addOfferingForObservableProperty(observableProperty, offering);
+                cache.addObservablePropertyForOffering(offering, observableProperty);
+                // observation type
+                cache.addObservationTypesForOffering(offering, observationType);
+            });
         }
     }
 }

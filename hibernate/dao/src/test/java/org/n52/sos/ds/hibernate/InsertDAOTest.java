@@ -50,6 +50,7 @@ import org.mockito.Mockito;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.OwsServiceProviderFactory;
 import org.n52.janmayen.event.EventBus;
 import org.n52.shetland.ogc.filter.FilterConstants;
@@ -333,12 +334,14 @@ public class InsertDAOTest extends HibernateTestCase {
             String offeringId, String featureId, String obsType, Session session) throws OwsExceptionReport,
             ConverterException {
         OmObservationConstellation obsConst = new OmObservationConstellation();
-        Procedure procedure = new ProcedureDAO(new DaoFactory()).getProcedureForIdentifier(procedureId, session);
+        DaoFactory daoFactory = new DaoFactory(new I18NDAORepository());
+
+        ProcedureDAO dao = daoFactory.getProcedureDAO();
+        Procedure procedure = dao.getProcedureForIdentifier(procedureId, session);
         OwsServiceProviderFactory serviceProviderFactory = Mockito.mock(OwsServiceProviderFactory.class);
 
-
         SosProcedureDescription<?> spd
-                = new HibernateProcedureConverter(serviceProviderFactory, new DaoFactory(), ConverterRepository
+                = new HibernateProcedureConverter(serviceProviderFactory, daoFactory, ConverterRepository
                                                   .getInstance(), HibernateProcedureDescriptionGeneratorFactoryRepository
                                                           .getInstance())
                         .createSosProcedureDescription(procedure, SensorMLConstants.NS_SML,
@@ -646,11 +649,11 @@ public class InsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
         GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        OmObservation omObservation = getObsResponse.getObservationCollection().next();
         if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+            assertThat(((StreamingValue)omObservation.getValue()).hasNext(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).next();
         }
         assertThat(omObservation.isSetParameter(), is(true));
         assertThat(omObservation.isSetSpatialFilteringProfileParameter(), is(true));
@@ -695,11 +698,11 @@ public class InsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, obsTimeParam, feature);
         GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        OmObservation omObservation = getObsResponse.getObservationCollection().next();
         if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+            assertThat(((StreamingValue)omObservation.getValue()).hasNext(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).next();
         }
         assertThat(omObservation.isSetParameter(), is(true));
         assertThat(omObservation.getParameter().size(), is(5));
@@ -755,11 +758,11 @@ public class InsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
         GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        OmObservation omObservation = getObsResponse.getObservationCollection().next();
         if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+            assertThat(((StreamingValue)omObservation.getValue()).hasNext(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).next();
         }
         assertThat(omObservation.isSetParameter(), is(true));
         assertThat(omObservation.isSetHeightParameter(), is(true));
@@ -795,11 +798,11 @@ public class InsertDAOTest extends HibernateTestCase {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
         GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        OmObservation omObservation = getObsResponse.getObservationCollection().next();
         if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+            assertThat(((StreamingValue)omObservation.getValue()).hasNext(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).next();
         }
         assertThat(omObservation.isSetParameter(), is(true));
         assertThat(omObservation.isSetDepthParameter(), is(true));
@@ -919,11 +922,11 @@ public class InsertDAOTest extends HibernateTestCase {
             obsFeature);
         GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
-        OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
+        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        OmObservation omObservation = getObsResponse.getObservationCollection().next();
         if (omObservation.getValue() instanceof StreamingValue) {
-            assertThat(((StreamingValue)omObservation.getValue()).hasNextValue(), is(true));
-            omObservation = ((StreamingValue)omObservation.getValue()).nextSingleObservation();
+            assertThat(((StreamingValue)omObservation.getValue()).hasNext(), is(true));
+            omObservation = ((StreamingValue)omObservation.getValue()).next();
             assertThat(omObservation.getObservationConstellation(), notNullValue());
             OmObservationConstellation obsConst = omObservation.getObservationConstellation();
             assertThat(obsConst.getProcedure().getIdentifier(), is(obsProcedure));

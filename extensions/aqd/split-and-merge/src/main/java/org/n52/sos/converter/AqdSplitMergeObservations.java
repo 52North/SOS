@@ -28,43 +28,28 @@
  */
 package org.n52.sos.converter;
 
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
-import org.n52.shetland.aqd.AqdConstants;
-import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 
-import com.google.common.collect.Sets;
-
 public class AqdSplitMergeObservations implements RequestResponseModifier {
 
-    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
-
-    /**
-     * Get the keys
-     *
-     * @return Set of keys
-     */
-    private static Set<RequestResponseModifierKey> getKeyTypes() {
-        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
-        keys.add(new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION,
-                new GetObservationRequest()));
-        keys.add(new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION,
-                new GetObservationRequest(), new GetObservationResponse()));
-        return keys;
-    }
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = new HashSet<>(
+            Arrays.asList(
+                    new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION, new GetObservationRequest()),
+                    new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION, new GetObservationRequest(), new GetObservationResponse())));
 
     @Override
     public Set<RequestResponseModifierKey> getKeys() {
@@ -83,75 +68,11 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
         if (response instanceof GetObservationResponse) {
-            return mergeObservations((GetObservationResponse) response);
+            GetObservationResponse getObservationResponse = (GetObservationResponse) response;
+            getObservationResponse.setMergeObservations(true);
+            getObservationResponse.setObservationCollection(getObservationResponse.getObservationCollection().merge());
         }
         return response;
-    }
-
-    private OwsServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {
-        response.setMergeObservations(true);
-        if (!response.hasStreamingData()) {
-            response.setObservationCollection(mergeObservations(response.getObservationCollection()));
-        }
-        return response;
-    }
-
-    private List<OmObservation> mergeObservations(List<OmObservation> observationCollection) {
-        if (observationCollection != null) {
-            final List<OmObservation> mergedObservations = new LinkedList<>();
-            int obsIdCounter = 1;
-            for (final OmObservation sosObservation : observationCollection) {
-                if (mergedObservations.isEmpty()) {
-                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
-                    mergedObservations.add(sosObservation);
-                } else {
-                    boolean combined = false;
-                    for (final OmObservation combinedSosObs : mergedObservations) {
-                        if (combinedSosObs.checkForMerge(sosObservation)) {
-                            combinedSosObs.setResultTime(null);
-                            mergeObservationValues(combinedSosObs, sosObservation);
-                            combined = true;
-                            break;
-                        }
-                    }
-                    if (!combined) {
-                        mergedObservations.add(sosObservation);
-                    }
-                }
-            }
-            return mergedObservations;
-        }
-        return observationCollection;
-    }
-
-    private void mergeObservationValues(OmObservation combinedSosObs, OmObservation sosObservation) {
-        mergeValues(combinedSosObs, sosObservation);
-        mergeResultTimes(combinedSosObs, sosObservation);
-    }
-
-    private void mergeValues(OmObservation combinedSosObs, OmObservation sosObservation) {
-        SweDataArray combinedValue = (SweDataArray) combinedSosObs.getValue().getValue().getValue();
-        SweDataArray value = (SweDataArray) sosObservation.getValue().getValue().getValue();
-        if (value.isSetValues()) {
-            combinedValue.addAll(value.getValues());
-        }
-    }
-
-    /**
-     * Merge result time with passed observation result time
-     *
-     * @param sosObservation
-     *            Observation to merge
-     * @param sosObservation2
-     */
-    private void mergeResultTimes(final OmObservation combinedSosObs, OmObservation sosObservation) {
-        if (combinedSosObs.isSetResultTime() && sosObservation.isSetResultTime()) {
-            if (combinedSosObs.getResultTime().getValue().isBefore(sosObservation.getResultTime().getValue())) {
-                combinedSosObs.setResultTime(sosObservation.getResultTime());
-            }
-        } else if (!combinedSosObs.isSetResultTime() && sosObservation.isSetResultTime()) {
-            combinedSosObs.setResultTime(sosObservation.getResultTime());
-        }
     }
 
     @Override

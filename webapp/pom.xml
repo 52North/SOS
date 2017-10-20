@@ -118,18 +118,8 @@
             <artifactId>janmayen</artifactId>
         </dependency>
         <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>stax</groupId>
-                    <artifactId>stax-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -142,10 +132,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId> xml-apis</groupId>
-            <artifactId> xml-apis</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -212,6 +198,10 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
         </dependency>
 
         <!-- LOGGING -->
@@ -366,19 +356,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- REST BINDING -->
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>rest-code</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>rest-xml</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        
         <!-- GET DATA AVAILABILITY -->
 
         <dependency>

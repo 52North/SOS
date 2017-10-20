@@ -56,9 +56,4 @@ public class TemporalReferencedSeriesObservation
         this.series = series;
     }
 
-    @Override
-    public boolean isSetSeries() {
-        return getSeries() != null;
-    }
-
 }

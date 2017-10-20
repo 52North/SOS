@@ -28,15 +28,15 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasDataCapture;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasDataCaptureFlag;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasTimeCoverageFlag;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasUncertaintyEstimation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasValidation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasVerification;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.EReportingValues;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasDataCapture;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasDataCaptureFlag;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasEReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasPrimaryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasTimeCoverageFlag;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasUncertaintyEstimation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasValidation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasVerification;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 
 /**

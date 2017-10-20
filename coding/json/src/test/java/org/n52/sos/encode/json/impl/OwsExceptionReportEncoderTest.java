@@ -48,9 +48,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 
-import org.n52.iceland.coding.encode.EncoderResponseUnsupportedException;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.encode.json.JSONEncodingException;
+import org.n52.svalbard.encode.exception.EncoderResponseUnsupportedException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

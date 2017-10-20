@@ -28,14 +28,9 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.util.Collections;
-import java.util.Set;
-
 import javax.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionKey;
 import org.n52.shetland.ogc.ows.OwsCapabilitiesExtension;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -43,26 +38,22 @@ import org.n52.shetland.ogc.sos.SosInsertionCapabilities;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
-import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class InsertResultTemplateCapabilitiesExtensionProvider
-        implements OwsCapabilitiesExtensionProvider {
-    private static final OwsCapabilitiesExtensionKey KEY
-            = new OwsCapabilitiesExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
-    @Inject
-    private CodingRepository codingRepository;
+public class InsertResultTemplateCapabilitiesExtensionProvider extends AbstractCapabilitiesExtensionProvider {
+
     @Inject
     private ContentCacheController contentCacheController;
 
-    @Override
-    @Deprecated
-    public OwsCapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return KEY;
+    @Inject
+    private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+
+    public InsertResultTemplateCapabilitiesExtensionProvider() {
+        super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, Sos2Constants.Operations.InsertResultTemplate.name());
     }
 
     @Override
@@ -71,7 +62,7 @@ public class InsertResultTemplateCapabilitiesExtensionProvider
         SosContentCache cache = getCache();
         insertionCapabilities.addFeatureOfInterestTypes(cache.getFeatureOfInterestTypes());
         insertionCapabilities.addObservationTypes(cache.getObservationTypes());
-        insertionCapabilities.addProcedureDescriptionFormats(ProcedureDescriptionFormatRepository.getInstance()
+        insertionCapabilities.addProcedureDescriptionFormats(procedureDescriptionFormatRepository
                 .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         // TODO dynamic
         insertionCapabilities.addSupportedEncoding(SweConstants.ENCODING_TEXT);
@@ -81,22 +72,4 @@ public class InsertResultTemplateCapabilitiesExtensionProvider
     private SosContentCache getCache() {
         return (SosContentCache) this.contentCacheController.getCache();
     }
-
-    @Override
-    public boolean hasRelatedOperation() {
-        return true;
-    }
-
-    @Override
-    public String getRelatedOperation() {
-        return Sos2Constants.Operations.InsertResultTemplate.name();
-    }
-
-    @Override
-    public Set<OwsCapabilitiesExtensionKey> getKeys() {
-        return Collections.singleton(KEY);
-    }
-
-
-
 }

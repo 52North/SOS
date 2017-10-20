@@ -34,14 +34,14 @@ import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.CONFORM
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
-import org.n52.shetland.ogc.sos.request.DeleteObservationRequest;
-import org.n52.shetland.ogc.sos.response.DeleteObservationResponse;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
+import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
 import org.n52.sos.request.operator.AbstractTransactionalRequestOperator;
 
 /**
@@ -70,7 +70,7 @@ public class DeleteObservationRequestOperator
     protected void checkParameters(DeleteObservationRequest sosRequest) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
-            checkObservationID(sosRequest.getObservationIdentifier(), DeleteObservationConstants.PARAMETER_NAME);
+            checkObservationIDs(sosRequest.getObservationIdentifiers(), DeleteObservationConstants.PARAM_OBSERVATION);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

@@ -35,8 +35,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  * @since 4.0.0
  */
@@ -55,7 +54,7 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
     }
 
     @Override
-    public void setGeom(final Geometry geom) {
+    public void setGeom(Geometry geom) {
         this.geom = geom;
     }
 
@@ -65,7 +64,7 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
     }
 
     @Override
-    public void setLongitude(final Object longitude) {
+    public void setLongitude(Object longitude) {
         this.longitude = longitude;
     }
 
@@ -75,7 +74,7 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
     }
 
     @Override
-    public void setLatitude(final Object latitude) {
+    public void setLatitude(Object latitude) {
         this.latitude = latitude;
     }
 
@@ -85,7 +84,7 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
     }
 
     @Override
-    public void setAltitude(final Object altitude) {
+    public void setAltitude(Object altitude) {
         this.altitude = altitude;
     }
 
@@ -95,33 +94,13 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
     }
 
     @Override
-    public SpatialEntity setSrid(final int srid) {
+    public void setSrid(int srid) {
         this.srid = srid;
-        return this;
-    }
-
-    @Override
-    public boolean isSetGeometry() {
-        return getGeom() != null;
-    }
-
-    @Override
-    public boolean isSetLongLat() {
-        return getLongitude() != null && getLatitude() != null;
-    }
-
-    @Override
-    public boolean isSetAltitude() {
-        return getAltitude() != null;
-    }
-
-    @Override
-    public boolean isSetSrid() {
-        return getSrid() > 0;
     }
 
     @Override
     public boolean isSpatial() {
-        return isSetGeometry() || (isSetLongLat() && isSetSrid());
+        return HasGeometry.super.isSpatial() || HasCoordinate.super.isSpatial();
     }
+
 }

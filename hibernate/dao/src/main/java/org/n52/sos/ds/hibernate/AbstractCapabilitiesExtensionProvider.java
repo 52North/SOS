@@ -36,6 +36,7 @@ import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
 public abstract class AbstractCapabilitiesExtensionProvider implements OwsCapabilitiesExtensionProvider {
@@ -45,14 +46,16 @@ public abstract class AbstractCapabilitiesExtensionProvider implements OwsCapabi
     public AbstractCapabilitiesExtensionProvider(String service,
                                                  String version,
                                                  String operation) {
-        this.operation = operation;
-        this.key = new OwsCapabilitiesExtensionKey(service, version);
+        this(new OwsCapabilitiesExtensionKey(service, version), operation);
     }
 
-    @Override
-    @Deprecated
-    public OwsCapabilitiesExtensionKey getCapabilitiesExtensionKey() {
-        return this.key;
+    public AbstractCapabilitiesExtensionProvider(String service, String version) {
+        this(service, version, null);
+    }
+
+    public AbstractCapabilitiesExtensionProvider(OwsCapabilitiesExtensionKey key, String operation) {
+        this.operation = operation;
+        this.key = key;
     }
 
     @Override

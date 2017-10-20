@@ -32,15 +32,16 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 
+import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * Interfaces that entities can implement to share constants and to make clear
- * which entities have which relations. Allows to throw compile time errors for
- * non existing relations.
+ * Interfaces that entities can implement to share constants and to make clear which entities have which relations.
+ * Allows to throw compile time errors for non existing relations.
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
@@ -52,8 +53,7 @@ public interface HibernateRelations {
 
         ObservationConstellation getObservationConstellation();
 
-        void setObservationConstellation(
-                ObservationConstellation observationConstellation);
+        void setObservationConstellation(ObservationConstellation observationConstellation);
     }
 
     interface HasObservationConstellations {
@@ -61,8 +61,7 @@ public interface HibernateRelations {
 
         Set<ObservationConstellation> getObservationConstellations();
 
-        void setObservationConstellations(
-                Set<ObservationConstellation> observationConstellations);
+        void setObservationConstellations(Set<ObservationConstellation> observationConstellations);
     }
 
     interface HasDescription {
@@ -77,7 +76,9 @@ public interface HibernateRelations {
          *
          * @return <code>true</code>, if description is set
          */
-        boolean isSetDescription();
+        default boolean isSetDescription() {
+            return getDescription() != null && !getDescription().isEmpty();
+        }
     }
 
     interface HasCodespace {
@@ -87,7 +88,9 @@ public interface HibernateRelations {
 
         void setCodespace(Codespace codespace);
 
-        boolean isSetCodespace();
+        default boolean isSetCodespace() {
+            return getCodespace() != null && getCodespace().isSetCodespace();
+        }
     }
 
     interface HasCodespaceName {
@@ -97,7 +100,9 @@ public interface HibernateRelations {
 
         void setCodespaceName(Codespace codespaceName);
 
-        boolean isSetCodespaceName();
+        default boolean isSetCodespaceName() {
+            return getCodespaceName() != null && getCodespaceName().isSetCodespace();
+        }
     }
 
     interface HasDisabledFlag {
@@ -123,7 +128,7 @@ public interface HibernateRelations {
     interface HasPublishedFlag {
         String PUBLISHED = "published";
 
-        HasPublishedFlag setPublished(boolean published);
+        void setPublished(boolean published);
 
         boolean isPublished();
     }
@@ -133,8 +138,7 @@ public interface HibernateRelations {
 
         FeatureOfInterestType getFeatureOfInterestType();
 
-        void setFeatureOfInterestType(
-                FeatureOfInterestType featureOfInterestType);
+        void setFeatureOfInterestType(FeatureOfInterestType featureOfInterestType);
     }
 
     interface HasFeatureOfInterestTypes {
@@ -142,8 +146,7 @@ public interface HibernateRelations {
 
         Set<FeatureOfInterestType> getFeatureOfInterestTypes();
 
-        void setFeatureOfInterestTypes(
-                Set<FeatureOfInterestType> featureOfInterestTypes);
+        void setFeatureOfInterestTypes(Set<FeatureOfInterestType> featureOfInterestTypes);
     }
 
     interface HasFeatureOfInterestGetter {
@@ -177,7 +180,9 @@ public interface HibernateRelations {
 
         void setDescriptionXml(String descriptionXml);
 
-        boolean isSetDescriptionXml();
+        default boolean isSetDescriptionXml() {
+            return !Strings.isNullOrEmpty(getDescriptionXml());
+        }
     }
 
     interface HasGeometry {
@@ -192,7 +197,13 @@ public interface HibernateRelations {
          *
          * @return <code>true</code>, if geometry is set
          */
-        boolean isSetGeometry();
+        default boolean isSetGeometry() {
+            return getGeom() != null;
+        }
+
+        default boolean isSpatial() {
+            return isSetGeometry();
+        }
     }
 
     interface HasHiddenChildFlag {
@@ -205,13 +216,17 @@ public interface HibernateRelations {
 
     interface HasChildFlag {
         String CHILD = "child";
+
         void setChild(boolean child);
+
         boolean isChild();
     }
 
     interface HasParentFlag {
         String PARENT = "parent";
+
         void setParent(boolean parent);
+
         boolean isParent();
     }
 
@@ -227,7 +242,9 @@ public interface HibernateRelations {
          *
          * @return <code>true</code>, if identifier is set
          */
-        boolean isSetIdentifier();
+        default boolean isSetIdentifier() {
+            return getIdentifier() != null && !getIdentifier().isEmpty();
+        }
     }
 
     interface HasName {
@@ -237,7 +254,9 @@ public interface HibernateRelations {
 
         void setName(String name);
 
-        boolean isSetName();
+        default boolean isSetName() {
+            return getName() != null && !getName().isEmpty();
+        }
 
     }
 
@@ -269,7 +288,9 @@ public interface HibernateRelations {
 
         void setObservationType(ObservationType observationType);
 
-        boolean isSetObservationType();
+        default boolean isSetObservationType() {
+            return getObservationType() != null && getObservationType().isSetObservationType();
+        }
     }
 
     interface HasObservationTypes {
@@ -304,8 +325,7 @@ public interface HibernateRelations {
         /**
          * Set the start phenomenon time
          *
-         * @param phenomenonTimeStart
-         *                            Start phenomenon time to set
+         * @param phenomenonTimeStart Start phenomenon time to set
          */
         void setPhenomenonTimeStart(Date phenomenonTimeStart);
 
@@ -319,8 +339,7 @@ public interface HibernateRelations {
         /**
          * Set the end phenomenon time
          *
-         * @param phenomenonTimeEnd
-         *                          End phenomenon time to set
+         * @param phenomenonTimeEnd End phenomenon time to set
          */
         void setPhenomenonTimeEnd(Date phenomenonTimeEnd);
     }
@@ -368,7 +387,9 @@ public interface HibernateRelations {
 
         void setResultEncoding(String resultEncoding);
 
-        boolean isSetResultEncoding();
+        default boolean isSetResultEncoding() {
+            return !Strings.isNullOrEmpty(getResultEncoding());
+        }
     }
 
     interface HasResultStructure {
@@ -378,7 +399,9 @@ public interface HibernateRelations {
 
         void setResultStructure(String resultStructure);
 
-        boolean isSetResultStructure();
+        default boolean isSetResultStructure() {
+            return !Strings.isNullOrEmpty(getResultStructure());
+        }
     }
 
     interface HasResultTime {
@@ -395,8 +418,7 @@ public interface HibernateRelations {
         /**
          * Set the result tiem
          *
-         * @param resultTime
-         *                   Result tiem to set
+         * @param resultTime Result tiem to set
          */
         void setResultTime(Date resultTime);
     }
@@ -413,7 +435,9 @@ public interface HibernateRelations {
          *
          * @return <code>true</code>, if unit is set
          */
-        boolean isSetUnit();
+        default boolean isSetUnit() {
+            return getUnit() != null && getUnit().isSetUnit();
+        }
     }
 
     interface HasValidTime {
@@ -432,8 +456,7 @@ public interface HibernateRelations {
         /**
          * Set the start valid time
          *
-         * @param validTimeStart
-         *                       Start valid time to set
+         * @param validTimeStart Start valid time to set
          */
         void setValidTimeStart(Date validTimeStart);
 
@@ -447,12 +470,13 @@ public interface HibernateRelations {
         /**
          * Set the end valid time
          *
-         * @param validTimeEnd
-         *                     End valid time to set
+         * @param validTimeEnd End valid time to set
          */
         void setValidTimeEnd(Date validTimeEnd);
 
-        boolean isSetValidTime();
+        default boolean isSetValidTime() {
+            return getValidTimeStart() != null && getValidTimeEnd() != null;
+        }
     }
 
     interface HasUrl {
@@ -463,10 +487,9 @@ public interface HibernateRelations {
         void setUrl(String url);
     }
 
-
     interface GetStringValue {
 
-         boolean isSetValue();
+        boolean isSetValue();
 
         String getValueAsString();
 
@@ -479,9 +502,19 @@ public interface HibernateRelations {
 
         void setValue(T value);
 
+        @Override
+        public default boolean isSetValue() {
+            return getValue() != null;
+        }
+
+        @Override
+        public default String getValueAsString() {
+            return isSetValue() ? getValue().toString() : null;
+        }
     }
 
-    interface HasUnitValue<T> extends HasUnit, HasValue<T> {}
+    interface HasUnitValue<T> extends HasUnit, HasValue<T> {
+    }
 
     interface HasOfferings {
         String OFFERINGS = "offerings";
@@ -500,7 +533,9 @@ public interface HibernateRelations {
 
         void setParameters(Object offerings);
 
-        boolean hasParameters();
+        default boolean hasParameters() {
+            return CollectionHelper.isNotEmpty(getParameters());
+        }
 
     }
 
@@ -509,8 +544,7 @@ public interface HibernateRelations {
 
         Set<ObservableProperty> getObservableProperties();
 
-        void setObservableProperties(
-                Set<ObservableProperty> observableProperties);
+        void setObservableProperties(Set<ObservableProperty> observableProperties);
     }
 
     interface GeoColumnsId {
@@ -556,14 +590,16 @@ public interface HibernateRelations {
 
         int getSrid();
 
-        HasSrid setSrid(int srid);
+        void setSrid(int srid);
 
         /**
          * Is srid set
          *
          * @return <code>true</code>, if srid is set
          */
-        boolean isSetSrid();
+        default boolean isSetSrid() {
+            return getSrid() > 0;
+        }
     }
 
     interface HasCoordinate extends HasSrid {
@@ -586,7 +622,9 @@ public interface HibernateRelations {
          *
          * @return <code>true</code>, if longitude and latitude are set
          */
-        boolean isSetLongLat();
+        default boolean isSetLongLat() {
+            return getLongitude() != null && getLatitude() != null;
+        }
 
         Object getAltitude();
 
@@ -597,9 +635,13 @@ public interface HibernateRelations {
          *
          * @return <code>true</code>, if altitude is set
          */
-        boolean isSetAltitude();
+        default boolean isSetAltitude() {
+            return getAltitude() != null;
+        }
 
-        boolean isSpatial();
+        default boolean isSpatial() {
+            return isSetLongLat() && isSetSrid();
+        }
     }
 
     interface HasValidProcedureTimes {
@@ -607,8 +649,7 @@ public interface HibernateRelations {
 
         Set<ValidProcedureTime> getValidProcedureTimes();
 
-        void setValidProcedureTimes(
-                Set<ValidProcedureTime> validProcedureTimes);
+        void setValidProcedureTimes(Set<ValidProcedureTime> validProcedureTimes);
     }
 
     interface HasParentChilds<T> {
@@ -642,8 +683,7 @@ public interface HibernateRelations {
         /**
          * Set the observation id
          *
-         * @param observationId
-         *                      Observation id to set
+         * @param observationId Observation id to set
          */
         void setObservationId(final long observationId);
     }
@@ -655,7 +695,9 @@ public interface HibernateRelations {
 
         void setLocale(Locale locale);
 
-        boolean isSetLocale();
+        default boolean isSetLocale() {
+            return getLocale() != null;
+        }
     }
 
     interface HasSamplingGeometry {
@@ -666,7 +708,9 @@ public interface HibernateRelations {
 
         void setSamplingGeometry(Geometry samplingGeometry);
 
-        boolean hasSamplingGeometry();
+        default boolean hasSamplingGeometry() {
+            return getSamplingGeometry() != null && !getSamplingGeometry().isEmpty();
+        }
 
     }
 }

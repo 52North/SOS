@@ -63,10 +63,6 @@ public class SeriesGeometryObservation
         this.value = value;
     }
 
-    @Override
-    public boolean isSetValue() {
-        return value != null;
-    }
 
     @Override
     public String getValueAsString() {

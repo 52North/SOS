@@ -39,7 +39,6 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUrl;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
@@ -76,16 +75,6 @@ public class FeatureOfInterest extends SpatialEntity  implements Serializable, H
     }
 
     @Override
-    public boolean isSetCodespace() {
-        return getCodespace() != null && getCodespace().isSetCodespace();
-    }
-
-    @Override
-    public boolean isSetCodespaceName() {
-        return getCodespaceName() != null && getCodespaceName().isSetCodespace();
-    }
-
-    @Override
     public String getUrl() {
         return this.url;
     }
@@ -93,11 +82,6 @@ public class FeatureOfInterest extends SpatialEntity  implements Serializable, H
     @Override
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    @Override
-    public boolean isSetDescription() {
-        return !Strings.isNullOrEmpty(getDescription());
     }
 
     @Override

@@ -30,7 +30,7 @@ package org.n52.sos.netcdf.data.dataset;
 
 public class IdentifierDatasetSensor extends DatasetSensor {
 
-    private String identifier;
+    private final String identifier;
 
     public IdentifierDatasetSensor(String identifier) {
         this.identifier = identifier;

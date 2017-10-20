@@ -30,10 +30,6 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
             <exclusions>
@@ -42,6 +38,10 @@
                     <artifactId>stax-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -54,6 +54,10 @@
         <dependency>
             <groupId>com.siemens.ct.exi</groupId>
             <artifactId>exificient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.siemens.ct.exi</groupId>
+            <artifactId>exificient-core</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

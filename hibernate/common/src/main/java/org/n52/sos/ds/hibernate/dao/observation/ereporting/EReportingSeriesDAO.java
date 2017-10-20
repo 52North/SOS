@@ -56,7 +56,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    protected Class<?> getSeriesClass() {
+    public Class<?> getSeriesClass() {
         return EReportingSeries.class;
     }
 

@@ -28,15 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations;
-
 /**
  * Interface for series interfaces.
  *
  * @since 4.0.0
  *
  */
-public interface HibernateSeriesRelations extends HibernateRelations {
+public interface HibernateSeriesRelations {
 
     /**
      * Interface to indicate that the implemented class has a series value.
@@ -58,8 +56,7 @@ public interface HibernateSeriesRelations extends HibernateRelations {
         /**
          * Set the series
          *
-         * @param series
-         *            Series to set
+         * @param series Series to set
          */
         void setSeries(Series series);
 
@@ -68,7 +65,9 @@ public interface HibernateSeriesRelations extends HibernateRelations {
          *
          * @return <code>true</code>, if series is not null
          */
-        boolean isSetSeries();
+        default boolean isSetSeries() {
+            return getSeries() != null;
+        }
     }
 
 }

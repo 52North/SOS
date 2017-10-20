@@ -28,10 +28,12 @@
  */
 package org.n52.sos.decode.json.inspire;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.shetland.inspire.Address;
-import org.n52.shetland.inspire.Contact;
+import org.n52.shetland.inspire.ad.AddressRepresentation;
+import org.n52.shetland.inspire.base2.Contact;
+import org.n52.shetland.iso.gmd.LocalisedCharacterString;
+import org.n52.shetland.iso.gmd.PT_FreeText;
 import org.n52.sos.util.AQDJSONConstants;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -45,14 +47,10 @@ public class ContactJSONDecoder extends AbstractJSONDecoder<Contact> {
     public Contact decodeJSON(JsonNode node, boolean validate)
             throws DecodingException {
         Contact contact = new Contact();
-        contact.setAddress(decodeJsonToNillable(node
-                                            .path(AQDJSONConstants.ADDRESS), Address.class));
-        contact.setContactInstructions(parseNillableString(node
-                .path(AQDJSONConstants.CONTACT_INSTRUCTIONS)));
-        contact.setElectronicMailAddress(parseNillableString(node
-                .path(AQDJSONConstants.ELECTRONIC_MAIL_ADDRESS)));
-        contact.setHoursOfService(parseNillableString(node
-                .path(AQDJSONConstants.HOURS_OF_SERVICE)));
+        contact.setAddress(decodeJsonToNillable(node.path(AQDJSONConstants.ADDRESS), AddressRepresentation.class));
+        contact.setContactInstructions(parseNillableString(node.path(AQDJSONConstants.CONTACT_INSTRUCTIONS)).transform(this::parseFreeText));
+        contact.setElectronicMailAddress(parseNillableString(node.path(AQDJSONConstants.ELECTRONIC_MAIL_ADDRESS)));
+        contact.setHoursOfService(parseNillableString(node.path(AQDJSONConstants.HOURS_OF_SERVICE)).transform(this::parseFreeText));
         contact.setWebsite(parseNillableString(node
                 .path(AQDJSONConstants.WEBSITE)));
         for (JsonNode n : node.path(AQDJSONConstants.TELEPHONE_FACSIMILE)) {
@@ -64,4 +62,8 @@ public class ContactJSONDecoder extends AbstractJSONDecoder<Contact> {
         return contact;
     }
 
+
+    private PT_FreeText parseFreeText(String s) {
+        return new PT_FreeText().addTextGroup(new LocalisedCharacterString(s));
+    }
 }

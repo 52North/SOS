@@ -35,9 +35,10 @@ import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.svalbard.encode.EncoderRepository;
 
 /**
- * Separate initializer for {@link ProcedureDescritionFormatRepository}
+ * Separate initializer for {@link ProcedureDescriptionFormatRepository}
  *
- * @see ProcedureDescritionFormatRepository.init()
+ * @see ProcedureDescriptionFormatRepository#init(org.n52.iceland.service.operator.ServiceOperatorRepository,
+ * org.n52.svalbard.encode.EncoderRepository)
  * @author Martin Kiesow
  */
 public class ProcedureDescriptionFormatRepositoryInitializer implements Constructable {
@@ -47,9 +48,10 @@ public class ProcedureDescriptionFormatRepositoryInitializer implements Construc
     private final ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
 
     @Inject
-    public ProcedureDescriptionFormatRepositoryInitializer(EncoderRepository encoderRepository,
-                                               ServiceOperatorRepository serviceOperatorRepository,
-                                               ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
+    public ProcedureDescriptionFormatRepositoryInitializer(
+            EncoderRepository encoderRepository,
+            ServiceOperatorRepository serviceOperatorRepository,
+            ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
         this.encoderRepository = encoderRepository;
         this.serviceOperatorRepository = serviceOperatorRepository;
         this.procedureDescriptionFormatRepository = procedureDescriptionFormatRepository;

@@ -50,13 +50,13 @@ public interface ValuedLegacyObservation<T>
         extends ValuedObservation<T>,
                 HasWriteableObservationContext {
 
-    abstract OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport;
+    OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport;
 
-    abstract void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport;
+    void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport;
 
-    abstract void addValueSpecificDataToObservation(OmObservation observation, Session session, Extensions extensions) throws OwsExceptionReport;
+    void addValueSpecificDataToObservation(OmObservation observation, Session session, Extensions extensions) throws OwsExceptionReport;
 
-    abstract void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat) throws OwsExceptionReport;
+    void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat) throws OwsExceptionReport;
 
-    abstract String getDiscriminator();
+    String getDiscriminator();
 }

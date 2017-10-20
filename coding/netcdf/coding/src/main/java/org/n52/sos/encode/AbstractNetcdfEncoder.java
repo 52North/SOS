@@ -46,6 +46,7 @@ import javax.inject.Inject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.request.handler.OperationHandler;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.janmayen.http.MediaType;
@@ -57,7 +58,6 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
-import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.OwsAddress;
 import org.n52.shetland.ogc.ows.OwsContact;
@@ -132,7 +132,7 @@ import ucar.nc2.constants.CDM;
 import ucar.nc2.constants.CF;
 import ucar.nc2.jni.netcdf.Nc4Iosp;
 
-import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.shetland.ogc.om.ObservationStream;
 
 /**
  * Abstract class of {@link ObservationEncoder} for netCDF encoding.
@@ -274,9 +274,14 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         return null;
     }
 
-    private BinaryAttachmentResponse encodeGetObsResponse(List<OmObservation> sosObservationCollection, Version version)
+    private BinaryAttachmentResponse encodeGetObsResponse(ObservationStream sosObservationCollection, Version version)
             throws EncodingException {
-        List<NetCDFObservation> netCDFSosObsList = NetCDFUtil.createNetCDFSosObservations(sosObservationCollection);
+        List<NetCDFObservation> netCDFSosObsList;
+        try {
+            netCDFSosObsList = NetCDFUtil.createNetCDFSosObservations(sosObservationCollection);
+        } catch (OwsExceptionReport ex) {
+            throw new  EncodingException(ex);
+        }
 
         if (netCDFSosObsList.isEmpty()) {
             throw new EncodingException("No feature types to encode.");

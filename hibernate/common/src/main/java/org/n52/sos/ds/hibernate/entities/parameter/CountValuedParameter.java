@@ -47,16 +47,6 @@ public class CountValuedParameter extends Parameter<Integer> {
     }
 
     @Override
-    public boolean isSetValue() {
-        return getValue() != null;
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
-
-    @Override
     public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }

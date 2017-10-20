@@ -105,16 +105,9 @@ public abstract class AbstractTemporalReferencedObservation
         this.validTimeEnd = validTimeEnd;
     }
 
-    @Override
-    public boolean isSetValidTime() {
-        return getValidTimeStart() != null && getValidTimeEnd() != null;
-    }
-
     /**
      * Create the phenomenon time from {@link AbstractValue}
      *
-     * @param abstractValue
-     *            {@link AbstractValue} for get time from
      * @return phenomenon time
      */
     public Time createPhenomenonTime() {

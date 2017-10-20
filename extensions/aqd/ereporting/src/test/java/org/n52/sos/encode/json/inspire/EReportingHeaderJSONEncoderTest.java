@@ -35,23 +35,25 @@ import org.joda.time.DateTime;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.janmayen.Json;
 import org.n52.shetland.aqd.EReportingChange;
 import org.n52.shetland.aqd.EReportingHeader;
-import org.n52.shetland.inspire.Address;
-import org.n52.shetland.inspire.Contact;
 import org.n52.shetland.inspire.GeographicalName;
-import org.n52.shetland.inspire.InspireID;
 import org.n52.shetland.inspire.Pronunciation;
-import org.n52.shetland.inspire.RelatedParty;
 import org.n52.shetland.inspire.Spelling;
+import org.n52.shetland.inspire.ad.AddressRepresentation;
+import org.n52.shetland.inspire.base.Identifier;
+import org.n52.shetland.inspire.base2.Contact;
+import org.n52.shetland.inspire.base2.RelatedParty;
+import org.n52.shetland.iso.gmd.LocalisedCharacterString;
+import org.n52.shetland.iso.gmd.PT_FreeText;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.w3c.Nillable;
 import org.n52.shetland.w3c.xlink.Reference;
 import org.n52.shetland.w3c.xlink.Referenceable;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -70,9 +72,7 @@ public class EReportingHeaderJSONEncoderTest {
             throws OwsExceptionReport, URISyntaxException, EncodingException {
         EReportingHeader header
                 = new EReportingHeader()
-                        .setInspireID(new InspireID()
-                                .setLocalId("id")
-                                .setNamespace("namespace")
+                        .setInspireID(new Identifier("id", "namespace")
                                 .setVersionId(Nillable.missing()))
                         .setChange(new EReportingChange("Changed because... you know"))
                         .setReportingPeriod(Referenceable.of(Nillable.present(new TimeInstant(DateTime.now()))))
@@ -86,10 +86,10 @@ public class EReportingHeaderJSONEncoderTest {
                                         .addTelephoneFacsimile("1234")
                                         .addTelephoneFacsimile(Nillable.missing())
                                         .addTelephoneVoice("asdfasdf")
-                                        .setHoursOfService("asdfasdf")
+                                        .setHoursOfService(new PT_FreeText().addTextGroup(new LocalisedCharacterString("asdfasdf")))
                                         .setWebsite(Nillable.unknown())
                                         .setElectronicMailAddress(Nillable.unknown())
-                                        .setAddress(new Address()
+                                        .setAddress(new AddressRepresentation()
                                                 .setPostCode("12341234")
                                                 .setAddressFeature(new Reference()
                                                         .setHref(URI.create("http://asdfasdf")))

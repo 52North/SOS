@@ -241,8 +241,7 @@ public class GetObservationRequestDecoderTest {
     @Test
     public void hasMergeObservationsIntoDataArrayExtension() throws IOException, DecodingException {
         final GetObservationRequest req = loadMergeIntoArray();
-        assertThat(req.getExtensions(), is(notNullValue()));
-        assertThat(req.getExtensions().isBooleanExtensionSet("MergeObservationsIntoDataArray"), is(true));
+        assertThat(req.getBooleanExtension("MergeObservationsIntoDataArray"), is(true));
    }
 
     protected GetObservationRequest loadSingle() throws DecodingException, IOException {

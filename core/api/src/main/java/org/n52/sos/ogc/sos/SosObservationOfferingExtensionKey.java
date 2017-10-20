@@ -32,7 +32,7 @@ import org.n52.iceland.ogc.AbstractComparableServiceVersionDomainKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 
 /**
- * Key class to identify {@link OfferingExtensionProvider}.
+ * Key class to identify {@link SosObservationOfferingExtensionProvider}.
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 1.0.0

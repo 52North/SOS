@@ -143,7 +143,7 @@ public class RelatedFeatureDAO {
                                 .insertFeature((SamplingFeature) feature, session);
                 url = ((SamplingFeature) feature).getUrl();
             }
-            relFeat.setFeatureOfInterest(new FeatureOfInterestDAO(daoFactory).getOrInsertFeatureOfInterest(identifier, url,
+            relFeat.setFeatureOfInterest(new FeatureOfInterestDAO(daoFactory).getOrInsert(identifier, url,
                     session));
             relFeat.setRelatedFeatureRoles(new HashSet<>(roles));
             session.save(relFeat);

@@ -32,8 +32,6 @@ import java.io.Serializable;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescriptionXml;
 
-import com.google.common.base.Strings;
-
 /**
  * @since 4.0.0
  *
@@ -54,8 +52,4 @@ public abstract class DescriptionXmlEntity extends AbstractIdentifierNameDescrip
         this.descriptionXml = descriptionXml;
     }
 
-    @Override
-    public boolean isSetDescriptionXml() {
-        return !Strings.isNullOrEmpty(descriptionXml);
-    }
 }

@@ -84,7 +84,6 @@ public class AbstractServiceResponseWriterFactory
     @Override
     public AbstractServiceResponseWriter create() {
         return new AbstractServiceResponseWriter(this.encoderRepository,
-                                                 this.responseWriterRepository,
-                                                 this.forceStreamingEncoding);
+                                                 this.responseWriterRepository);
     }
 }

@@ -41,19 +41,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.svalbard.decode.DecoderKey;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.decode.JsonDecoderKey;
-import org.n52.svalbard.decode.OperationDecoderKey;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.janmayen.stream.Streams;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.ogc.swes.SwesExtensions;
-import org.n52.janmayen.stream.Streams;
-import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONValidator;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.JsonDecoderKey;
+import org.n52.svalbard.decode.OperationDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -123,12 +124,17 @@ public abstract class AbstractSosRequestDecoder<T extends OwsServiceRequest> ext
     protected SwesExtension parseExtension(JsonNode node) {
         if (node.isObject() && node.has(DEFINITION) && node.has(VALUE)) {
             if (node.path("value").isBoolean()) {
-                return new SwesExtension<>().setDefinition(node.path(DEFINITION).asText())
-                    .setValue(new SweBoolean().setValue(node.path(VALUE).asBoolean()));
+                SwesExtension<SweBoolean> extension = new SwesExtension<>();
+                extension.setDefinition(node.path(DEFINITION).asText());
+                extension.setValue(new SweBoolean().setValue(node.path(VALUE).asBoolean()));
+                return extension;
             } else if (node.path(VALUE).isTextual()) {
-                return new SwesExtension<>().setDefinition(node.path(DEFINITION).asText())
-                    .setValue(new SweText().setValue(node.path(VALUE).asText()));
+                SwesExtension<SweAbstractDataComponent> extension = new SwesExtension<>();
+                extension.setDefinition(node.path(DEFINITION).asText());
+                extension.setValue(new SweText().setValue(node.path(VALUE).asText()));
+                return extension;
             }
+
         }
         return null;
     }

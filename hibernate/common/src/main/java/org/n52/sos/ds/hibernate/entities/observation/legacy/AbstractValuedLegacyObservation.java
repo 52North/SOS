@@ -89,11 +89,6 @@ public abstract class AbstractValuedLegacyObservation<T>
     }
 
     @Override
-    public boolean isSetUnit() {
-        return getUnit() != null && getUnit().isSetUnit();
-    }
-
-    @Override
     public Procedure getProcedure() {
         return procedure;
     }
@@ -126,11 +121,9 @@ public abstract class AbstractValuedLegacyObservation<T>
     /**
      * Create a {@link TimeValuePair} from {@link AbstractValue}
      *
-     * @param abstractValue
-     *            {@link AbstractValue} to create {@link TimeValuePair} from
      * @return resulting {@link TimeValuePair}
-     * @throws OwsExceptionReport
-     *             If an error occurs when getting the value
+     *
+     * @throws OwsExceptionReport If an error occurs when getting the value
      */
     public TimeValuePair createTimeValuePairFrom() throws OwsExceptionReport {
         return new TimeValuePair(createPhenomenonTime(), accept(new ObservationValueCreator()));
@@ -139,11 +132,10 @@ public abstract class AbstractValuedLegacyObservation<T>
     /**
      * Add {@link AbstractValue} data to {@link OmObservation}
      *
-     * @param observation
-     *            {@link OmObservation} to add data
+     * @param observation {@link OmObservation} to add data
      * @param responseFormat
-     * @throws OwsExceptionReport
-     *             If an error occurs when getting the value
+     *
+     * @throws OwsExceptionReport If an error occurs when getting the value
      */
     public OmObservation addValuesToObservation(OmObservation observation, String responseFormat)
             throws OwsExceptionReport {
@@ -176,22 +168,20 @@ public abstract class AbstractValuedLegacyObservation<T>
     /**
      * Create result time from {@link Date}
      *
-     * @param date
-     *            {@link Date} to create result time from
+     * @param date {@link Date} to create result time from
+     *
      * @return result time
      */
     protected TimeInstant createResutlTime(Date date) {
-        DateTime dateTime = new DateTime(date, DateTimeZone.UTC);
-        return new TimeInstant(dateTime);
+        return new TimeInstant(new DateTime(date, DateTimeZone.UTC));
     }
 
     /**
      * Create {@link TimePeriod} from {@link Date}s
      *
-     * @param start
-     *            Start {@link Date}
-     * @param end
-     *            End {@link Date}
+     * @param start Start {@link Date}
+     * @param end End {@link Date}
+     *
      * @return {@link TimePeriod} or null if {@link Date}s are null
      */
     protected TimePeriod createValidTime(Date start, Date end) {
@@ -206,8 +196,8 @@ public abstract class AbstractValuedLegacyObservation<T>
 
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
             throws OwsExceptionReport {
-        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-        final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
+        NamedValue<Geometry> namedValue = new NamedValue<>();
+        ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
         namedValue.setName(referenceType);
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
@@ -217,7 +207,8 @@ public abstract class AbstractValuedLegacyObservation<T>
     }
 
     @Override
-    public OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
+    public OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws
+            OwsExceptionReport {
         if (!observation.isSetValue()) {
             addValuesToObservation(observation, responseFormat);
         } else {
@@ -231,6 +222,7 @@ public abstract class AbstractValuedLegacyObservation<T>
         }
         return observation;
     }
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private SingleObservationValue getSingleObservationValue(Value<?> value) throws OwsExceptionReport {
         return new SingleObservationValue(createPhenomenonTime(), value);
@@ -245,7 +237,8 @@ public abstract class AbstractValuedLegacyObservation<T>
     }
 
     @Override
-    public void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
+    public void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws
+            OwsExceptionReport {
         // nothing to do
     }
 

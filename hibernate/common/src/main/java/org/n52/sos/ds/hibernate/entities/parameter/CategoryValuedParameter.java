@@ -75,11 +75,6 @@ public class CategoryValuedParameter extends Parameter<String> implements HasUni
     }
 
     @Override
-    public boolean isSetUnit() {
-        return getUnit() != null && getUnit().isSetUnit();
-    }
-
-    @Override
     public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }

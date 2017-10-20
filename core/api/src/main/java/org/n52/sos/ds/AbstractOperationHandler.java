@@ -36,11 +36,7 @@ import javax.inject.Inject;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.handler.OperationHandlerKey;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
@@ -112,11 +108,6 @@ public abstract class AbstractOperationHandler extends org.n52.iceland.request.h
         return Configurator.getInstance();
     }
 
-    @Deprecated
-    protected BindingRepository getBindingRepository() {
-        // FIXME use @Inject
-        return BindingRepository.getInstance();
-    }
 
     @Deprecated
     protected ServiceConfiguration getServiceConfiguration() {

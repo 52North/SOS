@@ -46,6 +46,7 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -253,7 +254,6 @@ public class InsertDAOTest extends HibernateTestCase {
 
     @Before
     public void setUp() throws OwsExceptionReport, ConverterException {
-        
         Session session = getSession();
         insertSensor(PROCEDURE1, OFFERING1, OBSPROP1, null);
         insertSensor(PROCEDURE2, OFFERING2, OBSPROP2, PROCEDURE1);

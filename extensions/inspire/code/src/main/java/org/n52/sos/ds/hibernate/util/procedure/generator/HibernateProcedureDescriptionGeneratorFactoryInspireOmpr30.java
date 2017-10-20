@@ -57,7 +57,8 @@ public class HibernateProcedureDescriptionGeneratorFactoryInspireOmpr30
 
     private static final List<HibernateProcedureDescriptionGeneratorFactoryKeyType> GENERATOR_KEY_TYPES =
             CollectionHelper
-                    .list(new HibernateProcedureDescriptionGeneratorFactoryKeyType(InspireOMPRConstants.NS_OMPR_30));
+                    .list(new HibernateProcedureDescriptionGeneratorFactoryKeyType(InspireOMPRConstants.NS_OMPR_30),
+                          new HibernateProcedureDescriptionGeneratorFactoryKeyType("http://inspire.ec.europa.eu/featureconcept/Process"));
 
     @Override
     public List<HibernateProcedureDescriptionGeneratorFactoryKeyType> getHibernateProcedureDescriptionGeneratorFactoryKeyTypes() {

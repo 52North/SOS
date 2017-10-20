@@ -46,6 +46,7 @@ import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.QuantityRangeValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
@@ -291,6 +292,11 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
             public JsonNode visit(ProfileValue value) throws OwsExceptionReport {
                 throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
             }
+
+            @Override
+            public JsonNode visit(QuantityRangeValue value) throws OwsExceptionReport {
+                throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
+            }
         });
     }
 
@@ -298,8 +304,12 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         ReferenceType ref = value.getValue();
         ObjectNode node = nodeFactory().objectNode();
         node.put(JSONConstants.HREF, ref.getHref());
-        node.put(JSONConstants.ROLE, ref.getRole());
-        node.put(JSONConstants.TITLE, ref.getTitle());
+        if (ref.isSetRole()) {
+            node.put(JSONConstants.ROLE, ref.getRole());
+        }
+        if (ref.isSetTitle()) {
+            node.put(JSONConstants.TITLE, ref.getTitle());
+        }
         return node;
     }
 
@@ -355,7 +365,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         GeometryValue geometryValue = (GeometryValue) value;
         return encodeObjectToJson(geometryValue.getValue());
     }
-
+    
     private JsonNode encodeComplexValue(Value<?> value) throws OwsExceptionReport {
         ArrayNode result = nodeFactory().arrayNode();
         ComplexValue complexValue = (ComplexValue) value;

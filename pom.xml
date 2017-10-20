@@ -10,10 +10,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.4.0</version>
+    <version>4.4.1</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
-    <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
+    <url>https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation</url>
     <inceptionYear>2012</inceptionYear>
     <packaging>pom</packaging>
     <issueManagement>
@@ -75,7 +75,7 @@
         <geotools.version>14.0</geotools.version>
         <jackson.version>2.7.3</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
-        <sqljdbc4.version>4.0</sqljdbc4.version>
+        <sqljdbc.version>6.2.1.jre7</sqljdbc.version>
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.3.0</n52.common.xml.version>
@@ -1256,33 +1256,33 @@
                 <version>${ojdbc6.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.microsoft</groupId>
-                <artifactId>sqljdbc4</artifactId>
-                <version>${sqljdbc4.version}</version>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>${sqljdbc.version}</version>
             </dependency>
             <!-- geotools -->
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-epsg-hsql</artifactId>
                 <version>${geotools.version}</version>
-		<exclusions>
-			<exclusion>
-				<groupId>javax.media</groupId>
-				<artifactId>jai_core</artifactId>
-			</exclusion>
-		</exclusions>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-main</artifactId>
                 <version>${geotools.version}</version>
-		<exclusions>
-		        <exclusion>
-				<groupId>javax.media</groupId>
-				<artifactId>jai_core</artifactId>
-			</exclusion>
-		</exclusions>
-	    </dependency>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-referencing</artifactId>
@@ -1292,10 +1292,10 @@
                         <groupId>java3d</groupId>
                         <artifactId>vecmath</artifactId>
                     </exclusion>
-	            <exclusion>
-			<groupId>javax.media</groupId>
-			<artifactId>jai_core</artifactId>
-		    </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1303,17 +1303,17 @@
                 <artifactId>vecmath</artifactId>
                 <version>1.5.2</version>
             </dependency>
-            <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-api</artifactId>
-                <version>${geotools.version}</version>
-		<exclusions>
-	            <exclusion>
-			<groupId>javax.media</groupId>
-			<artifactId>jai_core</artifactId>
-		    </exclusion>
-		</exclusions>
-            </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-api</artifactId>
+            <version>${geotools.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.media</groupId>
+                    <artifactId>jai_core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
@@ -1461,22 +1461,18 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.groovy.maven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.0</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <phase>initialize</phase>
+                        <id>timestamp-property</id>
                         <goals>
-                            <goal>execute</goal>
+                            <goal>timestamp-property</goal>
                         </goals>
                         <configuration>
-                            <source>
-                                import java.util.Date
-                                import java.text.MessageFormat
-                                def vartimestamp = MessageFormat.format("{0,date,yyyy}", new Date())
-                                project.properties['currentYearDynamic'] = vartimestamp
-                            </source>
+                            <name>currentYearDynamic</name>
+                            <pattern>yyyy</pattern>
                         </configuration>
                     </execution>
                 </executions>
@@ -1558,6 +1554,7 @@
                     <configuration>
                         <lifecycleMappingMetadata>
                             <pluginExecutions>
+                            <!-- 
                                 <pluginExecution>
                                     <pluginExecutionFilter>
                                         <groupId>org.codehaus.groovy.maven</groupId>
@@ -1573,6 +1570,7 @@
                                         </execute>
                                     </action>
                                 </pluginExecution>
+                                 -->
                                 <pluginExecution>
                                     <pluginExecutionFilter>
                                         <groupId>org.jasig.maven</groupId>

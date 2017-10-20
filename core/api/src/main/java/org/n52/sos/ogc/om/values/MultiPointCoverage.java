@@ -71,6 +71,8 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
      */
     private UoM unit;
 
+    private String rangeParameters;
+
     public MultiPointCoverage(String gmlId) {
         if (Strings.isNullOrEmpty(gmlId)) {
             gmlId = JavaHelper.generateID(toString());
@@ -184,6 +186,21 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
     @Override
     public List<Value<?>> getRangeSet() {
         return getPointValue().getValues();
+    }
+
+    @Override
+    public String getRangeParameters() {
+        return rangeParameters;
+    }
+
+    @Override
+    public void setRangeParameters(String rangeParameters) {
+        this.rangeParameters = rangeParameters;
+    }
+    
+    @Override
+    public boolean isSetRangeParameters() {
+        return !Strings.isNullOrEmpty(getRangeParameters());
     }
 
     @Override

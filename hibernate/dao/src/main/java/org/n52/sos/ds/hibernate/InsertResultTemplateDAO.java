@@ -224,9 +224,9 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                             "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition '%s', "
                             + " optional swe:Time with element definition '%s' and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
                             + "with element definition '%s' or swe:Vector with element defintion '%s' or swe:Text with element definitions "
-                            + "'%s' and '%s'!",
+                            + "'%s' and '%s' and swe:DataRecord with element definition '%s'!",
                             OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY,
-                            helper.OM_FEATURE_OF_INTEREST, helper.OM_PROCEDURE);
+                            helper.OM_FEATURE_OF_INTEREST, helper.OM_PROCEDURE, OmConstants.OM_PARAMETER);
         }
     }
 
@@ -247,6 +247,9 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                 if (helper.isText(swefield) && helper.checkDefinition(swefield, helper.OM_PROCEDURE)) {
                     additionalValues++;
                 }
+            }
+            if (helper.checkDataRecordForParameter(swefield)) {
+                additionalValues++;
             }
         }
         return allowedSize + additionalValues;

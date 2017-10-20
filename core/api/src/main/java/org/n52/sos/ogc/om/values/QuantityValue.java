@@ -40,7 +40,7 @@ import org.n52.sos.ogc.swe.simpleType.SweQuantity;
  * @since 4.0.0
  *
  */
-public class QuantityValue extends SweQuantity implements Value<Double>, Comparable<QuantityValue> {
+public class QuantityValue extends SweQuantity implements QuantityValued<Double, QuantityValue> {
     /**
      * serial number
      */

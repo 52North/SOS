@@ -43,5 +43,17 @@ public interface DiscreteCoverage<T> extends Value<T> {
     String getGmlId();
 
     Collection<Value<?>> getRangeSet();
+    
+    /**
+     * @return the rangeParameters
+     */
+    String getRangeParameters();
+    
+    /**
+     * @param rangeParameters the rangeParameters to set
+     */
+    void setRangeParameters(String rangeParameters);
+    
+    boolean isSetRangeParameters();
 
 }

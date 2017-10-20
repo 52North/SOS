@@ -100,6 +100,8 @@ public interface OmConstants {
     String EN_COUNT_OBSERVATION = "CountObservation";
 
     String EN_TEXT_OBSERVATION = "TextObservation";
+    
+    String EN_REFERENCE_OBSERVATION = "ReferenceObservation";
 
     String EN_TRUTH_OBSERVATION = "TruthObservation";
 
@@ -214,6 +216,10 @@ public interface OmConstants {
     String PARAMETER_NAME_FROM_ELEVATION = "fromEelvation";
     
     String PARAMETER_NAME_TO_ELEVATION = "toElevation";
+    
+    String PARAMETER = "parameter";
+    
+    String OM_PARAMETER = "om:parameter";
 
     // observation types
     String OBS_TYPE_MEASUREMENT = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement";
@@ -242,11 +248,16 @@ public interface OmConstants {
 
     // no Definition in O&M and not in Lightweight Profile
     String OBS_TYPE_TEXT_OBSERVATION = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation";
+    
+    String OBS_TYPE_PROFILE_OBSERVATION = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ProfileObservation";
 
     String OBS_TYPE_UNKNOWN = OGCConstants.UNKNOWN;
 
     String OBS_TYPE_SWE_ARRAY_OBSERVATION =
             "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation";
+    
+    String OBS_TYPE_REFERENCE_OBSERVATION =
+            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ReferenceObservation";
 
     String OBS_RESULT_TYPE_OBSERVATION = "http://www.opengis.net/sensorML/2.0/DataArray";
 
@@ -269,6 +280,8 @@ public interface OmConstants {
     QName RESULT_MODEL_TRUTH_OBSERVATION = new QName(NS_OM, EN_TRUTH_OBSERVATION, NS_OM_PREFIX);
 
     QName RESULT_MODEL_TEXT_OBSERVATION = new QName(NS_OM, EN_TEXT_OBSERVATION, NS_OM_PREFIX);
+    
+    QName RESULT_MODEL_REFERENCE_OBSERVATION = new QName(NS_OM, EN_REFERENCE_OBSERVATION, NS_OM_PREFIX);
 
     /**
      * Array of constants for result models.
@@ -308,7 +321,8 @@ public interface OmConstants {
             OBS_TYPE_GEOMETRY_OBSERVATION,
             OBS_TYPE_TEXT_OBSERVATION,
             OBS_TYPE_TRUTH_OBSERVATION,
-            OBS_TYPE_SWE_ARRAY_OBSERVATION
+            OBS_TYPE_SWE_ARRAY_OBSERVATION,
+            OBS_TYPE_PROFILE_OBSERVATION
     );
 
 }

@@ -112,7 +112,7 @@ public class MultiPointObservation extends AbstractInspireObservation {
     }
 
     @Override
-    protected void mergeValues(ObservationValue<?> observationValue) {
+    protected boolean mergeValues(ObservationValue<?> observationValue) {
         if (observationValue.getValue() instanceof MultiPointCoverage) {
             List<PointValuePair> valuesToMerge = ((MultiPointCoverage) observationValue.getValue()).getValue();
             ((MultiPointCoverage) getValue().getValue()).addValues(valuesToMerge);
@@ -126,8 +126,9 @@ public class MultiPointObservation extends AbstractInspireObservation {
                     }
                 }
             }
+            return true;
         } else {
-            super.mergeValues(observationValue);
+            return super.mergeValues(observationValue);
         }
     }
 

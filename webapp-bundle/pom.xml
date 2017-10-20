@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>52n-sos</artifactId>
 		<groupId>org.n52.sensorweb.sos</groupId>
-		 <version>4.4.0</version>
+		 <version>4.4.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>webapp-bundle</artifactId>
@@ -11,8 +11,8 @@
 	<name>52°North SOS - Webapp with Sensor Web REST API</name>
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
-    <series.api.version>2.0.0-alpha.5</series.api.version>
-    <series.db.version>2.0.0-alpha.2</series.db.version>
+    <series.api.version>2.0.0-SNAPSHOT</series.api.version>
+    <series.db.version>2.0.0-SNAPSHOT</series.db.version>
     <helgoland.version>1.0.0</helgoland.version>
 	</properties>
 	<build>

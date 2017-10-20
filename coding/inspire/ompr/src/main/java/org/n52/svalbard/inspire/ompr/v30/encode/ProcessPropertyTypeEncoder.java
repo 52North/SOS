@@ -35,6 +35,7 @@ import java.util.Set;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.ClassToClassEncoderKey;
 import org.n52.sos.encode.EncoderKey;
+import org.n52.sos.encode.XmlDocumentEncoderKey;
 import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -58,7 +59,9 @@ public class ProcessPropertyTypeEncoder extends ProcessTypeEncoder {
     protected static final Set<EncoderKey> ENCODER_KEYS =
             Sets.newHashSet(new ClassToClassEncoderKey(Process.class, ProcessDocument.class),
                     new XmlPropertyTypeEncoderKey(InspireOMPRConstants.NS_OMPR_30, Process.class),
-                    new XmlPropertyTypeEncoderKey(InspireOMPRConstants.NS_OMPR_30, SosProcedureDescription.class));
+                    new XmlPropertyTypeEncoderKey(InspireOMPRConstants.NS_OMPR_30, SosProcedureDescription.class),
+                    new XmlDocumentEncoderKey("http://inspire.ec.europa.eu/featureconcept/Process", Process.class),
+                    new XmlDocumentEncoderKey("http://inspire.ec.europa.eu/featureconcept/Process", SosProcedureDescription.class));
 
     public ProcessPropertyTypeEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",

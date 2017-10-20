@@ -120,4 +120,8 @@ alter table oracle.textfeatparamvalue add constraint featParamTextValueFk foreig
 alter table oracle.textparametervalue add constraint parameterTextValueFk foreign key (parameterId) references oracle.parameter;
 alter table oracle.xmlfeatparamvalue add constraint featParamXmlValueFk foreign key (parameterId) references oracle.featureparameter;
 alter table oracle.xmlparametervalue add constraint parameterXmlValueFk foreign key (parameterId) references oracle.parameter;
+ALTER TABLE oracle.featureofinterest ALTER hibernatediscriminator TYPE character varying(255);
+ALTER TABLE oracle.featureofinterest ALTER hibernatediscriminator DROP NOT NULL;
+UPDATE oracle.featureofinterest SET hibernatediscriminator = null;
+ALTER TABLE oracle.observableproperty DROP COLUMN hibernatediscriminator;
 create sequence oracle.relatedObservationId_seq

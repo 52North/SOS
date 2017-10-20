@@ -78,6 +78,8 @@ public class MiscSettings implements SettingDefinitionProvider {
 
     public static final String RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST = "profile.hydrology.overallExtrema";
 
+    public static final String CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES = "misc.convertComplexProfileToSingleProfiles";
+
     public static final SettingDefinitionGroup GROUP = 
     		new SettingDefinitionGroup()
 		    		.setTitle("Miscellaneous")
@@ -208,13 +210,24 @@ public class MiscSettings implements SettingDefinitionProvider {
                             "The service will return <strong>overall extrema</strong> for first/latest observation "
                             + "queries when this option is <strong>activated</strong>. When disabled, only for "
                             + "each time series");
+    
+    public static final BooleanSettingDefinition CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES_DEFINITION =
+            new BooleanSettingDefinition()
+                    .setGroup(GROUP)
+                    .setOrder(ORDER_17)
+                    .setKey(CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES)
+                    .setDefaultValue(true)
+                    .setTitle("Should the SOS convert complex profiles to single profiles?")
+                    .setDescription(
+                            "Should the SOS convert complex profiles to single profiles?");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
             TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION,DECIMAL_SEPERATOR_DEFINITION,
             SRS_NAME_PREFIX_SOS_V1_DEFINITION, SRS_NAME_PREFIX_SOS_V2_DEFINITION, DEFAULT_OFFERING_PREFIX_DEFINITION,
             DEFAULT_PROCEDURE_PREFIX_DEFINITION, CHARACTER_ENCODING_DEFINITION,
             HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING_DEFINITION, HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION,
-            HYDRO_MAX_NUMBER_OF_RETURNED_VALUES_DEFINITION, RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST_DEFINITION
+            HYDRO_MAX_NUMBER_OF_RETURNED_VALUES_DEFINITION, RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST_DEFINITION,
+            CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES_DEFINITION
             /*, RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES_DEFINITION */);
 
     @Override

@@ -59,6 +59,7 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.w3c.SchemaLocation;
 import org.n52.svalbard.gwml.v22.encode.streaming.GwmlV22XmlStreamWriter;
@@ -70,11 +71,15 @@ public class GwmlEncoderv22 extends OmEncoderv20 {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(GwmlEncoderv22.class);
     
-    private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(GWMLConstants.NS_GWML_22,
-            OmObservation.class, NamedValue.class, SingleObservationValue.class, MultiObservationValues.class);
+    @SuppressWarnings("unchecked")
+    private static final Set<EncoderKey> ENCODER_KEYS = CollectionHelper.union(
+            CodingHelper.encoderKeysForElements(GWMLConstants.NS_GWML_22,
+                    OmObservation.class, NamedValue.class, SingleObservationValue.class, MultiObservationValues.class),
+            CodingHelper.encoderKeysForElements(GWMLConstants.NS_GWML_WELL_22,
+                    OmObservation.class, NamedValue.class, SingleObservationValue.class, MultiObservationValues.class));
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.ObservationType, (Set<String>) Sets.newHashSet(GWMLConstants.OBS_TYPE_GEOLOGY_LOG));
+            SupportedTypeKey.ObservationType, (Set<String>) Sets.newHashSet(GWMLConstants.OBS_TYPE_GEOLOGY_LOG, OmConstants.OBS_TYPE_PROFILE_OBSERVATION));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -86,7 +91,7 @@ public class GwmlEncoderv22 extends OmEncoderv20 {
     }
 
 
-        @Override
+    @Override
     public Set<EncoderKey> getEncoderKeyType() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
@@ -133,14 +138,17 @@ public class GwmlEncoderv22 extends OmEncoderv20 {
 
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet(OmConstants.OM_20_SCHEMA_LOCATION);
+        Set<SchemaLocation> schemaLocations = Sets.newHashSet(GWMLConstants.GWML_22_SCHEMA_LOCATION, GWMLConstants.GWML_WELL_22_SCHEMA_LOCATION);
+        schemaLocations.addAll(super.getSchemaLocations());
+        return schemaLocations;
     }
     
     @Override
     protected OMObservationType createOmObservationType() {
         return super.createOmObservationType();
     }
-    
+
+
     @Override
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {

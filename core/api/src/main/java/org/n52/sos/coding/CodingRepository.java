@@ -291,7 +291,6 @@ public class CodingRepository {
                         schemaLocations.put(((XmlEncoderKey) key).getNamespace(), encoder.getSchemaLocations());
                     }
                 }
-
             }
         }
     }

@@ -88,7 +88,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     "The endpoint URL of this sos which will be shown in the GetCapabilities response "
                             + "(e.g. <code>http://localhost:8080/52nSOS/sos</code> or <code>http://localhost:8080/52nSOS/service</code>)."
                             + " The path to a specific binding (like <code>/soap</code>) will appended to this URL."
-                            + " For detailed information, please read the <a href=\"https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation\">documentation</a>.");
+                            + " For detailed information, please read the <a href=\"https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation\">documentation</a>.");
 
     public static final StringSettingDefinition SENSOR_DIRECTORY_DEFINITION =
             new StringSettingDefinition()

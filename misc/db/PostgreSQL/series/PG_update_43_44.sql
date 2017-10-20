@@ -120,4 +120,8 @@ alter table public.textfeatparamvalue add constraint featParamTextValueFk foreig
 alter table public.textparametervalue add constraint parameterTextValueFk foreign key (parameterId) references public.parameter;
 alter table public.xmlfeatparamvalue add constraint featParamXmlValueFk foreign key (parameterId) references public.featureparameter;
 alter table public.xmlparametervalue add constraint parameterXmlValueFk foreign key (parameterId) references public.parameter;
+ALTER TABLE public.featureofinterest ALTER hibernatediscriminator TYPE character varying(255);
+ALTER TABLE public.featureofinterest ALTER hibernatediscriminator DROP NOT NULL;
+UPDATE public.featureofinterest SET hibernatediscriminator = null;
+ALTER TABLE public.observableproperty DROP COLUMN hibernatediscriminator;
 create sequence public.relatedObservationId_seq

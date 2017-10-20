@@ -28,8 +28,15 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
@@ -50,6 +57,7 @@ public class ProfileLevel implements Comparable<ProfileLevel> {
     private QuantityValue levelEnd;
     private List<Value<?>> value = Lists.newArrayList();
     private Geometry location;
+    private Time phenomenonTime;
 
     /**
      * constructor
@@ -172,6 +180,24 @@ public class ProfileLevel implements Comparable<ProfileLevel> {
         return getLocation() != null;
     }
 
+    /**
+     * @return the phenomenonTime
+     */
+    public Time getPhenomenonTime() {
+        return phenomenonTime;
+    }
+
+    /**
+     * @param phenomenonTime the phenomenonTime to set
+     */
+    public void setPhenomenonTime(Time phenomenonTime) {
+        this.phenomenonTime = phenomenonTime;
+    }
+    
+    public boolean isSetPhenomenonTime() {
+        return getPhenomenonTime() != null;
+    }
+
     @Override
     public int compareTo(ProfileLevel o) {
         if (o == null) {
@@ -218,5 +244,20 @@ public class ProfileLevel implements Comparable<ProfileLevel> {
             }
         }
         return dataRecord;
+    }
+    
+    public <X> Collection<X> accept(ProfileLevelVisitor<X> visitor) throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    public Collection<NamedValue<?>> getLevelStartEndAsParameter() {
+        SortedSet<NamedValue<?>> parameter = new TreeSet<NamedValue<?>>();
+        if (isSetLevelStart() && getLevelStart().isSetDefinition()) {
+            parameter.add(new NamedValue(new ReferenceType(getLevelStart().getDefinition()), getLevelStart()));
+        }
+        if (isSetLevelEnd() && getLevelEnd().isSetDefinition()) {
+            parameter.add(new NamedValue(new ReferenceType(getLevelEnd().getDefinition()), getLevelEnd()));
+        }
+        return parameter;
     }
 }

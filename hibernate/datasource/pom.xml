@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-        <version>4.3.16</version>
+        <version>4.3.17-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-datasource</artifactId>
@@ -14,6 +14,7 @@
         <module>postgres</module>
         <module>h2</module>
         <module>mysql</module>
+        <module>sqlserver</module>
         <module>common</module>
     </modules>
     <dependencies>
@@ -56,12 +57,6 @@
             <id>oracle</id>
             <modules>
                 <module>oracle</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>sqlserver</id>
-            <modules>
-                <module>sqlserver</module>
             </modules>
         </profile>
     </profiles>

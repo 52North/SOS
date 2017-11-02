@@ -55,11 +55,11 @@
 
         <c:if test="${sos:hasInstaller() and not sos:configurated(pageContext.servletContext)}">
             <script type="text/javascript">
-				$(function() {
-					showMessage('You first have to complete the installation process! Click <a href="<c:url value="/install/index" />"><strong>here</strong></a> to start it.', "error");
-				});
-			</script>
-		</c:if>
+                $(function() {
+                        showMessage('You first have to complete the installation process! Click <a href="<c:url value="/install/index" />"><strong>here</strong></a> to start it.', "error");
+                });
+	    </script>
+	</c:if>
 	</head>
 	<body>
 		<div id="wrap">

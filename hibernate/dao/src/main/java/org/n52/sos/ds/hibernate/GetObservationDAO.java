@@ -176,6 +176,11 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         }
         return super.getConformanceClasses();
     }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 
     /**
      * Query observations from database depending on requested filters

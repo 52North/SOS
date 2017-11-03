@@ -80,5 +80,7 @@ public interface OperationDAO extends DatasourceDaoIdentifier {
     // // SosCapabilitiesExtension getExtension() throws OwsExceptionReport;
 
     Set<String> getConformanceClasses();
+ 
+    boolean isSupported();
     
 }

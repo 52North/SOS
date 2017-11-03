@@ -632,5 +632,10 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
         }
         return Lists.newLinkedList();
     }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 
 }

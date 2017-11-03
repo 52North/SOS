@@ -50,7 +50,9 @@ import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -371,6 +373,11 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
             }
         }
         return offerings;
+    }
+    
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
     }
 
     private static class InsertObservationCache {

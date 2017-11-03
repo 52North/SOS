@@ -41,11 +41,13 @@ import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
+import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
@@ -182,5 +184,10 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
                 new SeriesDAO().updateSeriesAfterObservationDeletion(series, (SeriesObservation) observation, session);
             }
         }
+    }
+
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
     }
 }

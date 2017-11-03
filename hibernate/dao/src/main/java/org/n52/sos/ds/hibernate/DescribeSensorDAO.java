@@ -271,4 +271,9 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
         }
         return procedureDescription;
     }
+
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 }

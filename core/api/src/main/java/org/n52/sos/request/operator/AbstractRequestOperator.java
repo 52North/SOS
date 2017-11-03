@@ -141,6 +141,11 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     protected D getDao() {
         return this.dao;
     }
+    
+    @Override
+    public boolean isSupported() {
+        return getDao() != null && getDao().isSupported();
+    }
 
     // @Override
     // public SosCapabilitiesExtension getExtension() throws OwsExceptionReport
@@ -166,7 +171,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     public AbstractServiceResponse receiveRequest(final AbstractServiceRequest<?> abstractRequest)
             throws OwsExceptionReport {
         SosEventBus.fire(new RequestEvent(abstractRequest));
-        if (requestType.isAssignableFrom(abstractRequest.getClass())) {
+        if (requestType.isAssignableFrom(abstractRequest.getClass()) && isSupported()) {
             Q request = requestType.cast(abstractRequest);
             checkForModifierAndProcess(request);
             checkParameters(request);

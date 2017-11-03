@@ -47,5 +47,7 @@ public interface RequestOperator extends ConformanceClass {
 
     OwsOperation getOperationMetadata(String service, String version) throws OwsExceptionReport;
 
+    boolean isSupported();
+
     // SosCapabilitiesExtension getExtension() throws OwsExceptionReport;
 }

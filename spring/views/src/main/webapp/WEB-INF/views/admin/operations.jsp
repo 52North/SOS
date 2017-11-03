@@ -137,7 +137,7 @@ jQuery(document).ready(function($) {
                 0: { sorter: "text" },
                 1: { sorter: "text" },
                 2: { sorter: "text" },
-                3: { sorter: false } 
+                3: { sorter: "text" } 
             },
             sortList: [ [0,0], [1,1], [2,0] ]
         });

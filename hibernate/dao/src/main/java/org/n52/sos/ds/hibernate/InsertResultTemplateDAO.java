@@ -41,7 +41,9 @@ import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -184,6 +186,11 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
         return getOperationName();
     }
 
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+    }
+    
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty, OmObservationConstellation sosObsConst)
             throws OwsExceptionReport {
         // TODO modify or remove if complex field elements are supported

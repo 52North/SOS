@@ -1256,4 +1256,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
     public String getDatasourceDaoIdentifier() {
         return IDEPENDET_IDENTIFIER;
     }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 }

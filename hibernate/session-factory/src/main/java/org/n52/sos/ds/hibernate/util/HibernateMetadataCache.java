@@ -79,9 +79,7 @@ public class HibernateMetadataCache {
 
     public static void init(Session session) {
         synchronized (lock) {
-            if (instance == null) {
-                instance = new HibernateMetadataCache(session);
-            }
+            instance = new HibernateMetadataCache(session);
         }
     }
 

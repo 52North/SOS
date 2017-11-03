@@ -1282,5 +1282,10 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             return collection;
         }
     }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 
 }

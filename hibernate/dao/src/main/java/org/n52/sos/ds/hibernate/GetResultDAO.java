@@ -158,6 +158,11 @@ public class GetResultDAO extends AbstractGetResultDAO {
         }
         return super.getConformanceClasses();
     }
+    
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+    }
 
     /**
      * Query observations from database depending on requested filters

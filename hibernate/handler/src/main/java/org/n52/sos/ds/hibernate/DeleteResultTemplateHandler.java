@@ -49,6 +49,8 @@ import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateResponse;
 import org.n52.sos.ds.AbstractDeleteResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
+import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.sos.concrete.DeleteResultTemplateInvalidParameterValueException;
 
 import com.google.common.collect.Lists;
@@ -97,6 +99,11 @@ public class DeleteResultTemplateHandler
             sessionHolder.returnSession(session);
         }
         return response;
+    }
+
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
     }
 
     protected void handleHibernateException(HibernateException he) throws OwsExceptionReport {

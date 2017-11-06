@@ -43,6 +43,8 @@ import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestResponse;
 import org.n52.sos.ds.AbstractInsertFeatureOfInterestHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInterestHandler {
 
@@ -88,6 +90,11 @@ public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInter
         InsertFeatureOfInterestResponse response = new InsertFeatureOfInterestResponse();
         response.set(request);
         return response;
+    }
+
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
     protected void handleHibernateException(HibernateException he) throws OwsExceptionReport {

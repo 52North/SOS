@@ -1,7 +1,7 @@
 # 52°North Sensor Observation Service (SOS)
 | Master | Develop | OpenHUB |
 | ------------- | ------------- | ------------- |
-| [![Master Build Status](https://travis-ci.org/52North/sos.png?branch=master)](https://travis-ci.org/52North/sos) | [![Develop Build Status](https://travis-ci.org/52North/sos.png?branch=develop)](https://travis-ci.org/52North/sos) | [![OpenHUB](https://www.openhub.net/p/SensorObservationService/widgets/project_thin_badge.gif)](https://www.openhub.net/p/SensorObservationService) |
+| [![Master Build Status](https://travis-ci.org/52North/SOS.png?branch=master)](https://travis-ci.org/52North/SOS) | [![Develop Build Status](https://travis-ci.org/52North/SOS.png?branch=develop)](https://travis-ci.org/52North/SOS) | [![OpenHUB](https://www.openhub.net/p/SensorObservationService/widgets/project_thin_badge.gif)](https://www.openhub.net/p/SensorObservationService) |
 
 ## Description
 
@@ -35,14 +35,21 @@ An extension accommodates additional INSPIRE Directive requirements, thus ensuri
   - Bundle including [Sensor Web REST-API](https://github.com/52North/series-rest-api) and [helgoland](https://github.com/52North/helgoland/)
   - DeleteObservation operation, to delete observation by identifier (not part of the SOS 2.0 specification)
   - [Efficient XML Interchange (EXI) 1.0 format](http://52north.org/communities/sensorweb/sos/index.html#www.w3.orgTRexi)
+  - Support for [GoundWaterML 2 GeologyLog observation](http://www.opengeospatial.org/standards/gwml2)
+  
+### Future
 
-## License
+From version 5.x of the 52N SOS, the database model and the DAO layer of 52N SOS and the [52N Sensor Web REST-API](https://github.com/52North/series-rest-api) would be merged to finally provide an easy-to-install and easy-to-configure service that provides the OGC SOS 2.0 interface and the 52N Sensor WEB REST-API to easily access the observed data via a restful interface.
 
- The 52°North SOS is published under the [GNU General Public License, Version 2 (GPLv2)](http://www.gnu.org/licenses/gpl-2.0.html)
+For that the similar database models of both services would be harmonized to use the same model. Furthermore, the new database model is to be defined in this way that a simple basic database model would provide the main features of the SOS and the Sensor WEB REST-API and can be easily extended to provide further features.
 
-## Changelog
+The Data Access Objects (DAO) layer would also be harmonized to provide a single point for accessing and manipulating the data in the database. This would reduce the maintenance and new database features would be easier supported by the SOS and the REST interface.
 
- The latest changes, additions, bugfixes, etc. can be found in the [RELEASE-NOTES](https://github.com/52North/SOS/blob/website-markdowns/RELEASE-NOTES)
+In the [Sensor Web Suite database project](https://github.com/52North/series-hibernate) the harmonized database model and the DAO layer would be provided as a separate project that would be use in the future 52N SOS and 52N Sensor WEB REST-API implementations. Additionally the [52N SOS Proxy](https://github.com/52North/series-sos-proxy) will also use this project to persist the metadata of the harvested SOS services. 
+
+![Image of Sensor Web Suite](https://github.com/52North/SOS/tree/develop/misc/pics/sensor_web_db_dao.PNG)
+
+This figure shows the future relation between the 52N Sensor Web Suite database project, the SOS and the Sensor WEB REST-API.
 
 ## Quick Start
 
@@ -56,6 +63,14 @@ An extension accommodates additional INSPIRE Directive requirements, thus ensuri
 
     http://sensorweb.demo.52north.org/sensorwebtestbed/
 
+## License
+
+ The 52°North SOS is published under the [GNU General Public License, Version 2 (GPLv2)](http://www.gnu.org/licenses/gpl-2.0.html)
+
+## Changelog
+
+ The latest changes, additions, bugfixes, etc. can be found in the [RELEASE-NOTES](https://github.com/52North/SOS/blob/website-markdowns/RELEASE-NOTES)
+
 ## References
 
  - [IRCEL-CELINE](www.irceline.be/) (Belgium): *Current and archived air quality data for all of Belgium*
@@ -65,28 +80,6 @@ An extension accommodates additional INSPIRE Directive requirements, thus ensuri
  - [Lithuanian EPA](http://gamta.lt/cms/index?lang=en) (Lithuania): *Current and archived air quality data for all of Lithuania*
  - [European Environment Agency (EEA)](http://www.eea.europa.eu/): *Use of SOS interface to collect data from the member countries, as well as to publish the collective data*
  - [PEGELONLINE](https://www.pegelonline.wsv.de/) (Germany): *Interoperable publication of te federal waterways' hydrological measurment data.*
-
-## Contact
-
- - Carsten Hollmann (c.hollmann@52north.org)
- - Christian Autermann (c.autermann@52north.org)
- - Eike Hinderk Jürrens [(EHJ-52n)](https://github.com/EHJ-52n/)
- 
-## Support
-
-You can get support in the community mailing list and forums:
-
-    http://52north.org/resources/mailing-lists-and-forums/
-
-## Contributing
-
-You are interesting in contributing the 52°North SOS and you want to pull your changes to the 52N repository to make it available to all?
-
-In that case we need your official permission and for this purpose we have a so called contributors license agreement (CLA) in place. With this agreement you grant us the rights to use and publish your code under an open source license.
-
-A link to the contributors license agreement and further explanations are available here: 
-
-    http://52north.org/about/licensing/cla-guidelines
 
 ## Credits
 
@@ -146,6 +139,50 @@ The development the 52°North Sensor Observation Service implementations was sup
 | <a target="_blank" href="http://www.geoviqua.org/"><img alt="GeoViQua - QUAlity aware VIsualization for the Global Earth Observation System of Systems" align="middle" width="172" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/funding/logo_geoviqua.png"/></a> | The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a href="http://www.geoviqua.org/" title="GeoViQua">GeoViQua</a> (co-funded by the European Commission under the grant agreement n&deg;265178) |
 | <a target="_blank" href="http://www.geowow.eu/"><img alt="GEOWOW - GEOSS interoperability for Weather, Ocean and Water" align="middle" width="172" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/funding/logo_geowow.png"/></a> | The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a href="http://www.geowow.eu/" title="GEOWOW">GEOWOW</a> (co-funded by the European Commission under the grant agreement n&deg;282915) |
 
+## Contact
+
+ - Carsten Hollmann (c.hollmann@52north.org)
+ - Christian Autermann (c.autermann@52north.org)
+ - Eike Hinderk Jürrens [(EHJ-52n)](https://github.com/EHJ-52n/)
+ 
+## Download
+
+The binaries of the 52N SOS releases are provided are provided with the releases on GitHub:
+
+    https://github.com/52North/SOS/releases
+    
+### Contents
+  * `/src` :             The source files of 52°North SOS modules
+  * `/bin` :             Executable binary of 52°North SOS webapp module
+  * `LICENSE` :         The license of 52°North SOS
+  * `NOTICE` :          Third Party libraries and their licenses
+  * `README` :          This file
+  * `RELEASE-NOTES` : The release notes of the 52°North SOS
+
+No printer friendly documentation exist for this release. Instead, refer to the [wiki documentation](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation).
+
+## Support
+
+You can get support in the community mailing list and forums:
+
+    http://52north.org/resources/mailing-lists-and-forums/
+
+## License
+
+The 52N SOS is licenses under the [GNU General Public License v2 (GPLv2)](http://www.gnu.org/licenses/gpl-2.0.html).
+
+The used 3rd party libraries and under which they are licensed is listed in the [NOITICE file](https://github.com/52North/SOS/blob/develop/NOTICE)
+
+## Contribute
+
+You are interesting in contributing the 52°North SOS and you want to pull your changes to the 52N repository to make it available to all?
+
+In that case we need your official permission and for this purpose we have a so called contributors license agreement (CLA) in place. With this agreement you grant us the rights to use and publish your code under an open source license.
+
+A link to the contributors license agreement and further explanations are available here: 
+
+    http://52north.org/about/licensing/cla-guidelines
+    
 ## Branches
 
 This project follows the  [Gitflow branching model](http://nvie.com/posts/a-successful-git-branching-model/). "master" reflects the latest stable release.
@@ -156,24 +193,5 @@ Ongoing development is done in branch [develop](../../tree/develop) and dedicate
 This project is managed with Maven3. Simply run `mvn clean install`
 to create a deployable .WAR file.
 
-## Distributions
-
-Here you can find some information that relates to the distributions of the 52°North SOS.
-
-### Download
-
-The latest release of 52°North SOS can be downloaded from this website:
-
-    http://52north.org/downloads/category/3-sos
-
-### Contents
-  * `/src` :                 The source files of 52°North SOS modules
-  * `/bin` :                 Executable binary of 52°North SOS webapp module
-  * `LICENSE` :              The license of 52°North SOS
-  * `NOTICE` :               Third Party libraries and their licenses
-  * `README` :               This file
-  * `RELEASE-NOTES` :        The release notes of the 52°North SOS
-
-No printer friendly documentation exist for this release. Instead, refer to the [wiki documentation](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation).
 
 52°North Inititative for Geospatial Open Source Software GmbH, Germany

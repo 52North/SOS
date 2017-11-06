@@ -5,7 +5,7 @@ RELEASE NOTES
  in Observation&Measurement), information about the sensor itself (encoded in a
  SensorML instance document), and information about the sensor mounting platform
  (SensorML as well).
-
+ 
    Release 52n-sensorweb-sos-4.4.x
 ====================================
  
@@ -19,7 +19,31 @@ RELEASE NOTES
   
   --- Fixed issues ---
   
-      * 
+      * Issue #212: Allow sort by status in 52n-sos-webapp/admin/operations
+      * Issue #572: Fix NPE in InsertSensor when procedure description has invalid namespace declaration
+      * Issue #574: Capabilities shows metadata and test client provides examples for not supported operations
+      * Issue #575: HibernateMetadataCache not updated after resetting the SOS
+
+   Release 52n-sensorweb-sos-4.4.1
+====================================
+ 
+  --- New features ---
+
+      * Support for ReferencedObservation
+      * Support for insertion of profile observations via InsertResult/Template operations
+  
+  --- Changes ---
+  
+      * Load Microsoft SQL Server JDBC from Maven repository
+      * Improvements on cache serialization
+  
+  --- Fixed issues ---
+  
+      * Issue #566: Reload Capabilities Cache leads to severe error
+      * Issue #571: Sensors disappear (same as #566)
+      * Fix resetting of HIBERNATE_DIRECTORY config on save
+      * Fix the deletion of child observations
+      * Fix issue with not correct observation type for GWML GeologyLogCoverage
 
    Release 52n-sensorweb-sos-4.4.0
 ====================================
@@ -115,6 +139,36 @@ RELEASE NOTES
       * Hidden NPE cause by not set request context while inserting new sample data
       * Avoid query for next value chunk if previous has less than chunk size
 
+
+     Release 52n-sensorweb-sos-4.3.16
+======================================
+
+  --- New features ---
+
+    
+  --- Changes ---
+    
+  
+  --- Fixed issues ---
+
+    * Issue #566: Reload Capabilities Cache leads to severe error
+    * Issue #571: Sensors disappear (same as #566)
+    
+    
+    Release 52n-sensorweb-sos-4.3.15
+=====================================
+
+  --- New features ---
+
+    
+  --- Changes ---
+    
+  
+  --- Fixed issues ---
+
+    * avoid orphaned session objects after re-configure SOS
+* prevents resetting HIBERNATE_DIRECTORY config (missing extension/readonly folder) 
+    
 
    Release 52n-sensorweb-sos-4.3.14
 =====================================

@@ -375,6 +375,11 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         }
         return offerings;
     }
+    
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
+    }
 
     private static class InsertObservationCache {
         private final Set<String> allOfferings = Sets.newHashSet();

@@ -129,6 +129,11 @@ public class DescribeSensorHandler
         }
     }
 
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
+
     private SosProcedureDescription<?> createSensorDescription(ProcedureEntity procedure,
             DescribeSensorRequest request, Session session)
             throws OwsExceptionReport {

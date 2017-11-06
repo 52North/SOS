@@ -133,6 +133,11 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         }
     }
 
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
+
     /**
      * Get featureOfInterest as a feature collection
      *

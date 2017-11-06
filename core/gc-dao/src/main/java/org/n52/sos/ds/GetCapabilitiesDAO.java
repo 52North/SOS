@@ -1278,4 +1278,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
             return sosCapabilities;
         }
     }
+
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 }

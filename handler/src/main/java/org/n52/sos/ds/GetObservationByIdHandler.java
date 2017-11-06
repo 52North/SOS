@@ -95,4 +95,9 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
             sessionStore.returnSession(session);
         }
     }
+
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 }

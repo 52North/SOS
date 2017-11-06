@@ -644,5 +644,10 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
         }
         return Lists.newLinkedList();
     }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 
 }

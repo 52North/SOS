@@ -111,6 +111,11 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
         }
     }
 
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
+
     private DbQuery createDbQuery(GetObservationRequest request) {
         Map<String, String> map = Maps.newHashMap();
         if (request.isSetFeatureOfInterest()) {

@@ -279,5 +279,10 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
     public String getRelatedOperation() {
         return getOperationName();
     }
+    
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
+    }
 
 }

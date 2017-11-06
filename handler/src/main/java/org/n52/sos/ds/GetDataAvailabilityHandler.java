@@ -101,6 +101,11 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         return response;
     }
 
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
+
     private List<DataAvailability> queryDataAvailabilityValues(GetDataAvailabilityRequest request) throws OwsExceptionReport {
         Session session = sessionStore.getSession();
         try {

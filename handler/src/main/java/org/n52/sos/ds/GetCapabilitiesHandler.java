@@ -203,6 +203,11 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         return response;
     }
 
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
+
     private String negotiateVersion(GetCapabilitiesRequest request) throws OwsExceptionReport {
         if (request.isSetVersion()) {
             return request.getVersion();

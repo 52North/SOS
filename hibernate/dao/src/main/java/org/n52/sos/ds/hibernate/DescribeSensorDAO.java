@@ -309,4 +309,9 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
         }
         return procedureDescription;
     }
+
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 }

@@ -134,4 +134,9 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionH
         }
     }
 
+    
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
+    }
 }

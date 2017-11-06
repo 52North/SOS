@@ -106,6 +106,11 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 
     @Override
     public GetObservationByIdResponse getObservationById(GetObservationByIdRequest request) throws OwsExceptionReport {

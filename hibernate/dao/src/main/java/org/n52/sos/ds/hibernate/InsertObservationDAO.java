@@ -66,7 +66,10 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
@@ -166,6 +169,11 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
          */
 
         return response;
+    }
+
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
     }
 
     private void insertObservation(OmObservation sosObservation,

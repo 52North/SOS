@@ -156,4 +156,9 @@ public class BatchOperationHandler extends AbstractOperationHandler {
             }
         }
     }
+
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 }

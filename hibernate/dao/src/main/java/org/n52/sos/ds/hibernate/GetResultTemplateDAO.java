@@ -41,6 +41,7 @@ import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.sos.ds.AbstractGetResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservablePropertyCombination;
 
@@ -84,5 +85,10 @@ public class GetResultTemplateDAO extends AbstractGetResultTemplateHandler {
         } finally {
             sessionHolder.returnSession(session);
         }
+    }
+
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
     }
 }

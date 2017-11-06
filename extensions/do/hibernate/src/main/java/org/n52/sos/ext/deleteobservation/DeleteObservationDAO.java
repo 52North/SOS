@@ -57,9 +57,11 @@ import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 
 /**
@@ -143,6 +145,11 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
             hibernateSessionHolder.returnSession(session);
         }
         return response;
+    }
+
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
     private AbstractObservationRequest getRequest(DeleteObservationRequest request) {

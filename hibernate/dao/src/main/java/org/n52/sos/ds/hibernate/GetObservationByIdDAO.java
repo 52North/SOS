@@ -54,6 +54,7 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.sos.ds.AbstractGetObservationByIdHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -125,6 +126,11 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
         } finally {
             sessionHolder.returnSession(session);
         }
+    }
+
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
     /**

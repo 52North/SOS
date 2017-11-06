@@ -51,8 +51,10 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
  * Implementation of the abstract class AbstractUpdateSensorDescriptionHandler
@@ -128,6 +130,11 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionH
         } finally {
             sessionHolder.returnSession(session);
         }
+    }
+
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
     }
 
 }

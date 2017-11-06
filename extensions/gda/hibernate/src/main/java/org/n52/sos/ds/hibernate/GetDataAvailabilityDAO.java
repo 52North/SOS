@@ -80,6 +80,7 @@ import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -163,6 +164,11 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
         } finally {
             sessionHolder.returnSession(session);
         }
+    }
+
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
     /**

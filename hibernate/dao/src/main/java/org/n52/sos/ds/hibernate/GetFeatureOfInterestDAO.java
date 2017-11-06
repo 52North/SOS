@@ -66,6 +66,7 @@ import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -175,6 +176,11 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
         } finally {
             sessionHolder.returnSession(session);
         }
+    }
+
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
     /**

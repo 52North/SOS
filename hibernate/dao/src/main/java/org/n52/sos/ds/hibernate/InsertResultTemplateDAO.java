@@ -53,6 +53,8 @@ import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 
@@ -130,6 +132,11 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler
             sessionHolder.returnSession(session);
         }
         return response;
+    }
+
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
     }
 
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty)

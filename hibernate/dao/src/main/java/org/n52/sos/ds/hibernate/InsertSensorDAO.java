@@ -72,6 +72,9 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
+import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
  * Implementation of the abstract class AbstractInsertSensorHandler
@@ -235,6 +238,11 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
             sessionHolder.returnSession(session);
         }
         return response;
+    }
+
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
     }
 
     /**

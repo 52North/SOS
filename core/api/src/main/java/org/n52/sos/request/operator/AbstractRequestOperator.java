@@ -209,6 +209,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         return getOperationHandler();
     }
 
+    @Override
+    public boolean isSupported() {
+        return getOptionalOperationHandler().isPresent() && getOptionalOperationHandler().get().isSupported();
+    }
+
     protected D getOperationHandler() {
         return getOptionalOperationHandler().orElseThrow(() ->
                 new NullPointerException(String.format("OperationDAO for Operation %s has no implementation!",

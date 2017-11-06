@@ -85,4 +85,5 @@ public class BatchRequestOperator extends AbstractRequestOperator<BatchOperation
     public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
+
 }

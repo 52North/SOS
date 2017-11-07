@@ -227,12 +227,12 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
     private void addSectionSpecificContent(SectionSpecificContentObject sectionSpecificContentObject,
                                            GetCapabilitiesRequest request) throws OwsExceptionReport {
-        String verion = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
+        String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
         String service = sectionSpecificContentObject.getGetCapabilitiesResponse().getService();
 
         if (isServiceIdentificationSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             sectionSpecificContentObject.getSosCapabilities()
-                    .setServiceIdentification(getServiceIdentification(request, service, verion));
+                    .setServiceIdentification(getServiceIdentification(request, service, version));
         }
         if (isServiceProviderSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             sectionSpecificContentObject.getSosCapabilities().setServiceProvider(this.serviceMetadataRepository
@@ -240,10 +240,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         }
         if (isOperationsMetadataSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             sectionSpecificContentObject.getSosCapabilities()
-                    .setOperationsMetadata(getOperationsMetadataForOperations(request, service, verion));
+                    .setOperationsMetadata(getOperationsMetadataForOperations(request, service, version));
         }
         if (isFilterCapabilitiesSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
-            sectionSpecificContentObject.getSosCapabilities().setFilterCapabilities(getFilterCapabilities(verion));
+            sectionSpecificContentObject.getSosCapabilities().setFilterCapabilities(getFilterCapabilities(version));
         }
         if (isContentsSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             if (isV2(sectionSpecificContentObject.getGetCapabilitiesResponse())) {
@@ -256,10 +256,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
         if (isV2(sectionSpecificContentObject.getGetCapabilitiesResponse())) {
             if (sectionSpecificContentObject.getRequestedSections() == ALL) {
-                sectionSpecificContentObject.getSosCapabilities().setExtensions(getAndMergeExtensions(service, verion));
+                sectionSpecificContentObject.getSosCapabilities().setExtensions(getAndMergeExtensions(service, version));
             } else if (!sectionSpecificContentObject.getRequestedExtensionSesctions().isEmpty()) {
                 sectionSpecificContentObject.getSosCapabilities().setExtensions(
-                        getExtensions(sectionSpecificContentObject.getRequestedExtensionSesctions(), service, verion));
+                        getExtensions(sectionSpecificContentObject.getRequestedExtensionSesctions(), service, version));
             }
         }
     }

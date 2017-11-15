@@ -24,6 +24,11 @@
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard</artifactId>
          </dependency>
+         <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard-json-common</artifactId>
+            <version>${svalbard.version}</version>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
@@ -33,9 +38,10 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <!-- moved to svalbard
         <dependency>
             <groupId>org.n52.sensorweb.sos</groupId>
-			<artifactId>coding-json-common</artifactId>
-        </dependency>
+            <artifactId>coding-json-common</artifactId>
+        </dependency>-->
     </dependencies>
 </project>

@@ -144,7 +144,14 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
         Criteria c =
                 daoFactory.getObservationDAO()
                         .getObservationClassCriteriaForResultModel(request.getResultModel(), session);
-        c.add(Restrictions.in(AbstractObservation.IDENTIFIER, request.getObservationIdentifier()));
+
+        // check observationid for STA extension or identifier for SOS
+        if (request.getObservationId() == null) {
+            c.add(Restrictions.in(AbstractObservation.IDENTIFIER, request.getObservationIdentifier()));
+
+        } else {
+            c.add(Restrictions.eq(AbstractObservation.ID, request.getObservationId()));
+        }
         LOGGER.debug("QUERY queryObservation(request): {}", HibernateHelper.getSqlString(c));
         return c.list();
     }

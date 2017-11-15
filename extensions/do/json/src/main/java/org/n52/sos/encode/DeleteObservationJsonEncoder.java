@@ -30,8 +30,8 @@ package org.n52.sos.encode;
 
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
-import org.n52.sos.coding.json.JSONConstants;
-import org.n52.sos.encode.json.AbstractSosResponseEncoder;
+import org.n52.svalbard.coding.json.JSONConstants;
+import org.n52.svalbard.encode.json.AbstractSosResponseEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 

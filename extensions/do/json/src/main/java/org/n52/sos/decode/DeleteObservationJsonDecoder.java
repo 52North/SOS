@@ -32,9 +32,9 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
-import org.n52.sos.coding.json.JSONConstants;
-import org.n52.sos.coding.json.SchemaConstants;
-import org.n52.sos.decode.json.AbstractSosRequestDecoder;
+import org.n52.svalbard.coding.json.JSONConstants;
+import org.n52.svalbard.coding.json.SchemaConstants;
+import org.n52.svalbard.decode.json.AbstractSosRequestDecoder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

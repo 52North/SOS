@@ -35,6 +35,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-json-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.fge</groupId>
@@ -108,6 +109,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-json-common</artifactId>
             <classifier>tests</classifier>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -29,7 +29,7 @@
 package org.n52.sos.encode.json.inspire;
 
 import org.n52.shetland.inspire.base2.Contact;
-import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.svalbard.encode.json.JSONEncoder;
 import org.n52.sos.util.AQDJSONConstants;
 import org.n52.svalbard.encode.exception.EncodingException;
 

@@ -29,7 +29,7 @@
 package org.n52.sos.encode.json.inspire;
 
 import org.n52.shetland.ogc.gml.CodeType;
-import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.svalbard.encode.json.JSONEncoder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

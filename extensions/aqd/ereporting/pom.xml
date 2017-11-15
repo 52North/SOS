@@ -41,6 +41,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard-json-common</artifactId>
+            <version>${svalbard.version}</version>
+        </dependency>
+        <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
         </dependency>
@@ -99,10 +104,11 @@
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
+        <!-- moved to svalbard
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-json-common</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>

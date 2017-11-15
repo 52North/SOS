@@ -36,7 +36,7 @@ import org.n52.shetland.util.DateTimeParseException;
 import org.n52.shetland.w3c.Nillable;
 import org.n52.shetland.w3c.xlink.Reference;
 import org.n52.shetland.w3c.xlink.Referenceable;
-import org.n52.sos.decode.json.JSONDecoder;
+import org.n52.svalbard.decode.json.JSONDecoder;
 import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.util.ThrowableFunction;
 import org.n52.svalbard.decode.exception.DecodingException;

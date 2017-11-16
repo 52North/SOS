@@ -460,17 +460,6 @@
                 <artifactId>split-and-merge</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!-- STA extension -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>sta-operations</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>sta-dao</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <!-- Statistics -->
             <dependency>
                 <groupId>${project.groupId}</groupId>

@@ -613,6 +613,11 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             c.add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, queryObject.getFeatureIdentifiers()));
             filtered = true;
         }
+        // request featureofinterestid, if set (intended without featureIdentifier and for STA requests)
+        if (queryObject.isSetFeatureId()) {
+            c.add(Restrictions.eq(FeatureOfInterest.ID, queryObject.getFeatureId()));
+            filtered = true;
+        }
         if (queryObject.isSetSpatialFilters()) {
             final Disjunction disjunction = Restrictions.disjunction();
             for (final SpatialFilter filter : queryObject.getSpatialFilters()) {

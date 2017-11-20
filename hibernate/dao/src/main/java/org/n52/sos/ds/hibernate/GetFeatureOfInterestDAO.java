@@ -234,17 +234,26 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
      *             If an error occurs during processing
      */
     private FeatureCollection getFeatures(final GetFeatureOfInterestRequest request, final Session session) throws OwsExceptionReport {
-        final Set<String> foiIDs = new HashSet<>(queryFeatureIdentifiersForParameter(request, session));
-        if (request.isSetFeatureOfInterestIdentifiers()) {
-            addRequestedRelatedFeatures(foiIDs, request.getFeatureIdentifiers());
+
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
+        if (request.getFeatureId() == null) {
+
+            final Set<String> foiIDs = new HashSet<>(queryFeatureIdentifiersForParameter(request, session));
+            if (request.isSetFeatureOfInterestIdentifiers()) {
+                addRequestedRelatedFeatures(foiIDs, request.getFeatureIdentifiers());
+            }
+            queryObject.setFeatureIdentifiers(foiIDs);
+
+        } else {
+            // check featureofinterestd for STA extension; ignore featureIdentifier
+            queryObject.setFeatureId(request.getFeatureId());
         }
-        // feature of interest
-        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
-                .setFeatureIdentifiers(foiIDs)
-                .setSpatialFilters(request.getSpatialFilters())
-                .setConnection(session)
-                .setVersion(request.getVersion())
-                .setI18N(getRequestedLocale(request));
+
+        queryObject.setSpatialFilters(request.getSpatialFilters())
+            .setConnection(session)
+            .setVersion(request.getVersion())
+            .setI18N(getRequestedLocale(request));
+
         return new FeatureCollection(this.featureQueryHandler.getFeatures(queryObject));
     }
 

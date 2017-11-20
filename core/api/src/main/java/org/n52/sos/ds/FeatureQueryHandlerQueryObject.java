@@ -48,6 +48,8 @@ public class FeatureQueryHandlerQueryObject {
 
     private List<SpatialFilter> spatialFilters = Lists.newArrayList();
 
+    private Long featureId;
+
     private Set<String> featureIdentifiers = Sets.newHashSet();
 
     private String version;
@@ -129,6 +131,15 @@ public class FeatureQueryHandlerQueryObject {
         return version;
     }
 
+    public FeatureQueryHandlerQueryObject setFeatureId(Long featureId) {
+        this.featureId = featureId;
+        return this;
+    }
+
+    public Long getFeatureId() {
+        return featureId;
+    }
+
     public boolean isSetConnection() {
         return getConnection() != null;
     }
@@ -151,5 +162,9 @@ public class FeatureQueryHandlerQueryObject {
 
     public boolean isSetVersion() {
         return !Strings.isNullOrEmpty(getVersion());
+    }
+
+    public boolean isSetFeatureId() {
+        return getFeatureId() != null;
     }
 }

@@ -114,6 +114,13 @@ public class IsoTimeStringTypeDescriptor implements SqlTypeDescriptor {
                 Date d = javaTypeDescriptor.unwrap(value, Timestamp.class, options);
                 st.setString(index, encode(d));
             }
+
+            @Override
+            protected void doBind(CallableStatement st, X value, String name, WrapperOptions options)
+                    throws SQLException {
+                Date d = javaTypeDescriptor.unwrap(value, Timestamp.class, options);
+                st.setString(name, encode(d));
+            }
         };
     }
 

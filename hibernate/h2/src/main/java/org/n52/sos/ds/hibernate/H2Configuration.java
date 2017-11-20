@@ -30,10 +30,14 @@ package org.n52.sos.ds.hibernate;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,9 +50,15 @@ import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.hibernate.tool.hbm2ddl.SchemaExport.Action;
+import org.hibernate.tool.hbm2ddl.SchemaUpdate;
+import org.hibernate.tool.schema.TargetType;
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
@@ -154,9 +164,9 @@ public class H2Configuration {
 
     private Configuration configuration;
 
-    private String[] createScript;
+    private List<String> createScript;
 
-    private String[] dropScript;
+    private List<String> dropScript;
 
     public static void assertInitialized() {
         synchronized (LOCK) {
@@ -224,11 +234,12 @@ public class H2Configuration {
             if (instance == null) {
                 throw new IllegalStateException("Database is not initialized");
             }
-            final Iterator<Table> tableMappings = instance.getConfiguration().getTableMappings();
+            Metadata metadata = new MetadataSources().buildMetadata(instance.getConfiguration().getStandardServiceRegistryBuilder().build());
+            final Collection<Table> tableMappings = metadata.collectTableMappings();
             final List<String> tableNames = new LinkedList<>();
             GeoDBDialect dialect = new GeoDBDialect();
-            while (tableMappings.hasNext()) {
-                tableNames.add(tableMappings.next().getQuotedName(dialect));
+            for (Table table : tableMappings) {
+                tableNames.add(table.getQuotedName(dialect));
             }
             Session session = null;
             Transaction transaction = null;
@@ -301,6 +312,8 @@ public class H2Configuration {
             Class.forName(H2_DRIVER);
             try (Connection conn = DriverManager.getConnection(H2_CONNECTION_URL)) {
                 GeoDB.InitGeoDB(conn);
+                Path createTempFile = null;
+                Path dropTempFile = null;
                 try (Statement stmt = conn.createStatement()) {
                     configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
                     @SuppressWarnings("unchecked")
@@ -309,12 +322,39 @@ public class H2Configuration {
                     for (String resource : resources) {
                         configuration.addInputStream(getClass().getResourceAsStream(resource));
                     }
-                    final GeoDBDialect dialect = new GeoDBDialect();
-                    createScript = getCreateSrcipt(configuration.generateSchemaCreationScript(dialect));
-                    dropScript = getDropScript(configuration.generateDropSchemaScript(dialect));
+//                    final GeoDBDialect dialect = new GeoDBDialect();
+                    createTempFile = Files.createTempFile("create", "tmp");
+                    dropTempFile = Files.createTempFile("drop", "tmp");
+                    SchemaExport schemaExport = new SchemaExport();
+                    schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
+                    Metadata metadata = new MetadataSources(configuration.getStandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build()).buildMetadata();
+                    schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, metadata);
+                    createScript = Files.readAllLines(createTempFile);
+                    schemaExport.setOutputFile(dropTempFile.toString());
+                    schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, metadata);
+                    dropScript = Files.readAllLines(dropTempFile);
                     for (final String s : createScript) {
                         LOG.debug("Executing {}", s);
                         stmt.execute(s);
+                    }
+                } catch (IOException e) {
+                    new RuntimeException(e);
+                } finally {
+                    try {
+                        if (createTempFile != null) {
+                            Files.deleteIfExists(createTempFile);
+                        }
+
+                    } catch (IOException e) {
+                        LOG.info("Unable to delete temp file {}", createTempFile.toString());
+                    }
+                    try {
+                        if (dropTempFile != null) {
+                            Files.deleteIfExists(dropTempFile);
+                        }
+
+                    } catch (IOException e) {
+                        LOG.info("Unable to delete temp file {}", dropTempFile.toString());
                     }
                 }
             }
@@ -368,11 +408,11 @@ public class H2Configuration {
         return configuration;
     }
 
-    public String[] getCreateScript() {
+    public List<String> getCreateScript() {
         return createScript;
     }
 
-    public String[] getDropScript() {
+    public List<String> getDropScript() {
         return dropScript;
     }
 }

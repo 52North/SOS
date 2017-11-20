@@ -40,10 +40,10 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.postgis.PostgisDialectSpatialIndex;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.n52.faroe.ConfigurationError;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.slf4j.Logger;
@@ -140,7 +140,7 @@ public abstract class AbstractPostgresDatasource
     }
 
     @Override
-    protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
         checkPostgis(con, settings);
         checkSpatialRefSys(con, metadata, settings);
     }
@@ -163,12 +163,12 @@ public abstract class AbstractPostgresDatasource
         }
     }
 
-    protected void checkSpatialRefSys(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
+    protected void checkSpatialRefSys(Connection con, Metadata metadata, Map<String, Object> settings) {
         Statement stmt = null;
         try {
-            if (!metadata.isTable("spatial_ref_sys")) {
-                throw new ConfigurationError("Missing 'spatial_ref_sys' table.");
-            }
+//            if (!metadata.isTable("spatial_ref_sys")) {
+//                throw new ConfigurationError("Missing 'spatial_ref_sys' table.");
+//            }
             StringBuilder builder = new StringBuilder();
             builder.append(SELECT);
             builder.append(' ');
@@ -216,7 +216,7 @@ public abstract class AbstractPostgresDatasource
             conn = openConnection(settings);
             String catalog = checkCatalog(conn);
             String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
-            Iterator<Table> tables = config.getTableMappings();
+            Iterator<Table> tables = getDatabaseMetadata(conn, settings).collectTableMappings().iterator();
             List<String> names = new LinkedList<String>();
             while (tables.hasNext()) {
                 Table table = tables.next();

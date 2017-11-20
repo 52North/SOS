@@ -67,6 +67,13 @@ public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {
                 st.setTimestamp(index, javaTypeDescriptor.unwrap(value, Timestamp.class, options),
                         Calendar.getInstance(UTC));
             }
+
+            @Override
+            protected void doBind(CallableStatement st, X value, String name, WrapperOptions options)
+                    throws SQLException {
+                st.setTimestamp(name, javaTypeDescriptor.unwrap(value, Timestamp.class, options),
+                        Calendar.getInstance(UTC));
+            }
         };
     }
 

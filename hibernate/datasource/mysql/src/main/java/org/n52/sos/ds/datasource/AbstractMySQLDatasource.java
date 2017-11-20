@@ -38,13 +38,11 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBTimestampDialect;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -196,7 +194,7 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
     }
 
     @Override
-    protected void validatePrerequisites(Connection arg0, DatabaseMetadata arg1, Map<String, Object> arg2) {
+    protected void validatePrerequisites(Connection arg0, Metadata arg1, Map<String, Object> arg2) {
     }
 
     @Override

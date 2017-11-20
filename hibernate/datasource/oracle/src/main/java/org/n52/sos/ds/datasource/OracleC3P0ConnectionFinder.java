@@ -35,8 +35,7 @@ import java.sql.Connection;
 
 import oracle.jdbc.OracleConnection;
 
-import org.hibernate.spatial.dialect.oracle.ConnectionFinder;
-import org.hibernate.spatial.helper.FinderException;
+import org.geolatte.geom.codec.db.oracle.ConnectionFinder;
 
 import com.mchange.v2.c3p0.C3P0ProxyConnection;
 
@@ -45,19 +44,21 @@ import com.mchange.v2.c3p0.C3P0ProxyConnection;
  *
  */
 public class OracleC3P0ConnectionFinder implements ConnectionFinder {
+    private static final long serialVersionUID = 1L;
+
     public static Connection getRawConnection(Connection con) {
         return con;
     }
 
     @Override
-    public OracleConnection find(Connection con) throws FinderException {
+    public OracleConnection find(Connection con) {
         Connection conn = con;
         if (con instanceof Proxy) {
             try {
                 InvocationHandler handler = Proxy.getInvocationHandler(con);
                 conn = (Connection) handler.invoke(con, con.getClass().getMethod("getWrappedObject"), null);
             } catch (Throwable e) {
-                throw new FinderException(e.getMessage());
+                throw new RuntimeException(e.getMessage());
             }
         }
 
@@ -75,12 +76,12 @@ public class OracleC3P0ConnectionFinder implements ConnectionFinder {
                         (Connection) cpCon.rawConnectionOperation(rawConnectionMethod, null,
                                 new Object[] { C3P0ProxyConnection.RAW_CONNECTION });
             } catch (Throwable ex) {
-                throw new FinderException(ex.getMessage());
+                throw new RuntimeException(ex.getMessage());
             }
             if (unwrappedCon != null && unwrappedCon instanceof OracleConnection) {
                 return (OracleConnection) unwrappedCon;
             }
         }
-        throw new FinderException("Couldn't get Oracle Connection in OracleConnectionFinder");
+        throw new RuntimeException("Couldn't get Oracle Connection in OracleConnectionFinder");
     }
 }

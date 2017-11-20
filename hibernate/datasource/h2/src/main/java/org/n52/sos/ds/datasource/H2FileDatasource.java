@@ -30,8 +30,6 @@ package org.n52.sos.ds.datasource;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -44,8 +42,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.joda.time.DateTime;
+import org.hibernate.boot.Metadata;
 import org.n52.faroe.AbstractSettingDefinition;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
@@ -174,7 +171,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
     }
 
     @Override

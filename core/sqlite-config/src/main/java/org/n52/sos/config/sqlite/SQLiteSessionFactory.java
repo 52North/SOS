@@ -166,10 +166,10 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
                 try {
                     if (this.sessionFactory instanceof SessionFactoryImpl) {
                         SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) this.sessionFactory;
-                        if (sessionFactoryImpl.getConnectionProvider() instanceof Stoppable) {
-                            Stoppable stoppable = (Stoppable) sessionFactoryImpl.getConnectionProvider();
-                            stoppable.stop();
-                        }
+//                        if (sessionFactoryImpl.getConnectionProvider() instanceof Stoppable) {
+//                            Stoppable stoppable = (Stoppable) sessionFactoryImpl.getConnectionProvider();
+//                            stoppable.stop();
+//                        }
                     }
                     this.sessionFactory.close();
                     LOG.info("Connection provider closed successfully!");

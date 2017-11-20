@@ -37,8 +37,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
 import org.n52.faroe.SettingDefinition;
 import org.n52.sos.ds.HibernateDatasourceConstants;
@@ -209,7 +210,7 @@ public class AbstractHibernateFullDBDatasourceTest
         }
 
         @Override
-        protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
+        protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
         }
 
         @Override
@@ -221,5 +222,6 @@ public class AbstractHibernateFullDBDatasourceTest
         protected String[] checkDropSchema(String[] dropSchema) {
             return null;
         }
+
     }
 }

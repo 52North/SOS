@@ -38,11 +38,11 @@ import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -167,12 +167,12 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         // hql method
         Session session = getSession();
         long start = System.currentTimeMillis();
-        Query query =
+        Query<?> query =
                 session.createQuery(
                         "select distinct foi." + FeatureOfInterest.IDENTIFIER + " from Observation o" + " join o."
                         + AbstractObservation.OFFERINGS + " offs " + " join o." + AbstractObservation.FEATURE_OF_INTEREST
                         + " foi" + " where o.deleted = 'F' and offs." + Offering.IDENTIFIER + " = :offering")
-                        .setString("offering", HibernateObservationBuilder.OFFERING_1);
+                            .setParameter("offering", HibernateObservationBuilder.OFFERING_1);
         query.list();
         long time = System.currentTimeMillis() - start;
         LOGGER.debug("QUERY get featureOfInterest identifiers for offering HQL way: {}",

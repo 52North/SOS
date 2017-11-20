@@ -34,7 +34,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 
 /**
  * @param <T> the type that is serialized to a string
@@ -53,7 +53,7 @@ public abstract class AbstractStringBasedHibernateUserType<T> extends AbstractHi
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws
             HibernateException, SQLException {
         String s = rs.getString(names[0]);
         return (s == null) ? null : decode(s);
@@ -61,7 +61,7 @@ public abstract class AbstractStringBasedHibernateUserType<T> extends AbstractHi
 
     @Override
     @SuppressWarnings("unchecked")
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws
             HibernateException, SQLException {
         if (value == null) {
             st.setNull(index, Types.VARCHAR);

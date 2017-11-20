@@ -29,11 +29,15 @@
 package org.n52.sos.ds.datasource;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Driver;
@@ -42,6 +46,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -50,11 +56,21 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.hibernate.HibernateException;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.hibernate.tool.hbm2ddl.SchemaValidator;
+import org.hibernate.tool.hbm2ddl.SchemaExport.Action;
+import org.hibernate.tool.schema.TargetType;
+import org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl;
+import org.hibernate.tool.schema.internal.Helper;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.BooleanSettingDefinition;
@@ -318,33 +334,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public CustomConfiguration getConfig(Map<String, Object> settings) {
         CustomConfiguration config = new CustomConfiguration();
         config.configure("/sos-hibernate.cfg.xml");
-        config.addDirectory(resource(HIBERNATE_MAPPING_CORE_PATH));
-        for (String resource : getDatabaseConceptMappingDirectory(settings)) {
-            config.addDirectory(resource(resource));
-        }
-        String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
-        if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
-            config.addDirectory(resource(featureConceptMappingDirectory));
-        }
-        if (isTransactionalDatasource()) {
-            Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
-            if (transactional != null && transactional.booleanValue()) {
-                config.addDirectory(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
-            }
-        }
-        if (isMultiLanguageDatasource()) {
-            Boolean multiLanguage = (Boolean) settings.get(this.multilingualismDefinition.getKey());
-            if (multiLanguage != null && multiLanguage.booleanValue()) {
-                config.addDirectory(resource(HIBERNATE_MAPPING_I18N_PATH));
-            }
-        }
-        DatabaseConcept databaseConcept = getDatabaseConcept(settings);
-        if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
-                || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
-            Boolean t = (Boolean) settings.get(this.seriesMetadataDefiniton.getKey());
-            if (t != null && t) {
-                config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_METADATA_PATH));
-            }
+        for (File path : getMappingPaths(settings)) {
+            config.addDirectory(path);
         }
         if (isSetSchema(settings)) {
             Properties properties = new Properties();
@@ -353,6 +344,39 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
         config.buildMappings();
         return config;
+    }
+
+    protected Set<File> getMappingPaths(Map<String, Object> settings) {
+        Set<File> paths  = new HashSet<>();
+        paths.add(resource(HIBERNATE_MAPPING_CORE_PATH));
+        for (String resource : getDatabaseConceptMappingDirectory(settings)) {
+            paths.add(resource(resource));
+        }
+        String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
+        if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
+            paths.add(resource(featureConceptMappingDirectory));
+        }
+        if (isTransactionalDatasource()) {
+            Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
+            if (transactional != null && transactional.booleanValue()) {
+                paths.add(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
+            }
+        }
+        if (isMultiLanguageDatasource()) {
+            Boolean multiLanguage = (Boolean) settings.get(this.multilingualismDefinition.getKey());
+            if (multiLanguage != null && multiLanguage.booleanValue()) {
+                paths.add(resource(HIBERNATE_MAPPING_I18N_PATH));
+            }
+        }
+        DatabaseConcept databaseConcept = getDatabaseConcept(settings);
+        if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
+                || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
+            Boolean t = (Boolean) settings.get(this.seriesMetadataDefiniton.getKey());
+            if (t != null && t) {
+                paths.add(resource(HIBERNATE_MAPPING_SERIES_METADATA_PATH));
+            }
+        }
+        return paths;
     }
 
     protected String getFeatureConceptMappingDirectory(Map<String, Object> settings) {
@@ -450,69 +474,123 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     @Override
     public String[] createSchema(Map<String, Object> settings) {
-        String[] script = getConfig(settings).generateSchemaCreationScript(getDialectInternal());
-        String[] pre = getPreSchemaScript();
-        String[] post = getPostSchemaScript();
+        Path createTempFile = null;
+        try {
+            createTempFile = Files.createTempFile("drop", "tmp");
+            SchemaExport schemaExport = new SchemaExport();
+            schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
+            Metadata metadata = new MetadataSources(getConfig(settings).getStandardServiceRegistryBuilder().build()).buildMetadata();
+            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, metadata);
+            List<String> readAllLines = Files.readAllLines(createTempFile);
+            String[] script = readAllLines.toArray(new String[readAllLines.size()]);
+            String[] pre = getPreSchemaScript();
+            String[] post = getPostSchemaScript();
 
-        script =
-                (pre == null) ? (post == null) ? script : concat(script, post) : (post == null) ? concat(pre, script)
-                        : concat(pre, script, post);
+            script =
+                    (pre == null) ? (post == null) ? script : concat(script, post) : (post == null) ? concat(pre, script)
+                            : concat(pre, script, post);
 
-        return checkCreateSchema(script);
+            return checkCreateSchema(script);
+        } catch (IOException e) {
+            throw new ConfigurationError(e);
+        } finally {
+            try {
+                if (createTempFile != null) {
+                    Files.deleteIfExists(createTempFile);
+                }
+            } catch (IOException e) {
+                LOG.info("Unable to delete temp file {}", createTempFile.toString());
+            }
+        }
+
     }
 
     @Override
     public String[] dropSchema(Map<String, Object> settings) {
         Connection conn = null;
+        Path dropTempFile = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
-            String[] dropScript =
-                    checkDropSchema(getConfig(settings).generateDropSchemaScript(getDialectInternal(), metadata));
-            return dropScript;
-        } catch (SQLException ex) {
+//            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
+//            String[] dropScript =
+//                    checkDropSchema(getConfig(settings).generateDropSchemaScript(getDialectInternal(), metadata));
+//            return dropScript;
+            dropTempFile = Files.createTempFile("drop", "tmp");
+            SchemaExport schemaExport = new SchemaExport();
+            schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(dropTempFile.toString());
+            Metadata metadata = new MetadataSources(getConfig(settings).getStandardServiceRegistryBuilder().build()).buildMetadata();
+            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, metadata);
+            List<String> readAllLines = Files.readAllLines(dropTempFile);
+            return readAllLines.toArray(new String[readAllLines.size()]);
+        } catch (SQLException | IOException ex) {
             throw new ConfigurationError(ex);
         } finally {
             close(conn);
+            try {
+                if (dropTempFile != null) {
+                    Files.deleteIfExists(dropTempFile);
+                }
+            } catch (IOException e) {
+                LOG.info("Unable to delete temp file {}", dropTempFile.toString());
+            }
         }
     }
 
     @Override
     public String[] updateSchema(Map<String, Object> settings) {
-        Connection conn = null;
+        Path createTempFile = null;
         try {
-            conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
-            List<SchemaUpdateScript> upSchema =
-                    getConfig(settings).generateSchemaUpdateScriptList(getDialectInternal(), metadata);
-            Set<String> nonDublicated = Sets.newLinkedHashSet(Arrays.asList(SchemaUpdateScript.toStringArray(upSchema)));
+            createTempFile = Files.createTempFile("create", "tmp");
+            SchemaExport schemaExport = new SchemaExport();
+            schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
+            Metadata metadata = new MetadataSources(getConfig(settings).getStandardServiceRegistryBuilder().build()).buildMetadata();
+            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, metadata);
+            Set<String> nonDublicated = Sets.newLinkedHashSet(Files.readAllLines(createTempFile));
             return nonDublicated.toArray(new String[nonDublicated.size()]);
-        } catch (SQLException ex) {
+        } catch (IOException ex) {
             throw new ConfigurationError(ex);
         } finally {
-            close(conn);
+            try {
+                if (createTempFile != null) {
+                    Files.deleteIfExists(createTempFile);
+                }
+            } catch (IOException e) {
+                LOG.info("Unable to delete temp file {}", createTempFile.toString());
+            }
         }
     }
 
     @Override
     public void validateSchema(Map<String, Object> settings) {
-        Connection conn = null;
         try {
-            conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
-            getConfig(settings).validateSchema(getDialectInternal(), metadata);
-        } catch (SQLException ex) {
-            throw new ConfigurationError(ex);
+            SchemaValidator schemaValidator = new SchemaValidator();
+            StandardServiceRegistry serviceRegistry = getConfig(settings).getStandardServiceRegistryBuilder().build();
+            Metadata metadata = new MetadataSources(serviceRegistry).buildMetadata();
+            schemaValidator.validate(metadata, serviceRegistry);
         } catch (HibernateException ex) {
             throw new ConfigurationError(ex);
-        } finally {
-            close(conn);
         }
     }
 
-    protected DatabaseMetadata getDatabaseMetadata(Connection conn, CustomConfiguration customConfiguration)
+    protected Metadata getDatabaseMetadata(Connection conn, Map<String, Object> settings)
             throws SQLException {
-        return new DatabaseMetadata(conn, getDialectInternal(), customConfiguration, true);
+        StandardServiceRegistry registry = null;
+        try {
+            StandardServiceRegistryBuilder registryBuilder = new StandardServiceRegistryBuilder();
+            registryBuilder.applySettings(settings);
+            registry = registryBuilder.build();
+            MetadataSources sources = new MetadataSources(registry);
+            for (File dir : getMappingPaths(settings)) {
+                sources.addDirectory(dir);
+            }
+            return sources.getMetadataBuilder().build();
+        } finally {
+            StandardServiceRegistryBuilder.destroy(registry);
+        }
+//        return new MetadataSources(configuration.getStandardServiceRegistryBuilder().applySettings(p).build()).buildMetadata();
+//        Helper.buildDatabaseInformation(serviceRegistry, ddlTransactionIsolator, defaultNamespace);
+//        new DatabaseInformationImpl(serviceRegistry, jdbcEnvironment, ddlTransactionIsolator, defaultNamespace);
+//        return new DatabaseMetadata(conn, getDialectInternal(), customConfiguration, true);
     }
 
     @Override
@@ -521,15 +599,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         try {
             /* check if any of the needed tables is existing */
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
-            Iterator<Table> iter = getConfig(settings).getTableMappings();
+            Metadata metadata = getDatabaseMetadata(conn, settings);
+            Iterator<Table> iter = metadata.collectTableMappings().iterator();
+
             String catalog = checkCatalog(conn);
             String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
             while (iter.hasNext()) {
                 Table table = iter.next();
-                if (table.isPhysicalTable()
-                        && metadata.isTable(table.getQuotedName())
-                        && metadata.getTableMetadata(table.getName(), schema, catalog, table.isQuoted()) != null) {
+                if (table.isPhysicalTable()) {
+//                        && metadata.isTable(table.getQuotedName())
+//                        && metadata.getTableMetadata(table.getName(), schema, catalog, table.isQuoted()) != null) {
                     return true;
                 }
             }
@@ -566,7 +645,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            execute(sql, conn);
+            execute(Lists.newArrayList(sql), conn);
         } catch (SQLException ex) {
             throw new ConfigurationError(ex);
         } finally {
@@ -596,7 +675,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
+            Metadata metadata = getDatabaseMetadata(conn, settings);
             validatePrerequisites(conn, metadata, settings);
         } catch (SQLException ex) {
             throw new ConfigurationError(ex);
@@ -679,7 +758,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @throws HibernateException
      *             If an error occurs
      */
-    protected void execute(String[] sql, Connection conn) throws HibernateException {
+    protected void execute(Collection<String> sql, Connection conn) throws HibernateException {
         Statement stmt = null;
         String lastCmd = null;
         try {
@@ -1026,7 +1105,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         String catalog = checkCatalog(conn);
         String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
         CustomConfiguration config = getConfig(settings);
-        Iterator<Table> tables = config.getTableMappings();
+        Iterator<Table> tables = getDatabaseMetadata(conn, settings).collectTableMappings().iterator();
         List<String> names = new LinkedList<String>();
         while (tables.hasNext()) {
             Table table = tables.next();
@@ -1111,7 +1190,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @param settings
      *            Datasource settings
      */
-    protected abstract void validatePrerequisites(Connection con, DatabaseMetadata metadata,
+    protected abstract void validatePrerequisites(Connection con, Metadata metadata,
             Map<String, Object> settings);
 
     /**

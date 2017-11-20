@@ -87,6 +87,13 @@ public class ConfigurableTimestampTypeDescriptor extends TimestampTypeDescriptor
                 st.setTimestamp(index, javaTypeDescriptor.unwrap(value, Timestamp.class, options),
                         Calendar.getInstance(timeZone));
             }
+
+            @Override
+            protected void doBind(CallableStatement st, X value, String name, WrapperOptions options)
+                    throws SQLException {
+                st.setTimestamp(name, javaTypeDescriptor.unwrap(value, Timestamp.class, options),
+                        Calendar.getInstance(timeZone));
+            }
         };
     }
 

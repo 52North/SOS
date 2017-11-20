@@ -36,8 +36,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
+import org.hibernate.boot.Metadata;
 import org.n52.faroe.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
@@ -101,7 +100,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
     }
 
     @Override

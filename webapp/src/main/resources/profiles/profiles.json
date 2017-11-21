@@ -4,7 +4,7 @@
 		    "identifier": "SOS_20_PROFILE",
 		    "active": true,
 		    "observationResponseFormat": "http://www.opengis.net/om/2.0",
-		    "encodeFeatureOfInterestInObservations": false,
+		    "encodeFeatureOfInterestInObservations": true,
 		    "encodingNamespaceForFeatureOfInterestEncoding": "",
 		    "showMetadataOfEmptyObservations": false,
 		    "listFeatureOfInterestsInOfferings": true,

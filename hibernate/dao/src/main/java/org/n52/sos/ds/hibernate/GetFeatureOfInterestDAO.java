@@ -245,7 +245,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
             queryObject.setFeatureIdentifiers(foiIDs);
 
         } else {
-            // check featureofinterestd for STA extension; ignore featureIdentifier
+            // check featureofinterestid for STA extension; ignore featureIdentifier
             queryObject.setFeatureId(request.getFeatureId());
         }
 

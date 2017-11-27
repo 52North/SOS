@@ -15,5 +15,6 @@
         <module>gda</module>
         <module>do</module>
         <module>inspire</module>
+        <module>sta</module>
     </modules>
 </project>

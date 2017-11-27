@@ -974,6 +974,16 @@
                 <artifactId>gda-hibernate</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sta-operation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sta-hibernate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- required for common test classes -->
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>

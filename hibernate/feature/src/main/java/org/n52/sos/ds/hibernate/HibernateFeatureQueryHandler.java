@@ -388,6 +388,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         }
         final SamplingFeature sampFeat = new SamplingFeature(identifier);
         addNameAndDescription(queryObject, feature, sampFeat, featureOfInterestDAO);
+        sampFeat.setFeatureId(feature.getFeatureOfInterestId());
         sampFeat.setGeometry(getGeomtery(feature, session));
         sampFeat.setFeatureType(feature.getFeatureOfInterestType().getFeatureOfInterestType());
         sampFeat.setUrl(feature.getUrl());

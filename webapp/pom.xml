@@ -369,7 +369,19 @@
             <artifactId>gda-hibernate</artifactId>
             <scope>runtime</scope>
         </dependency>
-
+        
+        <!-- SENSOR THINGS API -->
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sta-operation</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sta-hibernate</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- DELETE OBSERVATION -->
 
         <dependency>

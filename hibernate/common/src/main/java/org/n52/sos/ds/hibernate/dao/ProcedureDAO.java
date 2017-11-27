@@ -209,6 +209,31 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     // }
 
     /**
+     * Get Procedure object for procedure id
+     *
+     * @param id
+     *            Procedure id as in DB, used by STA extension
+     * @param session
+     *            Hibernate session
+     * @return Procedure object
+     */
+    public Procedure getProcedureForId(final Long id, final Session session) {
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(Procedure.ID, id));
+        LOGGER.debug("QUERY getProcedureForId(id): {}", HibernateHelper.getSqlString(criteria));
+        Procedure procedure = (Procedure) criteria.uniqueResult();
+        if (procedure instanceof TProcedure && HibernateHelper.isEntitySupported(TProcedure.class)) {
+            criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME)
+                    .add(Restrictions.isNull(ValidProcedureTime.END_TIME));
+            LOGGER.debug("QUERY getProcedureForId(id): {}", HibernateHelper.getSqlString(criteria));
+            Procedure proc = (Procedure) criteria.uniqueResult();
+            if (proc != null) {
+                return proc;
+            }
+        }
+        return procedure;
+    }
+
+    /**
      * Get Procedure object for procedure identifier inclusive deleted procedure
      *
      * @param identifier

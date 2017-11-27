@@ -39,6 +39,8 @@ import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.ResultFilter;
+import org.n52.sos.ogc.sos.ResultFilterConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
@@ -94,15 +96,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * Spatial filters list
      */
     private SpatialFilter spatialFilter;
-
-    /**
-     * Result filters list
-     */
-    @Deprecated
-    private ComparisonFilter result;
-
-    @SuppressWarnings("rawtypes")
-    private Filter resultFilter;
 
     private Map<String, String> namespaces = Maps.newHashMap();
 
@@ -220,7 +213,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      */
     @Deprecated
     public ComparisonFilter getResult() {
-        return result;
+        return getResultFilter();
     }
 
     /**
@@ -231,18 +224,9 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      */
     @Deprecated
     public void setResult(ComparisonFilter result) {
-        this.result = result;
+        this.setResultFilter(result);
     }
 
-    /**
-     * Get result filter(s)
-     * 
-     * @return result filter(s)
-     */
-    @SuppressWarnings("rawtypes")
-    public Filter getResultFilter() {
-        return resultFilter;
-    }
 
     /**
      * Add result filter(s)
@@ -251,8 +235,11 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      *            result filter(s)
      */
     @SuppressWarnings("rawtypes")
+    @Deprecated
     public void setResultFilter(Filter resultFilter) {
-        this.resultFilter = resultFilter;
+        if (resultFilter instanceof ComparisonFilter) {
+            setResultFilter((ComparisonFilter)resultFilter);
+        }
     }
 
     /**
@@ -260,6 +247,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * 
      * @return <code>true</code>, if a result filter is set
      */
+    @Deprecated
     public boolean isSetResultFilter() {
         return getResultFilter() != null;
     }
@@ -322,7 +310,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
         res.setResponseFormat(getResponseFormat());
         res.setResponseMode(getResponseMode());
         res.setSpatialFilter(this.spatialFilter);
-        res.setResult(this.result);
         res.setResultModel(getResultModel());
         res.setFeatureIdentifiers(this.featureIdentifiers);
         res.setService(this.getService());
@@ -438,6 +425,23 @@ public class GetObservationRequest extends AbstractObservationRequest implements
                 .equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE);
     }
 
+    public boolean hasResultFilter() {
+        return isSetExtensions() && hasExtension(ResultFilterConstants.RESULT_FILTER)
+                && getExtension(ResultFilterConstants.RESULT_FILTER) instanceof ResultFilter;
+    }
+    
+    public ComparisonFilter getResultFilter() {
+        if (hasResultFilter()) {
+            return ((ResultFilter)getExtension(ResultFilterConstants.RESULT_FILTER)).getValue();
+        }
+        return null;
+    }
+
+    public GetObservationRequest setResultFilter(ComparisonFilter filter) {
+        addExtension(new ResultFilter(filter));
+        return this;
+    }
+
     public boolean isSetRequestString() {
         return StringHelper.isNotEmpty(getRequestString());
     }
@@ -491,6 +495,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     }
 
     private boolean isFesFilterExtension(SwesExtension<?> extension) {
-        return extension.getValue() instanceof Filter<?>;
+        return !(extension instanceof ResultFilter) && extension.getValue() instanceof Filter<?>;
     }
 }

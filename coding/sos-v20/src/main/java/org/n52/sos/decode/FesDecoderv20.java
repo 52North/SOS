@@ -341,6 +341,9 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
         } else {
             throw new UnsupportedDecoderInputException(this, comparisonOpsType);
         }
+        if (comparisonOpsType.isSetMatchCase()) {
+            comparisonFilter.setMatchCase(comparisonOpsType.getMatchCase());
+        }
         parseExpressions(comparisonOpsType.getExpressionArray(), comparisonFilter);
         return comparisonFilter;
     }

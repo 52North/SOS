@@ -41,8 +41,11 @@ import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.ogc.filter.ComparisonFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
@@ -96,6 +99,21 @@ public abstract class AbstractValueDAO extends TimeCreator {
         }
     }
     
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
+            Session session) throws OwsExceptionReport {
+        if (request.hasResultFilter()) {
+            ComparisonFilter resultFilter = request.getResultFilter();
+            ResultFilterRestrictions.addResultFilterExpression(c, resultFilter, getResultFilterClasses());
+        }
+    }
+    
+    protected ResultFilterClasses getResultFilterClasses() {
+        return new ResultFilterClasses(getValuedObservationFactory().numericClass(), getValuedObservationFactory().countClass(),
+                getValuedObservationFactory().textClass(), getValuedObservationFactory().categoryClass(),
+                getValuedObservationFactory().complexClass(), getValuedObservationFactory().profileClass());
+    }
+
+
     protected void addTemporalFilterCriterion(Criteria c, Criterion temporalFilterCriterion, String logArgs) {
         if (temporalFilterCriterion != null) {
             logArgs += ", filterCriterion";
@@ -217,5 +235,6 @@ public abstract class AbstractValueDAO extends TimeCreator {
     }
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
-
+    
+    protected abstract ValuedObservationFactory getValuedObservationFactory();
 }

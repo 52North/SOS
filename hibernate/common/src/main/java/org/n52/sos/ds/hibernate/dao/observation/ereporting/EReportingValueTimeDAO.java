@@ -36,6 +36,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
+import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -97,6 +98,11 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO {
         projectionList.add(Projections.min(TemporalReferencedEReportingObservation.PHENOMENON_TIME_START));
         projectionList.add(Projections.max(TemporalReferencedEReportingObservation.PHENOMENON_TIME_END));
         c.setProjection(projectionList);
+    }
+
+    @Override
+    protected ValuedObservationFactory getValuedObservationFactory() {
+        return EReportingValuedObservationFactory.getInstance();
     }
 
 }

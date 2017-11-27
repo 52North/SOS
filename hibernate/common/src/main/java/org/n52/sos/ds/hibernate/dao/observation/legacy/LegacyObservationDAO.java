@@ -295,7 +295,8 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         final Criteria c = getDefaultObservationCriteria(session);
 
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
-
+        checkAndAddResultFilterCriterion(c, request, session);
+        
         if (CollectionHelper.isNotEmpty(request.getProcedures())) {
             c.createCriteria(AbstractLegacyObservation.PROCEDURE)
                     .add(Restrictions.in(Procedure.IDENTIFIER, request.getProcedures()));
@@ -354,7 +355,8 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         final Criteria c = getDefaultObservationCriteria(session);
 
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
-
+        checkAndAddResultFilterCriterion(c, request, session);
+        
         c.createCriteria(AbstractLegacyObservation.PROCEDURE)
                 .add(Restrictions.eq(Procedure.ID, oc.getProcedure().getProcedureId()));
 
@@ -517,5 +519,4 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation sosObservation) {
         return c;
     }
-
 }

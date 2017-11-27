@@ -91,6 +91,8 @@ import org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterFactory;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
@@ -102,6 +104,7 @@ import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.ogc.UoM;
+import org.n52.sos.ogc.filter.ComparisonFilter;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.Time;
@@ -165,7 +168,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     private static final String SQL_QUERY_CHECK_SAMPLING_GEOMETRIES = "checkSamplingGeometries";
 
     private static final String SQL_QUERY_OBSERVATION_TIME_EXTREMA = "getObservationTimeExtrema";
-
+    
     /**
      * Add observation identifier (procedure, observableProperty,
      * featureOfInterest) to observation
@@ -302,6 +305,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public abstract Criteria getTemoralReferencedObservationCriteriaFor(OmObservation bservation, ObservationConstellation observationConstellation, Session session) throws CodedException;
 
+    
+    public ResultFilterClasses getResultFilterClasses() {
+        return new ResultFilterClasses(getObservationFactory().numericClass(), getObservationFactory().countClass(),
+                getObservationFactory().textClass(), getObservationFactory().categoryClass(),
+                getObservationFactory().complexClass(), getObservationFactory().profileClass());
+    }
+    
     /**
      * Query observation by identifier
      *
@@ -1248,7 +1258,15 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
 
     }
-
+    
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
+            Session session) throws OwsExceptionReport {
+        if (request.hasResultFilter()) {
+            ComparisonFilter resultFilter = request.getResultFilter();
+            ResultFilterRestrictions.addResultFilterExpression(c, resultFilter, getResultFilterClasses());
+        }
+    }
+    
     /**
      * Get all observation identifiers
      *
@@ -2103,4 +2121,5 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             this.maxLon = maxLon;
         }
     }
+    
 }

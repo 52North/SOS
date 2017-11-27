@@ -37,6 +37,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
+import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyValuedObservationFactory;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -293,6 +295,7 @@ public class ValueTimeDAO extends AbstractValueDAO {
                 getDefaultObservationCriteria(TemporalReferencedLegacyObservation.class, session);
 
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
+        checkAndAddResultFilterCriterion(c, request, session);
 
         if (CollectionHelper.isNotEmpty(procedure)) {
             c.createAlias(TemporalReferencedLegacyObservation.PROCEDURE, "p");
@@ -341,5 +344,10 @@ public class ValueTimeDAO extends AbstractValueDAO {
     @Override
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
         // nothing  to add
+    }
+
+    @Override
+    protected ValuedObservationFactory getValuedObservationFactory() {
+        return LegacyValuedObservationFactory.getInstance();
     }
 }

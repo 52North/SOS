@@ -36,7 +36,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
@@ -49,7 +48,7 @@ import org.n52.sos.util.CollectionHelper;
 
 
 public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
-
+    
     /**
      * Query series observation for series and offerings
      *

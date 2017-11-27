@@ -290,6 +290,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         if (request instanceof GetObservationRequest) {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
             checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
+            checkAndAddResultFilterCriterion(c, getObsReq, session);
             if (CollectionHelper.isNotEmpty(getObsReq.getOfferings())) {
                 c.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS).add(
                         Restrictions.in(Offering.IDENTIFIER, getObsReq.getOfferings()));
@@ -318,6 +319,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         if (request instanceof GetObservationRequest) {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
             checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
+            checkAndAddResultFilterCriterion(c, getObsReq, session);
             if (CollectionHelper.isNotEmpty(getObsReq.getOfferings())) {
                 c.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS).add(
                         Restrictions.in(Offering.IDENTIFIER, getObsReq.getOfferings()));

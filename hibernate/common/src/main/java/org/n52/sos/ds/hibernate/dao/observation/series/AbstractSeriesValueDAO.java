@@ -37,15 +37,21 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.NumericValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.ProfileValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -251,6 +257,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
         if (request instanceof GetObservationRequest) {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
             checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
+            checkAndAddResultFilterCriterion(c, getObsReq, session);
             if (CollectionHelper.isNotEmpty(getObsReq.getOfferings())) {
                 c.createCriteria(AbstractValuedSeriesObservation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, getObsReq.getOfferings()));
             }
@@ -291,9 +298,23 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
         c.addOrder(Order.asc(getOrderColumn(request)));
         c.add(Restrictions.in("s." + Series.ID, series));
         String logArgs = "request, series";
+//        
+//        HibernateHelper.getSqlString(DetachedCriteria.forClass(ProfileValuedSeriesObservation.class)
+//                .createCriteria("value", "v").add(Subqueries.in("v.observationId", DetachedCriteria.forClass(NumericValuedSeriesObservation.class).add(Restrictions.eq("child", true))))
+//                .getExecutableCriteria(session));
+//        
+//        HibernateHelper.getSqlString(DetachedCriteria.forClass(ProfileValuedSeriesObservation.class)
+//                .createCriteria("value", "v").add(Restrictions.eq("child", true)).add(Restrictions.eq("class", NumericValuedSeriesObservation.class))
+//                .getExecutableCriteria(session));
+//        
+//        HibernateHelper.getSqlString(DetachedCriteria.forClass(ProfileValuedSeriesObservation.class)
+//                .createCriteria("value", "v").add(Restrictions.eq("class", NumericValuedSeriesObservation.class))
+//                .getExecutableCriteria(session));
+        
         if (request instanceof GetObservationRequest) {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
             checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
+            checkAndAddResultFilterCriterion(c, getObsReq, session);
             if (CollectionHelper.isNotEmpty(getObsReq.getOfferings())) {
                 c.createCriteria(AbstractValuedSeriesObservation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, getObsReq.getOfferings()));
             }

@@ -193,4 +193,12 @@ public class GeometryHandlerTest {
 
         geometryHandler.setEpsgCodesWithNorthingFirstAxisOrder(EPSG_4326_WITH_PREFIX);
     }
+    
+    @Test
+    public void changeSupportedCRS() throws OwsExceptionReport {
+        geometryHandler.setSupportedCRS(String.valueOf(EPSG_4326));
+        
+        assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_4326)), is(true));
+        assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_31467)), is(false));
+    }
 }

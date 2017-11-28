@@ -283,7 +283,9 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     public void setSupportedCRS(final String supportedCRS) throws ConfigurationException {
         // Validation.notNull("Supported CRS codes as CSV string",
         // supportedCRS);
-        this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, Constants.COMMA_STRING));
+        Set<String> newSupportedCRS = Sets.newHashSet();
+        newSupportedCRS.addAll(StringHelper.splitToSet(supportedCRS, Constants.COMMA_STRING));
+        this.supportedCRS = newSupportedCRS;
     }
 
     @Setting(FeatureQuerySettingsProvider.AUTHORITY)

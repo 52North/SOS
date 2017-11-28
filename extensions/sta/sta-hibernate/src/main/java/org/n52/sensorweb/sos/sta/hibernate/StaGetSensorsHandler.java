@@ -31,20 +31,14 @@ package org.n52.sensorweb.sos.sta.hibernate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
-//import org.n52.iceland.convert.ConverterRepository;       // pom: iceland
-//import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
-//import org.n52.iceland.util.LocalizedProducer;
 import org.n52.sensorweb.sos.sta.operation.StaAbstractGetSensorsHandler;
-//import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-//import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sta.StaConstants;
 import org.n52.shetland.ogc.sta.StaSensor;
 import org.n52.shetland.ogc.sta.request.StaGetSensorsRequest;
@@ -55,8 +49,6 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-//import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-//import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,7 +122,7 @@ public class StaGetSensorsHandler extends StaAbstractGetSensorsHandler {
             // request all non-parent procedures, filter
             // TODO add filters
 
-            List<Procedure> list = daoFactory.getProcedureDAO().getProcedureObjects(session);
+            List<Procedure> list = procedureDao.getProcedureObjects(session);
             list.forEach((Procedure p) -> {
                 try {
                     List<ValidProcedureTime> validProcedureTime = validProcedureTimeDao
@@ -144,8 +136,7 @@ public class StaGetSensorsHandler extends StaAbstractGetSensorsHandler {
                     }
                 } catch (CodedException ex) {
                     // TODO throw exception
-                    LOG.warn("Error while querying procedure to STA GET Sensors request.");
-                    java.util.logging.Logger.getLogger(StaGetSensorsHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    LOG.error("Error while querying procedure to STA GET Sensors request.");
                 }
             });
         }
@@ -173,17 +164,17 @@ public class StaGetSensorsHandler extends StaAbstractGetSensorsHandler {
         } else if (descriptionFormat.equalsIgnoreCase(StaConstants.SENSOR_ENCODING_TYPE_SENSORML_20)) {
 
             sensor.setEncodingType(StaConstants.SENSOR_ENCODING_TYPE_SENSORML_20);
-            
+
             if (procedure.getDescriptionXml() != null && !procedure.getDescriptionXml().isEmpty()) {
                 sensor.setMetadata(procedure.getDescriptionXml());
-                
+
             } else if (descriptionXml != null && !descriptionXml.isEmpty()) {
                 sensor.setMetadata(descriptionXml);
-                
+
             } else {
                 throw new NoApplicableCodeException()
                     .withMessage("Error while converting procedure to STA GET Sensors request: no metadata available");
-            }          
+            }
         } else {
             // TODO throw exception, for testing: let pass
 

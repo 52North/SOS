@@ -28,46 +28,27 @@
  */
 package org.n52.sensorweb.sos.sta.operation;
 
-import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sta.StaConstants;
-import org.n52.shetland.ogc.sta.request.StaGetSensorsRequest;
-import org.n52.shetland.ogc.sta.response.StaGetSensorsResponse;
-import org.n52.sos.request.operator.AbstractRequestOperator;
+import org.n52.shetland.ogc.sta.request.StaGetObservedPropertiesRequest;
+import org.n52.shetland.ogc.sta.response.StaGetObservedPropertiesResponse;
+import org.n52.sos.ds.AbstractOperationHandler;
 
 /**
- * SensorThings request operator for Sensor entities.
+ * Get observedable property as SensorThings ObservedProperty
  *
  * @author <a href="mailto:m.kiesow@52north.org">Martin Kiesow</a>
  */
-public class StaGetSensorsOperator extends AbstractRequestOperator<StaAbstractGetSensorsHandler, StaGetSensorsRequest, StaGetSensorsResponse> {
+public abstract class StaAbstractGetObservedPropertiesHandler extends AbstractOperationHandler implements Constructable {
 
-    public StaGetSensorsOperator() {
-        super(StaConstants.SERVICE_NAME, StaConstants.VERSION_1_0, StaConstants.Operation.GET_SENSORS.name(), StaGetSensorsRequest.class);
+    public StaAbstractGetObservedPropertiesHandler() {
+        super(StaConstants.SERVICE_NAME, StaConstants.Operation.GET_OBSERVED_PROPERTIES.name());
     }
 
-    @Override
-    protected StaGetSensorsResponse receive(StaGetSensorsRequest request) throws OwsExceptionReport {
-        final StaGetSensorsResponse response = getOperationHandler().getSensors(request);
-
-        return response;
+    public StaAbstractGetObservedPropertiesHandler(String service) {
+        super(service, StaConstants.Operation.GET_OBSERVED_PROPERTIES.name());
     }
 
-    @Override
-    protected void checkParameters(StaGetSensorsRequest request) throws OwsExceptionReport {
-
-        final CompositeOwsException exceptions = new CompositeOwsException();
-        try {
-            checkServiceParameter(request.getService());
-        } catch (OwsExceptionReport owse) {
-            exceptions.add(owse);
-        }
-        try {
-            checkSingleVersionParameter(request);
-        } catch (OwsExceptionReport owse) {
-            exceptions.add(owse);
-        }
-
-        exceptions.throwIfNotEmpty();
-    }
+    public abstract StaGetObservedPropertiesResponse getObservedProperties(StaGetObservedPropertiesRequest request) throws OwsExceptionReport;
 }

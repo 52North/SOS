@@ -245,6 +245,23 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     }
 
     /**
+     * Get observable property by observable property id
+     *
+     * @param id
+     *            The observable property's id
+     * @param session
+     *            Hibernate session
+     * @return Observable property object
+     */
+    public ObservableProperty getObservablePropertyForId(final Long id, final Session session) {
+        Criteria criteria = session.createCriteria(ObservableProperty.class)
+                .add(Restrictions.eq(ObservableProperty.ID, id));
+        LOGGER.debug("QUERY getObservablePropertyForIdentifier(id): {}",
+                HibernateHelper.getSqlString(criteria));
+        return (ObservableProperty) criteria.uniqueResult();
+    }
+
+    /**
      * Get all observable property objects
      *
      * @param session

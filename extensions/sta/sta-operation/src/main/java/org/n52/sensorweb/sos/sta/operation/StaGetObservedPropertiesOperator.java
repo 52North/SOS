@@ -31,30 +31,30 @@ package org.n52.sensorweb.sos.sta.operation;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sta.StaConstants;
-import org.n52.shetland.ogc.sta.request.StaGetSensorsRequest;
-import org.n52.shetland.ogc.sta.response.StaGetSensorsResponse;
+import org.n52.shetland.ogc.sta.request.StaGetObservedPropertiesRequest;
+import org.n52.shetland.ogc.sta.response.StaGetObservedPropertiesResponse;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 
 /**
- * SensorThings request operator for Sensor entities.
+ * SensorThings request operator for ObservedProperty entities.
  *
  * @author <a href="mailto:m.kiesow@52north.org">Martin Kiesow</a>
  */
-public class StaGetSensorsOperator extends AbstractRequestOperator<StaAbstractGetSensorsHandler, StaGetSensorsRequest, StaGetSensorsResponse> {
+public class StaGetObservedPropertiesOperator extends AbstractRequestOperator<StaAbstractGetObservedPropertiesHandler, StaGetObservedPropertiesRequest, StaGetObservedPropertiesResponse> {
 
-    public StaGetSensorsOperator() {
-        super(StaConstants.SERVICE_NAME, StaConstants.VERSION_1_0, StaConstants.Operation.GET_SENSORS.name(), StaGetSensorsRequest.class);
+    public StaGetObservedPropertiesOperator() {
+        super(StaConstants.SERVICE_NAME, StaConstants.VERSION_1_0, StaConstants.Operation.GET_OBSERVED_PROPERTIES.name(), StaGetObservedPropertiesRequest.class);
     }
 
     @Override
-    protected StaGetSensorsResponse receive(StaGetSensorsRequest request) throws OwsExceptionReport {
-        final StaGetSensorsResponse response = getOperationHandler().getSensors(request);
+    protected StaGetObservedPropertiesResponse receive(StaGetObservedPropertiesRequest request) throws OwsExceptionReport {
+        final StaGetObservedPropertiesResponse response = getOperationHandler().getObservedProperties(request);
 
         return response;
     }
 
     @Override
-    protected void checkParameters(StaGetSensorsRequest request) throws OwsExceptionReport {
+    protected void checkParameters(StaGetObservedPropertiesRequest request) throws OwsExceptionReport {
 
         final CompositeOwsException exceptions = new CompositeOwsException();
         try {

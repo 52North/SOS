@@ -180,6 +180,8 @@ public class GeometryHandlerTest {
 
     @Test
     public void changeEpsgCodesWithNorthingFirstAxisOrder() throws OwsExceptionReport {
+        assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_31467), is(true));
+        
         geometryHandler.setEpsgCodesWithNorthingFirstAxisOrder(String.valueOf(EPSG_4326));
 
         assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_4326), is(true));
@@ -196,6 +198,8 @@ public class GeometryHandlerTest {
     
     @Test
     public void changeSupportedCRS() throws OwsExceptionReport {
+        assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_31467)), is(true));
+        
         geometryHandler.setSupportedCRS(String.valueOf(EPSG_4326));
         
         assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_4326)), is(true));

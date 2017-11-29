@@ -43,19 +43,19 @@ import java.util.List;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.svalbard.decode.Decoder;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.sos.SosInsertionMetadata;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
 import org.n52.sos.decode.json.JSONDecoder;
-import org.n52.shetland.ogc.sos.SosInsertionMetadata;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;

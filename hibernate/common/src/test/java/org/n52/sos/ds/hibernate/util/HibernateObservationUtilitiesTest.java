@@ -158,9 +158,14 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             ArrayList<Observation<?>> observationsFromDataBase = new ArrayList<>();
             observationsFromDataBase.add(hObservation);
             // CALL
+
+            I18NDAORepository i18NDAORepository = new I18NDAORepository();
+            DaoFactory daoFactory = new DaoFactory();
+            daoFactory.setI18NDAORepository(i18NDAORepository);
+
             ObservationStream resultList =
                     HibernateObservationUtilities.createSosObservationsFromObservations(observationsFromDataBase,
-                            request, null, null, null, new DaoFactory(new I18NDAORepository()), session);
+                            request, null, null, null, daoFactory, session);
             // TEST RESULTS
             assertThat(resultList, is(notNullValue()));
             assertThat(resultList.hasNext(), is(true));

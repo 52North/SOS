@@ -97,7 +97,10 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     protected abstract Time createScenario(Session session) throws OwsExceptionReport;
 
     protected HibernateObservationBuilder getBuilder(Session session) throws OwsExceptionReport {
-        return new HibernateObservationBuilder(session, new DaoFactory(new I18NDAORepository()));
+        I18NDAORepository i18NDAORepository = new I18NDAORepository();
+        DaoFactory daoFactory = new DaoFactory();
+        daoFactory.setI18NDAORepository(i18NDAORepository);
+        return new HibernateObservationBuilder(session, daoFactory);
     }
 
     @SuppressWarnings("unchecked")

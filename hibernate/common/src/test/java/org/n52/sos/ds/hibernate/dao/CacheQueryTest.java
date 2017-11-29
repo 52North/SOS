@@ -187,7 +187,10 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            HibernateObservationBuilder b = new HibernateObservationBuilder(session, new DaoFactory(new I18NDAORepository()));
+            I18NDAORepository i18NDAORepository = new I18NDAORepository();
+            DaoFactory daoFactory = new DaoFactory();
+            daoFactory.setI18NDAORepository(i18NDAORepository);
+            HibernateObservationBuilder b = new HibernateObservationBuilder(session, daoFactory);
             DateTime begin = new DateTime();
             int numObs = 10000;
             for (int i = 0; i < numObs; ++i) {

@@ -34,6 +34,8 @@ import java.util.Set;
 
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.om.ObservationStream;
+import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 import org.n52.sos.coding.json.JSONConstants;
@@ -67,9 +69,8 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
     protected void encodeResponse(ObjectNode json, T t) throws EncodingException {
         ArrayNode obs = json.putArray(JSONConstants.OBSERVATIONS);
         try {
-            while (t.getObservationCollection().hasNext()) {
-                obs.add(encodeObjectToJson(t.getObservationCollection().next()));
-            }
+            ObservationStream observationCollection = t.getObservationCollection();
+            encodeObservationStream(observationCollection, obs);
         } catch (OwsExceptionReport ex) {
             throw new EncodingException(ex);
         }
@@ -98,5 +99,17 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
     @Override
     public Map<String, Set<SupportedType>> getSupportedResponseFormatObservationTypes() {
         return Collections.emptyMap();
+    }
+
+    private void encodeObservationStream(ObservationStream observationCollection, ArrayNode obs)
+            throws EncodingException, OwsExceptionReport {
+        while (observationCollection.hasNext()) {
+            OmObservation observation = observationCollection.next();
+            if (observation.getValue() instanceof ObservationStream) {
+                encodeObservationStream((ObservationStream) observation.getValue(), obs);
+            } else {
+                obs.add(encodeObjectToJson(observation));
+            }
+        }
     }
 }

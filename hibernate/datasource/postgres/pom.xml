@@ -18,7 +18,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-session-factory</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.faroe</groupId>
@@ -39,11 +38,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
-        </dependency>
-        <!-- Hibernate Core Dependencies -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -69,19 +63,4 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                    <usedDependencies>
-                        <usedDependency>${project.groupId}:api</usedDependency>
-                        <usedDependency>${project.groupId}:hibernate-common</usedDependency>
-                        <usedDependency>${project.groupId}:hibernate-session-factory</usedDependency>
-                    </usedDependencies>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

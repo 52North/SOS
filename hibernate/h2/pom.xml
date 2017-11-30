@@ -102,11 +102,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                    <usedDependencies>
-                        <usedDependency>${project.groupId}:hibernate-session-factory</usedDependency>
-                    </usedDependencies>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>

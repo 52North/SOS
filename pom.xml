@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.n52</groupId>
         <artifactId>parent</artifactId>
-        <version>4</version>
+        <version>10</version>
     </parent>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
@@ -35,6 +35,11 @@
             <url>dav:https://52north.org/maven/repo/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+    <scm>
+        <connection>scm:git:git://github.com/52North/SOS.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
+        <url>https://github.com/52North/SOS</url>
+    </scm>
     <modules>
         <module>core</module>
         <module>coding</module>
@@ -141,6 +146,21 @@
             <dependency>
                 <groupId>org.n52.svalbard</groupId>
                 <artifactId>svalbard-xmlstream</artifactId>
+                <version>${svalbard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.svalbard</groupId>
+                <artifactId>svalbard-json</artifactId>
+                <version>${svalbard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.svalbard</groupId>
+                <artifactId>svalbard-json-common</artifactId>
+                <version>${svalbard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.svalbard</groupId>
+                <artifactId>svalbard-exi</artifactId>
                 <version>${svalbard.version}</version>
             </dependency>
             <dependency>
@@ -1223,31 +1243,20 @@
                     <preparationGoals>clean install</preparationGoals>
                 </configuration>
             </plugin>
-            <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>license-maven-plugin</artifactId> <version>1.5</version> <executions> <execution> <id>download-licenses</id>
-            <goals> <goal>download-licenses</goal> </goals> </execution> </executions> </plugin> -->
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>git-commit-id</id>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                        <phase>validate</phase>
-                        <configuration>
-                            <dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
-                            <!-- Only changing prefix since properties conflicts with jgit above <prefix>git-commit-id</prefix> -->
-                            <!-- We're using a pom in this example <skipPoms>false</skipPoms> -->
-                            <gitDescribe>
-                                <!-- Faster to get just branch if skip = true -->
-                                <!-- true to solve https://github.com/ktoso/maven-git-commit-id-plugin/issues/61 -->
-                                <skip>true</skip>
-                            </gitDescribe>
-                            <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
-                        </configuration>
-                    </execution>
-                </executions>
+                <configuration>
+                    <dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
+                    <!-- Only changing prefix since properties conflicts with jgit above <prefix>git-commit-id</prefix> -->
+                    <!-- We're using a pom in this example <skipPoms>false</skipPoms> -->
+                    <gitDescribe>
+                        <!-- Faster to get just branch if skip = true -->
+                        <!-- true to solve https://github.com/ktoso/maven-git-commit-id-plugin/issues/61 -->
+                        <skip>true</skip>
+                    </gitDescribe>
+                    <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1380,19 +1389,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- TODO remove if mavent-parent merged -->
-            <plugin>
-                <artifactId>whitespace-maven-plugin</artifactId>
-                <groupId>com.github.dantwining.whitespace-maven-plugin</groupId>
-                <executions>
-                    <execution>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>trim</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -1414,19 +1410,6 @@
                         <memoryInitialSize>256</memoryInitialSize>
                         <memoryMaximumSize>256</memoryMaximumSize>
                         <download>false</download>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.7.0</version>
-                    <configuration>
-                        <compilerVersion>1.8</compilerVersion>
-                        <source>1.8</source>
-                        <target>1.8</target>
-                        <compilerArgument>-Xlint:all</compilerArgument>
-                        <showWarnings>true</showWarnings>
-                        <showDeprecation>true</showDeprecation>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1466,11 +1449,6 @@
                     <version>1.5</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.20.1</version>
-                </plugin>
-                <plugin>
                     <groupId>org.mortbay.jetty</groupId>
                     <artifactId>maven-jetty-plugin</artifactId>
                     <version>6.1.26</version>
@@ -1479,11 +1457,6 @@
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
                     <version>1.6.5</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.20.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
@@ -1511,11 +1484,6 @@
             </extension>
         </extensions>
     </build>
-    <scm>
-        <connection>scm:git:git://github.com/52North/SOS.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
-        <url>https://github.com/52North/SOS</url>
-    </scm>
     <repositories>
         <repository>
             <id>edu-repo</id>

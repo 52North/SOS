@@ -52,10 +52,5 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-xml</artifactId>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
 </project>

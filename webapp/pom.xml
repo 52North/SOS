@@ -98,10 +98,16 @@
         <dependency>
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard</artifactId>
+            <scope>runtime</scope>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard-xmlbeans</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard-exi</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -250,11 +256,6 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>coding-json</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>coding-kvp</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -343,14 +344,6 @@
             <scope>runtime</scope>
         </dependency>
         
-        <!-- BINDINGS -->
-        
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>binding-exi</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- GET DATA AVAILABILITY -->
 
         <dependency>
@@ -368,17 +361,7 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>do-xml</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>do-core</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-json</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>

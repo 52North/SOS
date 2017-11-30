@@ -11,9 +11,6 @@
     <name>52°North SOS - Coding Modules</name>
     <description>52°North SOS - Coding Modules</description>
     <modules>
-        <module>json</module>
-        <module>json-common</module>
-        <module>exi</module>
         <module>kvp</module>
         <module>netcdf</module>
     </modules>

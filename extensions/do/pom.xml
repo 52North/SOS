@@ -20,11 +20,10 @@
     </licenses>
     <inceptionYear>2012</inceptionYear>
     <modules>
-        <module>xml</module>
         <module>core</module>
         <module>hibernate</module>
         <module>kvp</module>
-		<module>json</module>
+		
     </modules>
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd_HH-mm</maven.build.timestamp.format>

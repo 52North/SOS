@@ -37,7 +37,6 @@
     </distributionManagement>
     <modules>
         <module>core</module>
-        <module>bindings</module>
         <module>coding</module>
         <module>converter</module>
         <module>operations</module>
@@ -85,7 +84,6 @@
         <jackson.version>2.9.2</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc4.version>4.0</sqljdbc4.version>
-        <exificient.version>0.9.6</exificient.version>
 
         <!-- 52N dependency versions -->
         <iceland.version>2.0.0</iceland.version>
@@ -216,22 +214,6 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>procedure-description-converter</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>coding-json</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>coding-json-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>coding-json-common</artifactId>
-                <version>${project.version}</version>
-                <classifier>tests</classifier>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -983,11 +965,6 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>do-xml</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>do-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -999,11 +976,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-kvp</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>do-json</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1187,21 +1159,7 @@
                 <version>0.9.11</version>
             </dependency>
             <!-- EXI - Efficient XML Interchange -->
-            <dependency>
-                <groupId>com.siemens.ct.exi</groupId>
-                <artifactId>exificient</artifactId>
-                <version>${exificient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.siemens.ct.exi</groupId>
-                <artifactId>exificient-grammars</artifactId>
-                <version>${exificient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.siemens.ct.exi</groupId>
-                <artifactId>exificient-core</artifactId>
-                <version>${exificient.version}</version>
-            </dependency>
+            
             <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
@@ -1212,17 +1170,6 @@
                 <artifactId>xml-apis</artifactId>
                 <version>1.4.01</version>
             </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>binding-exi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>coding-exi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <!-- netCDF -->
             <dependency>
                 <groupId>edu.ucar</groupId>

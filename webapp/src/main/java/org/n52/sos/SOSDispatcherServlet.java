@@ -69,9 +69,14 @@ public class SOSDispatcherServlet
         String def = getDefaultConfigLocations();
         String com = getCommonConfigLocation(servletContext);
         String add = isConfigured(servletContext)
-                ? getConfiguredConfigLocation(servletContext)
-                : getUnconfiguredConfigLocation(servletContext);
+                             ? getConfiguredConfigLocation(servletContext)
+                             : getUnconfiguredConfigLocation(servletContext);
         return def + " " + com + " " + add;
+    }
+
+    private String getConfigLocation(ServletContext servletContext, String initParamName) {
+        String initParam = servletContext.getInitParameter(initParamName);
+        return (initParam == null || initParam.isEmpty()) ? "" : initParam;
     }
 
     protected String getDefaultConfigLocations() {
@@ -79,11 +84,6 @@ public class SOSDispatcherServlet
         return XmlWebApplicationContext.DEFAULT_CONFIG_LOCATION_PREFIX +
                getNamespace() +
                XmlWebApplicationContext.DEFAULT_CONFIG_LOCATION_SUFFIX;
-    }
-
-    private String getConfigLocation(ServletContext servletContext, String initParamName) {
-        String initParam = servletContext.getInitParameter(initParamName);
-        return (initParam == null || initParam.isEmpty()) ? "" : initParam;
     }
 
     private String getCommonConfigLocation(ServletContext servletContext) {
@@ -96,6 +96,11 @@ public class SOSDispatcherServlet
 
     private String getConfiguredConfigLocation(ServletContext servletContext) {
         return getConfigLocation(servletContext, CONFIGURED_CONFIG_LOCATION_PARAM);
+    }
+
+    @Override
+    public boolean isConfigured() {
+        return this.configured;
     }
 
     protected boolean isConfigured(ServletContext servletContext) {
@@ -119,7 +124,7 @@ public class SOSDispatcherServlet
             if (targetBean instanceof HotSwappableTargetSource) {
                 ((HotSwappableTargetSource) targetBean).swap(this);
             }
-        } catch(NoSuchBeanDefinitionException e) {
+        } catch (NoSuchBeanDefinitionException e) {
             //ignore
         }
     }
@@ -134,8 +139,4 @@ public class SOSDispatcherServlet
         this.configureAndRefreshWebApplicationContext((ConfigurableWebApplicationContext) applicationContext);
     }
 
-    @Override
-    public boolean isConfigured() {
-        return this.configured;
-    }
 }

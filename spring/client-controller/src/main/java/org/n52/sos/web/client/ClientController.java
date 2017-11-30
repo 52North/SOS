@@ -130,7 +130,8 @@ public class ClientController extends AbstractController {
             this.method = method;
         }
 
-        public AvailableOperation(String service, String version, String operation, MediaType contentType, String method) {
+        public AvailableOperation(String service, String version, String operation,
+                                  MediaType contentType, String method) {
             this(service, version, operation, contentType.toString(), method);
         }
 

@@ -61,7 +61,7 @@ public interface InstallConstants {
         private final String view;
         private final String completionAttribute;
 
-        private Step(String path, String view) {
+        Step(String path, String view) {
             this.view = view;
             this.path = path;
             this.completionAttribute = view + "_complete";

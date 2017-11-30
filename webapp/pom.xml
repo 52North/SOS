@@ -30,6 +30,11 @@
         </dependency>
         <dependency>
             <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard-json</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard-xmlbeans</artifactId>
             <scope>runtime</scope>
         </dependency>

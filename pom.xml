@@ -12,17 +12,26 @@
     <version>5.0.0-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
-    <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
+    <url>https://github.com/52North/SOS</url>
     <inceptionYear>2012</inceptionYear>
     <packaging>pom</packaging>
+    
+    <scm>
+        <url>https://github.com/52North/SOS</url>
+        <connection>scm:git:git://github.com/52North/SOS.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
+    </scm>
+    
     <issueManagement>
         <system>GitHub issues</system>
         <url>https://github.com/52North/SOS/issues?state=open</url>
     </issueManagement>
+    
     <ciManagement>
-        <system>Jenkins</system>
-        <url>http://build.dev.52north.org/jenkins/job/sos-dev/</url>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/52North/SOS</url>
     </ciManagement>
+    
     <distributionManagement>
         <repository>
             <id>n52-releases-dist</id>
@@ -35,11 +44,16 @@
             <url>dav:https://52north.org/maven/repo/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-    <scm>
-        <connection>scm:git:git://github.com/52North/SOS.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
-        <url>https://github.com/52North/SOS</url>
-    </scm>
+
+    <licenses>
+        <license>
+            <name>GPLv2</name>
+            <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+            <distribution>repo</distribution>
+            <comments>See also http://52north.org/about/licensing/ for all information about 52°North licenses.</comments>
+        </license>
+    </licenses>
+
     <modules>
         <module>core</module>
         <module>coding</module>
@@ -52,32 +66,22 @@
         <module>webapp</module>
         <module>webapp-bundle</module>
     </modules>
-    <licenses>
-        <license>
-            <name>GPLv2</name>
-            <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
-            <distribution>repo</distribution>
-            <comments>See also http://52north.org/about/licensing/ for all information about 52°North licenses.</comments>
-        </license>
-    </licenses>
+    
     <properties>
         <!-- sos name -->
         <conf.sos.name>52n-sos-webapp</conf.sos.name>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <!-- Source encoding during build process ** !!! DO NOT CHANGE !!! ** -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 
         <!-- Logger configuration -->
-        <config.logger.fileappender.filepath>${catalina.base}/logs</config.logger.fileappender.filepath>
         <config.logger.fileappender.filename>${conf.sos.name}</config.logger.fileappender.filename>
-        <config.logger.level>INFO</config.logger.level>
         <config.logger.level.test.n52>ERROR</config.logger.level.test.n52>
         <config.logger.level.test.global>ERROR</config.logger.level.test.global>
+        <config.logger.level.main.n52>INFO</config.logger.level.main.n52>
+        <config.logger.level.main.global>WARN</config.logger.level.main.global>
         <config.logger.history.max>30</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
-
+        
+        
         <postgresql.version>42.0.0</postgresql.version>
         <postgis.version>2.2.1</postgis.version>
         <logback.version>1.2.3</logback.version>
@@ -101,6 +105,7 @@
         <org.springframework.version>4.3.12.RELEASE</org.springframework.version>
         <sos.test.suite.version>1.0.0-M6</sos.test.suite.version>
     </properties>
+    
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -1233,6 +1238,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+   
     <build>
         <plugins>
             <plugin>
@@ -1263,8 +1269,6 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <show>private</show>
-                    <nohelp>true</nohelp>
-                    <!-- see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html -->
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                 </configuration>
                 <executions>
@@ -1274,19 +1278,6 @@
                             <goal>aggregate</goal>
                         </goals>
                         <phase>site</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -1370,69 +1361,21 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireNoRepositories>
-                                    <banRepositories>false</banRepositories>
-                                    <allowSnapshotRepositories>true</allowSnapshotRepositories>
-                                    <allowedRepositories>
-                                        <id>sonatype-nexus-snapshots,edu-repo,apache,n52-releases,n52-snapshots,refractions,hibernate-spatial,boundless,unidata-releases</id>
-                                    </allowedRepositories>
-                                </requireNoRepositories>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
+                <configuration>
+                    <rules>
+                        <requireNoRepositories>
+                            <banRepositories>false</banRepositories>
+                            <allowSnapshotRepositories>true</allowSnapshotRepositories>
+                            <allowedRepositories>
+                                <id>sonatype-nexus-snapshots,edu-repo,n52-releases,n52-snapshots,refractions,hibernate-spatial,unidata-releases</id>
+                            </allowedRepositories>
+                        </requireNoRepositories>
+                    </rules>
+                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>xmlbeans-maven-plugin</artifactId>
-                    <version>2.3.3</version>
-                    <executions>
-                        <execution>
-                            <id>main</id>
-                            <goals>
-                                <goal>xmlbeans</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <!-- xmlbeans plugin only used to generate the classes not for compiling or jar generation. -->
-                        <noJavac>true</noJavac>
-                        <memoryInitialSize>256</memoryInitialSize>
-                        <memoryMaximumSize>256</memoryMaximumSize>
-                        <download>false</download>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>pl.project13.maven</groupId>
-                    <artifactId>git-commit-id-plugin</artifactId>
-                    <version>2.2.3</version>
-                </plugin>
-                <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>buildnumber-maven-plugin</artifactId> <version>1.3</version> </plugin> -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.4</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.0.2</version>
-                </plugin>
-                <plugin>
-                    <groupId>com.mycila</groupId>
-                    <artifactId>license-maven-plugin</artifactId>
-                    <version>3.0</version>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
@@ -1449,9 +1392,14 @@
                     <version>1.5</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.mortbay.jetty</groupId>
-                    <artifactId>maven-jetty-plugin</artifactId>
-                    <version>6.1.26</version>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-maven-plugin</artifactId>
+                    <version>9.4.7.v20170914</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
@@ -1459,15 +1407,8 @@
                     <version>1.6.5</version>
                 </plugin>
                 <plugin>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <configuration>
-                        <connectionUrl>scm:svn:https://svn.52north.org/svn/swe/main/SOS/Service/branches/52n-sos-400-refactored</connectionUrl>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.0</version>
                     <configuration>
                         <descriptors>
                             <descriptor>misc/assembly.xml</descriptor>
@@ -1497,23 +1438,9 @@
             </releases>
         </repository>
         <repository>
-            <id>apache</id>
-            <name>Apache repository</name>
-            <url>http://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>n52-releases</id>
             <name>52n Releases</name>
             <url>http://52north.org/maven/repo/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </repository>
         <repository>
             <id>n52-snapshots</id>
@@ -1546,11 +1473,6 @@
             <name>Boundless Cloud Repository</name>
             <url>https://repo.boundlessgeo.com/main/</url>
         </repository>
-        <!-- <repository>
-            <id>boundless</id>
-            <name>Boundless, formerly OpenGeo</name>
-            <url>http://repo.boundlessgeo.com/main/</url>
-        </repository> -->
         <repository>
             <id>unidata-releases</id>
             <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
@@ -1564,33 +1486,6 @@
                 <config.logger.level.test.n52>ERROR</config.logger.level.test.n52>
                 <config.logger.level>TRACE</config.logger.level>
             </properties>
-        </profile>
-        <profile>
-            <id>release</id>
-            <!-- a profile which shall be activated if a release is performed, it
-            is also automatic activated in the ci environment. -->
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>ci</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <configuration>
-                            <!-- no build in release:prepare (takes to long time), so in bad cases
-                            release fails on perform -->
-                            <preparationGoals>clean</preparationGoals>
-                            <autoVersionSubmodules>true</autoVersionSubmodules>
-                            <tagBase>https://svn.52north.org/svn/swe/main/SOS/Service/tags/</tagBase>
-                            <goals>deploy</goals>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>create-license-list</id>

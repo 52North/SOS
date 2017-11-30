@@ -23,6 +23,7 @@
 
 
     <!-- OperationHandler implementation from extensions/sta/sta-hibernate -->
+    <bean class="org.n52.sensorweb.sos.sta.hibernate.StaGetDatastreamsHandler"/>
     <bean class="org.n52.sensorweb.sos.sta.hibernate.StaGetSensorsHandler"/>
     <bean class="org.n52.sensorweb.sos.sta.hibernate.StaGetObservedPropertiesHandler"/>
 

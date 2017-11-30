@@ -109,6 +109,17 @@ public abstract class AbstractSeriesDAO {
                                            Collection<String> features, Session session);
 
     /**
+     * Get every available series
+     *
+     * @param session Hibernate session
+     *
+     * @return Series that fit
+     */
+    public List<Series> getSeries(Session session) {
+        return getDefaultAllSeriesCriteria(session).list();
+    }
+
+    /**
      * Get series for procedure, observableProperty and featureOfInterest
      *
      * @param procedure Procedure identifier parameter
@@ -120,6 +131,18 @@ public abstract class AbstractSeriesDAO {
      */
     public abstract Series getSeriesFor(String procedure, String observableProperty, String featureOfInterest,
                                         Session session);
+
+    /**
+     * Get series for seriesid
+     *
+     * @param seriesId series id
+     * @param session Hibernate session
+     *
+     * @return Matching series
+     */
+    public Series getSeriesForId(Long seriesId, Session session) {
+        return (Series) getSeriesCriteria(seriesId, session).uniqueResult();
+    }
 
     /**
      * Insert or update and get series for procedure, observable property and featureOfInterest
@@ -192,6 +215,14 @@ public abstract class AbstractSeriesDAO {
         }
         if (!Strings.isNullOrEmpty(observedProperty)) {
             addObservablePropertyToCriteria(c, observedProperty);
+        }
+        return c;
+    }
+
+    public Criteria getSeriesCriteria(Long seriesId, Session session) {
+        final Criteria c = getDefaultSeriesCriteria(session);
+        if (seriesId != null) {
+            addSeriesIdToCriteria(c, seriesId);
         }
         return c;
     }
@@ -298,6 +329,17 @@ public abstract class AbstractSeriesDAO {
      */
     public void addProcedureToCriteria(Criteria c, Collection<String> procedures) {
         c.createCriteria(Series.PROCEDURE).add(Restrictions.in(Procedure.IDENTIFIER, procedures));
+
+    }
+
+    /**
+     * Add seriesId restriction to Hibernate Criteria
+     *
+     * @param c Hibernate Criteria to add restriction
+     * @param seriesId series id to add
+     */
+    public void addSeriesIdToCriteria(Criteria c, Long seriesId) {
+        c.add(Restrictions.eq(Series.ID, seriesId));
 
     }
 

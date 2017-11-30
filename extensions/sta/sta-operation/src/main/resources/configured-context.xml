@@ -23,6 +23,7 @@
 
 
     <!-- Operation implementation from extensions/sta/sta-operation -->
+    <bean class="org.n52.sensorweb.sos.sta.operation.StaGetDatastreamsOperator"/>
     <bean class="org.n52.sensorweb.sos.sta.operation.StaGetSensorsOperator"/>
     <bean class="org.n52.sensorweb.sos.sta.operation.StaGetObservedPropertiesOperator"/>
 

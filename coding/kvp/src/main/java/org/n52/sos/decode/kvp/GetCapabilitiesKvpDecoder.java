@@ -28,8 +28,10 @@
  */
 package org.n52.sos.decode.kvp;
 
+
 import org.n52.iceland.binding.kvp.AbstractKvpDecoder;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -45,11 +47,11 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder<GetCapabilitie
 
     public GetCapabilitiesKvpDecoder() {
         super(GetCapabilitiesRequest::new,
-            new OperationDecoderKey(SosConstants.SOS, null,                         SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
-            new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
-            new OperationDecoderKey(null,             Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
+            new OperationDecoderKey(SosConstants.SOS, null,                         OWSConstants.Operations.GetCapabilities, MediaTypes.APPLICATION_KVP),
+            new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, OWSConstants.Operations.GetCapabilities, MediaTypes.APPLICATION_KVP),
+            new OperationDecoderKey(null,             Sos2Constants.SERVICEVERSION, OWSConstants.Operations.GetCapabilities, MediaTypes.APPLICATION_KVP),
             // FIXME isn't this the only one needed?
-            new OperationDecoderKey(null,             null,                         SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP));
+            new OperationDecoderKey(null,             null,                         OWSConstants.Operations.GetCapabilities, MediaTypes.APPLICATION_KVP));
     }
 
     @Override

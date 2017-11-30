@@ -42,7 +42,6 @@ import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.inspire.base2.RelatedParty;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.config.sqlite.AbstractSQLiteDao;
-import org.n52.sos.encode.json.JSONEncoderKey;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.JsonDecoderKey;
@@ -50,6 +49,7 @@ import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.json.JSONEncoderKey;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

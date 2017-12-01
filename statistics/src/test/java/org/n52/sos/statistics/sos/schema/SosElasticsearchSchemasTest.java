@@ -38,8 +38,8 @@ import basetest.ElasticsearchAwareTest;
 
 public class SosElasticsearchSchemasTest extends ElasticsearchAwareTest {
 
-    private String idx = "schema-creator-index";
-    private String type = "mytpe";
+    private final String idx = "schema-creator-index";
+    private final String type = "mytpe";
 
     @Before
     public void setUp() throws InterruptedException {

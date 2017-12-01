@@ -39,11 +39,10 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
 import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
 import org.n52.svalbard.decode.exception.DecodingException;
 
@@ -84,17 +83,10 @@ public class GetCapabilitiesKvpDecoderTest extends DeleteSensorKvpDecoderv20 {
         assertThat(req.getAcceptVersions(), is(Arrays.asList(ACCEPT_VERSIONS.split(","))));
     }
 
-    @Test(expected = OwsExceptionReport.class)
+    @Test(expected = DecodingException.class)
     public void additionalParameter() throws DecodingException {
         final Map<String, String> map = createMap();
         map.put(ADDITIONAL_PARAMETER, ADDITIONAL_PARAMETER);
-        decoder.decode(map);
-    }
-
-    @Test(expected = OwsExceptionReport.class)
-    public void emptyParam() throws DecodingException {
-        final Map<String, String> map = createMap();
-        map.put(GetCapabilitiesParams.AcceptVersions.name(), EMPTY_STRING);
         decoder.decode(map);
     }
 

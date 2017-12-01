@@ -32,8 +32,8 @@ import java.util.regex.Pattern;
 
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 /**

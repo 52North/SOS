@@ -41,15 +41,15 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
-import org.n52.janmayen.http.MediaType;
-import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
@@ -147,36 +147,6 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     // }
 
     @Test(expected = DecodingException.class)
-    public void missingService() throws DecodingException {
-        decoder.decode(createMap(EMPTY_STRING, Sos1Constants.SERVICEVERSION, EMPTY_STRING, PROCEDURE,
-                OBSERVED_PROPERTY, RESPONSE_FORMAT));
-    }
-
-    @Test(expected = DecodingException.class)
-    public void missingVersion() throws DecodingException {
-        decoder.decode(createMap(SosConstants.SOS, EMPTY_STRING, OFFERING, PROCEDURE, OBSERVED_PROPERTY,
-                RESPONSE_FORMAT));
-    }
-
-    @Test(expected = DecodingException.class)
-    public void missingOffering() throws DecodingException {
-        decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, EMPTY_STRING, PROCEDURE,
-                OBSERVED_PROPERTY, RESPONSE_FORMAT));
-    }
-
-    @Test(expected = DecodingException.class)
-    public void missingProcedure() throws DecodingException {
-        decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, EMPTY_STRING,
-                OBSERVED_PROPERTY, RESPONSE_FORMAT));
-    }
-
-    @Test(expected = DecodingException.class)
-    public void missingObservedProperty() throws DecodingException {
-        decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE, EMPTY_STRING,
-                RESPONSE_FORMAT));
-    }
-
-    @Test(expected = DecodingException.class)
     public void missingResponse() throws DecodingException {
         decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
                 OBSERVED_PROPERTY, EMPTY_STRING));
@@ -191,10 +161,11 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
         decoder.decode(map);
     }
 
-    private Map<String, String> createMap(String service, String version, String offering, String procedure, String observedProperty, String responseFormat) {
+    private Map<String, String> createMap(String service, String version, String offering,
+                                          String procedure, String observedProperty, String responseFormat) {
         Map<String, String> map = new HashMap<>(7);
         map.put(RequestParams.service.name(), service);
-        map.put(RequestParams.request.name(), SosConstants.Operations.DescribeSensor.name());
+        map.put(RequestParams.request.name(), SosConstants.Operations.GetObservation.name());
         map.put(RequestParams.version.name(), version);
         map.put(SosConstants.GetObservationParams.offering.name(), offering);
         map.put(SosConstants.GetObservationParams.procedure.name(), procedure);

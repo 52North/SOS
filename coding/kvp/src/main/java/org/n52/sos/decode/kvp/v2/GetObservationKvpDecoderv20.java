@@ -139,8 +139,8 @@ public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObserv
                     decodeNamespaces(GetObservationRequest::setNamespaces));
         builder.add(SosConstants.GetObservationParams.responseFormat,
                     GetObservationRequest::setResponseFormat);
-//        builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
-//                    GetObservationRequest::addSweBooleanExtension);
+        builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
+                    GetObservationRequest::addSweBooleanExtension);
         builder.add("extension", decodeList(this::parseExtensionParameter));
 
     }

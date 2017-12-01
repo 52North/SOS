@@ -28,8 +28,11 @@
  */
 package org.n52.sos.cache;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -39,6 +42,7 @@ import static org.junit.Assert.assertTrue;
 import static org.n52.shetland.ogc.om.OmConstants.OBS_TYPE_MEASUREMENT;
 import static org.n52.shetland.ogc.om.OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION;
 import static org.n52.shetland.ogc.om.features.SfConstants.FT_SAMPLINGPOINT;
+import static org.n52.sos.cache.Existing.existing;
 import static org.n52.sos.util.builder.DataRecordBuilder.aDataRecord;
 import static org.n52.sos.util.builder.InsertObservationRequestBuilder.aInsertObservationRequest;
 import static org.n52.sos.util.builder.InsertResultTemplateRequestBuilder.anInsertResultTemplateRequest;
@@ -56,14 +60,24 @@ import static org.n52.sos.util.builder.SweDataArrayBuilder.aSweDataArray;
 import static org.n52.sos.util.builder.SweDataArrayValueBuilder.aSweDataArrayValue;
 import static org.n52.sos.util.builder.SweTimeBuilder.aSweTime;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.cache.ctrl.ContentCacheControllerImpl;
+import org.n52.iceland.cache.ctrl.ContentCacheFactory;
+import org.n52.iceland.cache.ctrl.persistence.ImmediatePersistenceStrategy;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -80,11 +94,13 @@ import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
+import org.n52.sos.cache.ctrl.CompleteCacheUpdateFactoryImpl;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
+import org.n52.sos.ds.CacheFeederHandler;
 import org.n52.sos.ds.MockCacheFeederDAO;
 import org.n52.sos.util.builder.DeleteSensorRequestBuilder;
 
@@ -100,56 +116,83 @@ import com.vividsolutions.jts.geom.PrecisionModel;
  *
  * @since 4.0.0
  */
-public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
+public class ContentCacheControllerImplTest {
     /* FIXTURES */
     private static final String RELATED_FEATURE_ROLE_2 = "test-role-2";
-
     private static final String RELATED_FEATURE_ROLE = "test-role-1";
-
     private static final String FEATURE_2 = "test-related-feature-2";
-
     private static final String OBSERVATION_TYPE_2 = "test-observation-type-2";
-
     private static final String OBSERVATION_TYPE = "test-observation-type";
-
     private static final String FEATURE_OF_INTEREST_TYPE = "test-featureOfInterest-type";
-
     private static final String OFFERING_NAME_EXTENSION = "-offering-name";
-
     private static final String OFFERING_IDENTIFIER_EXTENSION = "-offering-identifier";
-
     private static final String OBSERVATION_ID = "test-observation-id";
-
     private static final String CODESPACE = "test-codespace";
-
     private static final String FEATURE = "test-feature";
-
     private static final String OBSERVABLE_PROPERTY = "test-observable-property";
-
     private static final String PROCEDURE = "test-procedure";
-
     private static final String PROCEDURE_2 = "test-procedure-2";
-
     private static final String RESULT_TEMPLATE_IDENTIFIER = "test-result-template";
-
     private static final String OFFERING = PROCEDURE + OFFERING_IDENTIFIER_EXTENSION;
     private static final int WGS84 = 4326;
 
     private OwsServiceRequest request;
-
-    private TestableInMemoryCacheController controller;
-
+    private ContentCacheControllerImpl controller;
     private OwsServiceResponse response;
-
     private OmObservation observation;
+
+    @Rule
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Before
     public void initController() {
-        controller = new TestableInMemoryCacheController();
+        this.controller = createController();
+    }
+
+    @After
+    public void tearDown() {
+        this.controller.destroy();
+    }
+
+    private ContentCacheControllerImpl createController() throws ConfigurationError {
+        ImmediatePersistenceStrategy persistenceStrategy = new ImmediatePersistenceStrategy();
+        persistenceStrategy.setConfigLocationProvider(tempFolder.getRoot()::getAbsolutePath);
+        persistenceStrategy.init();
+        CompleteCacheUpdateFactoryImpl cacheUpdateFactory = new CompleteCacheUpdateFactoryImpl();
+        CacheFeederHandler cacheFeederHandler = new NoOpCacheFeederHandler();
+        cacheUpdateFactory.setCacheFeederHandler(cacheFeederHandler);
+        ContentCacheFactory cacheFactory = InMemoryCacheImpl::new;
+
+        ContentCacheControllerImpl ccc = new ContentCacheControllerImpl();
+        ccc.setCacheFactory(cacheFactory);
+        ccc.setPersistenceStrategy(persistenceStrategy);
+        ccc.setCompleteCacheUpdateFactory(cacheUpdateFactory);
+        ccc.setUpdateInterval(0);
+        ccc.init();
+        return ccc;
+    }
+
+     @Test
+    public void testSerialization() throws IOException {
+        File tempFile = new File(tempFolder.getRoot(), "cache.tmp");
+
+        Files.deleteIfExists(tempFile.toPath());
+        assertThat(tempFile, is(not(existing())));
+        this.controller = createController();
+        assertThat(getCache().getFeaturesOfInterest(), is(empty()));
+        getCache().addFeatureOfInterest(FEATURE);
+        assertThat(getCache().getFeaturesOfInterest(), contains(FEATURE));
+        this.controller.destroy();
+
+        assertThat(tempFile, is(existing()));
+        this.controller = createController();
+        assertThat(tempFile, is(existing()));
+        assertThat(getCache().getFeaturesOfInterest(), contains(FEATURE));
     }
 
     @After
     public void setAllFixturesToNullAfterEachTest() {
+        this.controller.destroy();
         request = null;
         controller = null;
         observation = null;
@@ -954,7 +997,9 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     }
 
     protected SosWritableContentCache getCache() {
-        return controller.getCache();
+        return (SosWritableContentCache) controller.getCache();
     }
+
+
 
 }

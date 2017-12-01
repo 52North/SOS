@@ -62,6 +62,7 @@ import org.n52.sos.cache.SosContentCache.ComponentAggregation;
 import org.n52.sos.cache.SosContentCache.TypeInstance;
 import org.n52.sos.request.ProcedureRequestSettingProvider;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Sets;
@@ -1833,9 +1834,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     @Override
     public void addOfferings(Collection<String> offerings) {
         noNullValues(OFFERINGS, offerings);
-        for (String offering : offerings) {
-            addOffering(offering);
-        }
+        offerings.forEach(this::addOffering);
     }
 
     @Override
@@ -1848,9 +1847,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     @Override
     public void removeOfferings(Collection<String> offerings) {
         noNullValues(OFFERINGS, offerings);
-        for (String offering : offerings) {
-            removeOffering(offering);
-        }
+        offerings.forEach(this::removeOffering);
     }
 
     @Override
@@ -1976,9 +1973,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     @Override
     public void addSupportedLanguage(Collection<Locale> languages) {
         noNullValues(SUPPORTED_LANGUAGES, languages);
-        for (Locale language : languages) {
-            addSupportedLanguage(language);
-        }
+        languages.forEach(this::addSupportedLanguage);
     }
 
     @Override
@@ -2324,7 +2319,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
 
     @Override
     public Set<String> getRequestableProcedureDescriptionFormat() {
-        return this.requestableProcedureDescriptionFormats;
+        return copyOf(this.requestableProcedureDescriptionFormats);
     }
 
     @Override
@@ -2365,12 +2360,12 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     public Set<String> getQueryableProcedures() {
         Set<String> procedures = getProcedures();
         // allowQueryingForInstancesOnly
-        if (ProcedureRequestSettingProvider.getInstance().isAllowQueryingForInstancesOnly()) {
+        if (isAllowQueryingForInstancesOnly()) {
             procedures = CollectionHelper
                     .conjunctCollectionsToSet(procedures, getTypeInstanceProcedure(TypeInstance.INSTANCE));
         }
         // showOnlyAggregatedProcedures
-        if (ProcedureRequestSettingProvider.getInstance().isShowOnlyAggregatedProcedures()) {
+        if (isShowOnlyAggregatedProcedures()) {
             procedures = CollectionHelper
                     .conjunctCollectionsToSet(procedures, getComponentAggregationProcedure(ComponentAggregation.AGGREGATION));
 
@@ -2784,6 +2779,20 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
             return false;
         }
         return true;
+    }
+
+    private ProcedureRequestSettingProvider getProcedureRequestSettingProvider() {
+        return ProcedureRequestSettingProvider.getInstance();
+    }
+
+    @VisibleForTesting
+    boolean isAllowQueryingForInstancesOnly() {
+        return getProcedureRequestSettingProvider().isAllowQueryingForInstancesOnly();
+    }
+
+    @VisibleForTesting
+    boolean isShowOnlyAggregatedProcedures() {
+        return getProcedureRequestSettingProvider().isShowOnlyAggregatedProcedures();
     }
 
     private static <X, T> Function<X, Set<T>> createSynchronizedSet() {

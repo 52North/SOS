@@ -41,6 +41,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -66,7 +67,28 @@ public class InMemoryCacheImplTest {
 
     @Before
     public void initInstance() {
-        instance = new InMemoryCacheImpl();
+        // overwrite these methods as these are doing getInstance()-calls
+        instance = new InMemoryCacheImpl() {
+            @Override
+            boolean isAllowQueryingForInstancesOnly() {
+                return false;
+            }
+
+            @Override
+            boolean isShowOnlyAggregatedProcedures() {
+                return false;
+            }
+
+            @Override
+            public Set<String> getFeatureOfInterestTypes() {
+                return Collections.emptySet();
+            }
+
+            @Override
+            public Set<String> getObservationTypes() {
+                return Collections.emptySet();
+            }
+        };
     }
 
     @After
@@ -83,8 +105,7 @@ public class InMemoryCacheImplTest {
 
     @Test
     public void equalsWithNewInstances() {
-        InMemoryCacheImpl anotherInstance = new InMemoryCacheImpl();
-        assertEquals("equals failed", instance, anotherInstance);
+        assertEquals("equals failed", new InMemoryCacheImpl(), new InMemoryCacheImpl());
     }
 
     @Test

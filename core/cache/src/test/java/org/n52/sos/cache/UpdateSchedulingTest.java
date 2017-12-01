@@ -34,25 +34,48 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.cache.ContentCachePersistenceStrategy;
+import org.n52.iceland.cache.ctrl.ContentCacheControllerImpl;
+import org.n52.iceland.cache.ctrl.ContentCacheFactory;
+import org.n52.iceland.cache.ctrl.persistence.NoOpCachePersistenceStrategy;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.janmayen.GroupedAndNamedThreadFactory;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.cache.ctrl.CompleteCacheUpdateFactoryImpl;
+import org.n52.sos.ds.CacheFeederHandler;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
-public class UpdateSchedulingTest extends AbstractCacheControllerTest {
+public class UpdateSchedulingTest {
 
     private static final long TIMEOUT = 100 * 5;
 
     private static final long PAUSE = 50;
 
+    private ContentCacheControllerImpl createController() throws ConfigurationError {
+        ContentCachePersistenceStrategy persistenceStrategy = new NoOpCachePersistenceStrategy();
+        CompleteCacheUpdateFactoryImpl cacheUpdateFactory = new CompleteCacheUpdateFactoryImpl();
+        CacheFeederHandler cacheFeederHandler = new NoOpCacheFeederHandler();
+        cacheUpdateFactory.setCacheFeederHandler(cacheFeederHandler);
+        ContentCacheFactory cacheFactory = InMemoryCacheImpl::new;
+
+        ContentCacheControllerImpl ccc = new ContentCacheControllerImpl();
+        ccc.setCacheFactory(cacheFactory);
+        ccc.setPersistenceStrategy(persistenceStrategy);
+        ccc.setCompleteCacheUpdateFactory(cacheUpdateFactory);
+        ccc.setUpdateInterval(0);
+        ccc.init();
+        return ccc;
+    }
+
     @Test
     public void test() throws InterruptedException {
-        final TestableInMemoryCacheController ue = new TestableInMemoryCacheController();
-        ue.setCache(new InMemoryCacheImpl());
+        final ContentCacheController ue = createController();
         ExecutorService e = Executors.newFixedThreadPool(10, new GroupedAndNamedThreadFactory("test"));
 
         e.execute(new BlockingCacheUpdate(ue, "complete0", TIMEOUT));
@@ -71,13 +94,14 @@ public class UpdateSchedulingTest extends AbstractCacheControllerTest {
          */
         e.shutdown();
         e.awaitTermination(TIMEOUT * 10, TimeUnit.MILLISECONDS);
+
     }
 
     private class BlockingCacheUpdate extends NonBlockingCacheUpdate {
         private final long timeout;
 
-        BlockingCacheUpdate(TestableInMemoryCacheController e, String offering, long timeout) {
-            super(e, offering);
+        BlockingCacheUpdate(ContentCacheController controller, String offering, long timeout) {
+            super(controller, offering);
             this.timeout = timeout;
         }
 
@@ -98,13 +122,12 @@ public class UpdateSchedulingTest extends AbstractCacheControllerTest {
     }
 
     private class NonBlockingCacheUpdate extends SosContentCacheUpdate implements Runnable {
-        private final TestableInMemoryCacheController executor;
-
+        private final ContentCacheController controller;
         private final String offering;
 
-        NonBlockingCacheUpdate(TestableInMemoryCacheController executor, String offering) {
+        NonBlockingCacheUpdate(ContentCacheController controller, String offering) {
             this.offering = offering;
-            this.executor = executor;
+            this.controller = controller;
         }
 
         @Override
@@ -120,7 +143,7 @@ public class UpdateSchedulingTest extends AbstractCacheControllerTest {
         @Override
         public void run() {
             try {
-                executor.update(this);
+                controller.update(this);
             } catch (OwsExceptionReport ex) {
                 throw new RuntimeException(ex);
             }
@@ -128,7 +151,7 @@ public class UpdateSchedulingTest extends AbstractCacheControllerTest {
 
         @Override
         public String toString() {
-            return String.format("%s[offering=%s]", getClass().getSimpleName(), offering);
+            return String.format("%s[name=%s]", getClass().getSimpleName(), offering);
         }
     }
 }

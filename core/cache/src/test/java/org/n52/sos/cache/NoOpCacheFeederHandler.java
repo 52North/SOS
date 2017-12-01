@@ -28,31 +28,21 @@
  */
 package org.n52.sos.cache;
 
-import java.io.File;
+import java.util.Collection;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.n52.sos.ds.CacheFeederHandler;
 
 /**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
- * @since 4.0.0
+ * TODO JavaDoc
+ * @author Christian Autermann
  */
-public class AbstractCacheControllerTest {
-
-    @BeforeClass
-    public static void setUp() {
-        TestableInMemoryCacheController.setUp();
+public class NoOpCacheFeederHandler implements CacheFeederHandler {
+    @Override
+    public void updateCacheOfferings(SosWritableContentCache cache, Collection<String> offerings) {
     }
 
-    public static File getTempFile() {
-        return TestableInMemoryCacheController.getTempFile();
+    @Override
+    public void updateCache(SosWritableContentCache cache) {
     }
 
-    @Before
-    @After
-    public void deleteTempFile() {
-        TestableInMemoryCacheController.deleteTempFile();
-    }
 }

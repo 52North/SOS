@@ -28,16 +28,24 @@
  */
 package org.n52.sos.profile;
 
-import org.junit.Test;
-import org.n52.sos.service.profile.Profile;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import org.n52.sos.service.profile.Profile;
+
 public class ProfileHandlerImplTest {
 
-    ProfileHandlerImpl phi = new ProfileHandlerImpl();
+    private ProfileHandlerImpl phi;
+
+    @Before
+    public void setup() {
+        this.phi = new ProfileHandlerImpl();
+        this.phi.init();
+    }
 
     @Test
     public void is_aktive_profile_SOS_20_PROFILE() {

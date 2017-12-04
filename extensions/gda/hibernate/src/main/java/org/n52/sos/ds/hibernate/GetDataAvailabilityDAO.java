@@ -287,8 +287,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                 .setSeriesObservationDAO(getSeriesObservationDAO())
                 .setSupportsSeriesObservationTime(EntitiyHelper.getInstance().isSeriesObservationTimeSupported());
         boolean gdaV20 = checkForGDAv20(request);
-        for (final Series series : DaoFactory.getInstance().getSeriesDAO().getSeries(request.getProcedures(),
-                request.getObservedProperties(), request.getFeaturesOfInterest(), request.getOfferings(), session)) {
+        for (final Series series : DaoFactory.getInstance().getSeriesDAO().getSeries(request, session)) {
             if (gdaV20) {
                 context.setMinMaxTransformer(new SeriesOfferingMinMaxTransformer())
                 .setSupportsNamedQuery(HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_OFFERING_DATA_AVAILABILITY_FOR_SERIES, session));

@@ -27,6 +27,8 @@
     		<module>gml-cov</module>
     		<module>inspire</module>
     		<module>gwml</module>
-        <module>uvf</module>
+            <module>uvf</module>
+            <module>sos-rf</module>
+            <module>sos-sf</module>
     </modules>
 </project>

@@ -72,6 +72,7 @@ import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractBaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
@@ -1263,7 +1264,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             Session session) throws OwsExceptionReport {
         if (request.hasResultFilter()) {
             ComparisonFilter resultFilter = request.getResultFilter();
-            ResultFilterRestrictions.addResultFilterExpression(c, resultFilter, getResultFilterClasses());
+            ResultFilterRestrictions.addResultFilterExpression(c, resultFilter, getResultFilterClasses(), BaseObservation.OBS_ID);
         }
     }
     

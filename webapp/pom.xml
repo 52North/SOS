@@ -239,6 +239,14 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-wml-v20</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sos-rf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sos-sf</artifactId>
+        </dependency>
 
         <!-- OPERATIONS -->
 

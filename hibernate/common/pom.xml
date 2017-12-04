@@ -21,6 +21,10 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>gda-operation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-h2</artifactId>
             <scope>test</scope>
         </dependency>

@@ -118,6 +118,8 @@ This project includes:
   52°North Svalbard - GWML 2.2 XML Coding under GPLv2
   52°North Svalbard - INSPIRE XML OMPR Coding under GPLv2
   52°North Svalbard - INSPIRE XML OMSO Coding under GPLv2
+  52°North Svalbard - SOS RF 1.0 XML Coding under GPLv2
+  52°North Svalbard - SOS SF 1.0 XML Coding under GPLv2
   52°North Svalbard - Svalbard Related Offering Coding extension under GPLv2
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
                 License
@@ -262,8 +264,10 @@ This project includes:
   OGC SOS DeleteResultTemplate schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS GetDataAvailability schema 1.0 (OGC Best Practice 14-004r1) under The Apache Software License, Version 2.0
   OGC SOS RelatedOfferings schema 1.0 under The Apache Software License, Version 2.0
+  OGC SOS Result Filtering schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC SOS Spatial Filtering schema 1.0 under The Apache Software License, Version 2.0
   OGC SWECommon schema (spec. v1.0.1) under The Apache Software License, Version 2.0
   OGC SWECommon schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SWES schema (spec. v2.0) under The Apache Software License, Version 2.0

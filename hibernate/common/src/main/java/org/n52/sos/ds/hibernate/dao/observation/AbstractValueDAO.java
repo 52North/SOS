@@ -39,6 +39,7 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.TimeCreator;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
@@ -103,7 +104,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
             Session session) throws OwsExceptionReport {
         if (request.hasResultFilter()) {
             ComparisonFilter resultFilter = request.getResultFilter();
-            ResultFilterRestrictions.addResultFilterExpression(c, resultFilter, getResultFilterClasses());
+            ResultFilterRestrictions.addResultFilterExpression(c, resultFilter, getResultFilterClasses(), BaseObservation.OBS_ID);
         }
     }
     

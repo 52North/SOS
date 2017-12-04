@@ -78,7 +78,7 @@
         <sqljdbc.version>6.2.1.jre7</sqljdbc.version>
 
         <!-- 52N dependency versions -->
-        <n52.common.xml.version>2.3.0</n52.common.xml.version>
+        <n52.common.xml.version>2.4.0-SNAPSHOT</n52.common.xml.version>
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
@@ -199,6 +199,16 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>core-v20</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-sos-rf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-sos-sf</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -786,6 +796,16 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosro-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosrf-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sossf-v10</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>

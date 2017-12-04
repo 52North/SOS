@@ -39,6 +39,7 @@ import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
@@ -47,6 +48,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
+import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
@@ -76,6 +78,13 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     @SuppressWarnings("unchecked")
     @Override
     public List<Series> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
+        return getSeriesCriteria(request, session).list();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Series> getSeries(GetDataAvailabilityRequest request, Session session)
+            throws OwsExceptionReport {
         return getSeriesCriteria(request, session).list();
     }
 
@@ -197,6 +206,11 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
                 throw new OptionNotSupportedException().withMessage("The requested e-Reporting flow %s is not supported!", flow.name());
             }
         }
+    }
+    
+    @Override
+    public ObservationFactory getObservationFactory() {
+        return EReportingObservationFactory.getInstance();
     }
     
     private void addAssessmentType(Criteria c, String assessmentType) {

@@ -140,7 +140,7 @@ public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObserv
         builder.add(SosConstants.GetObservationParams.responseFormat,
                     GetObservationRequest::setResponseFormat);
         builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
-                    GetObservationRequest::addSweBooleanExtension);
+                    this::parseMergeObservationIntoDataArray);
         builder.add("extension", decodeList(this::parseExtensionParameter));
 
     }
@@ -171,6 +171,10 @@ public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObserv
         } else {
             return new SwesExtension<>().setValue(new SweText().setValue(value));
         }
+    }
+
+    private void parseMergeObservationIntoDataArray(GetObservationRequest request, String name, String value) {
+        request.addSweBooleanExtension(name, value);
     }
 
 }

@@ -2319,7 +2319,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
 
     @Override
     public Set<String> getRequestableProcedureDescriptionFormat() {
-        return copyOf(this.requestableProcedureDescriptionFormats);
+        return this.requestableProcedureDescriptionFormats;
     }
 
     @Override

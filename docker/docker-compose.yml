@@ -49,7 +49,7 @@ services:
   proxy:
     image: nginx:mainline-alpine
     ports:
-      - 81:80
+      - 80:80
     links:
       - sos:sos
     volumes:

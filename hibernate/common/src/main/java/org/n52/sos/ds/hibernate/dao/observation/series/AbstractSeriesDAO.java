@@ -276,6 +276,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(), request.getFeaturesOfInterest(), request.getOfferings(), session);
         checkAndAddResultFilterCriterion(c, request, session);
         checkAndAddSpatialFilterCriterion(c, request, session);
+        LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
         return c;
     }
     
@@ -748,8 +749,6 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                         geometry));
                 dc.setProjection(Projections.property(AbstractSeriesObservation.SERIES));
                 c.add(Subqueries.propertyIn(Series.ID, dc));
-            } else {
-                c.add(SpatialRestrictions.filter("foi." + FeatureOfInterest.GEOMETRY, filter.getOperator(), geometry));
             }
         }
     }

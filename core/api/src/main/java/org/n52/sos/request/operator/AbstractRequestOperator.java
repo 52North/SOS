@@ -57,6 +57,8 @@ import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingValueReferenceException;
+import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -65,8 +67,13 @@ import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
+import org.n52.sos.ogc.sos.ResultFilter;
+import org.n52.sos.ogc.sos.ResultFilterConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.sos.SosSpatialFilter;
+import org.n52.sos.ogc.sos.SosSpatialFilterConstants;
+import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.AbstractServiceRequest;
@@ -851,6 +858,59 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     private boolean checkSpatialFilteringProfileValueReference(String valueReference) {
         return Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE.equals(valueReference);
+    }
+    
+    protected void checkResultFilterExtension(AbstractServiceRequest request) throws CodedOwsException {
+        if (request.isSetExtensions() && request.hasExtension(ResultFilterConstants.RESULT_FILTER)) {
+            if (request.getExtensionCount(ResultFilterConstants.RESULT_FILTER) > 1) {
+                throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER, "duplicated");
+            }
+            SwesExtension<?> extension = request.getExtension(ResultFilterConstants.RESULT_FILTER);
+            if (extension.getValue() == null) {
+                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER);
+            }
+            ComparisonFilter filter = ((ResultFilter)extension).getValue();
+            if (!filter.hasValueReference()) {
+                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference");
+            } else if (!(filter.getValueReference().startsWith(".") || filter.getValueReference().startsWith("om:result"))) {
+                throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference", filter.getValueReference());
+            }
+            if (filter.getOperator() == null) {
+                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".operator");
+            }
+            
+            if (filter.getValue() == null) {
+                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".value");
+            }
+        }
+    }
+    
+    protected void checkSpatialFilterExtension(AbstractServiceRequest request) throws CodedOwsException {
+        if (request.isSetExtensions() && request.hasExtension(SosSpatialFilterConstants.SPATIAL_FILTER)) {
+            if (request.getExtensionCount(SosSpatialFilterConstants.SPATIAL_FILTER) > 1) {
+                throw new InvalidParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER, "duplicated");
+            }
+            SwesExtension<?> extension = request.getExtension(SosSpatialFilterConstants.SPATIAL_FILTER);
+            if (extension.getValue() == null) {
+                throw new MissingParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER);
+            }
+            SpatialFilter filter = ((SosSpatialFilter)extension).getValue();
+            if (!filter.hasValueReference()) {
+                throw new MissingParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".valueReference");
+            } else if (!checkFeatureValueReference(filter.getValueReference())
+                        && !checkSpatialFilteringProfileValueReference(filter.getValueReference())) {
+                    throw new InvalidValueReferenceException(filter.getValueReference());
+            }
+            if (filter.getOperator() == null) {
+                throw new MissingParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".operator");
+            } else if (!filter.getOperator().equals(SpatialOperator.BBOX)) {
+                throw new InvalidParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".operator", filter.getOperator().toString()); 
+            }
+            
+            if (filter.getGeometry() == null) {
+                throw new MissingParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".value");
+            }
+        }
     }
 
     protected boolean checkOnlyRequestableProcedureDescriptionFromats(String format, Enum<?> parameter, boolean mimeTypeAllowed)

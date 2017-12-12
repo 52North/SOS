@@ -28,6 +28,7 @@
  */
 package org.n52.sos.request.operator;
 
+import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +37,7 @@ import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractGetObservationDAO;
+import org.n52.sos.exception.ows.CodedOwsException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
@@ -299,22 +301,6 @@ public class SosGetObservationOperatorV20 extends
         }
     }
 
-    private void checkResultFilterExtension(GetObservationRequest request) throws InvalidParameterValueException {
-        if (request.isSetExtensions() && request.hasExtension(ResultFilterConstants.RESULT_FILTER)) {
-            SwesExtension<?> extension = request.getExtension(ResultFilterConstants.RESULT_FILTER);
-            if (extension.getValue() == null) {
-                throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER, "");
-                // TODO
-            }
-            ComparisonFilter filter = ((ResultFilter)extension).getValue();
-            if (!filter.hasValueReference()) {
-                // TODO throw
-            } else {
-                // TODO check for valid values
-            }
-            // TODO check for supported operators
-        }
-    }
 
     @Override
     public WSDLOperation getSosOperationDefinition() {

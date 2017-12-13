@@ -1264,7 +1264,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             Session session) throws OwsExceptionReport {
         if (request.hasResultFilter()) {
             ComparisonFilter resultFilter = request.getResultFilter();
-            ResultFilterRestrictions.addResultFilterExpression(c, resultFilter, getResultFilterClasses(), BaseObservation.OBS_ID);
+            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter, getResultFilterClasses(), BaseObservation.OBS_ID);
+            if (resultFilterExpression != null) {
+                c.add(resultFilterExpression);
+            }
         }
     }
     

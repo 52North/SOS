@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.util;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
@@ -49,11 +48,11 @@ import org.n52.sos.ogc.sos.ResultFilterConstants;
 
 public class ResultFilterRestrictions {
     
-    public static void addResultFilterExpression(Criteria c, ComparisonFilter resultFilter, ResultFilterClasses resultFilterClasses, String column) throws CodedException {
-        addResultFilterExpression(c, resultFilter, resultFilterClasses, column, column);
+    public static Criterion getResultFilterExpression(ComparisonFilter resultFilter, ResultFilterClasses resultFilterClasses, String column) throws CodedException {
+        return getResultFilterExpression(resultFilter, resultFilterClasses, column, column);
     }
 
-    public static void addResultFilterExpression(Criteria c, ComparisonFilter resultFilter,
+    public static Criterion getResultFilterExpression(ComparisonFilter resultFilter,
             ResultFilterClasses resultFilterClasses, String subqueryColumn, String column)
             throws CodedException {
         List<DetachedCriteria> list = new LinkedList<>();
@@ -192,11 +191,12 @@ public class ResultFilterRestrictions {
                 for (DetachedCriteria dc : list) {
                     d.add(getSubquery(dc, subqueryColumn));
                 }
-                c.add(d);
+                return d;
             } else {
-                c.add(getSubquery(list.iterator().next(), subqueryColumn));
+                return getSubquery(list.iterator().next(), subqueryColumn);
             }
         }
+        return null;
     }
 
     private static boolean isNumeric(String value) {

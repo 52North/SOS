@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -701,19 +702,25 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         return c;
     }
     
-    protected void checkAndAddResultFilterCriterion(Criteria c, GetDataAvailabilityRequest request,
-            Session session) throws OwsExceptionReport {
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetDataAvailabilityRequest request, Session session)
+            throws OwsExceptionReport {
         if (request.hasResultFilter()) {
-            ComparisonFilter resultFilter = request.getResultFilter();
-            ResultFilterRestrictions.addResultFilterExpression(c, resultFilter, getResultFilterClasses(), Series.ID, AbstractSeriesObservation.SERIES);
+            addResultfilter(c, request.getResultFilter());
+        }
+    }
+
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, Session session)
+            throws OwsExceptionReport {
+        if (request.hasResultFilter()) {
+            addResultfilter(c, request.getResultFilter());
         }
     }
     
-    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
-            Session session) throws OwsExceptionReport {
-        if (request.hasResultFilter()) {
-            ComparisonFilter resultFilter = request.getResultFilter();
-            ResultFilterRestrictions.addResultFilterExpression(c, resultFilter, getResultFilterClasses(), Series.ID, AbstractSeriesObservation.SERIES);
+    private void addResultfilter(Criteria c, ComparisonFilter resultFilter) throws CodedException {
+        Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
+                getResultFilterClasses(), Series.ID, AbstractSeriesObservation.SERIES);
+        if (resultFilterExpression != null) {
+            c.add(resultFilterExpression);
         }
     }
     

@@ -35,7 +35,7 @@
         <module>spring</module>
         <module>third-party</module>
         <module>webapp</module>
-        <module>webapp-bundle</module>
+        <!-- <module>webapp-bundle</module> -->
     </modules>
     <licenses>
         <license>
@@ -1564,6 +1564,7 @@
         </plugins>
         <pluginManagement>
             <plugins>
+
                 <!-- m2e fix – Plugin execution not covered by lifecycle 
                     configuration -->
                 <!-- See http://sourcevirtues.wordpress.com/2012/02/01/m2e-fix-plugin-execution-lifecycle-configuration/ -->

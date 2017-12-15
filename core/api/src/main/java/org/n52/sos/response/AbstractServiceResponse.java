@@ -28,6 +28,8 @@
  */
 package org.n52.sos.response;
 
+import java.util.Collection;
+
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.ogc.swes.SwesConstants.HasSwesExtension;
 import org.n52.sos.ogc.swes.SwesExtension;
@@ -87,6 +89,15 @@ public abstract class AbstractServiceResponse extends AbstractServiceCommunicati
             setExtensions(new SwesExtensions());
         }
         getExtensions().addSwesExtension(extension);
+        return this;
+    }
+    
+    @Override
+    public AbstractServiceResponse addExtensions(final Collection<SwesExtension<?>> extensions) {
+        if (getExtensions() == null) {
+            setExtensions(new SwesExtensions());
+        }
+        getExtensions().addSwesExtension(extensions);
         return this;
     }
 

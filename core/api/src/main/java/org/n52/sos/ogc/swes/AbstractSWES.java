@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ogc.swes;
 
+import java.util.Collection;
+
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.swes.SwesConstants.HasSwesExtension;
@@ -72,6 +74,15 @@ public abstract class AbstractSWES extends AbstractFeature implements HasSwesExt
             setExtensions(new SwesExtensions());
         }
         getExtensions().addSwesExtension(extension);
+        return this;
+    }
+    
+    @Override
+    public AbstractSWES addExtensions(final Collection<SwesExtension<?>> extensions) {
+        if (getExtensions() == null) {
+            setExtensions(new SwesExtensions());
+        }
+        getExtensions().addSwesExtension(extensions);
         return this;
     }
 

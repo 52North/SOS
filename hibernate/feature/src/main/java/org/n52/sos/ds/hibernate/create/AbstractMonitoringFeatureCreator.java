@@ -113,6 +113,13 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             CodeWithAuthority identifier = getIdentifier(vde);
             VerticalDatum verticalDatum = new VerticalDatum(identifier, scope);
             verticalDatum.setGmlId("vd_" + vde.getPkid());
+            if (vde.isSetName()) {
+                CodeType name = new CodeType(vde.getName());
+                if (vde.isSetCodespaceName()) {
+                    name.setCodeSpace(vde.getCodespaceName().getCodespace());
+                }
+                verticalDatum.addName(name);
+            }
             if (vde.isSetRemarks()) {
                 verticalDatum.setRemarks(vde.getRemarks());
             }

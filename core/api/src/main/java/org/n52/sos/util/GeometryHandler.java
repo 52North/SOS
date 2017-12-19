@@ -100,23 +100,18 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     private static final String EPSG = "EPSG";
     private static final String EPSG_PREFIX = EPSG + ":";
     private boolean datasoureUsesNorthingFirst;
-    private final List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
+    private List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
     private int storageEPSG;
     private int storage3DEPSG;
     private int defaultResponseEPSG;
     private int defaultResponse3DEPSG;
-    private final Set<String> supportedCRS = Sets.newHashSet();
+    private Set<String> supportedCRS = Sets.newHashSet();
     private boolean spatialDatasource;
     private String authority;
     private CRSAuthorityFactory crsAuthority;
-    private final Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();
+    private Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();
     private String srsNamePrefixUrl;
 
-    @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
-    public GeometryHandler setSrsNamePrefixUrl(String srsNamePrefixUrl) {
-        this.srsNamePrefixUrl = srsNamePrefixUrl;
-        return this;
-    }
 
     @Override
     public void init() {
@@ -259,7 +254,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     public void setSupportedCRS(final String supportedCRS) throws ConfigurationError {
         // Validation.notNull("Supported CRS codes as CSV string",
         // supportedCRS);
-        this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, ","));
+        this.supportedCRS = StringHelper.splitToSet(supportedCRS, ",");
     }
 
     /**
@@ -338,19 +333,24 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     public GeometryHandler setEpsgCodesWithNorthingFirstAxisOrder(final String codes) throws ConfigurationError {
         Validation.notNullOrEmpty("EPSG Codes to switch coordinates for", codes);
         final String[] splitted = codes.split(";");
+        List<Range> newEpsgCodes = Lists.newArrayListWithCapacity(splitted.length);
         for (final String entry : splitted) {
             final String[] splittedEntry = entry.split("-");
             Range r = null;
-            if (splittedEntry.length == 1) {
-                r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[0]));
-            } else if (splittedEntry.length == 2) {
-                r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[1]));
-            } else {
-                throw new ConfigurationError(String.format("Invalid format of entry in '%s': %s",
-                        FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry));
+            try {
+                if (splittedEntry.length == 1) {
+                    r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[0]));
+                } else if (splittedEntry.length == 2) {
+                    r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[1]));
+                } else {
+                    throw createException(entry, null);
+                }
+            } catch (NumberFormatException ex) {
+                throw createException(entry, ex);
             }
-            epsgsWithNorthingFirstAxisOrder.add(r);
+            newEpsgCodes.add(r);
         }
+        epsgsWithNorthingFirstAxisOrder = newEpsgCodes;
         return this;
     }
 
@@ -715,6 +715,11 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
 
     public String addOgcCrsPrefix(int crs) {
         return this.srsNamePrefixUrl + crs;
+    }
+
+    private ConfigurationError createException(String entry, Throwable ex) {
+        return new ConfigurationError(String.format("Invalid format of entry in '%s': %s",
+                FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry), ex);
     }
 
     /**

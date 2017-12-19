@@ -33,14 +33,21 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
@@ -49,20 +56,27 @@ import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
+import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class AbstractSeriesDAO
         extends AbstractIdentifierNameDescriptionDAO {
@@ -103,6 +117,16 @@ public abstract class AbstractSeriesDAO
      * @throws CodedException
      */
     public abstract List<Series> getSeries(GetObservationByIdRequest request, Session session)
+            throws OwsExceptionReport;
+
+    /**
+     * Get series for GetDataAvailability request
+     * @param request GetDataAvailability request to get series for
+     * @param session Hibernate session
+     * @return Series that fit
+     * @throws CodedException
+     */
+    public abstract List<Series> getSeries(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport;
 
     /**
@@ -209,6 +233,8 @@ public abstract class AbstractSeriesDAO
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request)
             throws OwsExceptionReport;
 
+    public abstract ObservationFactory getObservationFactory();
+
     protected Series getOrInsert(ObservationContext ctx, final Session session) throws OwsExceptionReport {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         ctx.addIdentifierRestrictionsToCritera(criteria);
@@ -256,6 +282,8 @@ public abstract class AbstractSeriesDAO
         final Criteria c = createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features,
                 request.getOfferings(), session);
         addSpecificRestrictions(c, request);
+        checkAndAddResultFilterCriterion(c, request, session);
+        checkAndAddSpatialFilterCriterion(c, request, session);
         LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
         return c;
     }
@@ -263,6 +291,14 @@ public abstract class AbstractSeriesDAO
     public Criteria getSeriesCriteria(GetObservationByIdRequest request, Session session) {
         final Criteria c = getDefaultSeriesCriteria(session);
         c.add(Restrictions.in(Series.IDENTIFIER, request.getObservationIdentifier()));
+        LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
+        return c;
+    }
+
+    protected Criteria getSeriesCriteria(GetDataAvailabilityRequest request, Session session) throws OwsExceptionReport {
+        Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(), request.getFeaturesOfInterest(), request.getOfferings(), session);
+        checkAndAddResultFilterCriterion(c, request, session);
+        checkAndAddSpatialFilterCriterion(c, request, session);
         LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
         return c;
     }
@@ -329,7 +365,7 @@ public abstract class AbstractSeriesDAO
      *            FeatureOfInterest identifier to add
      */
     public void addFeatureOfInterestToCriteria(Criteria c, String feature) {
-        c.createCriteria(Series.FEATURE_OF_INTEREST).add(Restrictions.eq(FeatureOfInterest.IDENTIFIER, feature));
+        c.createCriteria(Series.FEATURE_OF_INTEREST, "foi").add(Restrictions.eq(FeatureOfInterest.IDENTIFIER, feature));
 
     }
 
@@ -355,7 +391,7 @@ public abstract class AbstractSeriesDAO
      *            FeatureOfInterest identifiers to add
      */
     public void addFeatureOfInterestToCriteria(Criteria c, Collection<String> features) {
-        c.createCriteria(Series.FEATURE_OF_INTEREST).add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
+        c.createCriteria(Series.FEATURE_OF_INTEREST, "foi").add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
 
     }
 
@@ -690,6 +726,70 @@ public abstract class AbstractSeriesDAO
             addProcedureToCriteria(c, procedure);
         }
         return c;
+    }
+
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetDataAvailabilityRequest request, Session session)
+            throws OwsExceptionReport {
+        if (request.hasResultFilter()) {
+            addResultfilter(c, request.getResultFilter());
+        }
+    }
+
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, Session session)
+            throws OwsExceptionReport {
+        if (request.hasResultFilter() && request.getResultFilter() instanceof ComparisonFilter) {
+            addResultfilter(c, (ComparisonFilter) request.getResultFilter());
+        }
+    }
+
+    private void addResultfilter(Criteria c, ComparisonFilter resultFilter) throws CodedException {
+        Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
+                getResultFilterClasses(), Series.ID, AbstractSeriesObservation.SERIES);
+        if (resultFilterExpression != null) {
+            c.add(resultFilterExpression);
+        }
+    }
+
+    protected void checkAndAddSpatialFilterCriterion(Criteria c, GetDataAvailabilityRequest request,
+            Session session) throws OwsExceptionReport {
+        if (request.hasSpatialFilter()) {
+            SpatialFilter filter = request.getSpatialFilter();
+            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
+            if (filter.getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)) {
+                DetachedCriteria dc = DetachedCriteria.forClass(getObservationFactory().observationClass());
+                dc.add(SpatialRestrictions.filter(Observation.SAMPLING_GEOMETRY, filter.getOperator(),
+                        geometry));
+                dc.setProjection(Projections.property(AbstractSeriesObservation.SERIES));
+                c.add(Subqueries.propertyIn(Series.ID, dc));
+            } else {
+                if (request.isSetFeaturesOfInterest()) {
+                    c.add(SpatialRestrictions.filter("foi." + FeatureOfInterest.GEOMETRY, filter.getOperator(), geometry));
+                } else {
+                    c.createCriteria(Series.FEATURE_OF_INTEREST).add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(), geometry));
+                }
+            }
+        }
+    }
+
+    protected void checkAndAddSpatialFilterCriterion(Criteria c, GetObservationRequest request,
+            Session session) throws OwsExceptionReport {
+        if (request.isSetSpatialFilter()) {
+            SpatialFilter filter = request.getSpatialFilter();
+            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
+            if (filter.getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)) {
+                DetachedCriteria dc = DetachedCriteria.forClass(getObservationFactory().observationClass());
+                dc.add(SpatialRestrictions.filter(Observation.SAMPLING_GEOMETRY, filter.getOperator(),
+                        geometry));
+                dc.setProjection(Projections.property(AbstractSeriesObservation.SERIES));
+                c.add(Subqueries.propertyIn(Series.ID, dc));
+            }
+        }
+    }
+
+    public ResultFilterClasses getResultFilterClasses() {
+        return new ResultFilterClasses(getObservationFactory().numericClass(), getObservationFactory().countClass(),
+                getObservationFactory().textClass(), getObservationFactory().categoryClass(),
+                getObservationFactory().complexClass(), getObservationFactory().profileClass());
     }
 
     protected boolean isIncludeChildObservableProperties() {

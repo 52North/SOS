@@ -56,6 +56,8 @@ import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.janmayen.event.EventBus;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -71,16 +73,21 @@ import org.n52.shetland.ogc.ows.exception.MissingVersionParameterException;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.exception.VersionNegotiationFailedException;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.ResultFilter;
+import org.n52.shetland.ogc.sos.ResultFilterConstants;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosSpatialFilter;
+import org.n52.shetland.ogc.sos.SosSpatialFilterConstants;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
-import org.n52.shetland.ogc.swes.SwesExtensions;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
@@ -91,6 +98,7 @@ import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,6 +146,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
     private ResponseFormatRepository responseFormatRepository;
     private ConverterRepository converterRepository;
+    private EncoderRepository encoderRepository;
 
     public AbstractRequestOperator(String service,
                                    String version,
@@ -238,6 +247,15 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         return converterRepository;
     }
 
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
+    public EncoderRepository getEncoderRepository() {
+        return encoderRepository;
+    }
+
     /**
      * @deprecated Use {@link #getOperationHandler()}
      */
@@ -248,7 +266,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     @Override
     public boolean isSupported() {
-        return getDao() != null && getDao().isSupported();
+        return getOperationHandler() != null && getOperationHandler().isSupported();
     }
 
     protected D getOperationHandler() {
@@ -871,17 +889,6 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected List<String> addChildProcedures(Collection<String> procedures) {
-        Set<String> allProcedures = Sets.newHashSet();
-        if (procedures != null) {
-            for (String procedure : procedures) {
-                allProcedures.add(procedure);
-                allProcedures.addAll(getCache().getChildProcedures(procedure, true, false));
-            }
-        }
-        return Lists.newArrayList(allProcedures);
-    }
-
     protected List<String> addInstanceProcedures(Collection<String> procedures) {
         Set<String> allProcedures = Sets.newHashSet();
         if (procedures != null) {
@@ -1027,6 +1034,17 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
+    protected List<String> addChildProcedures(Collection<String> procedures) {
+        Set<String> allProcedures = Sets.newHashSet();
+        if (procedures != null) {
+            for (String procedure : procedures) {
+                allProcedures.add(procedure);
+                allProcedures.addAll(getCache().getChildProcedures(procedure, true, false));
+            }
+        }
+        return Lists.newArrayList(allProcedures);
+    }
+
     protected void setObservationResponseResponseFormatAndContentType(AbstractObservationRequest obsRequest,
             AbstractObservationResponse obsResponse) {
         if (obsRequest.isSetResponseFormat()) {
@@ -1036,7 +1054,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected boolean hasLanguageExtension(SwesExtensions extensions) {
+    protected boolean hasLanguageExtension(Extensions extensions) {
         return extensions != null && extensions.containsExtension(OWSConstants.AdditionalRequestParams.language);
     }
 
@@ -1048,6 +1066,59 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     private boolean checkSpatialFilteringProfileValueReference(String valueReference) {
         return Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE.equals(valueReference);
+    }
+
+    protected void checkResultFilterExtension(OwsServiceRequest request) throws CodedOwsException {
+        if (request.hasExtension(ResultFilterConstants.RESULT_FILTER)) {
+            if (request.getExtensionCount(ResultFilterConstants.RESULT_FILTER) > 1) {
+                throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER, "duplicated");
+            }
+            Optional<Extension<?>> extension = request.getExtension(ResultFilterConstants.RESULT_FILTER);
+            if (extension.isPresent() && extension.get().getValue() == null) {
+                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER);
+            }
+            ComparisonFilter filter = ((ResultFilter) extension.get()).getValue();
+            if (!filter.hasValueReference()) {
+                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference");
+            } else if (!(filter.getValueReference().startsWith(".") || filter.getValueReference().startsWith("om:result"))) {
+                throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference", filter.getValueReference());
+            }
+            if (filter.getOperator() == null) {
+                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".operator");
+            }
+
+            if (filter.getValue() == null) {
+                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".value");
+            }
+        }
+    }
+
+    protected void checkSpatialFilterExtension(OwsServiceRequest request) throws CodedOwsException {
+        if (request.hasExtension(SosSpatialFilterConstants.SPATIAL_FILTER)) {
+            if (request.getExtensionCount(SosSpatialFilterConstants.SPATIAL_FILTER) > 1) {
+                throw new InvalidParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER, "duplicated");
+            }
+            Optional<Extension<?>> extension = request.getExtension(SosSpatialFilterConstants.SPATIAL_FILTER);
+            if (extension.isPresent() && extension.get().getValue() == null) {
+                throw new MissingParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER);
+            }
+            SpatialFilter filter = ((SosSpatialFilter) extension.get()).getValue();
+            if (!filter.hasValueReference()) {
+                throw new MissingParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".valueReference");
+            } else if (!checkFeatureValueReference(filter.getValueReference())
+                        && !checkSpatialFilteringProfileValueReference(filter.getValueReference())) {
+                    throw new InvalidValueReferenceException(filter.getValueReference());
+            }
+            if (filter.getOperator() == null) {
+                throw new MissingParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".operator");
+            } else if (!filter.getOperator().equals(SpatialOperator.BBOX)) {
+                throw new InvalidParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".operator", filter.getOperator().toString());
+            }
+
+            if (filter.getGeometry() == null) {
+                throw new MissingParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".value");
+            }
+        }
     }
 
     protected boolean checkOnlyRequestableProcedureDescriptionFromats(String format, Enum<?> parameter, boolean mimeTypeAllowed)

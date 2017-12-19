@@ -15,6 +15,8 @@
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
+        <series.api.version>2.0.0-SNAPSHOT</series.api.version>
+        <series.db.version>2.0.0-SNAPSHOT</series.db.version>
         <helgoland.version>1.0.0</helgoland.version>
     </properties>
     <build>
@@ -56,106 +58,47 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>proxy-mappings</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <usedDependencies>
-                                <usedDependency>org.springframework:spring-core</usedDependency>
-                            </usedDependencies>
+						<id>rest-api</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.n52.series-api</groupId>
-                                    <artifactId>proxy-mappings</artifactId>
-                                    <overWrite>false</overWrite>
+                                    <groupId>org.n52.series-api.db</groupId>
+                                    <artifactId>mappings</artifactId>
+                                    <includes>hbm/sos/v44/*.hbm.xml</includes>
+                                    <outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly/</outputDirectory>
+                                    <overWrite>true</overWrite>
                                 </artifactItem>
                             </artifactItems>
-                            <includes>**/*.xml,**/README</includes>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>rest-api</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem> 
-                                 <groupId>org.n52.series-api.db</groupId> 
-                                 <artifactId>mappings</artifactId> 
-                                 <includes>hbm/sos/v44/*.hbm.xml</includes>
-                                 <outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly/</outputDirectory> 
-                                 <overWrite>true</overWrite>
-                                </artifactItem> 
-                             </artifactItems>
-                            <overWriteReleases>false</overWriteReleases>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>svalbard</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <includes>svalbard-*-context.xml</includes>
-                            <outputDirectory>${project.build.outputDirectory}/contexts/configured/</outputDirectory>
-                            <overWrite>true</overWrite>
-                            <overWriteReleases>false</overWriteReleases>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.n52.svalbard</groupId>
-                                    <artifactId>svalbard</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.n52.svalbard</groupId>
-                                    <artifactId>svalbard-exi</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.n52.svalbard</groupId>
-                                    <artifactId>svalbard-json</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.n52.svalbard</groupId>
-                                    <artifactId>svalbard-json-common</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.n52.svalbard</groupId>
-                                    <artifactId>svalbard-xmlbeans</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.n52.svalbard</groupId>
-                                    <artifactId>svalbard-xmlstream</artifactId>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
+						</configuration>
+					</execution>
                 </executions>
             </plugin>
-             <plugin>
-                <groupId>com.googlecode.maven-download-plugin</groupId>
-                <artifactId>download-maven-plugin</artifactId>
-                <version>1.3.0</version>
-                <executions>
-                <execution>
-                    <id>install-jbpm</id>
-                    <phase>pre-integration-test</phase>
-                    <goals>
-                        <goal>wget</goal>
-                    </goals>
-                    <configuration>
-                        <url>https://github.com/52North/helgoland/releases/download/v1.0.0/client.${helgoland.version}.war</url>
-                        <unpack>true</unpack>
-                        <outputDirectory>${project.build.directory}/${project.build.finalName}/static/client/helgoland</outputDirectory>
-                    </configuration>
-                </execution>
-            </executions>
-           </plugin>
+            <!-- 
+            <plugin>
+              <groupId>com.googlecode.maven-download-plugin</groupId>
+              <artifactId>download-maven-plugin</artifactId>
+              <version>1.3.0</version>
+              <executions>
+                  <execution>
+                      <id>download-helgoland</id>
+                      <phase>generate-sources</phase>
+                      <goals>
+                          <goal>wget</goal>
+                      </goals>
+                      <configuration>
+                          <url>https://github.com/52North/helgoland/releases/download/v${helgoland.version}/client.${helgoland.version}.war</url>
+                          <unpack>true</unpack>
+                          <outputDirectory>${project.build.directory}/${project.build.finalName}/static/client/helgoland</outputDirectory>
+                      </configuration>
+                  </execution>
+              </executions>
+            </plugin>
+             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -185,6 +128,25 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>views</artifactId>
                         </overlay>
+                         <overlay>
+                        <groupId>org.n52.series-api.db</groupId>
+                        <artifactId>webapp</artifactId>
+                        <includes>
+                            <include>WEB-INF/spring/*</include>
+                            <include>WEB-INF/classes/**</include>
+                            <!-- 
+                            <include>WEB-INF/classes/*.json</include>
+                            <include>WEB-INF/classes/*.properties</include>
+                            <include>WEB-INF/classes/*.txt</include>
+                            <include>WEB-INF/classes/org/*</include>
+                            <include>WEB-INF/classes/**/*.class)</include>
+                             -->
+                        </includes>
+                        <excludes>
+                            <exclude>WEB-INF/spring/series-database-config.xml</exclude>
+                            <exclude>WEB-INF/classes/*.xml</exclude>
+                        </excludes>
+                    </overlay>
                     </overlays>
                 </configuration>
             </plugin>
@@ -598,6 +560,14 @@
             <artifactId>coding-kvp</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sos-rf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sos-sf</artifactId>
+        </dependency>
 
         <!-- OPERATIONS -->
 
@@ -938,9 +908,208 @@
             <artifactId>coding-oceansites</artifactId>
             <scope>runtime</scope>
         </dependency>
+        
+        <!-- REST API Dependencies -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-sqlserver</artifactId>
+          <groupId>org.n52.series-api</groupId>
+          <artifactId>io</artifactId>
+          <version>${series.api.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>c3p0</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.mchange</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.n52.series-api</groupId>
+          <artifactId>rest</artifactId>
+          <version>${series.api.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>c3p0</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.mchange</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.n52.series-api</groupId>
+          <artifactId>spi</artifactId>
+          <version>${series.api.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>c3p0</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.mchange</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.series-api.db</groupId>
+            <artifactId>webapp</artifactId>
+            <version>${series.db.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+          <groupId>org.n52.series-api.db</groupId>
+          <artifactId>dao</artifactId>
+          <version>${series.db.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+          </exclusions>
+         </dependency>
+         <dependency>
+          <groupId>org.n52.series-api.db</groupId>
+          <artifactId>mappings</artifactId>
+          <version>${series.db.version}</version>
+          <scope>provided</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.n52.series-api.db</groupId>
+          <artifactId>sos-integration</artifactId>
+          <version>${series.db.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-main</artifactId>
+            </dependency>
+         
+        <!-- copied from REST-API series-dao-webapp -->  
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjtools</artifactId>
+            <version>1.8.9</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

@@ -137,6 +137,16 @@ public class GetDataAvailabilityOperator
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
+        try {
+            checkResultFilterExtension(request);
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        try {
+            checkSpatialFilterExtension(request);
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
 
         exceptions.throwIfNotEmpty();
     }

@@ -40,6 +40,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
+import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -113,6 +114,11 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
         projectionList.add(Projections.min(TemporalReferencedEReportingObservation.PHENOMENON_TIME_START));
         projectionList.add(Projections.max(TemporalReferencedEReportingObservation.PHENOMENON_TIME_END));
         c.setProjection(projectionList);
+    }
+
+    @Override
+    protected ValuedObservationFactory getValuedObservationFactory() {
+        return EReportingValuedObservationFactory.getInstance();
     }
 
 }

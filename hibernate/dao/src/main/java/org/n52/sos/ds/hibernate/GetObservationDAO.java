@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -165,9 +166,9 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
                  sosRequest.getObservedProperties().isEmpty()) {
             throw new MissingObservedPropertyParameterException();
         }
-        if (sosRequest.isSetResultFilter()) {
-            throw new NotYetSupportedException("result filtering");
-        }
+//        if (sosRequest.isSetResultFilter()) {
+//            throw new NotYetSupportedException("result filtering");
+//        }
         final GetObservationResponse sosResponse = new GetObservationResponse();
         sosResponse.setService(sosRequest.getService());
         sosResponse.setVersion(sosRequest.getVersion());
@@ -222,11 +223,11 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
         if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        HashSet<String> set = Sets.newHashSet(ResultFilterConstants.CONFORMANCE_CLASS_RF);
             if (isSpatialFilteringProfile()) {
-                return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
-            }
+            set.add(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
         }
-        return super.getConformanceClasses(service, version);
+        return set;
     }
     
     @Override

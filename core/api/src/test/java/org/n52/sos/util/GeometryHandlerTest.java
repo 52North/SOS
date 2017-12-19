@@ -34,19 +34,24 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
+import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 import com.google.common.base.Joiner;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 public class GeometryHandlerTest {
 
     private static final double DISTANCE = 0.0001;
 
     private static final double DISTANCE_TRANSFORMED = 10.0;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     private static GeometryHandler geometryHandler;
 
@@ -70,11 +75,13 @@ public class GeometryHandlerTest {
     private static final int EPSG_4326 = 4326;
 
     // easting first
-    private static final int EPSG_31467 = 31467;
+    private static int EPSG_31467 = 31467;
 
-    private static final String SUPPORTED_CRS = Joiner.on(",").join(EPSG_4326, EPSG_31467);
+    private static String EPSG_4326_WITH_PREFIX = "EPSG:4326";
 
-    private static final String NORTHING_FIRST_CRS = Joiner.on(";").join(EPSG_4326, EPSG_31467);
+    private static String SUPPORTED_CRS = Joiner.on(",").join(EPSG_4326, EPSG_31467);
+
+    private static String NORTHING_FIRST_CRS = Joiner.on(";").join(EPSG_4326, EPSG_31467);
 
     @BeforeClass
     public static void init() throws ParseException {
@@ -174,5 +181,33 @@ public class GeometryHandlerTest {
         geometryHandler.setDatasourceNorthingFirst(true);
         geometryHandler.setStorageEpsg(EPSG_31467);
         assertThat((geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(get31467Geometry()).distance(get31467Geometry()) < DISTANCE), is(true));
+    }
+
+    @Test
+    public void changeEpsgCodesWithNorthingFirstAxisOrder() throws OwsExceptionReport {
+        assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_31467), is(true));
+
+        geometryHandler.setEpsgCodesWithNorthingFirstAxisOrder(String.valueOf(EPSG_4326));
+
+        assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_4326), is(true));
+        assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_31467), is(false));
+    }
+
+    @Test
+    public void shouldShowExceptionWhenReceivingNonNumericalString() throws OwsExceptionReport {
+        thrown.expect(ConfigurationError.class);
+        thrown.expectMessage(is("Invalid format of entry in 'misc.switchCoordinatesForEpsgCodes': " + EPSG_4326_WITH_PREFIX));
+
+        geometryHandler.setEpsgCodesWithNorthingFirstAxisOrder(EPSG_4326_WITH_PREFIX);
+    }
+
+    @Test
+    public void changeSupportedCRS() throws OwsExceptionReport {
+        assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_31467)), is(true));
+
+        geometryHandler.setSupportedCRS(String.valueOf(EPSG_4326));
+
+        assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_4326)), is(true));
+        assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_31467)), is(false));
     }
 }

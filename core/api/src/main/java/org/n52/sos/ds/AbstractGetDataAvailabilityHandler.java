@@ -36,9 +36,13 @@ import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.ResultFilterConstants;
+import org.n52.shetland.ogc.sos.SosSpatialFilterConstants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
+
+import com.google.common.collect.Sets;
 
 /**
  * Handler to get the DataAvailabilities out of the database.
@@ -111,5 +115,10 @@ public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperati
     @Setting(GetDataAvailabilitySettings.FORCE_GDA_20_RESPONSE)
     public void setForceGDAv20Response(boolean forceGDAv20Response) {
         this.forceGDAv20Response = forceGDAv20Response;
+    }
+
+    @Override
+    public Set<String> getConformanceClasses(String service, String version) {
+        return Sets.newHashSet(ResultFilterConstants.CONFORMANCE_CLASS_RF, SosSpatialFilterConstants.CONFORMANCE_CLASS_SF);
     }
 }

@@ -98,7 +98,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             Observation<?> observation, Session session) throws OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Series series = seriesDAO.getOrInsertSeries(ctx, session);
-        ((SeriesObservation) observation).setSeries(series);
+        ((AbstractSeriesObservation) observation).setSeries(series);
         seriesDAO.updateSeriesWithFirstLatestValues(series, observation, session);
     }
 
@@ -521,6 +521,8 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         Criteria seriesCriteria = observationCriteria.createCriteria(AbstractSeriesObservation.SERIES);
 
         checkAndAddSpatialFilteringProfileCriterion(observationCriteria, request, session);
+        checkAndAddResultFilterCriterion(observationCriteria, request, session);
+
         addSpecificRestrictions(seriesCriteria, request);
         if (CollectionHelper.isNotEmpty(request.getProcedures())) {
             seriesCriteria.createCriteria(Series.PROCEDURE)
@@ -813,6 +815,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                 getDefaultObservationCriteria(session).add(
                         Restrictions.eq(AbstractSeriesObservation.SERIES, series));
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
+        checkAndAddResultFilterCriterion(c, request, session);
 
         if (request.isSetOffering()) {
             c.createCriteria(AbstractSeriesObservation.OFFERINGS).add(

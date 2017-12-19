@@ -43,6 +43,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
@@ -56,6 +57,7 @@ import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.shetland.ogc.UoM;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
@@ -126,6 +128,7 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
@@ -146,6 +149,8 @@ import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterFactory;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
+import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
@@ -333,6 +338,13 @@ public abstract class AbstractObservationDAO
      */
     public abstract Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation,
             ObservationConstellation observationConstellation, Session session) throws OwsExceptionReport;
+
+
+    public ResultFilterClasses getResultFilterClasses() {
+        return new ResultFilterClasses(getObservationFactory().numericClass(), getObservationFactory().countClass(),
+                getObservationFactory().textClass(), getObservationFactory().categoryClass(),
+                getObservationFactory().complexClass(), getObservationFactory().profileClass());
+    }
 
     /**
      * Query observation by identifier
@@ -1312,6 +1324,17 @@ public abstract class AbstractObservationDAO
 
     }
 
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
+            Session session) throws OwsExceptionReport {
+        if (request.hasResultFilter() && request.getResultFilter() instanceof ComparisonFilter) {
+            ComparisonFilter resultFilter = (ComparisonFilter) request.getResultFilter();
+            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter, getResultFilterClasses(), BaseObservation.OBS_ID);
+            if (resultFilterExpression != null) {
+                c.add(resultFilterExpression);
+            }
+        }
+    }
+
     /**
      * Get all observation identifiers
      *
@@ -2191,4 +2214,5 @@ public abstract class AbstractObservationDAO
             this.maxLon = maxLon;
         }
     }
+
 }

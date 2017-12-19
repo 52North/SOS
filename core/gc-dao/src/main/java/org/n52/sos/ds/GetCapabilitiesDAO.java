@@ -382,10 +382,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         if (Sos2Constants.SERVICEVERSION.equals(version)) {
             getConformance(filterCapabilities);
         }
-        // !!! Modify methods addicted to your implementation !!!
-        if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            getScalarFilterCapabilities(filterCapabilities);
-        }
+        getScalarFilterCapabilities(filterCapabilities, version);
         getSpatialFilterCapabilities(filterCapabilities, version);
         getTemporalFilterCapabilities(filterCapabilities, version);
 
@@ -781,13 +778,15 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
      *
      * @param filterCapabilities FilterCapabilities
      */
-    private void getScalarFilterCapabilities(final FilterCapabilities filterCapabilities) {
+    private void getScalarFilterCapabilities(final FilterCapabilities filterCapabilities, String version) {
         // TODO PropertyIsNil, PropertyIsNull? better:
         // filterCapabilities.setComparisonOperators(Arrays.asList(ComparisonOperator.values()));
         final List<ComparisonOperator> comparisonOperators = new ArrayList<>(8);
         comparisonOperators.add(ComparisonOperator.PropertyIsBetween);
         comparisonOperators.add(ComparisonOperator.PropertyIsEqualTo);
-        comparisonOperators.add(ComparisonOperator.PropertyIsNotEqualTo);
+        if (version.equals(Sos1Constants.SERVICEVERSION)) {
+//            comparisonOperators.add(ComparisonOperator.PropertyIsNotEqualTo);
+        }
         comparisonOperators.add(ComparisonOperator.PropertyIsLessThan);
         comparisonOperators.add(ComparisonOperator.PropertyIsLessThanOrEqualTo);
         comparisonOperators.add(ComparisonOperator.PropertyIsGreaterThan);

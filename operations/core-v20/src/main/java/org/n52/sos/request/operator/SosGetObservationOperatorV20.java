@@ -30,6 +30,7 @@ package org.n52.sos.request.operator;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -37,9 +38,13 @@ import javax.inject.Inject;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.ObservationType;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -59,6 +64,10 @@ import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 import org.n52.svalbard.ConformanceClasses;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.ObservationEncoder;
+
+import com.google.common.collect.Sets;
 
 /**
  * class and forwards requests to the GetObservationDAO; after query of
@@ -91,111 +100,112 @@ public class SosGetObservationOperatorV20 extends
     }
 
     @Override
-    public GetObservationResponse receive(GetObservationRequest sosRequest) throws OwsExceptionReport {
-        final GetObservationResponse sosResponse = getOperationHandler().getObservation(sosRequest);
-        setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
+    public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
+        final GetObservationResponse sosResponse = getOperationHandler().getObservation(request);
+        setObservationResponseResponseFormatAndContentType(request, sosResponse);
         return sosResponse;
     }
 
     @Override
-    protected void checkParameters(GetObservationRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(GetObservationRequest request) throws OwsExceptionReport {
         final CompositeOwsException exceptions = new CompositeOwsException();
         try {
-            checkServiceParameter(sosRequest.getService());
+            checkServiceParameter(request.getService());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkSingleVersionParameter(sosRequest);
+            checkSingleVersionParameter(request);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
 
         try {
-            checkOfferingId(sosRequest.getOfferings());
+            checkOfferingId(request.getOfferings());
             // add child offerings to request
-            if (sosRequest.isSetOffering()) {
-                sosRequest.setOfferings(addChildOfferings(sosRequest.getOfferings()));
+            if (request.isSetOffering()) {
+                request.setOfferings(addChildOfferings(request.getOfferings()));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkObservedProperties(sosRequest.getObservedProperties(), SosConstants.GetObservationParams.observedProperty, false);
+            checkObservedProperties(request.getObservedProperties(), SosConstants.GetObservationParams.observedProperty, false);
             // add child observedProperties if isInclude == true and requested observedProperty is parent.
-            if (sosRequest.isSetObservableProperty()) {
-                sosRequest.setObservedProperties(addChildObservableProperties(sosRequest.getObservedProperties()));
+            if (request.isSetObservableProperty()) {
+                request.setObservedProperties(addChildObservableProperties(request.getObservedProperties()));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkQueryableProcedures(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
+            checkQueryableProcedures(request.getProcedures(), SosConstants.GetObservationParams.procedure.name());
             // add instance and child procedures to request
-            if (sosRequest.isSetProcedure()) {
-                sosRequest.setProcedures(addChildProcedures(addInstanceProcedures(sosRequest.getProcedures())));
+            if (request.isSetProcedure()) {
+                request.setProcedures(addChildProcedures(addInstanceProcedures(request.getProcedures())));
             }
 
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkFeatureOfInterestIdentifiers(sosRequest.getFeatureIdentifiers(),
+            checkFeatureOfInterestIdentifiers(request.getFeatureIdentifiers(),
                     SosConstants.GetObservationParams.featureOfInterest.name());
-            if (sosRequest.isSetFeatureOfInterest()) {
-                sosRequest.setFeatureIdentifiers(addChildFeatures(sosRequest.getFeatureIdentifiers()));
+            if (request.isSetFeatureOfInterest()) {
+                request.setFeatureIdentifiers(addChildFeatures(request.getFeatureIdentifiers()));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkSpatialFilter(sosRequest.getSpatialFilter(),
+            checkSpatialFilter(request.getSpatialFilter(),
                     SosConstants.GetObservationParams.featureOfInterest.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
 
-            if (sosRequest.isSetTemporalFilter()) {
-                checkTemporalFilter(sosRequest.getTemporalFilters(),
+            if (request.isSetTemporalFilter()) {
+                checkTemporalFilter(request.getTemporalFilters(),
                         Sos2Constants.GetObservationParams.temporalFilter.name());
             } else if (getActiveProfile().isReturnLatestValueIfTemporalFilterIsMissingInGetObservation()) {
-                sosRequest.setTemporalFilters(CollectionHelper.list(TEMPORAL_FILTER_LATEST));
+                request.setTemporalFilters(CollectionHelper.list(TEMPORAL_FILTER_LATEST));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
 
         try {
-            if (!sosRequest.isSetResponseFormat()) {
-                sosRequest.setResponseFormat(getActiveProfile().getObservationResponseFormat());
+            if (!request.isSetResponseFormat()) {
+                request.setResponseFormat(getActiveProfile().getObservationResponseFormat());
             }
-            checkResponseFormat(sosRequest.getResponseFormat(), sosRequest.getService(),
-                    sosRequest.getVersion());
+            checkResponseFormat(request.getResponseFormat(), request.getService(),
+                    request.getVersion());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
 
-//        try {
-//            if (sosRequest.isSetResultModel()) {
-//                if (Strings.isNullOrEmpty(sosRequest.getResultModel())) {
-//                    throw new MissingParameterValueException(SosConstants.GetObservationParams.resultType);
-//                } else {
-//                    if (!getResponseFormatsForObservationType(sosRequest.getResultModel(),
-//                                    sosRequest.getService(), sosRequest.getVersion())
-//                            .contains(sosRequest.getResponseFormat())) {
-//                        throw new InvalidParameterValueException().withMessage(
-//                                "The requested resultType {} is not valid for the responseFormat {}!",
-//                                sosRequest.getResultModel(), sosRequest.getResponseFormat());
-//                    }
-//                }
-//            }
-//        } catch (OwsExceptionReport owse) {
-//            exceptions.add(owse);
-//        }
+        try {
+            if (request.isSetResultModel()) {
+                if (request.getResultModel() != null && !request.getResultModel().isEmpty()) {
+                    throw new MissingParameterValueException(SosConstants.GetObservationParams.resultType);
+                } else {
 
-        if (getProfileHandler().getActiveProfile().isMergeValues()) {
-            if (sosRequest.getExtensions() != null && !sosRequest.getExtensions()
+                    if (!getResponseFormatsForObservationType(request.getResultModel(),
+                                    request.getService(), request.getVersion())
+                            .contains(request.getResponseFormat())) {
+                        throw new InvalidParameterValueException().withMessage(
+                                "The requested resultType {} is not valid for the responseFormat {}!",
+                                request.getResultModel(), request.getResponseFormat());
+                    }
+                }
+            }
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+
+        if (getActiveProfile().isMergeValues()) {
+            if (!request.getExtensions()
                     .containsExtension(Sos2Constants.Extensions.MergeObservationsIntoDataArray)) {
                 SwesExtensions extensions = new SwesExtensions();
                 extensions.addExtension(new SwesExtension<SweBoolean>()
@@ -204,16 +214,21 @@ public class SosGetObservationOperatorV20 extends
                                 .setValue(getProfileHandler().getActiveProfile()
                                         .isMergeValues())
                                 .setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())));
-                sosRequest.setExtensions(extensions);
+                request.setExtensions(extensions);
             }
         }
-        checkExtensions(sosRequest, exceptions);
+        try {
+            checkResultFilterExtension(request);
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        checkExtensions(request, exceptions);
         exceptions.throwIfNotEmpty();
 
         // check if parameters are set, if not throw ResponseExceedsSizeLimit
         // exception
         // TODO remove after finishing CITE tests
-        if (sosRequest.isEmpty() && isBlockRequestsWithoutRestriction()) {
+        if (request.isEmpty() && isBlockRequestsWithoutRestriction()) {
             throw new ResponseExceedsSizeLimitException()
                     .withMessage("The response exceeds the size limit! Please define some filtering parameters.");
         }
@@ -227,34 +242,6 @@ public class SosGetObservationOperatorV20 extends
     public void setBlockRequestsWithoutRestriction(boolean flag) {
         this.blockRequestsWithoutRestriction = flag;
     }
-
-//    /**
-//     * checks if mandatory parameter observed property is correct
-//     *
-//     * @param observedProperties
-//     *            list containing the observed properties of the request
-//     *
-//     * @throws OwsExceptionReport
-//     *             if the parameter does not containing any matching
-//     *             observedProperty for the requested offering
-//     */
-//    private void checkObservedProperties(final List<String> observedProperties) throws OwsExceptionReport {
-//        if (observedProperties != null) {
-//            final CompositeOwsException exceptions = new CompositeOwsException();
-//            final Collection<String> validObservedProperties =
-//                    Configurator.getInstance().getCache().getPublishedObservableProperties();
-//            for (final String obsProp : observedProperties) {
-//                if (obsProp.isEmpty()) {
-//                    exceptions.add(new MissingObservedPropertyParameterException());
-//                } else {
-//                    if (!validObservedProperties.contains(obsProp)) {
-//                        exceptions.add(new InvalidObservedPropertyParameterException(obsProp));
-//                    }
-//                }
-//            }
-//            exceptions.throwIfNotEmpty();
-//        }
-//    }
 
     /**
      * checks if the passed offeringId is supported
@@ -286,6 +273,29 @@ public class SosGetObservationOperatorV20 extends
             });
             exceptions.throwIfNotEmpty();
         }
+    }
+
+    protected Set<String> getResponseFormatsForObservationType(String observationType, String service,
+            String version) {
+        Set<String> responseFormats = Sets.newHashSet();
+        for (Encoder<?, ?> e : getEncoderRepository().getEncoders()) {
+            if (e instanceof ObservationEncoder) {
+                final ObservationEncoder<?, ?> oe = (ObservationEncoder<?, ?>) e;
+                Map<String, Set<SupportedType>> supportedResponseFormatObservationTypes =
+                        oe.getSupportedResponseFormatObservationTypes();
+                if (supportedResponseFormatObservationTypes != null
+                        && !supportedResponseFormatObservationTypes.isEmpty()) {
+                    for (final String responseFormat : supportedResponseFormatObservationTypes.keySet()) {
+                        for (SupportedType st : supportedResponseFormatObservationTypes.get(responseFormat)) {
+                            if (st instanceof ObservationType && observationType.equals(((ObservationType) st).getValue())) {
+                                responseFormats.add(responseFormat);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return responseFormats;
     }
 
     @Override

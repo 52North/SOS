@@ -2325,7 +2325,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     @Override
     public void setRequestableProcedureDescriptionFormat(Collection<String> formats) {
         LOG.trace("Adding requestable procedureDescriptionFormat");
-        getRequestableProcedureDescriptionFormat().addAll(formats);
+        this.requestableProcedureDescriptionFormats.addAll(formats);
     }
 
     @Override

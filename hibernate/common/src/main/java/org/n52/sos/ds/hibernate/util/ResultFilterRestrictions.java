@@ -255,8 +255,13 @@ public class ResultFilterRestrictions {
     }
 
     private static DetachedCriteria createLikeDC(DetachedCriteria dc, ComparisonFilter resultFilter, String column) {
-        String value = resultFilter.getValue().replaceAll(resultFilter.getSingleChar(), "_")
-                .replaceAll(resultFilter.getWildCard(), "%");
+        String value = resultFilter.getValue();
+        if (resultFilter.getSingleChar() != null) {
+            value = resultFilter.getValue().replaceAll(resultFilter.getSingleChar(), "_");
+        }
+        if (resultFilter.getWildCard() != null) {
+            value = resultFilter.getValue().replaceAll(resultFilter.getWildCard(), "%");
+        }
         return dc
                 .add(HibernateCriterionHelper.getLikeExpression(ValuedObservation.VALUE, value,
                         resultFilter.getEscapeString(), resultFilter.isMatchCase()))

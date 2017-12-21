@@ -67,7 +67,7 @@ In the [Sensor Web Suite database project](https://github.com/52North/series-hib
 
  The latest changes, additions, bugfixes, etc. can be found in the [RELEASE-NOTES](https://github.com/52North/SOS/blob/website-markdowns/RELEASE-NOTES)
 
-## Referencesirceline
+## References
 
  - [IRCEL-CELINE](http://www.irceline.be/) (Belgium): *Current and archived air quality data for all of Belgium*
  - [Wupperverband](https://www.wupperverband.de/) (Germnay): *Regional water board providing a multitude of hydrological measurment data with the help of SOS standards*

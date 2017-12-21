@@ -48,6 +48,11 @@
             <artifactId>saxon</artifactId>
             <classifier>dom</classifier>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
      <repositories>
 		<repository>

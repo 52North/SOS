@@ -26,11 +26,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.kvp.v2;
+package org.n52.sos.gda;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -38,11 +35,9 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.sos.decode.kvp.v2.GetObservationKvpDecoderv20;
 import org.n52.sos.ogc.filter.FilterConstants;
-import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.request.GetObservationRequest;
 
 import com.google.common.collect.Maps;
@@ -53,13 +48,10 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.io.WKTWriter;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
- * @since 4.0.0
+ * @since 4.4.2
  * 
  */
-public class GetObservationKvpDecoderv20Test {
-    
+public class GetDataAvailabilityKvpDecoderTest  {
     private GetObservationKvpDecoderv20 decoder;
     private Polygon polygon;
     private GeometryFactory geometryFactory;
@@ -78,67 +70,6 @@ public class GetObservationKvpDecoderv20Test {
         });
         this.wktGeometry = new WKTWriter().write(polygon).replaceFirst(" ", "").replaceAll(", ", ",");
     }
-
-    @Test
-    public void should_decode_extension_parameter_MergeObservationsIntoDataArray() throws OwsExceptionReport {
-        final Map<String, String> mapTrue = getDefaultMap();
-        mapTrue.put(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name(), "true");
-        final GetObservationRequest requestTrue = decoder.decode(mapTrue);
-
-        final Map<String, String> mapFalse = getDefaultMap();
-        mapFalse.put(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name(), "false");
-        final GetObservationRequest requestFalse = decoder.decode(mapFalse);
-
-        assertThat(requestTrue.isSetExtensions(), is(TRUE));
-        assertThat(requestTrue.getExtensions()
-                .isBooleanExtensionSet(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), is(TRUE));
-
-        assertThat(requestFalse.isSetExtensions(), is(TRUE));
-        assertThat(requestFalse.getExtensions()
-                .isBooleanExtensionSet(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), is(FALSE));
-    }
-
-    @Test
-    public void should_decode_extension_parameter_language() throws OwsExceptionReport {
-        final Map<String, String> map = getDefaultMap();
-        map.put(OWSConstants.AdditionalRequestParams.language.name(), "ger");
-        final GetObservationRequest request = decoder.decode(map);
-
-        assertThat(request.isSetExtensions(), is(TRUE));
-        assertThat(request.getExtensions().containsExtension(OWSConstants.AdditionalRequestParams.language),
-                is(TRUE));
-        assertThat(request.getExtensions().getExtension(OWSConstants.AdditionalRequestParams.language.name())
-                .getValue(), instanceOf(SweText.class));
-        assertThat(((SweText) request.getExtensions()
-                .getExtension(OWSConstants.AdditionalRequestParams.language.name()).getValue()).getStringValue(),
-                is("ger"));
-    }
-
-    @Test
-    public void should_decode_extension_parameter_crs() throws OwsExceptionReport {
-        final Map<String, String> map = getDefaultMap();
-        map.put(OWSConstants.AdditionalRequestParams.crs.name(), "4852");
-        final GetObservationRequest request = decoder.decode(map);
-
-        assertThat(request.isSetExtensions(), is(TRUE));
-        assertThat(request.getExtensions().containsExtension(OWSConstants.AdditionalRequestParams.crs), is(TRUE));
-        assertThat(
-                request.getExtensions().getExtension(OWSConstants.AdditionalRequestParams.crs.name()).getValue(),
-                instanceOf(SweText.class));
-        assertThat(((SweText) request.getExtensions()
-                .getExtension(OWSConstants.AdditionalRequestParams.crs.name()).getValue()).getValue(), is("4852"));
-    }
-
-    @Test
-    public void should_decode_extension_parameter_resultType() throws OwsExceptionReport {
-        final Map<String, String> map = getDefaultMap();
-        map.put("resultType", "MyObservation");
-        final GetObservationRequest request = decoder.decode(map);
-
-        assertThat(request.isSetResultModel(), is(TRUE));
-        assertThat(request.getResultModel(), is("MyObservation"));
-    }
-    
     
     @Test
     public void should_decode_extension_resultFilter() throws OwsExceptionReport {
@@ -194,8 +125,7 @@ public class GetObservationKvpDecoderv20Test {
         Map<String, String> map = Maps.newHashMap();
         map.put("service", "SOS");
         map.put("version", "2.0.0");
-        map.put("request", "GetObservation");
+        map.put("request", "GetDataAvailability");
         return map;
     }
-
 }

@@ -11,7 +11,8 @@ RELEASE NOTES
  
   --- New features ---
 
-      * 
+      * Result filtering for GetObservation and GetDataAvailability
+      * Spatial filtering for GetDataAvailability
   
   --- Changes ---
   

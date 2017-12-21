@@ -158,4 +158,9 @@ public class ReportingHeaderSQLiteSessionFactory extends AbstractSessionFactoryP
         }
         super.cleanup();
     }
+
+    @Override
+    public int getMaxConnections() {
+        return 0;
+    }
 }

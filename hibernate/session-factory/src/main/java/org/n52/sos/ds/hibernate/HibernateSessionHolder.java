@@ -70,7 +70,7 @@ public class HibernateSessionHolder {
         getConnectionProvider().returnConnection(session);
     }
     
-    private ConnectionProvider getConnectionProvider() {
+    protected ConnectionProvider getConnectionProvider() {
         if (Configurator.getInstance() != null) {
             return Configurator.getInstance().getDataConnectionProvider();
         }

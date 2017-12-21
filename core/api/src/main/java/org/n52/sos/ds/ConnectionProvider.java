@@ -69,4 +69,11 @@ public interface ConnectionProvider extends Cleanupable, ConnectionProviderIdent
      */
     void initialize(Properties properties) throws ConfigurationException;
 
+    /**
+     * Get the max connections number
+     * 
+     * @return The max connection number
+     */
+    int getMaxConnections();
+
 }

@@ -44,6 +44,8 @@ import org.n52.sos.ogc.sos.ResultFilterConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.ogc.sos.SosSpatialFilter;
+import org.n52.sos.ogc.sos.SosSpatialFilterConstants;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.response.AbstractObservationResponse;
@@ -279,7 +281,10 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      */
     @Override
     public SpatialFilter getSpatialFilter() {
-        return spatialFilter;
+        if (hasExtension(SosSpatialFilterConstants.SPATIAL_FILTER)) {
+            return ((SosSpatialFilter) getExtension(SosSpatialFilterConstants.SPATIAL_FILTER)).getValue();
+        } else
+            return spatialFilter;
     }
 
     /**
@@ -364,7 +369,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     @Override
     public boolean isSetSpatialFilter() {
-        if (spatialFilter != null) {
+        if (spatialFilter != null || hasExtension(SosSpatialFilterConstants.SPATIAL_FILTER)) {
             return true;
         }
         return false;
@@ -421,8 +426,10 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     @Override
     public boolean hasSpatialFilteringProfileSpatialFilter() {
-        return isSetSpatialFilter() && getSpatialFilter().getValueReference()
-                .equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE);
+        return isSetSpatialFilter() 
+                && (getSpatialFilter().getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)
+                        || ((SosSpatialFilter) getExtension(SosSpatialFilterConstants.SPATIAL_FILTER)).getValue()
+                                .getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE));
     }
 
     public boolean hasResultFilter() {

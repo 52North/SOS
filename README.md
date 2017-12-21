@@ -69,7 +69,7 @@ In the [Sensor Web Suite database project](https://github.com/52North/series-hib
 
 ## References
 
- - [IRCEL-CELINE](www.irceline.be/) (Belgium): *Current and archived air quality data for all of Belgium*
+ - [IRCEL-CELINE](http://www.irceline.be/) (Belgium): *Current and archived air quality data for all of Belgium*
  - [Wupperverband](https://www.wupperverband.de/) (Germnay): *Regional water board providing a multitude of hydrological measurment data with the help of SOS standards*
  - [Swedish EPA](http://www.swedishepa.se/)/[IVL](http://www.ivl.se/)/[SMHI](http://www.smhi.se/) (Schweden): *Current and archived air quality data for all of Sweden, as well as delivery this data to the European Protection Agency*
  - [RIVM](http://www.rivm.nl/) (Netherlands): *Current and archived air quality data for all of the Netherlands*

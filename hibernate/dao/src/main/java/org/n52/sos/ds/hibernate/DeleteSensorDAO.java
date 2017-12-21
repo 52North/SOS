@@ -45,6 +45,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservation
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -147,6 +148,11 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
             throw new NoApplicableCodeException().withMessage("The required '%s' implementation is no supported!",
                     AbstractObservationDAO.class.getName());
         }
+    }
+    
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
     }
 
 }

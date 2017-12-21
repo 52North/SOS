@@ -87,4 +87,9 @@ public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInter
         throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg).setStatus(status);
     }
 
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
+
 }

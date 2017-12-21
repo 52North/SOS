@@ -49,6 +49,7 @@ import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.Validation;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.uvf.UVFSettings;
@@ -82,6 +83,11 @@ public class UVFRequestModifier implements RequestResponseModifier<AbstractObser
 
     @Override
     public AbstractObservationRequest modifyRequest(AbstractObservationRequest request) throws OwsExceptionReport {
+        // check for response format to avoid incomprehensible exception
+        if (request.isSetResponseFormat()) {
+            SosHelper.checkResponseFormat(request.getResponseFormat(), request.getService(),
+                    request.getVersion());
+        }
         if ((request.getRequestContext().getAcceptType().isPresent()
                 && request.getRequestContext().getAcceptType().get().contains(UVFConstants.CONTENT_TYPE_UVF))
                 || (request.isSetResponseFormat() 

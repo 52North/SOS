@@ -312,6 +312,13 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                     mpt.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sosName));
                 }
             }
+            
+            if (sampFeat.isSetDescription()) {
+                if (!mpt.isSetDescription()) {
+                    mpt.addNewDescription();
+                }
+                mpt.getDescription().setStringValue(sampFeat.getDescription());
+            }
 
             // set type
             // TODO: check if special definition

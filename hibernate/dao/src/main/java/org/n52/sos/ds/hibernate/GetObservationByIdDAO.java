@@ -89,6 +89,11 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 
     @Override
     public GetObservationByIdResponse getObservationById(GetObservationByIdRequest request) throws OwsExceptionReport {

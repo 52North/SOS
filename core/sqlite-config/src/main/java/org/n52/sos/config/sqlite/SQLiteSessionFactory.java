@@ -225,4 +225,9 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
     public String getConnectionProviderIdentifier() {
         return "sqLiteHibernate";
     }
+
+    @Override
+    public int getMaxConnections() {
+        return 0;
+    }
 }

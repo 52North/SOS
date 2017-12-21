@@ -68,8 +68,16 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
      */
     private int cacheThreadCount = 5;
 
+    /**
+     * Get the defined cache thread count or the maximum connection count minus
+     * one to avoid hanging threads during the cache update.
+     * 
+     * @return Defined cache thread count or the maximum connection count minus
+     *         one
+     */
     public int getCacheThreadCount() {
-        return cacheThreadCount;
+        int maxConnections = getConnectionProvider().getMaxConnections();
+        return maxConnections > 0 && cacheThreadCount >= maxConnections ? maxConnections - 1 : cacheThreadCount;
     }
 
     @Setting(CACHE_THREAD_COUNT)

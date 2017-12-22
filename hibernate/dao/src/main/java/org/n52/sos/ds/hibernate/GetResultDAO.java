@@ -218,6 +218,11 @@ public class GetResultDAO extends AbstractGetResultHandler {
         return HibernateHelper.isEntitySupported(ResultTemplate.class);
     }
 
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+    }
+
     /**
      * Query observations from database depending on requested filters
      *

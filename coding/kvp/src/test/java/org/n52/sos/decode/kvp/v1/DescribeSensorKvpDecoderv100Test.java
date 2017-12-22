@@ -38,13 +38,12 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
 import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
@@ -78,27 +77,7 @@ public class DescribeSensorKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
         assertThat(req.getProcedure(), is(PROCEDURE));
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void missingService() throws DecodingException {
-        decoder.decode(createMap(EMPTY_STRING, Sos1Constants.SERVICEVERSION, PROCEDURE, OUTPUT_FORMAT));
-    }
-
-    @Test(expected = OwsExceptionReport.class)
-    public void missingVersion() throws DecodingException {
-        decoder.decode(createMap(SosConstants.SOS, EMPTY_STRING, PROCEDURE, OUTPUT_FORMAT));
-    }
-
-    @Test(expected = OwsExceptionReport.class)
-    public void missingProcedure() throws DecodingException {
-        decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, EMPTY_STRING, OUTPUT_FORMAT));
-    }
-
-    @Test(expected = OwsExceptionReport.class)
-    public void missingOutputFormat() throws DecodingException {
-        decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, PROCEDURE, EMPTY_STRING));
-    }
-
-    @Test(expected = OwsExceptionReport.class)
+    @Test(expected = DecodingException.class)
     public void additionalParameter() throws DecodingException {
         final Map<String, String> map =
                 createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, PROCEDURE, OUTPUT_FORMAT);

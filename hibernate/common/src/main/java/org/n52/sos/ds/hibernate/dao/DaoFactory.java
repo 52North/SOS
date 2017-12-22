@@ -88,7 +88,7 @@ public class DaoFactory {
     private I18NDAORepository i18NDAORepository;
 
     @Inject
-    public DaoFactory(I18NDAORepository i18NDAORepository) {
+    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
         this.i18NDAORepository = i18NDAORepository;
     }
 

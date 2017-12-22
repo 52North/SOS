@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Assert;
 import org.junit.Test;
+
 import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.iceland.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 import org.n52.iceland.statistics.impl.resolvers.ExceptionEventResolver;

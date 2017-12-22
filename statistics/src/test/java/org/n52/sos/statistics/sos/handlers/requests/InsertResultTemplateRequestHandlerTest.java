@@ -34,6 +34,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
@@ -56,7 +57,7 @@ public class InsertResultTemplateRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertEquals("id", map.get(SosDataMapping.IRT_IDENTIFIER.getName()));
+        Assert.assertEquals(new CodeWithAuthority("id"), map.get(SosDataMapping.IRT_IDENTIFIER.getName()));
         Assert.assertNotNull(map.get(SosDataMapping.IRT_OBSERVATION_TEMPLATE.getName()));
         // Assert.assertEquals("xml",
         // map.get(SosDataMapping.IRT_RESULT_ENCODING));

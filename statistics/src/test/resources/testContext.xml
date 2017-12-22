@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
+    
+    <bean id="settingValueFactory" class="org.n52.faroe.json.JsonSettingValueFactory" primary="true" />
+    
+    <bean id="elasticsearchSettings" class="org.n52.iceland.statistics.api.ElasticsearchSettings" depends-on="settingValueFactory" primary="true">
+        <property name="loggingEnabled" value="true"></property>
+        <property name="clusterName" value="elasticsearch"></property>
+        <property name="nodeConnectionMode" value="statistics.elasticsearch.connection_mode.transport_client"></property>
+        <property name="indexId" value="ogc-statistics-index"></property>
+        <property name="typeId" value="ogc-type"></property>
+        <property name="uuid" value="test-uuid"></property>
+        <property name="clusterNodes" value="localhost"></property>
+        <property name="settingValueFactory" ref="settingValuefactory" />
+    </bean>
 
-	<bean id="elasticsearchSettings" class="org.n52.iceland.statistics.api.ElasticsearchSettings" primary="true">
-		<property name="loggingEnabled" value="true"></property>
-		<property name="clusterName" value="elasticsearch"></property>
-		<property name="nodeConnectionMode" value="statistics.elasticsearch.connection_mode.transport_client"></property>
-		<property name="indexId" value="ogc-statistics-index"></property>
-		<property name="typeId" value="ogc-type"></property>
-		<property name="uuid" value="test-uuid"></property>
-		<property name="clusterNodes" value="localhost"></property>
-	</bean>
+    <bean id="adminDataHandler" class="org.n52.iceland.statistics.impl.ElasticsearchAdminHandler" depends-on="elasticsearchSettings" primary="true" init-method="init" />
 
-	<bean id="adminDataHandler" class="org.n52.iceland.statistics.impl.ElasticsearchAdminHandler" depends-on="elasticsearchSettings" primary="true" init-method="init"/>
+    <bean id="statisticsLocationUtil" class="org.n52.iceland.statistics.impl.geolocation.StatisticsLocationUtil" primary="true" init-method="init"></bean>
 
-	<bean id="statisticsLocationUtil" class="org.n52.iceland.statistics.impl.StatisticsLocationUtil" primary="true" init-method="init"></bean>
+    <bean id="settingsService" class="mock.MockSettingsService" />
 
-	<bean id="settingsService" class="mock.MockSettingsService" />
+    <bean id="servletContext" class="mock.MockServletContext" />
+    
 
-	<bean id="servletContext" class="mock.MockServletContext"></bean>
-
-	<bean id="serviceBus" class="org.n52.iceland.event.ServiceEventBus"></bean>
+    <bean id="serviceBus" class="org.n52.janmayen.event.EventBus"></bean>
 
 </beans>

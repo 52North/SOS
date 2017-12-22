@@ -99,6 +99,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     private static GeometryHandler instance;
     private static final String EPSG = "EPSG";
     private static final String EPSG_PREFIX = EPSG + ":";
+    private static final String EPSG_4326_WITH_PREFIX = "EPSG:4326";
     private boolean datasoureUsesNorthingFirst;
     private List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
     private int storageEPSG;
@@ -254,7 +255,8 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     public void setSupportedCRS(final String supportedCRS) throws ConfigurationError {
         // Validation.notNull("Supported CRS codes as CSV string",
         // supportedCRS);
-        this.supportedCRS = StringHelper.splitToSet(supportedCRS, ",");
+        this.supportedCRS.clear();
+        this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, ","));
     }
 
     /**
@@ -345,12 +347,15 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
                 } else {
                     throw createException(entry, null);
                 }
-            } catch (NumberFormatException ex) {
+            }
+            catch (NumberFormatException ex) {
                 throw createException(entry, ex);
             }
             newEpsgCodes.add(r);
+            epsgsWithNorthingFirstAxisOrder.add(r);
         }
-        epsgsWithNorthingFirstAxisOrder = newEpsgCodes;
+        epsgsWithNorthingFirstAxisOrder.clear();
+        epsgsWithNorthingFirstAxisOrder.addAll(newEpsgCodes);
         return this;
     }
 
@@ -715,6 +720,11 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
 
     public String addOgcCrsPrefix(int crs) {
         return this.srsNamePrefixUrl + crs;
+    }
+    
+    private ConfigurationError createException(String entry, Throwable ex) {
+        return new ConfigurationError(String.format("Invalid format of entry in '%s': %s",
+                FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry), ex);
     }
 
     private ConfigurationError createException(String entry, Throwable ex) {

@@ -28,8 +28,6 @@
  */
 package org.n52.sos.request.operator;
 
-import static org.n52.shetland.ogc.sos.SosConstants.SOS;
-import static org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants.CONFORMANCE_CLASSES;
 
 import java.util.Collections;
 import java.util.Set;
@@ -58,8 +56,10 @@ public class DeleteObservationRequestOperator
         implements RequestOperator {
 
     public DeleteObservationRequestOperator() {
-        super(SOS, Sos2Constants.SERVICEVERSION, DeleteObservationConstants.Operations.DeleteObservation.name(),
-                DeleteObservationRequest.class);
+        super(SosConstants.SOS,
+              Sos2Constants.SERVICEVERSION,
+              DeleteObservationConstants.Operations.DeleteObservation,
+              DeleteObservationRequest.class);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class DeleteObservationRequestOperator
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
         if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
-            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+            return Collections.unmodifiableSet(DeleteObservationConstants.CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
     }

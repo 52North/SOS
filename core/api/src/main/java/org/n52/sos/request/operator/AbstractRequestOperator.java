@@ -119,7 +119,8 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 @Configurable
-public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse> implements RequestOperator {
+public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
+        implements RequestOperator {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRequestOperator.class);
 
     public static final String EXPOSE_CHILD_OBSERVABLE_PROPERTIES = "service.exposeChildObservableProperties";
@@ -266,7 +267,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     @Override
     public boolean isSupported() {
-        return getOperationHandler() != null && getOperationHandler().isSupported();
+        return getOptionalOperationHandler().isPresent() && getOptionalOperationHandler().get().isSupported();
     }
 
     protected D getOperationHandler() {

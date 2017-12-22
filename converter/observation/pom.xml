@@ -7,7 +7,6 @@
         <version>5.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>observation-converter</artifactId>
-    <packaging>jar</packaging>
     <name>52°North SOS - Observation Converter</name>
     <description>52°North SOS - Observation Converter</description>
     <dependencies>
@@ -38,10 +37,12 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>

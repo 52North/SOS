@@ -32,10 +32,10 @@ package org.n52.sos.request.operator;
 import javax.inject.Inject;
 
 import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.request.handler.OperationHandler;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.iceland.request.handler.OperationHandler;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
@@ -53,8 +53,14 @@ public abstract class AbstractTransactionalRequestOperator<D extends OperationHa
 
     private TransactionalSecurityConfiguration transactionalSecurityConfiguration;
 
-    public AbstractTransactionalRequestOperator(String service, String version, String operationName, Class<Q> requestType) {
+    public AbstractTransactionalRequestOperator(String service, String version, String operationName,
+                                                Class<Q> requestType) {
         super(service, version, operationName, TRANSACTIONAL_ACTIVATION_STATE, requestType);
+    }
+
+    public AbstractTransactionalRequestOperator(String service, String version, Enum<?> operationName,
+                                                Class<Q> requestType) {
+        this(service, version, operationName.name(), requestType);
     }
 
     @Inject

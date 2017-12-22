@@ -241,6 +241,11 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
         return response;
     }
 
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+    }
+
     /**
      * Create OmObservation from result values
      *

@@ -137,6 +137,11 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
         return response;
     }
 
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
+
     private AbstractObservationRequest getRequest(DeleteObservationRequest request) {
         return (AbstractObservationRequest) new GetObservationRequest().setService(request.getService())
                 .setVersion(request.getVersion());

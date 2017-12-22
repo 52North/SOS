@@ -28,10 +28,11 @@
  */
 package org.n52.sos.web.install;
 
+import static java.util.stream.Collectors.toMap;
+
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 
@@ -39,11 +40,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.SettingDefinition;
-import org.n52.faroe.SettingValue;
 import org.n52.faroe.SettingValueFactory;
 import org.n52.iceland.ds.Datasource;
-import org.n52.faroe.ConfigurationError;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
 
@@ -62,8 +60,6 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
 
     @Inject
     private Collection<Datasource> datasources;
-
-
 
     @Override
     protected Step getStep() {
@@ -95,20 +91,22 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                 if (createTables) {
                     if (alreadyExistent) {
                         if (!overwriteTables) {
-                            throw new InstallationSettingsError(c,
-                                                                ErrorMessages.TABLES_ALREADY_CREATED_BUT_SHOULD_NOT_OVERWRITE);
+                            throw new InstallationSettingsError(
+                                    c, ErrorMessages.TABLES_ALREADY_CREATED_BUT_SHOULD_NOT_OVERWRITE);
                         } else {
                             try {
                                 datasource.validateSchema(c.getDatabaseSettings());
                             } catch (ConfigurationError e) {
                                 throw new InstallationSettingsError(c, String.format(
-                                        ErrorMessages.EXISTING_SCHEMA_DIFFERS_DROP_CREATE_SCHEMA, e.getMessage()), e);
+                                                                    ErrorMessages.EXISTING_SCHEMA_DIFFERS_DROP_CREATE_SCHEMA, e
+                                                                            .getMessage()), e);
                             }
                         }
                     }
                     if (!datasource.checkSchemaCreation(c.getDatabaseSettings())) {
-                        throw new InstallationSettingsError(c, String.format(
-                                                            ErrorMessages.COULD_NOT_CREATE_SOS_TABLES, "schema creation test table"));
+                        throw new InstallationSettingsError(
+                                c, String.format(ErrorMessages.COULD_NOT_CREATE_SOS_TABLES,
+                                                 "schema creation test table"));
                     }
                 } else if (!alreadyExistent) {
                     throw new InstallationSettingsError(c, ErrorMessages.NO_TABLES_AND_SHOULD_NOT_CREATE);
@@ -116,14 +114,15 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                     try {
                         datasource.validateSchema(c.getDatabaseSettings());
                     } catch (ConfigurationError e) {
-                        if (!Strings.isNullOrEmpty(e.getMessage())
-                                && (e.getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_FOI_COL_IN_OBS_TAB) || e
-                                        .getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_SERIES_COL_IN_OBS_TAB))) {
-                            throw new InstallationSettingsError(c, String.format(
-                                    ErrorMessages.EXISTING_SCHEMA_DIFFERS_UPDATE_SCHEMA, e.getMessage()), e);
+                        if (!Strings.isNullOrEmpty(e.getMessage()) &&
+                            (e.getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_FOI_COL_IN_OBS_TAB) || e
+                             .getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_SERIES_COL_IN_OBS_TAB))) {
+                            throw new InstallationSettingsError(
+                                    c, String.format(ErrorMessages.EXISTING_SCHEMA_DIFFERS_UPDATE_SCHEMA,
+                                                     e.getMessage()), e);
                         } else if (!forceUpdateTables) {
-                            throw new InstallationSettingsError(c, String.format(
-                                    ErrorMessages.EXISTING_SCHEMA_REQUIRES_UPDATE, e.getMessage()), e);
+                            throw new InstallationSettingsError(
+                                    c, String.format(ErrorMessages.EXISTING_SCHEMA_REQUIRES_UPDATE, e.getMessage()), e);
                         }
                     }
                 }
@@ -153,7 +152,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
         if (datasource.needsSchema()) {
             Boolean createTablesParameter = parseBoolean(parameters, InstallConstants.CREATE_TABLES_PARAMETER);
             if (createTablesParameter != null) {
-                createTables = (overwriteTables) ? overwriteTables : createTablesParameter;
+                createTables = overwriteTables ? overwriteTables : createTablesParameter;
             }
         }
         parameters.remove(InstallConstants.CREATE_TABLES_PARAMETER);
@@ -167,7 +166,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
         if (datasource.needsSchema()) {
             Boolean updateTablesParameter = parseBoolean(parameters, InstallConstants.UPDATE_TABLES_PARAMETER);
             if (updateTablesParameter != null) {
-                updateTables = (createTables) ? false : updateTablesParameter;
+                updateTables = createTables ? false : updateTablesParameter;
             }
         }
         parameters.remove(InstallConstants.UPDATE_TABLES_PARAMETER);
@@ -176,22 +175,14 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
     }
 
     protected Map<String, Object> parseDatasourceSettings(Datasource datasource, Map<String, String> parameters) {
-        Set<SettingDefinition<?>> defs = datasource.getSettingDefinitions();
-        Map<String, Object> parsedSettings = new HashMap<>(parameters.size());
-        for (SettingDefinition<?> def : defs) {
-            SettingValue<?> newValue =
-                    this.settingValueFactory.newSettingValue(def, parameters.get(def.getKey()));
-            parsedSettings.put(def.getKey(), newValue.getValue());
-        }
-        return parsedSettings;
+        return datasource.getSettingDefinitions().stream()
+                .collect(toMap(def -> def.getKey(),
+                               def -> this.settingValueFactory.newSettingValue(def, parameters.get(def.getKey()))
+                                       .getValue()));
     }
 
     protected Map<String, Datasource> getDatasources() {
-        Map<String, Datasource> dialects = new HashMap<>(this.datasources.size());
-        for (Datasource dd : this.datasources) {
-            dialects.put(dd.getDialectName(), dd);
-        }
-        return dialects;
+        return this.datasources.stream().collect(toMap(Datasource::getDialectName, Function.identity()));
     }
 
     protected Datasource checkDatasource(Map<String, String> parameters, InstallationConfiguration settings)
@@ -201,7 +192,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
         Datasource datasource = getDatasources().get(datasourceName);
         if (datasource == null) {
             throw new InstallationSettingsError(settings, String.format(ErrorMessages.INVALID_DATASOURCE,
-                                                        datasourceName));
+                                                                        datasourceName));
         } else {
             settings.setDatasource(datasource);
         }

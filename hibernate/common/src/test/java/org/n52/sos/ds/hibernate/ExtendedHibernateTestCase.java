@@ -66,7 +66,10 @@ public abstract class ExtendedHibernateTestCase extends HibernateTestCase {
     }
 
     protected static DaoFactory getDaoFactory() {
-        return new DaoFactory(new I18NDAORepository());
+        I18NDAORepository i18NDAORepository = new I18NDAORepository();
+        DaoFactory daoFactory = new DaoFactory();
+        daoFactory.setI18NDAORepository(i18NDAORepository);
+        return daoFactory;
     }
 
     protected static AbstractObservationDAO getObservationDao() throws OwsExceptionReport {

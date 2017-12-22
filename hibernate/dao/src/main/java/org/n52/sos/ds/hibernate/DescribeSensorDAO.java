@@ -174,6 +174,11 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
         return operationParameters;
     }
 
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
+
     /**
      * Get procedure description for non transactional SOS
      *

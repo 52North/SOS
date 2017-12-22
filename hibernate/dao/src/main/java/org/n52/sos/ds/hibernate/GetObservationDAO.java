@@ -235,6 +235,11 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         return true;
     }
 
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
+
     /**
      * Query observations from database depending on requested filters
      *

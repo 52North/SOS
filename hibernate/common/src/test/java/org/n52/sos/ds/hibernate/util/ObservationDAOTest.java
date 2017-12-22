@@ -61,9 +61,7 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationDAOTest.class);
 
     private AbstractObservationDAO observationDAO = null;
-
-    private final DaoFactory daoFactory = new DaoFactory(new I18NDAORepository());
-    private final OfferingDAO offeringDAO = new OfferingDAO(daoFactory);
+    private OfferingDAO offeringDAO;
 
     @Before
     public void fillObservations() throws OwsExceptionReport {
@@ -71,7 +69,11 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
 
         Transaction transaction = null;
         try {
+            I18NDAORepository i18NDAORepository = new I18NDAORepository();
+            DaoFactory daoFactory = new DaoFactory();
+            daoFactory.setI18NDAORepository(i18NDAORepository);
             observationDAO = daoFactory.getObservationDAO();
+            offeringDAO = daoFactory.getOfferingDAO();
             transaction = session.beginTransaction();
             HibernateObservationBuilder b;
             b = new HibernateObservationBuilder(session, daoFactory);

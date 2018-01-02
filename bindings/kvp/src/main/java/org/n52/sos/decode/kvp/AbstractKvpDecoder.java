@@ -41,6 +41,7 @@ import java.util.RandomAccess;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.locationtech.jts.io.WKTWriter;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.decode.Decoder;
@@ -49,6 +50,7 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
@@ -89,6 +91,11 @@ import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.odata.ODataFesParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 
 /**
  * @since 4.0.0
@@ -541,12 +548,22 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         }
     }
 
-    private SpatialFilter convertSpatialFilter(org.n52.shetland.ogc.filter.SpatialFilter filter) {
-        SpatialFilter spatialFilter = new SpatialFilter();
-        spatialFilter.setGeometry(filter.getGeometry().toGeometry());
-        spatialFilter.setOperator(convertSpatialOperator(filter.getOperator()));
-        spatialFilter.setValueReference(filter.getValueReference());
-        return spatialFilter;
+    private SpatialFilter convertSpatialFilter(org.n52.shetland.ogc.filter.SpatialFilter filter) throws CodedException {
+        try {
+            SpatialFilter spatialFilter = new SpatialFilter();
+            spatialFilter
+                    .setGeometry(new WKTReader(convertGeometryFactory(filter.getGeometry().toGeometry().getFactory()))
+                            .read(new WKTWriter().write(filter.getGeometry().toGeometry())));
+            spatialFilter.setOperator(convertSpatialOperator(filter.getOperator()));
+            spatialFilter.setValueReference(filter.getValueReference());
+            return spatialFilter;
+        } catch (ParseException e) {
+            throw new NoApplicableCodeException().causedBy(e);
+        }
+    }
+
+    private GeometryFactory convertGeometryFactory(org.locationtech.jts.geom.GeometryFactory factory) {
+        return new GeometryFactory(new PrecisionModel(), factory.getSRID());
     }
 
     private SpatialOperator convertSpatialOperator(

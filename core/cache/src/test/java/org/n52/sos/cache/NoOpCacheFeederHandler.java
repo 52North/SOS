@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,33 +26,27 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.util;
+package org.n52.sos.cache;
 
-import java.util.Random;
+import java.util.Collection;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.CacheFeederHandler;
 
-public class JTSHelperForTesting {
+public class NoOpCacheFeederHandler
+        implements
+        CacheFeederHandler {
 
-    private static final Random RANDOM = new Random();
+    @Override
+    public void updateCacheOfferings(SosWritableContentCache cache, Collection<String> offerings)
+            throws OwsExceptionReport {
 
-    public static Coordinate randomCoordinate() {
-        return new Coordinate(RANDOM.nextDouble(), RANDOM.nextDouble(), RANDOM.nextDouble());
     }
 
-    public static Coordinate[] randomCoordinates(int size) {
-        Coordinate[] coordinates = new Coordinate[size];
-        for (int i = 0; i < size; ++i) {
-            coordinates[i] = randomCoordinate();
-        }
-        return coordinates;
+    @Override
+    public void updateCache(SosWritableContentCache cache)
+            throws OwsExceptionReport {
+
     }
 
-    public static Coordinate[] randomCoordinateRing(int size) {
-        Coordinate[] coordinates = randomCoordinates(size);
-        if (size > 0) {
-            coordinates[size - 1] = coordinates[0];
-        }
-        return coordinates;
-    }
 }

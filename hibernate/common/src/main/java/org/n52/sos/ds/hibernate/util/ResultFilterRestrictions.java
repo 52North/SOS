@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -256,8 +256,13 @@ public class ResultFilterRestrictions {
     }
 
     private static DetachedCriteria createLikeDC(DetachedCriteria dc, ComparisonFilter resultFilter, String column) {
-        String value = resultFilter.getValue().replaceAll(resultFilter.getSingleChar(), "_")
-                .replaceAll(resultFilter.getWildCard(), "%");
+        String value = resultFilter.getValue();
+        if (resultFilter.getSingleChar() != null) {
+            value = resultFilter.getValue().replaceAll(resultFilter.getSingleChar(), "_");
+        }
+        if (resultFilter.getWildCard() != null) {
+            value = resultFilter.getValue().replaceAll(resultFilter.getWildCard(), "%");
+        }
         return dc
                 .add(HibernateCriterionHelper.getLikeExpression(ValuedObservation.VALUE, value,
                         resultFilter.getEscapeString(), resultFilter.isMatchCase()))

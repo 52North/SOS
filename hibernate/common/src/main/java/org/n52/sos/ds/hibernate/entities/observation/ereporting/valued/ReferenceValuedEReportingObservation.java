@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -87,11 +87,6 @@ public class ReferenceValuedEReportingObservation
        this.href = href;
     }
 
-    @Override
-    public boolean isSetHref() {
-        return StringHelper.isNotEmpty(getHref());
-    }
-
     /**
      * @return the title
      */
@@ -106,10 +101,6 @@ public class ReferenceValuedEReportingObservation
         this.title = title;
     }
 
-    public boolean isSetTitle() {
-        return StringHelper.isNotEmpty(getTitle());
-    }
-
     @Override
     public String getRole() {
         return role;
@@ -118,11 +109,6 @@ public class ReferenceValuedEReportingObservation
     @Override
     public void setRole(String role) {
         this.role = role;
-    }
-
-    @Override
-    public boolean isSetRole() {
-        return StringHelper.isNotEmpty(getRole());
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -52,7 +52,6 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
-import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
@@ -336,13 +335,13 @@ public abstract class AbstractSeriesDAO
         if (CollectionHelper.isNotEmpty(features)) {
             addFeatureOfInterestToCriteria(c, features);
         }
-        if (StringHelper.isNotEmpty(observedProperty)) {
+        if (!Strings.isNullOrEmpty(observedProperty)) {
             addObservablePropertyToCriteria(c, observedProperty);
         }
-        if (StringHelper.isNotEmpty(offering)) {
+        if (!Strings.isNullOrEmpty(offering)) {
             addOfferingToCriteria(c, offering);
         }
-        if (StringHelper.isNotEmpty(procedure)) {
+        if (!Strings.isNullOrEmpty(procedure)) {
             addProcedureToCriteria(c, procedure);
         }
         return c;
@@ -754,7 +753,7 @@ public abstract class AbstractSeriesDAO
             Session session) throws OwsExceptionReport {
         if (request.hasSpatialFilter()) {
             SpatialFilter filter = request.getSpatialFilter();
-            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
+            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(filter.getGeometry());
             if (filter.getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)) {
                 DetachedCriteria dc = DetachedCriteria.forClass(getObservationFactory().observationClass());
                 dc.add(SpatialRestrictions.filter(Observation.SAMPLING_GEOMETRY, filter.getOperator(),
@@ -775,7 +774,7 @@ public abstract class AbstractSeriesDAO
             Session session) throws OwsExceptionReport {
         if (request.isSetSpatialFilter()) {
             SpatialFilter filter = request.getSpatialFilter();
-            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
+            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(filter.getGeometry());
             if (filter.getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)) {
                 DetachedCriteria dc = DetachedCriteria.forClass(getObservationFactory().observationClass());
                 dc.add(SpatialRestrictions.filter(Observation.SAMPLING_GEOMETRY, filter.getOperator(),

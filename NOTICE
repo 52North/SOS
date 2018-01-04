@@ -10,7 +10,11 @@ This project includes:
   52North SOS Integration and Compliance Common under Eclipse Public License 1.0
   52°North Aggregated Third Party modules under GPLv2
   52°North AQD - 1.0 XML Coding under GPLv2
+  52°North Faroe Annotations under The Apache Software License, Version 2.0
+  52°North Faroe Utilities under The Apache Software License, Version 2.0
+  52°North Jan Mayen under The Apache Software License, Version 2.0
   52°North Sensor Observation Service under GPLv2
+  52°North Shetland under The Apache Software License, Version 2.0
   52°North SOS -  GMLCOV 1.0 XML Request Coding under GPLv2
   52°North SOS - 2.0 XML Request Coding under GPLv2
   52°North SOS - Abstract Identifier Modifier Modules under GPLv2
@@ -120,10 +124,16 @@ This project includes:
   52°North Svalbard - SOS RF 1.0 XML Coding under GPLv2
   52°North Svalbard - SOS SF 1.0 XML Coding under GPLv2
   52°North Svalbard - Svalbard Related Offering Coding extension under GPLv2
+  52°North Svalbard Core under The Apache Software License, Version 2.0
+  52°North Svalbard OData under The Apache Software License, Version 2.0
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
                 License
+  abego TreeLayout Core under BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)
+  ANTLR 4 Runtime under BSD 3-Clause License
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
+  Apache Commons Codec under Apache License, Version 2.0
+  Apache Commons Lang under The Apache Software License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
   Apache HttpClient Mime under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
@@ -210,6 +220,7 @@ This project includes:
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
+  javax.inject under The Apache Software License, Version 2.0
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging I18n Annotations under Public Domain
   JCL 1.1.1 implemented over SLF4J under MIT License
@@ -243,6 +254,10 @@ This project includes:
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0
   OASIS WS-Resources specification schemas v1.2 under The Apache Software License, Version 2.0
   Objenesis under MIT License
+  odata-commons-api under The Apache Software License, Version 2.0
+  odata-commons-core under The Apache Software License, Version 2.0
+  odata-server-api under The Apache Software License, Version 2.0
+  odata-server-core under The Apache Software License, Version 2.0
   OGC Filter schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC GML Coverage schema (spec. v1.0) under The Apache Software License, Version 2.0
   OGC GML schema (spec. v3.1.1) under The Apache Software License, Version 2.0

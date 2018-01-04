@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.io.request.IoParameters;
-import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.proxy.db.dao.ProxyFeatureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.FeatureEntity;
@@ -51,6 +50,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.ProxyQueryHelper;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
+import org.n52.sos.util.JTSConverter;
 import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Strings;
@@ -145,9 +145,9 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
         }
         if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
             if (getProcedureCreationContext().getGeometryHandler() != null) {
-            sampFeat.setGeometry(getProcedureCreationContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometryEntity().getGeometry()));
+            sampFeat.setGeometry(getProcedureCreationContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(feature.getGeometryEntity().getGeometry()));
             } else {
-                sampFeat.setGeometry(feature.getGeometryEntity().getGeometry());
+                sampFeat.setGeometry(JTSConverter.convert(feature.getGeometryEntity().getGeometry()));
             }
         }
         final Set<FeatureEntity> parentFeatures = feature.getParents();

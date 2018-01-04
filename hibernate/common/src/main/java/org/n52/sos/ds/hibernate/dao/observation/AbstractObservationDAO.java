@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -56,6 +56,8 @@ import org.hibernate.spatial.criterion.SpatialProjections;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
@@ -157,14 +159,15 @@ import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+//import com.vividsolutions.jts.geom.Envelope;
+//import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract Hibernate data access class for observations.
@@ -1319,7 +1322,7 @@ public abstract class AbstractObservationDAO
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
             c.add(SpatialRestrictions.filter(Observation.SAMPLING_GEOMETRY, request.getSpatialFilter().getOperator(),
                     getGeometryHandler()
-                            .switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter().getGeometry())));
+                            .switchCoordinateAxisFromToDatasourceIfNeededAndConvert(request.getSpatialFilter().getGeometry())));
         }
 
     }
@@ -1367,13 +1370,13 @@ public abstract class AbstractObservationDAO
                 criteria.createCriteria(Observation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
                 LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}",
                         HibernateHelper.getSqlString(criteria));
-                Geometry geom = (Geometry) criteria.uniqueResult();
+                Geometry geom = JTSConverter.convert((com.vividsolutions.jts.geom.Geometry) criteria.uniqueResult());
                 geom = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
                 if (geom != null) {
                     return new ReferencedEnvelope(geom.getEnvelopeInternal(), getGeometryHandler().getStorageEPSG());
                 }
             } else {
-                Envelope envelope = null;
+                Envelope envelope = new Envelope();
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
                 criteria.createCriteria(AbstractObservation.OFFERINGS)
                         .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
@@ -1386,7 +1389,7 @@ public abstract class AbstractObservationDAO
                             .map(HasSamplingGeometry::getSamplingGeometry).filter(Objects::nonNull)
                             .filter(geom -> (geom != null && geom.getEnvelopeInternal() != null))
                             .forEachOrdered((geom) -> {
-                                envelope.expandToInclude(geom.getEnvelopeInternal());
+                                envelope.expandToInclude(JTSConverter.convert(geom.getEnvelopeInternal()));
                             });
                     if (!envelope.isNull()) {
                         return new ReferencedEnvelope(envelope, getGeometryHandler().getStorageEPSG());
@@ -1406,11 +1409,11 @@ public abstract class AbstractObservationDAO
 
     public abstract String addProcedureAlias(Criteria criteria);
 
-    public abstract List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
+    public abstract List<org.locationtech.jts.geom.Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
 
     public abstract Long getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport;
 
-    public abstract Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
+    public abstract org.locationtech.jts.geom.Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
 
     public abstract ObservationFactory getObservationFactory();
 
@@ -1595,7 +1598,7 @@ public abstract class AbstractObservationDAO
 
         private final ObservationFactory observationFactory;
 
-        private final OmObservation sosObservation;
+        private final OmObservation omObservation;
 
         private final boolean childObservation;
 
@@ -1620,8 +1623,8 @@ public abstract class AbstractObservationDAO
             this.observationConstellations = hObservationConstellations;
             this.featureOfInterest = hFeature;
             this.caches = caches;
-            this.sosObservation = observation;
-            this.samplingGeometry = samplingGeometry != null ? samplingGeometry : getSamplingGeometry(sosObservation);
+            this.omObservation = observation;
+            this.samplingGeometry = samplingGeometry != null ? samplingGeometry : getSamplingGeometry(omObservation);
             this.session = session;
             this.daos = daos;
             this.observationFactory = daos.observation().getObservationFactory();
@@ -1638,7 +1641,7 @@ public abstract class AbstractObservationDAO
              * phenTimeEnd, resultTime, depth/height parameter (same observation
              * different depth/height)
              */
-            daos.observation.checkForDuplicatedObservations(sosObservation, observationConstellations.iterator().next(), session);
+            daos.observation.checkForDuplicatedObservations(omObservation, observationConstellations.iterator().next(), session);
 
         }
 
@@ -1659,7 +1662,7 @@ public abstract class AbstractObservationDAO
 
         @Override
         public Observation<?> visit(GeometryValue value) throws OwsExceptionReport {
-            return setUnitAndPersist(observationFactory.geometry(), value);
+            return setUnitAndPersist(observationFactory.geometry(), new OldGeometryValue(value));
         }
 
         @Override
@@ -1739,7 +1742,7 @@ public abstract class AbstractObservationDAO
         public Observation<?> visit(ProfileValue value) throws OwsExceptionReport {
             ProfileObservation profile = observationFactory.profile();
             profile.setParent(true);
-            sosObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
+            omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
             return persist(profile, persistChildren(value.getValue()));
         }
 
@@ -1799,7 +1802,7 @@ public abstract class AbstractObservationDAO
 
         private OmObservation getObservationWithLevelParameter(ProfileLevel level) {
             OmObservation o = new OmObservation();
-            sosObservation.copyTo(o);
+            omObservation.copyTo(o);
             o.setParameter(level.getLevelStartEndAsParameter());
             if (level.isSetPhenomenonTime()) {
                 o.setValue(new SingleObservationValue<>());
@@ -1824,7 +1827,7 @@ public abstract class AbstractObservationDAO
 
         private ObservationPersister createChildPersister(ObservableProperty observableProperty)
                 throws OwsExceptionReport {
-            return new ObservationPersister(geometryHandler, daos, caches, sosObservation,
+            return new ObservationPersister(geometryHandler, daos, caches, omObservation,
                     getObservationConstellation(observableProperty), featureOfInterest, samplingGeometry, offerings,
                     session, true);
         }
@@ -1866,21 +1869,21 @@ public abstract class AbstractObservationDAO
 
         private <V, T extends Observation<V>> T persist(T observation, V value) throws OwsExceptionReport {
             if (!observation.isSetUnit()) {
-                observation.setUnit(getUnit(sosObservation.getValue().getValue()));
+                observation.setUnit(getUnit(omObservation.getValue().getValue()));
             }
             observation.setDeleted(false);
 
             if (!childObservation) {
-                daos.observation().addIdentifier(sosObservation, observation, session);
+                daos.observation().addIdentifier(omObservation, observation, session);
             } else {
                 observation.setChild(true);
             }
 
-            daos.observation().addName(sosObservation, observation, session);
-            daos.observation().addDescription(sosObservation, observation);
-            daos.observation().addTime(sosObservation, observation);
+            daos.observation().addName(omObservation, observation, session);
+            daos.observation().addDescription(omObservation, observation);
+            daos.observation().addTime(omObservation, observation);
             observation.setValue(value);
-            observation.setSamplingGeometry(samplingGeometry);
+            observation.setSamplingGeometry(JTSConverter.convert(samplingGeometry));
             checkUpdateFeatureOfInterestGeometry();
 
             ObservationContext observationContext = daos.observation().createObservationContext();
@@ -1900,8 +1903,8 @@ public abstract class AbstractObservationDAO
                     }
                 }
 
-            if (sosObservation.isSetSeriesType()) {
-                observationContext.setSeriesType(sosObservation.getSeriesType());
+            if (omObservation.isSetSeriesType()) {
+                observationContext.setSeriesType(omObservation.getSeriesType());
             } else {
                 observationContext.setSeriesType(observation.accept(SERIES_TYPE_VISITOR));
             }
@@ -1918,13 +1921,13 @@ public abstract class AbstractObservationDAO
             }
             observationContext.setFeatureOfInterest(featureOfInterest);
             observation.setOfferings(offerings);
-            daos.observation().fillObservationContext(observationContext, sosObservation, session);
+            daos.observation().fillObservationContext(observationContext, omObservation, session);
             daos.observation().addObservationContextToObservation(observationContext, observation, session);
 
             session.saveOrUpdate(observation);
 
-            if (sosObservation.isSetParameter()) {
-                daos.parameter().insertParameter(sosObservation.getParameter(), observation.getObservationId(),
+            if (omObservation.isSetParameter()) {
+                daos.parameter().insertParameter(omObservation.getParameter(), observation.getObservationId(),
                         caches.units, session);
             }
             return observation;
@@ -1956,17 +1959,17 @@ public abstract class AbstractObservationDAO
                 return geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
                         ((ProfileValue) sosObservation.getValue().getValue()).getGeometry());
             }
-            NamedValue<Geometry> spatialFilteringProfileParameter =
+            NamedValue<org.locationtech.jts.geom.Geometry> spatialFilteringProfileParameter =
                     sosObservation.getSpatialFilteringProfileParameter();
-            Geometry geometry = spatialFilteringProfileParameter.getValue().getValue();
-            return geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
+            return geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
+                    spatialFilteringProfileParameter.getValue().getValue());
         }
 
-        private void checkUpdateFeatureOfInterestGeometry() {
+        private void checkUpdateFeatureOfInterestGeometry() throws CodedException {
             // check if flag is set and if this observation is not a child
             // observation
             if (samplingGeometry != null && isUpdateFeatureGeometry() && !childObservation) {
-                daos.feature.updateFeatureOfInterestGeometry(featureOfInterest, samplingGeometry, session);
+                daos.feature.updateFeatureOfInterestGeometry(featureOfInterest, JTSConverter.convert(samplingGeometry), session);
             }
         }
 
@@ -2105,7 +2108,61 @@ public abstract class AbstractObservationDAO
                 return "reference";
             }
         }
+
+
+        public class OldGeometryValue
+        implements
+        Value<com.vividsolutions.jts.geom.Geometry> {
+
+            private com.vividsolutions.jts.geom.Geometry value;
+            private UoM unit;
+
+            public OldGeometryValue(GeometryValue value) throws CodedException {
+                setValue(JTSConverter.convert(value.getGeometry()));
+                setUnit(value.getUnit());
+            }
+
+            @Override
+            public OldGeometryValue setValue(com.vividsolutions.jts.geom.Geometry value) {
+                this.value = value;
+                return this;
+            }
+
+            @Override
+            public com.vividsolutions.jts.geom.Geometry getValue() {
+                return value;
+            }
+
+            @Override
+            public void setUnit(String unit) {
+                setUnit(new UoM(unit));
+            }
+
+            @Override
+            public OldGeometryValue setUnit(UoM unit) {
+                this.unit = unit;
+                return this;
+            }
+
+            @Override
+            public UoM getUnitObject() {
+                return unit;
+            }
+
+            @Override
+            public String getUnit() {
+                return unit.getUom();
+            }
+
+            @Override
+            public <X, E extends Exception> X accept(ValueVisitor<X, E> visitor) throws E {
+                return null;
+            }
+
+        }
     }
+
+
 
     /**
      * Observation time extrema {@link ResultTransformer}

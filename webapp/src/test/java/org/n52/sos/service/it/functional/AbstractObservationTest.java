@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,17 +37,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import javax.naming.ConfigurationException;
 import javax.xml.namespace.NamespaceContext;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.joda.time.DateTime;
 import org.junit.rules.ErrorCollector;
-import org.n52.faroe.SettingDefinition;
-import org.n52.faroe.SettingValue;
-import org.n52.faroe.SettingValueFactory;
-import org.n52.iceland.ds.ConnectionProviderException;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -81,15 +80,10 @@ import org.n52.shetland.util.JTSHelper;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.service.it.AbstractComplianceSuiteTest;
 import org.n52.sos.service.it.Client;
-import org.n52.svalbard.util.CodingHelper;
 import org.n52.svalbard.util.XmlOptionsHelper;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Iterators;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
 import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.InsertObservationDocument;

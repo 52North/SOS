@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -140,6 +140,7 @@ public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<G
         builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
                     this::parseMergeObservationIntoDataArray);
         builder.add("extension", decodeList(this::parseExtensionParameter));
+        builder.add("$filter", this::parseODataFes);
 
     }
 

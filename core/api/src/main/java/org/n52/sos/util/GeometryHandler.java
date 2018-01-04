@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,6 +42,25 @@ import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
 import org.geotools.referencing.factory.DeferredAuthorityFactory;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.util.Range;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.janmayen.lifecycle.Destroyable;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.EnvelopeOrGeometry;
+import org.n52.shetland.util.GeometryTransformer;
+import org.n52.shetland.util.JTSHelper;
+import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.util.StringHelper;
+import org.n52.sos.ds.FeatureQuerySettingsProvider;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -51,27 +70,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.Validation;
-import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
-import org.n52.iceland.util.Range;
-import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.janmayen.lifecycle.Destroyable;
-import org.n52.shetland.ogc.filter.SpatialFilter;
-import org.n52.shetland.util.EnvelopeOrGeometry;
-import org.n52.shetland.ogc.ows.exception.CodedException;
-import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.CollectionHelper;
-import org.n52.shetland.util.GeometryTransformer;
-import org.n52.shetland.util.JTSHelper;
-import org.n52.shetland.util.JavaHelper;
-import org.n52.shetland.util.StringHelper;
-import org.n52.sos.ds.FeatureQuerySettingsProvider;
-import org.n52.svalbard.CodingSettings;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -414,7 +412,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @throws OwsExceptionReport
      *             If coordinate axis switching fails
      */
-    public Geometry switchCoordinateAxisFromToDatasourceIfNeeded(EnvelopeOrGeometry geom) throws OwsExceptionReport {
+    public org.locationtech.jts.geom.Geometry switchCoordinateAxisFromToDatasourceIfNeeded(EnvelopeOrGeometry geom) throws OwsExceptionReport {
         return switchCoordinateAxisFromToDatasourceIfNeeded(geom.toGeometry());
     }
 
@@ -428,6 +426,19 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      *             If coordinate axis switching fails
      */
     public Geometry switchCoordinateAxisFromToDatasourceIfNeeded(Geometry geom) throws OwsExceptionReport {
+        return JTSConverter.convert(switchCoordinateAxisFromToDatasourceIfNeeded(JTSConverter.convert(geom)));
+    }
+
+    /**
+     * Switch the coordinate axis of geometry from or for datasource
+     *
+     * @param geom
+     *            Geometry to switch coordinate axis
+     * @return Geometry with switched coordinate axis if needed
+     * @throws OwsExceptionReport
+     *             If coordinate axis switching fails
+     */
+    public org.locationtech.jts.geom.Geometry switchCoordinateAxisFromToDatasourceIfNeeded(org.locationtech.jts.geom.Geometry geom) throws OwsExceptionReport {
         if (geom != null && !geom.isEmpty()) {
             if (isDatasourceNorthingFirst()) {
                 if (!isNorthingFirstEpsgCode(geom.getSRID())) {
@@ -440,7 +451,30 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         return geom;
     }
 
+    public Geometry switchCoordinateAxisFromToDatasourceIfNeededAndConvert(EnvelopeOrGeometry geom) throws OwsExceptionReport {
+        return JTSConverter.convert(switchCoordinateAxisFromToDatasourceIfNeeded(geom.toGeometry()));
+    }
+
+    public org.locationtech.jts.geom.Geometry switchCoordinateAxisFromToDatasourceIfNeededAndConvert(Geometry geom) throws OwsExceptionReport {
+        return switchCoordinateAxisFromToDatasourceIfNeeded(JTSConverter.convert(geom));
+    }
+
+    public Geometry switchCoordinateAxisFromToDatasourceIfNeededAndConvert(org.locationtech.jts.geom.Geometry geom) throws OwsExceptionReport {
+        return JTSConverter.convert(switchCoordinateAxisFromToDatasourceIfNeeded(geom));
+    }
+
     private Geometry switchCoordinateAxisIfNeeded(Geometry geometry, int targetSRID) throws OwsExceptionReport {
+        if (geometry != null && !geometry.isEmpty()) {
+            if ((isNorthingFirstEpsgCode(geometry.getSRID()) && isNorthingFirstEpsgCode(targetSRID))
+                    || (isEastingFirstEpsgCode(geometry.getSRID()) && isEastingFirstEpsgCode(targetSRID))) {
+                return geometry;
+            }
+            return JTSConverter.convert(switchCoordinateAxisIfNeeded(JTSConverter.convert(geometry), targetSRID));
+        }
+        return geometry;
+    }
+
+    private org.locationtech.jts.geom.Geometry switchCoordinateAxisIfNeeded(org.locationtech.jts.geom.Geometry geometry, int targetSRID) throws OwsExceptionReport {
         if (geometry != null && !geometry.isEmpty()) {
             if ((isNorthingFirstEpsgCode(geometry.getSRID()) && isNorthingFirstEpsgCode(targetSRID))
                     || (isEastingFirstEpsgCode(geometry.getSRID()) && isEastingFirstEpsgCode(targetSRID))) {
@@ -460,7 +494,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @throws OwsExceptionReport
      *             If SpatialFilter is not supported
      */
-    public Geometry getFilterForNonSpatialDatasource(SpatialFilter filter) throws OwsExceptionReport {
+    public org.locationtech.jts.geom.Geometry getFilterForNonSpatialDatasource(SpatialFilter filter) throws OwsExceptionReport {
         switch (filter.getOperator()) {
         case BBOX:
             return switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
@@ -529,6 +563,20 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
+     * Check if geometry is in SpatialFilter envelopes
+     *
+     * @param geometry
+     *            Geometry to check
+     * @param envelopes
+     *            SpatialFilter envelopes
+     * @return True if geometry is contained in envelopes
+     */
+    public boolean featureIsInFilter(org.locationtech.jts.geom.Geometry geometry, List<org.locationtech.jts.geom.Geometry> envelopes) {
+        return geometry != null && !geometry.isEmpty() && envelopes.stream().anyMatch(e -> e.contains(geometry));
+    }
+
+
+    /**
      * Transforms the geometry to the storage EPSG code
      *
      * @param geometry
@@ -537,7 +585,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @throws OwsExceptionReport
      */
     public Geometry transformToStorageEpsg(EnvelopeOrGeometry geometry) throws OwsExceptionReport {
-        return transformToStorageEpsg(geometry.toGeometry());
+        return transformToStorageEpsg(JTSConverter.convert(geometry.toGeometry()));
     }
 
     /**
@@ -560,6 +608,18 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
             return transform(geometry, targetSRID, sourceCRS, getCRS(targetSRID));
         }
         return geometry;
+    }
+
+    /**
+     * Transforms the geometry to the storage EPSG code
+     *
+     * @param geometry
+     *            Geometry to transform
+     * @return Transformed geometry
+     * @throws OwsExceptionReport
+     */
+    public org.locationtech.jts.geom.Geometry transformToStorageEpsg(org.locationtech.jts.geom.Geometry geometry) throws OwsExceptionReport {
+        return JTSConverter.convert(transformToStorageEpsg(JTSConverter.convert(geometry)));
     }
 
     /**
@@ -698,6 +758,13 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         return envelope;
     }
 
+    public org.locationtech.jts.geom.Envelope transformEnvelope(org.locationtech.jts.geom.Envelope envelope, int sourceSRID, int targetSRID) throws CodedException {
+        if (envelope != null && !envelope.isNull() && targetSRID > 0 && sourceSRID != targetSRID) {
+            return JTSConverter.convert(transformEnvelope(JTSConverter.convert(envelope), sourceSRID, targetSRID));
+        }
+        return envelope;
+    }
+
     /**
      * Clears the supported Coordinate Reference Systems map
      */
@@ -721,11 +788,6 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     public String addOgcCrsPrefix(int crs) {
         return this.srsNamePrefixUrl + crs;
     }
-    
-    private ConfigurationError createException(String entry, Throwable ex) {
-        return new ConfigurationError(String.format("Invalid format of entry in '%s': %s",
-                FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry), ex);
-    }
 
     private ConfigurationError createException(String entry, Throwable ex) {
         return new ConfigurationError(String.format("Invalid format of entry in '%s': %s",
@@ -738,6 +800,12 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     @Deprecated
     public static GeometryHandler getInstance() {
         return instance;
+    }
+
+    @Override
+    public org.locationtech.jts.geom.Geometry transform(org.locationtech.jts.geom.Geometry geometry, int targetCRS)
+            throws OwsExceptionReport {
+        return JTSConverter.convert(transform(JTSConverter.convert(geometry), targetCRS));
     }
 
 }

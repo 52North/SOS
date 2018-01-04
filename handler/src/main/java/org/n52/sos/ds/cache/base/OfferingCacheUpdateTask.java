@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -51,10 +51,11 @@ import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.cache.ProcedureFlag;
+import org.n52.sos.util.JTSConverter;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  *
@@ -233,7 +234,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     protected ReferencedEnvelope getEnvelopeForOffering(OfferingEntity offering) throws OwsExceptionReport {
         if (offering.hasEnvelope()) {
-            return new ReferencedEnvelope(offering.getEnvelope().getEnvelopeInternal(), offering.getEnvelope().getSRID());
+            return new ReferencedEnvelope(JTSConverter.convert(offering.getEnvelope()).getEnvelopeInternal(), offering.getEnvelope().getSRID());
         } else if (datasets != null && !datasets.isEmpty()) {
             Envelope e = new Envelope();
             int srid = -1;
@@ -242,7 +243,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                     if (srid < 0 ) {
                         srid = de.getFeature().getGeometryEntity().getGeometry().getSRID();
                     }
-                    e.expandToInclude(de.getFeature().getGeometryEntity().getGeometry().getEnvelopeInternal());
+                    e.expandToInclude(JTSConverter.convert(de.getFeature().getGeometryEntity().getGeometry()).getEnvelopeInternal());
                 }
             }
             return new ReferencedEnvelope(e, srid);

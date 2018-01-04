@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -49,6 +49,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +78,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         final Criteria c = getDefaultCriteria(session)
                 .setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
         if (filter != null && (filter.getGeometry().getGeometry().isPresent() || filter.getGeometry().getEnvelope().isPresent())) {
-                c.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(), filter.getGeometry().toGeometry()));
+                c.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(), JTSConverter.convert(filter.getGeometry().toGeometry())));
         }
         return c.list();
     }
@@ -189,7 +190,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
             final Disjunction disjunction = Restrictions.disjunction();
             for (final SpatialFilter filter : filters) {
                 if (filter != null && (filter.getGeometry().getGeometry().isPresent() || filter.getGeometry().getEnvelope().isPresent())) {
-                    disjunction.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(), filter.getGeometry().toGeometry()));
+                    disjunction.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(), JTSConverter.convert(filter.getGeometry().toGeometry())));
                 }
             }
             c.add(disjunction);

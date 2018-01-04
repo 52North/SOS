@@ -59,7 +59,7 @@
             </fes:BBOX>
         </sossf:SpatialFilter>
     </swes:extension> -->
-    <!-- 
+    <!--
     <swes:extension>
         <sosrf:ResultFilter>
             <fes:PropertyIsEqualTo>
@@ -69,7 +69,7 @@
         </sosrf:ResultFilter>
     </swes:extension>
      -->
-     <!-- 
+     <!--
     <swes:extension>
         <sosrf:ResultFilter>
             <fes:PropertyIsBetween>
@@ -84,7 +84,7 @@
         </sosrf:ResultFilter>
     </swes:extension>
      -->
-     <!-- 
+     <!--
     <swes:extension>
         <sosrf:ResultFilter>
             <fes:PropertyIsLike wildCard="%" singleChar="_" escapeChar="!">

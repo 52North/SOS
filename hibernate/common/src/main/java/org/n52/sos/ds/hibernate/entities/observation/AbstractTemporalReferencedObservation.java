@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,6 +32,7 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -46,8 +47,6 @@ import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterAdder;
 import org.n52.sos.ds.hibernate.util.observation.RelatedObservationAdder;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.util.GmlHelper;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract implementation of {@link TemporalReferencedObservation}.
@@ -168,7 +167,7 @@ public abstract class AbstractTemporalReferencedObservation
 
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
             throws OwsExceptionReport {
-        final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
+        final NamedValue<org.locationtech.jts.geom.Geometry> namedValue = new NamedValue<org.locationtech.jts.geom.Geometry>();
         final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
         namedValue.setName(referenceType);
         // TODO add lat/long version

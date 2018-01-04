@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -70,7 +70,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHandler implements ProxyQueryHelper {
 
@@ -180,7 +180,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             sampFeat.setDescription(feature.getDescription());
         }
         if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
-            sampFeat.setGeometry(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometryEntity().getGeometry()));
+            sampFeat.setGeometry(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(feature.getGeometryEntity().getGeometry()));
         }
         final Set<FeatureEntity> parentFeatures = feature.getParents();
         if (parentFeatures != null && !parentFeatures.isEmpty()) {

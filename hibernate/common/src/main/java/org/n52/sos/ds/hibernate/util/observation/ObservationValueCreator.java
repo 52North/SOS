@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -73,6 +73,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObserva
 import org.n52.sos.ds.hibernate.entities.observation.valued.ReferenceValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
+import org.n52.sos.util.JTSConverter;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.CodingHelper;
@@ -145,8 +146,8 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @Override
-    public GeometryValue visit(GeometryValuedObservation o) {
-        GeometryValue v = new GeometryValue(o.getValue());
+    public GeometryValue visit(GeometryValuedObservation o) throws OwsExceptionReport {
+        GeometryValue v = new GeometryValue(JTSConverter.convert(o.getValue()));
         if (!addUnit(o, v) && o instanceof GeometryValuedSeriesObservation && ((GeometryValuedSeriesObservation) o).getSeries().isSetUnit()) {
             v.setUnit(getUnit(((GeometryValuedSeriesObservation) o).getSeries().getUnit()));
         }

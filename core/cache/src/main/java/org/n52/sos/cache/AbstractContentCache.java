@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,7 +41,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-
+import org.locationtech.jts.geom.Envelope;
 import org.n52.iceland.cache.ContentCache;
 import org.n52.janmayen.stream.Streams;
 import org.n52.shetland.ogc.gml.time.Time;
@@ -53,7 +53,6 @@ import org.n52.shetland.util.ReferencedEnvelope;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * TODO JavaDoc

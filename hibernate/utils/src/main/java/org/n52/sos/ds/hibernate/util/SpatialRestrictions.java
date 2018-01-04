@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,6 +34,7 @@ import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
+import org.n52.sos.util.JTSConverter;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -58,7 +59,7 @@ public class SpatialRestrictions {
      * @throws OwsExceptionReport if the spatial filter is not supported
      */
     public static Criterion filter(String propertyName, SpatialFilter filter) throws OwsExceptionReport {
-        return filter(propertyName, filter.getOperator(), filter.getGeometry().toGeometry());
+        return filter(propertyName, filter.getOperator(), JTSConverter.convert(filter.getGeometry().toGeometry()));
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,16 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
-import java.util.Locale;
-
-import org.hibernate.Session;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 public class FeatureOfInterestCreator extends AbstractFeatureOfInerestCreator<FeatureOfInterest> {
 

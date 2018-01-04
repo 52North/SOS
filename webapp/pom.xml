@@ -182,169 +182,6 @@
         <artifactId>aspectjtools</artifactId>
         <scope>runtime</scope>
     </dependency>
-    <!-- REST API Dependencies -->
-     <dependency>
-      <groupId>org.n52.series-api</groupId>
-      <artifactId>io</artifactId>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-main</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-epsg-hsql</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-opengis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-metadata</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>c3p0</groupId>
-          <artifactId>c3p0</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.mchange</groupId>
-          <artifactId>c3p0</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.n52.series-api</groupId>
-      <artifactId>rest</artifactId>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-main</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-epsg-hsql</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-opengis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-metadata</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>c3p0</groupId>
-          <artifactId>c3p0</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.mchange</groupId>
-          <artifactId>c3p0</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.n52.series-api</groupId>
-      <artifactId>spi</artifactId>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-main</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-epsg-hsql</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-opengis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-metadata</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>c3p0</groupId>
-          <artifactId>c3p0</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.mchange</groupId>
-          <artifactId>c3p0</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.n52.series-api.db</groupId>
-      <artifactId>dao</artifactId>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-main</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-epsg-hsql</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-opengis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-metadata</artifactId>
-        </exclusion>
-      </exclusions>
-     </dependency>
-     <dependency>
-      <groupId>org.n52.series-api.db</groupId>
-      <artifactId>mappings</artifactId>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-main</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-epsg-hsql</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-opengis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-metadata</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.n52.series-api.db</groupId>
-      <artifactId>sos-integration</artifactId>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-main</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-epsg-hsql</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-opengis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-metadata</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
         <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
@@ -379,11 +216,6 @@
         <dependency>
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard-xmlbeans</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.svalbard</groupId>
-            <artifactId>svalbard-exi</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -568,14 +400,6 @@
             <artifactId>coding-kvp</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sos-rf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sos-sf</artifactId>
-        </dependency>
 
         <!-- OPERATIONS -->
 
@@ -656,16 +480,14 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-    		    <groupId>${project.groupId}</groupId>
-    		    <artifactId>hibernate-datasource-h2</artifactId>
-    		</dependency>
+		    <groupId>${project.groupId}</groupId>
+		    <artifactId>hibernate-datasource-h2</artifactId>
+		</dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-sqlserver</artifactId>
+            <scope>runtime</scope>
         </dependency>
-
-        <!-- BINDINGS -->
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-postgres</artifactId>
@@ -674,11 +496,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-mysql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-h2</artifactId>
             <scope>runtime</scope>
         </dependency>
         
@@ -726,12 +543,6 @@
             <artifactId>prefixed-identifier</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ereporting-identifier</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ereporting-identifier</artifactId>
@@ -948,6 +759,10 @@
               <groupId>com.mchange</groupId>
               <artifactId>c3p0</artifactId>
             </exclusion>
+            <exclusion>
+              <groupId>commons-codec</groupId>
+              <artifactId>commons-codec</artifactId>
+            </exclusion>
           </exclusions>
         </dependency>
         <dependency>
@@ -1092,151 +907,12 @@
             </exclusion>
           </exclusions>
         </dependency>
-            <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-main</artifactId>
-            </dependency>
-         
-        <!-- copied from REST-API series-dao-webapp -->  
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-oxm</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-main</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-    
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjtools</artifactId>
-            <version>1.8.9</version>
-            <scope>runtime</scope>
-        </dependency>
-    </dependencies>
-    <build>
-        <finalName>${conf.sos.name}##${project.version}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/*Suite*.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>hibernate-mapping</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <usedDependencies>
-                                <usedDependency>org.springframework:spring-core</usedDependency>
-                            </usedDependencies>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>hibernate-mappings</artifactId>
-                                    <overWrite>false</overWrite>
-                                </artifactItem>
-                            </artifactItems>
-                            <includes>**/*.xml,**/README</includes>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-                    <webResources>
-                        <resource>
-                            <directory>src/main/webapp</directory>
-                            <filtering>true</filtering>
-                        </resource>
-                        <resource>
-                            <directory>src/main/resources</directory>
-                            <filtering>true</filtering>
-                            <targetPath>WEB-INF/classes</targetPath>
-                        </resource>
-                        <resource>
-                            <directory>../misc/db</directory>
-                            <filtering>false</filtering>
-                            <targetPath>sql</targetPath>
-                            <includes>
-                                <include>**/*.sql</include>
-                            </includes>
-                        </resource>
-                    </webResources>
-                    <overlays>
-                        <overlay>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>views</artifactId>
-                        </overlay>
-                    </overlays>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <configuration>
-                    <waitForChild>true</waitForChild>
-                    <jvmArgs>-Xmx2048m</jvmArgs>
-                    <httpConnector>
-                        <port>${jetty.port.http}</port>
-                    </httpConnector>
-                    <stopPort>${jetty.port.stop}</stopPort>
-                    <systemProperties>
-                        <systemProperty>
-                            <name>catalina.base</name>
-                            <value>${project.build.directory}</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>config.logger.level.main.global</name>
-                            <value>INFO</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>config.logger.level.main.n52</name>
-                            <value>DEBUG</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>config.logger.fileappender.filename</name>
-                            <value>${project.build.finalName}</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>config.logger.history.max</name>
-                            <value>3</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>config.logger.maxFileSize</name>
-                            <value>10MB</value>
-                        </systemProperty>
-                    </systemProperties>
-                    <contextXml>src/main/resources/jetty-context.xml</contextXml>
-                    <webApp>
-                        <contextPath>/</contextPath>
-                    </webApp>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+	</dependencies>
+            
     <profiles>
         <profile>
             <id>oracle</id>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -173,9 +173,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             sosObservation = createNewObservation(obsConst, hObservation, value);
             // add SpatialFilteringProfile
             if (hObservation.hasSamplingGeometry()) {
-                sosObservation.addSpatialFilteringProfileParameter(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(hObservation.getSamplingGeometry()));
+                sosObservation.addSpatialFilteringProfileParameter(getGeometryHandler()
+                        .switchCoordinateAxisFromToDatasourceIfNeededAndConvert(hObservation.getSamplingGeometry()));
             } else if (hObservation.isSetLongLat()) {
-                sosObservation.addSpatialFilteringProfileParameter(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(new HibernateGeometryCreator().createGeometry(hObservation)));
+                sosObservation.addSpatialFilteringProfileParameter(
+                        getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
+                                new HibernateGeometryCreator().createGeometry(hObservation)));
             }
             addRelatedObservations(sosObservation, hObservation);
             addParameter(sosObservation, hObservation);

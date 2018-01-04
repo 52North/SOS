@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[3.9.0.201707061730-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[3.9.2.201712210913-RELEASE]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -10,6 +10,7 @@
 	</configs>
 	<autoconfigs>
 		<config>src/main/resources/contexts/settings/uvf.xml</config>
+		<config>src/main/resources/contexts/settings/exi.xml</config>
 		<config>src/main/resources/contexts/settings/metadata.xml</config>
 		<config>src/main/resources/contexts/settings/transactional.xml</config>
 		<config>src/main/resources/contexts/settings/streaming.xml</config>

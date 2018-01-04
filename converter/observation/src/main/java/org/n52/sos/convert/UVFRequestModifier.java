@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,9 +28,11 @@
  */
 package org.n52.sos.convert;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.naming.ConfigurationException;
 
 import org.n52.faroe.Validation;
@@ -47,13 +49,18 @@ import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.ows.service.ResponseFormat;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.uvf.UVFConstants;
 import org.n52.shetland.uvf.UVFSettingsProvider;
+import org.n52.sos.coding.encode.ResponseFormatRepository;
+import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
+import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
@@ -73,6 +80,17 @@ public class UVFRequestModifier
 
     private String defaultCRS;
 
+    private ResponseFormatRepository responseFormatRepository;
+
+    @Inject
+    public void setResponseFormatRepository(ResponseFormatRepository responseFormatRepository) {
+        this.responseFormatRepository = responseFormatRepository;
+    }
+
+    public ResponseFormatRepository getResponseFormatRepository() {
+        return responseFormatRepository;
+    }
+
     @Override
     public Set<RequestResponseModifierKey> getKeys() {
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
@@ -81,6 +99,11 @@ public class UVFRequestModifier
     @Override
     public OwsServiceRequest modifyRequest(OwsServiceRequest request)
             throws OwsExceptionReport {
+        // check for response format to avoid incomprehensible exception
+        if (request instanceof AbstractObservationRequest && ((AbstractObservationRequest) request).isSetResponseFormat()) {
+            checkResponseFormat(((AbstractObservationRequest) request).getResponseFormat(), request.getService(),
+                    request.getVersion());
+        }
         if ((request.getRequestContext().getAcceptType().isPresent()
                 && request.getRequestContext().getAcceptType().get().contains(UVFConstants.CONTENT_TYPE_UVF))
                 || (request instanceof ResponseFormat && ((ResponseFormat) request).isSetResponseFormat()
@@ -135,6 +158,34 @@ public class UVFRequestModifier
                     + "Choose an integer of the interval ]%d, %d[.", defaultCRS, minimum, maximum));
         }
         this.defaultCRS = defaultCRS;
+    }
+
+
+    /**
+     * help method to check the result format parameter. If the application/zip
+     * result format is set, true is returned. If not and the value is text/xml;
+     * subtype="OM" false is returned. If neither zip nor OM is set, a
+     * ServiceException with InvalidParameterValue as its code is thrown.
+     *
+     * @param responseFormat
+     *            String containing the value of the result format parameter
+     * @param service
+     * @param version
+     *
+     * @throws OwsExceptionReport
+     *             * if the parameter value is incorrect
+     */
+    protected void checkResponseFormat(final String responseFormat, final String service, final String version)
+            throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(responseFormat)) {
+            throw new MissingResponseFormatParameterException();
+        } else {
+            final Collection<String> supportedResponseFormats =
+                    getResponseFormatRepository().getSupportedResponseFormats(service, version);
+            if (!supportedResponseFormats.contains(responseFormat)) {
+                throw new InvalidResponseFormatParameterException(responseFormat);
+            }
+        }
     }
 
     @Override

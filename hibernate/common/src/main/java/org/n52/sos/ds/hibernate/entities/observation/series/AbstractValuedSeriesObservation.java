@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,6 +43,7 @@ import org.n52.shetland.util.OMHelper;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractValuedObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
+import org.n52.sos.util.JTSConverter;
 
 /**
  * Abstract implementation of {@link ValuedSeriesObservation}.
@@ -114,7 +115,7 @@ public abstract class AbstractValuedSeriesObservation<T>
         observation.setResultTime(createResutlTime(getResultTime()));
         observation.setValidTime(createValidTime(getValidTimeStart(), getValidTimeEnd()));
         if (hasSamplingGeometry()) {
-            observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
+            observation.addParameter(createSpatialFilteringProfileParameter(JTSConverter.convert(getSamplingGeometry())));
         } else if (isSetLongLat()) {
             observation.addParameter(createSpatialFilteringProfileParameter(new HibernateGeometryCreator().createGeometry(this)));
         }

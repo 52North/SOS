@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -47,6 +47,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
@@ -81,12 +83,12 @@ import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.service.SosSettings;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+
 
 @Configurable
 public class HibernateFeatureQueryHandler
@@ -167,7 +169,7 @@ public class HibernateFeatureQueryHandler
                 if (queryObject.isSetSpatialFilters()) {
                     SpatialFilter filter = queryObject.getSpatialFitler();
                     c.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(),
-                            getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry())));
+                            getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(filter.getGeometry())));
                 }
                 if (queryObject.isSetSpatialFilters()) {
                     c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, queryObject.getFeatures()));
@@ -239,7 +241,7 @@ public class HibernateFeatureQueryHandler
                     // HibernateHelper.getSqlString(featureExtentCriteria));
                     // Geometry geom = (Geometry)
                     // featureExtentCriteria.uniqueResult();
-                    Geometry geom = (Geometry) session.createCriteria(FeatureOfInterest.class)
+                    com.vividsolutions.jts.geom.Geometry geom = (com.vividsolutions.jts.geom.Geometry) session.createCriteria(FeatureOfInterest.class)
                             .add(QueryHelper.getCriterionForObjects(FeatureOfInterest.IDENTIFIER,
                                     queryObject.getFeatures()))
                             .setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY)).uniqueResult();
@@ -247,7 +249,7 @@ public class HibernateFeatureQueryHandler
                         int srid = geom.getSRID() > 0 ? geom.getSRID() : getStorageEPSG();
                         geom.setSRID(srid);
                         geom = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
-                        return new ReferencedEnvelope(geom.getEnvelopeInternal(), srid);
+                        return new ReferencedEnvelope(JTSConverter.convert(geom.getEnvelopeInternal()), srid);
                     }
                 } else {
                     final Envelope envelope = new Envelope();
@@ -359,7 +361,7 @@ public class HibernateFeatureQueryHandler
         } else {
             return (FeatureOfInterest) session.createCriteria(FeatureOfInterest.class)
                     .add(SpatialRestrictions.eq(FeatureOfInterest.GEOMETRY,
-                            getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry)))
+                            getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(geometry)))
                     .uniqueResult();
         }
     }
@@ -429,7 +431,7 @@ public class HibernateFeatureQueryHandler
             FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
         final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
         final Map<String, AbstractFeature> featureMap = new HashMap<>(0);
-        List<Geometry> envelopes = null;
+        List<org.locationtech.jts.geom.Geometry> envelopes = null;
         boolean hasSpatialFilter = false;
         if (queryObject.isSetSpatialFilters()) {
             hasSpatialFilter = true;
@@ -467,7 +469,7 @@ public class HibernateFeatureQueryHandler
         if (queryObject.isSetSpatialFilters()) {
             for (final SpatialFilter filter : queryObject.getSpatialFilters()) {
                 filter.setGeometry(
-                        getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry()));
+                        getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry().toGeometry()));
             }
         }
         List<AbstractFeatureOfInterest> features = daoFactory.getFeatureDAO().getFeatures(queryObject.getFeatures(),

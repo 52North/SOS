@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,8 +38,8 @@ import basetest.ElasticsearchAwareTest;
 
 public class SosElasticsearchSchemasTest extends ElasticsearchAwareTest {
 
-    private String idx = "schema-creator-index";
-    private String type = "mytpe";
+    private final String idx = "schema-creator-index";
+    private final String type = "mytpe";
 
     @Before
     public void setUp() throws InterruptedException {

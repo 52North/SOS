@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -124,6 +124,7 @@ import org.n52.sos.ogc.sos.SosObservationOfferingExtensionProvider;
 import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
+import org.n52.sos.util.JTSConverter;
 import org.n52.svalbard.ConformanceClass;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
@@ -132,7 +133,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * Implementation of the interface AbstractGetCapabilitiesHandler
@@ -462,7 +463,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
                     // only if fois are contained for the offering set the values of
                     // the envelope
                     if (offering.hasEnvelope()) {
-                        sosObservationOffering.setObservedArea(processObservedArea(offering.getEnvelope()));
+                        sosObservationOffering.setObservedArea(processObservedArea(JTSConverter.convert(offering.getEnvelope())));
                     } else if (getCache().hasEnvelopeForOffering(offering.getDomainId())) {
                         sosObservationOffering.setObservedArea(getCache().getEnvelopeForOffering(offering.getDomainId()));
                     }
@@ -587,7 +588,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
                                 sosObservationOffering.setObservationTypes(observationTypes);
 
                                 if (offering.hasEnvelope()) {
-                                    sosObservationOffering.setObservedArea(processObservedArea(offering.getEnvelope()));
+                                    sosObservationOffering.setObservedArea(processObservedArea(JTSConverter.convert(offering.getEnvelope())));
                                 } else if (getCache().hasEnvelopeForOffering(offering.getDomainId())) {
                                     sosObservationOffering.setObservedArea(getCache().getEnvelopeForOffering(offering.getDomainId()));
                                 }

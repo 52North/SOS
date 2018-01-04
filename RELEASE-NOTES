@@ -11,7 +11,8 @@ RELEASE NOTES
  
   --- New features ---
 
-      * 
+      * Result filtering for GetObservation and GetDataAvailability
+      * Spatial filtering for GetDataAvailability
   
   --- Changes ---
   
@@ -23,6 +24,7 @@ RELEASE NOTES
       * Issue #572: Fix NPE in InsertSensor when procedure description has invalid namespace declaration
       * Issue #574: Capabilities shows metadata and test client provides examples for not supported operations
       * Issue #575: HibernateMetadataCache not updated after resetting the SOS
+      * Issue #581: Cache: loosing spatial information after manually triggered update
 
    Release 52n-sensorweb-sos-4.4.1
 ====================================

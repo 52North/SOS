@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -128,9 +128,9 @@ import org.n52.svalbard.util.CodingHelper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 
 import net.opengis.sensorML.x101.SystemDocument;
 import net.opengis.swe.x20.DataRecordDocument;
@@ -249,7 +249,7 @@ public class InsertDAOTest
     private final GetObservationDao getObsDAO = new GetObservationDao();
     private final SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
     private final I18NDAORepository i18NDAORepository = new I18NDAORepository();
-    private final DaoFactory daoFactory = new DaoFactory(null);
+    private final DaoFactory daoFactory = new DaoFactory();
     private final EncoderRepository encoderRepository = new EncoderRepository();
     private final DecoderRepository decoderRepository = new DecoderRepository();
     private final ConverterRepository converterRepository = new ConverterRepository();

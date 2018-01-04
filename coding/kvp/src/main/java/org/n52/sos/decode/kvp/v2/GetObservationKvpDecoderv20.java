@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -137,9 +137,10 @@ public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<G
                     decodeNamespaces(GetObservationRequest::setNamespaces));
         builder.add(SosConstants.GetObservationParams.responseFormat,
                     GetObservationRequest::setResponseFormat);
-//        builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
-//                    GetObservationRequest::addSweBooleanExtension);
+        builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
+                    this::parseMergeObservationIntoDataArray);
         builder.add("extension", decodeList(this::parseExtensionParameter));
+        builder.add("$filter", this::parseODataFes);
 
     }
 
@@ -169,6 +170,10 @@ public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<G
         } else {
             return new SwesExtension<>().setValue(new SweText().setValue(value));
         }
+    }
+
+    private void parseMergeObservationIntoDataArray(GetObservationRequest request, String name, String value) {
+        request.addSweBooleanExtension(name, value);
     }
 
 }

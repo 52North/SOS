@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,6 +36,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -45,9 +46,12 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.TimeCreator;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
+import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
@@ -86,7 +90,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
                     c.add(SpatialRestrictions.filter(
                             AbstractObservation.SAMPLING_GEOMETRY,
                             ((GetObservationRequest)request).getSpatialFilter().getOperator(),
-                            GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                            GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(
                                     ((GetObservationRequest)request).getSpatialFilter().getGeometry())));
                 } else {
                     // TODO add filter with lat/lon
@@ -95,6 +99,24 @@ public abstract class AbstractValueDAO extends TimeCreator {
             }
         }
     }
+
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
+            Session session) throws OwsExceptionReport {
+        if (request.hasResultFilter() && request.getResultFilter() instanceof ComparisonFilter) {
+            ComparisonFilter resultFilter = (ComparisonFilter) request.getResultFilter();
+            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter, getResultFilterClasses(), BaseObservation.OBS_ID);
+            if (resultFilterExpression != null) {
+                c.add(resultFilterExpression);
+            }
+        }
+    }
+
+    protected ResultFilterClasses getResultFilterClasses() {
+        return new ResultFilterClasses(getValuedObservationFactory().numericClass(), getValuedObservationFactory().countClass(),
+                getValuedObservationFactory().textClass(), getValuedObservationFactory().categoryClass(),
+                getValuedObservationFactory().complexClass(), getValuedObservationFactory().profileClass());
+    }
+
 
     protected void addTemporalFilterCriterion(Criteria c, Criterion temporalFilterCriterion, String logArgs) {
         if (temporalFilterCriterion != null) {
@@ -218,4 +240,5 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport;
 
+    protected abstract ValuedObservationFactory getValuedObservationFactory();
 }

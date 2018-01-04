@@ -28,10 +28,6 @@
 			<artifactId>shetland</artifactId>
 		</dependency>
         <dependency>
-            <groupId>org.n52.janmayen</groupId>
-            <artifactId>janmayen</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard</artifactId>
         </dependency>

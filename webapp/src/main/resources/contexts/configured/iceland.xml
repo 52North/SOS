@@ -2,6 +2,14 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
     <bean class="org.n52.iceland.response.SoapChainResponseWriterFactory"/>
     <bean class="org.n52.iceland.response.SoapResponseWriterFactory"/>
+    <bean class="org.n52.iceland.response.JSONResponseWriterFactory"/>
+    <bean class="org.n52.iceland.response.EXIResponseWriterFactory"/>
+
+    <bean class="org.n52.iceland.coding.SupportedTypeRepositoryInitializer"/>
+
+    <bean class="org.n52.iceland.binding.exi.EXIUtils" />
+    <bean id="exiBinding" class="org.n52.iceland.binding.exi.EXIBinding"/>
 </beans>

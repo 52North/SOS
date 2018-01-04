@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,9 +37,11 @@ import org.n52.janmayen.lifecycle.Constructable;
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
+ * @deprecated inject the settings directly
  *
  */
 @Configurable
+@Deprecated
 public class ProcedureRequestSettingProvider implements Constructable {
     public static final String ALLOW_QUERYING_FOR_INSTANCES_ONLY = "request.procedure.instancesOnly";
     public static final String SHOW_ONLY_AGGREGATED_PROCEDURES = "request.procedure.aggregationOnly";
@@ -111,7 +113,7 @@ public class ProcedureRequestSettingProvider implements Constructable {
         this.addOutputsToSensorML = addOutputsToSensorML;
     }
     @Deprecated
-    public static synchronized ProcedureRequestSettingProvider getInstance() {
+    public static ProcedureRequestSettingProvider getInstance() {
         return ProcedureRequestSettingProvider.instance;
     }
 

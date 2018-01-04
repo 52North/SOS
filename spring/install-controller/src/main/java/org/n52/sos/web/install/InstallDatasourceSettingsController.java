@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,14 +28,16 @@
  */
 package org.n52.sos.web.install;
 
+import static java.util.stream.Collectors.toMap;
+
 import java.io.File;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -71,42 +73,33 @@ public class InstallDatasourceSettingsController extends AbstractInstallControll
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
     public String get(HttpSession session) throws JSONException {
-        InstallationConfiguration c = getSettings(session);
-        Map<String, Datasource> datasources = getDatasources();
-        return Json.print(encode(c, datasources));
+        return Json.print(encode(getSettings(session), getDatasources()));
     }
 
     private JsonNode encode(InstallationConfiguration c, Map<String, Datasource> dialects) throws JSONException {
         ObjectNode node = Json.nodeFactory().objectNode();
         JsonSettingsEncoder enc = getSettingsEncoder();
-        List<String> orderedDialects = getOrderedDialects(dialects.keySet());
-        for (String dialect : orderedDialects) {
+        getOrderedDialects(dialects.keySet()).forEach((dialect) -> {
             boolean selected = false;
             if (c.getDatasource() != null && c.getDatasource().getDialectName().equals(dialect)) {
                 selected = true;
             }
-            Datasource d = dialects.get(dialect);
-            Set<SettingDefinition<?>> defs = d.getSettingDefinitions();
+            Datasource datasource = dialects.get(dialect);
+            Set<SettingDefinition<?>> defs = datasource.getSettingDefinitions();
             if (selected) {
-                for (SettingDefinition<?> def : defs) {
-                    setDefaultValue(c, def);
-                }
+                defs.forEach(def -> setDefaultValue(c, def));
             }
             JsonNode settings = enc.encode(enc.sortByGroup(defs));
             ObjectNode jsonObject = node.putObject(dialect);
             jsonObject.set("settings", settings);
-            jsonObject.put("needsSchema", d.needsSchema());
+            jsonObject.put("needsSchema", datasource.needsSchema());
             jsonObject.put("selected", selected);
-        }
+        });
         return node;
     }
 
     protected Map<String, Datasource> getDatasources() {
-        Map<String, Datasource> dialects = new HashMap<>(this.datasources.size());
-        for (Datasource dd : this.datasources) {
-            dialects.put(dd.getDialectName(), dd);
-        }
-        return dialects;
+        return this.datasources.stream().collect(toMap(Datasource::getDialectName, Function.identity()));
     }
 
     @SuppressWarnings("unchecked")
@@ -114,32 +107,32 @@ public class InstallDatasourceSettingsController extends AbstractInstallControll
         Object val = c.getDatabaseSetting(def.getKey());
         if (val != null) {
             switch (def.getType()) {
-            case BOOLEAN:
-                SettingDefinition<Boolean> bsd = (SettingDefinition<Boolean>) def;
-                bsd.setDefaultValue((Boolean) val);
-                break;
-            case FILE:
-                SettingDefinition<File> fsd = (SettingDefinition<File>) def;
-                fsd.setDefaultValue((File) val);
-                break;
-            case INTEGER:
-                SettingDefinition<Integer> isd = (SettingDefinition<Integer>) def;
-                isd.setDefaultValue((Integer) val);
-                break;
-            case NUMERIC:
-                SettingDefinition<Double> dsd = (SettingDefinition<Double>) def;
-                dsd.setDefaultValue((Double) val);
-                break;
-            case STRING:
-                SettingDefinition<String> ssd = (SettingDefinition<String>) def;
-                ssd.setDefaultValue((String) val);
-                break;
-            case URI:
-                SettingDefinition<URI> usd = (SettingDefinition<URI>) def;
-                usd.setDefaultValue((URI) val);
-                break;
-            default:
-                break;
+                case BOOLEAN:
+                    SettingDefinition<Boolean> bsd = (SettingDefinition<Boolean>) def;
+                    bsd.setDefaultValue((Boolean) val);
+                    break;
+                case FILE:
+                    SettingDefinition<File> fsd = (SettingDefinition<File>) def;
+                    fsd.setDefaultValue((File) val);
+                    break;
+                case INTEGER:
+                    SettingDefinition<Integer> isd = (SettingDefinition<Integer>) def;
+                    isd.setDefaultValue((Integer) val);
+                    break;
+                case NUMERIC:
+                    SettingDefinition<Double> dsd = (SettingDefinition<Double>) def;
+                    dsd.setDefaultValue((Double) val);
+                    break;
+                case STRING:
+                    SettingDefinition<String> ssd = (SettingDefinition<String>) def;
+                    ssd.setDefaultValue((String) val);
+                    break;
+                case URI:
+                    SettingDefinition<URI> usd = (SettingDefinition<URI>) def;
+                    usd.setDefaultValue((URI) val);
+                    break;
+                default:
+                    break;
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,6 +46,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObserva
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
+import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +100,7 @@ public class ProfileGeneratorSplitter {
                         profileLevel.setLevelStart(levelStart);
                         profileLevel.setLevelEnd(levelEnd);
                         if (observation.hasSamplingGeometry()) {
-                            profileLevel.setLocation(observation.getSamplingGeometry());
+                            profileLevel.setLocation(JTSConverter.convert(observation.getSamplingGeometry()));
                         }
                         profileLevel.addValue(value);
                         map.put(key, profileLevel);
@@ -119,7 +120,7 @@ public class ProfileGeneratorSplitter {
         return Double.NaN;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings("rawtypes")
     private static QuantityValue getLevelStart(Set<Parameter<?>> parameters) throws OwsExceptionReport {
         for (Parameter<?> parameter : parameters) {
             if (checkParameterForStartLevel(parameter.getName())) {
@@ -135,7 +136,7 @@ public class ProfileGeneratorSplitter {
         return null;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings("rawtypes")
     private static QuantityValue getLevelEnd(Set<Parameter<?>> parameters) throws OwsExceptionReport {
         for (Parameter<?> parameter : parameters) {
             if (checkParameterForEndLevel(parameter.getName())) {

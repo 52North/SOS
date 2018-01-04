@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -335,7 +335,9 @@ public class InsertDAOTest extends HibernateTestCase {
             String offeringId, String featureId, String obsType, Session session) throws OwsExceptionReport,
             ConverterException {
         OmObservationConstellation obsConst = new OmObservationConstellation();
-        DaoFactory daoFactory = new DaoFactory(new I18NDAORepository());
+        DaoFactory daoFactory = new DaoFactory();
+        daoFactory.setI18NDAORepository(new I18NDAORepository());
+
 
         ProcedureDAO dao = daoFactory.getProcedureDAO();
         Procedure procedure = dao.getProcedureForIdentifier(procedureId, session);

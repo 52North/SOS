@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -49,6 +49,7 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.locationtech.jts.geom.Envelope;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -77,12 +78,11 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class AbstractSeriesObservationDAO extends AbstractObservationDAO {
 
@@ -98,7 +98,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             Observation<?> observation, Session session) throws OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         Series series = seriesDAO.getOrInsertSeries(ctx, session);
-        ((SeriesObservation) observation).setSeries(series);
+        ((AbstractSeriesObservation) observation).setSeries(series);
         seriesDAO.updateSeriesWithFirstLatestValues(series, observation, session);
     }
 
@@ -278,7 +278,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
+    public List<org.locationtech.jts.geom.Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
         Criteria criteria = getDefaultObservationTimeCriteria(session).createAlias(AbstractSeriesObservation.SERIES, "s");
         criteria.createCriteria("s." + Series.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
         criteria.addOrder(Order.asc(AbstractTemporalReferencedObservation.PHENOMENON_TIME_START));
@@ -291,7 +291,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                 && HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), AbstractTemporalReferencedObservation.LATITUDE)) {
             criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractTemporalReferencedObservation.LATITUDE),
                     Restrictions.isNotNull(AbstractTemporalReferencedObservation.LONGITUDE)));
-            List<Geometry> samplingGeometries = Lists.newArrayList();
+            List<org.locationtech.jts.geom.Geometry> samplingGeometries = Lists.newArrayList();
             LOGGER.debug("QUERY getSamplingGeometries(feature): {}", HibernateHelper.getSqlString(criteria));
             for (AbstractTemporalReferencedObservation element : (List<AbstractTemporalReferencedObservation>)criteria.list()) {
                 samplingGeometries.add(new HibernateGeometryCreator().createGeometry(element));
@@ -330,7 +330,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                 criteria.setProjection(SpatialProjections.extent(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
                 LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}",
                         HibernateHelper.getSqlString(criteria));
-                return (Envelope) criteria.uniqueResult();
+                return JTSConverter.convert((com.vividsolutions.jts.geom.Envelope) criteria.uniqueResult());
             }
         } else if (HibernateHelper.isColumnSupported(getObservationFactory().temporalReferencedClass(), AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY)) {
             criteria.add(Restrictions.isNotNull(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
@@ -338,8 +338,8 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}",
                     HibernateHelper.getSqlString(criteria));
             Envelope envelope = new Envelope();
-            for (Geometry geom : (List<Geometry>) criteria.list()) {
-                envelope.expandToInclude(geom.getEnvelopeInternal());
+            for (com.vividsolutions.jts.geom.Geometry geom : (List<com.vividsolutions.jts.geom.Geometry>) criteria.list()) {
+                envelope.expandToInclude(JTSConverter.convert(geom.getEnvelopeInternal()));
             }
             return envelope;
         } else if (HibernateHelper.isColumnSupported(getObservationFactory().temporalReferencedClass(), AbstractTemporalReferencedObservation.LATITUDE)
@@ -521,6 +521,8 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         Criteria seriesCriteria = observationCriteria.createCriteria(AbstractSeriesObservation.SERIES);
 
         checkAndAddSpatialFilteringProfileCriterion(observationCriteria, request, session);
+        checkAndAddResultFilterCriterion(observationCriteria, request, session);
+
         addSpecificRestrictions(seriesCriteria, request);
         if (CollectionHelper.isNotEmpty(request.getProcedures())) {
             seriesCriteria.createCriteria(Series.PROCEDURE)
@@ -813,6 +815,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                 getDefaultObservationCriteria(session).add(
                         Restrictions.eq(AbstractSeriesObservation.SERIES, series));
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
+        checkAndAddResultFilterCriterion(c, request, session);
 
         if (request.isSetOffering()) {
             c.createCriteria(AbstractSeriesObservation.OFFERINGS).add(

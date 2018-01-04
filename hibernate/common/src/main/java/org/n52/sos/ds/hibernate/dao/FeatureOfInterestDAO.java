@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -82,6 +82,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -474,7 +475,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                 dao.addIdentifierNameDescription(abstractFeature, feature, session);
                 if (abstractFeature instanceof FeatureWithGeometry) {
                     if (((FeatureWithGeometry) abstractFeature).isSetGeometry()) {
-                        feature.setGeom(((FeatureWithGeometry) abstractFeature).getGeometry());
+                        feature.setGeom(JTSConverter.convert(((FeatureWithGeometry) abstractFeature).getGeometry()));
                     }
                 }
                 if (abstractFeature.isSetXml()) {
@@ -524,7 +525,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             final String newId = value.getIdentifierCodeWithAuthority().getValue();
             Geometry geom = null;
             if (value instanceof FeatureWithGeometry) {
-                geom = ((FeatureWithGeometry) value).getGeometry();
+                geom = JTSConverter.convert(((FeatureWithGeometry) value).getGeometry());
 
             }
             return dao.getFeatureOfInterest(newId, geom, session);

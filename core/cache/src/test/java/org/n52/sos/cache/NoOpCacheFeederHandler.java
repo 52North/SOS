@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,31 +28,25 @@
  */
 package org.n52.sos.cache;
 
-import java.io.File;
+import java.util.Collection;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.CacheFeederHandler;
 
-/**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
- * @since 4.0.0
- */
-public class AbstractCacheControllerTest {
+public class NoOpCacheFeederHandler
+        implements
+        CacheFeederHandler {
 
-    @BeforeClass
-    public static void setUp() {
-        TestableInMemoryCacheController.setUp();
+    @Override
+    public void updateCacheOfferings(SosWritableContentCache cache, Collection<String> offerings)
+            throws OwsExceptionReport {
+
     }
 
-    public static File getTempFile() {
-        return TestableInMemoryCacheController.getTempFile();
+    @Override
+    public void updateCache(SosWritableContentCache cache)
+            throws OwsExceptionReport {
+
     }
 
-    @Before
-    @After
-    public void deleteTempFile() {
-        TestableInMemoryCacheController.deleteTempFile();
-    }
 }

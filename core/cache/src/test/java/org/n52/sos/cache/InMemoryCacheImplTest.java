@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,6 +41,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -68,7 +69,29 @@ public class InMemoryCacheImplTest {
 
     @Before
     public void initInstance() {
-        instance = new InMemoryCacheImpl();
+        // overwrite these methods as these are doing getInstance()-calls
+        instance = new InMemoryCacheImpl() {
+            private static final long serialVersionUID = -2571450058666530166L;
+            @Override
+            boolean isAllowQueryingForInstancesOnly() {
+                return false;
+            }
+
+            @Override
+            boolean isShowOnlyAggregatedProcedures() {
+                return false;
+            }
+
+            @Override
+            public Set<String> getFeatureOfInterestTypes() {
+                return Collections.emptySet();
+            }
+
+            @Override
+            public Set<String> getObservationTypes() {
+                return Collections.emptySet();
+            }
+        };
         SupportedTypeRepository supportedTypeRepository = new SupportedTypeRepository();
         supportedTypeRepository.init(new DecoderRepository(), new EncoderRepository());
         instance.setSupportedTypeRepository(supportedTypeRepository);
@@ -88,8 +111,7 @@ public class InMemoryCacheImplTest {
 
     @Test
     public void equalsWithNewInstances() {
-        InMemoryCacheImpl anotherInstance = new InMemoryCacheImpl();
-        assertEquals("equals failed", instance, anotherInstance);
+        assertEquals("equals failed", new InMemoryCacheImpl(), new InMemoryCacheImpl());
     }
 
     @Test

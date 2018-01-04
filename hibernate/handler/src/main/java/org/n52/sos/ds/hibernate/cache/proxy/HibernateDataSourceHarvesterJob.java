@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -57,6 +57,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
 import org.n52.sos.event.events.UpdateCache;
+import org.n52.sos.util.JTSConverter;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -153,7 +154,7 @@ public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job
             }
             ReferencedEnvelope spatialFilteringProfileEnvelope = daoFactory.getObservationDAO().getSpatialFilteringProfileEnvelopeForOfferingId(offering.getIdentifier(), session);
             if (spatialFilteringProfileEnvelope != null && spatialFilteringProfileEnvelope.isSetEnvelope()) {
-                offferingEntity.setEnvelope(new GeometryFactory().toGeometry(spatialFilteringProfileEnvelope.getEnvelope()));
+                offferingEntity.setEnvelope(new GeometryFactory().toGeometry(JTSConverter.convert(spatialFilteringProfileEnvelope.getEnvelope())));
             }
             insertRepository.insertOffering(offferingEntity);
         }

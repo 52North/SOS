@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.request.operator;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.n52.iceland.request.handler.OperationHandler;
@@ -38,12 +39,9 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 
 /**
- * @param <D>
- *            The OperationDAO implementation class
- * @param <Q>
- *            the request type
- * @param <A>
- *            the response type
+ * @param <D> The OperationDAO implementation class
+ * @param <Q> the request type
+ * @param <A> the response type
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
@@ -57,15 +55,15 @@ public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q ex
 
     @Override
     public Map<String, String> getAdditionalSchemaImports() {
-        return null;
+        return Collections.emptyMap();
     }
 
     @Override
     public Map<String, String> getAdditionalPrefixes() {
-        return null;
+        return Collections.emptyMap();
     }
 
-    protected void checkExtensions(final OwsServiceRequest request, final CompositeOwsException exceptions) {
+    protected void checkExtensions(OwsServiceRequest request, CompositeOwsException exceptions) {
         // currently nothing to check
     }
 }

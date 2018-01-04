@@ -16,14 +16,18 @@
             <artifactId>api</artifactId>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>core-v20</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.n52.janmayen</groupId>
             <artifactId>janmayen</artifactId>
-         </dependency>
-         <dependency>
+        </dependency>
+        <dependency>
             <groupId>org.n52.shetland</groupId>
             <artifactId>shetland</artifactId>
-         </dependency>
-         <dependency>
+        </dependency>
+        <dependency>
             <groupId>org.n52.svalbard</groupId>
             <artifactId>svalbard</artifactId>
          </dependency>
@@ -31,13 +35,10 @@
             <groupId>org.n52.faroe</groupId>
             <artifactId>faroe-annotations</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>core-v20</artifactId>
-        </dependency>
+        
     </dependencies>
 </project>

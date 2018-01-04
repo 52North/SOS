@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.janmayen.i18n.LocalizedString;
@@ -48,9 +51,7 @@ import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 
 import com.google.common.collect.Lists;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+
 
 public abstract class AbstractFeatureCreator<T extends FeatureOfInterest>
         implements FeatureCreator<T> {
@@ -148,7 +149,7 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest>
      */
     protected Geometry createGeometryFrom(FeatureOfInterest feature) throws OwsExceptionReport {
         if (feature.isSetGeometry()) {
-            return getContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeom());
+            return getContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(feature.getGeom());
         } else if (feature.isSetLongLat()) {
             return getContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
                     new HibernateGeometryCreator().createGeometry(feature, getContext().getGeometryHandler()));

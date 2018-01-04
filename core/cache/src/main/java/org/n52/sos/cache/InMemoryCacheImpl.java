@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.joda.time.DateTime;
+import org.locationtech.jts.geom.Envelope;
 import org.n52.janmayen.function.Functions;
 import org.n52.janmayen.function.Predicates;
 import org.n52.janmayen.function.Suppliers;
@@ -59,10 +60,10 @@ import org.n52.sos.request.ProcedureRequestSettingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Envelope;
 
 public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements SosWritableContentCache, CacheConstants {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryCacheImpl.class);
@@ -1936,9 +1937,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     @Override
     public void addOfferings(Collection<String> offerings) {
         noNullValues(OFFERINGS, offerings);
-        for (String offering : offerings) {
-            addOffering(offering);
-        }
+        offerings.forEach(this::addOffering);
     }
 
     @Override
@@ -1951,9 +1950,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     @Override
     public void removeOfferings(Collection<String> offerings) {
         noNullValues(OFFERINGS, offerings);
-        for (String offering : offerings) {
-            removeOffering(offering);
-        }
+        offerings.forEach(this::removeOffering);
     }
 
     @Override
@@ -2079,9 +2076,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     @Override
     public void addSupportedLanguage(Collection<Locale> languages) {
         noNullValues(SUPPORTED_LANGUAGES, languages);
-        for (Locale language : languages) {
-            addSupportedLanguage(language);
-        }
+        languages.forEach(this::addSupportedLanguage);
     }
 
     @Override
@@ -2427,13 +2422,13 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
 
     @Override
     public Set<String> getRequestableProcedureDescriptionFormat() {
-        return this.requestableProcedureDescriptionFormats;
+        return copyOf(this.requestableProcedureDescriptionFormats);
     }
 
     @Override
     public void setRequestableProcedureDescriptionFormat(Collection<String> formats) {
         LOG.trace("Adding requestable procedureDescriptionFormat");
-        getRequestableProcedureDescriptionFormat().addAll(formats);
+        this.requestableProcedureDescriptionFormats.addAll(formats);
     }
 
     @Override
@@ -2467,12 +2462,12 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     public Set<String> getQueryableProcedures() {
         Set<String> procedures = getPublishedProcedures();
         // allowQueryingForInstancesOnly
-        if (ProcedureRequestSettingProvider.getInstance().isAllowQueryingForInstancesOnly()) {
+        if (isAllowQueryingForInstancesOnly()) {
             procedures = CollectionHelper
                     .conjunctCollectionsToSet(procedures, getTypeInstanceProcedure(TypeInstance.INSTANCE));
         }
         // showOnlyAggregatedProcedures
-        if (ProcedureRequestSettingProvider.getInstance().isShowOnlyAggregatedProcedures()) {
+        if (isShowOnlyAggregatedProcedures()) {
             procedures = CollectionHelper
                     .conjunctCollectionsToSet(procedures, getComponentAggregationProcedure(ComponentAggregation.AGGREGATION));
 
@@ -3099,6 +3094,20 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
             return false;
         }
         return true;
+    }
+
+    private ProcedureRequestSettingProvider getProcedureRequestSettingProvider() {
+        return ProcedureRequestSettingProvider.getInstance();
+    }
+
+    @VisibleForTesting
+    boolean isAllowQueryingForInstancesOnly() {
+        return getProcedureRequestSettingProvider().isAllowQueryingForInstancesOnly();
+    }
+
+    @VisibleForTesting
+    boolean isShowOnlyAggregatedProcedures() {
+        return getProcedureRequestSettingProvider().isShowOnlyAggregatedProcedures();
     }
 
     private static <X, T> Function<X, Set<T>> createSynchronizedSet() {

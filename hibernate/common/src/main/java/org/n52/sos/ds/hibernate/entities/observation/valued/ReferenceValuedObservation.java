@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,18 +37,24 @@ public interface ReferenceValuedObservation extends ValuedObservation<ReferenceT
 
     void setHref(String href);
 
-    boolean isSetHref();
+    default boolean isSetHref() {
+        return getHref() != null && !getHref().isEmpty();
+    }
 
     String getTitle();
 
     void setTitle(String title);
 
-    boolean isSetTitle();
+    default boolean isSetTitle() {
+        return getTitle() != null && !getTitle().isEmpty();
+    }
 
     String getRole();
 
     void setRole(String role);
 
-    boolean isSetRole();
+    default boolean isSetRole() {
+        return getRole() != null && !getRole().isEmpty();
+    }
 
 }

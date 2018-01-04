@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -48,6 +48,7 @@ import org.n52.shetland.ogc.ows.OwsPossibleValues;
 import org.n52.shetland.ogc.ows.OwsRange;
 import org.n52.shetland.ogc.ows.OwsValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.ResultFilterConstants;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -150,7 +151,8 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
         switch (version) {
             case Sos2Constants.SERVICEVERSION:
                 versionParameters = Stream.of(getTemporalFilterParameter(service, version),
-                                              getSpatialFilterParameter(service, version));
+                                              getSpatialFilterParameter(service, version),
+                                              getResultFilterParameter(service, version));
                 break;
             case Sos1Constants.SERVICEVERSION:
                 versionParameters = Stream.of(getEventTimeParameter(service, version),
@@ -183,11 +185,14 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
         return getEnvelopeParameter(name, SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
     }
 
+    private OwsDomain getResultFilterParameter(String service, String version) {
+        return new OwsDomain(ResultFilterConstants.METADATA_RESULT_FILTER, OwsAnyValue.instance());
+    }
+
     private OwsDomain getResponseFormatParameter(String service, String version) {
         GetObservationParams name = SosConstants.GetObservationParams.responseFormat;
         Set<String> responseFormats = getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, version);
-        return new OwsDomain(name, new OwsAllowedValues(responseFormats.stream().map(OwsValue::new))
-        );
+        return new OwsDomain(name, new OwsAllowedValues(responseFormats.stream().map(OwsValue::new)));
     }
 
     private OwsDomain getTemporalFilterParameter(String service, String version) throws OwsExceptionReport {

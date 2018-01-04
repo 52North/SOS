@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -66,7 +66,10 @@ public abstract class ExtendedHibernateTestCase extends HibernateTestCase {
     }
 
     protected static DaoFactory getDaoFactory() {
-        return new DaoFactory(new I18NDAORepository());
+        I18NDAORepository i18NDAORepository = new I18NDAORepository();
+        DaoFactory daoFactory = new DaoFactory();
+        daoFactory.setI18NDAORepository(i18NDAORepository);
+        return daoFactory;
     }
 
     protected static AbstractObservationDAO getObservationDao() throws OwsExceptionReport {

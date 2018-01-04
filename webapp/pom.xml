@@ -78,6 +78,45 @@
                             <overWriteReleases>false</overWriteReleases>
 						</configuration>
 					</execution>
+                    <execution>
+                        <id>svalbard</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <includes>svalbard-*-context.xml</includes>
+                            <outputDirectory>${project.build.outputDirectory}/contexts/configured/</outputDirectory>
+                            <overWrite>true</overWrite>
+                            <overWriteReleases>false</overWriteReleases>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.n52.svalbard</groupId>
+                                    <artifactId>svalbard</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.svalbard</groupId>
+                                    <artifactId>svalbard-exi</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.svalbard</groupId>
+                                    <artifactId>svalbard-json</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.svalbard</groupId>
+                                    <artifactId>svalbard-json-common</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.svalbard</groupId>
+                                    <artifactId>svalbard-xmlbeans</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.svalbard</groupId>
+                                    <artifactId>svalbard-xmlstream</artifactId>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <!-- 
@@ -163,6 +202,15 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <ignoredUnusedDeclaredDependencies>
+                        <ignoredUnusedDeclaredDependency>org.n52.series-api.db:webapp:war</ignoredUnusedDeclaredDependency>
+                    </ignoredUnusedDeclaredDependencies>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -239,8 +287,8 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.vividsolutions</groupId>
-            <artifactId>jts</artifactId>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -482,6 +530,7 @@
         <dependency>
 		    <groupId>${project.groupId}</groupId>
 		    <artifactId>hibernate-datasource-h2</artifactId>
+            <scope>runtime</scope>
 		</dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -732,7 +781,6 @@
         <dependency>
           <groupId>org.n52.series-api</groupId>
           <artifactId>io</artifactId>
-          <version>${series.api.version}</version>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
@@ -768,7 +816,6 @@
         <dependency>
           <groupId>org.n52.series-api</groupId>
           <artifactId>rest</artifactId>
-          <version>${series.api.version}</version>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
@@ -800,7 +847,6 @@
         <dependency>
           <groupId>org.n52.series-api</groupId>
           <artifactId>spi</artifactId>
-          <version>${series.api.version}</version>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
@@ -832,13 +878,12 @@
         <dependency>
             <groupId>org.n52.series-api.db</groupId>
             <artifactId>webapp</artifactId>
-            <version>${series.db.version}</version>
+            <version>${dataset.dao.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
           <groupId>org.n52.series-api.db</groupId>
           <artifactId>dao</artifactId>
-          <version>${series.db.version}</version>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
@@ -862,7 +907,6 @@
          <dependency>
           <groupId>org.n52.series-api.db</groupId>
           <artifactId>mappings</artifactId>
-          <version>${series.db.version}</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>
@@ -886,7 +930,6 @@
         <dependency>
           <groupId>org.n52.series-api.db</groupId>
           <artifactId>sos-integration</artifactId>
-          <version>${series.db.version}</version>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
@@ -910,6 +953,7 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-main</artifactId>
+            <scope>runtime</scope>
         </dependency>
 	</dependencies>
             

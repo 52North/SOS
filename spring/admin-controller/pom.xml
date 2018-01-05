@@ -107,10 +107,6 @@
             <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-sos-v20</artifactId>
         </dependency>

@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -69,7 +70,7 @@ import com.google.common.collect.Sets;
 public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandler implements ProxyQueryHelper {
 
     private HibernateSessionStore sessionStore;
-    private GetDataAvailabilityDao dao;
+    private Optional<GetDataAvailabilityDao> dao = Optional.empty();
 
 
     public GetDataAvailabilityHandler() {
@@ -81,9 +82,11 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         this.sessionStore = sessionStore;
     }
 
-    @Autowired(required=false)
-    public void setGetDataAvaolabilityDao(GetDataAvailabilityDao getDataAvailabilityDao) {
-        this.dao = getDataAvailabilityDao;
+    @Inject
+    public void setGetDataAvaolabilityDao(Optional<GetDataAvailabilityDao> getDataAvailabilityDao) {
+        if (getDataAvailabilityDao != null) {
+            this.dao = getDataAvailabilityDao;
+        }
     }
 
     @Override
@@ -158,8 +161,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
                 if (isShowCount(context.getRequest()) && entity.getObservationCount() >= 0) {
                     dataAvailability.setCount(entity.getObservationCount());
                 }
-                if (isIncludeResultTime(context.getRequest()) && dao != null) {
-                    dataAvailability.setResultTimes(dao.getResultTimes(dataAvailability, context.getRequest()));
+                if (isIncludeResultTime(context.getRequest()) && dao.isPresent()) {
+                    dataAvailability.setResultTimes(dao.get().getResultTimes(dataAvailability, context.getRequest()));
                 }
                 return dataAvailability;
             }
@@ -198,8 +201,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         DataAvailability dataAvailability = defaultProcessDataAvailability(entity, context, session);
         if (dataAvailability != null) {
             dataAvailability.setFormatDescriptor(getFormatDescriptor(context, entity));
-            if (dao != null) {
-                dataAvailability.setMetadata(dao.getMetadata(dataAvailability));
+            if (dao.isPresent()) {
+                dataAvailability.setMetadata(dao.get().getMetadata(dataAvailability));
             }
             context.addDataAvailability(dataAvailability);
         }

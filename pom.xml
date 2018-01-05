@@ -330,6 +330,13 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>sqlite-config</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>cache</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1482,9 +1489,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>se.jiderhamn</groupId>
-                <artifactId>classloader-leak-prevention</artifactId>
-                <version>1.15.4</version>
+                <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
+                <artifactId>classloader-leak-prevention-servlet3</artifactId>
+                <version>2.5.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.servlet</groupId>

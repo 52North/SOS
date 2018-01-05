@@ -53,7 +53,7 @@
     </context-param>
     <!-- Memory leak preventer listener -->
     <listener>
-        <listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor</listener-class>
+    	<listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventorListener</listener-class>
     </listener>
     <!-- Spring startup listener -->
     <listener>

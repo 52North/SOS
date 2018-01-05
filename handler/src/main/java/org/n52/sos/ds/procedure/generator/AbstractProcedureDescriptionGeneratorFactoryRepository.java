@@ -29,14 +29,17 @@
 package org.n52.sos.ds.procedure.generator;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
 
 import org.n52.janmayen.Producer;
 import org.n52.janmayen.component.AbstractComponentRepository;
 import org.n52.janmayen.component.Component;
 import org.n52.janmayen.component.ComponentFactory;
 import org.n52.janmayen.lifecycle.Constructable;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
 
@@ -48,11 +51,11 @@ public abstract class AbstractProcedureDescriptionGeneratorFactoryRepository<K, 
 
     private final Map<K, Producer<C>> factories = Maps.newHashMap();
 
-    @Autowired(required = false)
-    private Collection<C> components;
+    @Inject
+    private Optional<Collection<C>> components = Optional.of(Collections.emptyList());
 
-    @Autowired(required = false)
-    private Collection<F> componentFactories;
+    @Inject
+    private Optional<Collection<F>> componentFactories = Optional.of(Collections.emptyList());
 
     @Override
     public void init() {

@@ -31,6 +31,7 @@ package org.n52.sos.web.client;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -44,7 +45,6 @@ import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -66,11 +66,11 @@ public class ClientController
     @Inject
     private ContextSwitcher contextSwitcher;
 
-    @Autowired(required = false)
-    private RequestOperatorRepository requestOperatorRepository;
+    @Inject
+    private Optional<RequestOperatorRepository> requestOperatorRepository = Optional.empty();
 
-    @Autowired(required = false)
-    private BindingRepository bindingRepository;
+    @Inject
+    private Optional<BindingRepository> bindingRepository = Optional.empty();
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView get() {
@@ -83,35 +83,34 @@ public class ClientController
 
     private List<AvailableOperation> getAvailableOperations() {
         final List<AvailableOperation> ops = new LinkedList<>();
-
-
-
-        for (RequestOperatorKey rokt : this.requestOperatorRepository.getActiveRequestOperatorKeys()) {
-            String service = rokt.getServiceOperatorKey().getService();
-            String version = rokt.getServiceOperatorKey().getVersion();
-            String operation = rokt.getOperationName();
-            OwsOperationKey ok = new OwsOperationKey(service, version, operation);
-            this.bindingRepository.getBindingsByMediaType().forEach((mediaType, binding) -> {
-                try {
-                    if (binding.checkOperationHttpDeleteSupported(ok)) {
-                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.DELETE));
+        if (this.requestOperatorRepository.isPresent() && this.bindingRepository.isPresent()) {
+            for (RequestOperatorKey rokt : this.requestOperatorRepository.get().getActiveRequestOperatorKeys()) {
+                String service = rokt.getServiceOperatorKey().getService();
+                String version = rokt.getServiceOperatorKey().getVersion();
+                String operation = rokt.getOperationName();
+                OwsOperationKey ok = new OwsOperationKey(service, version, operation);
+                this.bindingRepository.get().getBindingsByMediaType().forEach((mediaType, binding) -> {
+                    try {
+                        if (binding.checkOperationHttpDeleteSupported(ok)) {
+                            ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.DELETE));
+                        }
+                        if (binding.checkOperationHttpGetSupported(ok)) {
+                            ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.GET));
+                        }
+                        if (binding.checkOperationHttpOptionsSupported(ok)) {
+                            ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.OPTIONS));
+                        }
+                        if (binding.checkOperationHttpPostSupported(ok)) {
+                            ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.POST));
+                        }
+                        if (binding.checkOperationHttpPutSupported(ok)) {
+                            ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.PUT));
+                        }
+                    } catch (HTTPException ex) {
+                        /* ignore */
                     }
-                    if (binding.checkOperationHttpGetSupported(ok)) {
-                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.GET));
-                    }
-                    if (binding.checkOperationHttpOptionsSupported(ok)) {
-                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.OPTIONS));
-                    }
-                    if (binding.checkOperationHttpPostSupported(ok)) {
-                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.POST));
-                    }
-                    if (binding.checkOperationHttpPutSupported(ok)) {
-                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.PUT));
-                    }
-                } catch (HTTPException ex) {
-                    /* ignore */
-                }
-            });
+                });
+            }
         }
         return ops;
     }

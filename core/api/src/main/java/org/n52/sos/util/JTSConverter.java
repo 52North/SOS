@@ -31,75 +31,181 @@ package org.n52.sos.util;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
+import org.locationtech.jts.io.WKTWriter;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.PrecisionModel;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
-import com.vividsolutions.jts.io.WKTWriter;
-
+/**
+ * Interface to convert JTS from Vividsolutions to the successor JTS from
+ * LocationTech.
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ *
+ * @since 5.0.2
+ *
+ */
 public interface JTSConverter {
 
-
-    public static Geometry convert(org.locationtech.jts.geom.Geometry geometry) throws CodedException {
+    /**
+     * Convert the {@link com.vividsolutions.jts.geom.Geometry} to
+     * {@link Geometry}
+     *
+     * @param geometry
+     *            {@link com.vividsolutions.jts.geom.Geometry} to convert
+     * @return converted {@link Geometry}
+     * @throws CodedException
+     *             If an error occurs during conversion. If an error occurs
+     *             during conversion.
+     */
+    public static Geometry convert(com.vividsolutions.jts.geom.Geometry geometry)
+            throws CodedException {
         try {
-            return new WKTReader(convertGeometryFactory(geometry.getFactory())).read(new org.locationtech.jts.io.WKTWriter().write(geometry));
+            return geometry != null ? new WKTReader(convertGeometryFactory(geometry.getFactory()))
+                    .read(new com.vividsolutions.jts.io.WKTWriter().write(geometry)) : null;
         } catch (ParseException e) {
             throw new NoApplicableCodeException().causedBy(e);
         }
     }
 
-    public static org.locationtech.jts.geom.Geometry convert(Geometry geometry) throws CodedException {
+    /**
+     * Convert the {@link Geometry} to
+     * {@link com.vividsolutions.jts.geom.Geometry}
+     *
+     * @param geometry
+     *            {@link Geometry} to convert
+     * @return converted {@link com.vividsolutions.jts.geom.Geometry}
+     * @throws CodedException
+     *             If an error occurs during conversion.
+     */
+    public static com.vividsolutions.jts.geom.Geometry convert(Geometry geometry)
+            throws CodedException {
         try {
-            return new org.locationtech.jts.io.WKTReader(convertGeometryFactory(geometry.getFactory())).read(new WKTWriter().write(geometry));
-        } catch (org.locationtech.jts.io.ParseException e) {
+            return geometry != null
+                    ? new com.vividsolutions.jts.io.WKTReader(convertGeometryFactory(geometry.getFactory()))
+                            .read(new WKTWriter().write(geometry))
+                    : null;
+        } catch (com.vividsolutions.jts.io.ParseException e) {
             throw new NoApplicableCodeException().causedBy(e);
         }
     }
 
-    public static GeometryFactory convertGeometryFactory(org.locationtech.jts.geom.GeometryFactory factory) {
-        return new GeometryFactory(new PrecisionModel(), factory.getSRID());
+    /**
+     * Convert the {@link com.vividsolutions.jts.geom.GeometryFactory} to
+     * {@link GeometryFactory}
+     *
+     * @param factory
+     *            {@link com.vividsolutions.jts.geom.GeometryFactory} to convert
+     * @return converted {@link GeometryFactory}
+     */
+    public static GeometryFactory convertGeometryFactory(com.vividsolutions.jts.geom.GeometryFactory factory) {
+        return factory != null ? new GeometryFactory(new PrecisionModel(), factory.getSRID()) : null;
     }
 
-    public static org.locationtech.jts.geom.GeometryFactory convertGeometryFactory(GeometryFactory factory) {
-        return new org.locationtech.jts.geom.GeometryFactory(new org.locationtech.jts.geom.PrecisionModel(), factory.getSRID());
+    /**
+     * Convert the {@link GeometryFactory} to
+     * {@link com.vividsolutions.jts.geom.GeometryFactory}
+     *
+     * @param factory
+     *            {@link GeometryFactory} to convert
+     * @return converted {@link com.vividsolutions.jts.geom.GeometryFactory}
+     */
+    public static com.vividsolutions.jts.geom.GeometryFactory convertGeometryFactory(GeometryFactory factory) {
+        return factory != null
+                ? new com.vividsolutions.jts.geom.GeometryFactory(new com.vividsolutions.jts.geom.PrecisionModel(),
+                        factory.getSRID())
+                : null;
     }
 
-
-    public static Coordinate[] convert(org.locationtech.jts.geom.Coordinate[] coordinates) {
-        List<Coordinate> l = new LinkedList<Coordinate>();
-        for (org.locationtech.jts.geom.Coordinate c : coordinates) {
-            l.add(convert(c));
+    /**
+     * Convert {@link com.vividsolutions.jts.geom.Coordinate} array to
+     * {@link Coordinate} array
+     *
+     * @param coordinates
+     *            {@link com.vividsolutions.jts.geom.Coordinate} array to
+     *            convert
+     * @return converted {@link Coordinate} array
+     */
+    public static Coordinate[] convert(com.vividsolutions.jts.geom.Coordinate[] coordinates) {
+        if (coordinates != null) {
+            List<Coordinate> l = new LinkedList<Coordinate>();
+            for (com.vividsolutions.jts.geom.Coordinate c : coordinates) {
+                l.add(convert(c));
+            }
+            return l.toArray(new Coordinate[0]);
         }
-        return l.toArray(new Coordinate[0]);
+        return null;
     }
 
-    public static org.locationtech.jts.geom.Coordinate[] convert(Coordinate[] coordinates) {
-        List<org.locationtech.jts.geom.Coordinate> l = new LinkedList<org.locationtech.jts.geom.Coordinate>();
-        for (Coordinate c : coordinates) {
-            l.add(convert(c));
+    /**
+     * Convert {@link Coordinate} array to
+     * {@link com.vividsolutions.jts.geom.Coordinate} array
+     *
+     * @param coordinates
+     *            {@link Coordinate} array to convert
+     * @return converted {@link com.vividsolutions.jts.geom.Coordinate} array
+     */
+    public static com.vividsolutions.jts.geom.Coordinate[] convert(Coordinate[] coordinates) {
+        if (coordinates != null) {
+            List<com.vividsolutions.jts.geom.Coordinate> l = new LinkedList<com.vividsolutions.jts.geom.Coordinate>();
+            for (Coordinate c : coordinates) {
+                l.add(convert(c));
+            }
+            return l.toArray(new com.vividsolutions.jts.geom.Coordinate[0]);
         }
-        return l.toArray(new org.locationtech.jts.geom.Coordinate[0]);
+        return null;
     }
 
-    public static Coordinate convert(org.locationtech.jts.geom.Coordinate c) {
-        return new Coordinate(c.x, c.y, c.z);
+    /**
+     * Convert {@link com.vividsolutions.jts.geom.Coordinate} to
+     * {@link Coordinate}
+     *
+     * @param c
+     *            {@link com.vividsolutions.jts.geom.Coordinate} to convert
+     * @return converted {@link Coordinate}
+     */
+    public static Coordinate convert(com.vividsolutions.jts.geom.Coordinate c) {
+        return c != null ? new Coordinate(c.x, c.y, c.z) : null;
     }
 
-    public static org.locationtech.jts.geom.Coordinate convert(Coordinate c) {
-        return new org.locationtech.jts.geom.Coordinate(c.x, c.y, c.z);
+    /**
+     * Convert {@link Coordinate} to
+     * {@link com.vividsolutions.jts.geom.Coordinate}
+     *
+     * @param c
+     *            {@link Coordinate} to convert
+     * @return converted {@link com.vividsolutions.jts.geom.Coordinate}
+     */
+    public static com.vividsolutions.jts.geom.Coordinate convert(Coordinate c) {
+        return c != null ? new com.vividsolutions.jts.geom.Coordinate(c.x, c.y, c.z) : null;
     }
 
-    public static Envelope convert(org.locationtech.jts.geom.Envelope e) {
-        return new Envelope(e.getMinX(), e.getMaxX(), e.getMinY(), e.getMaxY());
+    /**
+     * Convert {@link com.vividsolutions.jts.geom.Envelope} to {@link Envelope}
+     *
+     * @param e
+     *            {@link com.vividsolutions.jts.geom.Envelope} to convert
+     * @return converted {@link Envelope}
+     */
+    public static Envelope convert(com.vividsolutions.jts.geom.Envelope e) {
+        return e != null ? new Envelope(e.getMinX(), e.getMaxX(), e.getMinY(), e.getMaxY()) : null;
     }
 
-    public static org.locationtech.jts.geom.Envelope convert(Envelope e) {
-        return new org.locationtech.jts.geom.Envelope(e.getMinX(), e.getMaxX(), e.getMinY(), e.getMaxY());
+    /**
+     * Convert {@link Envelope} to {@link com.vividsolutions.jts.geom.Envelope}
+     *
+     * @param e
+     *            {@link Envelope} to convert
+     * @return converted {@link com.vividsolutions.jts.geom.Envelope}
+     */
+    public static com.vividsolutions.jts.geom.Envelope convert(Envelope e) {
+        return e != null ? new com.vividsolutions.jts.geom.Envelope(e.getMinX(), e.getMaxX(), e.getMinY(), e.getMaxY())
+                : null;
     }
 }

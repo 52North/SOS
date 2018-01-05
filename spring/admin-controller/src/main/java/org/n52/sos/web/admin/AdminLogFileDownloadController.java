@@ -31,16 +31,15 @@ package org.n52.sos.web.admin;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.n52.sos.web.common.ControllerConstants;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import org.n52.sos.web.common.ControllerConstants;
 
 /**
  * @since 4.0.0
@@ -50,7 +49,7 @@ import org.n52.sos.web.common.ControllerConstants;
 @RequestMapping(value = ControllerConstants.Paths.ADMIN_LOGGING_FILE_DOWNLOAD)
 public class AdminLogFileDownloadController {
 
-    @Autowired
+    @Inject
     private AbstractLoggingConfigurator loggingConfigurator;
 
     @RequestMapping(method = RequestMethod.GET,

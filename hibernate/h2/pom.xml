@@ -10,19 +10,19 @@
     <name>52°North SOS - Hibernate H2</name>
     <dependencies>
         <dependency>
-            <groupId>org.n52.iceland</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>iceland</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.shetland</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>shetland</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.faroe</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.faroe</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-utils</artifactId>
         </dependency>
         <dependency>

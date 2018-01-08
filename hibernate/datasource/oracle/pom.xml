@@ -12,7 +12,7 @@
 	<description>52°North Sensor Observation Service Hibernate Oracle module</description>
 	<dependencies>
          <dependency>
-            <groupId>org.n52.faroe</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe</artifactId>
          </dependency>
          <dependency>

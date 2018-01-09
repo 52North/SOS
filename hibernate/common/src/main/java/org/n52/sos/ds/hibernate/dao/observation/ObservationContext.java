@@ -53,8 +53,8 @@ public class ObservationContext {
     private Procedure procedure;
     private Offering offering;
     private String seriesType;
-    private boolean hiddenChild = false; 
 
+    private boolean hiddenChild;
     /**
      * @return the featureOfInterest
      */
@@ -62,40 +62,22 @@ public class ObservationContext {
         return featureOfInterest;
     }
 
-    /**
-     * @param featureOfInterest
-     *                          the featureOfInterest to set
-     */
     public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
     }
 
-    /**
-     * @return the observableProperty
-     */
     public ObservableProperty getObservableProperty() {
         return observableProperty;
     }
 
-    /**
-     * @param observableProperty
-     *                           the observableProperty to set
-     */
     public void setObservableProperty(ObservableProperty observableProperty) {
         this.observableProperty = observableProperty;
     }
 
-    /**
-     * @return the procedure
-     */
     public Procedure getProcedure() {
         return procedure;
     }
 
-    /**
-     * @param procedure
-     *                  the procedure to set
-     */
     public void setProcedure(Procedure procedure) {
         this.procedure = procedure;
     }
@@ -111,21 +93,15 @@ public class ObservationContext {
     public boolean isSetProcedure() {
         return getProcedure() != null;
     }
-    
-    /**
-     * @return the offering
-     */
+
     public Offering getOffering() {
         return offering;
     }
 
-    /**
-     * @param offering the offering to set
-     */
     public void setOffering(Offering offering) {
         this.offering = offering;
     }
-    
+
     public boolean isSetOffering() {
         return getOffering() != null;
     }
@@ -172,21 +148,21 @@ public class ObservationContext {
     public void setSeriesType(String seriesType) {
         this.seriesType = seriesType;
     }
-    
+
     public String getSeriesType() {
-        return this.seriesType;
+        return seriesType;
     }
-    
+
     public boolean isSetSeriesType() {
         return !Strings.isNullOrEmpty(getSeriesType());
     }
-    
+
     public void setHiddenChild(boolean hiddenChild) {
         this.hiddenChild = hiddenChild;
     }
 
     public boolean isHiddenChild() {
-        return this.hiddenChild;
+        return hiddenChild;
     }
 
 }

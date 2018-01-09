@@ -150,7 +150,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                         final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
                         final OfferingDAO offeringDAO = new OfferingDAO();
                         for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
-                            final List<RelatedFeature> hRelatedFeatures = new LinkedList<RelatedFeature>();
+                            final List<RelatedFeature> hRelatedFeatures = new LinkedList<>();
                             if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
                                 final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO();
                                 final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
@@ -202,7 +202,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
      *
      * @param obsProps
      *            observableProperty identifiers
-     * @param sosProcedureDescription 
+     * @param sosProcedureDescription
      * @param session
      *            Hibernate Session
      * @return ObservableProperty entities
@@ -261,7 +261,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
             throw new NoApplicableCodeException().withMessage("The transactional database profile is not activated!");
         }
     }
-    
+
     @Override
     public CapabilitiesExtension getExtension() {
         final SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
@@ -286,7 +286,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
     public String getRelatedOperation() {
         return getOperationName();
     }
-    
+
     @Override
     public boolean isSupported() {
         return HibernateHelper.isEntitySupported(ValidProcedureTime.class);

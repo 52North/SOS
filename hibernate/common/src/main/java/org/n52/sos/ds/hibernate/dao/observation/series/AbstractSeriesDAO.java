@@ -33,7 +33,6 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -84,7 +83,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      */
     public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session)
             throws OwsExceptionReport;
-    
+
     /**
      * Get series for GetObservationByIdRequest request
      * @param request GetObservationByIdRequest request to get series for
@@ -204,20 +203,16 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             series.setDeleted(false);
             series.setPublished(true);
             series.setHiddenChild(ctx.isHiddenChild());
-            session.saveOrUpdate(series);
-            session.flush();
-            session.refresh(series);
         } else if (series.isDeleted()) {
             series.setDeleted(false);
-            session.saveOrUpdate(series);
-            session.flush();
-            session.refresh(series);
         } else if (ctx.isSetSeriesType() && !series.isSetSeriesType()) {
             ctx.addValuesToSeries(series);
-            session.saveOrUpdate(series);
-            session.flush();
-            session.refresh(series);
+        } else {
+            return series;
         }
+        session.saveOrUpdate(series);
+        session.flush();
+        session.refresh(series);
         return series;
     }
 
@@ -416,12 +411,12 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 
     /**
      * Add offering restriction to Hibernate Criteria with LEFT-OUTER-JOIN
-     * 
+     *
      * @param c
      *            Hibernate Criteria to add restriction
      * @param offerings
      *            Offering identifiers to add
-     * @throws OwsExceptionReport 
+     * @throws OwsExceptionReport
      */
     public void addOfferingToCriteria(Criteria c, Collection<String> offerings) {
         c.createAlias(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
@@ -429,13 +424,13 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 Restrictions.in("off." + Offering.IDENTIFIER, offerings)));
 
     }
-    
+
     public void addOfferingToCriteria(Criteria c, String offering) {
         c.createAlias(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
         c.add(Restrictions.or(Restrictions.isNull(Series.OFFERING),
                 Restrictions.eq("off." + Offering.IDENTIFIER, offering)));
     }
-    
+
     public void addOfferingToCriteria(Criteria c, Offering offering) {
         c.add(Restrictions.eq(Series.PROCEDURE, offering));
     }
@@ -509,14 +504,14 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         boolean minChanged = false;
         boolean maxChanged = false;
         if (!series.isSetFirstTimeStamp()
-                || (series.isSetFirstTimeStamp() && series.getFirstTimeStamp().after(
-                        hObservation.getPhenomenonTimeStart()))) {
+                || series.isSetFirstTimeStamp() && series.getFirstTimeStamp().after(
+                        hObservation.getPhenomenonTimeStart())) {
             minChanged = true;
             series.setFirstTimeStamp(hObservation.getPhenomenonTimeStart());
         }
         if (!series.isSetLastTimeStamp()
-                || (series.isSetLastTimeStamp() && series.getLastTimeStamp().before(
-                        hObservation.getPhenomenonTimeEnd()))) {
+                || series.isSetLastTimeStamp() && series.getLastTimeStamp().before(
+                        hObservation.getPhenomenonTimeEnd())) {
             maxChanged = true;
             series.setLastTimeStamp(hObservation.getPhenomenonTimeEnd());
         }
@@ -540,7 +535,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     /**
      * Check {@link Series} if the deleted observation time stamp corresponds to
      * the first/last series time stamp
-     * 
+     *
      * @param series
      *            Series to update
      * @param observation
@@ -563,7 +558,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 	                series.setFirstNumericValue(null);
 	            }
             }
-        } 
+        }
         if (series.isSetLastTimeStamp() && series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
             SeriesObservation<?> latestObservation = seriesObservationDAO.getLastObservationFor(series, session);
             if (latestObservation != null) {
@@ -666,7 +661,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         }
         return c;
     }
-    
+
     protected boolean isIncludeChildObservableProperties() {
         return ServiceConfiguration.getInstance().isIncludeChildObservableProperties();
     }

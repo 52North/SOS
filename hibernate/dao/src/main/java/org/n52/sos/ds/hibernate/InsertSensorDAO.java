@@ -69,8 +69,12 @@ import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
+import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
+import org.n52.sos.ogc.sensorML.elements.SmlCapabilitiesPredicates;
+import org.n52.sos.ogc.sensorML.v20.AbstractProcessV20;
 import org.n52.sos.ogc.sos.CapabilitiesExtension;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionKey;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionProvider;
@@ -84,6 +88,7 @@ import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.service.operator.ServiceOperatorKey;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
@@ -96,6 +101,9 @@ import com.google.common.collect.Sets;
 public class InsertSensorDAO extends AbstractInsertSensorDAO implements CapabilitiesExtensionProvider {
 
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+
+    public static final Predicate<SmlCapabilities> REFERENCE_VALUES_PREDICATE =
+            SmlCapabilitiesPredicates.name(SensorMLConstants.ELEMENT_NAME_REFERENCE_VALUES);
 
     /**
      * constructor
@@ -168,6 +176,8 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                             for (final ObservableProperty hObservableProperty : hObservableProperties) {
                                 observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,
                                         hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
+                                if (checkPreconditionsOfStaticReferenceValues(request)) {
+                                }
                             }
                         }
                         // TODO: parent and child procedures
@@ -194,6 +204,12 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
             sessionHolder.returnSession(session);
         }
         return response;
+    }
+
+    private boolean checkPreconditionsOfStaticReferenceValues(final InsertSensorRequest request) {
+        return request.getProcedureDescription() instanceof AbstractProcessV20 &&
+                ((AbstractProcessV20)request.getProcedureDescription()).isSetSmlFeatureOfInterest() &&
+                ((AbstractSensorML)request.getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE).isPresent();
     }
 
     /**

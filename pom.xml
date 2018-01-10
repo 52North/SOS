@@ -95,11 +95,7 @@
         <sqljdbc4.version>4.0</sqljdbc4.version>
 
         <!-- 52N dependency versions -->
-        <iceland.version>2.0.0</iceland.version>
-        <shetland.version>1.0.0</shetland.version>
-        <svalbard.version>1.0.0</svalbard.version>
-        <janmayen.version>1.2.0</janmayen.version>
-        <faroe.version>1.3.0</faroe.version>
+        <arctic-sea.version>3.0.0</arctic-sea.version>
         <n52.common.xml.version>2.3.0</n52.common.xml.version>
         <org.springframework.security.version>4.2.3.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.3.12.RELEASE</org.springframework.version>
@@ -109,92 +105,92 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.n52.iceland</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>iceland</artifactId>
-                <version>${iceland.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.faroe</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>faroe</artifactId>
-                <version>${faroe.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.faroe</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>faroe-json</artifactId>
-                <version>${faroe.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.faroe</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>faroe-utils</artifactId>
-                <version>${faroe.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.faroe</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>faroe-annotations</artifactId>
-                <version>${faroe.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.shetland</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>shetland</artifactId>
-                <version>${shetland.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.svalbard</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard</artifactId>
-                <version>${svalbard.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.svalbard</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard-xmlbeans</artifactId>
-                <version>${svalbard.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.svalbard</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard-xmlstream</artifactId>
-                <version>${svalbard.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.svalbard</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard-json</artifactId>
-                <version>${svalbard.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.svalbard</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard-json-common</artifactId>
-                <version>${svalbard.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.svalbard</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard-exi</artifactId>
-                <version>${svalbard.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.janmayen</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>janmayen</artifactId>
-                <version>${janmayen.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.iceland</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>iceland</artifactId>
-                <version>${iceland.version}</version>
+                <version>${arctic-sea.version}</version>
                 <type>test-jar</type>
             </dependency>
             <dependency>
-                <groupId>org.n52.iceland</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>iceland</artifactId>
-                <version>${iceland.version}</version>
+                <version>${arctic-sea.version}</version>
                 <scope>test</scope>
                 <classifier>tests</classifier>
             </dependency>
             <dependency>
-                <groupId>org.n52.iceland</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>statistics</artifactId>
-                <version>${iceland.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.iceland</groupId>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>statistics-geolocation</artifactId>
-                <version>${iceland.version}</version>
+                <version>${arctic-sea.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.elasticsearch</groupId>
@@ -1496,10 +1492,16 @@
             <id>boundlessgeo</id>
             <name>Boundless Cloud Repository</name>
             <url>https://repo.boundlessgeo.com/main/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>unidata-releases</id>
             <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
     <profiles>

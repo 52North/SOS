@@ -31,11 +31,11 @@
             <artifactId>hibernate-utils</artifactId>
         </dependency>
          <dependency>
-            <groupId>org.n52.iceland</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>iceland</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.shetland</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>shetland</artifactId>
         </dependency>
         <dependency>

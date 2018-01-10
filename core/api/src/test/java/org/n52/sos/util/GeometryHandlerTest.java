@@ -28,22 +28,19 @@
  */
 package org.n52.sos.util;
 
+import com.google.common.base.Joiner;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-
-import com.google.common.base.Joiner;
+import org.junit.rules.ExpectedException;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 import org.n52.faroe.ConfigurationError;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.JTSHelper;
 
 public class GeometryHandlerTest {
 
@@ -93,45 +90,40 @@ public class GeometryHandlerTest {
         geometryHandler.setEpsgCodesWithNorthingFirstAxisOrder(NORTHING_FIRST_CRS);
         geometryHandler.setDatasourceNorthingFirst(false);
         geometryHandler.init();
-        WKTReader reader = new WKTReader();
+
         double lat_4326 = 52.7;
         double lon_4326 = 7.52;
         double lat_31467 = 5841822;
         double lon_31467 = 3400029;
 
 
-
         wkt4326 = geometryHandler.getWktString(lat_4326, lon_4326);
-        geometry4326 = reader.read(wkt4326);
-        geometry4326.setSRID(EPSG_4326);
+        geometry4326 = JTSHelper.createGeometryFromWKT(wkt4326, EPSG_4326);
 
         wkt4326Switched = geometryHandler.getWktString(lon_4326, lat_4326);
-        geometry4326Switched = reader.read(wkt4326Switched);
-        geometry4326Switched.setSRID(EPSG_4326);
+        geometry4326Switched = JTSHelper.createGeometryFromWKT(wkt4326Switched, EPSG_4326);
 
         wkt31467 = geometryHandler.getWktString(lat_31467, lon_31467);
-        geometry31467 = reader.read(wkt31467);
-        geometry31467.setSRID(EPSG_31467);
+        geometry31467 = JTSHelper.createGeometryFromWKT(wkt31467, EPSG_31467);
 
         wkt31467Switched = geometryHandler.getWktString(lon_31467, lat_31467);
-        geometry31467Switched = reader.read(wkt31467Switched);
-        geometry31467Switched.setSRID(EPSG_31467);
+        geometry31467Switched = JTSHelper.createGeometryFromWKT(wkt31467Switched, EPSG_31467);
     }
 
     private Geometry get4326Geometry() {
-        return (Geometry)geometry4326.clone();
+        return (Geometry) geometry4326.copy();
     }
 
     private Geometry get4326SwitchedGeometry() {
-        return (Geometry)geometry4326Switched.clone();
+        return (Geometry) geometry4326Switched.copy();
     }
 
     private Geometry get31467Geometry() {
-        return (Geometry)geometry31467.clone();
+        return (Geometry) geometry31467.copy();
     }
 
     private Geometry get31467SwitchedGeometry() {
-        return (Geometry)geometry31467Switched.clone();
+        return (Geometry) geometry31467Switched.copy();
     }
 
     @Test

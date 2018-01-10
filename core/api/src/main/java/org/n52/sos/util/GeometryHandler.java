@@ -28,31 +28,22 @@
  */
 package org.n52.sos.util;
 
-import static java.util.stream.Collectors.toSet;
-import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import static java.util.stream.Collectors.toSet;
 import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
+import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
 import org.geotools.referencing.factory.DeferredAuthorityFactory;
-import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.faroe.ConfigurationError;
@@ -62,24 +53,29 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.util.Range;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
 import org.n52.shetland.ogc.filter.SpatialFilter;
-import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.shetland.util.GeometryTransformer;
 import org.n52.shetland.util.JTSHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.FeatureQuerySettingsProvider;
 import org.n52.svalbard.CodingSettings;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class to provide some methods for JTS Geometry which is used by
@@ -590,6 +586,12 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         return geometry;
     }
 
+    private Geometry transform(final Geometry geometry, final int targetSRID,
+            final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
+            throws OwsExceptionReport {
+        return transform(JTSConverter.convert(geometry), targetSRID, sourceCRS, targetCRS);
+    }
+
     /**
      * Transform geometry
      *
@@ -604,16 +606,16 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @return Transformed geometry
      * @throws OwsExceptionReport
      */
-    private Geometry transform(final Geometry geometry, final int targetSRID,
+    private Geometry transform(final com.vividsolutions.jts.geom.Geometry geometry, final int targetSRID,
             final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
             throws OwsExceptionReport {
         if (sourceCRS.equals(targetCRS)) {
-            return geometry;
+            return JTSConverter.convert(geometry);
         }
-        Geometry switchedCoordiantes = switchCoordinateAxisIfNeeded(geometry, targetSRID);
+        Geometry switchedCoordiantes = switchCoordinateAxisIfNeeded(JTSConverter.convert(geometry), targetSRID);
         try {
             MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
-            Geometry transformed = JTS.transform(switchedCoordiantes, transform);
+            Geometry transformed = JTSConverter.convert(JTS.transform(JTSConverter.convert(switchedCoordiantes), transform));
             transformed.setSRID(targetSRID);
             return transformed;
         } catch (FactoryException | MismatchedDimensionException | TransformException fe) {
@@ -669,6 +671,10 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         return crsAuthority;
     }
 
+    public Envelope transformEnvelope(Envelope envelope, int sourceSRID, int targetSRID) throws CodedException {
+        return transformEnvelope(JTSConverter.convert(envelope), sourceSRID, targetSRID);
+    }
+
     /**
      * Transform envelope from source to target EPSG code
      *
@@ -682,13 +688,13 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @throws CodedException
      *             If the geometry EPSG code is not supported
      */
-    public Envelope transformEnvelope(Envelope envelope, int sourceSRID, int targetSRID) throws CodedException {
+    public Envelope transformEnvelope(com.vividsolutions.jts.geom.Envelope envelope, int sourceSRID, int targetSRID) throws CodedException {
         if (envelope != null && !envelope.isNull() && targetSRID > 0 && sourceSRID != targetSRID) {
             CoordinateReferenceSystem sourceCRS = getCRS(sourceSRID);
             CoordinateReferenceSystem targetCRS = getCRS(targetSRID);
             try {
                 MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
-                Envelope transformed = JTS.transform(envelope, transform);
+                Envelope transformed = JTSConverter.convert(JTS.transform(envelope, transform));
                 return transformed;
             } catch (FactoryException fe) {
                 throw new NoApplicableCodeException().causedBy(fe).withMessage("The EPSG code '%s' is not supported!",
@@ -701,7 +707,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
                         "TTransformation from EPSG code '%s' to '%s' fails!", sourceSRID, targetSRID);
             }
         }
-        return envelope;
+        return JTSConverter.convert(envelope);
     }
 
     /**
@@ -727,7 +733,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     public String addOgcCrsPrefix(int crs) {
         return this.srsNamePrefixUrl + crs;
     }
-    
+
     private ConfigurationError createException(String entry, Throwable ex) {
         return new ConfigurationError(String.format("Invalid format of entry in '%s': %s",
                 FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry), ex);

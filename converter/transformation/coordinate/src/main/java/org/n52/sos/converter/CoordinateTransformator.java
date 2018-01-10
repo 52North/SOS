@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,8 +28,10 @@
  */
 package org.n52.sos.converter;
 
-import static java.util.stream.Collectors.toList;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,8 +39,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
-
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
@@ -56,7 +64,6 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
@@ -109,17 +116,6 @@ import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.GeometryHandler;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
 
 /**
  * Class that transforms geometries in the requests to the stored EPSG code and
@@ -710,7 +706,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      *             If an error occurs when parsing the request
      */
     private int getCrsFrom(OwsServiceRequest request) throws OwsExceptionReport {
-        Optional<?> crsExtension = request.getExtension(OWSConstants.AdditionalRequestParams.crs).map(Extension::getValue);
+        Optional<?> crsExtension = request.getExtension(OWSConstants.AdditionalRequestParams.crs).map((extension) ->
+                extension.getValue());
 
         if (crsExtension.isPresent()) {
             return getCrs(crsExtension.get());

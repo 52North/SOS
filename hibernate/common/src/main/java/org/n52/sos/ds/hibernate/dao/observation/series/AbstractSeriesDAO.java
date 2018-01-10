@@ -201,12 +201,14 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             series = getSeriesImpl();
             ctx.addValuesToSeries(series);
             series.setDeleted(false);
-            series.setPublished(true);
+            series.setPublished(ctx.isPublish());
             series.setHiddenChild(ctx.isHiddenChild());
         } else if (series.isDeleted()) {
             series.setDeleted(false);
         } else if (ctx.isSetSeriesType() && !series.isSetSeriesType()) {
             ctx.addValuesToSeries(series);
+        } else if (ctx.isPublish() && !series.isPublished()) {
+            series.setPublished(true);
         } else {
             return series;
         }

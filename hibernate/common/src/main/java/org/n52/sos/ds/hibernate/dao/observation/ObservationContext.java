@@ -44,20 +44,31 @@ import com.google.common.base.Strings;
  * observableProperty, procedure).
  *
  * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  * @since 4.0.0
  *
  */
 public class ObservationContext {
+
     private AbstractFeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
     private Offering offering;
     private String seriesType;
-
     private boolean hiddenChild;
+    private boolean publish = true;
+
     /**
-     * @return the featureOfInterest
+     * Indicates that the series of the observation should be published
      */
+    public boolean isPublish() {
+        return publish;
+    }
+
+    public void setPublish(boolean publish) {
+        this.publish = publish;
+    }
+
     public AbstractFeatureOfInterest getFeatureOfInterest() {
         return featureOfInterest;
     }

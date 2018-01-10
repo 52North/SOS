@@ -10,6 +10,6 @@
 
     <bean class="org.n52.iceland.coding.SupportedTypeRepositoryInitializer"/>
 
-    <bean class="org.n52.iceland.binding.exi.EXIUtils" />
+    <bean id="exiUtils" class="org.n52.iceland.binding.exi.EXIUtils" />
     <bean id="exiBinding" class="org.n52.iceland.binding.exi.EXIBinding"/>
 </beans>

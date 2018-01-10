@@ -35,7 +35,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -69,10 +72,10 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     private final Map<SosObservationOfferingExtensionKey, Producer<SosObservationOfferingExtensionProvider>> offeringExtensionProviders = new HashMap<>(0);
     private final ActivationListeners<SosObservationOfferingExtensionKey> activation = new ActivationListeners<>(true);
 
-    @Autowired(required = false)
-    private Collection<SosObservationOfferingExtensionProvider> components;
-    @Autowired(required = false)
-    private Collection<SosObservationOfferingExtensionProviderFactory> componentFactories;
+    @Inject
+    private Optional<Collection<SosObservationOfferingExtensionProvider>> components = Optional.of(Collections.emptyList());
+    @Inject
+    private Optional<Collection<SosObservationOfferingExtensionProviderFactory>> componentFactories = Optional.of(Collections.emptyList());
 
     @Override
     public void init() {

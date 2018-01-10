@@ -28,38 +28,37 @@
  */
 package org.n52.sos.statistics.sos;
 
+import javax.inject.Inject;
+
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
-
-import org.n52.janmayen.event.EventBus;
 import org.n52.iceland.event.events.CountingOutputStreamEvent;
 import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.iceland.event.events.OutgoingResponseEvent;
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.event.events.ResponseEvent;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.iceland.statistics.impl.AbstractStatisticsServiceEventListener;
+import org.n52.janmayen.event.EventBus;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.net.IPAddress;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import basetest.ElasticsearchAwareTest;
 
 @Deprecated
 public class ServiceEventBusIt extends ElasticsearchAwareTest {
 
-    @Autowired
+    @Inject
     private AbstractStatisticsServiceEventListener listener;
 
-    @Autowired
+    @Inject
     private EventBus serviceBus;
 
     @Test

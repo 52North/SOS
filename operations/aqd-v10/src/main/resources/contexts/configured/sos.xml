@@ -18,6 +18,6 @@
       class="org.n52.sos.request.operator.ReportObligationRepository" />
 
 
-    <bean id="reportObligationRepository"
+    <bean id="adminEReportingHeaderController"
           class="org.n52.sos.web.admin.AdminEReportingHeaderController" />
 </beans>

@@ -31,18 +31,15 @@ package org.n52.sos.ds.hibernate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.Map.Entry;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.convert.ConverterRepository;
 import org.n52.sos.ds.AbstractInsertSensorDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -55,6 +52,7 @@ import org.n52.sos.ds.hibernate.dao.RelatedFeatureRoleDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.ObservationType;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -63,6 +61,7 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
@@ -83,14 +82,13 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosInsertionCapabilities;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
 import org.n52.sos.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
-import org.n52.sos.service.operator.ServiceOperatorKey;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 /**
  * Implementation of the abstract class AbstractInsertSensorDAO
@@ -146,16 +144,17 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                         getSensorDescriptionFromProcedureDescription(request.getProcedureDescription(),
                                 assignedProcedureID), new DateTime(DateTimeZone.UTC), session);
                 if (!request.isType()) {
-                    final List<ObservationType> observationTypes =
-                            new ObservationTypeDAO().getOrInsertObservationTypes(request.getMetadata().getObservationTypes(),
+                    final List<ObservationType> observationTypes = new ObservationTypeDAO()
+                            .getOrInsertObservationTypes(request.getMetadata().getObservationTypes(), session);
+                    final List<FeatureOfInterestType> featureOfInterestTypes = new FeatureOfInterestTypeDAO()
+                            .getOrInsertFeatureOfInterestTypes(request.getMetadata().getFeatureOfInterestTypes(),
                                     session);
-                    final List<FeatureOfInterestType> featureOfInterestTypes =
-                            new FeatureOfInterestTypeDAO().getOrInsertFeatureOfInterestTypes(request.getMetadata()
-                                    .getFeatureOfInterestTypes(), session);
                     if (observationTypes != null && featureOfInterestTypes != null) {
                         final List<ObservableProperty> hObservableProperties =
-                                getOrInsertNewObservableProperties(request.getObservableProperty(), request.getProcedureDescription(), session);
-                        final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
+                                getOrInsertNewObservableProperties(request.getObservableProperty(),
+                                        request.getProcedureDescription(), session);
+                        final ObservationConstellationDAO observationConstellationDAO =
+                                new ObservationConstellationDAO();
                         final OfferingDAO offeringDAO = new OfferingDAO();
                         for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
                             final List<RelatedFeature> hRelatedFeatures = new LinkedList<>();
@@ -163,34 +162,52 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                                 final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO();
                                 final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
                                 for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
-                                    final List<RelatedFeatureRole> relatedFeatureRoles =
-                                            relatedFeatureRoleDAO.getOrInsertRelatedFeatureRole(relatedFeature.getRole(),
-                                                    session);
+                                    final List<RelatedFeatureRole> relatedFeatureRoles = relatedFeatureRoleDAO
+                                            .getOrInsertRelatedFeatureRole(relatedFeature.getRole(), session);
                                     hRelatedFeatures.addAll(relatedFeatureDAO.getOrInsertRelatedFeature(
                                             relatedFeature.getFeature(), relatedFeatureRoles, session));
                                 }
                             }
                             final Offering hOffering =
-                                    offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering, hRelatedFeatures, observationTypes,
-                                            featureOfInterestTypes, session);
+                                    offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering, hRelatedFeatures,
+                                            observationTypes, featureOfInterestTypes, session);
                             for (final ObservableProperty hObservableProperty : hObservableProperties) {
-                                observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,
-                                        hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
+                                ObservationConstellation hObservationConstellation = observationConstellationDAO
+                                        .checkOrInsertObservationConstellation(hProcedure, hObservableProperty,
+                                                hOffering, assignedOffering.isParentOffering(), session);
                                 if (checkPreconditionsOfStaticReferenceValues(request)) {
+                                    AbstractFeatureOfInterest hFeature = new FeatureOfInterestDAO().checkOrInsertFeatureOfInterest(
+                                            request.getProcedureDescription().getFeaturesOfInterestMap().entrySet().iterator().next().getValue(), session);
+                                    String identifier = hProcedure.getIdentifier() + "_referencevalue";
+                                    Procedure hProcedureReferenceSeries = new ProcedureDAO().getOrInsertProcedure(
+                                            identifier,
+                                            procedureDescriptionFormat,
+                                            new SosProcedureDescriptionUnknowType(identifier,
+                                                    procedureDescriptionFormat.getProcedureDescriptionFormat(), ""),
+                                            false,
+                                            session);
+                                    Offering hOfferingReferenceSeries = new OfferingDAO().getAndUpdateOrInsertNewOffering(
+                                            new SosOffering(
+                                                    hOffering.getIdentifier() + "_referencevalue",
+                                                    hOffering.getName() + "_referencevalue"),
+                                            hRelatedFeatures,
+                                            observationTypes,
+                                            featureOfInterestTypes,
+                                            session);
                                 }
                             }
                         }
                         // TODO: parent and child procedures
-//                        response.setAssignedProcedure(assignedProcedureID);
-//                        response.setAssignedOffering(firstAssignedOffering.getIdentifier());
                     } else {
-                        throw new NoApplicableCodeException().withMessage("Error while inserting InsertSensor into database!");
+                        throw new NoApplicableCodeException()
+                                .withMessage("Error while inserting InsertSensor into database!");
                     }
                 }
                 response.setAssignedProcedure(assignedProcedureID);
                 response.setAssignedOffering(firstAssignedOffering.getIdentifier());
             } else {
-                throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat, request.getProcedureDescriptionFormat());
+                throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
+                        request.getProcedureDescriptionFormat());
             }
             session.flush();
             transaction.commit();
@@ -208,8 +225,11 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
 
     private boolean checkPreconditionsOfStaticReferenceValues(final InsertSensorRequest request) {
         return request.getProcedureDescription() instanceof AbstractProcessV20 &&
-                ((AbstractProcessV20)request.getProcedureDescription()).isSetSmlFeatureOfInterest() &&
-                ((AbstractSensorML)request.getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE).isPresent();
+                ((AbstractProcessV20) request.getProcedureDescription()).isSetSmlFeatureOfInterest() &&
+                ((AbstractSensorML) request.getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE)
+                    .isPresent() &&
+                    !request.getProcedureDescription().getFeaturesOfInterestMap().isEmpty() &&
+                    request.getProcedureDescription().getFeaturesOfInterestMap().size() == 1;
     }
 
     /**

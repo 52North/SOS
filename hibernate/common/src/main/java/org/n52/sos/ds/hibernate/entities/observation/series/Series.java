@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
@@ -40,7 +39,6 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPublishedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -60,19 +58,19 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
         implements HasWriteableObservationContext,
                    HasDeletedFlag,
                    HasHiddenChildFlag,
-                   HasUnit, 
-                   HasPublishedFlag, 
+                   HasUnit,
+                   HasPublishedFlag,
                    HasSeriesType,
                    HasOffering{
 
     private static final long serialVersionUID = 7838379468605356753L;
-    
+
     public static String ID = "seriesId";
     public static String FIRST_TIME_STAMP = "firstTimeStamp";
     public static String LAST_TIME_STAMP = "lastTimeStamp";
-    
+
     public static final String ALIAS = "s";
-    
+
     public static final String ALIAS_DOT = ALIAS + Constants.DOT_STRING;
 
     private long seriesId;
@@ -150,7 +148,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     public boolean isDeleted() {
         return deleted;
     }
-    
+
     @Override
     public Series setPublished(final boolean published) {
         this.published = published;
@@ -277,7 +275,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
 
     @Override
     public boolean isHiddenChild() {
-        return this.hiddenChild;
+        return hiddenChild;
     }
 
     public boolean isSetFirstLastTime() {
@@ -293,7 +291,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     public void setOffering(final Offering offering) {
         this.offering = offering;
     }
-    
+
     @Override
     public boolean isSetOffering() {
         return getOffering() != null;
@@ -304,14 +302,17 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
                 && getObservableProperty().equals(s.getObservableProperty());
     }
 
+    @Override
     public String getSeriesType() {
-        return this.seriesType;
+        return seriesType;
     }
 
+    @Override
     public void setSeriesType(String seriesType) {
         this.seriesType = seriesType;
     }
-    
+
+    @Override
     public boolean isSetSeriesType() {
         return !Strings.isNullOrEmpty(getSeriesType());
     }

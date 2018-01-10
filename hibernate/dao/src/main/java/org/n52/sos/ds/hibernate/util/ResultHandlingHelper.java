@@ -66,7 +66,7 @@ import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.base.Strings;
-import com.vividsolutions.jts.io.WKTWriter;
+import org.locationtech.jts.io.WKTWriter;
 
 /**
  * @since 4.0.0

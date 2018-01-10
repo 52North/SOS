@@ -39,7 +39,7 @@ import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 
 import com.google.common.collect.Lists;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 import ucar.nc2.constants.CF;
 

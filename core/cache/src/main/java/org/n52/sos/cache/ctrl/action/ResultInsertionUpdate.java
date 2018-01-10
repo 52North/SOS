@@ -39,7 +39,7 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.cache.SosWritableContentCache;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations are added, settings are updated in

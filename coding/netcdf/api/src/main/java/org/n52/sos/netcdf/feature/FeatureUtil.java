@@ -33,9 +33,9 @@ import java.util.Set;
 
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 
 /**
  * Utility class for features in netCDF encoding

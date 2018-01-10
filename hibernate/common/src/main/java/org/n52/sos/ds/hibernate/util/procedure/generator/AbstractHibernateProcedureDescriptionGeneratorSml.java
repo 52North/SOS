@@ -86,7 +86,7 @@ import org.n52.svalbard.CodingSettings;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 /**
  * Abstract generator class for SensorML procedure descriptions

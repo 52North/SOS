@@ -80,7 +80,7 @@ import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.encode.EncoderRepository;
 
 import com.google.common.base.Strings;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * TODO JavaDoc

@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 public class SpatialFilterEsModel extends AbstractElasticsearchModel {
 

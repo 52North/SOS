@@ -49,7 +49,7 @@ import org.n52.sos.ds.DatasourceCacheUpdate;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  * Updates the cache after a Observation was deleted. Uses the deleted

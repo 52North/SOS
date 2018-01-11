@@ -153,5 +153,9 @@
                 <comment>Definition of the series type, e.g. measurement for OM_Measurement. Optional</comment>
             </column>
         </property>
+        <set name="referenceValues" table="series_reference" inverse="true">
+            <key column="series_pkid_from" />
+            <many-to-many class="org.n52.sos.ds.hibernate.entities.observation.series.Series" column="series_pkid_to" unique="true" />
+        </set>
     </class>
 </hibernate-mapping>

@@ -89,6 +89,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     private Unit unit;
     private boolean hiddenChild;
     private String seriesType;
+    private Set<Series> referenceValues;
     /**
      * Get series id
      *
@@ -315,5 +316,13 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     @Override
     public boolean isSetSeriesType() {
         return !Strings.isNullOrEmpty(getSeriesType());
+    }
+
+    public Set<Series> getReferenceValues() {
+        return referenceValues;
+    }
+
+    public void setReferenceValues(Set<Series> referenceValues) {
+        this.referenceValues = referenceValues;
     }
 }

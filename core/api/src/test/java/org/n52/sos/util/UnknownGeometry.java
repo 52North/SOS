@@ -362,11 +362,6 @@ public class UnknownGeometry extends Geometry {
     }
 
     @Override
-    public Object clone() {
-        return new UnknownGeometry((Geometry) geom.clone());
-    }
-
-    @Override
     public void normalize() {
         geom.normalize();
     }
@@ -403,7 +398,7 @@ public class UnknownGeometry extends Geometry {
 
     @Override
     public Geometry copy() {
-        return geom.copy();
+        return new UnknownGeometry((Geometry) geom.copy());
     }
 
     @Override

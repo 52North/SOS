@@ -12,39 +12,35 @@
     <description>52°North SOS - API module</description>
     <dependencies>
         <dependency>
-            <groupId>org.n52.iceland</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>iceland</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.janmayen</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>janmayen</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.shetland</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>shetland</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.svalbard</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>svalbard</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.faroe</groupId>
-            <artifactId>faroe</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.faroe</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-utils</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.faroe</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-annotations</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.faroe</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-json</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.iceland</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>iceland</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
@@ -65,6 +61,10 @@
         <dependency>
             <groupId>com.vividsolutions</groupId>
             <artifactId>jts</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -178,7 +178,6 @@
                             <goal>test-jar</goal>
                         </goals>
                         <configuration>
-                            <classifier>without</classifier>
                             <excludes>
                                 <exclude>**/*Test.*</exclude>
                                 <exclude>**/*$.*</exclude>

@@ -52,8 +52,8 @@ import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSHelperForTesting;
 import org.n52.sos.util.builder.SamplingFeatureBuilder;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 
 /**
  * TODO JavaDoc

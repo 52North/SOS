@@ -53,7 +53,7 @@ import org.n52.shetland.util.ReferencedEnvelope;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  * TODO JavaDoc

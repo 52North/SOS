@@ -37,7 +37,7 @@ import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisito
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * Implementation of a full {@link Observation} for the legacy observation

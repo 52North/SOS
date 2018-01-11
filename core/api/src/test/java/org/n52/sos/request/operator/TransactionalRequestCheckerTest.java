@@ -41,7 +41,7 @@ import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.net.IPAddress;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
-import com.vividsolutions.jts.io.ParseException;
+import org.locationtech.jts.io.ParseException;
 
 /**
  * @since 4.0.0

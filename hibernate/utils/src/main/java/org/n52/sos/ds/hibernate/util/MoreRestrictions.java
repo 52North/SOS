@@ -28,16 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import static org.n52.sos.ds.hibernate.util.HibernateCollectors.toConjunction;
-import static org.n52.sos.ds.hibernate.util.HibernateCollectors.toDisjunction;
-
 import java.util.Arrays;
 import java.util.Optional;
-
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
+import static org.n52.sos.ds.hibernate.util.HibernateCollectors.toConjunction;
+import static org.n52.sos.ds.hibernate.util.HibernateCollectors.toDisjunction;
 
 /**
  * TODO JavaDoc
@@ -52,7 +50,7 @@ public class MoreRestrictions {
     @SafeVarargs
     @SuppressWarnings(value = "varargs")
     public static Optional<? extends Criterion> and(Optional<? extends Criterion>... criteria) {
-        Conjunction conjunction = Arrays.stream(criteria).filter(Optional::isPresent).map(Optional::get)
+        Conjunction conjunction = Arrays.stream(criteria).filter(Optional::isPresent).map((optional) -> optional.get())
                 .collect(toConjunction());
         return Optional.of(conjunction).filter(MoreRestrictions::hasConditions);
     }
@@ -60,7 +58,7 @@ public class MoreRestrictions {
     @SafeVarargs
     @SuppressWarnings(value = "varargs")
     public static Optional<? extends Criterion> or(Optional<? extends Criterion>... criteria) {
-        Disjunction disjunction = Arrays.stream(criteria).filter(Optional::isPresent).map(Optional::get)
+        Disjunction disjunction = Arrays.stream(criteria).filter(Optional::isPresent).map((optional) -> optional.get())
                 .collect(toDisjunction());
         return Optional.of(disjunction).filter(MoreRestrictions::hasConditions);
     }

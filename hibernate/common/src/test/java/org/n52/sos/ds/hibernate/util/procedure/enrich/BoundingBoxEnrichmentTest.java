@@ -51,7 +51,7 @@ import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 
 import com.google.common.collect.Lists;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 
 public class BoundingBoxEnrichmentTest {

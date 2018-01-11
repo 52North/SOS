@@ -30,7 +30,7 @@ package org.n52.sos.util;
 
 import java.util.Random;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 public class JTSHelperForTesting {
 

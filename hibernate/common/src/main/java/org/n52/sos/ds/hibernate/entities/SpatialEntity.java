@@ -32,7 +32,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

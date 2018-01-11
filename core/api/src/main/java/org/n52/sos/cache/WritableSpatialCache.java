@@ -32,7 +32,7 @@ import java.util.Collection;
 
 import org.n52.shetland.util.ReferencedEnvelope;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  * TODO JavaDoc

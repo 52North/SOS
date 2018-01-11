@@ -135,8 +135,8 @@ import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * Abstract Hibernate data access class for observations.

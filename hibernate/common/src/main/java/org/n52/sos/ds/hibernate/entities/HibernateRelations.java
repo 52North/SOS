@@ -37,7 +37,7 @@ import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 
 import com.google.common.base.Strings;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * Interfaces that entities can implement to share constants and to make clear which entities have which relations.

@@ -73,7 +73,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public abstract class AbstractSeriesObservationDAO extends AbstractObservationDAO {
 

@@ -897,6 +897,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             if (procedureDescription.isSetInsitu()) {
                 tProcedure.setInsitu(procedureDescription.getInsitu());
             }
+            tProcedure.setReference(procedureDescription.isReference());
             procedure = tProcedure;
         }
         procedure.setDeleted(false);

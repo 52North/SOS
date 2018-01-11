@@ -67,7 +67,8 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     private final Set<SosProcedureDescription> childProcedures = Sets.newLinkedHashSet();
     private Time validTime;
     private ReferenceType typeOf;
-    
+    private boolean reference;
+
     /**
      * Is it an aggregation procedure, e.g. System, PhysicalSystem
      *
@@ -409,5 +410,18 @@ public abstract class SosProcedureDescription extends AbstractFeature {
 
     public boolean getInsitu() {
         return true;
+    }
+
+    /**
+     * Flag used by the REST API for displaying reference values. Not used by OGC SOS interface
+     *
+     * @return the reference flag state
+     */
+    public boolean isReference() {
+        return reference;
+    }
+
+    public void setReference(boolean isReference) {
+        reference = isReference;
     }
 }

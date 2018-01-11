@@ -178,7 +178,6 @@
                             <goal>test-jar</goal>
                         </goals>
                         <configuration>
-                            <classifier>without</classifier>
                             <excludes>
                                 <exclude>**/*Test.*</exclude>
                                 <exclude>**/*$.*</exclude>

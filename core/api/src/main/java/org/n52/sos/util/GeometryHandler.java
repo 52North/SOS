@@ -727,7 +727,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     public String addOgcCrsPrefix(int crs) {
         return this.srsNamePrefixUrl + crs;
     }
-    
+
     private ConfigurationError createException(String entry, Throwable ex) {
         return new ConfigurationError(String.format("Invalid format of entry in '%s': %s",
                 FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry), ex);

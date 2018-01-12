@@ -47,7 +47,6 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -83,8 +82,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
- * Class to provide some methods for JTS Geometry which is used by
- * {@link org.n52.sos.ds.FeatureQueryHandler}.
+ * Class to provide some methods for JTS Geometry which is used by {@link org.n52.sos.ds.FeatureQueryHandler}.
  *
  * @since 4.0.0
  *
@@ -95,7 +93,6 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     /*
      * longitude = east-west latitude = north-south
      */
-
     private static final Logger LOGGER = LoggerFactory.getLogger(GeometryHandler.class);
     @Deprecated
     private static GeometryHandler instance;
@@ -124,7 +121,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     public void init() {
         GeometryHandler.instance = this;
         Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
-                isEastingFirstEpsgCode(getStorageEPSG()));
+                                isEastingFirstEpsgCode(getStorageEPSG()));
         this.crsAuthority = getCRSAuthorityFactory(this.authority, hints);
     }
 
@@ -193,10 +190,9 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     /**
      * Set storage EPSG code from settings
      *
-     * @param epsgCode
-     *            EPSG code from settings
-     * @throws ConfigurationError
-     *             If an error occurs
+     * @param epsgCode EPSG code from settings
+     *
+     * @throws ConfigurationError If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
     public void setStorageEpsg(int epsgCode) throws ConfigurationError {
@@ -208,13 +204,12 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     /**
      * Set storage 3D EPSG code from settings
      *
-     * @param epsgCode3D
-     *            3D EPSG code from settings
-     * @throws ConfigurationError
-     *             If an error occurs
+     * @param epsgCode3D 3D EPSG code from settings
+     *
+     * @throws ConfigurationError If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
-    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationError {
+    public void setStorage3DEpsg(int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         storage3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
@@ -223,13 +218,12 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     /**
      * Set default response EPSG code from settings
      *
-     * @param epsgCode
-     *            EPSG code from settings
-     * @throws ConfigurationError
-     *             If an error occurs
+     * @param epsgCode EPSG code from settings
+     *
+     * @throws ConfigurationError If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
-    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationError {
+    public void setDefaultResponseEpsg(int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         defaultResponseEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
@@ -238,13 +232,12 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     /**
      * Set default response 3D EPSG code from settings
      *
-     * @param epsgCode3D
-     *            3D EPSG code from settings
-     * @throws ConfigurationError
-     *             If an error occurs
+     * @param epsgCode3D 3D EPSG code from settings
+     *
+     * @throws ConfigurationError If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
-    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationError {
+    public void setDefaultResponse3DEpsg(int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         defaultResponse3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
@@ -253,8 +246,8 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     /**
      * Set the supported EPSG codes
      *
-     * @param supportedCRS
-     *            Supported EPSG codes
+     * @param supportedCRS Supported EPSG codes
+     *
      * @throws ConfigurationError
      */
     @Setting(FeatureQuerySettingsProvider.SUPPORTED_CRS_KEY)
@@ -297,10 +290,11 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Add integer EPSG code to supported CRS set
+     * Add integer EPSG code to supported CRS set.
      *
-     * @param epsgCode
-     *            Integer EPSG code
+     * @param epsgCode Integer EPSG code
+     *
+     * @return this
      */
     private GeometryHandler addToSupportedCrs(int epsgCode) {
         this.supportedCRS.add(Integer.toString(epsgCode));
@@ -308,37 +302,37 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Set the northing first indicator for the datasource
+     * Set the northing first indicator for the datasource.
      *
-     * @param datasoureUsesNorthingFirst
-     *            Northing first indicator
+     * @param datasoureUsesNorthingFirst Northing first indicator
+     *
+     * @return this
      */
     @Setting(FeatureQuerySettingsProvider.DATASOURCE_NORTHING_FIRST)
-    public GeometryHandler setDatasourceNorthingFirst(final boolean datasoureUsesNorthingFirst) {
+    public GeometryHandler setDatasourceNorthingFirst(boolean datasoureUsesNorthingFirst) {
         this.datasoureUsesNorthingFirst = datasoureUsesNorthingFirst;
         return this;
     }
 
     /**
-     * Check if the datasource uses northing first coordinates
+     * Check if the datasource uses northing first coordinates.
      *
-     * @return <code>true</code>, if the datasource uses northing first
-     *         coordinates
+     * @return <code>true</code>, if the datasource uses northing first coordinates
      */
     public boolean isDatasourceNorthingFirst() {
         return datasoureUsesNorthingFirst;
     }
 
     /**
-     * Set the EPSG code ranges for which the coordinates should be switched
+     * Set the EPSG code ranges for which the coordinates should be switched.
      *
-     * @param codes
-     *            EPSG code ranges
-     * @throws ConfigurationError
-     *             If an error occurs
+     * @param codes EPSG code ranges
+     *
+     * @throws ConfigurationError If an error occurs
+     * @return this
      */
     @Setting(FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST)
-    public GeometryHandler setEpsgCodesWithNorthingFirstAxisOrder(final String codes) throws ConfigurationError {
+    public GeometryHandler setEpsgCodesWithNorthingFirstAxisOrder(String codes) throws ConfigurationError {
         Validation.notNullOrEmpty("EPSG Codes to switch coordinates for", codes);
         final String[] splitted = codes.split(";");
         List<Range> newEpsgCodes = Lists.newArrayListWithCapacity(splitted.length);
@@ -356,8 +350,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
                     default:
                         throw createException(entry, null);
                 }
-            }
-            catch (NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 throw createException(entry, ex);
             }
             newEpsgCodes.add(r);
@@ -369,19 +362,17 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Set flag if the used datasource is a spatial datasource (provides spatial
-     * functions)
+     * Set flag if the used datasource is a spatial datasource (provides spatial functions).
      *
-     * @param spatialDatasource
-     *            Flag if spatial datasource
+     * @param spatialDatasource Flag if spatial datasource
      */
     @Setting(FeatureQuerySettingsProvider.SPATIAL_DATASOURCE)
-    public void setSpatialDatasource(final boolean spatialDatasource) {
+    public void setSpatialDatasource(boolean spatialDatasource) {
         this.spatialDatasource = spatialDatasource;
     }
 
     /**
-     * Is datasource a spatial datasource
+     * Is datasource a spatial datasource.
      *
      * @return Spatial datasource or not
      */
@@ -390,51 +381,50 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Check if the EPSG code is northing first
+     * Check if the EPSG code is northing first.
      *
-     * @param epsgCode
-     *            EPSG code to check
+     * @param epsgCode EPSG code to check
+     *
      * @return <code>true</code>, if the EPSG code is northing first
      */
-    public boolean isNorthingFirstEpsgCode(final int epsgCode) {
+    public boolean isNorthingFirstEpsgCode(int epsgCode) {
         return this.epsgsWithNorthingFirstAxisOrder.stream()
                 .filter(r -> r.contains(epsgCode))
                 .findAny().isPresent();
     }
 
     /**
-     * Check if the EPSG code is easting first
+     * Check if the EPSG code is easting first.
      *
-     * @param epsgCode
-     *            EPSG code to check
+     * @param epsgCode EPSG code to check
+     *
      * @return <code>true</code>, if the EPSG code is easting first
      */
-    public boolean isEastingFirstEpsgCode(final int epsgCode) {
+    public boolean isEastingFirstEpsgCode(int epsgCode) {
         return !isNorthingFirstEpsgCode(epsgCode);
     }
 
-
     /**
-     * Switch the coordinate axis of geometry from or for datasource
+     * Switch the coordinate axis of geometry from or for datasource.
      *
-     * @param geom
-     *            Geometry to switch coordinate axis
+     * @param geom Geometry to switch coordinate axis
+     *
      * @return Geometry with switched coordinate axis if needed
-     * @throws OwsExceptionReport
-     *             If coordinate axis switching fails
+     *
+     * @throws OwsExceptionReport If coordinate axis switching fails
      */
     public Geometry switchCoordinateAxisFromToDatasourceIfNeeded(EnvelopeOrGeometry geom) throws OwsExceptionReport {
         return switchCoordinateAxisFromToDatasourceIfNeeded(geom.toGeometry());
     }
 
     /**
-     * Switch the coordinate axis of geometry from or for datasource
+     * Switch the coordinate axis of geometry from or for datasource.
      *
-     * @param geom
-     *            Geometry to switch coordinate axis
+     * @param geom Geometry to switch coordinate axis
+     *
      * @return Geometry with switched coordinate axis if needed
-     * @throws OwsExceptionReport
-     *             If coordinate axis switching fails
+     *
+     * @throws OwsExceptionReport If coordinate axis switching fails
      */
     public Geometry switchCoordinateAxisFromToDatasourceIfNeeded(Geometry geom) throws OwsExceptionReport {
         if (!shouldSwitchCoordinateAxis(geom)) {
@@ -444,7 +434,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     private Geometry switchCoordinateAxisIfNeeded(Geometry geometry, int targetSRID) throws OwsExceptionReport {
-        if (!GeometryHandler.this.shouldSwitchCoordinateAxis(geometry, targetSRID)) {
+        if (!shouldSwitchCoordinateAxis(geometry, targetSRID)) {
             return geometry;
         }
         return JTSHelper.switchCoordinateAxisOrder(geometry);
@@ -465,32 +455,31 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Get filter geometry for BBOX spatial filter and non spatial datasource
+     * Get filter geometry for BBOX spatial filter and non spatial datasource.
      *
-     * @param filter
-     *            SpatialFilter
+     * @param filter SpatialFilter
+     *
      * @return SpatialFilter geometry
-     * @throws OwsExceptionReport
-     *             If SpatialFilter is not supported
+     *
+     * @throws OwsExceptionReport If SpatialFilter is not supported
      */
     public Geometry getFilterForNonSpatialDatasource(SpatialFilter filter) throws OwsExceptionReport {
         switch (filter.getOperator()) {
-        case BBOX:
-            return switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
-        default:
-            throw new InvalidParameterValueException("spatialFilter", filter
-                    .getOperator().name());
+            case BBOX:
+                return switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
+            default:
+                throw new InvalidParameterValueException("spatialFilter", filter
+                                                         .getOperator().name());
             // Sos2Constants.GetObservationParams.spatialFilter = "spatialFilter"
         }
     }
 
     /**
-     * Get WKT string from longitude and latitude
+     * Get WKT string from longitude and latitude.
      *
-     * @param longitude
-     *            Longitude coordinate
-     * @param latitude
-     *            Latitude coordinate
+     * @param longitude Longitude coordinate
+     * @param latitude  Latitude coordinate
+     *
      * @return WKT string
      */
     public String getWktString(Object longitude, Object latitude) {
@@ -512,15 +501,12 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Get WKT string from longitude and latitude with axis order as defined by
-     * EPSG code.
+     * Get WKT string from longitude and latitude with axis order as defined by EPSG code.
      *
-     * @param longitude
-     *            Longitude coordinate
-     * @param latitude
-     *            Latitude coordinate
-     * @param epsg
-     *            EPSG code to check for axis order
+     * @param longitude Longitude coordinate
+     * @param latitude  Latitude coordinate
+     * @param epsg      EPSG code to check for axis order
+     *
      * @return WKT string
      */
     public String getWktString(Object longitude, Object latitude, int epsg) {
@@ -528,12 +514,11 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Check if geometry is in SpatialFilter envelopes
+     * Check if geometry is in SpatialFilter envelopes.
      *
-     * @param geometry
-     *            Geometry to check
-     * @param envelopes
-     *            SpatialFilter envelopes
+     * @param geometry  Geometry to check
+     * @param envelopes SpatialFilter envelopes
+     *
      * @return True if geometry is contained in envelopes
      */
     public boolean featureIsInFilter(Geometry geometry, List<Geometry> envelopes) {
@@ -541,11 +526,12 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Transforms the geometry to the storage EPSG code
+     * Transforms the geometry to the storage EPSG code.
      *
-     * @param geometry
-     *            Geometry to transform
+     * @param geometry Geometry to transform
+     *
      * @return Transformed geometry
+     *
      * @throws OwsExceptionReport
      */
     public Geometry transformToStorageEpsg(EnvelopeOrGeometry geometry) throws OwsExceptionReport {
@@ -553,67 +539,64 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Transforms the geometry to the storage EPSG code
+     * Transforms the geometry to the storage EPSG code.
      *
-     * @param geometry
-     *            Geometry to transform
+     * @param geometry Geometry to transform
+     *
      * @return Transformed geometry
+     *
      * @throws OwsExceptionReport
      */
     public Geometry transformToStorageEpsg(Geometry geometry) throws OwsExceptionReport {
-        if (geometry != null && !geometry.isEmpty()) {
-            CoordinateReferenceSystem sourceCRS = getCRS(geometry.getSRID());
-            int targetSRID = sourceCRS.getCoordinateSystem().getDimension() == 3 ? getStorage3DEPSG() : getStorageEPSG();
-            return transform(geometry, targetSRID, sourceCRS, getCRS(targetSRID));
+        if (geometry == null || geometry.isEmpty()) {
+            return geometry;
         }
-        return geometry;
+        CoordinateReferenceSystem sourceCRS = getCRS(geometry.getSRID());
+        int targetSRID = sourceCRS.getCoordinateSystem().getDimension() == 3 ? getStorage3DEPSG() : getStorageEPSG();
+        return transform(geometry, targetSRID, sourceCRS, getCRS(targetSRID));
+
     }
 
     /**
-     * Transform geometry to this EPSG code
+     * Transform geometry to this EPSG code.
      *
-     * @param geometry
-     *            Geometry to transform
-     * @param targetSRID
-     *            Target EPSG code
+     * @param geometry Geometry to transform
+     * @param targetSRID Target EPSG code
+     *
      * @return Transformed geometry
+     *
      * @throws OwsExceptionReport
      */
     @Override
     public Geometry transform(Geometry geometry, int targetSRID) throws OwsExceptionReport {
-        if (geometry != null && !geometry.isEmpty()) {
-            if (geometry.getSRID() == targetSRID) {
-                return geometry;
-            }
-            CoordinateReferenceSystem sourceCRS = getCRS(geometry.getSRID());
-            CoordinateReferenceSystem targetCRS = getCRS(targetSRID);
-            return transform(geometry, targetSRID, sourceCRS, targetCRS);
+        if (geometry == null || geometry.isEmpty() || geometry.getSRID() == targetSRID) {
+            return geometry;
         }
-        return geometry;
+        CoordinateReferenceSystem sourceCRS = getCRS(geometry.getSRID());
+        CoordinateReferenceSystem targetCRS = getCRS(targetSRID);
+        return transform(geometry, targetSRID, sourceCRS, targetCRS);
     }
 
     private Geometry transform(final Geometry geometry, final int targetSRID,
-            final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
+                               final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
             throws OwsExceptionReport {
         return transform(JTSConverter.convert(geometry), targetSRID, sourceCRS, targetCRS);
     }
 
     /**
-     * Transform geometry
+     * Transform geometry.
      *
-     * @param geometry
-     *            Geometry to transform
-     * @param targetSRID
-     *            TargetEPSG code
-     * @param sourceCRS
-     *            Source CRS
-     * @param targetCRS
-     *            Target CRS
+     * @param geometry Geometry to transform
+     * @param targetSRID TargetEPSG code
+     * @param sourceCRS Source CRS
+     * @param targetCRS Target CRS
+     *
      * @return Transformed geometry
+     *
      * @throws OwsExceptionReport
      */
     private Geometry transform(final com.vividsolutions.jts.geom.Geometry geometry, final int targetSRID,
-            final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
+                               final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
             throws OwsExceptionReport {
         if (sourceCRS.equals(targetCRS)) {
             return JTSConverter.convert(geometry);
@@ -621,16 +604,18 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         Geometry switchedCoordiantes = switchCoordinateAxisIfNeeded(JTSConverter.convert(geometry), targetSRID);
         try {
             MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
-            Geometry transformed = JTSConverter.convert(JTS.transform(JTSConverter.convert(switchedCoordiantes), transform));
+            Geometry transformed = JTSConverter.convert(JTS
+                    .transform(JTSConverter.convert(switchedCoordiantes), transform));
             transformed.setSRID(targetSRID);
             return transformed;
         } catch (FactoryException | MismatchedDimensionException | TransformException fe) {
-            throw new NoApplicableCodeException().causedBy(fe).withMessage("The EPSG code '%s' is not supported!", switchedCoordiantes.getSRID());
+            throw new NoApplicableCodeException().causedBy(fe)
+                    .withMessage("The EPSG code '%s' is not supported!", switchedCoordiantes.getSRID());
         }
     }
 
     /**
-     * Get CRS from EPSG code
+     * Get CRS from EPSG code.
      *
      * @param epsgCode EPSG code to get CRS for
      *
@@ -638,7 +623,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      *
      * @throws CodedException If the geometry EPSG code is not supported
      */
-    private CoordinateReferenceSystem getCRS(final int epsgCode) throws OwsExceptionReport {
+    private CoordinateReferenceSystem getCRS(int epsgCode) throws OwsExceptionReport {
         try {
             return this.crsCache.computeIfAbsent(epsgCode, code -> {
                                              try {
@@ -654,28 +639,25 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Create CRS for EPSG code
+     * Create CRS for EPSG code.
      *
-     * @param epsgCode
-     *            EPSG code to create CRS for
+     * @param epsgCode EPSG code to create CRS for
+     *
      * @return Created CRS
-     * @throws CodedException
-     *             If the geometry EPSG code is not supported
+     *
+     * @throws CodedException If the geometry EPSG code is not supported
      */
     private CoordinateReferenceSystem createCRS(int epsgCode) throws OwsExceptionReport {
         try {
             return getCrsAuthorityFactory().createCoordinateReferenceSystem(EPSG_PREFIX + epsgCode);
-        } catch (NoSuchAuthorityCodeException nsace) {
+        } catch (FactoryException nsace) {
             throw new NoApplicableCodeException().causedBy(nsace)
-                    .withMessage("The EPSG code '%s' is not supported!", epsgCode);
-        } catch (FactoryException fe) {
-            throw new NoApplicableCodeException().causedBy(fe)
                     .withMessage("The EPSG code '%s' is not supported!", epsgCode);
         }
     }
 
     /**
-     * Get CSR authority
+     * Get CSR authority.
      *
      * @return CRS authority
      */
@@ -688,17 +670,15 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Transform envelope from source to target EPSG code
+     * Transform envelope from source to target EPSG code.
      *
-     * @param envelope
-     *            Envelope to transform
-     * @param sourceSRID
-     *            Source EPSG code
-     * @param targetSRID
-     *            Target EPSG code
+     * @param envelope Envelope to transform
+     * @param sourceSRID Source EPSG code
+     * @param targetSRID Target EPSG code
+     *
      * @return Transformed envelope
-     * @throws CodedException
-     *             If the geometry EPSG code is not supported
+     *
+     * @throws CodedException If the geometry EPSG code is not supported
      */
     public Envelope transformEnvelope(com.vividsolutions.jts.geom.Envelope envelope, int sourceSRID, int targetSRID)
             throws OwsExceptionReport {
@@ -724,7 +704,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     /**
-     * Clears the supported Coordinate Reference Systems map
+     * Clears the supported Coordinate Reference Systems map.
      */
     @VisibleForTesting
     protected void clearSupportedCRSMap() {

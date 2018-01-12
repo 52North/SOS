@@ -31,6 +31,7 @@ package org.n52.sos.encode;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -56,6 +57,7 @@ import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.values.Value;
@@ -131,8 +133,6 @@ import ucar.nc2.Variable;
 import ucar.nc2.constants.CDM;
 import ucar.nc2.constants.CF;
 import ucar.nc2.jni.netcdf.Nc4Iosp;
-
-import org.n52.shetland.ogc.om.ObservationStream;
 
 /**
  * Abstract class of {@link ObservationEncoder} for netCDF encoding.
@@ -227,7 +227,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     private Version getVersion(AbstractObservationResponse aor) {
         MediaType contentType = getBestFitContentType(aor);
         if (contentType != null && contentType.hasParameter(NetcdfConstants.PARAM_VERSION)) {
-            List<String> parameter = contentType.getParameter(NetcdfConstants.PARAM_VERSION);
+            Collection<String> parameter = contentType.getParameter(NetcdfConstants.PARAM_VERSION);
             if (parameter.contains("3")) {
                 return Version.netcdf3;
             } else if (parameter.contains("4")) {

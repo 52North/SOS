@@ -32,9 +32,9 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.janmayen.component.Component;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 
 /**
  * TODO JavaDoc
@@ -43,7 +43,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
  */
 public interface HibernateProcedureDescriptionGenerator extends Component<HibernateProcedureDescriptionGeneratorKey> {
 
-    SosProcedureDescription<?> generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
+    SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, Session session)
             throws OwsExceptionReport;
 
 }

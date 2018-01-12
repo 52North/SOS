@@ -37,23 +37,16 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.UnitEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.NumericValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.ProfileValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
 import org.slf4j.Logger;
@@ -144,12 +137,12 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      *             If an error occurs when querying
      */
     @SuppressWarnings("unchecked")
-    public List<AbstractValuedSeriesObservation<?>> getStreamingSeriesValuesFor(AbstractObservationRequest request, long series,
+    public List<DataEntity<?>> getStreamingSeriesValuesFor(AbstractObservationRequest request, long series,
             Criterion temporalFilterCriterion, int chunkSize, int currentRow, Session session)
             throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow, request);
-        return (List<AbstractValuedSeriesObservation<?>>) c.list();
+        return (List<DataEntity<?>>) c.list();
     }
 
     /**
@@ -172,12 +165,12 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      *             If an error occurs when querying
      */
     @SuppressWarnings("unchecked")
-    public List<AbstractValuedObservation<?>> getStreamingSeriesValuesFor(AbstractObservationRequest request, Set<Long> series,
+    public List<DataEntity<?>> getStreamingSeriesValuesFor(AbstractObservationRequest request, Set<Long> series,
             Criterion temporalFilterCriterion, int chunkSize, int currentRow, Session session)
             throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow, request);
-        return (List<AbstractValuedObservation<?>>) c.list();
+        return (List<DataEntity<?>>) c.list();
     }
 
     /**
@@ -198,11 +191,11 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      *             If an error occurs when querying
      */
     @SuppressWarnings("unchecked")
-    public List<AbstractValuedObservation<?>> getStreamingSeriesValuesFor(AbstractObservationRequest request, Set<Long> series, int chunkSize,
+    public List<DataEntity<?>> getStreamingSeriesValuesFor(AbstractObservationRequest request, Set<Long> series, int chunkSize,
             int currentRow, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow, request);
-        return (List<AbstractValuedObservation<?>>) c.list();
+        return (List<DataEntity<?>>) c.list();
     }
 
     /**
@@ -223,11 +216,11 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      *             If an error occurs when querying
      */
     @SuppressWarnings("unchecked")
-    public List<AbstractValuedObservation<?>> getStreamingSeriesValuesFor(AbstractObservationRequest request, long series, int chunkSize,
+    public List<DataEntity<?>> getStreamingSeriesValuesFor(AbstractObservationRequest request, long series, int chunkSize,
             int currentRow, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow, request);
-        return (List<AbstractValuedObservation<?>>) c.list();
+        return (List<DataEntity<?>>) c.list();
     }
 
     /**
@@ -248,17 +241,14 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      */
     private Criteria getSeriesValueCriteriaFor(AbstractObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
-        final Criteria c = getDefaultObservationCriteria(session).createAlias(AbstractValuedSeriesObservation.SERIES, "s");
+        final Criteria c = getDefaultObservationCriteria(session).createAlias(DataEntity.PROPERTY_DATASET, "s");
         c.addOrder(Order.asc(getOrderColumn(request)));
-        c.add(Restrictions.eq("s." + Series.ID, series));
+        c.add(Restrictions.eq("s." + DatasetEntity.PROPERTY_ID, series));
         String logArgs = "request, series";
         if (request instanceof GetObservationRequest) {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
             checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
             checkAndAddResultFilterCriterion(c, getObsReq, session);
-            if (CollectionHelper.isNotEmpty(getObsReq.getOfferings())) {
-                c.createCriteria(AbstractValuedSeriesObservation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, getObsReq.getOfferings()));
-            }
 
             logArgs += ", offerings";
             if (temporalFilterCriterion != null) {
@@ -292,9 +282,9 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      */
     private Criteria getSeriesValueCriteriaFor(AbstractObservationRequest request, Set<Long> series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
-        final Criteria c = getDefaultObservationCriteria(session).createAlias(AbstractValuedSeriesObservation.SERIES, "s");
+        final Criteria c = getDefaultObservationCriteria(session).createAlias(DataEntity.PROPERTY_DATASET, "s");
         c.addOrder(Order.asc(getOrderColumn(request)));
-        c.add(Restrictions.in("s." + Series.ID, series));
+        c.add(Restrictions.in("s." + DatasetEntity.PROPERTY_ID, series));
         String logArgs = "request, series";
 //
 //        HibernateHelper.getSqlString(DetachedCriteria.forClass(ProfileValuedSeriesObservation.class)
@@ -313,11 +303,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
             checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
             checkAndAddResultFilterCriterion(c, getObsReq, session);
-            if (CollectionHelper.isNotEmpty(getObsReq.getOfferings())) {
-                c.createCriteria(AbstractValuedSeriesObservation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, getObsReq.getOfferings()));
-            }
 
-            logArgs += ", offerings";
             if (temporalFilterCriterion != null) {
                 logArgs += ", filterCriterion";
                 c.add(temporalFilterCriterion);
@@ -356,8 +342,8 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      */
     public String getUnit(AbstractObservationRequest request, long series, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
-        Unit unit = (Unit) c.setMaxResults(1).setProjection(Projections.property(AbstractValuedSeriesObservation.UNIT)).uniqueResult();
-        if (unit != null && unit.isSetUnit()) {
+        UnitEntity unit = (UnitEntity) c.setMaxResults(1).setProjection(Projections.property(DatasetEntity.PROPERTY_UNIT)).uniqueResult();
+        if (unit != null && unit.isSetIdentifier()) {
             return unit.getUnit();
         }
         return null;
@@ -378,8 +364,8 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      */
     public String getUnit(AbstractObservationRequest request, Set<Long> series, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
-        Unit unit = (Unit) c.setMaxResults(1).setProjection(Projections.property(AbstractValuedSeriesObservation.UNIT)).uniqueResult();
-        if (unit != null && unit.isSetUnit()) {
+        UnitEntity unit = (UnitEntity) c.setMaxResults(1).setProjection(Projections.property(DatasetEntity.PROPERTY_UNIT)).uniqueResult();
+        if (unit != null && unit.isSetIdentifier()) {
             return unit.getUnit();
         }
         return null;

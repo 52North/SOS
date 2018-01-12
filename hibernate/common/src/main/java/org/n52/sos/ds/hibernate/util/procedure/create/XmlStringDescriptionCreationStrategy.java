@@ -32,11 +32,11 @@ import java.util.Locale;
 
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.CodingHelper;
@@ -51,17 +51,17 @@ public class XmlStringDescriptionCreationStrategy
         implements DescriptionCreationStrategy {
 
     @Override
-    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n,
+    public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
             HibernateProcedureCreationContext ctx, Session s)
             throws OwsExceptionReport {
         SosProcedureDescription<?> desc = new SosProcedureDescription<>(readXml(p.getDescriptionFile(), ctx));
         desc.setIdentifier(p.getIdentifier());
-        desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
+        desc.setDescriptionFormat(p.getFormat().getFormat());
         return desc;
     }
 
     @Override
-    public boolean apply(Procedure p) {
+    public boolean apply(ProcedureEntity p) {
         return !Strings.isNullOrEmpty(p.getDescriptionFile()) && p.getDescriptionFile().startsWith("<");
     }
 

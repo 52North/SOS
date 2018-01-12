@@ -28,21 +28,21 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
+import org.n52.series.db.beans.CategoryDataEntity;
+import org.n52.series.db.beans.ComplexDataEntity;
+import org.n52.series.db.beans.CountDataEntity;
+import org.n52.series.db.beans.ProfileDataEntity;
+import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.TextDataEntity;
 
 public class ResultFilterClasses {
 
-    public Class<? extends NumericValuedObservation> numeric;
-    public Class<? extends CountValuedObservation> count;
-    public Class<? extends TextValuedObservation> text;
-    public Class<? extends CategoryValuedObservation> category;
-    public Class<? extends ComplexValuedObservation> complex;
-    public Class<? extends ProfileValuedObservation> profile;
+    public Class<? extends QuantityDataEntity> numeric;
+    public Class<? extends CountDataEntity> count;
+    public Class<? extends TextDataEntity> text;
+    public Class<? extends CategoryDataEntity> category;
+    public Class<? extends ComplexDataEntity> complex;
+    public Class<? extends ProfileDataEntity> profile;
 
 
     /**
@@ -54,9 +54,9 @@ public class ResultFilterClasses {
      * @param profile
      */
     public ResultFilterClasses(
-            Class<? extends NumericValuedObservation> numeric, Class<? extends CountValuedObservation> count,
-            Class<? extends TextValuedObservation> text, Class<? extends CategoryValuedObservation> category,
-            Class<? extends ComplexValuedObservation> complex, Class<? extends ProfileValuedObservation> profile) {
+            Class<? extends QuantityDataEntity> numeric, Class<? extends CountDataEntity> count,
+            Class<? extends TextDataEntity> text, Class<? extends CategoryDataEntity> category,
+            Class<? extends ComplexDataEntity> complex, Class<? extends ProfileDataEntity> profile) {
         this.numeric = numeric;
         this.count = count;
         this.text = text;
@@ -68,42 +68,42 @@ public class ResultFilterClasses {
     /**
      * @return the numeric
      */
-    public Class<? extends NumericValuedObservation> getNumeric() {
+    public Class<? extends QuantityDataEntity> getNumeric() {
         return numeric;
     }
 
     /**
      * @return the count
      */
-    public Class<? extends CountValuedObservation> getCount() {
+    public Class<? extends CountDataEntity> getCount() {
         return count;
     }
 
     /**
      * @return the text
      */
-    public Class<? extends TextValuedObservation> getText() {
+    public Class<? extends TextDataEntity> getText() {
         return text;
     }
 
     /**
      * @return the category
      */
-    public Class<? extends CategoryValuedObservation> getCategory() {
+    public Class<? extends CategoryDataEntity> getCategory() {
         return category;
     }
 
     /**
      * @return the complex
      */
-    protected Class<? extends ComplexValuedObservation> getComplex() {
+    protected Class<? extends ComplexDataEntity> getComplex() {
         return complex;
     }
 
     /**
      * @return the profile
      */
-    protected Class<? extends ProfileValuedObservation> getProfile() {
+    protected Class<? extends ProfileDataEntity> getProfile() {
         return profile;
     }
 }

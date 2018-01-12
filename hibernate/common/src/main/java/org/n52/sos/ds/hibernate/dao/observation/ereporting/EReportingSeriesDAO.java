@@ -35,6 +35,10 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
+import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -48,10 +52,6 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 
 public class EReportingSeriesDAO extends AbstractSeriesDAO {
@@ -62,33 +62,33 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
     @Override
     public Class<?> getSeriesClass() {
-        return EReportingSeries.class;
+        return EReportingDatasetEntity.class;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
+    public List<DatasetEntity> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
         return getSeriesCriteria(request, features, session).list();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Series> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
+    public List<DatasetEntity> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
         return getSeriesCriteria(request, session).list();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Series> getSeries(GetDataAvailabilityRequest request, Session session)
+    public List<DatasetEntity> getSeries(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
         return getSeriesCriteria(request, session).list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(String observedProperty, Collection<String> features, Session session) {
+    public List<DatasetEntity> getSeries(String observedProperty, Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(observedProperty, ids, session).list());
             }
@@ -100,9 +100,9 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
+    public List<DatasetEntity> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(procedure, observedProperty, offering, ids, session).list());
             }
@@ -114,10 +114,10 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
+    public List<DatasetEntity> getSeries(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(procedures, observedProperties, ids, session).list());
             }
@@ -129,10 +129,10 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
+    public List<DatasetEntity> getSeries(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Collection<String> offerings, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(procedures, observedProperties, ids, offerings, session).list());
             }
@@ -143,14 +143,19 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public EReportingSeries getSeriesFor(String procedure, String observableProperty, String featureOfInterest,
+    public EReportingDatasetEntity getSeriesFor(String procedure, String observableProperty, String featureOfInterest,
             Session session) {
-        return (EReportingSeries) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
+        return (EReportingDatasetEntity) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
     }
 
     @Override
-    public EReportingSeries getOrInsertSeries(ObservationContext identifiers, Session session) throws OwsExceptionReport {
-        return (EReportingSeries) super.getOrInsert(identifiers, session);
+    public List<DatasetEntity> getSeries(String procedure, String observableProperty, Session session) {
+        return (List<DatasetEntity>) getSeriesCriteriaFor(procedure, observableProperty, session).list();
+    }
+
+    @Override
+    public EReportingDatasetEntity getOrInsertSeries(ObservationContext identifiers, Session session) throws OwsExceptionReport {
+        return (EReportingDatasetEntity) super.getOrInsert(identifiers, session);
     }
 
     /**
@@ -162,7 +167,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
      *            EReportingSamplingPoint identifier to add
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, String samplingPoint) {
-        c.createCriteria(EReportingSeries.SAMPLING_POINT).add(Restrictions.eq(EReportingSamplingPoint.IDENTIFIER, samplingPoint));
+        c.createCriteria(EReportingDatasetEntity.SAMPLING_POINT).add(Restrictions.eq(EReportingSamplingPointEntity.IDENTIFIER, samplingPoint));
 
     }
 
@@ -174,8 +179,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
      * @param samplingPoint
      *            EReportingSamplingPoint to add
      */
-    public void addEReportingSamplingPointToCriteria(Criteria c, EReportingSamplingPoint samplingPoint) {
-        c.add(Restrictions.eq(EReportingSeries.SAMPLING_POINT, samplingPoint));
+    public void addEReportingSamplingPointToCriteria(Criteria c, EReportingSamplingPointEntity samplingPoint) {
+        c.add(Restrictions.eq(EReportingDatasetEntity.SAMPLING_POINT, samplingPoint));
     }
 
     /**
@@ -187,7 +192,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
      *            EReportingSamplingPoint identifiers to add
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, Collection<String> samplingPoints) {
-        c.createCriteria(EReportingSeries.SAMPLING_POINT).add(Restrictions.in(EReportingSamplingPoint.IDENTIFIER, samplingPoints));
+        c.createCriteria(EReportingDatasetEntity.SAMPLING_POINT).add(Restrictions.in(EReportingSamplingPointEntity.IDENTIFIER, samplingPoints));
     }
 
     @Override
@@ -218,8 +223,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     private void addAssessmentType(Criteria c, String assessmentType) {
-        c.createCriteria(EReportingSeries.SAMPLING_POINT).createCriteria(EReportingSamplingPoint.ASSESSMENTTYPE).
-        add(Restrictions.ilike(EReportingAssessmentType.ASSESSMENT_TYPE, assessmentType));
+        c.createCriteria(EReportingDatasetEntity.SAMPLING_POINT).createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE).
+        add(Restrictions.ilike(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, assessmentType));
     }
 
 }

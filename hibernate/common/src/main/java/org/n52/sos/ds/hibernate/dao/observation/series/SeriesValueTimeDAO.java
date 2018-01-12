@@ -33,12 +33,12 @@ import java.util.Collection;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,11 +62,11 @@ public class SeriesValueTimeDAO extends AbstractSeriesValueTimeDAO {
 
     @Override
     protected Class<?> getSeriesValueTimeClass() {
-        return TemporalReferencedSeriesObservation.class;
+        return DataEntity.class;
     }
 
     @Override
-    public ObservationTimeExtrema getTimeExtremaForSeries(Collection<Series> series, Criterion temporalFilter,
+    public ObservationTimeExtrema getTimeExtremaForSeries(Collection<DatasetEntity> series, Criterion temporalFilter,
             Session session) throws OwsExceptionReport {
         return new ObservationTimeExtrema();
     }

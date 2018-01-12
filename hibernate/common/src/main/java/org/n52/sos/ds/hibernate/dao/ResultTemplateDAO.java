@@ -39,6 +39,12 @@ import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ResultTemplateEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -51,13 +57,6 @@ import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.ResultTemplate;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
@@ -109,13 +108,13 @@ public class ResultTemplateDAO {
      *            Hibernate session
      * @return Result template object
      */
-    public ResultTemplate getResultTemplateObject(final String identifier, final Session session) {
+    public ResultTemplateEntity getResultTemplateObject(final String identifier, final Session session) {
         Criteria criteria =
-                session.createCriteria(ResultTemplate.class)
-                        .add(Restrictions.eq(ResultTemplate.IDENTIFIER, identifier))
+                session.createCriteria(ResultTemplateEntity.class)
+                        .add(Restrictions.eq(ResultTemplateEntity.PROPERTY_IDENTIFIER, identifier))
                         .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         LOGGER.debug("QUERY getResultTemplateObject(identifier): {}", HibernateHelper.getSqlString(criteria));
-        return (ResultTemplate) criteria.uniqueResult();
+        return (ResultTemplateEntity) criteria.uniqueResult();
     }
 
     /**
@@ -126,11 +125,11 @@ public class ResultTemplateDAO {
      * @return Result template objects
      */
     @SuppressWarnings("unchecked")
-    public List<ResultTemplate> getResultTemplateObjects(final Session session) {
-        return session.createCriteria(ResultTemplate.class)
-                .setFetchMode(ResultTemplate.OFFERING, FetchMode.JOIN)
-                .setFetchMode(ResultTemplate.OBSERVABLE_PROPERTY, FetchMode.JOIN)
-                .setFetchMode(ResultTemplate.FEATURE_OF_INTEREST, FetchMode.JOIN)
+    public List<ResultTemplateEntity> getResultTemplateObjects(final Session session) {
+        return session.createCriteria(ResultTemplateEntity.class)
+                .setFetchMode(ResultTemplateEntity.PROPERTY_OFFERING, FetchMode.JOIN)
+                .setFetchMode(ResultTemplateEntity.PROPERTY_PHENOMENON, FetchMode.JOIN)
+                .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN)
                 .list();
     }
 
@@ -143,8 +142,8 @@ public class ResultTemplateDAO {
      *            Hibernate session
      * @return Result template object
      */
-    public ResultTemplate getResultTemplateObjectsForObservationConstellation(
-            final ObservationConstellation observationConstellation, final Session session) {
+    public ResultTemplateEntity getResultTemplateObjectsForObservationConstellation(
+            final DatasetEntity observationConstellation, final Session session) {
         return getResultTemplateObject(observationConstellation.getOffering().getIdentifier(),
                 observationConstellation.getObservableProperty().getIdentifier(), session);
     }
@@ -161,8 +160,8 @@ public class ResultTemplateDAO {
      *            Hibernate session
      * @return Result template objects
      */
-    public List<ResultTemplate> getResultTemplateObjectsForObservationConstellationAndFeature(
-            final ObservationConstellation observationConstellation, final AbstractFeature sosAbstractFeature,
+    public List<ResultTemplateEntity> getResultTemplateObjectsForObservationConstellationAndFeature(
+            final DatasetEntity observationConstellation, final AbstractFeature sosAbstractFeature,
             final Session session) {
         return getResultTemplateObject(observationConstellation.getOffering().getIdentifier(),
                 observationConstellation.getObservableProperty().getIdentifier(),
@@ -182,16 +181,16 @@ public class ResultTemplateDAO {
      * @return Result template object
      */
     @SuppressWarnings("unchecked")
-    public ResultTemplate getResultTemplateObject(final String offering, final String observedProperty,
+    public ResultTemplateEntity getResultTemplateObject(final String offering, final String observedProperty,
             final Session session) {
-        final Criteria rtc = session.createCriteria(ResultTemplate.class).setMaxResults(1);
-        rtc.createCriteria(ObservationConstellation.OFFERING).add(Restrictions.eq(Offering.IDENTIFIER, offering));
-        rtc.createCriteria(ObservationConstellation.OBSERVABLE_PROPERTY).add(
-                Restrictions.eq(ObservableProperty.IDENTIFIER, observedProperty));
+        final Criteria rtc = session.createCriteria(ResultTemplateEntity.class).setMaxResults(1);
+        rtc.createCriteria(DatasetEntity.OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        rtc.createCriteria(DatasetEntity.OBSERVABLE_PROPERTY).add(
+                Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
         /* there can be multiple but equal result templates... */
         LOGGER.debug("QUERY getResultTemplateObject(offering, observedProperty): {}",
                 HibernateHelper.getSqlString(rtc));
-        final List<ResultTemplate> templates = rtc.list();
+        final List<ResultTemplateEntity> templates = rtc.list();
         return templates.isEmpty() ? null : templates.iterator().next();
     }
 
@@ -210,17 +209,17 @@ public class ResultTemplateDAO {
      * @return Result template objects
      */
     @SuppressWarnings("unchecked")
-    public List<ResultTemplate> getResultTemplateObject(final String offering, final String observedProperty,
+    public List<ResultTemplateEntity> getResultTemplateObject(final String offering, final String observedProperty,
             final Collection<String> featureOfInterest, final Session session) {
         final Criteria rtc =
-                session.createCriteria(ResultTemplate.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        rtc.createCriteria(ObservationConstellation.OFFERING).add(Restrictions.eq(Offering.IDENTIFIER, offering));
-        rtc.createCriteria(ObservationConstellation.OBSERVABLE_PROPERTY).add(
-                Restrictions.eq(ObservableProperty.IDENTIFIER, observedProperty));
+                session.createCriteria(ResultTemplateEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        rtc.createCriteria(DatasetEntity.OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        rtc.createCriteria(DatasetEntity.OBSERVABLE_PROPERTY).add(
+                Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
         if (featureOfInterest != null && !featureOfInterest.isEmpty()) {
-            rtc.createAlias(ResultTemplate.FEATURE_OF_INTEREST, "foi", JoinType.LEFT_OUTER_JOIN);
-            rtc.add(Restrictions.or(Restrictions.isNull(ResultTemplate.FEATURE_OF_INTEREST),
-                    Restrictions.in("foi." + FeatureOfInterest.IDENTIFIER, featureOfInterest)));
+            rtc.createAlias(ResultTemplateEntity.PROPERTY_FEATURE, "foi", JoinType.LEFT_OUTER_JOIN);
+            rtc.add(Restrictions.or(Restrictions.isNull(ResultTemplateEntity.PROPERTY_FEATURE),
+                    Restrictions.in("foi." + AbstractFeatureEntity.IDENTIFIER, featureOfInterest)));
             // rtc.createCriteria(ResultTemplate.FEATURE_OF_INTEREST).add(
             // Restrictions.in(FeatureOfInterest.IDENTIFIER,
             // featureOfInterest));
@@ -246,28 +245,28 @@ public class ResultTemplateDAO {
      *             If the requested structure/encoding is invalid
      */
     public void checkOrInsertResultTemplate(InsertResultTemplateRequest request,
-            ObservationConstellation observationConstellation,
-            Procedure procedure,
-            AbstractFeatureOfInterest featureOfInterest,
+            DatasetEntity observationConstellation,
+            ProcedureEntity procedure,
+            AbstractFeatureEntity featureOfInterest,
             Session session)
             throws OwsExceptionReport {
         try {
             String offering = observationConstellation.getOffering().getIdentifier();
             String observableProperty = observationConstellation.getObservableProperty().getIdentifier();
 
-            List<ResultTemplate> resultTemplates =
+            List<ResultTemplateEntity> resultTemplates =
                     getResultTemplateObject(offering, observableProperty, null, session);
             if (CollectionHelper.isEmpty(resultTemplates)) {
                 createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest, session);
             } else {
                 List<String> storedIdentifiers = new ArrayList<>(0);
 
-                for (ResultTemplate storedResultTemplate : resultTemplates) {
+                for (ResultTemplateEntity storedResultTemplate : resultTemplates) {
                     storedIdentifiers.add(storedResultTemplate.getIdentifier());
                     SosResultStructure storedStructure =
-                            createSosResultStructure(storedResultTemplate.getResultStructure());
+                            createSosResultStructure(storedResultTemplate.getStructure());
                     SosResultEncoding storedEncoding =
-                            createSosResultEncoding(storedResultTemplate.getResultEncoding());
+                            createSosResultEncoding(storedResultTemplate.getEncoding());
 
                     if (!storedStructure.equals(request.getResultStructure())) {
                         throw new InvalidParameterValueException()
@@ -312,31 +311,31 @@ public class ResultTemplateDAO {
      * @throws OwsExceptionReport
      */
     private void createAndSaveResultTemplate(final InsertResultTemplateRequest request,
-            final ObservationConstellation observationConstellation, Procedure procedure,
-            final AbstractFeatureOfInterest featureOfInterest,
+            final DatasetEntity observationConstellation, ProcedureEntity procedure,
+            final AbstractFeatureEntity featureOfInterest,
             final Session session)
             throws EncodingException {
-        final ResultTemplate resultTemplate = new ResultTemplate();
+        final ResultTemplateEntity resultTemplate = new ResultTemplateEntity();
         resultTemplate.setIdentifier(request.getIdentifier().getValue());
-        resultTemplate.setObservableProperty(observationConstellation.getObservableProperty());
+        resultTemplate.setPhenomenon(observationConstellation.getObservableProperty());
         resultTemplate.setOffering(observationConstellation.getOffering());
         if (procedure != null) {
             resultTemplate.setProcedure(procedure);
         }
         if (featureOfInterest != null) {
-            resultTemplate.setFeatureOfInterest(featureOfInterest);
+            resultTemplate.setFeature(featureOfInterest);
         }
 
         if (request.getResultEncoding().getXml().isPresent()) {
-            resultTemplate.setResultEncoding(request.getResultEncoding().getXml().get());
+            resultTemplate.setEncoding(request.getResultEncoding().getXml().get());
         } else {
-            resultTemplate.setResultEncoding(
+            resultTemplate.setEncoding(
                     encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultEncoding().get().get()));
         }
         if (request.getResultStructure().getXml().isPresent()) {
-            resultTemplate.setResultStructure(request.getResultStructure().getXml().get());
+            resultTemplate.setStructure(request.getResultStructure().getXml().get());
         } else {
-            resultTemplate.setResultStructure(
+            resultTemplate.setStructure(
                     encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultStructure().get().get()));
         }
 

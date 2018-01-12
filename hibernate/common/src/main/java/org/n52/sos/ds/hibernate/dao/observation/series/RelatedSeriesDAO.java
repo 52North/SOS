@@ -34,8 +34,8 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.observation.series.RelatedSeries;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.RelatedDatasetEntity;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,15 +44,15 @@ public class RelatedSeriesDAO {
 
 private static final Logger LOGGER = LoggerFactory.getLogger(RelatedSeriesDAO.class);
 
-    public List<RelatedSeries> getRelatedSeries(Series series, Session session) {
-        return getRelatedSeries(series.getSeriesId(), session);
+    public List<RelatedDatasetEntity> getRelatedSeries(DatasetEntity series, Session session) {
+        return getRelatedSeries(series.getId(), session);
     }
 
     @SuppressWarnings("unchecked")
-    private List<RelatedSeries> getRelatedSeries(long series, Session session) {
-        if (HibernateHelper.isEntitySupported(RelatedSeries.class)) {
+    private List<RelatedDatasetEntity> getRelatedSeries(long series, Session session) {
+        if (HibernateHelper.isEntitySupported(RelatedDatasetEntity.class)) {
             Criteria c = getDefaultCriteria(session);
-            c.add(Restrictions.eq(RelatedSeries.SERIES_ID, series));
+            c.add(Restrictions.eq(RelatedDatasetEntity.PROPERTY_ITEM, series));
             LOGGER.debug("QUERY getRelatedSeries(): {series}", HibernateHelper.getSqlString(c));
             return c.list();
         }
@@ -60,7 +60,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(RelatedSeriesDAO.cl
     }
 
     private Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(RelatedSeries.class)
+        return session.createCriteria(RelatedDatasetEntity.class)
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 

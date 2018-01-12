@@ -26,16 +26,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds;
+package org.n52.sos.ds.hibernate.util.observation;
 
-import java.util.Collection;
+import java.util.Set;
 
-import com.google.common.base.Joiner;
+import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 
-public interface ProxyQueryHelper {
+public class DatasetParameterAdder {
 
-    default String listToString(Collection<String> values) {
-        return Joiner.on(",").join(values);
+    private OmObservation observation;
+    private Set<Parameter<?>> hParameters;
+
+    public DatasetParameterAdder(OmObservation observation, Set<Parameter<?>> hParameters) {
+        this.observation = observation;
+        this.hParameters = hParameters;
+    }
+
+    public void add() throws OwsExceptionReport {
+        if (CollectionHelper.isNotEmpty(hParameters)) {
+            for (Parameter parameter : hParameters) {
+                observation.addParameter(new ParameterVisitor().visit(parameter));
+            }
+        }
     }
 
 }

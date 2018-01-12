@@ -34,6 +34,7 @@ import java.util.Locale;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.n52.iceland.convert.ConverterException;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.om.ObservationStream;
@@ -46,7 +47,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.generator.AbstractHibernateProcedureDescriptionGeneratorSml;
 import org.slf4j.Logger;
@@ -64,11 +64,11 @@ import com.google.common.collect.Sets;
 public class ObservationConstellationOmObservationCreator extends AbstractOmObservationCreator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationConstellationOmObservationCreator.class);
 
-    protected final ObservationConstellation oc;
+    protected final DatasetEntity oc;
 
     protected final List<String> featureIds;
 
-    public ObservationConstellationOmObservationCreator(ObservationConstellation observationConstellation,
+    public ObservationConstellationOmObservationCreator(DatasetEntity observationConstellation,
                                                         List<String> featureOfInterestIdentifiers,
                                                         AbstractObservationRequest request,
                                                         Locale language,
@@ -128,10 +128,10 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
                     getSession()
                             .getNamedQuery(
                                     AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING);
-            namedQuery.setParameter(ObservationConstellation.OBSERVABLE_PROPERTY, oc.getObservableProperty()
+            namedQuery.setParameter(DatasetEntity.OBSERVABLE_PROPERTY, oc.getObservableProperty()
                     .getIdentifier());
-            namedQuery.setParameter(ObservationConstellation.PROCEDURE, oc.getProcedure().getIdentifier());
-            namedQuery.setParameter(ObservationConstellation.OFFERING, oc.getOffering().getIdentifier());
+            namedQuery.setParameter(DatasetEntity.PROCEDURE, oc.getProcedure().getIdentifier());
+            namedQuery.setParameter(DatasetEntity.OFFERING, oc.getOffering().getIdentifier());
             LOGGER.debug(
                     "QUERY queryUnit(observationConstellation) with NamedQuery: {}",
                     AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING);
@@ -143,9 +143,9 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
                     getSession()
                             .getNamedQuery(
                                     AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE);
-            namedQuery.setParameter(ObservationConstellation.OBSERVABLE_PROPERTY, oc.getObservableProperty()
+            namedQuery.setParameter(DatasetEntity.OBSERVABLE_PROPERTY, oc.getObservableProperty()
                     .getIdentifier());
-            namedQuery.setParameter(ObservationConstellation.PROCEDURE, oc.getProcedure().getIdentifier());
+            namedQuery.setParameter(DatasetEntity.PROCEDURE, oc.getProcedure().getIdentifier());
             LOGGER.debug("QUERY queryUnit(observationConstellation) with NamedQuery: {}",
                     AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE);
             return (String) namedQuery.uniqueResult();
@@ -154,7 +154,7 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
             Query namedQuery =
                     getSession().getNamedQuery(
                             AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
-            namedQuery.setParameter(ObservationConstellation.OBSERVABLE_PROPERTY, oc.getObservableProperty()
+            namedQuery.setParameter(DatasetEntity.OBSERVABLE_PROPERTY, oc.getObservableProperty()
                     .getIdentifier());
             LOGGER.debug("QUERY queryUnit(observationConstellation) with NamedQuery: {}",
                     AbstractHibernateProcedureDescriptionGeneratorSml.SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
@@ -166,7 +166,7 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
     /**
      * @return the observation constellation
      */
-    protected ObservationConstellation getObservationConstellation() {
+    protected DatasetEntity getObservationConstellation() {
         return oc;
     }
 

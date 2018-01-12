@@ -29,20 +29,16 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.RelatedDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
-import org.n52.sos.ds.hibernate.dao.observation.series.RelatedSeriesDAO;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.RelatedSeries;
-import org.n52.sos.ds.hibernate.entities.observation.series.RelatedSeriesAdder;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
 public class InspireObservationCreator extends AbstractAdditionalObservationCreator {
 
@@ -50,10 +46,10 @@ public class InspireObservationCreator extends AbstractAdditionalObservationCrea
 
     private static final Set<AdditionalObservationCreatorKey> KEYS =
             AdditionalObservationCreatorRepository.encoderKeysForElements(NS_OMSO_30,
-                    AbstractSeriesObservation.class,
-                    AbstractEReportingObservation.class,
-                    Series.class,
-                    EReportingSeries.class);
+                    DataEntity.class,
+                    EReportingDataEntity.class,
+                    DatasetEntity.class,
+                    EReportingDatasetEntity.class);
 
     @Override
     public Set<AdditionalObservationCreatorKey> getKeys() {
@@ -61,34 +57,28 @@ public class InspireObservationCreator extends AbstractAdditionalObservationCrea
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, Series series, Session session) throws CodedException {
+    public OmObservation create(OmObservation omObservation, DatasetEntity series, Session session) throws CodedException {
         create(omObservation, series);
         // TODO remove from PointObservation, profile, multipoint
-        addRelatedSeries(omObservation, new RelatedSeriesDAO().getRelatedSeries(series, session));
+        addRelatedSeries(omObservation, series.getRelatedDatasets());
         return omObservation;
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, Observation<?> observation, Session session) throws CodedException {
+    public OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException {
         create(omObservation, observation);
-        if (observation instanceof AbstractSeriesObservation) {
-            addRelatedSeries(omObservation, new RelatedSeriesDAO()
-                    .getRelatedSeries(((AbstractSeriesObservation<?>) observation).getSeries(), session));
-        }
+        addRelatedSeries(omObservation, observation.getDataset().getRelatedDatasets());
         return omObservation;
     }
 
     @Override
-    public OmObservation add(OmObservation omObservation, Observation<?> observation, Session session) throws CodedException {
+    public OmObservation add(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException {
         add(omObservation, observation);
-        if (observation instanceof AbstractSeriesObservation) {
-            addRelatedSeries(omObservation, new RelatedSeriesDAO()
-                    .getRelatedSeries(((AbstractSeriesObservation<?>) observation).getSeries(), session));
-        }
+            addRelatedSeries(omObservation, observation.getDataset().getRelatedDatasets());
         return omObservation;
     }
 
-    private void addRelatedSeries(OmObservation omObservation, List<RelatedSeries> relatedSeries) throws CodedException {
+    private void addRelatedSeries(OmObservation omObservation, Set<RelatedDatasetEntity> relatedSeries) throws CodedException {
         new RelatedSeriesAdder(omObservation, relatedSeries).add();
     }
 }

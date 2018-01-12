@@ -30,29 +30,29 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
-import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
 public class PhenomenonTimeCreator {
 
-    private TemporalReferencedObservation hObservation;
-    private Series hSeries;
+    private DataEntity hObservation;
+    private DatasetEntity hSeries;
 
-    public PhenomenonTimeCreator(TemporalReferencedObservation hObservation) {
+    public PhenomenonTimeCreator(DataEntity hObservation) {
         this.hObservation = hObservation;
     }
 
-    public PhenomenonTimeCreator(Series hSeries) {
+    public PhenomenonTimeCreator(DatasetEntity hSeries) {
         this.hSeries = hSeries;
     }
 
     public Time create() {
         if (hObservation != null) {
             return createFromObservation();
-        } else if (hSeries != null && hSeries.isSetFirstLastTime()) {
+        } else if (hSeries != null && hSeries.isSetFirstValueAt() && hSeries.isSetLastValueAt()) {
             return createFromSeries();
         }
         return null;
@@ -72,8 +72,8 @@ public class PhenomenonTimeCreator {
 
     private Time createFromSeries() {
         // create time element
-        final DateTime phenStartTime = new DateTime(hSeries.getFirstTimeStamp(), DateTimeZone.UTC);
-        final DateTime phenEndTime = new DateTime(hSeries.getLastTimeStamp(), DateTimeZone.UTC);
+        final DateTime phenStartTime = new DateTime(hSeries.getFirstValueAt(), DateTimeZone.UTC);
+        final DateTime phenEndTime = new DateTime(hSeries.getLastValueAt(), DateTimeZone.UTC);
         return createTime(phenStartTime, phenEndTime);
     }
 

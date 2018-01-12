@@ -30,12 +30,11 @@ package org.n52.sos.ds.cache.base;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
-import org.n52.proxy.db.beans.RelatedFeatureEntity;
-import org.n52.proxy.db.beans.RelatedFeatureRoleEntity;
-import org.n52.proxy.db.dao.ProxyRelatedFeatureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.dao.RelatedFeatureDao;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.slf4j.Logger;
@@ -54,15 +53,13 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
         LOGGER.debug("Executing RelatedFeaturesCacheUpdate");
         startStopwatch();
         try {
-            for (RelatedFeatureEntity relatedFeature : new ProxyRelatedFeatureDao(getSession())
+            for (RelatedFeatureEntity relatedFeature : new RelatedFeatureDao(getSession())
                     .getAllInstances(new DbQuery(IoParameters.createDefaults()))) {
-                String identifier = relatedFeature.getFeature().getDomainId();
+                String identifier = relatedFeature.getFeature().getIdentifier();
                 for (OfferingEntity offering : relatedFeature.getOfferings()) {
-                    getCache().addRelatedFeatureForOffering(offering.getDomainId(), identifier);
+                    getCache().addRelatedFeatureForOffering(offering.getIdentifier(), identifier);
                 }
-                for (RelatedFeatureRoleEntity relatedFeatureRole : relatedFeature.getRelatedFeatureRoles()) {
-                    getCache().addRoleForRelatedFeature(identifier, relatedFeatureRole.getRelatedFeatureRole());
-                }
+                getCache().addRoleForRelatedFeature(identifier, relatedFeature.getRole().getRelatedFeatureRole());
             }
         } catch (HibernateException | DataAccessException dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae)

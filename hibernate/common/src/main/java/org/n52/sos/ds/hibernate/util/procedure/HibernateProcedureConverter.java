@@ -39,6 +39,10 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.series.db.beans.HibernateRelations.HasProcedureDescriptionFormat;
+import org.n52.series.db.beans.HibernateRelations.HasXml;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
@@ -50,10 +54,6 @@ import org.n52.shetland.ogc.sensorML.v20.AbstractProcessV20;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
-import org.n52.sos.ds.hibernate.entities.DescriptionXmlEntity;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescriptionFormat;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.procedure.create.DescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.FileDescriptionCreationStrategy;
 import org.n52.sos.ds.hibernate.util.procedure.create.GeneratedDescriptionCreationStrategy;
@@ -80,7 +80,7 @@ import com.google.common.collect.Lists;
  *        (creates, file, or database) - use setting switches for code flow
  */
 public class HibernateProcedureConverter
-        extends AbstractProcedureConverter<Procedure>
+        extends AbstractProcedureConverter<ProcedureEntity>
         implements HibernateSqlQueryConstants {
 
     private final HibernateProcedureCreationContext ctx;
@@ -113,7 +113,7 @@ public class HibernateProcedureConverter
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription<?> createSosProcedureDescription(Procedure procedure,
+    public SosProcedureDescription<?> createSosProcedureDescription(ProcedureEntity procedure,
             String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n, Session session)
             throws OwsExceptionReport {
         if (procedure == null) {
@@ -157,8 +157,8 @@ public class HibernateProcedureConverter
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription<?> createSosProcedureDescriptionFromValidProcedureTime(Procedure procedure,
-            String requestedDescriptionFormat, ValidProcedureTime vpt, String version, Locale i18n, Session session)
+    public SosProcedureDescription<?> createSosProcedureDescriptionFromValidProcedureTime(ProcedureEntity procedure,
+            String requestedDescriptionFormat, ProcedureHistoryEntity vpt, String version, Locale i18n, Session session)
             throws OwsExceptionReport {
         if (vpt != null) {
             checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), vpt, requestedDescriptionFormat,
@@ -183,18 +183,18 @@ public class HibernateProcedureConverter
         return description.orNull();
     }
 
-    private void addHumanReadableName(SosProcedureDescription<?> desc, Procedure procedure) {
+    private void addHumanReadableName(SosProcedureDescription<?> desc, ProcedureEntity procedure) {
         if (!desc.isSetHumanReadableIdentifier() && procedure.isSetName()) {
             desc.setHumanReadableIdentifier(procedure.getName());
         }
     }
 
-    protected TimePeriod getValidTime(ValidProcedureTime validProcedureTime) {
+    protected TimePeriod getValidTime(ProcedureHistoryEntity validProcedureTime) {
         return new TimePeriod(validProcedureTime.getStartTime(), validProcedureTime.getEndTime());
     }
 
     private String getFormat(HasProcedureDescriptionFormat hpdf) {
-        return hpdf.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
+        return hpdf.getFormat().getFormat();
     }
 
     /**
@@ -216,10 +216,10 @@ public class HibernateProcedureConverter
      *             If procedureDescriptionFormats are invalid
      */
     @VisibleForTesting
-    boolean checkOutputFormatWithDescriptionFormat(String identifier, DescriptionXmlEntity procedure,
+    boolean checkOutputFormatWithDescriptionFormat(String identifier, HasProcedureDescriptionFormat procedure,
             String requestedFormat, String descriptionFormat)
             throws OwsExceptionReport {
-        if (procedure.isSetDescriptionXml() || checkForDescriptionFile(procedure)) {
+        if ((procedure instanceof HasXml  && ((HasXml)procedure).isSetXml()) || checkForDescriptionFile(procedure)) {
             if (requestedFormat.equalsIgnoreCase(descriptionFormat)
                     || existConverter(descriptionFormat, requestedFormat)) {
                 return true;
@@ -235,9 +235,9 @@ public class HibernateProcedureConverter
                 .setStatus(HTTPStatus.BAD_REQUEST);
     }
 
-    private boolean checkForDescriptionFile(DescriptionXmlEntity procedure) {
-        if (procedure instanceof Procedure) {
-            return ((Procedure) procedure).isSetDescriptionFile();
+    private boolean checkForDescriptionFile(HasProcedureDescriptionFormat procedure) {
+        if (procedure instanceof ProcedureEntity) {
+            return ((ProcedureEntity) procedure).isSetDescription();
         }
         return false;
     }
@@ -250,8 +250,8 @@ public class HibernateProcedureConverter
         return ctx.getFactoryRepository().hasProcedureDescriptionGeneratorFactory(descriptionFormat);
     }
 
-    private Optional<SosProcedureDescription<?>> create(Procedure procedure, String descriptionFormat,
-            ValidProcedureTime vpt, Locale i18n, Session session)
+    private Optional<SosProcedureDescription<?>> create(ProcedureEntity procedure, String descriptionFormat,
+            ProcedureHistoryEntity vpt, Locale i18n, Session session)
             throws OwsExceptionReport {
         Optional<DescriptionCreationStrategy> strategy = getCreationStrategy(procedure, vpt);
         if (strategy.isPresent()) {
@@ -261,7 +261,7 @@ public class HibernateProcedureConverter
         }
     }
 
-    private Optional<DescriptionCreationStrategy> getCreationStrategy(Procedure p, ValidProcedureTime vpt) {
+    private Optional<DescriptionCreationStrategy> getCreationStrategy(ProcedureEntity p, ProcedureHistoryEntity vpt) {
         for (DescriptionCreationStrategy strategy : getCreationStrategies(vpt)) {
             if (strategy.apply(p)) {
                 return Optional.of(strategy);
@@ -270,7 +270,7 @@ public class HibernateProcedureConverter
         return Optional.absent();
     }
 
-    protected List<DescriptionCreationStrategy> getCreationStrategies(ValidProcedureTime vpt) {
+    protected List<DescriptionCreationStrategy> getCreationStrategies(ProcedureHistoryEntity vpt) {
         return Lists.newArrayList(new ValidProcedureTimeDescriptionCreationStrategy(vpt),
                                   new LinkedDescriptionCreationStrategy(),
                                   new XmlStringDescriptionCreationStrategy(),
@@ -302,7 +302,7 @@ public class HibernateProcedureConverter
      * @throws OwsExceptionReport
      *             if the enrichment fails
      */
-    private void enrich(SosProcedureDescription<?> desc, Procedure procedure, String version, String format,
+    private void enrich(SosProcedureDescription<?> desc, ProcedureEntity procedure, String version, String format,
             TimePeriod validTime, Locale language, Session session)
             throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
@@ -311,7 +311,7 @@ public class HibernateProcedureConverter
                 .setDescription(desc).setProcedureDescriptionFormat(format).setSession(session).setValidTime(validTime)
                 .setConverter(this);
         if (procedure.isSetTypeOf() && desc.getProcedureDescription() instanceof AbstractProcessV20) {
-            Procedure typeOf = procedure.getTypeOf();
+            ProcedureEntity typeOf = procedure.getTypeOf();
             enrichments.setTypeOfIdentifier(typeOf.getIdentifier()).setTypeOfFormat(format);
         }
         if (desc.getProcedureDescription() instanceof SensorML

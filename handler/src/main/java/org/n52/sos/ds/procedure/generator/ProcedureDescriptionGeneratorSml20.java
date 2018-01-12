@@ -129,7 +129,7 @@ class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGen
     }
 
     private void setIdentifier(DescribedObject describedObject, ProcedureEntity procedure) {
-        CodeWithAuthority cwa = new CodeWithAuthority(procedure.getDomainId(), OGCConstants.UNIQUE_ID);
+        CodeWithAuthority cwa = new CodeWithAuthority(procedure.getIdentifier(), OGCConstants.UNIQUE_ID);
         describedObject.setIdentifier(cwa);
     }
 

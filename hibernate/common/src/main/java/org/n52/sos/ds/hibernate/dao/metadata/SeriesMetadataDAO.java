@@ -29,23 +29,22 @@
 package org.n52.sos.ds.hibernate.dao.metadata;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
+import org.n52.series.db.beans.metadata.MetadataEntity;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 public class SeriesMetadataDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesMetadataDAO.class);
 
     @SuppressWarnings("unchecked")
-    public List<SeriesMetadata> getMetadata(long series, Session session) {
+    public List<MetadataEntity> getMetadata(long series, Session session) {
         Criteria c = getDefaultSeriesCriteria(session);
         addSeriesRestriction(series, c);
         LOGGER.debug("QUERY getMetadata(series): {}", HibernateHelper.getSqlString(c));
@@ -53,11 +52,11 @@ public class SeriesMetadataDAO {
     }
 
     private Criteria getDefaultSeriesCriteria(Session session) {
-        return session.createCriteria(SeriesMetadata.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return session.createCriteria(MetadataEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     @SuppressWarnings("unchecked")
-    public List<SeriesMetadata> getDomainMetadata(long seriesId, String domainIdentifier, Session session) {
+    public List<MetadataEntity> getDomainMetadata(long seriesId, String domainIdentifier, Session session) {
         Criteria c = getDefaultSeriesCriteria(session);
         addSeriesRestriction(seriesId, c);
         addDomainRestriction(domainIdentifier, c);
@@ -65,23 +64,23 @@ public class SeriesMetadataDAO {
         return c.list();
     }
 
-    public Optional<String> getMetadataElement(List<SeriesMetadata> seriesMetadata, String domainIdentifier,
+    public Optional<Object> getMetadataElement(List<MetadataEntity> seriesMetadata, String domainIdentifier,
             String identifier) {
-        for (SeriesMetadata seriesMetadataElement : seriesMetadata) {
+        for (MetadataEntity seriesMetadataElement : seriesMetadata) {
             if (seriesMetadataElement.getDomain().equals(domainIdentifier) &&
-                    seriesMetadataElement.getIdentifier().equals(identifier)) {
-                return Optional.fromNullable(seriesMetadataElement.getValue());
+                    seriesMetadataElement.getName().equals(identifier)) {
+                return Optional.ofNullable(seriesMetadataElement.getValue());
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private void addSeriesRestriction(long series, Criteria c) {
-        c.add(Restrictions.eq(SeriesMetadata.SERIES_ID, series));
+        c.add(Restrictions.eq(MetadataEntity.PROPERTY_ID, series));
     }
 
     private void addDomainRestriction(String domainIdentifier, Criteria c) {
-        c.add(Restrictions.eq(SeriesMetadata.DOMAIN, domainIdentifier));
+        c.add(Restrictions.eq(MetadataEntity.PROPERTY_DOMAIN, domainIdentifier));
     }
 
 }

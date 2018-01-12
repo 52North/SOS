@@ -40,6 +40,9 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterText;
 import org.n52.shetland.ogc.filter.BinaryLogicFilter;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.Filter;
@@ -49,9 +52,6 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractBaseObservation;
-import org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter;
-import org.n52.sos.ds.hibernate.entities.parameter.observation.TextValuedParameter;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -120,7 +120,7 @@ public class ExtensionFesFilterCriteriaAdder {
             Map<NameValue, Set<String>> map =
                     mergeNamesValues((BinaryLogicFilter) filter, Maps.<NameValue, Set<String>> newHashMap(), 0);
             checkMap(map);
-            return Subqueries.propertyIn(AbstractBaseObservation.OBS_ID,
+            return Subqueries.propertyIn(DataEntity.PROPERTY_ID,
                     getDetachedCriteria(getClassFor(null, null), map));
             // current implementation, maybe change in the future
             // return getBinaryLogicFilterCriterion((BinaryLogicFilter) filter);
@@ -133,7 +133,7 @@ public class ExtensionFesFilterCriteriaAdder {
                     addValue(NameValue.VALUE, (ComparisonFilter) filter, map);
                 }
                 checkMap(map);
-                return Subqueries.propertyIn(AbstractBaseObservation.OBS_ID,
+                return Subqueries.propertyIn(DataEntity.PROPERTY_ID,
                         getDetachedCriteria(getClassFor(null, null), map));
             }
             throw new NoApplicableCodeException().withMessage(
@@ -153,13 +153,13 @@ public class ExtensionFesFilterCriteriaAdder {
         if (map.containsKey(NameValue.VALUE)) {
             detachedCriteria.add(getRestrictionIn(Parameter.VALUE, map.get(NameValue.VALUE)));
         }
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.OBS_ID)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.PROPERTY_ID)));
         return detachedCriteria;
     }
 
     private Class<?> getClassFor(String value, ComparisonOperator operator) {
         // TODO check for other types
-        return TextValuedParameter.class;
+        return ParameterText.class;
     }
 
     private Criterion getRestrictionIn(String name, Set<String> values) {

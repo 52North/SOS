@@ -28,24 +28,24 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
 public abstract class AbstractAdditionalObservationCreator implements AdditionalObservationCreator {
 
     @Override
-    public OmObservation create(OmObservation omObservation, Series series) {
+    public OmObservation create(OmObservation omObservation, DatasetEntity series) {
         return omObservation;
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, Observation<?> observation) {
+    public OmObservation create(OmObservation omObservation, DataEntity<?> observation) {
         return omObservation;
     }
 
     @Override
-    public OmObservation add(OmObservation sosObservation, Observation<?> observation) {
+    public OmObservation add(OmObservation sosObservation, DataEntity<?> observation) {
         return sosObservation;
     }
 }

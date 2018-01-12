@@ -53,6 +53,7 @@ import javax.xml.namespace.QName;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
@@ -70,6 +71,7 @@ import org.n52.janmayen.function.Functions;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -133,14 +135,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.locationtech.jts.geom.Geometry;
 
 /**
  * Implementation of the interface AbstractGetCapabilitiesHandler
  *
  * @since 4.0.0
  */
-public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
+public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler implements ApiQueryHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCapabilitiesHandler.class);
 
@@ -449,23 +450,23 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
             final Collection<OfferingEntity> offerings = new OfferingDao(session).getAllInstances(new DbQuery(IoParameters.createDefaults()));
             final List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
             for (final OfferingEntity offering : offerings) {
-                final Collection<String> procedures = getProceduresForOffering(offering.getDomainId(), version);
-                final ReferencedEnvelope envelopeForOffering = getCache().getEnvelopeForOffering(offering.getDomainId());
-                final Set<String> featuresForoffering = getFOI4offering(offering.getDomainId());
+                final Collection<String> procedures = getProceduresForOffering(offering.getIdentifier(), version);
+                final ReferencedEnvelope envelopeForOffering = getCache().getEnvelopeForOffering(offering.getIdentifier());
+                final Set<String> featuresForoffering = getFOI4offering(offering.getIdentifier());
                 final Collection<String> responseFormats = getResponseFormatRepository()
                         .getSupportedResponseFormats(SosConstants.SOS, Sos1Constants.SERVICEVERSION);
                 if (checkOfferingValues(envelopeForOffering, featuresForoffering, responseFormats)) {
                     final SosObservationOffering sosObservationOffering = new SosObservationOffering();
 
                     // insert observationTypes
-                    sosObservationOffering.setObservationTypes(getObservationTypes(offering.getDomainId()));
+                    sosObservationOffering.setObservationTypes(getObservationTypes(offering.getIdentifier()));
 
                     // only if fois are contained for the offering set the values of
                     // the envelope
-                    if (offering.hasEnvelope()) {
-                        sosObservationOffering.setObservedArea(processObservedArea(JTSConverter.convert(offering.getEnvelope())));
-                    } else if (getCache().hasEnvelopeForOffering(offering.getDomainId())) {
-                        sosObservationOffering.setObservedArea(getCache().getEnvelopeForOffering(offering.getDomainId()));
+                    if (offering.isSetGeometry()) {
+                        sosObservationOffering.setObservedArea(processObservedArea(JTSConverter.convert(offering.getGeometry())));
+                    } else if (getCache().hasEnvelopeForOffering(offering.getIdentifier())) {
+                        sosObservationOffering.setObservedArea(getCache().getEnvelopeForOffering(offering.getIdentifier()));
                     }
 
                     // TODO: add intended application
@@ -476,11 +477,11 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
                     // set up phenomena
                     sosObservationOffering
-                            .setObservableProperties(getCache().getObservablePropertiesForOffering(offering.getDomainId()));
-                    sosObservationOffering.setCompositePhenomena(getCache().getCompositePhenomenonsForOffering(offering.getDomainId()));
+                            .setObservableProperties(getCache().getObservablePropertiesForOffering(offering.getIdentifier()));
+                    sosObservationOffering.setCompositePhenomena(getCache().getCompositePhenomenonsForOffering(offering.getIdentifier()));
                     final Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
-                    if (getCache().getCompositePhenomenonsForOffering(offering.getDomainId()) != null) {
-                        for (final String compositePhenomenon : getCache().getCompositePhenomenonsForOffering(offering.getDomainId())) {
+                    if (getCache().getCompositePhenomenonsForOffering(offering.getIdentifier()) != null) {
+                        for (final String compositePhenomenon : getCache().getCompositePhenomenonsForOffering(offering.getIdentifier())) {
                             phens4CompPhens.put(compositePhenomenon, getCache()
                                                 .getObservablePropertiesForCompositePhenomenon(compositePhenomenon));
                         }
@@ -492,7 +493,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
                     // add feature of interests
                     if (getProfileHandler().getActiveProfile().isListFeatureOfInterestsInOfferings()) {
-                        sosObservationOffering.setFeatureOfInterest(getFOI4offering(offering.getDomainId()));
+                        sosObservationOffering.setFeatureOfInterest(getFOI4offering(offering.getIdentifier()));
                     }
 
                     // set procedures
@@ -500,7 +501,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
                     // insert result models
                     final Collection<QName> resultModels = OMHelper.getQNamesForResultModel(getCache()
-                            .getObservationTypesForOffering(offering.getDomainId()));
+                            .getObservationTypesForOffering(offering.getIdentifier()));
                     sosObservationOffering.setResultModels(resultModels);
 
                     // set response format
@@ -576,7 +577,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
                 for (final OfferingEntity offering : offerings) {
                     final Collection<ProcedureEntity> procedures = getProceduresForOffering(offering, session);
                     if (!procedures.isEmpty()) {
-                        final Collection<String> observationTypes = offering.getObservationTypes();
+                        final Collection<FormatEntity> observationTypes = offering.getObservationTypes();
                         if (observationTypes != null && !observationTypes.isEmpty()) {
                             // FIXME why a loop? We are in SOS 2.0 context -> offering 1
                             // <-> 1 procedure!
@@ -585,15 +586,15 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
                                 final SosObservationOffering sosObservationOffering = new SosObservationOffering();
 
                                 // insert observationTypes
-                                sosObservationOffering.setObservationTypes(observationTypes);
+                                sosObservationOffering.setObservationTypes(toStringSet(observationTypes));
 
-                                if (offering.hasEnvelope()) {
-                                    sosObservationOffering.setObservedArea(processObservedArea(JTSConverter.convert(offering.getEnvelope())));
-                                } else if (getCache().hasEnvelopeForOffering(offering.getDomainId())) {
-                                    sosObservationOffering.setObservedArea(getCache().getEnvelopeForOffering(offering.getDomainId()));
+                                if (offering.isSetGeometry()) {
+                                    sosObservationOffering.setObservedArea(processObservedArea(JTSConverter.convert(offering.getGeometry())));
+                                } else if (getCache().hasEnvelopeForOffering(offering.getIdentifier())) {
+                                    sosObservationOffering.setObservedArea(getCache().getEnvelopeForOffering(offering.getIdentifier()));
                                 }
 
-                                sosObservationOffering.setProcedures(Collections.singletonList(procedure.getDomainId()));
+                                sosObservationOffering.setProcedures(Collections.singletonList(procedure.getIdentifier()));
 
                                 // TODO: add intended application
 
@@ -606,8 +607,8 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
                                     for (SosObservationOfferingExtensionProvider provider : offeringExtensionRepository
                                             .getOfferingExtensionProvider(
                                                     sectionSpecificContentObject.getGetCapabilitiesRequest())) {
-                                        if (provider != null && provider.hasExtendedOfferingFor(offering.getDomainId())) {
-                                            sosObservationOffering.addExtensions(provider.getOfferingExtensions(offering.getDomainId()));
+                                        if (provider != null && provider.hasExtendedOfferingFor(offering.getIdentifier())) {
+                                            sosObservationOffering.addExtensions(provider.getOfferingExtensions(offering.getIdentifier()));
                                         }
                                     }
                                 }
@@ -630,7 +631,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
                             }
                         }
                     } else {
-                        LOGGER.error( "No procedures are contained in the database for the offering {}! Please contact the admin of this SOS.", offering.getDomainId());
+                        LOGGER.error( "No procedures are contained in the database for the offering {}! Please contact the admin of this SOS.", offering.getIdentifier());
                     }
                 }
             }
@@ -656,7 +657,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
     private void addSosOfferingToObservationOffering(OfferingEntity offering,
             SosObservationOffering sosObservationOffering, GetCapabilitiesRequest request) throws CodedException {
-        SosOffering sosOffering = new SosOffering(offering.getDomainId(), false);
+        SosOffering sosOffering = new SosOffering(offering.getIdentifier(), false);
         sosObservationOffering.setOffering(sosOffering);
         // add offering name
         I18NHelper.addOfferingNames(getCache(), sosOffering, getRequestedLocale(request), Locale.ROOT, false);
@@ -867,8 +868,8 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
     protected void setUpPhenomenaForOffering(OfferingEntity offering, ProcedureEntity procedure,
             SosObservationOffering sosOffering, Session session) throws DataAccessException {
         Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.OFFERINGS, Long.toString(offering.getPkid()));
-        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getPkid()));
+        map.put(IoParameters.OFFERINGS, Long.toString(offering.getId()));
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
 
         List<PhenomenonEntity> observableProperties =
                 new PhenomenonDao(session).getAllInstances(new DbQuery(IoParameters.createFromSingleValueMap(map)));
@@ -877,11 +878,11 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
         Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
         for (PhenomenonEntity observableProperty : observableProperties) {
             if (!observableProperty.hasChildren() && !observableProperty.hasParents()) {
-                phenomenons.add(observableProperty.getDomainId());
+                phenomenons.add(observableProperty.getIdentifier());
             } else if (observableProperty.hasChildren() && !observableProperty.hasParents()) {
                 Set<String> childs = new TreeSet<String>();
                 for (PhenomenonEntity child : observableProperty.getChildren()) {
-                    childs.add(child.getDomainId());
+                    childs.add(child.getIdentifier());
                 }
             }
         }
@@ -917,8 +918,9 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 
     protected void setUpFeatureOfInterestTypesForOffering(OfferingEntity offering,
             SosObservationOffering sosOffering) {
-        sosOffering.setFeatureOfInterestTypes(offering.getFeatureTypes());
+        sosOffering.setFeatureOfInterestTypes(toStringSet(offering.getFeatureTypes()));
     }
+    
 
     protected void setUpResponseFormatForOffering(SosObservationOffering sosOffering) {
         // initialize as new HashSet so that collection is modifiable
@@ -975,7 +977,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
             SosObservationOffering sosObservationOffering) throws OwsExceptionReport {
         final Map<String, Set<String>> relatedFeatures = Maps.newHashMap();
         final Set<String> relatedFeaturesForThisOffering =
-                getCache().getRelatedFeaturesForOffering(offering.getDomainId());
+                getCache().getRelatedFeaturesForOffering(offering.getIdentifier());
         if (CollectionHelper.isNotEmpty(relatedFeaturesForThisOffering)) {
             for (final String relatedFeature : relatedFeaturesForThisOffering) {
                 relatedFeatures.put(relatedFeature, getCache().getRolesForRelatedFeature(relatedFeature));
@@ -1035,7 +1037,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
     private Collection<ProcedureEntity> getProceduresForOffering(final OfferingEntity offering, Session session)
             throws OwsExceptionReport, DataAccessException {
         Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.OFFERINGS, Long.toString(offering.getPkid()));
+        map.put(IoParameters.OFFERINGS, Long.toString(offering.getId()));
         List<ProcedureEntity> procedures =
                 new ProcedureDao(session).getAllInstances(new DbQuery(IoParameters.createFromSingleValueMap(map)));
         // if (procedures.isEmpty()) {
@@ -1706,7 +1708,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //                                sosObservationOffering.setObservedArea(processObservedArea(offering.getEnvelope()));
 //                            }
 //
-//                            sosObservationOffering.setProcedures(Collections.singletonList(procedure.getDomainId()));
+//                            sosObservationOffering.setProcedures(Collections.singletonList(procedure.getIdentifier()));
 //
 //                            // TODO: add intended application
 //
@@ -1719,8 +1721,8 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //                                for (OfferingExtensionProvider provider : SosObservationOfferingExtensionRepository
 //                                        .getOfferingExtensionProvider(
 //                                                sectionSpecificContentObject.getGetCapabilitiesRequest())) {
-//                                    if (provider != null && provider.hasExtendedOfferingFor(offering.getDomainId())) {
-//                                        sosObservationOffering.addExtensions(provider.getOfferingExtensions(offering.getDomainId()));
+//                                    if (provider != null && provider.hasExtendedOfferingFor(offering.getIdentifier())) {
+//                                        sosObservationOffering.addExtensions(provider.getOfferingExtensions(offering.getIdentifier()));
 //                                    }
 //                                }
 //                            }
@@ -1743,7 +1745,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //                        }
 //                    }
 //                } else {
-//                    LOGGER.error( "No procedures are contained in the database for the offering {}! Please contact the admin of this SOS.", offering.getDomainId());
+//                    LOGGER.error( "No procedures are contained in the database for the offering {}! Please contact the admin of this SOS.", offering.getIdentifier());
 //                }
 //            }
 //        }
@@ -1759,7 +1761,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //
 //    private void addSosOfferingToObservationOffering(OfferingEntity offering, SosObservationOffering sosObservationOffering,
 //            GetCapabilitiesRequest request) throws CodedException {
-//        SosOffering sosOffering = new SosOffering(offering.getDomainId(), false);
+//        SosOffering sosOffering = new SosOffering(offering.getIdentifier(), false);
 //        sosObservationOffering.setOffering(sosOffering);
 //        // add offering name
 //        I18NHelper.addOfferingNames(getCache(), sosOffering, request.getRequestedLocale(), Locale.ROOT, false);
@@ -1874,11 +1876,11 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //        Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
 //        for (PhenomenonEntity observableProperty : observableProperties) {
 //            if (!observableProperty.hasChilds() && !observableProperty.hasParents()) {
-//                phenomenons.add(observableProperty.getDomainId());
+//                phenomenons.add(observableProperty.getIdentifier());
 //            } else if (observableProperty.hasChilds() && !observableProperty.hasParents()) {
 //                Set<String> childs = new TreeSet<String>();
 //                for (PhenomenonEntity child : observableProperty.getChilds()) {
-//                    childs.add(child.getDomainId());
+//                    childs.add(child.getIdentifier());
 //                }
 //            }
 //        }
@@ -1918,7 +1920,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler {
 //            SosObservationOffering sosObservationOffering) throws OwsExceptionReport {
 //        final Map<String, Set<String>> relatedFeatures = Maps.newHashMap();
 //        final Set<String> relatedFeaturesForThisOffering =
-//                getCache().getRelatedFeaturesForOffering(offering.getDomainId());
+//                getCache().getRelatedFeaturesForOffering(offering.getIdentifier());
 //        if (CollectionHelper.isNotEmpty(relatedFeaturesForThisOffering)) {
 //            for (final String relatedFeature : relatedFeaturesForThisOffering) {
 //                relatedFeatures.put(relatedFeature, getCache().getRolesForRelatedFeature(relatedFeature));

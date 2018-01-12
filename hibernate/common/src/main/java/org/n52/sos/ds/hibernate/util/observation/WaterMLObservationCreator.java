@@ -32,34 +32,30 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
 import com.google.common.collect.Sets;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
+ *         J&uuml;rrens</a>
  *
  */
-public class WaterMLObservationCreator extends AbstractAdditionalObservationCreator {
+public class WaterMLObservationCreator
+        extends
+        AbstractAdditionalObservationCreator {
 
-    private static final Set<AdditionalObservationCreatorKey> KEYS =  Sets.union(
-            AdditionalObservationCreatorRepository.encoderKeysForElements(WaterMLConstants.NS_WML_20,
-                    AbstractSeriesObservation.class,
-                    AbstractEReportingObservation.class,
-                    Series.class,
-                    EReportingSeries.class),
-            AdditionalObservationCreatorRepository.encoderKeysForElements("application/uvf",
-                    AbstractSeriesObservation.class,
-                    AbstractEReportingObservation.class,
-                    Series.class,
-                    EReportingSeries.class));
+    private static final Set<AdditionalObservationCreatorKey> KEYS = Sets.union(
+            AdditionalObservationCreatorRepository.encoderKeysForElements(WaterMLConstants.NS_WML_20, DataEntity.class,
+                    EReportingDataEntity.class, DatasetEntity.class, EReportingDatasetEntity.class),
+            AdditionalObservationCreatorRepository.encoderKeysForElements("application/uvf", DataEntity.class,
+                    EReportingDataEntity.class, DatasetEntity.class, EReportingDatasetEntity.class));
 
     @Override
     public Set<AdditionalObservationCreatorKey> getKeys() {
@@ -67,32 +63,27 @@ public class WaterMLObservationCreator extends AbstractAdditionalObservationCrea
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, Observation<?> observation, Session session)
+    public OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session)
             throws CodedException {
         create(omObservation, observation);
-        if (observation instanceof AbstractSeriesObservation) {
-            return addWaterMLMetadata(omObservation, ((AbstractSeriesObservation<?>)observation).getSeries(), session);
-        }
-        return omObservation;
+        return addWaterMLMetadata(omObservation, observation.getDataset(), session);
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, Series series, Session session) throws CodedException {
+    public OmObservation create(OmObservation omObservation, DatasetEntity series, Session session)
+            throws CodedException {
         create(omObservation, series);
         return addWaterMLMetadata(omObservation, series, session);
     }
 
     @Override
-    public OmObservation add(OmObservation omObservation, Observation<?> observation, Session session)
+    public OmObservation add(OmObservation omObservation, DataEntity<?> observation, Session session)
             throws CodedException {
         add(omObservation, observation);
-        if (observation instanceof AbstractSeriesObservation) {
-            return addWaterMLMetadata(omObservation, ((AbstractSeriesObservation<?>)observation).getSeries(), session);
-        }
-        return omObservation;
+        return addWaterMLMetadata(omObservation, observation.getDataset(), session);
     }
 
-    private OmObservation addWaterMLMetadata(OmObservation omObservation, Series series, Session session)
+    private OmObservation addWaterMLMetadata(OmObservation omObservation, DatasetEntity series, Session session)
             throws CodedException {
         return new WaterMLMetadataAdder(omObservation, series, session).add().result();
     }

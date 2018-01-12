@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.locationtech.jts.geom.Envelope;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -48,6 +49,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
+import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.cache.ProcedureFlag;
@@ -55,7 +57,6 @@ import org.n52.sos.util.JTSConverter;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.locationtech.jts.geom.Envelope;
 
 /**
  *
@@ -63,7 +64,7 @@ import org.locationtech.jts.geom.Envelope;
  *
  * @since 4.0.0
  */
-public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
+public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate implements ApiQueryHelper {
 
 //    private final FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
     private final String identifier;
@@ -88,7 +89,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                                    Locale defaultLanguage,
                                    I18NDAORepository i18NDAORepository) {
         this.offering = offering;
-        this.identifier = offering.getDomainId();
+        this.identifier = offering.getIdentifier();
         this.datasets = datasets;
         this.defaultLanguage = defaultLanguage;
         this.i18NDAORepository = i18NDAORepository;
@@ -120,11 +121,11 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         getCache().setObservablePropertiesForOffering(identifier, getObservablePropertyIdentifier(session));
 
         // Observation types
-        getCache().setObservationTypesForOffering(identifier, offering.getObservationTypes());
+        getCache().setObservationTypesForOffering(identifier, toStringSet(offering.getObservationTypes()));
 
         // Features of Interest
         getCache().setFeaturesOfInterestForOffering(identifier, DatasourceCacheUpdateHelper.getAllFeatureIdentifiersFromDatasets(datasets));
-        getCache().setFeatureOfInterestTypesForOffering(identifier, offering.getFeatureTypes());
+        getCache().setFeatureOfInterestTypesForOffering(identifier, toStringSet(offering.getFeatureTypes()));
 
         // Spatial Envelope
         getCache().setEnvelopeForOffering(identifier, getEnvelopeForOffering(offering));
@@ -233,8 +234,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     }
 
     protected ReferencedEnvelope getEnvelopeForOffering(OfferingEntity offering) throws OwsExceptionReport {
-        if (offering.hasEnvelope()) {
-            return new ReferencedEnvelope(JTSConverter.convert(offering.getEnvelope()).getEnvelopeInternal(), offering.getEnvelope().getSRID());
+        if (offering.isSetGeometry()) {
+            return new ReferencedEnvelope(JTSConverter.convert(offering.getGeometry()).getEnvelopeInternal(), offering.getGeometry().getSRID());
         } else if (datasets != null && !datasets.isEmpty()) {
             Envelope e = new Envelope();
             int srid = -1;

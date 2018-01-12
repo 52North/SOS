@@ -77,7 +77,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
 
     protected void getProcedureInformationFromDbAndAddItToCacheMaps() throws OwsExceptionReport {
         if (datasets != null) {
-            String identifier = procedure.getDomainId();
+            String identifier = procedure.getIdentifier();
             getCache().addProcedure(identifier);
             getCache().addPublishedProcedure(identifier);
             if (procedure.isSetName()) {
@@ -109,7 +109,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
         Set<String> parentProcedures = Sets.newTreeSet();
         if (procedure.hasParents()) {
             for (ProcedureEntity parentEntity : procedure.getParents()) {
-                parentProcedures.add(parentEntity.getDomainId());
+                parentProcedures.add(parentEntity.getIdentifier());
                 parentProcedures.addAll(getParents(parentEntity));
             }
         }
@@ -118,7 +118,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
 
     private DbQuery createDatasetDbQuery(ProcedureEntity procedure) {
         Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getPkid()));
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 

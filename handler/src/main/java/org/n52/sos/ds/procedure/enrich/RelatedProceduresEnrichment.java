@@ -90,7 +90,7 @@ public class RelatedProceduresEnrichment
         Set<String> parents = new HashSet<>();
         if (getProcedure().hasParents()) {
             for (ProcedureEntity parent : getProcedure().getParents()) {
-                parents.add(parent.getDomainId());
+                parents.add(parent.getIdentifier());
             }
         }
         return parents;

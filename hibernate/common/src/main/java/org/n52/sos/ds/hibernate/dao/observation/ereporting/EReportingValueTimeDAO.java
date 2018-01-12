@@ -36,14 +36,14 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
     }
     @Override
     protected Class<?> getSeriesValueTimeClass() {
-        return TemporalReferencedEReportingObservation.class;
+        return EReportingDataEntity.class;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
     }
 
     @Override
-    public ObservationTimeExtrema getTimeExtremaForSeries(Collection<Series> series, Criterion temporalFilterCriterion,
+    public ObservationTimeExtrema getTimeExtremaForSeries(Collection<DatasetEntity> series, Criterion temporalFilterCriterion,
             Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(series, temporalFilterCriterion, null, session);
         addPhenomenonTimeProjection(c);
@@ -111,8 +111,8 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
 
     private void addPhenomenonTimeProjection(Criteria c) {
         ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.min(TemporalReferencedEReportingObservation.PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(TemporalReferencedEReportingObservation.PHENOMENON_TIME_END));
+        projectionList.add(Projections.min(EReportingDataEntity.PROPERTY_PHENOMENON_TIME_START));
+        projectionList.add(Projections.max(EReportingDataEntity.PROPERTY_PHENOMENON_TIME_END));
         c.setProjection(projectionList);
     }
 

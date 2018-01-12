@@ -101,8 +101,9 @@
         <actic-sea.version>3.1.0-SNAPSHOT</actic-sea.version>
         
         <dataset.api.version>2.0.0-SNAPSHOT</dataset.api.version>
-        <dataset.dao.version>2.0.0-SNAPSHOT</dataset.dao.version>
-        <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version>
+        <dataset.dao.version>3.0.0-SNAPSHOT</dataset.dao.version>
+        <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
+        <dataset.hibernate.version>1-SNAPSHOT</dataset.hibernate.version>
         
         <org.springframework.security.version>4.2.3.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.3.10.RELEASE</org.springframework.version>
@@ -227,6 +228,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <!-- 
             <dependency>
                 <groupId>org.n52.series-api</groupId>
                 <artifactId>proxy-dao</artifactId>
@@ -247,6 +249,7 @@
                 <artifactId>proxy-mappings</artifactId>
                 <version>${dataset.proxy.version}</version>
             </dependency>
+              -->
             <dependency>
                 <groupId>org.n52.series-api.db</groupId>
                 <artifactId>dao</artifactId>
@@ -262,14 +265,30 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+           
             <dependency>
-                <groupId>org.n52.series-api.db</groupId>
+                <groupId>org.n52.series.db</groupId>
                 <artifactId>mappings</artifactId>
-                <version>${dataset.dao.version}</version>
+                <version>${dataset.hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.series.db</groupId>
+                <artifactId>entities</artifactId>
+                <version>${dataset.hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.series.db</groupId>
+                <artifactId>types</artifactId>
+                <version>${dataset.hibernate.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.series-api.db</groupId>
                 <artifactId>sos-integration</artifactId>
+                <version>${dataset.dao.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.series-api.db</groupId>
+            	<artifactId>mappings</artifactId>
                 <version>${dataset.dao.version}</version>
             </dependency>
             <dependency>

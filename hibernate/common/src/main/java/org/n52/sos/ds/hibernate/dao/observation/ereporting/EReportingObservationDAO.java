@@ -41,6 +41,12 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.AqdConstants.AssessmentType;
 import org.n52.shetland.aqd.AqdSamplingPoint;
@@ -67,13 +73,6 @@ import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 
 import com.google.common.base.Strings;
@@ -101,20 +100,20 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<SeriesObservation<?>> getSeriesObservationFor(Series series, List<String> offerings, Session session) {
+    public List<DataEntity<?>> getSeriesObservationFor(DatasetEntity series, List<String> offerings, Session session) {
         return getSeriesObservationCriteriaFor(series, offerings, session).list();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<SeriesObservation<?>> getSeriesObservationFor(Series series, List<String> offerings,
+    public List<DataEntity<?>> getSeriesObservationFor(DatasetEntity series, List<String> offerings,
                                                               Criterion filterCriterion, Session session) {
         return getSeriesObservationCriteriaFor(series, offerings, filterCriterion, session).list();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<SeriesObservation<?>> getSeriesObservationForExtendedIndeterminateTimeFilter(Series series,
+    public List<DataEntity<?>> getSeriesObservationForExtendedIndeterminateTimeFilter(DatasetEntity series,
                                                                                         List<String> offerings,
                                                                                         IndeterminateValue sosIndeterminateTime,
                                                                                         Session session) {
@@ -123,21 +122,21 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     }
 
     @Override
-    public List<SeriesObservation<?>> getSeriesObservationsFor(GetObservationRequest request,
+    public List<DataEntity<?>> getSeriesObservationsFor(GetObservationRequest request,
                                                                Collection<String> features, Session session) throws
             OwsExceptionReport {
         return getSeriesObservationsFor(request, features, null, null, session);
     }
 
     @Override
-    public List<SeriesObservation<?>> getSeriesObservationsFor(GetObservationRequest request,
+    public List<DataEntity<?>> getSeriesObservationsFor(GetObservationRequest request,
                                                                Collection<String> features, Criterion filterCriterion,
                                                                Session session) throws OwsExceptionReport {
         return getSeriesObservationsFor(request, features, filterCriterion, null, session);
     }
 
     @Override
-    public List<SeriesObservation<?>> getSeriesObservationsFor(GetObservationRequest request,
+    public List<DataEntity<?>> getSeriesObservationsFor(GetObservationRequest request,
                                                                Collection<String> features,
                                                                IndeterminateValue sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
@@ -146,13 +145,13 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
 
     @SuppressWarnings("unchecked")
     @Override
-    protected List<SeriesObservation<?>> getSeriesObservationsFor(GetObservationRequest request,
+    protected List<DataEntity<?>> getSeriesObservationsFor(GetObservationRequest request,
                                                                   Collection<String> features, Criterion filterCriterion,
                                                                   IndeterminateValue sosIndeterminateTime,
                                                                   Session session) throws HibernateException,
                                                                                           OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<SeriesObservation<?>> observations = new ArrayList<>();
+            List<DataEntity<?>> observations = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 observations.addAll(getSeriesObservationCriteriaFor(request, ids, filterCriterion, sosIndeterminateTime, session).list());
             }
@@ -164,7 +163,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<SeriesObservation<?>> getSeriesObservationsFor(Series series, GetObservationRequest request,
+    public List<DataEntity<?>> getSeriesObservationsFor(DatasetEntity series, GetObservationRequest request,
                                                                IndeterminateValue sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
         return getSeriesObservationCriteriaFor(series, request, sosIndeterminateTime, session).list();
@@ -198,22 +197,22 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     }
 
     private void addAssessmentType(Criteria c, String assessmentType) {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EReportingSeries.class);
-        detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
-        detachedCriteria.createCriteria(EReportingSeries.SAMPLING_POINT)
-                .createCriteria(EReportingSamplingPoint.ASSESSMENTTYPE).
-                add(Restrictions.ilike(EReportingAssessmentType.ASSESSMENT_TYPE, assessmentType));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.ID)));
-        c.add(Subqueries.propertyIn(SeriesObservation.SERIES, detachedCriteria));
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EReportingDatasetEntity.class);
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.DELETED, false));
+        detachedCriteria.createCriteria(EReportingDatasetEntity.SAMPLING_POINT)
+                .createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE).
+                add(Restrictions.ilike(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, assessmentType));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_ID)));
+        c.add(Subqueries.propertyIn(EReportingDataEntity.PROPERTY_DATASET, detachedCriteria));
     }
 
     @Override
     protected void addObservationContextToObservation(ObservationContext ctx,
-                                                      Observation<?> observation, Session session) throws
+                                                      DataEntity<?> observation, Session session) throws
             OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
-        Series series = seriesDAO.getOrInsertSeries(ctx, session);
-        ((AbstractSeriesObservation) observation).setSeries(series);
+        DatasetEntity series = seriesDAO.getOrInsertSeries(ctx, session);
+        ((DataEntity) observation).setDataset(series);
         seriesDAO.updateSeriesWithFirstLatestValues(series, observation, session);
     }
 
@@ -252,8 +251,8 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation observation) {
         String identifier = getSamplingPointIdentifier(observation);
         if (!Strings.isNullOrEmpty(identifier)) {
-            c.createCriteria(EReportingSeries.SAMPLING_POINT)
-                    .add(Restrictions.eq(EReportingSamplingPoint.IDENTIFIER, identifier));
+            c.createCriteria(EReportingDatasetEntity.SAMPLING_POINT)
+                    .add(Restrictions.eq(EReportingSamplingPointEntity.IDENTIFIER, identifier));
         }
         return c;
     }

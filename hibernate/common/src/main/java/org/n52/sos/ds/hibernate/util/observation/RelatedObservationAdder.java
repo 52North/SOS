@@ -34,6 +34,8 @@ import java.net.URLEncoder;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.RelatedDataEntity;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -47,17 +49,14 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
-import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.RelatedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 
 
 public class RelatedObservationAdder {
 
     private OmObservation observation;
-    private TemporalReferencedObservation hObservation;
+    private DataEntity<?> hObservation;
 
-    public RelatedObservationAdder(OmObservation observation, TemporalReferencedObservation hObservation) {
+    public RelatedObservationAdder(OmObservation observation, DataEntity hObservation) {
         this.observation = observation;
         this.hObservation = hObservation;
     }
@@ -65,7 +64,7 @@ public class RelatedObservationAdder {
     public void add() throws CodedException {
         try {
             if (hObservation != null && hObservation.hasRelatedObservations()) {
-                for (RelatedObservation hRelatedObservation : hObservation.getRelatedObservations()) {
+                for (RelatedDataEntity hRelatedObservation : hObservation.getRelatedObservations()) {
                     ReferenceType role = new ReferenceType();
                     if (hRelatedObservation.isSetRole()) {
                         role.setHref(hRelatedObservation.getRole());
@@ -73,11 +72,11 @@ public class RelatedObservationAdder {
                     if (hRelatedObservation.isSetRelatedUrl()) {
                         observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(hRelatedObservation.getRelatedUrl())));
                     } else {
-                        if (hRelatedObservation.getRelatedObservation().isSetIdentifier()) {
-                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationByIdUrl(hRelatedObservation.getRelatedObservation().getIdentifier()))));
-                        } else if (hRelatedObservation instanceof ContextualReferencedObservation) {
+                        if (hRelatedObservation.getRelatedItem().isSetIdentifier()) {
+                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationByIdUrl(hRelatedObservation.getRelatedItem().getIdentifier()))));
+                        } else if (hRelatedObservation.getRelatedItem() instanceof DataEntity) {
                             // TODO check if this should be set because result may not be a unique observation.
-                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationUrl((ContextualReferencedObservation)hRelatedObservation))));
+                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationUrl((DataEntity)hRelatedObservation.getRelatedItem()))));
                         }
                     }
                 }
@@ -102,7 +101,7 @@ public class RelatedObservationAdder {
         }
     }
 
-    private String createGetObservationUrl(ContextualReferencedObservation hObservation) throws DateTimeFormatException, UnsupportedEncodingException {
+    private String createGetObservationUrl(DataEntity hObservation) throws DateTimeFormatException, UnsupportedEncodingException {
         if (isKvpSupported()) {
             final StringBuilder url = new StringBuilder();
             // service URL
@@ -110,11 +109,11 @@ public class RelatedObservationAdder {
             // request
             url.append(encodeRequest(SosConstants.Operations.GetObservation.name()));
             // procedure
-            url.append(encodeParam(SosConstants.GetObservationParams.procedure.name(), hObservation.getProcedure().getIdentifier()));
+            url.append(encodeParam(SosConstants.GetObservationParams.procedure.name(), hObservation.getDataset().getProcedure().getIdentifier()));
             // observedProperty
-            url.append(encodeParam(SosConstants.GetObservationParams.observedProperty.name(), hObservation.getObservableProperty().getIdentifier()));
+            url.append(encodeParam(SosConstants.GetObservationParams.observedProperty.name(), hObservation.getDataset().getPhenomenon().getIdentifier()));
             // featureOfInterest
-            url.append(encodeParam(SosConstants.GetObservationParams.featureOfInterest.name(), hObservation.getFeatureOfInterest().getIdentifier()));
+            url.append(encodeParam(SosConstants.GetObservationParams.featureOfInterest.name(), hObservation.getDataset().getFeature().getIdentifier()));
             // phenomenonTime
             url.append(encodeTemporalFilterParam(hObservation));
             return url.toString();
@@ -155,7 +154,7 @@ public class RelatedObservationAdder {
         return encodeParam(OWSConstants.RequestParams.request.name(), requestName);
     }
 
-    private String encodeTemporalFilterParam(ContextualReferencedObservation hObservation) throws DateTimeFormatException, UnsupportedEncodingException {
+    private String encodeTemporalFilterParam(DataEntity hObservation) throws DateTimeFormatException, UnsupportedEncodingException {
         Time phenomenonTime = new PhenomenonTimeCreator(hObservation).create();
         final StringBuilder time = new StringBuilder("om:phenomenonTime").append(",");
         if (phenomenonTime instanceof TimeInstant) {

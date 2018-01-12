@@ -32,13 +32,13 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;
 
 public interface EReportingDaoHelper {
 
@@ -48,10 +48,10 @@ public interface EReportingDaoHelper {
             ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
                 if (isSetValidityFlags()) {
-                    c.add(Restrictions.in(EReportingObservation.VALIDATION, getValidityFlags()));
+                    c.add(Restrictions.in(EReportingDataEntity.VALIDATION, getValidityFlags()));
                 }
                 if (isSetVerificationFlags()) {
-                    c.add(Restrictions.in(EReportingObservation.VERIFICATION, getVerificationFlags()));
+                    c.add(Restrictions.in(EReportingDataEntity.VERIFICATION, getVerificationFlags()));
                 }
             }
         }

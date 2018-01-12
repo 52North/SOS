@@ -21,6 +21,7 @@
 		<module>datasource</module>
         <module>utils</module>
         <module>c3p0</module>
+        <module>entities</module>
     </modules>
 	<profiles>
         <profile>

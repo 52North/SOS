@@ -39,11 +39,11 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
-import org.n52.proxy.db.dao.ProxyProcedureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.dao.ProcedureDao;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -109,7 +109,7 @@ public class DescribeSensorHandler
             response.setOutputFormat(request.getProcedureDescriptionFormat());
 
             ProcedureEntity entity =
-                    new ProxyProcedureDao(session).getInstance(request.getProcedure(), createDbQuery(request));
+                    new ProcedureDao(session).getInstance(request.getProcedure(), createDbQuery(request));
             if (entity == null) {
                 throw new NoApplicableCodeException()
                         .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))

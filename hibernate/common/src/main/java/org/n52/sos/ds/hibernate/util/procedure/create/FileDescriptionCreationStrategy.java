@@ -33,11 +33,11 @@ import java.io.InputStream;
 import java.util.Locale;
 
 import org.hibernate.Session;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.StringHelper;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,14 +53,14 @@ public class FileDescriptionCreationStrategy
     private static final Logger LOGGER = LoggerFactory.getLogger(FileDescriptionCreationStrategy.class);
 
     @Override
-    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n,
+    public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
             HibernateProcedureCreationContext ctx, Session s)
             throws OwsExceptionReport {
         try {
             SosProcedureDescription<?> desc =
                     new SosProcedureDescription<>(readXml(read(p.getDescriptionFile(), ctx), ctx));
             desc.setIdentifier(p.getIdentifier());
-            desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
+            desc.setDescriptionFormat(p.getFormat().getFormat());
             return desc;
         } catch (IOException ex) {
             throw new NoApplicableCodeException().causedBy(ex);
@@ -88,7 +88,7 @@ public class FileDescriptionCreationStrategy
     }
 
     @Override
-    public boolean apply(Procedure p) {
+    public boolean apply(ProcedureEntity p) {
         return !Strings.isNullOrEmpty(p.getDescriptionFile());
     }
 }

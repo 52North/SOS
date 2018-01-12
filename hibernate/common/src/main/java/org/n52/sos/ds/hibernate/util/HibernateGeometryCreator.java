@@ -28,11 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import org.n52.series.db.beans.HibernateRelations.HasCoordinate;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.JTSHelper;
 import org.n52.shetland.util.JavaHelper;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.util.GeometryHandler;
 
 import org.locationtech.jts.geom.Geometry;
@@ -62,15 +62,15 @@ public class HibernateGeometryCreator {
                 epsg = coodinates.getSrid();
             }
             final String wktString =
-                    geometryHandler.getWktString(coodinates.getLongitude(), coodinates.getLatitude(), epsg);
+                    geometryHandler.getWktString(coodinates.getLon(), coodinates.getLat(), epsg);
             Geometry geom;
             try {
                 geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
             } catch (ParseException e) {
                 throw new NoApplicableCodeException().causedBy(e);
             }
-            if (coodinates.isSetAltitude()) {
-                geom.getCoordinate().z = JavaHelper.asDouble(coodinates.getAltitude());
+            if (coodinates.isSetAlt()) {
+                geom.getCoordinate().z = JavaHelper.asDouble(coodinates.getAlt());
                 if (geom.getSRID() == geometryHandler.getStorage3DEPSG()) {
                     geom.setSRID(geometryHandler.getStorage3DEPSG());
                 }

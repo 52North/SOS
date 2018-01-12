@@ -91,7 +91,7 @@ public class ProcedureConverter
                     .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
-        checkOutputFormatWithDescriptionFormat(procedure.getDomainId(), requestedDescriptionFormat);
+        checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), requestedDescriptionFormat);
         SosProcedureDescription<?> desc = create(procedure, requestedDescriptionFormat, i18n, session).orNull();
         if (desc != null) {
             addHumanReadableName(desc, procedure);
@@ -192,7 +192,7 @@ public class ProcedureConverter
             throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
                 new ProcedureDescriptionEnrichments(language, serviceProvider, ctx);
-        enrichments.setIdentifier(procedure.getDomainId())
+        enrichments.setIdentifier(procedure.getIdentifier())
                     .setProcedure(procedure)
                     .setVersion(version)
                     .setDescription(desc)
@@ -203,7 +203,7 @@ public class ProcedureConverter
         // if (procedure.isSetTypeOf() && desc.getProcedureDescription()
         // instanceof AbstractProcessV20) {
         // Procedure typeOf = procedure.getTypeOf();
-        // enrichments.setTypeOfIdentifier(typeOf.getDomainId()).setTypeOfFormat(format);
+        // enrichments.setTypeOfIdentifier(typeOf.getIdentifier()).setTypeOfFormat(format);
         // }
         if (desc.getProcedureDescription() instanceof SensorML
                 && ((SensorML) desc.getProcedureDescription()).isWrapper()) {

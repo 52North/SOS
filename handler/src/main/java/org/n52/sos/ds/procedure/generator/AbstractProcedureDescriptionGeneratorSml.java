@@ -124,7 +124,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
             throws OwsExceptionReport {
         setCommonData(procedure, abstractProcess, session);
 
-        String identifier = procedure.getDomainId();
+        String identifier = procedure.getIdentifier();
         List<PhenomenonEntity> observableProperties = getObservablePropertiesForProcedure(procedure, session);
         // 3 set identification
         abstractProcess.setIdentifications(createIdentifications(identifier));
@@ -220,7 +220,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
         case "category":
             final SweCategory category = new SweCategory();
             if (dataset.getUnit() != null) {
-                category.setUom(dataset.getUnit().getDomainId());
+                category.setUom(dataset.getUnit().getIdentifier());
             }
             simpleType = category;
             break;
@@ -229,7 +229,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
             break;
         }
         if (simpleType != null) {
-            simpleType.setDefinition(observableProperty.getDomainId());
+            simpleType.setDefinition(observableProperty.getIdentifier());
             if (observableProperty.isSetName()) {
                 simpleType.setName(observableProperty.getName());
             }
@@ -243,14 +243,14 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
 
     private DbQuery createDbQuery(ProcedureEntity procedure, PhenomenonEntity observableProperty) {
         Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getPkid()));
-        map.put(IoParameters.PHENOMENA, Long.toString(observableProperty.getPkid()));
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
+        map.put(IoParameters.PHENOMENA, Long.toString(observableProperty.getId()));
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private DbQuery createDbQuery(ProcedureEntity procedure) {
         Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getPkid()));
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 

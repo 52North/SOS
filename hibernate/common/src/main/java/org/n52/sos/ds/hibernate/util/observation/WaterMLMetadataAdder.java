@@ -29,8 +29,11 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.Session;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.metadata.MetadataEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.series.wml.DefaultPointMetadata;
@@ -42,11 +45,7 @@ import org.n52.shetland.ogc.om.series.wml.WaterMLConstants.InterpolationType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.hibernate.dao.metadata.SeriesMetadataDAO;
-import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-
-import com.google.common.base.Optional;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -55,19 +54,19 @@ import com.google.common.base.Optional;
 public class WaterMLMetadataAdder {
 
     private OmObservation omObservation;
-    private Series series;
+    private DatasetEntity series;
     private Session session;
     private static SeriesMetadataDAO seriesMetadataDAO = new SeriesMetadataDAO();
 
-    public WaterMLMetadataAdder(OmObservation omObservation, Series series, Session session) {
+    public WaterMLMetadataAdder(OmObservation omObservation, DatasetEntity series, Session session) {
         this.omObservation = omObservation;
         this.series = series;
         this.session = session;
     }
 
     public WaterMLMetadataAdder add() throws CodedException {
-        if (HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
-            List<SeriesMetadata> seriesMetadata = seriesMetadataDAO.getDomainMetadata(series.getSeriesId(),
+        if (HibernateHelper.isEntitySupported(MetadataEntity.class)) {
+            List<MetadataEntity> seriesMetadata = seriesMetadataDAO.getDomainMetadata(series.getId(),
                     WaterMLConstants.NS_WML_20, session);
             OmObservationConstellation observationConstellation = omObservation.getObservationConstellation();
             /*
@@ -83,7 +82,7 @@ public class WaterMLMetadataAdder {
             /*
              * Get interpolation type from database
              */
-            Optional<String> interpolationTypeTitle = seriesMetadataDAO.getMetadataElement(seriesMetadata,
+            Optional<Object> interpolationTypeTitle = seriesMetadataDAO.getMetadataElement(seriesMetadata,
                     WaterMLConstants.NS_WML_20,
                     WaterMLConstants.INTERPOLATION_TYPE);
             /*
@@ -92,7 +91,7 @@ public class WaterMLMetadataAdder {
             InterpolationType interpolationType = WaterMLConstants.InterpolationType.Continuous;
             if (interpolationTypeTitle.isPresent()) {
                 try {
-                    interpolationType = InterpolationType.from(interpolationTypeTitle.get());
+                    interpolationType = InterpolationType.from(interpolationTypeTitle.get().toString());
                 } catch (IllegalArgumentException iae) {
                     throw createMetadataInvalidException(WaterMLConstants.INTERPOLATION_TYPE,
                             interpolationType.getTitle(), iae);
@@ -109,7 +108,7 @@ public class WaterMLMetadataAdder {
             if (!observationConstellation.getMetadata().isSetTimeseriesMetadata()) {
                 observationConstellation.getMetadata().setTimeseriesmetadata(new MeasurementTimeseriesMetadata());
             }
-            Optional<String> cumulativeMetadata = seriesMetadataDAO.getMetadataElement(seriesMetadata,
+            Optional<Object> cumulativeMetadata = seriesMetadataDAO.getMetadataElement(seriesMetadata,
                     WaterMLConstants.NS_WML_20,
                     WaterMLConstants.SERIES_METADATA_CUMULATIVE);
             /*
@@ -117,19 +116,20 @@ public class WaterMLMetadataAdder {
              */
             boolean cumulative = false;
             if (cumulativeMetadata.isPresent()) {
-                if (!cumulativeMetadata.get().isEmpty() && (
-                            cumulativeMetadata.get().equalsIgnoreCase("true") ||
-                            cumulativeMetadata.get().equalsIgnoreCase("false") ||
-                            cumulativeMetadata.get().equalsIgnoreCase("1") ||
-                            cumulativeMetadata.get().equalsIgnoreCase("0"))) {
-                    if (cumulativeMetadata.get().equals("1")) {
+               String cumulativeMetadataValue = cumulativeMetadata.get().toString();
+                if (!cumulativeMetadataValue.isEmpty() && (
+                            cumulativeMetadataValue.equalsIgnoreCase("true") ||
+                            cumulativeMetadataValue.equalsIgnoreCase("false") ||
+                            cumulativeMetadataValue.equalsIgnoreCase("1") ||
+                            cumulativeMetadataValue.equalsIgnoreCase("0"))) {
+                    if (cumulativeMetadataValue.equals("1")) {
                         cumulative = true;
                     } else {
-                        cumulative = Boolean.parseBoolean(cumulativeMetadata.get());
+                        cumulative = Boolean.parseBoolean(cumulativeMetadataValue);
                     }
                 } else {
                     throw createMetadataInvalidException(WaterMLConstants.SERIES_METADATA_CUMULATIVE,
-                            cumulativeMetadata.get(), null);
+                            cumulativeMetadataValue, null);
                 }
             }
             ((MeasurementTimeseriesMetadata)observationConstellation.getMetadata().getTimeseriesmetadata())
@@ -143,7 +143,7 @@ public class WaterMLMetadataAdder {
         CodedException e = new NoApplicableCodeException().withMessage("Series Metadata '%s' for Series '%s' "
                 + "could not be parsed '%s'. Please contact the administrator of this service.",
                 metadataKey,
-                series.getSeriesId(),
+                series.getId(),
                 metadataContent);
         if (iae != null) {
             return e.causedBy(iae);

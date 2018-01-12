@@ -31,10 +31,10 @@ package org.n52.sos.ds.hibernate.util.procedure.create;
 import java.util.Locale;
 
 import org.hibernate.Session;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 
 /**
@@ -43,25 +43,25 @@ import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext
  */
 public class ValidProcedureTimeDescriptionCreationStrategy
         extends XmlStringDescriptionCreationStrategy {
-    final ValidProcedureTime vpt;
+    final ProcedureHistoryEntity vpt;
 
-    public ValidProcedureTimeDescriptionCreationStrategy(ValidProcedureTime validProcedureTime) {
+    public ValidProcedureTimeDescriptionCreationStrategy(ProcedureHistoryEntity validProcedureTime) {
         this.vpt = validProcedureTime;
     }
 
     @Override
-    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n,
+    public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
             HibernateProcedureCreationContext ctx, Session s)
             throws OwsExceptionReport {
         SosProcedureDescription<?> desc =
-                new SosProcedureDescription<>(readXml(vpt.getDescriptionXml(), ctx));
+                new SosProcedureDescription<>(readXml(vpt.getXml(), ctx));
         desc.setIdentifier(p.getIdentifier());
-        desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
+        desc.setDescriptionFormat(p.getFormat().getFormat());
         return desc;
     }
 
     @Override
-    public boolean apply(Procedure p) {
+    public boolean apply(ProcedureEntity p) {
         return vpt != null;
     }
 }

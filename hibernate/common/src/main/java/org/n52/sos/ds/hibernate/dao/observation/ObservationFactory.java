@@ -28,112 +28,111 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
+import org.n52.series.db.beans.BlobDataEntity;
+import org.n52.series.db.beans.BooleanDataEntity;
+import org.n52.series.db.beans.CategoryDataEntity;
+import org.n52.series.db.beans.ComplexDataEntity;
+import org.n52.series.db.beans.CountDataEntity;
+import org.n52.series.db.beans.DataArrayDataEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.GeometryDataEntity;
+import org.n52.series.db.beans.ProfileDataEntity;
+import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.ReferencedDataEntity;
+import org.n52.series.db.beans.TextDataEntity;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ReferenceObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
+
 
 
 public abstract class ObservationFactory {
 
     @SuppressWarnings("rawtypes")
-    public abstract Class<? extends Observation> observationClass();
+    public abstract Class<? extends DataEntity> observationClass();
 
-    public abstract Class<? extends ContextualReferencedObservation> contextualReferencedClass();
+    public abstract Class<? extends DataEntity> contextualReferencedClass();
 
-    public abstract Class<? extends TemporalReferencedObservation> temporalReferencedClass();
+    public abstract Class<? extends DataEntity> temporalReferencedClass();
 
-    public abstract Class<? extends BlobObservation> blobClass();
+    public abstract Class<? extends BlobDataEntity> blobClass();
 
-    public BlobObservation blob()
+    public BlobDataEntity blob()
             throws OwsExceptionReport {
         return instantiate(blobClass());
     }
 
-    public abstract Class<? extends BooleanObservation> truthClass();
+    public abstract Class<? extends BooleanDataEntity> truthClass();
 
-    public BooleanObservation truth()
+    public BooleanDataEntity truth()
             throws OwsExceptionReport {
         return instantiate(truthClass());
     }
 
-    public abstract Class<? extends CategoryObservation> categoryClass();
+    public abstract Class<? extends CategoryDataEntity> categoryClass();
 
-    public CategoryObservation category()
+    public CategoryDataEntity category()
             throws OwsExceptionReport {
         return instantiate(categoryClass());
     }
 
-    public abstract Class<? extends CountObservation> countClass();
+    public abstract Class<? extends CountDataEntity> countClass();
 
-    public CountObservation count()
+    public CountDataEntity count()
             throws OwsExceptionReport {
         return instantiate(countClass());
     }
 
-    public abstract Class<? extends GeometryObservation> geometryClass();
+    public abstract Class<? extends GeometryDataEntity> geometryClass();
 
-    public GeometryObservation geometry()
+    public GeometryDataEntity geometry()
             throws OwsExceptionReport {
         return instantiate(geometryClass());
     }
 
-    public abstract Class<? extends NumericObservation> numericClass();
+    public abstract Class<? extends QuantityDataEntity> numericClass();
 
-    public NumericObservation numeric()
+    public QuantityDataEntity numeric()
             throws OwsExceptionReport {
         return instantiate(numericClass());
     }
 
-    public abstract Class<? extends SweDataArrayObservation> sweDataArrayClass();
+    public abstract Class<? extends DataArrayDataEntity> sweDataArrayClass();
 
-    public SweDataArrayObservation sweDataArray()
+    public DataArrayDataEntity sweDataArray()
             throws OwsExceptionReport {
         return instantiate(sweDataArrayClass());
     }
 
-    public abstract Class<? extends TextObservation> textClass();
+    public abstract Class<? extends TextDataEntity> textClass();
 
-    public TextObservation text()
+    public TextDataEntity text()
             throws OwsExceptionReport {
         return instantiate(textClass());
     }
 
-    public abstract Class<? extends ComplexObservation> complexClass();
+    public abstract Class<? extends ComplexDataEntity> complexClass();
 
-    public ComplexObservation complex()
+    public ComplexDataEntity complex()
             throws OwsExceptionReport {
         return instantiate(complexClass());
     }
 
-    public abstract Class<? extends ProfileObservation> profileClass();
+    public abstract Class<? extends ProfileDataEntity> profileClass();
 
-    public ProfileObservation profile()
+    public ProfileDataEntity profile()
             throws OwsExceptionReport {
         return instantiate(profileClass());
     }
 
-    public abstract Class<? extends ReferenceObservation> referenceClass();
+    public abstract Class<? extends ReferencedDataEntity> referenceClass();
 
-    public ReferenceObservation reference()
+    public ReferencedDataEntity reference()
             throws OwsExceptionReport {
         return instantiate(referenceClass());
     }
 
-    private <T extends Observation<?>> T instantiate(Class<T> c)
+    private <T extends DataEntity<?>> T instantiate(Class<T> c)
             throws OwsExceptionReport {
         try {
             return c.newInstance();
@@ -144,7 +143,7 @@ public abstract class ObservationFactory {
     }
 
     @SuppressWarnings("rawtypes")
-    public Class<? extends Observation> classForObservationType(
+    public Class<? extends DataEntity> classForObservationType(
             String observationType) {
         if (observationType != null) {
             switch (observationType) {
@@ -175,7 +174,7 @@ public abstract class ObservationFactory {
         return observationClass();
     }
 
-    public Observation<?> forObservationType(String observationType)
+    public DataEntity<?> forObservationType(String observationType)
             throws OwsExceptionReport {
         return instantiate(classForObservationType(observationType));
     }

@@ -93,7 +93,7 @@ class ProcedureDescriptionGeneratorWml20 extends AbstractProcedureDescriptionGen
     }
 
     private void addName(ProcedureEntity procedure, ObservationProcess op) {
-        String name = procedure.getDomainId();
+        String name = procedure.getIdentifier();
         if (procedure.isSetName()) {
            name = procedure.getName();
         }

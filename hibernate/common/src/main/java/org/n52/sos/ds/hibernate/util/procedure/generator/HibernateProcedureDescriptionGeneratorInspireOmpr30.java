@@ -35,6 +35,7 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.inspire.base2.Contact;
 import org.n52.shetland.inspire.ompr.InspireOMPRConstants;
 import org.n52.shetland.inspire.ompr.Process;
@@ -45,7 +46,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 
 public class HibernateProcedureDescriptionGeneratorInspireOmpr30
         extends AbstractHibernateProcedureDescriptionGenerator {
@@ -77,7 +77,7 @@ public class HibernateProcedureDescriptionGeneratorInspireOmpr30
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription<AbstractFeature> generateProcedureDescription(Procedure p, Locale i18n,
+    public SosProcedureDescription<AbstractFeature> generateProcedureDescription(ProcedureEntity p, Locale i18n,
             Session session) throws OwsExceptionReport {
         setLocale(i18n);
         final Process process = new Process();

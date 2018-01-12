@@ -33,13 +33,12 @@ import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
-import org.n52.io.request.RequestSimpleParameterSet;
-import org.n52.proxy.db.dao.ProxyDatasetDao;
-import org.n52.proxy.db.dao.ProxyPhenomenonDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.dao.PhenomenonDao;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
@@ -63,10 +62,10 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
         startStopwatch();
         try {
             List<PhenomenonEntity> observableProperties =
-                    new ProxyPhenomenonDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+                    new PhenomenonDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
 
             for (PhenomenonEntity observableProperty : observableProperties) {
-                String identifier = observableProperty.getDomainId();
+                String identifier = observableProperty.getIdentifier();
                 getCache().addPublishedObservableProperty(identifier);
                 if (observableProperty.isSetName()) {
                     getCache().addObservablePropertyIdentifierHumanReadableName(identifier,
@@ -74,12 +73,12 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 }
                 if (observableProperty.hasChildren()) {
                     for (PhenomenonEntity child : observableProperty.getChildren()) {
-                        getCache().addCompositePhenomenonForObservableProperty(child.getDomainId(), identifier);
-                        getCache().addObservablePropertyForCompositePhenomenon(identifier, child.getDomainId());
+                        getCache().addCompositePhenomenonForObservableProperty(child.getIdentifier(), identifier);
+                        getCache().addObservablePropertyForCompositePhenomenon(identifier, child.getIdentifier());
                     }
                 }
 
-                List<DatasetEntity> datasets = new ProxyDatasetDao<>(getSession()).getAllInstances(createDatasetDbQuery(observableProperty));
+                List<DatasetEntity> datasets = new DatasetDao<>(getSession()).getAllInstances(createDatasetDbQuery(observableProperty));
 
                 if (datasets != null && !datasets.isEmpty()) {
                     getCache().setOfferingsForObservableProperty(identifier,
@@ -99,7 +98,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
 
     private DbQuery createDatasetDbQuery(PhenomenonEntity observableProperty) {
         Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.PHENOMENA, Long.toString(observableProperty.getPkid()));
+        map.put(IoParameters.PHENOMENA, Long.toString(observableProperty.getId()));
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 }

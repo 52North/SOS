@@ -31,8 +31,8 @@ package org.n52.sos.ds.hibernate.util.procedure.enrich;
 import java.util.Locale;
 
 import org.n52.iceland.util.LocalizedProducer;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.ds.procedure.enrich.AbstractProcedureDescriptionEnrichments;
 import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
@@ -43,7 +43,7 @@ import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class ProcedureDescriptionEnrichments
-        extends AbstractProcedureDescriptionEnrichments<Procedure> {
+        extends AbstractProcedureDescriptionEnrichments<ProcedureEntity> {
 
     public ProcedureDescriptionEnrichments(
             Locale locale,
@@ -52,7 +52,7 @@ public class ProcedureDescriptionEnrichments
         super(locale, serviceProvider, ctx);
     }
 
-    public AbstractRelatedProceduresEnrichment<Procedure> createRelatedProceduresEnrichment() {
+    public AbstractRelatedProceduresEnrichment<ProcedureEntity> createRelatedProceduresEnrichment() {
         return setValues(new RelatedProceduresEnrichment(getProcedureCreationContext()))
                 .setConverter(getConverter())
                 .setProcedure(getProcedure())

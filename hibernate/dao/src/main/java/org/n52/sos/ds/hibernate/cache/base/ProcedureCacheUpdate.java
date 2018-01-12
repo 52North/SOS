@@ -45,7 +45,7 @@ import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
+import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -100,7 +100,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     }
 
     private void getProcedureDescriptionFormat() {
-        getCache().setRequestableProcedureDescriptionFormat(new ProcedureDescriptionFormatDAO().getProcedureDescriptionFormat(getSession()));
+        getCache().setRequestableProcedureDescriptionFormat(new FormatDAO().getProcedureDescriptionFormat(getSession()));
     }
 
 

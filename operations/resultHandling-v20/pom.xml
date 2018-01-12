@@ -35,9 +35,5 @@
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-annotations</artifactId>
          </dependency>
-         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-         </dependency>
     </dependencies>
 </project>

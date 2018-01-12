@@ -63,7 +63,7 @@ import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
+import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.RelatedFeatureDAO;
 import org.n52.sos.ds.hibernate.dao.RelatedFeatureRoleDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
@@ -118,7 +118,7 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
             final ProcedureDescriptionFormat procedureDescriptionFormat =
-                    new ProcedureDescriptionFormatDAO().getOrInsertProcedureDescriptionFormat(
+                    new FormatDAO().getOrInsertProcedureDescriptionFormat(
                             request.getProcedureDescriptionFormat(), session);
             if (procedureDescriptionFormat != null)  {
                 final Procedure hProcedure =

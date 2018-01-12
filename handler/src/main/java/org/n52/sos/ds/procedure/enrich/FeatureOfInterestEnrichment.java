@@ -37,10 +37,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.io.request.IoParameters;
-import org.n52.proxy.db.dao.ProxyFeatureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.dao.FeatureDao;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.samplingFeatures.InvalidSridException;
@@ -48,7 +48,7 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.ProxyQueryHelper;
+import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.util.JTSConverter;
 import org.n52.sos.util.SosHelper;
@@ -62,7 +62,7 @@ import com.google.common.collect.Sets;
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment implements ProxyQueryHelper {
+public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment implements ApiQueryHelper {
 
     public FeatureOfInterestEnrichment(AbstractProcedureCreationContext ctx) {
         super(ctx);
@@ -110,7 +110,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
         }
         try {
             return createFeatures(new HashSet<>(
-                    new ProxyFeatureDao(getSession()).getAllInstances(createDbQuery(featureOfInterestIDs))));
+                    new FeatureDao(getSession()).getAllInstances(createDbQuery(featureOfInterestIDs))));
         } catch (InvalidSridException | DataAccessException e) {
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage("Error while querying data for GetFeatureOfInterest!");
@@ -136,7 +136,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
     }
 
     private AbstractFeature createFeature(FeatureEntity feature) throws InvalidSridException, OwsExceptionReport {
-        final SamplingFeature sampFeat = new SamplingFeature(new CodeWithAuthority(feature.getDomainId()));
+        final SamplingFeature sampFeat = new SamplingFeature(new CodeWithAuthority(feature.getIdentifier()));
         if (feature.isSetName()) {
             sampFeat.addName(feature.getName());
         }

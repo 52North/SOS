@@ -41,12 +41,13 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.locationtech.jts.geom.Envelope;
 import org.n52.io.request.IoParameters;
-import org.n52.proxy.db.dao.ProxyFeatureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.dao.FeatureDao;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -70,9 +71,8 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.locationtech.jts.geom.Envelope;
 
-public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHandler implements ProxyQueryHelper {
+public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHandler implements ApiQueryHelper {
 
     private HibernateSessionStore sessionStore;
     private GetFeatureOfInterestDao dao;
@@ -156,7 +156,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             return new FeatureCollection();
         }
         if (dao != null) {
-            request.setFeatureIdentifiers(featureEntities.stream().map(f -> f.getDomainId()).collect(Collectors.toSet()));
+            request.setFeatureIdentifiers(featureEntities.stream().map(f -> f.getIdentifier()).collect(Collectors.toSet()));
             return new FeatureCollection(dao.getFeatureOfInterest(request));
         }
         return new FeatureCollection(createFeatures(featureEntities));
@@ -172,7 +172,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     }
 
     private AbstractFeature createFeature(FeatureEntity feature) throws InvalidSridException, OwsExceptionReport {
-        final SamplingFeature sampFeat = new SamplingFeature(new CodeWithAuthority(feature.getDomainId()));
+        final SamplingFeature sampFeat = new SamplingFeature(new CodeWithAuthority(feature.getIdentifier()));
         if (feature.isSetName()) {
             sampFeat.addName(feature.getName());
         }
@@ -206,7 +206,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     private List<FeatureEntity> queryFeaturesForParameter(GetFeatureOfInterestRequest req, Session session)
             throws OwsExceptionReport {
         try {
-            return new ProxyFeatureDao(session).getAllInstances(createDbQuery(req));
+            return new FeatureDao(session).getAllInstances(createDbQuery(req));
         } catch (DataAccessException dae) {
             throw new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while querying data for GetFeatureOfInterest!");

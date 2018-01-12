@@ -30,6 +30,11 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
 
+import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
+import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingNetworkEntity;
+import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
+import org.n52.series.db.beans.ereporting.EReportingStationEntity;
 import org.n52.shetland.aqd.AqdConstants.AssessmentType;
 import org.n52.shetland.aqd.AqdConstants.ProcessParameter;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -37,19 +42,14 @@ import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingStation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 
 import com.google.common.collect.Lists;
 
 public class EReportingObservationHelper {
 
-    public Collection<NamedValue<?>> createOmParameterForEReporting(EReportingSeries series) {
+    public Collection<NamedValue<?>> createOmParameterForEReporting(EReportingDatasetEntity series) {
         Collection<NamedValue<?>> namedValues = Lists.newArrayList(createSamplingPointParameter(series));
-        EReportingSamplingPoint samplingPoint = series.getSamplingPoint();
+        EReportingSamplingPointEntity samplingPoint = series.getSamplingPoint();
         if (samplingPoint.isSetStation()) {
             namedValues.add(getStation(samplingPoint.getStation()));
         }
@@ -59,35 +59,35 @@ public class EReportingObservationHelper {
         return namedValues;
     }
 
-    public Collection<NamedValue<?>> createSamplingPointParameter(EReportingSeries series) {
+    public Collection<NamedValue<?>> createSamplingPointParameter(EReportingDatasetEntity series) {
         Collection<NamedValue<?>> namedValues = Lists.newArrayListWithCapacity(2);
         namedValues.add(getAssessmentType(series.getSamplingPoint()));
         namedValues.add(getAssesmentMethod(series.getSamplingPoint()));
         return namedValues;
     }
 
-    private NamedValue<?> getStation(EReportingStation station) {
+    private NamedValue<?> getStation(EReportingStationEntity station) {
         NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();
         namedValue.setName(new ReferenceType(ProcessParameter.MonitoringStation.getConceptURI()));
         namedValue.setValue(createHrefAttributeValue(station.getIdentifier()));
         return namedValue;
     }
 
-    private NamedValue<?> getNetwork(EReportingNetwork network) {
+    private NamedValue<?> getNetwork(EReportingNetworkEntity network) {
         NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();
         namedValue.setName(new ReferenceType(ProcessParameter.Network.getConceptURI()));
         namedValue.setValue(createHrefAttributeValue(network.getIdentifier()));
         return namedValue;
     }
 
-    private NamedValue<?> getAssessmentType(EReportingSamplingPoint samplingPoint) {
+    private NamedValue<?> getAssessmentType(EReportingSamplingPointEntity samplingPoint) {
         NamedValue<W3CHrefAttribute> namedValue = new NamedValue<>();
         namedValue.setName(new ReferenceType(ProcessParameter.AssessmentType.getConceptURI()));
         namedValue.setValue(createHrefAttributeValueFromAssessmentType(samplingPoint.getAssessmentType()));
         return namedValue;
     }
 
-    private NamedValue<?> getAssesmentMethod(EReportingSamplingPoint samplingPoint) {
+    private NamedValue<?> getAssesmentMethod(EReportingSamplingPointEntity samplingPoint) {
         if (samplingPoint.isSetName()) {
             NamedValue<ReferenceType> namedValue = new NamedValue<>();
             namedValue.setName(new ReferenceType(ProcessParameter.SamplingPoint.getConceptURI()));
@@ -114,7 +114,7 @@ public class EReportingObservationHelper {
         return hrefAttributeValue;
     }
 
-    private HrefAttributeValue createHrefAttributeValueFromAssessmentType(EReportingAssessmentType assessmentType) {
+    private HrefAttributeValue createHrefAttributeValueFromAssessmentType(EReportingAssessmentTypeEntity assessmentType) {
         if (assessmentType.isSetUri()) {
             return createHrefAttributeValue(assessmentType.getUri());
         } else {

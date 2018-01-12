@@ -137,7 +137,7 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
      */
     protected void setCommonData(ProcedureEntity procedure, AbstractFeature feature, Session session)
             throws OwsExceptionReport {
-        String identifier = procedure.getDomainId();
+        String identifier = procedure.getIdentifier();
         addNameAndDescription(procedure, feature);
         feature.setIdentifier(identifier);
     }
@@ -152,7 +152,7 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
             } else {
                 if (requestedLocale != null) {
                     // specific locale was requested
-                    I18NProcedureMetadata i18n = i18nDAO.getMetadata(procedure.getDomainId(), requestedLocale);
+                    I18NProcedureMetadata i18n = i18nDAO.getMetadata(procedure.getIdentifier(), requestedLocale);
                     Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
                     if (name.isPresent()) {
                         if (name.isPresent()) {
@@ -168,10 +168,10 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
                     final I18NProcedureMetadata i18n;
                     if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
                         // load all names
-                        i18n = i18nDAO.getMetadata(procedure.getDomainId());
+                        i18n = i18nDAO.getMetadata(procedure.getIdentifier());
                     } else {
                         // load only name in default locale
-                        i18n = i18nDAO.getMetadata(procedure.getDomainId(), defaultLocale);
+                        i18n = i18nDAO.getMetadata(procedure.getIdentifier(), defaultLocale);
                     }
                     for (LocalizedString name : i18n.getName()) {
                         // either all or default only
@@ -200,13 +200,13 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
      */
     protected List<CodeType> createNames(ProcedureEntity procedure) {
         // locale
-        return Lists.newArrayList(new CodeType(procedure.getDomainId()));
+        return Lists.newArrayList(new CodeType(procedure.getIdentifier()));
     }
 
     protected List<String> createDescriptions(ProcedureEntity procedure, String[] observableProperties) {
         // locale
         String template = procedureSettings().getDescriptionTemplate();
-        String identifier = procedure.getDomainId();
+        String identifier = procedure.getIdentifier();
         String obsProps = COMMA_JOINER.join(observableProperties);
         String type = "procedure";
         return Lists.newArrayList(String.format(template, type, identifier, obsProps));
@@ -231,14 +231,14 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
     protected TreeSet<String> getIdentifierList(Collection<PhenomenonEntity> observableProperties) {
         TreeSet<String> set = Sets.newTreeSet();
         for (PhenomenonEntity entity : observableProperties) {
-            set.add(entity.getDomainId());
+            set.add(entity.getIdentifier());
         }
         return set;
     }
 
     private DbQuery createDbQuery(ProcedureEntity procedure) {
         Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getPkid()));
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 

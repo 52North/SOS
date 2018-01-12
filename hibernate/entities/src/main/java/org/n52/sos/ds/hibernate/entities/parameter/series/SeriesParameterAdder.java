@@ -39,9 +39,9 @@ import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 public class SeriesParameterAdder {
 
     private OmObservation observation;
-    private List<Parameter> hParameters;
+    private Set<Parameter> hParameters;
 
-    public SeriesParameterAdder(OmObservation observation, List<Parameter> hParameters) {
+    public SeriesParameterAdder(OmObservation observation, Set<Parameter> hParameters) {
         this.observation = observation;
         this.hParameters = hParameters;
     }

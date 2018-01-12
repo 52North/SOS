@@ -56,8 +56,8 @@ public class DatasourceCacheUpdateHelper {
             Collection<DatasetEntity> datasets) {
         Set<String> offerings = new HashSet<String>(datasets.size());
         for (DatasetEntity dataset : datasets) {
-            if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getDomainId())) {
-                offerings.add(dataset.getOffering().getDomainId());
+            if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getIdentifier())) {
+                offerings.add(dataset.getOffering().getIdentifier());
             }
         }
         return offerings;
@@ -87,7 +87,7 @@ public class DatasourceCacheUpdateHelper {
                     }
                 }
                 if (addProcedure) {
-                    procedures.add(dataset.getProcedure().getDomainId());
+                    procedures.add(dataset.getProcedure().getIdentifier());
                 }
             }
         }
@@ -98,8 +98,8 @@ public class DatasourceCacheUpdateHelper {
     public static Collection<String> getAllOfferingIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> offerings = Sets.newTreeSet();
         for (DatasetEntity dataset : datasets) {
-            if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getDomainId())) {
-                offerings.add(dataset.getOffering().getDomainId());
+            if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getIdentifier())) {
+                offerings.add(dataset.getOffering().getIdentifier());
             }
         }
         return offerings;
@@ -109,8 +109,8 @@ public class DatasourceCacheUpdateHelper {
     public static Collection<String> getAllProcedureIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> procedures = Sets.newTreeSet();
         for (DatasetEntity dataset : datasets) {
-            if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getDomainId())) {
-                procedures.add(dataset.getProcedure().getDomainId());
+            if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getIdentifier())) {
+                procedures.add(dataset.getProcedure().getIdentifier());
             }
         }
         return procedures;
@@ -120,8 +120,8 @@ public class DatasourceCacheUpdateHelper {
     public static Set<String> getAllObservablePropertyIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> observableProperties = Sets.newTreeSet();
         for (DatasetEntity dataset : datasets) {
-            if (dataset.getPhenomenon() != null && !Strings.isNullOrEmpty(dataset.getPhenomenon().getDomainId())) {
-                observableProperties.add(dataset.getPhenomenon().getDomainId());
+            if (dataset.getPhenomenon() != null && !Strings.isNullOrEmpty(dataset.getPhenomenon().getIdentifier())) {
+                observableProperties.add(dataset.getPhenomenon().getIdentifier());
             }
         }
         return observableProperties;
@@ -131,8 +131,8 @@ public class DatasourceCacheUpdateHelper {
     public static Collection<String> getAllFeatureIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> features = Sets.newTreeSet();
         for (DatasetEntity dataset : datasets) {
-            if (dataset.getFeature() != null && !Strings.isNullOrEmpty(dataset.getFeature().getDomainId())) {
-                features.add(dataset.getFeature().getDomainId());
+            if (dataset.getFeature() != null && !Strings.isNullOrEmpty(dataset.getFeature().getIdentifier())) {
+                features.add(dataset.getFeature().getIdentifier());
             }
         }
         return features;
@@ -144,11 +144,11 @@ public class DatasourceCacheUpdateHelper {
             Collection<DatasetEntity> datasets, ProcedureFlag parent) {
         Set<String> procedures = Sets.newTreeSet();
         for (DatasetEntity dataset : datasets) {
-            if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getDomainId())) {
+            if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getIdentifier())) {
                 if (ProcedureFlag.HIDDEN_CHILD.equals(parent)) {
                     addChilds(dataset.getProcedure(), procedures);
                 } else {
-                    procedures.add(dataset.getProcedure().getDomainId());
+                    procedures.add(dataset.getProcedure().getIdentifier());
                 }
             }
         }
@@ -158,7 +158,7 @@ public class DatasourceCacheUpdateHelper {
     private static void addChilds(ProcedureEntity procedure, Collection<String> procedures) {
         if (procedure.hasChildren()) {
             for (ProcedureEntity child : procedure.getChildren()) {
-                procedures.add(child.getDomainId());
+                procedures.add(child.getIdentifier());
             }
         }
     }
@@ -168,8 +168,8 @@ public class DatasourceCacheUpdateHelper {
             Collection<DatasetEntity> datasets) {
         Map<String,Collection<DatasetEntity>> map = Maps.newHashMap();
         for (DatasetEntity dataset : datasets) {
-            if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getDomainId())) {
-                CollectionHelper.addToCollectionMap(dataset.getOffering().getDomainId(), dataset, map);
+            if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getIdentifier())) {
+                CollectionHelper.addToCollectionMap(dataset.getOffering().getIdentifier(), dataset, map);
             }
         }
         return map;
@@ -180,8 +180,8 @@ public class DatasourceCacheUpdateHelper {
             Collection<DatasetEntity> datasets) {
         Map<String,Collection<DatasetEntity>> map = Maps.newHashMap();
         for (DatasetEntity dataset : datasets) {
-            if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getDomainId())) {
-                CollectionHelper.addToCollectionMap(dataset.getProcedure().getDomainId(), dataset, map);
+            if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getIdentifier())) {
+                CollectionHelper.addToCollectionMap(dataset.getProcedure().getIdentifier(), dataset, map);
             }
         }
         return map;
@@ -192,8 +192,8 @@ public class DatasourceCacheUpdateHelper {
             Collection<DatasetEntity> datasets) {
         Map<String,Collection<DatasetEntity>> map = Maps.newHashMap();
         for (DatasetEntity dataset : datasets) {
-            if (dataset.getPhenomenon() != null && !Strings.isNullOrEmpty(dataset.getPhenomenon().getDomainId())) {
-                CollectionHelper.addToCollectionMap(dataset.getPhenomenon().getDomainId(), dataset, map);
+            if (dataset.getPhenomenon() != null && !Strings.isNullOrEmpty(dataset.getPhenomenon().getIdentifier())) {
+                CollectionHelper.addToCollectionMap(dataset.getPhenomenon().getIdentifier(), dataset, map);
             }
         }
         return map;

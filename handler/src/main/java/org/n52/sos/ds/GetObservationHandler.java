@@ -35,13 +35,14 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.hibernate.Session;
+import org.locationtech.jts.geom.Envelope;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.io.request.IoParameters;
-import org.n52.proxy.db.dao.ProxyFeatureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.dao.FeatureDao;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -57,9 +58,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.locationtech.jts.geom.Envelope;
 
-public class GetObservationHandler extends AbstractGetObservationHandler implements ProxyQueryHelper {
+public class GetObservationHandler extends AbstractGetObservationHandler implements ApiQueryHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationHandler.class);
 
@@ -96,11 +96,11 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
             response.setVersion(request.getVersion());
             response.setResponseFormat(request.getResponseFormat());
             response.setResultModel(request.getResultModel());
-            List<FeatureEntity> features = new ProxyFeatureDao(session).getAllInstances(createDbQuery(request));
+            List<FeatureEntity> features = new FeatureDao(session).getAllInstances(createDbQuery(request));
             if (features == null || (features != null && features.isEmpty())) {
                 return response;
             }
-            request.setFeatureIdentifiers(features.stream().map(f -> f.getDomainId()).collect(Collectors.toList()));
+            request.setFeatureIdentifiers(features.stream().map(f -> f.getIdentifier()).collect(Collectors.toList()));
             dao.queryObservationData(request, response);
             return response;
         } catch (DataAccessException e) {

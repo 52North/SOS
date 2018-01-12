@@ -29,12 +29,12 @@
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import org.hibernate.Criteria;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
+import org.n52.series.db.beans.DatasetEntity;
 
 public interface AbstractSeriesIdentifiers {
 
     void addIdentifierRestrictionsToCritera(Criteria c);
 
-    void addValuesToSeries(HasWriteableObservationContext series);
+    void addValuesToSeries(DatasetEntity series);
 
 }

@@ -167,7 +167,7 @@ class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGe
         RulesDefinition rD = new RulesDefinition();
         String template = procedureSettings().getProcessMethodRulesDefinitionDescriptionTemplate();
         String description =
-                String.format(template, procedure.getDomainId(), COMMA_JOINER.join(observableProperties));
+                String.format(template, procedure.getIdentifier(), COMMA_JOINER.join(observableProperties));
         rD.setDescription(description);
         return rD;
     }

@@ -30,12 +30,17 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+//import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
+//import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
+//import org.n52.sos.ds.hibernate.entities.PhenomenonEntity;
+//import org.n52.sos.ds.hibernate.entities.Offering;
+//import org.n52.sos.ds.hibernate.entities.ProcedureEntity;
+//import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureEntity;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.ProcedureEntity;
 
 import com.google.common.base.Strings;
 
@@ -48,17 +53,16 @@ import com.google.common.base.Strings;
  *
  */
 public class ObservationContext {
-    private AbstractFeatureOfInterest featureOfInterest;
-    private ObservableProperty observableProperty;
-    private Procedure procedure;
-    private Offering offering;
-    private String seriesType;
+    private AbstractFeatureEntity featureOfInterest;
+    private PhenomenonEntity observableProperty;
+    private ProcedureEntity procedure;
+    private OfferingEntity offering;
     private boolean hiddenChild = false;
 
     /**
      * @return the featureOfInterest
      */
-    public AbstractFeatureOfInterest getFeatureOfInterest() {
+    public AbstractFeatureEntity getFeatureOfInterest() {
         return featureOfInterest;
     }
 
@@ -66,14 +70,14 @@ public class ObservationContext {
      * @param featureOfInterest
      *                          the featureOfInterest to set
      */
-    public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
+    public void setFeatureOfInterest(AbstractFeatureEntity featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
     }
 
     /**
      * @return the observableProperty
      */
-    public ObservableProperty getObservableProperty() {
+    public PhenomenonEntity getPhenomenon() {
         return observableProperty;
     }
 
@@ -81,22 +85,24 @@ public class ObservationContext {
      * @param observableProperty
      *                           the observableProperty to set
      */
-    public void setObservableProperty(ObservableProperty observableProperty) {
+    public void setPhenomenon(PhenomenonEntity observableProperty) {
         this.observableProperty = observableProperty;
     }
 
     /**
      * @return the procedure
      */
-    public Procedure getProcedure() {
+    public ProcedureEntity getProcedure() {
         return procedure;
     }
+
+    private String seriesType;
 
     /**
      * @param procedure
      *                  the procedure to set
      */
-    public void setProcedure(Procedure procedure) {
+    public void setProcedure(ProcedureEntity procedure) {
         this.procedure = procedure;
     }
 
@@ -104,8 +110,8 @@ public class ObservationContext {
         return getFeatureOfInterest() != null;
     }
 
-    public boolean isSetObservableProperty() {
-        return getObservableProperty() != null;
+    public boolean isSetPhenomenon() {
+        return getPhenomenon() != null;
     }
 
     public boolean isSetProcedure() {
@@ -115,14 +121,14 @@ public class ObservationContext {
     /**
      * @return the offering
      */
-    public Offering getOffering() {
+    public OfferingEntity getOffering() {
         return offering;
     }
 
     /**
      * @param offering the offering to set
      */
-    public void setOffering(Offering offering) {
+    public void setOffering(OfferingEntity offering) {
         this.offering = offering;
     }
 
@@ -133,30 +139,30 @@ public class ObservationContext {
     public void addIdentifierRestrictionsToCritera(Criteria c) {
         if (isSetFeatureOfInterest()) {
             c.add(Restrictions
-                    .eq(HasWriteableObservationContext.FEATURE_OF_INTEREST,
+                    .eq(DatasetEntity.PROPERTY_FEATURE,
                         getFeatureOfInterest()));
         }
-        if (isSetObservableProperty()) {
+        if (isSetPhenomenon()) {
             c.add(Restrictions
-                    .eq(HasWriteableObservationContext.OBSERVABLE_PROPERTY,
-                        getObservableProperty()));
+                    .eq(DatasetEntity.OBSERVABLE_PROPERTY,
+                        getPhenomenon()));
         }
         if (isSetProcedure()) {
             c.add(Restrictions
-                    .eq(HasWriteableObservationContext.PROCEDURE,
+                    .eq(DatasetEntity.PROCEDURE,
                         getProcedure()));
         }
         if (isSetOffering()) {
-            c.add(Restrictions.eq(HasWriteableObservationContext.OFFERING, offering));
+            c.add(Restrictions.eq(DatasetEntity.OFFERING, offering));
         }
     }
 
-    public void addValuesToSeries(HasWriteableObservationContext contextual) {
+    public void addValuesToSeries(DatasetEntity contextual) {
         if (isSetFeatureOfInterest()) {
-            contextual.setFeatureOfInterest(getFeatureOfInterest());
+            contextual.setFeature(getFeatureOfInterest());
         }
-        if (isSetObservableProperty()) {
-            contextual.setObservableProperty(getObservableProperty());
+        if (isSetPhenomenon()) {
+            contextual.setPhenomenon(getPhenomenon());
         }
         if (isSetProcedure()) {
             contextual.setProcedure(getProcedure());
@@ -164,9 +170,9 @@ public class ObservationContext {
         if (isSetOffering()) {
             contextual.setOffering(getOffering());
         }
-        if (contextual instanceof HasSeriesType && isSetSeriesType()) {
-            ((HasSeriesType)contextual).setSeriesType(getSeriesType());
-        }
+//        if (contextual instanceof HasSeriesType && isSetSeriesType()) {
+//            ((HasSeriesType)contextual).setSeriesType(getSeriesType());
+//        }
     }
 
     public void setSeriesType(String seriesType) {

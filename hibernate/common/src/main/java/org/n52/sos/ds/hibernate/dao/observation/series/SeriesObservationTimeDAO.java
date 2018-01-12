@@ -34,13 +34,11 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.OfferingEntity;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 
 /**
  * Hibernate data access class for series observation times
@@ -62,11 +60,11 @@ public class SeriesObservationTimeDAO
      *            Hibernate session
      * @return Criteria for series
      */
-    private Criteria createCriteriaFor(Class<?> clazz, Series series, Session session) {
+    private Criteria createCriteriaFor(Class<?> clazz, DatasetEntity series, Session session) {
         final Criteria criteria = session.createCriteria(clazz)
-                .add(Restrictions.eq(AbstractTemporalReferencedObservation.DELETED, false))
+                .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        criteria.add(Restrictions.eq(TemporalReferencedSeriesObservation.SERIES, series));
+        criteria.add(Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
         return criteria;
     }
 
@@ -81,38 +79,35 @@ public class SeriesObservationTimeDAO
      *            Hibernate session
      * @return Criteria for time values
      */
-    public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(Series series, Collection<String> offerings,
+    public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(DatasetEntity series, Collection<String> offerings,
             Session session) {
-        Criteria criteria = createCriteriaFor(TemporalReferencedSeriesObservation.class, series, session);
-        if (CollectionHelper.isNotEmpty(offerings)) {
-            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS)
-                    .add(Restrictions.in(Offering.IDENTIFIER, offerings));
-        }
+        Criteria criteria = createCriteriaFor(DataEntity.class, series, session);
         criteria.setProjection(Projections.projectionList()
-                .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
-                .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
+                .add(Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START))
+                .add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END)));
         return criteria;
     }
 
-    public Criteria getOfferingMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(Series series,
+    public Criteria getOfferingMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(DatasetEntity series,
             Collection<String> offerings, Session session) {
-        Criteria criteria = createCriteriaFor(TemporalReferencedSeriesObservation.class, series, session);
+        Criteria criteria = createCriteriaFor(DataEntity.class, series, session);
+        Criteria datasetCriteria = criteria.createCriteria(DataEntity.PROPERTY_DATASET, "ds");
         if (CollectionHelper.isNotEmpty(offerings)) {
-            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS, "off")
-                    .add(Restrictions.in(Offering.IDENTIFIER, offerings));
+            datasetCriteria.createCriteria(DatasetEntity.OFFERING, "ds.off")
+                    .add(Restrictions.in(OfferingEntity.IDENTIFIER, offerings));
         } else {
-            criteria.createAlias(AbstractObservation.OFFERINGS, "off");
+            datasetCriteria.createAlias(DatasetEntity.OFFERING, "ds.off");
         }
         criteria.setProjection(
-                Projections.projectionList().add(Projections.groupProperty("off." + Offering.IDENTIFIER))
-                        .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
-                        .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
+                Projections.projectionList().add(Projections.groupProperty("ds.off." + OfferingEntity.IDENTIFIER))
+                        .add(Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START))
+                        .add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END)));
         return criteria;
     }
 
     @Override
     protected Class<?> getObservationTimeClass() {
-        return TemporalReferencedSeriesObservation.class;
+        return DataEntity.class;
     }
 
 }

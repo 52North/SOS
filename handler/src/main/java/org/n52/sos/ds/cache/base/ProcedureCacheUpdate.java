@@ -35,13 +35,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.n52.io.request.IoParameters;
-import org.n52.proxy.db.dao.ProxyDatasetDao;
-import org.n52.proxy.db.dao.ProxyProcedureDao;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.dao.ProcedureDao;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.cache.AbstractQueueingDatasourceCacheUpdate;
@@ -77,7 +77,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         if (procedureDatasetMap.isEmpty()) {
             try {
                 Map<String, Collection<DatasetEntity>> map = DatasourceCacheUpdateHelper.mapByProcedure(
-                        new ProxyDatasetDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults())));
+                        new DatasetDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults())));
                 if (map != null) {
                     procedureDatasetMap.putAll(map);
                 }
@@ -119,7 +119,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     protected ProcedureCacheUpdateTask[] getUpdatesToExecute() {
         Collection<ProcedureCacheUpdateTask> procedureUpdateTasks = Lists.newArrayList();
         for (ProcedureEntity procedure : procedures) {
-            procedureUpdateTasks.add(new ProcedureCacheUpdateTask(procedure, procedureDatasetMap.get(procedure.getDomainId())));
+            procedureUpdateTasks.add(new ProcedureCacheUpdateTask(procedure, procedureDatasetMap.get(procedure.getIdentifier())));
         }
         return procedureUpdateTasks.toArray(new ProcedureCacheUpdateTask[procedureUpdateTasks.size()]);
     }
@@ -131,13 +131,13 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         startStopwatch();
 //        getProcedureDescriptionFormat();
         try {
-            procedures = new ProxyProcedureDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+            procedures = new ProcedureDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
             getProcedureDatasets();
 //        try {
 //        Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
 //            List<ProcedureEntity> procedures = procedureDAO.getAllInstances(new DbQuery(IoParameters.createDefaults()));
 //            for (ProcedureEntity procedure : procedures) {
-//                String identifier = procedure.getDomainId();
+//                String identifier = procedure.getIdentifier();
 //                getCache().addProcedure(identifier);
 //                if (procedure.isSetName()) {
 //                    getCache().addProcedureIdentifierHumanReadableName(identifier, procedure.getName());

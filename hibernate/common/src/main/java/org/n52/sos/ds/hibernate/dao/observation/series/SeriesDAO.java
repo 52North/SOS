@@ -34,6 +34,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
@@ -42,7 +43,6 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 
 /**
@@ -59,10 +59,10 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws
+    public List<DatasetEntity> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws
             OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(request, ids, session).list());
             }
@@ -74,23 +74,23 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Series> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
+    public List<DatasetEntity> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
         return getSeriesCriteria(request, session).list();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Series> getSeries(GetDataAvailabilityRequest request, Session session)
+    public List<DatasetEntity> getSeries(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
         return getSeriesCriteria(request, session).list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
+    public List<DatasetEntity> getSeries(Collection<String> procedures, Collection<String> observedProperties,
                                   Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(procedures, observedProperties, ids, session).list());
             }
@@ -102,10 +102,10 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
+    public List<DatasetEntity> getSeries(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Collection<String> offerings, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(procedures, observedProperties, ids, offerings, session).list());
             }
@@ -117,9 +117,9 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(String observedProperty, Collection<String> features, Session session) {
+    public List<DatasetEntity> getSeries(String observedProperty, Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(observedProperty, ids, session).list());
             }
@@ -131,9 +131,9 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
+    public List<DatasetEntity> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(procedure, observedProperty, offering, ids, session).list());
             }
@@ -144,18 +144,23 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public Series getSeriesFor(String procedure, String observableProperty, String featureOfInterest, Session session) {
-        return (Series) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
+    public DatasetEntity getSeriesFor(String procedure, String observableProperty, String featureOfInterest, Session session) {
+        return (DatasetEntity) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
     }
 
     @Override
-    public Series getOrInsertSeries(ObservationContext identifiers, final Session session) throws OwsExceptionReport {
+    public List<DatasetEntity> getSeries(String procedure, String observableProperty, Session session) {
+        return (List<DatasetEntity>) getSeriesCriteriaFor(procedure, observableProperty, session).list();
+    }
+
+    @Override
+    public DatasetEntity getOrInsertSeries(ObservationContext identifiers, final Session session) throws OwsExceptionReport {
         return getOrInsert(identifiers, session);
     }
 
     @Override
     public Class<?> getSeriesClass() {
-        return Series.class;
+        return DatasetEntity.class;
     }
 
     @Override

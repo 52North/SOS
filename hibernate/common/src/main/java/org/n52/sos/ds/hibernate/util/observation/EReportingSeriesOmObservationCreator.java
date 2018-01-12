@@ -32,14 +32,14 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.iceland.convert.ConverterException;
+import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 
 public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
 
-    public EReportingSeriesOmObservationCreator(EReportingSeries series,
+    public EReportingSeriesOmObservationCreator(EReportingDatasetEntity series,
                                                 AbstractObservationRequest request,
                                                 Locale i18n,
                                                 String pdf,

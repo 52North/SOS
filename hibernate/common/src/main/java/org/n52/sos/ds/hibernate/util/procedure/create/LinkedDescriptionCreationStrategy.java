@@ -36,11 +36,11 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import org.hibernate.Session;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.XmlHelper;
@@ -55,17 +55,17 @@ public class LinkedDescriptionCreationStrategy
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkedDescriptionCreationStrategy.class);
 
     @Override
-    public boolean apply(Procedure p) {
+    public boolean apply(ProcedureEntity p) {
         return !Strings.isNullOrEmpty(p.getDescriptionFile()) && (p.getDescriptionFile().startsWith("http"));
     }
 
     @Override
-    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n,
+    public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
             HibernateProcedureCreationContext ctx, Session s)
             throws OwsExceptionReport {
         String xml = loadDescriptionFromHttp(p.getDescriptionFile());
         return new SosProcedureDescriptionUnknownType(p.getIdentifier(),
-                p.getProcedureDescriptionFormat().getProcedureDescriptionFormat(), xml);
+                p.getFormat().getFormat(), xml);
     }
 
     private String loadDescriptionFromHttp(String descriptionFile)

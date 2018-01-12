@@ -111,12 +111,11 @@ public class TransactionalSecurityConfiguration implements Constructable {
     @Setting(TRANSACTIONAL_ALLOWED_IPS)
     public void setTransactionalAllowedIps(final String txAllowedIps) throws ConfigurationError {
         if (!Strings.isNullOrEmpty(txAllowedIps)) {
-            final Builder<IPAddressRange> builder = ImmutableSet.builder();
+            Builder<IPAddressRange> builder = ImmutableSet.builder();
             for (final String splitted : txAllowedIps.split(",")) {
-                final String trimmed = splitted.trim();
-                final String cidrAddress = trimmed.contains("/") ? trimmed : trimmed + "/32";
+                String trimmed = splitted.trim();
                 try {
-                    builder.add(new IPAddressRange(cidrAddress));
+                    builder.add(new IPAddressRange(trimmed));
                 } catch (final IllegalArgumentException e) {
                     throw new ConfigurationError(
                             "Transactional allowed address is not a valid CIDR range or IP address", e);

@@ -95,7 +95,7 @@
         <sqljdbc4.version>4.0</sqljdbc4.version>
 
         <!-- 52N dependency versions -->
-        <arctic-sea.version>3.0.0</arctic-sea.version>
+        <arctic-sea.version>3.1.0-SNAPSHOT</arctic-sea.version>
         <n52.common.xml.version>2.3.0</n52.common.xml.version>
         <org.springframework.security.version>4.2.3.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.3.12.RELEASE</org.springframework.version>

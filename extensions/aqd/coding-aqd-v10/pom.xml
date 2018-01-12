@@ -12,19 +12,19 @@
     <description>52°North Air Quality Data 1.0 XML Coding</description>
     <dependencies>
         <dependency>
-            <groupId>org.n52.svalbard</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>svalbard</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.iceland</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>iceland</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.shetland</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>shetland</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.n52.janmayen</groupId>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>janmayen</artifactId>
         </dependency>
         <dependency>

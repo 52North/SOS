@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,7 +42,7 @@ import org.n52.shetland.util.JTSHelper;
 import org.n52.sos.statistics.sos.SosDataMapping;
 import org.n52.sos.statistics.sos.models.SpatialFilterEsModel;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import basetest.SpringBaseTest;
 

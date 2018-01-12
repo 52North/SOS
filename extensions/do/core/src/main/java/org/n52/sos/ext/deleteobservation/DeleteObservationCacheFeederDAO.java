@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -49,7 +49,7 @@ import org.n52.sos.ds.DatasourceCacheUpdate;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  * Updates the cache after a Observation was deleted. Uses the deleted

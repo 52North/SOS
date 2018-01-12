@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,9 +38,9 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.InvalidSridException;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.util.JTSHelper;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

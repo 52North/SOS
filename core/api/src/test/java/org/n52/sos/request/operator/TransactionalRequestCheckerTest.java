@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,7 +41,7 @@ import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.net.IPAddress;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
-import com.vividsolutions.jts.io.ParseException;
+import org.locationtech.jts.io.ParseException;
 
 /**
  * @since 4.0.0

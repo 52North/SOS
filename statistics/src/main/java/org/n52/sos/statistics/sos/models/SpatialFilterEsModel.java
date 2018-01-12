@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,23 +28,20 @@
  */
 package org.n52.sos.statistics.sos.models;
 
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.elasticsearch.common.geo.builders.PointBuilder;
 import org.elasticsearch.common.geo.builders.PolygonBuilder;
 import org.elasticsearch.common.geo.builders.ShapeBuilder;
+import org.locationtech.jts.geom.Coordinate;
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
-import org.n52.shetland.ogc.filter.SpatialFilter;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 public class SpatialFilterEsModel extends AbstractElasticsearchModel {
 
@@ -131,7 +128,7 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
     private void createBbox(SpatialFilter filter) {
         PolygonBuilder polygon = PolygonBuilder.newPolygon();
         for (Coordinate coord : filter.getGeometry().getCoordinates()) {
-            polygon.point(coord);
+            polygon.point(JTSConverter.convert(coord));
         }
 
         createSpatialFilter(filter, polygon);

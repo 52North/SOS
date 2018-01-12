@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -66,7 +66,7 @@ import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.base.Strings;
-import com.vividsolutions.jts.io.WKTWriter;
+import org.locationtech.jts.io.WKTWriter;
 
 /**
  * @since 4.0.0

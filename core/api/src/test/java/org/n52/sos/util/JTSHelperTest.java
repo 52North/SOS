@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,6 +35,16 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import org.junit.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.JTSHelper;
 import static org.n52.shetland.util.JTSHelper.WKT_POINT;
 import static org.n52.shetland.util.JTSHelper.createGeometryFromWKT;
 import static org.n52.shetland.util.JTSHelper.createWKTPointFromCoordinateString;
@@ -45,20 +55,7 @@ import static org.n52.sos.util.JTSHelperForTesting.randomCoordinate;
 import static org.n52.sos.util.JTSHelperForTesting.randomCoordinateRing;
 import static org.n52.sos.util.JTSHelperForTesting.randomCoordinates;
 import static org.n52.sos.util.ReverseOf.reverseOf;
-
-import org.junit.Test;
-
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.JTSHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.ParseException;
 
 /**
  * TODO JavaDoc

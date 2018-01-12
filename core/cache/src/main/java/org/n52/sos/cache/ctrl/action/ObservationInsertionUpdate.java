@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,8 +46,8 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations

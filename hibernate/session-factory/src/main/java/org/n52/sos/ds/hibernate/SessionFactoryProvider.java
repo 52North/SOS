@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,7 +38,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -48,12 +47,12 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.UpdateableConnectionProvider;
+import org.n52.sos.ds.hibernate.util.HibernateConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -63,8 +62,9 @@ import org.n52.iceland.ds.UpdateableConnectionProvider;
  */
 public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider implements UpdateableConnectionProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
+    private int maxConnections;
 
-
+    @Override
     public String getUpdateScript() throws ConnectionProviderException {
         Configuration configuration = getConfiguration();
         if (configuration == null) {
@@ -105,6 +105,9 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
     protected Configuration getConfiguration(Properties properties) throws ConfigurationError {
         try {
             Configuration configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
+            if (properties.containsKey(HibernateConstants.C3P0_MAX_SIZE)) {
+                this.maxConnections = Integer.parseInt(properties.getProperty(HibernateConstants.C3P0_MAX_SIZE, "-1"));
+            }
             if (properties.containsKey(HIBERNATE_RESOURCES)) {
                 List<String> resources = (List<String>) properties.get(HIBERNATE_RESOURCES);
                 for (String resource : resources) {
@@ -149,5 +152,10 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
             destroy();
             throw new ConfigurationError(exceptionText, he);
         }
+    }
+
+    @Override
+    public int getMaxConnections() {
+        return maxConnections;
     }
 }

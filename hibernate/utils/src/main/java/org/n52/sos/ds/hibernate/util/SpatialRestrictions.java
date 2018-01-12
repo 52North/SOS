@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,13 +29,12 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.hibernate.criterion.Criterion;
-
+import org.locationtech.jts.geom.Geometry;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
-
-import com.vividsolutions.jts.geom.Geometry;
+import org.n52.sos.util.JTSConverter;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -101,40 +100,46 @@ public class SpatialRestrictions {
         }
     }
 
+    private static com.vividsolutions.jts.geom.Geometry jtsConvert(Geometry value) {
+        return JTSConverter.convert(value);
+    }
+
     public static Criterion eq(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.eq(propertyName, value);
+        return org.hibernate.spatial.criterion.SpatialRestrictions.eq(propertyName, jtsConvert(value));
     }
 
     public static Criterion within(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.within(propertyName, value);
+        return org.hibernate.spatial.criterion.SpatialRestrictions.within(propertyName, jtsConvert(value));
     }
 
     public static Criterion contains(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.contains(propertyName, value);
+        return org.hibernate.spatial.criterion.SpatialRestrictions.contains(propertyName, jtsConvert(value));
     }
 
     public static Criterion crosses(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.crosses(propertyName, value);
+        return org.hibernate.spatial.criterion.SpatialRestrictions.crosses(propertyName, jtsConvert(value));
     }
 
     public static Criterion disjoint(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.disjoint(propertyName, value);
+        return org.hibernate.spatial.criterion.SpatialRestrictions.disjoint(propertyName, jtsConvert(value));
     }
 
     public static Criterion intersects(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.intersects(propertyName, value);
+        return org.hibernate.spatial.criterion.SpatialRestrictions.intersects(propertyName, jtsConvert(value));
     }
 
     public static Criterion overlaps(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.overlaps(propertyName, value);
+        return org.hibernate.spatial.criterion.SpatialRestrictions.overlaps(propertyName, jtsConvert(value));
     }
 
     public static Criterion touches(String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.touches(propertyName, value);
+        return org.hibernate.spatial.criterion.SpatialRestrictions.touches(propertyName, jtsConvert(value));
     }
 
-    public static Criterion distanceWithin(String propertyName, Geometry geometry, double distance) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.distanceWithin(propertyName, geometry, distance);
+    public static Criterion distanceWithin(String propertyName, Geometry value, double distance) {
+        return org.hibernate.spatial.criterion.SpatialRestrictions.distanceWithin(propertyName,
+                                                                                  jtsConvert(value),
+                                                                                  distance);
     }
 
     public static Criterion havingSRID(String propertyName, int srid) {
@@ -150,7 +155,9 @@ public class SpatialRestrictions {
     }
 
     public static Criterion spatialRestriction(int relation, String propertyName, Geometry value) {
-        return org.hibernate.spatial.criterion.SpatialRestrictions.spatialRestriction(relation, propertyName, value);
+        return org.hibernate.spatial.criterion.SpatialRestrictions.spatialRestriction(relation,
+                                                                                      propertyName,
+                                                                                      jtsConvert(value));
     }
 
 }

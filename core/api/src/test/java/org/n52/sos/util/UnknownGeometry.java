@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,18 +28,18 @@
  */
 package org.n52.sos.util;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateFilter;
-import com.vividsolutions.jts.geom.CoordinateSequenceComparator;
-import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryComponentFilter;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.GeometryFilter;
-import com.vividsolutions.jts.geom.IntersectionMatrix;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateFilter;
+import org.locationtech.jts.geom.CoordinateSequenceComparator;
+import org.locationtech.jts.geom.CoordinateSequenceFilter;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryComponentFilter;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.GeometryFilter;
+import org.locationtech.jts.geom.IntersectionMatrix;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 
 public class UnknownGeometry extends Geometry {
     private static final long serialVersionUID = -1032955252468856386L;
@@ -362,11 +362,6 @@ public class UnknownGeometry extends Geometry {
     }
 
     @Override
-    public Object clone() {
-        return new UnknownGeometry((Geometry) geom.clone());
-    }
-
-    @Override
     public void normalize() {
         geom.normalize();
     }
@@ -399,5 +394,15 @@ public class UnknownGeometry extends Geometry {
     @Override
     protected int compareToSameClass(Object o, CoordinateSequenceComparator comp) {
         return geom.compareTo(o, comp);
+    }
+
+    @Override
+    public Geometry copy() {
+        return new UnknownGeometry((Geometry) geom.copy());
+    }
+
+    @Override
+    protected int getSortIndex() {
+        return -1;
     }
 }

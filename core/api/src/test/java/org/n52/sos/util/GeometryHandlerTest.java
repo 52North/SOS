@@ -28,61 +28,49 @@
  */
 package org.n52.sos.util;
 
-import com.google.common.base.Joiner;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import org.junit.BeforeClass;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.io.ParseException;
+
 import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.JTSHelper;
+
+import com.google.common.base.Joiner;
 
 public class GeometryHandlerTest {
 
     private static final double DISTANCE = 0.0001;
 
     private static final double DISTANCE_TRANSFORMED = 10.0;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    private static GeometryHandler geometryHandler;
-
-    private static String wkt4326;
-
-    private static String wkt4326Switched;
-
-    private static String wkt31467;
-
-    private static String wkt31467Switched;
-
-    private static Geometry geometry4326;
-
-    private static Geometry geometry4326Switched;
-
-    private static Geometry geometry31467;
-
-    private static Geometry geometry31467Switched;
-
     // northing first
     private static final int EPSG_4326 = 4326;
-
     // easting first
     private static final int EPSG_31467 = 31467;
-
     private static final String EPSG_4326_WITH_PREFIX = "EPSG:4326";
-
     private static final String SUPPORTED_CRS = Joiner.on(",").join(EPSG_4326, EPSG_31467);
-
     private static final String NORTHING_FIRST_CRS = Joiner.on(";").join(EPSG_4326, EPSG_31467);
 
-    @BeforeClass
-    public static void init() throws ParseException {
+    private GeometryHandler geometryHandler;
+    private Geometry geometry4326;
+    private Geometry geometry4326Switched;
+    private Geometry geometry31467;
+    private Geometry geometry31467Switched;
+
+    @Rule
+    public final ExpectedException thrown = ExpectedException.none();
+
+    @Before
+    public void init() throws ParseException {
         geometryHandler =  new GeometryHandler();
         geometryHandler.setAuthority("EPSG");
         geometryHandler.setStorageEpsg(EPSG_4326);
@@ -91,39 +79,36 @@ public class GeometryHandlerTest {
         geometryHandler.setDatasourceNorthingFirst(false);
         geometryHandler.init();
 
+        GeometryFactory f4326 = JTSHelper.getGeometryFactoryForSRID(EPSG_4326);
+        GeometryFactory f31467 = JTSHelper.getGeometryFactoryForSRID(EPSG_31467);
+
         double lat_4326 = 52.7;
         double lon_4326 = 7.52;
         double lat_31467 = 5841822;
         double lon_31467 = 3400029;
 
+        geometry4326 = f4326.createPoint(new Coordinate(lat_4326, lon_4326));
+        geometry4326Switched = f4326.createPoint(new Coordinate(lon_4326, lat_4326));
 
-        wkt4326 = geometryHandler.getWktString(lat_4326, lon_4326);
-        geometry4326 = JTSHelper.createGeometryFromWKT(wkt4326, EPSG_4326);
-
-        wkt4326Switched = geometryHandler.getWktString(lon_4326, lat_4326);
-        geometry4326Switched = JTSHelper.createGeometryFromWKT(wkt4326Switched, EPSG_4326);
-
-        wkt31467 = geometryHandler.getWktString(lat_31467, lon_31467);
-        geometry31467 = JTSHelper.createGeometryFromWKT(wkt31467, EPSG_31467);
-
-        wkt31467Switched = geometryHandler.getWktString(lon_31467, lat_31467);
-        geometry31467Switched = JTSHelper.createGeometryFromWKT(wkt31467Switched, EPSG_31467);
+        geometry31467 = f31467.createPoint(new Coordinate(lat_31467, lon_31467));
+        geometry31467Switched = f31467.createPoint(new Coordinate(lon_31467, lat_31467));
     }
 
+
     private Geometry get4326Geometry() {
-        return (Geometry) geometry4326.copy();
+        return geometry4326.copy();
     }
 
     private Geometry get4326SwitchedGeometry() {
-        return (Geometry) geometry4326Switched.copy();
+        return geometry4326Switched.copy();
     }
 
     private Geometry get31467Geometry() {
-        return (Geometry) geometry31467.copy();
+        return geometry31467.copy();
     }
 
     private Geometry get31467SwitchedGeometry() {
-        return (Geometry) geometry31467Switched.copy();
+        return geometry31467Switched.copy();
     }
 
     @Test

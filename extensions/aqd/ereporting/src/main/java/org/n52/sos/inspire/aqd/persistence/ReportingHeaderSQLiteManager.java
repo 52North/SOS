@@ -53,7 +53,7 @@ import org.n52.svalbard.encode.json.JSONEncoderKey;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
+public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao implements ReportingHeaderDAO {
     protected static final String REPORTING_AUTHORITY_KEY = "reportingAuthority";
     protected static final String REPORT_OBLIGATION_KEY_PREFIX = "reportObligation_";
 
@@ -62,6 +62,7 @@ public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
     @Inject
     private EncoderRepository encoderRepository;
 
+    @Override
     public void save(RelatedParty relatedParty) {
         try {
             save(REPORTING_AUTHORITY_KEY, relatedParty);
@@ -70,6 +71,7 @@ public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
         }
     }
 
+    @Override
     public void save(ReportObligationType type, ReportObligation reportObligation) {
         try {
             save(REPORT_OBLIGATION_KEY_PREFIX + type, reportObligation);
@@ -78,6 +80,7 @@ public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
         }
     }
 
+    @Override
     public RelatedParty loadRelatedParty() {
         try {
             return throwingExecute(new LoadReportingAuthorityAction());
@@ -86,6 +89,7 @@ public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
         }
     }
 
+    @Override
     public ReportObligation loadReportObligation(ReportObligationType type) {
         try {
             return throwingExecute(new LoadJSONFragmentAction<>(REPORT_OBLIGATION_KEY_PREFIX + type, ReportObligation.class));

@@ -52,6 +52,7 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
 import org.n52.sos.ds.hibernate.dao.RelatedFeatureDAO;
 import org.n52.sos.ds.hibernate.dao.RelatedFeatureRoleDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationPersister;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
@@ -154,7 +155,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
             if (procedureDescriptionFormat != null)  {
                 final Procedure hProcedure =
                         new ProcedureDAO().getOrInsertProcedure(assignedProcedureID, procedureDescriptionFormat,
-                                request.getProcedureDescription(), request.isType(),session);
+                                request.getProcedureDescription(), request.isType(), session);
                 // TODO: set correct validTime,
                 new ValidProcedureTimeDAO().insertValidProcedureTime(
                         hProcedure,
@@ -251,11 +252,22 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                                                 );
                                         sosValue.getValue().accept(persister);
                                         SeriesDAO seriesDAO = new SeriesDAO();
-                                        List<Series> series = seriesDAO.getSeries(hProcedureReferenceSeries.getIdentifier(),
+                                        Series hReferenceSeries = seriesDAO.getSeries(hProcedureReferenceSeries.getIdentifier(),
                                                 hObservableProperty.getIdentifier(),
                                                 hOfferingReferenceSeries.getIdentifier(),
                                                 Collections.singleton(hFeature.getIdentifier()),
-                                                session);
+                                                session).get(0);
+                                        hReferenceSeries.setPublished(false);
+                                        session.update(hReferenceSeries);
+                                        ObservationContext ctx = new ObservationContext();
+                                        ctx.setObservableProperty(hObservableProperty);
+                                        ctx.setFeatureOfInterest(hFeature);
+                                        ctx.setProcedure(hProcedure);
+                                        ctx.setOffering(hOffering);
+                                        ctx.setPublish(false);
+                                        Series hSeries = seriesDAO.getOrInsertSeries(ctx, session);
+                                        hSeries.setReferenceValues(Collections.singleton(hReferenceSeries));
+                                        session.update(hSeries);
                                     }
                                 }
                             }

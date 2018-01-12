@@ -33,6 +33,7 @@
             <element column="resulttime" type="timestamp" />
         </set>
         -->
+        
         <subclass discriminator-value="quantity" name="QuantityDatasetEntity">
             <property formula="3" name="numberOfDecimals" type="int" />
             <!-- first value for backwards compatibility -->
@@ -53,6 +54,10 @@
                 <index column="seriesid" />
                 <one-to-many class="DataEntity" />
             </list>
+            <set name="referenceValues" table="seriesreference" inverse="true">
+                <key column="sourceseriesid" />
+                <many-to-many class="DatasetEntity" unique="true" column="targetseriesid" />
+            </set>
         </subclass>
 
         <subclass discriminator-value="text" name="TextDatasetEntity">

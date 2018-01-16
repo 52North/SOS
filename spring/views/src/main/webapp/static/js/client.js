@@ -164,6 +164,7 @@ $(function() {
         },
         createPermalink: function() {
             var link = document.location.protocol
+            		+ "//"
                     +  document.location.host
                     +  document.location.pathname;
             link += "?method=" + encodeURIComponent(this.$method.val());

@@ -28,22 +28,21 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
+import org.locationtech.jts.geom.Geometry;
+import org.n52.series.db.beans.feature.wml.MonitoringPointEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.series.wml.WmlMonitoringPoint;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.feature.wml.MonitoringPoint;
 
-import org.locationtech.jts.geom.Geometry;
-
-public class MonitoringPointCreator extends AbstractMonitoringFeatureCreator<MonitoringPoint> {
+public class MonitoringPointCreator extends AbstractMonitoringFeatureCreator<MonitoringPointEntity> {
 
     public MonitoringPointCreator(FeatureVisitorContext context) {
         super(context);
     }
 
     @Override
-    public AbstractFeature create(MonitoringPoint f)
+    public AbstractFeature create(MonitoringPointEntity f)
             throws OwsExceptionReport {
         AbstractFeature absFeat = createFeature(f);
         if (absFeat instanceof WmlMonitoringPoint) {
@@ -54,7 +53,7 @@ public class MonitoringPointCreator extends AbstractMonitoringFeatureCreator<Mon
     }
 
     @Override
-    public Geometry createGeometry(MonitoringPoint f) throws OwsExceptionReport {
+    public Geometry createGeometry(MonitoringPointEntity f) throws OwsExceptionReport {
         return createGeometryFrom(f);
     }
 

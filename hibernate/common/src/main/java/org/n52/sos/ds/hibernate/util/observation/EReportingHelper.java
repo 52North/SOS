@@ -31,7 +31,8 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.series.db.beans.ereporting.EReportingDataEntity;
+import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.EReportingData;
+import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.EReportingQualityData;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.AqdConstants.PrimaryObservation;
 import org.n52.shetland.aqd.AqdUomRepository;
@@ -95,7 +96,7 @@ public class EReportingHelper {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation,
-            EReportingDataEntity observation) throws CodedException {
+            EReportingData observation) throws CodedException {
         SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
         sweDataArrayValue.setValue(createSweDataArray(omObservation, observation));
         SingleObservationValue observationValue = new SingleObservationValue(sweDataArrayValue);
@@ -114,7 +115,7 @@ public class EReportingHelper {
      *            {@link EReportingValue} to create {@link SweDataArray} from
      * @return Created {@link SweDataArray}
      */
-    public static SweDataArray createSweDataArray(OmObservation omObservation, EReportingDataEntity observation) {
+    public static SweDataArray createSweDataArray(OmObservation omObservation, EReportingData observation) {
         SweDataArray sweDataArray = new SweDataArray();
         sweDataArray.setElementCount(createElementCount(omObservation));
         PrimaryObservation primaryObservation = PrimaryObservation.from(observation.getPrimaryObservation());
@@ -140,7 +141,7 @@ public class EReportingHelper {
         return combinedValue;
     }
 
-    private static String getUnit(OmObservation omObservation, EReportingDataEntity observation) {
+    private static String getUnit(OmObservation omObservation, EReportingData observation) {
         if (omObservation.isSetValue() && omObservation.getValue().getValue().isSetUnit()) {
             return omObservation.getValue().getValue().getUnit();
         } else if (observation.getDataset().hasUnit()) {
@@ -235,7 +236,7 @@ public class EReportingHelper {
         }
     }
 
-    private static void addValue(List<String> value, EReportingDataEntity observation, OmObservation omObservation) {
+    private static void addValue(List<String> value, EReportingData observation, OmObservation omObservation) {
         if (observation.isSetValue()) {
             // TODO check if this is the best solution
             if (omObservation.isSetDecimalSeparator() && omObservation.getDecimalSeparator() != ".") {
@@ -248,7 +249,7 @@ public class EReportingHelper {
         }
     }
 
-    private static List<List<String>> createValue(OmObservation omObservation, EReportingDataEntity observation, PrimaryObservation primaryObservation) {
+    private static List<List<String>> createValue(OmObservation omObservation, EReportingData observation, PrimaryObservation primaryObservation) {
         List<String> value = Lists.newArrayListWithCapacity(5);
         addIntegerValue(value, observation.getVerification());
         addIntegerValue(value, observation.getValidation());
@@ -290,11 +291,11 @@ public class EReportingHelper {
         return time;
     }
 
-    private static void addQuality(EReportingDataEntity eReportingObservation, SingleObservationValue<?> value) throws CodedException {
+    private static void addQuality(EReportingData eReportingObservation, SingleObservationValue<?> value) throws CodedException {
         value.addQualityList(getGmdDomainConsistency(eReportingObservation, false));
     }
 
-    public static Set<OmResultQuality> getGmdDomainConsistency(EReportingDataEntity eReportingObservation, boolean force) throws CodedException {
+    public static Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingObservation, boolean force) throws CodedException {
         Set<OmResultQuality> set = Sets.newHashSet();
         if (eReportingObservation.isSetDataCaptureFlag()) {
             set.add(GmdDomainConsistency.dataCapture(eReportingObservation.getDataCaptureFlag()));

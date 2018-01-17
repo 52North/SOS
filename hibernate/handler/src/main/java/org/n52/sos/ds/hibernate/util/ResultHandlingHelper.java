@@ -36,6 +36,15 @@ import java.util.TreeMap;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.series.db.beans.BlobDataEntity;
+import org.n52.series.db.beans.BooleanDataEntity;
+import org.n52.series.db.beans.CategoryDataEntity;
+import org.n52.series.db.beans.ComplexDataEntity;
+import org.n52.series.db.beans.CountDataEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.GeometryDataEntity;
+import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.TextDataEntity;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -55,15 +64,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.IncDecInteger;
 import org.n52.svalbard.util.SweHelper;
@@ -106,7 +106,7 @@ public class ResultHandlingHelper {
      * @throws OwsExceptionReport
      *             If creation fails
      */
-    public String createResultValuesFromObservations(final List<Observation<?>> observations,
+    public String createResultValuesFromObservations(final List<DataEntity<?>> observations,
             final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure, String noDataPlaceholder)
             throws OwsExceptionReport {
         final StringBuilder builder = new StringBuilder();
@@ -115,7 +115,7 @@ public class ResultHandlingHelper {
             final String blockSeparator = getBlockSeparator(sosResultEncoding.get().get());
             final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure.get().get());
             addElementCount(builder, observations.size(), blockSeparator);
-            for (final Observation<?> observation : observations) {
+            for (final DataEntity<?> observation : observations) {
                 for (final Integer intger : valueOrder.keySet()) {
                     final String definition = valueOrder.get(intger);
                     switch (definition) {
@@ -130,15 +130,15 @@ public class ResultHandlingHelper {
                             builder.append(getSamplingGeometry(observation, tokenSeparator, sosResultStructure.get().get(), noDataPlaceholder));
                             break;
                         case OM_PROCEDURE:
-                            if (observation.getProcedure() != null && observation.getProcedure().isSetIdentifier()) {
-                                builder.append(observation.getProcedure().getIdentifier());
+                            if (observation.getDataset().getProcedure() != null && observation.getDataset().getProcedure().isSetIdentifier()) {
+                                builder.append(observation.getDataset().getProcedure().getIdentifier());
                             } else {
                                 builder.append("");
                             }
                             break;
                         case OM_FEATURE_OF_INTEREST:
-                            if (observation.getFeatureOfInterest() != null && observation.getFeatureOfInterest().isSetIdentifier()) {
-                                builder.append(observation.getFeatureOfInterest().getIdentifier());
+                            if (observation.getDataset().getFeature() != null && observation.getDataset().getFeature().isSetIdentifier()) {
+                                builder.append(observation.getDataset().getFeature().getIdentifier());
                             } else {
                                 builder.append("");
                             }
@@ -334,46 +334,46 @@ public class ResultHandlingHelper {
         }
     }
 
-    private String getValueAsStringForObservedProperty(final Observation<?> observation,
+    private String getValueAsStringForObservedProperty(final DataEntity<?> observation,
             final String definition) {
-        final String observedProperty = observation.getObservableProperty().getIdentifier();
-        if (observation instanceof ComplexObservation) {
-            for (Observation<?> contentObservation : ((ComplexObservation)observation).getValue()) {
+        final String observedProperty = observation.getDataset().getObservableProperty().getIdentifier();
+        if (observation instanceof ComplexDataEntity) {
+            for (DataEntity<?> contentObservation : ((ComplexDataEntity)observation).getValue()) {
                 String value = getValueAsStringForObservedProperty(contentObservation, definition);
                 if (!Strings.isNullOrEmpty(value)) {
                     return value;
                 }
             }
         } else if (observedProperty.equals(definition)) {
-            if (observation instanceof NumericObservation) {
-                return String.valueOf(((NumericObservation) observation).getValue());
-            } else if (observation instanceof BooleanObservation) {
-                return String.valueOf(((BooleanObservation) observation).getValue());
-            } else if (observation instanceof CategoryObservation) {
-                return String.valueOf(((CategoryObservation) observation).getValue());
-            } else if (observation instanceof CountObservation) {
-                return String.valueOf(((CountObservation) observation).getValue());
-            } else if (observation instanceof TextObservation) {
-                return String.valueOf(((TextObservation) observation).getValue());
-            } else if (observation instanceof GeometryObservation) {
+            if (observation instanceof QuantityDataEntity) {
+                return String.valueOf(((QuantityDataEntity) observation).getValue());
+            } else if (observation instanceof BooleanDataEntity) {
+                return String.valueOf(((BooleanDataEntity) observation).getValue());
+            } else if (observation instanceof CategoryDataEntity) {
+                return String.valueOf(((CategoryDataEntity) observation).getValue());
+            } else if (observation instanceof CountDataEntity) {
+                return String.valueOf(((CountDataEntity) observation).getValue());
+            } else if (observation instanceof TextDataEntity) {
+                return String.valueOf(((TextDataEntity) observation).getValue());
+            } else if (observation instanceof GeometryDataEntity) {
                 final WKTWriter writer = new WKTWriter();
-                return writer.write(((GeometryObservation) observation).getValue());
-            } else if (observation instanceof BlobObservation) {
-                return String.valueOf(((BlobObservation) observation).getValue());
+                return writer.write(((GeometryDataEntity) observation).getValue().getGeometry());
+            } else if (observation instanceof BlobDataEntity) {
+                return String.valueOf(((BlobDataEntity) observation).getValue());
             }
         }
         return "";
     }
 
-    private String getSamplingGeometry(Observation<?> observation, String tokenSeparator, SweAbstractDataComponent sweAbstractDataComponent, String noDataPlaceholder) throws OwsExceptionReport {
+    private String getSamplingGeometry(DataEntity<?> observation, String tokenSeparator, SweAbstractDataComponent sweAbstractDataComponent, String noDataPlaceholder) throws OwsExceptionReport {
         SweVector vector = getVector(sweAbstractDataComponent);
         if (vector != null && vector.isSetCoordinates()) {
             final Map<Integer, String> valueOrder = new HashMap<>(0);
             addOrderAndVectorDefinitionToMap(vector.getCoordinates(), valueOrder, new IncDecInteger());
             final StringBuilder builder = new StringBuilder();
             Geometry samplingGeometry = null;
-            if (observation.hasSamplingGeometry()) {
-                samplingGeometry = getGeomtryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(observation.getSamplingGeometry());
+            if (observation.isSetGeometryEntity()) {
+                samplingGeometry = getGeomtryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(observation.getGeometryEntity().getGeometry());
             }
             for (final Integer intger : valueOrder.keySet()) {
                 final String definition = valueOrder.get(intger);

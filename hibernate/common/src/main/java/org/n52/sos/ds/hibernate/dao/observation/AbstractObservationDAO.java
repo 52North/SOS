@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,6 +78,10 @@ import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.data.Data.ComplexData;
+import org.n52.series.db.beans.data.Data.ProfileData;
+import org.n52.series.db.beans.data.Data.ReferencedData;
 import org.n52.series.db.beans.parameter.Parameter;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
@@ -158,6 +163,19 @@ import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.series.db.beans.data.Data.BlobData;
+import org.n52.series.db.beans.data.Data.BooleanData;
+import org.n52.series.db.beans.data.Data.CategoryData;
+import org.n52.series.db.beans.data.Data.ComplexData;
+import org.n52.series.db.beans.data.Data.CountData;
+import org.n52.series.db.beans.data.Data.DataArrayData;
+import org.n52.series.db.beans.data.Data.GeometryData;
+import org.n52.series.db.beans.data.Data.ProfileData;
+import org.n52.series.db.beans.data.Data.QuantityData;
+import org.n52.series.db.beans.data.Data.ReferencedData;
+import org.n52.series.db.beans.data.Data.TextData;
+import org.n52.series.db.beans.data.Data;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -198,7 +216,7 @@ public abstract class AbstractObservationDAO
      * @throws OwsExceptionReport
      */
     protected abstract void addObservationContextToObservation(ObservationContext observationIdentifiers,
-            DataEntity<?> observation, Session session) throws OwsExceptionReport;
+            Data<?> observation, Session session) throws OwsExceptionReport;
 
     /**
      * Get Hibernate Criteria for querying observations with parameters
@@ -876,7 +894,7 @@ public abstract class AbstractObservationDAO
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected boolean checkObservationFor(Class clazz, String offeringIdentifier, Session session) {
         Criteria c = session.createCriteria(clazz).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-        c.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria(DatasetEntity.OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringIdentifier));
+        c.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria( DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringIdentifier));
         c.setMaxResults(1);
         LOGGER.debug("QUERY checkObservationFor(clazz, offeringIdentifier): {}", HibernateHelper.getSqlString(c));
         return CollectionHelper.isNotEmpty(c.list());
@@ -892,7 +910,7 @@ public abstract class AbstractObservationDAO
      */
     public DateTime getMinPhenomenonTime(Session session) {
         Criteria criteria = session.createCriteria(getObservationFactory().temporalReferencedClass())
-                .setProjection(Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START))
+                .setProjection(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
         LOGGER.debug("QUERY getMinPhenomenonTime(): {}", HibernateHelper.getSqlString(criteria));
         Object min = criteria.uniqueResult();
@@ -913,13 +931,13 @@ public abstract class AbstractObservationDAO
     public DateTime getMaxPhenomenonTime(Session session) {
 
         Criteria criteriaStart = session.createCriteria(getObservationFactory().temporalReferencedClass())
-                .setProjection(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_START))
+                .setProjection(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START))
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
         LOGGER.debug("QUERY getMaxPhenomenonTime() start: {}", HibernateHelper.getSqlString(criteriaStart));
         Object maxStart = criteriaStart.uniqueResult();
 
         Criteria criteriaEnd = session.createCriteria(getObservationFactory().temporalReferencedClass())
-                .setProjection(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END))
+                .setProjection(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END))
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
         LOGGER.debug("QUERY getMaxPhenomenonTime() end: {}", HibernateHelper.getSqlString(criteriaEnd));
         Object maxEnd = criteriaEnd.uniqueResult();
@@ -986,9 +1004,9 @@ public abstract class AbstractObservationDAO
         if (session != null) {
             Criteria criteria = session.createCriteria(getObservationFactory().temporalReferencedClass());
             criteria.add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-            criteria.setProjection(Projections.projectionList().add(Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START))
-                    .add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_START))
-                    .add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END)));
+            criteria.setProjection(Projections.projectionList().add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                    .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                    .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));
             LOGGER.debug("QUERY getGlobalTemporalBoundingBox(): {}", HibernateHelper.getSqlString(criteria));
             Object temporalBoundingBox = criteria.uniqueResult();
             if (temporalBoundingBox instanceof Object[]) {
@@ -1011,9 +1029,9 @@ public abstract class AbstractObservationDAO
      */
     protected Order getOrder(IndeterminateValue indetTime) {
         if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
-            return Order.asc(DataEntity.PROPERTY_PHENOMENON_TIME_START);
+            return Order.asc(DataEntity.PROPERTY_SAMPLING_TIME_START);
         } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
-            return Order.desc(DataEntity.PROPERTY_PHENOMENON_TIME_END);
+            return Order.desc(DataEntity.PROPERTY_SAMPLING_TIME_END);
         }
         return null;
     }
@@ -1028,9 +1046,9 @@ public abstract class AbstractObservationDAO
      */
     protected Projection getIndeterminateTimeExtremaProjection(IndeterminateValue indetTime) {
         if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
-            return Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START);
+            return Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START);
         } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
-            return Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END);
+            return Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END);
         }
         return null;
     }
@@ -1046,9 +1064,9 @@ public abstract class AbstractObservationDAO
      */
     protected String getIndeterminateTimeFilterProperty(IndeterminateValue indetTime) {
         if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
-            return DataEntity.PROPERTY_PHENOMENON_TIME_START;
+            return DataEntity.PROPERTY_SAMPLING_TIME_START;
         } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
-            return DataEntity.PROPERTY_PHENOMENON_TIME_END;
+            return DataEntity.PROPERTY_SAMPLING_TIME_END;
         }
         return null;
     }
@@ -1134,7 +1152,7 @@ public abstract class AbstractObservationDAO
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected void addPhenomeonTimeAndResultTimeToObservation(DataEntity<?> observation, Time phenomenonTime,
+    protected void addPhenomeonTimeAndResultTimeToObservation(Data<?> observation, Time phenomenonTime,
             TimeInstant resultTime) throws OwsExceptionReport {
         addPhenomenonTimeToObservation(observation, phenomenonTime);
         addResultTimeToObservation(observation, resultTime, phenomenonTime);
@@ -1151,7 +1169,7 @@ public abstract class AbstractObservationDAO
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected void addTime(OmObservation sosObservation, DataEntity<?> observation) throws OwsExceptionReport {
+    protected void addTime(OmObservation sosObservation, Data<?> observation) throws OwsExceptionReport {
         addPhenomeonTimeAndResultTimeToObservation(observation, sosObservation.getPhenomenonTime(),
                 sosObservation.getResultTime());
         addValidTimeToObservation(observation, sosObservation.getValidTime());
@@ -1166,7 +1184,7 @@ public abstract class AbstractObservationDAO
      *            SOS phenomenon time
      * @throws OwsExceptionReport
      */
-    public void addPhenomenonTimeToObservation(DataEntity<?> observation, Time phenomenonTime)
+    public void addPhenomenonTimeToObservation(Data<?> observation, Time phenomenonTime)
             throws OwsExceptionReport {
         if (phenomenonTime instanceof TimeInstant) {
             TimeInstant time = (TimeInstant) phenomenonTime;
@@ -1217,7 +1235,7 @@ public abstract class AbstractObservationDAO
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public void addResultTimeToObservation(DataEntity<?> observation, TimeInstant resultTime, Time phenomenonTime)
+    public void addResultTimeToObservation(Data<?> observation, TimeInstant resultTime, Time phenomenonTime)
             throws CodedException {
         if (resultTime != null) {
             if (resultTime.isSetValue()) {
@@ -1265,7 +1283,7 @@ public abstract class AbstractObservationDAO
      * @param validTime
      *            SOS valid time
      */
-    protected void addValidTimeToObservation(DataEntity<?> observation, TimePeriod validTime) {
+    protected void addValidTimeToObservation(Data<?> observation, TimePeriod validTime) {
         if (validTime != null) {
             observation.setValidTimeStart(validTime.getStart().toDate());
             observation.setValidTimeEnd(validTime.getEnd().toDate());
@@ -1362,7 +1380,7 @@ public abstract class AbstractObservationDAO
                     && HibernateHelper.supportsFunction(dialect, HibernateConstants.FUNC_EXTENT)) {
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
                 criteria.setProjection(SpatialProjections.extent(DataEntity.PROPERTY_GEOMETRY_ENTITY));
-                criteria.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria(DatasetEntity.OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringID));
+                criteria.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria( DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringID));
                 LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}",
                         HibernateHelper.getSqlString(criteria));
                 Geometry geom = JTSConverter.convert((com.vividsolutions.jts.geom.Geometry) criteria.uniqueResult());
@@ -1373,7 +1391,7 @@ public abstract class AbstractObservationDAO
             } else {
                 Envelope envelope = new Envelope();
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
-                criteria.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria(DatasetEntity.OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringID));
+                criteria.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria( DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringID));
                 LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}",
                         HibernateHelper.getSqlString(criteria));
                 @SuppressWarnings("unchecked")
@@ -1431,7 +1449,7 @@ public abstract class AbstractObservationDAO
         filters.add(getResultTimeFilter(c, sosObservation.getResultTime(), sosObservation.getPhenomenonTime()));
         c.add(SosTemporalRestrictions.filter(filters));
         if (sosObservation.isSetHeightDepthParameter()) {
-            NamedValue<Double> hdp = sosObservation.getHeightDepthParameter();
+            NamedValue<BigDecimal> hdp = sosObservation.getHeightDepthParameter();
             addParameterRestriction(c, hdp);
         }
         c.setMaxResults(1);
@@ -1447,7 +1465,7 @@ public abstract class AbstractObservationDAO
             builder.append("resultTime=").append(sosObservation.getResultTime().toString());
             // TODO for e-Reporting SampligPoint should be added.
             if (sosObservation.isSetHeightDepthParameter()) {
-                NamedValue<Double> hdp = sosObservation.getHeightDepthParameter();
+                NamedValue<BigDecimal> hdp = sosObservation.getHeightDepthParameter();
                 builder.append("height/depth=").append(hdp.getName().getHref()).append("/")
                         .append(hdp.getValue().getValue());
             }
@@ -1557,8 +1575,8 @@ public abstract class AbstractObservationDAO
             return (TimeExtrema) namedQuery.uniqueResult();
         } else {
             Criteria c = getDefaultObservationTimeCriteria(session).setProjection(
-                    Projections.projectionList().add(Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START))
-                            .add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END))
+                    Projections.projectionList().add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                            .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END))
                             .add(Projections.min(DataEntity.PROPERTY_RESULT_TIME))
                             .add(Projections.max(DataEntity.PROPERTY_RESULT_TIME)));
             c.setResultTransformer(new ObservationTimeTransformer());
@@ -1575,10 +1593,10 @@ public abstract class AbstractObservationDAO
     }
 
     private static class ObservationPersister
-            implements ValueVisitor<DataEntity<?>, OwsExceptionReport>, ProfileLevelVisitor<DataEntity<?>> {
-        private static final ObservationVisitor<String> SERIES_TYPE_VISITOR = new SeriesTypeVisitor();
+            implements ValueVisitor<Data<?>, OwsExceptionReport>, ProfileLevelVisitor<Data<?>> {
+//        private static final ObservationVisitor<String> SERIES_TYPE_VISITOR = new SeriesTypeVisitor();
 
-        private final Set<DatasetEntity> observationConstellations;
+        private final Set<DatasetEntity> datasets;
 
         private final AbstractFeatureEntity featureOfInterest;
 
@@ -1602,19 +1620,19 @@ public abstract class AbstractObservationDAO
 
         ObservationPersister(
                 GeometryHandler geometryHandler, AbstractObservationDAO observationDao, DaoFactory daoFactory,
-                OmObservation sosObservation, Set<DatasetEntity> hObservationConstellations,
+                OmObservation sosObservation, Set<DatasetEntity> hDatasets,
                 AbstractFeatureEntity hFeature, Map<String, CodespaceEntity> codespaceCache, Map<UoM, UnitEntity> unitCache,
                 Set<OfferingEntity> hOfferings, Session session) throws OwsExceptionReport {
             this(geometryHandler, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache),
-                    sosObservation, hObservationConstellations, hFeature, null, hOfferings, session, false);
+                    sosObservation, hDatasets, hFeature, null, hOfferings, session, false);
         }
 
         private ObservationPersister(
                 GeometryHandler geometryHandler, DAOs daos, Caches caches, OmObservation observation,
-                Set<DatasetEntity> hObservationConstellations, AbstractFeatureEntity hFeature,
+                Set<DatasetEntity> hDatasets, AbstractFeatureEntity hFeature,
                 Geometry samplingGeometry, Set<OfferingEntity> hOfferings, Session session, boolean childObservation)
                 throws OwsExceptionReport {
-            this.observationConstellations = hObservationConstellations;
+            this.datasets = hDatasets;
             this.featureOfInterest = hFeature;
             this.caches = caches;
             this.omObservation = observation;
@@ -1625,129 +1643,130 @@ public abstract class AbstractObservationDAO
             this.childObservation = childObservation;
             this.offerings = hOfferings;
             this.geometryHandler = geometryHandler;
+            checkForDuplicity();
         }
 
-//        private void checkForDuplicity() throws OwsExceptionReport {
-//            /*
-//             * TODO check if observation exists in database for - series,
-//             * phenTimeStart, phenTimeEnd, resultTime - series, phenTimeStart,
-//             * phenTimeEnd, resultTime, depth/height parameter (same observation
-//             * different depth/height)
-//             */
-//            daos.observation.checkForDuplicatedObservations(omObservation, observationConstellations.iterator().next(), session);
-//
-//        }
+        private void checkForDuplicity() throws OwsExceptionReport {
+            /*
+             * TODO check if observation exists in database for - series,
+             * phenTimeStart, phenTimeEnd, resultTime - series, phenTimeStart,
+             * phenTimeEnd, resultTime, depth/height parameter (same observation
+             * different depth/height)
+             */
+            daos.observation.checkForDuplicatedObservations(omObservation, datasets.iterator().next(), session);
+
+        }
 
         @Override
-        public DataEntity<?> visit(BooleanValue value) throws OwsExceptionReport {
+        public Data<?> visit(BooleanValue value) throws OwsExceptionReport {
             return setUnitAndPersist(observationFactory.truth(), value);
         }
 
         @Override
-        public DataEntity<?> visit(CategoryValue value) throws OwsExceptionReport {
+        public Data<?> visit(CategoryValue value) throws OwsExceptionReport {
             return setUnitAndPersist(observationFactory.category(), value);
         }
 
         @Override
-        public DataEntity<?> visit(CountValue value) throws OwsExceptionReport {
+        public Data<?> visit(CountValue value) throws OwsExceptionReport {
             return setUnitAndPersist(observationFactory.count(), value);
         }
 
         @Override
-        public DataEntity<?> visit(GeometryValue value) throws OwsExceptionReport {
+        public Data<?> visit(GeometryValue value) throws OwsExceptionReport {
 //            return setUnitAndPersist(observationFactory.geometry(), new OldGeometryValue(value));
              // TODO
             return null;
         }
 
         @Override
-        public DataEntity<?> visit(QuantityValue value) throws OwsExceptionReport {
+        public Data<?> visit(QuantityValue value) throws OwsExceptionReport {
             return setUnitAndPersist(observationFactory.numeric(), value);
         }
 
         @Override
-        public DataEntity<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
+        public Data<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public DataEntity<?> visit(TextValue value)
+        public Data<?> visit(TextValue value)
                 throws OwsExceptionReport {
             return setUnitAndPersist(observationFactory.text(), value);
         }
 
         @Override
-        public DataEntity<?> visit(UnknownValue value) throws OwsExceptionReport {
+        public Data<?> visit(UnknownValue value) throws OwsExceptionReport {
             return setUnitAndPersist(observationFactory.blob(), value);
         }
 
         @Override
-        public DataEntity<?> visit(SweDataArrayValue value) throws OwsExceptionReport {
+        public Data<?> visit(SweDataArrayValue value) throws OwsExceptionReport {
 //            return persist(observationFactory.sweDataArray(), value.getValue());
             // TODO
             return null;
         }
 
         @Override
-        public DataEntity<?> visit(ComplexValue value) throws OwsExceptionReport {
-            ComplexDataEntity complex = observationFactory.complex();
+        public Data<?> visit(ComplexValue value) throws OwsExceptionReport {
+            ComplexData complex = observationFactory.complex();
             complex.setParent(true);
-            return persist(complex, persistChildren(value.getValue()));
+            return persist((Data)complex, persistChildren(value.getValue()));
         }
 
         @Override
-        public DataEntity<?> visit(HrefAttributeValue value) throws OwsExceptionReport {
+        public Data<?> visit(HrefAttributeValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public DataEntity<?> visit(NilTemplateValue value) throws OwsExceptionReport {
+        public Data<?> visit(NilTemplateValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public DataEntity<?> visit(ReferenceValue value) throws OwsExceptionReport {
-            ReferencedDataEntity reference = observationFactory.reference();
+        public Data<?> visit(ReferenceValue value) throws OwsExceptionReport {
+            ReferencedData reference = observationFactory.reference();
             reference.setName(value.getValue().getTitle());
             return persist(reference, value.getValue().getHref());
         }
 
         @Override
-        public DataEntity<?> visit(TVPValue value) throws OwsExceptionReport {
+        public Data<?> visit(TVPValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public DataEntity<?> visit(TLVTValue value) throws OwsExceptionReport {
+        public Data<?> visit(TLVTValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public DataEntity<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+        public Data<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public DataEntity<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
+        public Data<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public DataEntity<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
+        public Data<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public DataEntity<?> visit(ProfileValue value) throws OwsExceptionReport {
-            ProfileDataEntity profile = observationFactory.profile();
+        public Data<?> visit(ProfileValue value) throws OwsExceptionReport {
+            ProfileData profile = observationFactory.profile();
             profile.setParent(true);
             omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
-            return persist(profile, persistChildren(value.getValue()));
+            return persist((Data)profile, persistChildren(value.getValue()));
         }
 
         @Override
-        public Collection<DataEntity<?>> visit(ProfileLevel value) throws OwsExceptionReport {
-            List<DataEntity<?>> childObservations = new ArrayList<>();
+        public Collection<Data<?>> visit(ProfileLevel value) throws OwsExceptionReport {
+            List<Data<?>> childObservations = new ArrayList<>();
             if (value.isSetValue()) {
                 for (Value<?> v : value.getValue()) {
                     childObservations.add(v.accept(this));
@@ -1757,20 +1776,20 @@ public abstract class AbstractObservationDAO
         }
 
         @Override
-        public DataEntity<?> visit(XmlValue value) throws OwsExceptionReport {
+        public Data<?> visit(XmlValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
 
 
         @Override
-        public DataEntity<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+        public Data<?> visit(TimeRangeValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
-        private Set<DataEntity<?>> persistChildren(SweAbstractDataRecord dataRecord)
+        private Set<Data<?>> persistChildren(SweAbstractDataRecord dataRecord)
                 throws HibernateException, OwsExceptionReport {
-            Set<DataEntity<?>> children = new TreeSet<>();
+            Set<Data<?>> children = new TreeSet<>();
             for (SweField field : dataRecord.getFields()) {
                 PhenomenonEntity observableProperty = getObservablePropertyForField(field);
                 ObservationPersister childPersister = createChildPersister(observableProperty);
@@ -1780,8 +1799,8 @@ public abstract class AbstractObservationDAO
             return children;
         }
 
-        private Set<DataEntity<?>> persistChildren(List<ProfileLevel> values) throws OwsExceptionReport {
-            Set<DataEntity<?>> children = new TreeSet<>();
+        private Set<Data<?>> persistChildren(List<ProfileLevel> values) throws OwsExceptionReport {
+            Set<Data<?>> children = new TreeSet<>();
             for (ProfileLevel level : values) {
                 if (level.isSetValue()) {
                     for (Value<?> v : level.getValue()) {
@@ -1819,7 +1838,7 @@ public abstract class AbstractObservationDAO
 
         private ObservationPersister createChildPersister(ProfileLevel level) throws OwsExceptionReport {
             return new ObservationPersister(geometryHandler, daos, caches, getObservationWithLevelParameter(level),
-                    observationConstellations, featureOfInterest, getSamplingGeometryFromLevel(level), offerings,
+                    datasets, featureOfInterest, getSamplingGeometryFromLevel(level), offerings,
                     session, true);
 
         }
@@ -1832,8 +1851,8 @@ public abstract class AbstractObservationDAO
         }
 
         private Set<DatasetEntity> getObservationConstellation(PhenomenonEntity observableProperty) {
-            Set<DatasetEntity> newObservationConstellations = new HashSet<>(observationConstellations.size());
-            for (DatasetEntity constellation : observationConstellations) {
+            Set<DatasetEntity> newObservationConstellations = new HashSet<>(datasets.size());
+            for (DatasetEntity constellation : datasets) {
                 newObservationConstellations.add(daos.dataset().checkOrInsertSeries(
                         constellation.getProcedure(), observableProperty, constellation.getOffering(), true, session));
             }
@@ -1855,12 +1874,12 @@ public abstract class AbstractObservationDAO
             return daos.observableProperty().getObservablePropertyForIdentifier(observableProperty, session);
         }
 
-        private <V, T extends DataEntity<V>> T setUnitAndPersist(T observation, Value<V> value)
+        private <V, T extends Data<V>> T setUnitAndPersist(T observation, Value<V> value)
                 throws OwsExceptionReport {
             return persist(observation, value.getValue());
         }
 
-        private <V, T extends DataEntity<V>> T persist(T observation, V value) throws OwsExceptionReport {
+        private <V, T extends Data<V>> T persist(T observation, V value) throws OwsExceptionReport {
 
             observation.setDeleted(false);
 
@@ -1874,15 +1893,17 @@ public abstract class AbstractObservationDAO
             daos.observation().addDescription(omObservation, observation);
             daos.observation().addTime(omObservation, observation);
             observation.setValue(value);
-            observation.setGeometryEntity(new GeometryEntity().setGeometry(JTSConverter.convert(samplingGeometry)));
+            GeometryEntity geometryEntity = new GeometryEntity();
+            geometryEntity.setGeometry(JTSConverter.convert(samplingGeometry));
+            observation.setGeometryEntity(geometryEntity);
             checkUpdateFeatureOfInterestGeometry();
 
             ObservationContext observationContext = daos.observation().createObservationContext();
 
             String observationType = ObservationTypeObservationVisitor.getInstance().visit((DataEntity)observation);
 
-                for (DatasetEntity oc : observationConstellations) {
-                    if (!isProfileObservation(oc) || (isProfileObservation(oc) && !childObservation)) {
+            for (DatasetEntity oc : datasets) {
+                if (!isProfileObservation(oc) || (isProfileObservation(oc) && !childObservation)) {
                     offerings.add(oc.getOffering());
                     if (!daos.dataset().checkObservationType(oc, observationType, session)) {
                         throw new InvalidParameterValueException().withMessage(
@@ -1891,16 +1912,16 @@ public abstract class AbstractObservationDAO
                                 oc.getObservableProperty().getIdentifier(), oc.getOffering().getIdentifier(),
                                 oc.getObservationType().getFormat());
                     }
-                    }
                 }
-
-            if (omObservation.isSetSeriesType()) {
-                observationContext.setSeriesType(omObservation.getSeriesType());
-            } else {
-                observationContext.setSeriesType(SERIES_TYPE_VISITOR.visit(observation));
             }
 
-            DatasetEntity first = Iterables.getFirst(observationConstellations, null);
+//            if (omObservation.isSetSeriesType()) {
+//                observationContext.setSeriesType(omObservation.getSeriesType());
+//            } else {
+//                observationContext.setSeriesType(SERIES_TYPE_VISITOR.visit(observation));
+//            }
+
+            DatasetEntity first = Iterables.getFirst(datasets, null);
             if (first != null) {
                 observationContext.setPhenomenon(first.getObservableProperty());
                 observationContext.setProcedure(first.getProcedure());
@@ -1919,7 +1940,7 @@ public abstract class AbstractObservationDAO
                 observation.setParameters(insertParameter);
             }
             session.saveOrUpdate(observation);
-            
+
             return observation;
         }
 
@@ -2029,96 +2050,96 @@ public abstract class AbstractObservationDAO
             public FeatureOfInterestDAO feature() {
                 return this.feature;
             }
-            
+
             public AbstractSeriesDAO dataset() {
                 return this.dataset;
             }
         }
 
-        private static class SeriesTypeVisitor
-                implements ObservationVisitor<String> {
-            
-            @SuppressWarnings("unused")
-            public String visit(DataEntity o) {
-                if (o instanceof QuantityDataEntity) {
-                    return visit((QuantityDataEntity)o);
-                } else if (o instanceof BlobDataEntity) {
-                    return visit((BlobDataEntity)o);
-                } else if (o instanceof BooleanDataEntity) {
-                    return visit((BooleanDataEntity)o);
-                } else if (o instanceof CategoryDataEntity) {
-                    return visit((CategoryDataEntity)o);
-                } else if (o instanceof ComplexDataEntity) {
-                    return visit((ComplexDataEntity)o);
-                } else if (o instanceof CountDataEntity) {
-                    return visit((CountDataEntity)o);
-                } else if (o instanceof GeometryDataEntity) {
-                    return visit((GeometryDataEntity)o);
-                } else if (o instanceof TextDataEntity) {
-                    return visit((TextDataEntity)o);
-                } else if (o instanceof ProfileDataEntity) {
-                    return visit((ProfileDataEntity)o);
-                } else if (o instanceof ReferencedDataEntity) {
-                    return visit((ReferencedDataEntity)o);
-                }
-                return null;
-             }
-
-            @Override
-            public String visit(QuantityDataEntity o) {
-                return "quantity";
-            }
-
-            @Override
-            public String visit(BlobDataEntity o) {
-                return "blob";
-            }
-
-            @Override
-            public String visit(BooleanDataEntity o) {
-                return "boolean";
-            }
-
-            @Override
-            public String visit(CategoryDataEntity o) {
-                return "category";
-            }
-
-            @Override
-            public String visit(ComplexDataEntity o) {
-                return "complex";
-            }
-
-            @Override
-            public String visit(CountDataEntity o) {
-                return "count";
-            }
-
-            @Override
-            public String visit(GeometryDataEntity o) {
-                return "geometry";
-            }
-
-            @Override
-            public String visit(TextDataEntity o) {
-                return "text";
-            }
-
-            @Override
-            public String visit(DataArrayDataEntity o) {
-                return "swedataarray";
-            }
-
-            @Override
-            public String visit(ProfileDataEntity o) {
-                return "profile";
-            }
-
-            @Override
-            public String visit(ReferencedDataEntity o) {
-                return "reference";
-            }
-        }
+//        private static class SeriesTypeVisitor
+//                implements ObservationVisitor<String> {
+//
+//            @SuppressWarnings("unused")
+//            public String visit(Data o) {
+//                if (o instanceof QuantityData) {
+//                    return visit((QuantityData)o);
+//                } else if (o instanceof BlobData) {
+//                    return visit((BlobData)o);
+//                } else if (o instanceof BooleanData) {
+//                    return visit((BooleanData)o);
+//                } else if (o instanceof CategoryData) {
+//                    return visit((CategoryData)o);
+//                } else if (o instanceof ComplexData) {
+//                    return visit((ComplexData)o);
+//                } else if (o instanceof CountData) {
+//                    return visit((CountData)o);
+//                } else if (o instanceof GeometryData) {
+//                    return visit((GeometryData)o);
+//                } else if (o instanceof TextData) {
+//                    return visit((TextData)o);
+//                } else if (o instanceof ProfileData) {
+//                    return visit((ProfileData)o);
+//                } else if (o instanceof ReferencedData) {
+//                    return visit((ReferencedData)o);
+//                }
+//                return null;
+//             }
+//
+//            @Override
+//            public String visit(QuantityData o) {
+//                return "quantity";
+//            }
+//
+//            @Override
+//            public String visit(BlobData o) {
+//                return "blob";
+//            }
+//
+//            @Override
+//            public String visit(BooleanData o) {
+//                return "boolean";
+//            }
+//
+//            @Override
+//            public String visit(CategoryData o) {
+//                return "category";
+//            }
+//
+//            @Override
+//            public String visit(ComplexData o) {
+//                return "complex";
+//            }
+//
+//            @Override
+//            public String visit(CountData o) {
+//                return "count";
+//            }
+//
+//            @Override
+//            public String visit(GeometryData o) {
+//                return "geometry";
+//            }
+//
+//            @Override
+//            public String visit(TextData o) {
+//                return "text";
+//            }
+//
+//            @Override
+//            public String visit(DataArrayData o) {
+//                return "swedataarray";
+//            }
+//
+//            @Override
+//            public String visit(ProfileData o) {
+//                return "profile";
+//            }
+//
+//            @Override
+//            public String visit(ReferencedData o) {
+//                return "reference";
+//            }
+//        }
 
 
         public class OldGeometryValue

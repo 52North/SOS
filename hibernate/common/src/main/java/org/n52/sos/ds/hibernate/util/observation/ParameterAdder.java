@@ -35,6 +35,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 public class ParameterAdder {
 
+    private ParameterVisitor visitor = new ParameterVisitor();
     private OmObservation observation;
     private DataEntity<?> hObservation;
 
@@ -46,7 +47,7 @@ public class ParameterAdder {
     public void add() throws OwsExceptionReport {
         if (hObservation.hasParameters()) {
             for (Parameter parameter : hObservation.getParameters()) {
-                observation.addParameter(new ParameterVisitor().visit(parameter));
+                observation.addParameter(visitor.visit(parameter));
             }
         }
     }

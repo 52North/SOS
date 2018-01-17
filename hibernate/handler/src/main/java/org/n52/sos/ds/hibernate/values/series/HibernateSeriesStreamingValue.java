@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
@@ -37,7 +38,6 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractValuedObservation;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
 import org.n52.svalbard.util.GmlHelper;
@@ -113,9 +113,9 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         }
     }
 
-    protected boolean checkValue(AbstractValuedObservation value) {
+    protected boolean checkValue(DataEntity value) {
         if (isDuplicated()) {
-            return value.getOfferings() != null && value.getOfferings().size() == 1;
+            return value.getDataset().getOffering() != null;
         }
         return true;
      }

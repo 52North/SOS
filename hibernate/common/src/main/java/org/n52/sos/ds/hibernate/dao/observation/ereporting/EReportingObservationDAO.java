@@ -71,7 +71,6 @@ import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationContext;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingSamplingPointDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
-import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 
@@ -198,22 +197,12 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
 
     private void addAssessmentType(Criteria c, String assessmentType) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EReportingDatasetEntity.class);
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.DELETED, false));
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
         detachedCriteria.createCriteria(EReportingDatasetEntity.SAMPLING_POINT)
                 .createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE).
                 add(Restrictions.ilike(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, assessmentType));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_ID)));
         c.add(Subqueries.propertyIn(EReportingDataEntity.PROPERTY_DATASET, detachedCriteria));
-    }
-
-    @Override
-    protected void addObservationContextToObservation(ObservationContext ctx,
-                                                      DataEntity<?> observation, Session session) throws
-            OwsExceptionReport {
-        AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
-        DatasetEntity series = seriesDAO.getOrInsertSeries(ctx, session);
-        ((DataEntity) observation).setDataset(series);
-        seriesDAO.updateSeriesWithFirstLatestValues(series, observation, session);
     }
 
     @Override

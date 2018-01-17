@@ -28,13 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
+import org.locationtech.jts.geom.Geometry;
+import org.n52.series.db.beans.FeatureEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 
-import org.locationtech.jts.geom.Geometry;
-
-public interface FeatureCreator<T extends FeatureOfInterest> {
+public interface FeatureCreator<T extends FeatureEntity> {
 
     AbstractFeature create(T f)
             throws OwsExceptionReport;

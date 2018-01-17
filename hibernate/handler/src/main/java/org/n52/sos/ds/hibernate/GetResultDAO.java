@@ -45,6 +45,9 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ResultTemplateEntity;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -58,13 +61,6 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractGetResultHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.ResultTemplate;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
@@ -137,11 +133,11 @@ public class GetResultDAO extends AbstractGetResultHandler {
             response.setService(request.getService());
             response.setVersion(request.getVersion());
             final Set<String> featureIdentifier = QueryHelper.getFeatures(this.featureQueryHandler, request, session);
-            final List<ResultTemplate> resultTemplates = queryResultTemplate(request, featureIdentifier, session);
+            final List<ResultTemplateEntity> resultTemplates = queryResultTemplate(request, featureIdentifier, session);
             if (isNotEmpty(resultTemplates)) {
-                final SosResultEncoding sosResultEncoding = createSosResultEncoding(resultTemplates.get(0).getResultEncoding());
-                final SosResultStructure sosResultStructure = createSosResultStructure(resultTemplates.get(0).getResultStructure());
-                final List<Observation<?>> observations;
+                final SosResultEncoding sosResultEncoding = createSosResultEncoding(resultTemplates.get(0).getEncoding());
+                final SosResultStructure sosResultStructure = createSosResultStructure(resultTemplates.get(0).getStructure());
+                final List<DataEntity<?>> observations;
                     observations = querySeriesObservation(request, featureIdentifier, session);
                 response.setResultValues(new ResultHandlingHelper(geometryHandler).createResultValuesFromObservations(observations,
                         sosResultEncoding, sosResultStructure, getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder()));
@@ -173,7 +169,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
 
     @Override
     public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+        return HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
     }
 
     /**
@@ -192,21 +188,18 @@ public class GetResultDAO extends AbstractGetResultHandler {
      *             If an error occurs.
      */
     @SuppressWarnings("unchecked")
-    protected List<Observation<?>> querySeriesObservation(GetResultRequest request,
+    protected List<DataEntity<?>> querySeriesObservation(GetResultRequest request,
             Collection<String> featureIdentifiers, Session session) throws OwsExceptionReport {
-        final Criteria c = createCriteriaFor(AbstractSeriesObservation.class, session);
+        final Criteria c = createCriteriaFor(DataEntity.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
 
-        List<Series> series = daoFactory.getSeriesDAO().getSeries(request.getObservedProperty(), featureIdentifiers, session);
+        List<DatasetEntity> series = daoFactory.getSeriesDAO().getSeries(request, featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {
-            c.add(Restrictions.in(AbstractSeriesObservation.SERIES, series));
+            c.add(Restrictions.in(DataEntity.PROPERTY_DATASET, series));
         }
 
-        if (request.isSetOffering()) {
-            addOfferingRestriction(c, request.getOffering());
-        }
         if (request.getTemporalFilter() != null && !request.getTemporalFilter().isEmpty()) {
             addTemporalFilter(c, request.getTemporalFilter());
         }
@@ -227,24 +220,12 @@ public class GetResultDAO extends AbstractGetResultHandler {
      *            Hibernate session
      * @return Resulting ResultTemplates as list
      */
-    private List<ResultTemplate> queryResultTemplate(final GetResultRequest request,
+    private List<ResultTemplateEntity> queryResultTemplate(final GetResultRequest request,
             final Set<String> featureIdentifier, final Session session) {
-        final List<ResultTemplate> resultTemplates =
+        final List<ResultTemplateEntity> resultTemplates =
                 daoFactory.getResultTemplateDAO().getResultTemplateObject(request.getOffering(), request.getObservedProperty(),
                         featureIdentifier, session);
         return resultTemplates;
-    }
-
-    /**
-     * Add offering identifier restriction to Hibernate Criteria
-     *
-     * @param c
-     *            Hibernate Criteria to add restriction
-     * @param offering
-     *            Offering identifier ot add
-     */
-    private void addOfferingRestriction(Criteria c, String offering) {
-        c.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
     }
 
     /**
@@ -280,8 +261,8 @@ public class GetResultDAO extends AbstractGetResultHandler {
     @SuppressWarnings("rawtypes")
     private Criteria createCriteriaFor(Class clazz, Session session) {
         return session.createCriteria(clazz).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq(AbstractObservation.DELETED, false))
-                .addOrder(Order.asc(AbstractObservation.PHENOMENON_TIME_START));
+                .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
+                .addOrder(Order.asc(DataEntity.PROPERTY_SAMPLING_TIME_START));
     }
 
     /**
@@ -299,7 +280,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
             throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
                 criteria.add(SpatialRestrictions.filter(
-                        AbstractObservation.SAMPLING_GEOMETRY,
+                        DataEntity.PROPERTY_GEOMETRY_ENTITY,
                         request.getSpatialFilter().getOperator(),
                         geometryHandler.switchCoordinateAxisFromToDatasourceIfNeededAndConvert(
                                 request.getSpatialFilter().getGeometry())));

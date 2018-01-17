@@ -38,7 +38,7 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CodespaceEntity;
-import org.n52.series.db.beans.DescribableEntity;
+import org.n52.series.db.beans.IdentifierNameDescriptionEntity;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.AbstractGML;
@@ -56,7 +56,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
     }
 
     public void addIdentifierNameDescription(AbstractGML abstractFeature,
-            DescribableEntity entity,
+            IdentifierNameDescriptionEntity entity,
                                              Session session) {
         addIdentifier(abstractFeature, entity, session);
         addName(abstractFeature, entity, session);
@@ -64,12 +64,12 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
     }
 
     public void addIdentifier(AbstractGML abstractFeature,
-            DescribableEntity entity,
+                    IdentifierNameDescriptionEntity entity,
                               Session session) {
         addIdentifier(entity, abstractFeature.getIdentifierCodeWithAuthority(), session);
     }
 
-    public void addIdentifier(DescribableEntity entity,
+    public void addIdentifier(IdentifierNameDescriptionEntity entity,
                               CodeWithAuthority identifier, Session session) {
         String value = identifier != null && identifier.isSetValue()
                                ? identifier.getValue() : null;
@@ -82,12 +82,12 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
     }
 
     public void addName(AbstractGML abstractFeature,
-            DescribableEntity entity,
+            IdentifierNameDescriptionEntity entity,
                         Session session) {
         addName(entity, abstractFeature.getFirstName(), session);
     }
 
-    public void addName(DescribableEntity entity, CodeType name,
+    public void addName(IdentifierNameDescriptionEntity entity, CodeType name,
                         Session session) {
         String value = name != null && name.isSetValue()
                                ? name.getValue() : null;
@@ -99,11 +99,11 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
     }
 
     public void addDescription(AbstractGML abstractFeature,
-            DescribableEntity entity) {
+            IdentifierNameDescriptionEntity entity) {
         addDescription(entity, abstractFeature.getDescription());
     }
 
-    public void addDescription(DescribableEntity entity,
+    public void addDescription(IdentifierNameDescriptionEntity entity,
                                String description) {
         if (description != null && !description.isEmpty()) {
             entity.setDescription(description);
@@ -111,13 +111,13 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
     }
 
     public void getAndAddIdentifierNameDescription(AbstractGML abstractFeature,
-            DescribableEntity entity) throws OwsExceptionReport {
+            IdentifierNameDescriptionEntity entity) throws OwsExceptionReport {
         abstractFeature.setIdentifier(getIdentifier(entity));
         abstractFeature.addName(getName(entity));
         abstractFeature.setDescription(getDescription(entity));
     }
 
-    public CodeWithAuthority getIdentifier(DescribableEntity entity) {
+    public CodeWithAuthority getIdentifier(IdentifierNameDescriptionEntity entity) {
         CodeWithAuthority identifier = new CodeWithAuthority(entity.getIdentifier());
         if (entity.isSetIdentifierCodespace()) {
             identifier.setCodeSpace(entity.getIdentifierCodespace().getName());
@@ -125,7 +125,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         return identifier;
     }
 
-    public CodeType getName(DescribableEntity entity) throws OwsExceptionReport {
+    public CodeType getName(IdentifierNameDescriptionEntity entity) throws OwsExceptionReport {
         if (entity.isSetName()) {
             CodeType name = new CodeType(entity.getName());
             if (entity.isSetNameCodespace()) {
@@ -140,7 +140,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         return null;
     }
 
-    public String getDescription(DescribableEntity entity) {
+    public String getDescription(IdentifierNameDescriptionEntity entity) {
         if (entity.isSetDescription()) {
             return entity.getDescription();
         }
@@ -156,7 +156,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         }
     }
 
-    public void insertNameAndDescription(DescribableEntity entity,
+    public void insertNameAndDescription(IdentifierNameDescriptionEntity entity,
                                          AbstractFeature abstractFeature,
                                          Session session) {
         if (abstractFeature.isSetName()) {

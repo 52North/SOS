@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.feature.SpecimenEntity;
+import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
+import org.n52.series.db.beans.feature.wml.MonitoringPointEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureVisitor;
-import org.n52.sos.ds.hibernate.entities.feature.Specimen;
-import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
-import org.n52.sos.ds.hibernate.entities.feature.wml.MonitoringPoint;
+import org.n52.sos.ds.hibernate.FeatureVisitor;
 
 public class HibernateFeatureVisitor
         implements FeatureVisitor<AbstractFeature> {
@@ -45,28 +45,28 @@ public class HibernateFeatureVisitor
         this.context = context;
     }
 
-    public AbstractFeature visit(FeatureOfInterest f) throws OwsExceptionReport {
-        if (f instanceof Specimen) {
-            return visit((Specimen) f);
-        } else if (f instanceof EnvironmentalMonitoringFacility) {
-            return visit((EnvironmentalMonitoringFacility) f);
-        } else if (f instanceof MonitoringPoint) {
-            return visit((MonitoringPoint) f);
+    public AbstractFeature visit(FeatureEntity f) throws OwsExceptionReport {
+        if (f instanceof SpecimenEntity) {
+            return visit((SpecimenEntity) f);
+        } else if (f instanceof EnvironmentalMonitoringFacilityEntity) {
+            return visit((EnvironmentalMonitoringFacilityEntity) f);
+        } else if (f instanceof MonitoringPointEntity) {
+            return visit((MonitoringPointEntity) f);
         }
         return new FeatureOfInterestCreator(context).create(f);
     }
 
-    public AbstractFeature visit(Specimen f) throws OwsExceptionReport {
+    public AbstractFeature visit(SpecimenEntity f) throws OwsExceptionReport {
         return new SpecimenCreator(context).create(f);
     }
 
-    public AbstractFeature visit(EnvironmentalMonitoringFacility f) throws OwsExceptionReport {
+    public AbstractFeature visit(EnvironmentalMonitoringFacilityEntity f) throws OwsExceptionReport {
         return new EnvironmentalMonitoringFacilityCreator(context)
                 .create(f);
     }
 
     @Override
-    public AbstractFeature visit(MonitoringPoint f) throws OwsExceptionReport {
+    public AbstractFeature visit(MonitoringPointEntity f) throws OwsExceptionReport {
         return new MonitoringPointCreator(context).create(f);
     }
 }

@@ -920,7 +920,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
             SosObservationOffering sosOffering) {
         sosOffering.setFeatureOfInterestTypes(toStringSet(offering.getFeatureTypes()));
     }
-    
+
 
     protected void setUpResponseFormatForOffering(SosObservationOffering sosOffering) {
         // initialize as new HashSet so that collection is modifiable

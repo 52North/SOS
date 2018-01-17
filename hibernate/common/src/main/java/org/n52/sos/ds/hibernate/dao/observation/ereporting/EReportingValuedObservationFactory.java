@@ -28,18 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
-import org.n52.series.db.beans.BlobDataEntity;
-import org.n52.series.db.beans.BooleanDataEntity;
-import org.n52.series.db.beans.CategoryDataEntity;
-import org.n52.series.db.beans.ComplexDataEntity;
-import org.n52.series.db.beans.CountDataEntity;
-import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.GeometryDataEntity;
-import org.n52.series.db.beans.ProfileDataEntity;
-import org.n52.series.db.beans.QuantityDataEntity;
-import org.n52.series.db.beans.ReferencedDataEntity;
-import org.n52.series.db.beans.TextDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingBlobDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingBooleanDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingCategoryDataEntity;
@@ -65,57 +54,57 @@ public class EReportingValuedObservationFactory
     }
 
     @Override
-    public Class<? extends BlobDataEntity> blobClass() {
+    public Class<? extends EReportingBlobDataEntity> blobClass() {
         return EReportingBlobDataEntity.class;
     }
 
     @Override
-    public Class<? extends BooleanDataEntity> truthClass() {
+    public Class<? extends EReportingBooleanDataEntity> truthClass() {
         return EReportingBooleanDataEntity.class;
     }
 
     @Override
-    public Class<? extends CategoryDataEntity> categoryClass() {
+    public Class<? extends EReportingCategoryDataEntity> categoryClass() {
         return EReportingCategoryDataEntity.class;
     }
 
     @Override
-    public Class<? extends CountDataEntity> countClass() {
+    public Class<? extends EReportingCountDataEntity> countClass() {
         return EReportingCountDataEntity.class;
     }
 
     @Override
-    public Class<? extends GeometryDataEntity> geometryClass() {
+    public Class<? extends EReportingGeometryDataEntity> geometryClass() {
         return EReportingGeometryDataEntity.class;
     }
 
     @Override
-    public Class<? extends QuantityDataEntity> numericClass() {
+    public Class<? extends EReportingQuantityDataEntity> numericClass() {
         return EReportingQuantityDataEntity.class;
     }
 
     @Override
-    public Class<? extends DataArrayDataEntity> sweDataArrayClass() {
+    public Class<? extends EReportingDataArrayDataEntity> sweDataArrayClass() {
         return EReportingDataArrayDataEntity.class;
     }
 
     @Override
-    public Class<? extends TextDataEntity> textClass() {
+    public Class<? extends EReportingTextDataEntity> textClass() {
         return EReportingTextDataEntity.class;
     }
 
     @Override
-    public Class<? extends ComplexDataEntity> complexClass() {
+    public Class<? extends EReportingComplexDataEntity> complexClass() {
         return EReportingComplexDataEntity.class;
     }
 
     @Override
-    public Class<? extends ProfileDataEntity> profileClass() {
+    public Class<? extends EReportingProfileDataEntity> profileClass() {
         return EReportingProfileDataEntity.class;
     }
 
     @Override
-    public Class<? extends ReferencedDataEntity> referenceClass() {
+    public Class<? extends EReportingReferencedDataEntity> referenceClass() {
         return EReportingReferencedDataEntity.class;
     }
 

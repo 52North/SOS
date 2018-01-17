@@ -26,35 +26,36 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.create;
+package org.n52.sos.ds.hibernate;
 
-import org.locationtech.jts.geom.Geometry;
+import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.feature.SpecimenEntity;
+import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
+import org.n52.series.db.beans.feature.wml.MonitoringPointEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
-public class FeatureOfInterestCreator extends AbstractFeatureOfInerestCreator<FeatureEntity> {
+public interface FeatureVisitor<T extends AbstractFeature> {
 
-    public FeatureOfInterestCreator(FeatureVisitorContext context) {
-        super(context);
+    default T visit(AbstractFeatureEntity<?> f) throws OwsExceptionReport {
+        if (f instanceof FeatureEntity) {
+            return visit((FeatureEntity) f);
+        } else if (f instanceof SpecimenEntity) {
+            return visit((SpecimenEntity) f);
+        } else if (f instanceof EnvironmentalMonitoringFacilityEntity) {
+            return visit((EnvironmentalMonitoringFacilityEntity) f);
+        } else if (f instanceof MonitoringPointEntity) {
+            return visit((MonitoringPointEntity) f);
+        }
+        return null;
     }
 
-    @Override
-    public AbstractFeature create(FeatureEntity f)
-            throws OwsExceptionReport {
-        return createFeature(f);
-    }
+    T visit(FeatureEntity f) throws OwsExceptionReport;
 
-    @Override
-    public Geometry createGeometry(FeatureEntity feature) throws OwsExceptionReport {
-        return createGeometryFrom(feature);
-    }
+    T visit(SpecimenEntity f) throws OwsExceptionReport;
 
-    @Override
-    protected AbstractFeature getFeatureType(CodeWithAuthority identifier) {
-        return new SamplingFeature(identifier);
-    }
+    T visit(EnvironmentalMonitoringFacilityEntity f) throws OwsExceptionReport;
 
+    T visit(MonitoringPointEntity f) throws OwsExceptionReport;
 }

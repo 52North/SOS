@@ -36,6 +36,10 @@ import org.hibernate.Transaction;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ResultTemplateEntity;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -52,11 +56,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.ResultTemplate;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
@@ -121,16 +120,16 @@ public class InsertResultTemplateDAO
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
             OmObservationConstellation sosObsConst = request.getObservationTemplate();
-            ObservationConstellation obsConst = null;
+            DatasetEntity obsConst = null;
             for (String offeringID : sosObsConst.getOfferings()) {
-                obsConst = daoFactory.getObservationConstellationDAO().checkObservationConstellation(sosObsConst,
+                obsConst = daoFactory.getSeriesDAO().checkSeries(sosObsConst,
                         offeringID, session, Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
                 if (obsConst != null) {
                     // check if result structure elements are supported
                     checkResultStructure(request.getResultStructure(),
                             obsConst.getObservableProperty().getIdentifier(), sosObsConst);
-                    Procedure procedure = null;
-                    AbstractFeatureOfInterest feature = null;
+                    ProcedureEntity procedure = null;
+                    AbstractFeatureEntity feature = null;
                     if (sosObsConst.isSetFeatureOfInterest()) {
                         FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
                         feature = featureOfInterestDAO.checkOrInsert(sosObsConst.getFeatureOfInterest(), session);
@@ -167,11 +166,11 @@ public class InsertResultTemplateDAO
 
     @Override
     public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+        return HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
     }
 
-    private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, ObservationConstellation obsConst,
-            Procedure procedure, AbstractFeatureOfInterest feature, Session session)
+    private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, DatasetEntity obsConst,
+            ProcedureEntity procedure, AbstractFeatureEntity feature, Session session)
             throws OwsExceptionReport {
         daoFactory.getResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
     }

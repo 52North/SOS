@@ -22,6 +22,7 @@
 
     <bean class="org.n52.series.db.dao.DefaultDbQueryFactory"/>
 
+    <!--
     <bean id="insertRepository"
           class="org.n52.proxy.db.da.InsertRepository"/>
 
@@ -37,7 +38,7 @@
             </bean>
         </property>
     </bean>
-
+    -->
 
     <!-- <bean id="getFeatureOfInterestDAO"
           class="org.n52.sos.ds.hibernate.GetFeatureOfInterestDAO"/> -->

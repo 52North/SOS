@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.procedure.generator;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -310,13 +311,13 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
      * @return List with SWE Coordinate
      */
     @SuppressWarnings("unchecked")
-    private List<SweCoordinate<Double>> createCoordinatesForPosition(Object longitude, Object latitude,
+    private List<SweCoordinate<BigDecimal>> createCoordinatesForPosition(Object longitude, Object latitude,
             Object altitude) {
         SweQuantity yq = createSweQuantity(latitude, SweConstants.Y_AXIS, procedureSettings().getLatLongUom());
         SweQuantity xq = createSweQuantity(longitude, SweConstants.X_AXIS, procedureSettings().getLatLongUom());
         SweQuantity zq = createSweQuantity(altitude, SweConstants.Z_AXIS, procedureSettings().getAltitudeUom());
         // TODO add Integer: Which SweSimpleType to use?
-        return Lists.<SweCoordinate<Double>> newArrayList(new SweCoordinate<>(SweCoordinateNames.NORTHING, yq),
+        return Lists.<SweCoordinate<BigDecimal>> newArrayList(new SweCoordinate<>(SweCoordinateNames.NORTHING, yq),
                 new SweCoordinate<>(SweCoordinateNames.EASTING, xq),
                 new SweCoordinate<>(SweCoordinateNames.ALTITUDE, zq));
     }

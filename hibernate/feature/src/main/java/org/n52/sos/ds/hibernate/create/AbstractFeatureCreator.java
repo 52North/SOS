@@ -40,20 +40,19 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.series.db.beans.DescribableEntity;
+import org.n52.series.db.beans.FeatureEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 
 import com.google.common.collect.Lists;
 
 
-public abstract class AbstractFeatureCreator<T extends FeatureOfInterest>
+public abstract class AbstractFeatureCreator<T extends FeatureEntity>
         implements FeatureCreator<T> {
 
     public static final String CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS =
@@ -64,15 +63,15 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest>
         this.context = context;
     }
 
-    public CodeWithAuthority getIdentifier(IdentifierNameDescriptionEntity entity) {
+    public CodeWithAuthority getIdentifier(DescribableEntity entity) {
         CodeWithAuthority identifier = new CodeWithAuthority(entity.getIdentifier());
-        if (entity.isSetCodespace()) {
-            identifier.setCodeSpace(entity.getCodespace().getCodespace());
+        if (entity.isSetIdentifierCodespace()) {
+            identifier.setCodeSpace(entity.getIdentifierCodespace().getName());
         }
         return identifier;
     }
 
-    protected void addNameAndDescription(Locale requestedLocale, FeatureOfInterest feature,
+    protected void addNameAndDescription(Locale requestedLocale, FeatureEntity feature,
             AbstractFeature abstractFeature) throws OwsExceptionReport {
         I18NDAO<I18NFeatureMetadata> i18nDAO = getContext().getI18NDAORepository().getDAO(I18NFeatureMetadata.class);
         // set name as human readable identifier if set
@@ -117,15 +116,15 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest>
         }
     }
 
-    protected CodeType getName(IdentifierNameDescriptionEntity entity) throws OwsExceptionReport {
+    protected CodeType getName(DescribableEntity entity) throws OwsExceptionReport {
         if (entity.isSetName()) {
             CodeType name = new CodeType(entity.getName());
-            if (entity.isSetCodespaceName()) {
+            if (entity.isSetNameCodespace()) {
                 try {
-                    name.setCodeSpace(new URI(entity.getCodespaceName().getCodespace()));
+                    name.setCodeSpace(new URI(entity.getNameCodespace().getName()));
                 } catch (URISyntaxException e) {
                     throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'",
-                            entity.getCodespaceName().getCodespace());
+                            entity.getNameCodespace().getName());
                 }
             }
             return name;
@@ -133,7 +132,7 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest>
         return null;
     }
 
-    protected String getDescription(IdentifierNameDescriptionEntity entity) {
+    protected String getDescription(DescribableEntity entity) {
         if (entity.isSetDescription()) {
             return entity.getDescription();
         }
@@ -147,12 +146,9 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest>
      * @return geometry
      * @throws OwsExceptionReport
      */
-    protected Geometry createGeometryFrom(FeatureOfInterest feature) throws OwsExceptionReport {
+    protected Geometry createGeometryFrom(FeatureEntity feature) throws OwsExceptionReport {
         if (feature.isSetGeometry()) {
-            return getContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(feature.getGeom());
-        } else if (feature.isSetLongLat()) {
-            return getContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
-                    new HibernateGeometryCreator().createGeometry(feature, getContext().getGeometryHandler()));
+            return getContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(feature.getGeometryEntity().getGeometry());
         } else {
             if (!feature.isSetUrl() && getContext().getSession() != null) {
                 if (getContext().createFeatureGeometryFromSamplingGeometries()) {

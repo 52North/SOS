@@ -39,6 +39,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.series.db.beans.ResultTemplateEntity;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -48,8 +49,6 @@ import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateRequest;
 import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateResponse;
 import org.n52.sos.ds.AbstractDeleteResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.ResultTemplate;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.sos.concrete.DeleteResultTemplateInvalidParameterValueException;
 
@@ -103,7 +102,7 @@ public class DeleteResultTemplateHandler
 
     @Override
     public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+        return HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
     }
 
     protected void handleHibernateException(HibernateException he) throws OwsExceptionReport {
@@ -116,7 +115,7 @@ public class DeleteResultTemplateHandler
             throws InvalidParameterValueException {
         List<String> deletedResultTemplates = Lists.newArrayList();
         for (String resultTemplate : resultTemplates) {
-            final ResultTemplate templateObject =
+            final ResultTemplateEntity templateObject =
                     daoFactory.getResultTemplateDAO().getResultTemplateObject(resultTemplate, session);
             if (templateObject == null) {
                 throw new InvalidParameterValueException(DeleteResultTemplateConstants.PARAMETERS.resultTemplate,
@@ -136,7 +135,7 @@ public class DeleteResultTemplateHandler
         for (Map.Entry<String, String> observedPropertyOfferingPair : observedPropertyOfferingPairs) {
             final String offering = observedPropertyOfferingPair.getValue();
             final String observedProperty = observedPropertyOfferingPair.getKey();
-            final ResultTemplate resultTemplateObject =
+            final ResultTemplateEntity resultTemplateObject =
                     daoFactory.getResultTemplateDAO().getResultTemplateObject(offering, observedProperty, session);
             if (resultTemplateObject == null) {
                 exceptions.add(new DeleteResultTemplateInvalidParameterValueException(offering, observedProperty));

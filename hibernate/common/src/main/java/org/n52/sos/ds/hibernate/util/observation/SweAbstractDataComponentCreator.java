@@ -155,7 +155,7 @@ public class SweAbstractDataComponentCreator
             throws OwsExceptionReport {
         SweDataArray array = new SweDataArray();
         // TODO
-        
+
        return array;
     }
 

@@ -111,8 +111,8 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
 
     private void addPhenomenonTimeProjection(Criteria c) {
         ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.min(EReportingDataEntity.PROPERTY_PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(EReportingDataEntity.PROPERTY_PHENOMENON_TIME_END));
+        projectionList.add(Projections.min(EReportingDataEntity.PROPERTY_SAMPLING_TIME_START));
+        projectionList.add(Projections.max(EReportingDataEntity.PROPERTY_SAMPLING_TIME_END));
         c.setProjection(projectionList);
     }
 

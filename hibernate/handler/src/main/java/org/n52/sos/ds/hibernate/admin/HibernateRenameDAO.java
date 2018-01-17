@@ -35,10 +35,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.RenameDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.exception.NoSuchObservablePropertyException;
 
 /**
@@ -60,8 +60,8 @@ public class HibernateRenameDAO implements RenameDAO {
         try {
             s = sessionHolder.getSession();
             t = s.beginTransaction();
-            ObservableProperty op = (ObservableProperty) s.createCriteria(ObservableProperty.class)
-                    .add(Restrictions.eq(ObservableProperty.IDENTIFIER, oldName)).uniqueResult();
+            PhenomenonEntity op = (PhenomenonEntity) s.createCriteria(PhenomenonEntity.class)
+                    .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, oldName)).uniqueResult();
 
             if (op == null) {
                 throw new NoSuchObservablePropertyException(oldName);

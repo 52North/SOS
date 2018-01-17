@@ -29,11 +29,11 @@
 package org.n52.sos.ds.hibernate.create;
 
 import java.net.URI;
-import java.util.Locale;
 
-import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.locationtech.jts.geom.Geometry;
+import org.n52.series.db.beans.feature.SpecimenEntity;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -49,13 +49,8 @@ import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.w3c.xlink.Reference;
 import org.n52.shetland.w3c.xlink.Referenceable;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.feature.Specimen;
-import org.n52.sos.util.GeometryHandler;
 
-import org.locationtech.jts.geom.Geometry;
-
-public class SpecimenCreator extends AbstractFeatureOfInerestCreator<Specimen> {
+public class SpecimenCreator extends AbstractFeatureOfInerestCreator<SpecimenEntity> {
 
 
     public SpecimenCreator(FeatureVisitorContext context) {
@@ -63,7 +58,7 @@ public class SpecimenCreator extends AbstractFeatureOfInerestCreator<Specimen> {
     }
 
     @Override
-    public AbstractFeature create(Specimen f) throws OwsExceptionReport {
+    public AbstractFeature create(SpecimenEntity f) throws OwsExceptionReport {
          AbstractFeature absFeat = createFeature(f);
          if (absFeat instanceof SfSpecimen) {
              SfSpecimen specimen = (SfSpecimen)absFeat;
@@ -102,7 +97,7 @@ public class SpecimenCreator extends AbstractFeatureOfInerestCreator<Specimen> {
          return absFeat;
     }
 
-    private Time getSamplingTime(Specimen s) {
+    private Time getSamplingTime(SpecimenEntity s) {
         final DateTime phenStartTime = new DateTime(s.getSamplingTimeStart(), DateTimeZone.UTC);
         DateTime phenEndTime;
         if (s.getSamplingTimeEnd() != null) {
@@ -122,7 +117,7 @@ public class SpecimenCreator extends AbstractFeatureOfInerestCreator<Specimen> {
     }
 
     @Override
-    public Geometry createGeometry(Specimen feature) throws OwsExceptionReport {
+    public Geometry createGeometry(SpecimenEntity feature) throws OwsExceptionReport {
         return createGeometryFrom(feature);
     }
 

@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.series.db.beans.ResultTemplateEntity;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -40,8 +41,6 @@ import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.sos.ds.AbstractGetResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.ResultTemplate;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservablePropertyCombination;
 
@@ -76,14 +75,14 @@ public class GetResultTemplateDAO
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            ResultTemplate resultTemplate = daoFactory.getResultTemplateDAO()
+            ResultTemplateEntity resultTemplate = daoFactory.getResultTemplateDAO()
                     .getResultTemplateObject(request.getOffering(), request.getObservedProperty(), session);
             if (resultTemplate != null) {
                 GetResultTemplateResponse response = new GetResultTemplateResponse();
                 response.setService(request.getService());
                 response.setVersion(request.getVersion());
-                response.setResultEncoding(createSosResultEncoding(resultTemplate.getResultEncoding()));
-                response.setResultStructure(createSosResultStructure(resultTemplate.getResultStructure()));
+                response.setResultEncoding(createSosResultEncoding(resultTemplate.getEncoding()));
+                response.setResultStructure(createSosResultStructure(resultTemplate.getStructure()));
                 return response;
             }
             throw new NoSweCommonEncodingForOfferingObservablePropertyCombination(request.getOffering(),
@@ -98,6 +97,6 @@ public class GetResultTemplateDAO
 
     @Override
     public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+        return HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
     }
 }

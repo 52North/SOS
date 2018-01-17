@@ -45,6 +45,8 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -52,9 +54,6 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
@@ -141,14 +140,14 @@ public class GetObservationByIdDao
         }
     }
 
-    private List<Observation<?>> checkObservations(List<Observation<?>> queryObservation,
+    private List<DataEntity<?>> checkObservations(List<DataEntity<?>> queryObservation,
             GetObservationByIdRequest request) {
         if (!request.isCheckForDuplicity()) {
             return queryObservation;
         }
-        List<Observation<?>> checkedObservations = Lists.newArrayList();
+        List<DataEntity<?>> checkedObservations = Lists.newArrayList();
         Set<String> identifiers = Sets.newHashSet();
-        for (Observation<?> observation : queryObservation) {
+        for (DataEntity<?> observation : queryObservation) {
             if (!identifiers.contains(observation.getIdentifier())) {
                 identifiers.add(observation.getIdentifier());
                 checkedObservations.add(observation);
@@ -169,11 +168,11 @@ public class GetObservationByIdDao
      *             If an error occurs during querying the database
      */
     @SuppressWarnings("unchecked")
-    private List<Observation<?>> queryObservation(GetObservationByIdRequest request, Session session)
+    private List<DataEntity<?>> queryObservation(GetObservationByIdRequest request, Session session)
             throws OwsExceptionReport {
         Criteria c = daoFactory.getObservationDAO().getObservationClassCriteriaForResultModel(request.getResultModel(),
                 session);
-        c.add(Restrictions.in(AbstractObservation.IDENTIFIER, request.getObservationIdentifier()));
+        c.add(Restrictions.in(DataEntity.IDENTIFIER, request.getObservationIdentifier()));
         LOGGER.debug("QUERY queryObservation(request): {}", HibernateHelper.getSqlString(c));
         return c.list();
     }
@@ -196,16 +195,16 @@ public class GetObservationByIdDao
         final long start = System.currentTimeMillis();
         final List<OmObservation> result = new LinkedList<OmObservation>();
         // get valid featureOfInterest identifier
-        List<Series> serieses = daoFactory.getSeriesDAO().getSeries(request, session);
+        List<DatasetEntity> serieses = daoFactory.getSeriesDAO().getSeries(request, session);
         HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
-        for (Series series : serieses) {
+        for (DatasetEntity series : serieses) {
             ObservationStream createSosObservationFromSeries =
                     HibernateObservationUtilities.createSosObservationFromSeries(series, request,
                             getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext, session);
             OmObservation observationTemplate = createSosObservationFromSeries.next();
             HibernateSeriesStreamingValue streamingValue =
                     new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series.getSeriesId(), request.isCheckForDuplicity());
+                            series.getId(), request.isCheckForDuplicity());
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setObservationTemplate(observationTemplate);
             observationTemplate.setValue(streamingValue);

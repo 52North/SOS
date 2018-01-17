@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.GeometryVisitor;
-import org.n52.sos.ds.hibernate.entities.feature.Specimen;
-import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
-
 import org.locationtech.jts.geom.Geometry;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.feature.SpecimenEntity;
+import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
+import org.n52.series.db.beans.feature.wml.MonitoringPointEntity;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.GeometryVisitor;
 
 public class HibernateGeometryVisitor
         implements GeometryVisitor {
@@ -45,21 +45,28 @@ public class HibernateGeometryVisitor
         this.context = context;
     }
 
-    public Geometry visit(FeatureOfInterest f) throws OwsExceptionReport {
-        if (f instanceof Specimen) {
-            return visit((Specimen) f);
-        } else if (f instanceof EnvironmentalMonitoringFacility) {
-            return visit((EnvironmentalMonitoringFacility) f);
+    public Geometry visit(FeatureEntity f) throws OwsExceptionReport {
+        if (f instanceof SpecimenEntity) {
+            return visit((SpecimenEntity) f);
+        } else if (f instanceof EnvironmentalMonitoringFacilityEntity) {
+            return visit((EnvironmentalMonitoringFacilityEntity) f);
         }
         return new FeatureOfInterestCreator(context).createGeometry(f);
     }
 
-    public Geometry visit(Specimen f) throws OwsExceptionReport {
+    public Geometry visit(SpecimenEntity f) throws OwsExceptionReport {
         return new SpecimenCreator(context).createGeometry(f);
     }
 
-    public Geometry visit(EnvironmentalMonitoringFacility f) throws OwsExceptionReport {
+    public Geometry visit(EnvironmentalMonitoringFacilityEntity f) throws OwsExceptionReport {
         return new EnvironmentalMonitoringFacilityCreator(context)
+                .createGeometry(f);
+    }
+
+    @Override
+    public Geometry visit(MonitoringPointEntity f)
+            throws OwsExceptionReport {
+        return new MonitoringPointCreator(context)
                 .createGeometry(f);
     }
 

@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -39,6 +41,15 @@ import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.series.db.beans.DataArrayDataEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
+import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.EReportingData;
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.aqd.ReportObligations;
+import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.Time;
@@ -47,29 +58,30 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.om.TimeValuePair;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.OMHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingQualityDAO;
+import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
+import org.n52.sos.ds.hibernate.util.observation.ParameterAdder;
+import org.n52.sos.ds.hibernate.util.observation.RelatedObservationAdder;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSConverter;
 import org.n52.svalbard.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +96,7 @@ import org.locationtech.jts.geom.Geometry;
  * @since 4.1.0
  *
  */
-public abstract class AbstractHibernateStreamingValue extends StreamingValue<AbstractValuedObservation<?>> {
+public abstract class AbstractHibernateStreamingValue extends StreamingValue<DataEntity<?>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateStreamingValue.class);
     protected final HibernateSessionHolder sessionHolder;
@@ -111,38 +123,38 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     public ObservationStream merge() throws OwsExceptionReport {
         Map<String, OmObservation> observations = Maps.newHashMap();
         while (hasNext()) {
-            AbstractValuedObservation<?> nextEntity = nextEntity();
+            DataEntity<?> nextEntity = nextEntity();
             boolean mergableObservationValue = checkForMergability(nextEntity);
             OmObservation observation = null;
-            if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
-                observation = observations.get(nextEntity.getDiscriminator());
+            if (observations.containsKey(getDiscriminator(nextEntity)) && mergableObservationValue) {
+                observation = observations.get(getDiscriminator(nextEntity));
             } else {
                 observation = getObservationTemplate().cloneTemplate();
                 addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
-                if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
-                    observations.put(Long.toString(nextEntity.getObservationId()), observation);
+                if (!mergableObservationValue && getDiscriminator(nextEntity) == null) {
+                    observations.put(Long.toString(nextEntity.getId()), observation);
                 } else {
-                    observations.put(nextEntity.getDiscriminator(), observation);
+                    observations.put(getDiscriminator(nextEntity), observation);
                 }
             }
-            nextEntity.mergeValueToObservation(observation, getResponseFormat());
+            mergeValueToObservation(nextEntity, observation, getResponseFormat());
             sessionHolder.getSession().evict(nextEntity);
         }
         return ObservationStream.of(observations.values());
     }
 
-    private boolean checkForMergability(AbstractValuedObservation<?> nextEntity) {
-        return !(nextEntity instanceof SweDataArrayValuedObservation);
+    private boolean checkForMergability(DataEntity<?> nextEntity) {
+        return !(nextEntity instanceof DataArrayDataEntity);
     }
 
-    private void addSpecificValuesToObservation(OmObservation observation, AbstractValuedObservation<?> value, Extensions extensions) {
+    private void addSpecificValuesToObservation(OmObservation observation, DataEntity<?> value, Extensions extensions) {
         boolean newSession = false;
         try {
             if (session == null) {
                 session = sessionHolder.getSession();
                 newSession = true;
             }
-            value.addValueSpecificDataToObservation(observation, session, extensions);
+            addValueSpecificDataToObservation(value, observation, session, extensions);
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying times", owse);
         } finally {
@@ -164,7 +176,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     }
 
     /**
-     * Create a {@link TimeValuePair} from {@link AbstractValuedObservation}
+     * Create a {@link TimeValuePair} from {@link DataEntity}
      *
      * @param abstractValue
      *            {@link AbstractValueObservation} to create {@link TimeValuePair} from
@@ -172,36 +184,36 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      * @throws OwsExceptionReport
      *             If an error occurs when getting the value
      */
-    protected TimeValuePair createTimeValuePairFrom(ValuedObservation<?> abstractValue) throws OwsExceptionReport {
-        return new TimeValuePair(createPhenomenonTime(abstractValue), abstractValue.accept(new ObservationValueCreator()));
+    protected TimeValuePair createTimeValuePairFrom(DataEntity<?> abstractValue) throws OwsExceptionReport {
+        return new TimeValuePair(createPhenomenonTime(abstractValue), new ObservationValueCreator().visit(abstractValue));
     }
 
     /**
-     * Add {@link AbstractValuedObservation} data to {@link OmObservation}
+     * Add {@link DataEntity} data to {@link OmObservation}
      *
      * @param observation
      *            {@link OmObservation} to add data
      * @param abstractValue
-     *            {@link AbstractValuedObservation} to get data from
+     *            {@link DataEntity} to get data from
      * @throws OwsExceptionReport
      *             If an error occurs when getting the value
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Deprecated
-    protected void addValuesToObservation(OmObservation observation, ValuedObservation<?> abstractValue)
+    protected void addValuesToObservation(OmObservation observation, DataEntity<?> abstractValue)
             throws OwsExceptionReport {
-        observation.setObservationID(Long.toString(abstractValue.getObservationId()));
+        observation.setObservationID(Long.toString(abstractValue.getId()));
         if (abstractValue.isSetIdentifier()) {
             CodeWithAuthority identifier = new CodeWithAuthority(abstractValue.getIdentifier());
-            if (abstractValue.isSetCodespace()) {
-                identifier.setCodeSpace(abstractValue.getCodespace().getCodespace());
+            if (abstractValue.isSetIdentifierCodespace()) {
+                identifier.setCodeSpace(abstractValue.getIdentifierCodespace().getName());
             }
             observation.setIdentifier(identifier);
         }
         if (abstractValue.isSetDescription()) {
             observation.setDescription(abstractValue.getDescription());
         }
-        Value<?> value = abstractValue.accept(new ObservationValueCreator());
+        Value<?> value = new ObservationValueCreator().visit(abstractValue);
         if (!observation.getObservationConstellation().isSetObservationType()) {
             observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));
         }
@@ -211,28 +223,28 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     }
 
     /**
-     * Get the observation ids from {@link AbstractValuedObservation}s
+     * Get the observation ids from {@link DataEntity}s
      *
      * @param abstractValuesResult
-     *            {@link AbstractValuedObservation}s to get ids from
+     *            {@link DataEntity}s to get ids from
      * @return Set with ids
      */
-    protected Set<Long> getObservationIds(Collection<? extends BaseObservation> abstractValuesResult) {
+    protected Set<Long> getObservationIds(Collection<? extends DataEntity> abstractValuesResult) {
         Set<Long> ids = new HashSet<>(abstractValuesResult.size());
-        for (BaseObservation abstractValue : abstractValuesResult) {
-            ids.add(abstractValue.getObservationId());
+        for (DataEntity abstractValue : abstractValuesResult) {
+            ids.add(abstractValue.getId());
         }
         return ids;
     }
 
     /**
-     * Create the phenomenon time from {@link AbstractValuedObservation}
+     * Create the phenomenon time from {@link DataEntity}
      *
      * @param abstractValue
-     *            {@link AbstractValuedObservation} for get time from
+     *            {@link DataEntity} for get time from
      * @return phenomenon time
      */
-    protected Time createPhenomenonTime(TemporalReferencedObservation abstractValue) {
+    protected Time createPhenomenonTime(DataEntity<?> abstractValue) {
         // create time element
         final DateTime phenStartTime = new DateTime(abstractValue.getPhenomenonTimeStart(), DateTimeZone.UTC);
         DateTime phenEndTime;
@@ -253,7 +265,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      *            maximum {@link AbstractTemporalReferencedObservation}
      * @return phenomenon time
      */
-    protected Time createPhenomenonTime(TemporalReferencedObservation minTime, TemporalReferencedObservation maxTime) {
+    protected Time createPhenomenonTime(DataEntity<?> minTime, DataEntity<?> maxTime) {
         // create time element
 
         final DateTime phenStartTime = DateTimeHelper.makeDateTime(minTime.getPhenomenonTimeStart());
@@ -273,7 +285,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      *            {@link AbstractTemporalReferencedObservation} to create result time from
      * @return result time
      */
-    protected TimeInstant createResutlTime(TemporalReferencedObservation maxTime) {
+    protected TimeInstant createResutlTime(DataEntity<?> maxTime) {
         DateTime dateTime = DateTimeHelper.makeDateTime(maxTime.getResultTime());
         return new TimeInstant(dateTime);
     }
@@ -299,7 +311,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      *            maximum {@link AbstractTemporalReferencedObservation}
      * @return valid time or null if valid time is not set in datasource
      */
-    protected Time createValidTime(TemporalReferencedObservation minTime, TemporalReferencedObservation maxTime) {
+    protected Time createValidTime(DataEntity<?> minTime, DataEntity<?> maxTime) {
         // create time element
         if (minTime.getValidTimeStart() != null && maxTime.getValidTimeEnd() != null) {
             final DateTime startTime = DateTimeHelper.makeDateTime(minTime.getValidTimeStart());
@@ -346,11 +358,11 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     }
 
     /**
-     * Get internal {@link Value} from {@link AbstractValuedObservation}
+     * Get internal {@link Value} from {@link DataEntity}
      *
      * @param abstractValue
-     *            {@link AbstractValuedObservation} to get {@link Value} from
-     * @return {@link Value} or null if the concrete {@link AbstractValuedObservation} is
+     *            {@link DataEntity} to get {@link Value} from
+     * @return {@link Value} or null if the concrete {@link DataEntity} is
      *         not supported
      * @throws OwsExceptionReport
      *             If an error occurs when creating
@@ -359,8 +371,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      * User {@link Observation#accept(org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor)}
      */
     @Deprecated
-    protected Value<?> getValueFrom(ValuedObservation<?> abstractValue) throws OwsExceptionReport {
-        Value<?> value = abstractValue.accept(new ObservationValueCreator());
+    protected Value<?> getValueFrom(DataEntity<?> abstractValue) throws OwsExceptionReport {
+        Value<?> value = new ObservationValueCreator().visit(abstractValue);
 //        if (value != null && abstractValue.isSetUnit()) {
 //            value.setUnit(abstractValue.getUnit().getUnit());
 //        }
@@ -382,6 +394,189 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     public DaoFactory getDaoFactory() {
         return daoFactory;
+    }
+
+    /**
+     * Add {@code AbstractValue} data to {@code OmObservation}
+     *
+     * @param observation {@link OmObservation} to add data
+     * @param responseFormat
+     *
+     * @throws OwsExceptionReport If an error occurs when getting the value
+     */
+    public OmObservation addValuesToObservation(DataEntity<?> o, OmObservation observation, String responseFormat)
+            throws OwsExceptionReport {
+        observation.setObservationID(Long.toString(o.getId()));
+        if (!observation.isSetIdentifier() && o.isSetIdentifier()) {
+            CodeWithAuthority identifier = new CodeWithAuthority(o.getIdentifier());
+            if (o.isSetIdentifierCodespace()) {
+                identifier.setCodeSpace(o.getIdentifierCodespace().getName());
+            }
+            observation.setIdentifier(identifier);
+        }
+        if (!observation.isSetName() && o.isSetName()) {
+            CodeType name = new CodeType(o.getName());
+            if (o.isSetNameCodespace()) {
+                try {
+                    name.setCodeSpace(new URI(o.getNameCodespace().getName()));
+                } catch (URISyntaxException e) {
+                    throw new NoApplicableCodeException().causedBy(e).withMessage("Invalid codespace value: {}", o.getNameCodespace().getName());
+                }
+            }
+            observation.setName(name);
+        }
+        if (!observation.isSetDescription() && o.isSetDescription()) {
+            observation.setDescription(o.getDescription());
+        }
+        Value<?> value = new ObservationValueCreator().visit(o);
+        if (!value.isSetUnit()
+                && observation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty
+                && ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
+                        .isSetUnit()) {
+            value.setUnit( ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
+                        .getUnit());
+        }
+        if (!observation.getObservationConstellation().isSetObservationType()) {
+            observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));
+        }
+        observation.setResultTime(createResutlTime(o.getResultTime()));
+        observation.setValidTime(createValidTime(o.getValidTimeStart(), o.getValidTimeEnd()));
+        if (o.isSetGeometryEntity()) {
+            observation.addParameter(createSpatialFilteringProfileParameter(JTSConverter.convert(o.getGeometryEntity().getGeometry())));
+        }
+        addRelatedObservation(o, observation);
+        addParameter(o, observation);
+        addValueSpecificDataToObservation(o, observation, responseFormat);
+        addObservationValueToObservation(o, observation, value, responseFormat);
+        return observation;
+    }
+
+    protected void addRelatedObservation(DataEntity<?> o, OmObservation observation) throws OwsExceptionReport {
+        new RelatedObservationAdder(observation, o).add();
+    }
+
+    protected void addParameter(DataEntity<?> o, OmObservation observation) throws OwsExceptionReport {
+        new ParameterAdder(observation, o).add();
+    }
+
+    protected void addValueSpecificDataToObservation(DataEntity<?> o, OmObservation observation, String responseFormat) throws
+    OwsExceptionReport {
+    // nothing to do
+    }
+
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private SingleObservationValue getSingleObservationValue(DataEntity<?> o, Value<?> value) throws OwsExceptionReport {
+        return new SingleObservationValue(createPhenomenonTime(o), value);
+    }
+
+    public OmObservation mergeValueToObservation(DataEntity<?> o, OmObservation observation, String responseFormat)
+            throws OwsExceptionReport {
+        if (checkResponseFormat(responseFormat) && o instanceof EReportingData) {
+            if (!observation.isSetValue()) {
+                addValuesToObservation(o, observation, responseFormat);
+            } else {
+                checkTime(o, observation);
+                EReportingHelper.mergeValues((SweDataArray) observation.getValue().getValue().getValue(),
+                        EReportingHelper.createSweDataArray(observation, (EReportingData) o));
+            }
+            if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
+                    .getObservationType())) {
+                observation.getObservationConstellation().setObservationType(
+                        OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            }
+
+        } else {
+            if (!observation.isSetValue()) {
+                addValuesToObservation(o, observation, responseFormat);
+            } else {
+                // TODO
+                if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION
+                        .equals(observation.getObservationConstellation().getObservationType())) {
+                    observation.getObservationConstellation()
+                            .setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+                }
+                observation.mergeWithObservation(getSingleObservationValue(o, new ObservationValueCreator().visit(o)));
+            }
+        }
+        return observation;
+    }
+
+    public void addValueSpecificDataToObservation(DataEntity<?> o, OmObservation observation, Session session, Extensions extensions)
+            throws OwsExceptionReport {
+        if (o instanceof EReportingData) {
+            if (ReportObligations.hasFlow(extensions)) {
+                ReportObligationType flow = ReportObligations.getFlow(extensions);
+                if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
+                    int year = DateTimeHelper.makeDateTime(o.getPhenomenonTimeStart()).getYear();
+                    EReportingQualityEntity eReportingQuality =
+                            new EReportingQualityDAO().getEReportingQuality(o.getDataset().getId(), year,
+                                    ((EReportingData)o).getPrimaryObservation(), session);
+                    if (eReportingQuality != null) {
+                        observation.setResultQuality(EReportingHelper.getGmdDomainConsistency(eReportingQuality, true));
+                    } else {
+                        observation.setResultQuality(EReportingHelper.getGmdDomainConsistency(new EReportingQualityEntity(), true));
+                    }
+                }
+            }
+        }
+    }
+
+    public void addObservationValueToObservation(DataEntity<?> o, OmObservation observation, Value<?> value, String responseFormat)
+            throws OwsExceptionReport {
+        if (checkResponseFormat(responseFormat)) {
+            if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
+                    .getObservationType())) {
+                observation.getObservationConstellation().setObservationType(
+                        OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            }
+            observation.setValue(EReportingHelper.createSweDataArrayValue(observation, (EReportingData) o));
+        } else {
+            observation.setValue(getSingleObservationValue(o, value));
+        }
+    }
+
+    private boolean checkResponseFormat(String responseFormat) {
+        return AqdConstants.NS_AQD.equals(responseFormat);
+    }
+
+    public String getDiscriminator(DataEntity<?> o) {
+        if (o instanceof EReportingData) {
+            return ((EReportingData) o).getPrimaryObservation();
+        }
+        return null;
+    }
+
+    private void checkTime(DataEntity<?> o, OmObservation observation) {
+        if (observation.isSetValue()) {
+            Time obsPhenTime = observation.getValue().getPhenomenonTime();
+            Time valuePhenTime = createPhenomenonTime(o);
+            if (obsPhenTime != null) {
+                TimePeriod timePeriod;
+                if (obsPhenTime instanceof TimePeriod) {
+                    timePeriod = (TimePeriod) obsPhenTime;
+                } else {
+                    timePeriod = new TimePeriod();
+                    timePeriod.extendToContain(obsPhenTime);
+                }
+                timePeriod.extendToContain(valuePhenTime);
+                observation.getValue().setPhenomenonTime(timePeriod);
+            } else {
+                observation.getValue().setPhenomenonTime(valuePhenTime);
+            }
+        }
+        TimeInstant rt = createResutlTime(o.getResultTime());
+        if (observation.getResultTime().getValue().isBefore(rt.getValue())) {
+            observation.setResultTime(rt);
+        }
+        if (isSetValidTime()) {
+            TimePeriod vt = createValidTime(o.getValidTimeStart(), o.getValidTimeEnd());
+            if (observation.isSetValidTime()) {
+                observation.getValidTime().extendToContain(vt);
+            } else {
+                observation.setValidTime(vt);
+            }
+        }
     }
 
 }

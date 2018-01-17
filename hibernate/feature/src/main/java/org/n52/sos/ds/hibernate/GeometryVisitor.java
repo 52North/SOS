@@ -26,18 +26,36 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.feature;
-
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
+package org.n52.sos.ds.hibernate;
 
 import org.locationtech.jts.geom.Geometry;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.feature.SpecimenEntity;
+import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
+import org.n52.series.db.beans.feature.wml.MonitoringPointEntity;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 public interface GeometryVisitor {
 
-    Geometry visit(FeatureOfInterest f) throws OwsExceptionReport;
+    default Geometry visit(AbstractFeatureEntity<?> f) throws OwsExceptionReport {
+        if (f instanceof FeatureEntity) {
+            return visit((FeatureEntity) f);
+        } else if (f instanceof SpecimenEntity) {
+            return visit((SpecimenEntity) f);
+        } else if (f instanceof EnvironmentalMonitoringFacilityEntity) {
+            return visit((EnvironmentalMonitoringFacilityEntity) f);
+        } else if (f instanceof MonitoringPointEntity) {
+            return visit((MonitoringPointEntity) f);
+        }
+        return null;
+    }
 
-    Geometry visit(Specimen f) throws OwsExceptionReport;
+    Geometry visit(FeatureEntity f) throws OwsExceptionReport;
 
-    Geometry visit(EnvironmentalMonitoringFacility f) throws OwsExceptionReport;
+    Geometry visit(SpecimenEntity f) throws OwsExceptionReport;
+
+    Geometry visit(EnvironmentalMonitoringFacilityEntity f) throws OwsExceptionReport;
+
+    Geometry visit(MonitoringPointEntity f) throws OwsExceptionReport;
 }

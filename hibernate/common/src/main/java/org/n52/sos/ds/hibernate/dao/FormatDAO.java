@@ -80,7 +80,7 @@ public class FormatDAO {
                 HibernateHelper.getSqlString(criteria));
         return (FormatEntity) criteria.uniqueResult();
     }
-    
+
     /**
      * Get observation type objects for observation types
      *
@@ -120,7 +120,7 @@ public class FormatDAO {
         }
         return hFormatEntity;
     }
-    
+
     /**
      * Insert or/and get observation type objects for observation types
      *
@@ -137,7 +137,7 @@ public class FormatDAO {
         }
         return obsTypes;
     }
-    
+
     /**
      * Get featureOfInterest type objects for featureOfInterest identifiers
      *

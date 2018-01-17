@@ -33,7 +33,11 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
+import org.locationtech.jts.geom.Geometry;
+//import org.locationtech.jts.geom.GeometryFactory;
 import org.n52.faroe.ConfigurationError;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.FormatEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.SfConstants;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
@@ -45,14 +49,9 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 //import org.n52.shetland.util.JTSHelperForTesting;
 //import org.n52.shetland.util.ReverseOf;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSConverter;
 import org.n52.sos.util.builder.SamplingFeatureBuilder;
-
-import org.locationtech.jts.geom.Geometry;
-//import org.locationtech.jts.geom.GeometryFactory;
 
 /**
  * TODO JavaDoc
@@ -80,7 +79,7 @@ public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
         try {
             final String id = "id";
             final String type = SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT;
-            FeatureOfInterest feature = create(1, id, null, "name", "url", createFeatureOfInterestType(1, type));
+            FeatureEntity feature = create(1, id, null, "name", "url", createFeatureOfInterestType(1L, type));
             String version = Sos2Constants.SERVICEVERSION;
             AbstractFeature result =
                     new HibernateFeatureQueryHandler().createSosAbstractFeature(feature,
@@ -95,22 +94,22 @@ public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
         }
     }
 
-    public FeatureOfInterest create(long id, String identifier, Geometry geom, String name, String url,
-            FeatureOfInterestType type) throws CodedException {
-        FeatureOfInterest featureOfInterest = new FeatureOfInterest();
+    public FeatureEntity create(long id, String identifier, Geometry geom, String name, String url,
+            FormatEntity type) throws CodedException {
+        FeatureEntity featureOfInterest = new FeatureEntity();
         featureOfInterest.setIdentifier(identifier);
-        featureOfInterest.setFeatureOfInterestId(id);
+        featureOfInterest.setId(id);
         // featureOfInterest.setNames(name);
-        featureOfInterest.setGeom(JTSConverter.convert(geom));
+        featureOfInterest.setGeometry(JTSConverter.convert(geom));
         featureOfInterest.setUrl(url);
-        featureOfInterest.setFeatureOfInterestType(type);
+        featureOfInterest.setFeatureType(type);
         return featureOfInterest;
     }
 
-    private FeatureOfInterestType createFeatureOfInterestType(int id, String type) {
-        FeatureOfInterestType featureOfInterestType = new FeatureOfInterestType();
-        featureOfInterestType.setFeatureOfInterestTypeId(id);
-        featureOfInterestType.setFeatureOfInterestType(type);
+    private FormatEntity createFeatureOfInterestType(Long id, String type) {
+        FormatEntity featureOfInterestType = new FormatEntity();
+        featureOfInterestType.setId(id);
+        featureOfInterestType.setFormat(type);
         return featureOfInterestType;
     }
 

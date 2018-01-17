@@ -44,6 +44,14 @@ import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.CodespaceEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ResultTemplateEntity;
+import org.n52.series.db.beans.UnitEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -81,18 +89,9 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
+import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.ResultTemplate;
-import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
@@ -158,12 +157,12 @@ public class InsertResultDAO
         Session session = null;
         Transaction transaction = null;
 
-        Map<String, Codespace> codespaceCache = Maps.newHashMap();
-        Map<UoM, Unit> unitCache = Maps.newHashMap();
+        Map<String, CodespaceEntity> codespaceCache = Maps.newHashMap();
+        Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
 
         try {
             session = sessionHolder.getSession();
-            final ResultTemplate resultTemplate =
+            final ResultTemplateEntity resultTemplate =
                     daoFactory.getResultTemplateDAO().getResultTemplateObject(request.getTemplateIdentifier(),
                             session);
             transaction = session.beginTransaction();
@@ -178,19 +177,19 @@ public class InsertResultDAO
                 response.setObservations(observations);
             }
 
-            final ObservationConstellationDAO obsConstDao = daoFactory.getObservationConstellationDAO();
-            final ObservationTypeDAO obsTypeDao = daoFactory.getObservationTypeDAO();
-            Map<OmObservationConstellation, ObservationConstellation> obsConsts = new HashMap<>();
+            final AbstractSeriesDAO obsConstDao = daoFactory.getSeriesDAO();
+            final FormatDAO obsTypeDao = daoFactory.getObservationTypeDAO();
+            Map<OmObservationConstellation, DatasetEntity> obsConsts = new HashMap<>();
 
             int insertion = 0;
             final int size = observations.size();
             final AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             LOGGER.debug("Start saving {} observations.", size);
-            Map<String, AbstractFeatureOfInterest> featureEntityMap = new HashMap<>();
+            Map<String, AbstractFeatureEntity> featureEntityMap = new HashMap<>();
             for (final OmObservation observation : observations) {
                 OmObservationConstellation omObsConst = observation.getObservationConstellation();
                 if (!obsConsts.containsKey(omObsConst)) {
-                    ObservationConstellation oc = obsConstDao.getObservationConstellation(omObsConst, session);
+                    DatasetEntity oc = obsConstDao.getSeries(omObsConst, session);
                     if (oc != null) {
                         obsConsts.put(omObsConst, oc);
                     } else if (oc == null && isConvertComplexProfileToSingleProfiles() && observation.isSetValue()
@@ -200,10 +199,10 @@ public class InsertResultDAO
                                 observation, session));
                     }
                 }
-                ObservationConstellation obsConst = obsConsts.get(observation.getObservationConstellation());
-                AbstractFeatureOfInterest feature = null;
-                if (resultTemplate.isSetFeatureOfInterest()) {
-                    feature = resultTemplate.getFeatureOfInterest();
+                DatasetEntity obsConst = obsConsts.get(observation.getObservationConstellation());
+                AbstractFeatureEntity feature = null;
+                if (resultTemplate.isSetFeature()) {
+                    feature = resultTemplate.getFeature();
                 } else {
                     if (featureEntityMap.containsKey(omObsConst.getFeatureOfInterestIdentifier())) {
                         feature = featureEntityMap.get(omObsConst.getFeatureOfInterestIdentifier());
@@ -246,7 +245,7 @@ public class InsertResultDAO
 
     @Override
     public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+        return HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
     }
 
     /**
@@ -265,10 +264,10 @@ public class InsertResultDAO
      *             If an error occurs during the processing
      */
     private OmObservation getSingleObservationFromResultValues(final String version,
-            final ResultTemplate resultTemplate, final String resultValues, final Session session)
+            final ResultTemplateEntity resultTemplate, final String resultValues, final Session session)
             throws OwsExceptionReport {
-        final SosResultEncoding resultEncoding = createSosResultEncoding(resultTemplate.getResultEncoding());
-        final SosResultStructure resultStructure = createSosResultStructure(resultTemplate.getResultStructure());
+        final SosResultEncoding resultEncoding = createSosResultEncoding(resultTemplate.getEncoding());
+        final SosResultStructure resultStructure = createSosResultStructure(resultTemplate.getStructure());
         final String[] blockValues = getBlockValues(resultValues, resultEncoding.get().get());
         final OmObservation singleObservation =
                 getObservation(resultTemplate, blockValues, resultStructure.get().get(),
@@ -312,30 +311,31 @@ public class InsertResultDAO
      * @param session
      *            Hibernate session
      * @return Internal ObservationConstellation
+     * @throws OwsExceptionReport
      */
-    private OmObservationConstellation getSosObservationConstellation(final ResultTemplate resultTemplate,
-            final Session session) {
+    private OmObservationConstellation getSosObservationConstellation(final ResultTemplateEntity resultTemplate,
+            final Session session) throws OwsExceptionReport {
 
-        final List<ObservationConstellation> obsConsts = daoFactory.getObservationConstellationDAO()
-                .getObservationConstellationsForOfferings(resultTemplate.getObservableProperty(),
+        final List<DatasetEntity> obsConsts = daoFactory.getSeriesDAO()
+                .getSeriesForOfferings(resultTemplate.getPhenomenon(),
                         Sets.newHashSet(resultTemplate.getOffering()), session);
         final Set<String> offerings = Sets.newHashSet(resultTemplate.getOffering().getIdentifier());
         String observationType = null;
-        for (ObservationConstellation obsConst : obsConsts) {
+        for (DatasetEntity obsConst : obsConsts) {
             if (observationType == null) {
-                observationType = obsConst.getObservationType().getObservationType();
+                observationType = obsConst.getObservationType().getFormat();
             }
         }
         OmObservationConstellation omObservationConstellation = new OmObservationConstellation()
                 .setObservableProperty(
-                        new OmObservableProperty(resultTemplate.getObservableProperty().getIdentifier()))
+                        new OmObservableProperty(resultTemplate.getPhenomenon().getIdentifier()))
                 .setOfferings(offerings).setObservationType(observationType);
         if (resultTemplate.isSetProcedure()) {
             omObservationConstellation.setProcedure(createProcedure(resultTemplate.getProcedure()));
         }
-        if (resultTemplate.isSetFeatureOfInterest()) {
+        if (resultTemplate.isSetFeature()) {
             omObservationConstellation.setFeatureOfInterest(
-                    new SamplingFeature(new CodeWithAuthority(resultTemplate.getFeatureOfInterest().getIdentifier())));
+                    new SamplingFeature(new CodeWithAuthority(resultTemplate.getFeature().getIdentifier())));
         }
         return omObservationConstellation;
     }
@@ -347,7 +347,7 @@ public class InsertResultDAO
      *            Procedure entity
      * @return Internal ProcedureDescription
      */
-    private SosProcedureDescription<?> createProcedure(final Procedure hProcedure) {
+    private SosProcedureDescription<?> createProcedure(final ProcedureEntity hProcedure) {
         final SensorML procedure = new SensorML();
         procedure.setIdentifier(hProcedure.getIdentifier());
         return new SosProcedureDescription<AbstractFeature>(procedure);
@@ -370,7 +370,7 @@ public class InsertResultDAO
      * @throws OwsExceptionReport
      *             If processing fails
      */
-    private OmObservation getObservation(final ResultTemplate resultTemplate, final String[] blockValues,
+    private OmObservation getObservation(final ResultTemplateEntity resultTemplate, final String[] blockValues,
             final SweAbstractDataComponent resultStructure, final SweAbstractEncoding encoding, final Session session)
             throws OwsExceptionReport {
         final int resultTimeIndex = helper.hasResultTime(resultStructure);
@@ -554,20 +554,20 @@ public class InsertResultDAO
         return values.split(separator);
     }
 
-    private ObservationConstellation insertObservationConstellationForProfiles(ObservationConstellationDAO obsConstDao,
-            ObservationTypeDAO obsTypeDao, OmObservation o, Session session) {
-        Procedure procedure = daoFactory.getProcedureDAO()
+    private DatasetEntity insertObservationConstellationForProfiles(AbstractSeriesDAO obsConstDao,
+           FormatDAO obsTypeDao, OmObservation o, Session session) {
+        ProcedureEntity procedure = daoFactory.getProcedureDAO()
                 .getProcedureForIdentifier(o.getObservationConstellation().getProcedureIdentifier(), session);
-        ObservableProperty observableProperty = daoFactory.getObservablePropertyDAO()
+        PhenomenonEntity observableProperty = daoFactory.getObservablePropertyDAO()
                 .getOrInsertObservableProperty(o.getObservationConstellation().getObservableProperty(), session);
-        Offering offering = daoFactory.getOfferingDAO()
+        OfferingEntity offering = daoFactory.getOfferingDAO()
                 .getOfferingForIdentifier(o.getObservationConstellation().getOfferings().iterator().next(), session);
 
-        ObservationConstellation oc = obsConstDao.checkOrInsertObservationConstellation(procedure, observableProperty,
+        DatasetEntity oc = obsConstDao.checkOrInsertSeries(procedure, observableProperty,
                 offering, false, session);
         if (o.getObservationConstellation().isSetObservationType()) {
             oc.setObservationType(obsTypeDao
-                    .getObservationTypeObject(o.getObservationConstellation().getObservationType(), session));
+                    .getFormatEntityObject(o.getObservationConstellation().getObservationType(), session));
         }
         return oc;
     }

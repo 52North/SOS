@@ -163,9 +163,9 @@ public abstract class AbstractValueDAO extends TimeCreator {
      */
     protected Projection getIndeterminateTimeExtremaProjection(IndeterminateValue indetTime) {
         if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
-            return Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START);
+            return Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START);
         } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
-            return Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END);
+            return Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END);
         }
         return null;
     }
@@ -180,9 +180,9 @@ public abstract class AbstractValueDAO extends TimeCreator {
      */
     protected String getIndeterminateTimeFilterProperty(IndeterminateValue indetTime) {
         if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
-            return DataEntity.PROPERTY_PHENOMENON_TIME_START;
+            return DataEntity.PROPERTY_SAMPLING_TIME_START;
         } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
-            return DataEntity.PROPERTY_PHENOMENON_TIME_END;
+            return DataEntity.PROPERTY_SAMPLING_TIME_END;
         }
         return null;
     }
@@ -213,7 +213,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
                 }
             }
         }
-        return DataEntity.PROPERTY_PHENOMENON_TIME_START;
+        return DataEntity.PROPERTY_SAMPLING_TIME_START;
     }
 
     @SuppressWarnings("rawtypes")

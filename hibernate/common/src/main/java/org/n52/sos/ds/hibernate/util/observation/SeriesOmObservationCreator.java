@@ -174,13 +174,13 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
 
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES, getSession())) {
             Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES);
-            namedQuery.setParameter(DatasetEntity.OBSERVABLE_PROPERTY, property);
-            namedQuery.setParameter(DatasetEntity.PROCEDURE, procedure);
+            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, property);
+            namedQuery.setParameter(DatasetEntity.PROPERTY_PROCEDURE, procedure);
             LOGGER.debug("QUERY queryUnit({}, {}) with NamedQuery '{}': {}", property, procedure, SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES, namedQuery.getQueryString());
             return (String) namedQuery.uniqueResult();
         } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES, getSession())) {
             Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES);
-            namedQuery.setParameter(DatasetEntity.OBSERVABLE_PROPERTY, property);
+            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, property);
             LOGGER.debug("QUERY queryUnit({}) with NamedQuery '{}': {}", property, SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES, namedQuery.getQueryString());
             return (String) namedQuery.uniqueResult();
         }

@@ -316,8 +316,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         } else {
             Criteria c = null;
                 c = session.createCriteria(EntitiyHelper.getInstance().getSeriesEntityClass())
-                        .createAlias(DatasetEntity.PROPERTY_FEATURE, "f").createAlias(DatasetEntity.PROCEDURE, "p")
-                        .add(Restrictions.eq(DatasetEntity.DELETED, false))
+                        .createAlias(DatasetEntity.PROPERTY_FEATURE, "f").createAlias( DatasetEntity.PROPERTY_PROCEDURE, "p")
+                        .add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false))
                         .setProjection(Projections.distinct(Projections.projectionList()
                                 .add(Projections.property("f." + AbstractFeatureEntity.IDENTIFIER))
                                 .add(Projections.property("p." + ProcedureEntity.IDENTIFIER))));
@@ -563,13 +563,13 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
         Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
             criteria.createAlias(DataEntity.PROPERTY_DATASET, "s");
-            criteria.createAlias("s." + DatasetEntity.PROCEDURE, "p");
+            criteria.createAlias("s." +  DatasetEntity.PROPERTY_PROCEDURE, "p");
         criteria.add(Restrictions.eq("p." + ProcedureEntity.IDENTIFIER, procedureIdentifier));
         ProjectionList projectionList = Projections.projectionList();
         projectionList.add(Projections.groupProperty("p." + ProcedureEntity.IDENTIFIER));
-        projectionList.add(Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END));
+        projectionList.add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START));
+        projectionList.add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START));
+        projectionList.add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END));
         criteria.setProjection(projectionList);
 
         LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(criteria));
@@ -591,7 +591,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
             if (seriesDAO != null) {
                 Criteria c = seriesDAO.getDefaultSeriesCriteria(session);
-                c.createAlias(DatasetEntity.PROCEDURE, "p");
+                c.createAlias( DatasetEntity.PROPERTY_PROCEDURE, "p");
                 c.setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("p." + ProcedureEntity.IDENTIFIER))
                         .add(Projections.min(DatasetEntity.PROPERTY_FIRST_VALUE_AT)).add(Projections.max(DatasetEntity.PROPERTY_LAST_VALUE_AT)));
@@ -606,9 +606,9 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 String alias = observationDAO.addProcedureAlias(criteria);
                 criteria.setProjection(
                         Projections.projectionList().add(Projections.groupProperty(alias + ProcedureEntity.IDENTIFIER))
-                                .add(Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START))
-                                .add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_START))
-                                .add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_START)));
+                                .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                                .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                                .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START)));
 
                 LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}",
                         HibernateHelper.getSqlString(criteria));
@@ -670,7 +670,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             } else {
                 addProcedureRestrictionForObservation(criteria, procedure);
             }
-            addMinMaxProjection(criteria, MinMax.MIN, DataEntity.PROPERTY_PHENOMENON_TIME_START);
+            addMinMaxProjection(criteria, MinMax.MIN, DataEntity.PROPERTY_SAMPLING_TIME_START);
             LOGGER.debug("QUERY getMinDate4Procedure(procedure): {}", HibernateHelper.getSqlString(criteria));
             min = criteria.uniqueResult();
         }
@@ -711,8 +711,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 addProcedureRestrictionForObservation(cstart, procedure);
                 addProcedureRestrictionForObservation(cend, procedure);
             }
-            addMinMaxProjection(cstart, MinMax.MAX, DataEntity.PROPERTY_PHENOMENON_TIME_START);
-            addMinMaxProjection(cend, MinMax.MAX, DataEntity.PROPERTY_PHENOMENON_TIME_END);
+            addMinMaxProjection(cstart, MinMax.MAX, DataEntity.PROPERTY_SAMPLING_TIME_START);
+            addMinMaxProjection(cend, MinMax.MAX, DataEntity.PROPERTY_SAMPLING_TIME_END);
             LOGGER.debug("QUERY getMaxDate4Procedure(procedure) start: {}", HibernateHelper.getSqlString(cstart));
             LOGGER.debug("QUERY getMaxDate4Procedure(procedure) end: {}", HibernateHelper.getSqlString(cend));
             if (HibernateHelper.getSqlString(cstart).endsWith(HibernateHelper.getSqlString(cend))) {
@@ -802,8 +802,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     private DetachedCriteria getDetachedCriteriaProceduresForFromSeries(Session session) throws OwsExceptionReport {
         final DetachedCriteria detachedCriteria =
                 DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.DELETED, false));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROCEDURE)));
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PROCEDURE)));
         return detachedCriteria;
     }
 
@@ -822,12 +822,12 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             AbstractFeatureEntity featureOfInterest, Session session) throws OwsExceptionReport {
         final DetachedCriteria detachedCriteria =
                 DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.DELETED, false));
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
         detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_FEATURE, featureOfInterest));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROCEDURE)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PROCEDURE)));
         return detachedCriteria;
     }
-    
+
     /**
      * Get Hibernate Detached Criteria for class ObservationConstellation and
      * observableProperty identifier
@@ -841,10 +841,10 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     private DetachedCriteria getDetachedCriteriaProceduresForObservablePropertyFromObservationConstellation(
             String observablePropertyIdentifier, Session session) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.DELETED, false));
-        detachedCriteria.createCriteria(DatasetEntity.OBSERVABLE_PROPERTY)
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
                 .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observablePropertyIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROCEDURE)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PROCEDURE)));
         return detachedCriteria;
     }
 
@@ -864,10 +864,10 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         final DetachedCriteria detachedCriteria =
                 DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
 
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.DELETED, false));
-        detachedCriteria.createCriteria(DatasetEntity.OBSERVABLE_PROPERTY)
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
                 .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observablePropertyIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROCEDURE)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PROCEDURE)));
         return detachedCriteria;
     }
 
@@ -884,10 +884,10 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     private DetachedCriteria getDetachedCriteriaProceduresForOfferingFromObservationConstellation(
             String offeringIdentifier, Session session) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.DELETED, false));
-        detachedCriteria.createCriteria(DatasetEntity.OFFERING)
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_OFFERING)
                 .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROCEDURE)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PROCEDURE)));
         return detachedCriteria;
     }
 
@@ -901,7 +901,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      */
     private void addProcedureRestrictionForSeries(Criteria criteria, String procedure) {
         Criteria seriesCriteria = criteria.createCriteria(DataEntity.PROPERTY_DATASET);
-        seriesCriteria.createCriteria(DatasetEntity.PROCEDURE).add(
+        seriesCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE).add(
                 Restrictions.eq(ProcedureEntity.IDENTIFIER, procedure));
     }
 
@@ -914,7 +914,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            ProcedureEntity identifier
      */
     private void addProcedureRestrictionForObservation(Criteria criteria, String procedure) {
-        criteria.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria(DatasetEntity.PROCEDURE)
+        criteria.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
                 .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedure));
     }
 
@@ -927,7 +927,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                             .add(Restrictions.isNotNull(DataEntity.IDENTIFIER))
                             .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
             Criteria seriesCriteria = criteria.createCriteria(DataEntity.PROPERTY_DATASET);
-            seriesCriteria.createCriteria(DatasetEntity.PROCEDURE)
+            seriesCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
                     .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedureIdentifier));
             LOGGER.debug("QUERY getObservationIdentifiers(procedureIdentifier): {}",
                     HibernateHelper.getSqlString(criteria));
@@ -969,8 +969,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
      private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
          final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
-         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.DELETED, true), Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
-         detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROCEDURE)));
+         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true), Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
+         detachedCriteria.setProjection(Projections.distinct(Projections.property( DatasetEntity.PROPERTY_PROCEDURE)));
          return detachedCriteria;
 }
 

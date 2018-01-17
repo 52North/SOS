@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Locale;
 
 import org.hibernate.Session;
@@ -37,6 +37,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.series.db.beans.CodespaceEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.FormatEntity;
+import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.QuantityDatasetEntity;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -44,17 +54,6 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
-import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.ObservationType;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesNumericObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
 
@@ -108,27 +107,27 @@ public class HibernateObservationUtilitiesTest
             GetObservationByIdRequest request = new GetObservationByIdRequest();
             request.setVersion(Sos2Constants.SERVICEVERSION);
 
-            ProcedureDescriptionFormat hProcedureDescriptionFormat = new ProcedureDescriptionFormat();
-            FeatureOfInterestType hFeatureOfInterestType = new FeatureOfInterestType();
-            FeatureOfInterest hFeatureOfInterest = new FeatureOfInterest();
-            ObservableProperty hObservableProperty = new ObservableProperty();
-            ObservationType hObservationType = new ObservationType();
-            Offering hOffering = new Offering();
-            ObservationConstellation hObservationConstellation = new ObservationConstellation();
-            Codespace hCodespace = new Codespace();
-            Procedure hProcedure = new Procedure();
-            SeriesNumericObservation hObservation = new SeriesNumericObservation();
+            FormatEntity hProcedureDescriptionFormat = new FormatEntity();
+            FormatEntity hFeatureOfInterestType = new FormatEntity();
+            FeatureEntity hFeatureOfInterest = new FeatureEntity();
+            PhenomenonEntity hObservableProperty = new PhenomenonEntity();
+            FormatEntity hObservationType = new FormatEntity();
+            OfferingEntity hOffering = new OfferingEntity();
+            DatasetEntity hObservationConstellation = new QuantityDatasetEntity();
+            CodespaceEntity hCodespace = new CodespaceEntity();
+            ProcedureEntity hProcedure = new ProcedureEntity();
+            QuantityDataEntity hObservation = new QuantityDataEntity();
 
-            hProcedureDescriptionFormat.setProcedureDescriptionFormat(PROCEDURE_DESCRIPTION_FORMAT);
-            hCodespace.setCodespace(CODESPACE);
+            hProcedureDescriptionFormat.setFormat(PROCEDURE_DESCRIPTION_FORMAT);
+            hCodespace.setName(CODESPACE);
             hProcedure.setIdentifier(PROCEDURE);
-            hProcedure.setProcedureDescriptionFormat(hProcedureDescriptionFormat);
-            hFeatureOfInterestType.setFeatureOfInterestType(FEATURE_OF_INTEREST_TYPE);
+            hProcedure.setFormat(hProcedureDescriptionFormat);
+            hFeatureOfInterestType.setFormat(FEATURE_OF_INTEREST_TYPE);
             hFeatureOfInterest.setIdentifier(FEATURE);
-            hFeatureOfInterest.setFeatureOfInterestType(hFeatureOfInterestType);
-            hFeatureOfInterest.setCodespace(hCodespace);
+            hFeatureOfInterest.setFeatureType(hFeatureOfInterestType);
+            hFeatureOfInterest.setIdentifierCodespace(hCodespace);
             hObservableProperty.setIdentifier(OBSERVABLE_PROPERTY);
-            hObservationType.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            hObservationType.setFormat(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
             hOffering.setIdentifier(OFFERING);
             hObservationConstellation.setProcedure(hProcedure);
             hObservationConstellation.setOffering(hOffering);
@@ -149,14 +148,11 @@ public class HibernateObservationUtilitiesTest
 
             session.flush();
 
-            hObservation.setValue(Double.valueOf(1.0));
-            hObservation.setProcedure(hProcedure);
-            hObservation.setOfferings(Collections.singleton(hOffering));
-            hObservation.setObservableProperty(hObservableProperty);
-            hObservation.setFeatureOfInterest(hFeatureOfInterest);
+            hObservation.setValue(new BigDecimal(1.0));
+            hObservation.setDataset(hObservationConstellation);
             hObservation.setDeleted(false);
 
-            ArrayList<Observation<?>> observationsFromDataBase = new ArrayList<>();
+            ArrayList<DataEntity<?>> observationsFromDataBase = new ArrayList<>();
             observationsFromDataBase.add(hObservation);
             // CALL
             ObservationStream resultList = HibernateObservationUtilities.createSosObservationsFromObservations(

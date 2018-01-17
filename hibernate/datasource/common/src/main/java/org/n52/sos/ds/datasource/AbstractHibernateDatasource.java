@@ -356,24 +356,24 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
             paths.add(resource(featureConceptMappingDirectory));
         }
-        if (isTransactionalDatasource()) {
-            Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
-            if (transactional != null && transactional.booleanValue()) {
-                paths.add(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
-            }
-        }
-        if (isMultiLanguageDatasource()) {
-            Boolean multiLanguage = (Boolean) settings.get(this.multilingualismDefinition.getKey());
-            if (multiLanguage != null && multiLanguage.booleanValue()) {
-                paths.add(resource(HIBERNATE_MAPPING_I18N_PATH));
-            }
-        }
+//        if (isTransactionalDatasource()) {
+//            Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
+//            if (transactional != null && transactional.booleanValue()) {
+//                paths.add(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
+//            }
+//        }
+//        if (isMultiLanguageDatasource()) {
+//            Boolean multiLanguage = (Boolean) settings.get(this.multilingualismDefinition.getKey());
+//            if (multiLanguage != null && multiLanguage.booleanValue()) {
+//                paths.add(resource(HIBERNATE_MAPPING_I18N_PATH));
+//            }
+//        }
         DatabaseConcept databaseConcept = getDatabaseConcept(settings);
         if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
                 || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
             Boolean t = (Boolean) settings.get(this.seriesMetadataDefiniton.getKey());
             if (t != null && t) {
-                paths.add(resource(HIBERNATE_MAPPING_SERIES_METADATA_PATH));
+                paths.add(resource(HIBERNATE_MAPPING_EXTENSION));
             }
         }
         return paths;
@@ -421,18 +421,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 //                    databaseConceptDefinition.getKey(),
 //                    concept);
 //        }
-        HashSet<String> mappings = Sets.newHashSet(HIBERNATE_MAPPING_PARAMETER_FEATURE_PATH, HIBERNATE_MAPPING_PARAMETER_OBSERVATION_PATH);
+        HashSet<String> mappings = Sets.newHashSet();
         switch (getDatabaseConcept(settings)) {
             case SERIES_CONCEPT:
-                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH);
-                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH);
+                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_PATH);
                 break;
             case EREPORTING_CONCEPT:
-                mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH);
-                mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_VALUE_PATH);
+                mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH);
                 break;
             default:
-                mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH);
+                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_PATH);
                 break;
         }
         return mappings;
@@ -443,7 +441,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (concept == null || concept.isEmpty()) {
             String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
             concept = DatabaseConcept.SERIES_CONCEPT.name();
-            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH)) {
+            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH)) {
                 concept = DatabaseConcept.EREPORTING_CONCEPT.name();
             }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
@@ -577,6 +575,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         StandardServiceRegistry registry = null;
         try {
             StandardServiceRegistryBuilder registryBuilder = new StandardServiceRegistryBuilder();
+            settings.put(HibernateConstants.DIALECT, getDialectInternal());
             registryBuilder.applySettings(settings);
             registry = registryBuilder.build();
             MetadataSources sources = new MetadataSources(registry);
@@ -706,25 +705,24 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     @Override
     public void checkPostCreation(Properties properties) {
-        if (checkIfExtensionDirectoryExists()) {
-            StringBuilder builder =
-                    new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EXTENSION_READONLY);
-            properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
-        }
+//        if (checkIfExtensionDirectoryExists()) {
+//            StringBuilder builder =
+//                    new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
+//            properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+//        }
     }
 
-    private boolean checkIfExtensionDirectoryExists() {
-        URL dirUrl = Thread.currentThread().getContextClassLoader().getResource(HIBERNATE_MAPPING_EXTENSION_READONLY);
-        if (dirUrl != null) {
-            try {
-                return new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset().toString())).exists();
-            } catch (UnsupportedEncodingException e) {
-                throw new ConfigurationError("Unable to encode directory URL " + dirUrl + "!");
-            }
-        }
-        return false;
-    }
+//    private boolean checkIfExtensionDirectoryExists() {
+//        URL dirUrl = Thread.currentThread().getContextClassLoader().getResource(HIBERNATE_MAPPING_EXTENSION_READONLY);
+//        if (dirUrl != null) {
+//            try {
+//                return new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset().toString())).exists();
+//            } catch (UnsupportedEncodingException e) {
+//                throw new ConfigurationError("Unable to encode directory URL " + dirUrl + "!");
+//            }
+//        }
+//        return false;
+//    }
 
     protected Set<SettingDefinition<?>> filter(Set<SettingDefinition<?>> definitions, Set<String> keysToExclude) {
         Iterator<SettingDefinition<?>> iterator = definitions.iterator();
@@ -833,24 +831,24 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
                     featureConceptMappingDirectory);
         }
-        if (isTransactionalDatasource()) {
-            Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
-            if (t != null && t) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
-            }
-        }
-        if (isMultiLanguageDatasource()) {
-            Boolean t = (Boolean) settings.get(multilingualismDefinition.getKey());
-            if (t != null && t) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_I18N_PATH);
-            }
-        }
+//        if (isTransactionalDatasource()) {
+//            Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
+//            if (t != null && t) {
+//                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+//            }
+//        }
+//        if (isMultiLanguageDatasource()) {
+//            Boolean t = (Boolean) settings.get(multilingualismDefinition.getKey());
+//            if (t != null && t) {
+//                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_I18N_PATH);
+//            }
+//        }
         DatabaseConcept databaseConcept = getDatabaseConcept(settings);
         if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
                 || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
             Boolean t = (Boolean) settings.get(seriesMetadataDefiniton.getKey());
             if (t != null && t) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_METADATA_PATH);
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EXTENSION);
             }
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
@@ -873,8 +871,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *         path
      */
     protected boolean isTransactional(Properties properties) {
-        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
-        return p == null || p.contains(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+//        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+//        return p == null || p.contains(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+        return true;
     }
 
     /**
@@ -887,8 +886,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     protected boolean isMultiLanguage(Properties properties) {
-        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
-        return p == null || p.contains(HIBERNATE_MAPPING_I18N_PATH);
+//        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+//        return p == null || p.contains(HIBERNATE_MAPPING_I18N_PATH);
+        return true;
     }
 
     protected BooleanSettingDefinition getMulitLanguageDefiniton() {
@@ -905,7 +905,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     protected boolean isSeriesMetadata(Properties properties) {
         String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
-        return p == null || p.contains(HIBERNATE_MAPPING_SERIES_METADATA_PATH);
+        return p == null || p.contains(HIBERNATE_MAPPING_EXTENSION);
     }
 
     /**

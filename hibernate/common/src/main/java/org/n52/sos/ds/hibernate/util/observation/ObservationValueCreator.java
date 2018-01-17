@@ -115,7 +115,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
 
     @Override
     public QuantityValue visit(QuantityDataEntity o) {
-        QuantityValue v = new QuantityValue(o.getValue());
+        QuantityValue v = new QuantityValue(o.getValue().doubleValue());
         if (o.getDataset().hasUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }

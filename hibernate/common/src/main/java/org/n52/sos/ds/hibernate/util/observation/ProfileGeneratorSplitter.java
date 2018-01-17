@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,10 +71,10 @@ public class ProfileGeneratorSplitter {
             }
         }
         if (entity.hasFromLevel()) {
-            profileValue.setFromLevel(new QuantityValue(entity.getFromLevel(), uom));
+            profileValue.setFromLevel(new QuantityValue(entity.getFromLevel().doubleValue(), uom));
         }
         if (entity.hasToLevel()) {
-            profileValue.setToLevel(new QuantityValue(entity.getToLevel(), uom));
+            profileValue.setToLevel(new QuantityValue(entity.getToLevel().doubleValue(), uom));
         }
         profileValue.setValue(createProfileLevel(entity));
         return profileValue;
@@ -84,13 +85,13 @@ public class ProfileGeneratorSplitter {
     }
 
     private static List<ProfileLevel> createProfileLevel(ProfileDataEntity entity) throws OwsExceptionReport {
-        Map<Double, ProfileLevel> map = Maps.newTreeMap();
+        Map<BigDecimal, ProfileLevel> map = Maps.newTreeMap();
         if (entity.hasValue()) {
             for (DataEntity<?> observation : entity.getValue()) {
                 if (observation.hasParameters() && observation.hasValue()) {
                     QuantityValue levelStart = getLevelStart(observation.getParameters());
                     QuantityValue levelEnd = getLevelEnd(observation.getParameters());
-                    Double key = getKey(levelStart, levelEnd);
+                    BigDecimal key = getKey(levelStart, levelEnd);
                     Value<?> value = new ObservationValueCreator().visit(observation);
                     if (map.containsKey(key)) {
                         map.get(key).addValue(value);
@@ -110,13 +111,13 @@ public class ProfileGeneratorSplitter {
         return (List<ProfileLevel>)Lists.newArrayList(map.values());
     }
 
-    private static Double getKey(QuantityValue levelStart, QuantityValue levelEnd) {
+    private static BigDecimal getKey(QuantityValue levelStart, QuantityValue levelEnd) {
         if (levelStart != null && levelStart.isSetValue()) {
             return levelStart.getValue();
         } else if (levelEnd != null && levelEnd.isSetValue()) {
             return levelEnd.getValue();
         }
-        return Double.NaN;
+        return new BigDecimal(Double.NaN);
     }
 
     @SuppressWarnings("rawtypes")

@@ -14,14 +14,14 @@
         <module>mappings</module>
         <module>session-factory</module>
         <module>common</module>
-        <!-- <module>dao</module> -->
         <module>handler</module>
         <module>feature</module>
 		<module>h2</module>
 		<module>datasource</module>
         <module>utils</module>
         <module>c3p0</module>
-        <module>entities</module>
+        <!-- <module>dao</module> -->
+        <!-- <module>entities</module> -->
     </modules>
 	<profiles>
         <profile>

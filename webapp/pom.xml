@@ -65,25 +65,6 @@
                         </configuration>
                     </execution>
                     <execution>
-						<id>rest-api</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.n52.series-api.db</groupId>
-                                    <artifactId>mappings</artifactId>
-                                    <includes>hbm/sos/v44/*.hbm.xml</includes>
-                                    <outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly/</outputDirectory>
-                                    <overWrite>true</overWrite>
-                                </artifactItem>
-                            </artifactItems>
-                            <overWriteReleases>false</overWriteReleases>
-						</configuration>
-					</execution>
-                    <execution>
                         <id>svalbard</id>
                         <phase>generate-resources</phase>
                         <goals>
@@ -174,25 +155,25 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>views</artifactId>
                         </overlay>
-                         <overlay>
-                        <groupId>org.n52.series-api.db</groupId>
-                        <artifactId>webapp</artifactId>
-                        <includes>
-                            <include>WEB-INF/spring/*</include>
-                            <include>WEB-INF/classes/**</include>
-                            <!-- 
-                            <include>WEB-INF/classes/*.json</include>
-                            <include>WEB-INF/classes/*.properties</include>
-                            <include>WEB-INF/classes/*.txt</include>
-                            <include>WEB-INF/classes/org/*</include>
-                            <include>WEB-INF/classes/**/*.class)</include>
-                             -->
-                        </includes>
-                        <excludes>
-                            <exclude>WEB-INF/spring/series-database-config.xml</exclude>
-                            <exclude>WEB-INF/classes/*.xml</exclude>
-                        </excludes>
-                    </overlay>
+                        <overlay>
+                            <groupId>org.n52.series-api.db</groupId>
+                            <artifactId>webapp</artifactId>
+                            <includes>
+                                <include>WEB-INF/spring/*</include>
+                                <include>WEB-INF/classes/**</include>
+                                <!-- 
+                                <include>WEB-INF/classes/*.json</include>
+                                <include>WEB-INF/classes/*.properties</include>
+                                <include>WEB-INF/classes/*.txt</include>
+                                <include>WEB-INF/classes/org/*</include>
+                                <include>WEB-INF/classes/**/*.class)</include>
+                                 -->
+                            </includes>
+                            <excludes>
+                                <exclude>WEB-INF/spring/series-database-config.xml</exclude>
+                                <exclude>WEB-INF/classes/*.xml</exclude>
+                            </excludes>
+                        </overlay>
                     </overlays>
                 </configuration>
             </plugin>
@@ -900,10 +881,10 @@
             </exclusion>
           </exclusions>
          </dependency>
-         <dependency>
+        <dependency>
           <groupId>org.n52.series-api.db</groupId>
-          <artifactId>mappings</artifactId>
-          <scope>provided</scope>
+          <artifactId>sos-integration</artifactId>
+          <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -923,9 +904,9 @@
             </exclusion>
           </exclusions>
         </dependency>
-        <dependency>
-          <groupId>org.n52.series-api.db</groupId>
-          <artifactId>sos-integration</artifactId>
+         <dependency>
+          <groupId>org.n52.series.db</groupId>
+          <artifactId>entities</artifactId>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>

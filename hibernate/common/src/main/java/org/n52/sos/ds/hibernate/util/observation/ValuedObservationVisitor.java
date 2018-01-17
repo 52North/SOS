@@ -49,7 +49,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
  * @author Christian Autermann
  */
 public interface ValuedObservationVisitor<T> {
-    
+
     T visit(DataEntity o) throws OwsExceptionReport;
 
     T visit(QuantityDataEntity o) throws OwsExceptionReport;

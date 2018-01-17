@@ -184,8 +184,8 @@ public class ResultTemplateDAO {
     public ResultTemplateEntity getResultTemplateObject(final String offering, final String observedProperty,
             final Session session) {
         final Criteria rtc = session.createCriteria(ResultTemplateEntity.class).setMaxResults(1);
-        rtc.createCriteria(DatasetEntity.OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
-        rtc.createCriteria(DatasetEntity.OBSERVABLE_PROPERTY).add(
+        rtc.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        rtc.createCriteria(DatasetEntity.PROPERTY_PHENOMENON).add(
                 Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
         /* there can be multiple but equal result templates... */
         LOGGER.debug("QUERY getResultTemplateObject(offering, observedProperty): {}",
@@ -213,8 +213,8 @@ public class ResultTemplateDAO {
             final Collection<String> featureOfInterest, final Session session) {
         final Criteria rtc =
                 session.createCriteria(ResultTemplateEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        rtc.createCriteria(DatasetEntity.OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
-        rtc.createCriteria(DatasetEntity.OBSERVABLE_PROPERTY).add(
+        rtc.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        rtc.createCriteria(DatasetEntity.PROPERTY_PHENOMENON).add(
                 Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
         if (featureOfInterest != null && !featureOfInterest.isEmpty()) {
             rtc.createAlias(ResultTemplateEntity.PROPERTY_FEATURE, "foi", JoinType.LEFT_OUTER_JOIN);

@@ -102,7 +102,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         }
         return offeringsToUpdate;
     }
-    
+
     private DbQuery createDatasetDbQuery(Collection<String> ids) {
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.OFFERINGS, listToString(ids));

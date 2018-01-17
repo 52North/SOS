@@ -38,6 +38,9 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.series.db.beans.FormatEntity;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -51,10 +54,6 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
-import org.n52.sos.ds.hibernate.entities.TProcedure;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
@@ -98,24 +97,22 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionH
                 // identifier
                 // ITime validTime =
                 // getValidTimeForProcedure(procedureDescription);
-                Procedure procedure =
+                ProcedureEntity procedure =
                         new ProcedureDAO(daoFactory).getProcedureForIdentifier(request.getProcedureIdentifier(), session);
-                if (procedure instanceof TProcedure) {
-                    ProcedureDescriptionFormat procedureDescriptionFormat =
-                            new FormatDAO().getProcedureDescriptionFormatObject(
+                    FormatEntity procedureDescriptionFormat =
+                            new FormatDAO().getFormatEntityObject(
                                     request.getProcedureDescriptionFormat(), session);
-                    Set<ValidProcedureTime> validProcedureTimes = ((TProcedure) procedure).getValidProcedureTimes();
-                    ValidProcedureTimeDAO validProcedureTimeDAO = new ValidProcedureTimeDAO(daoFactory);
-                    for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
-                        if (validProcedureTime.getProcedureDescriptionFormat().equals(procedureDescriptionFormat)
-                                && validProcedureTime.getEndTime() == null) {
-                            validProcedureTime.setEndTime(currentTime.toDate());
-                            validProcedureTimeDAO.updateValidProcedureTime(validProcedureTime, session);
+                    Set<ProcedureHistoryEntity> procedureHistories = procedure.getProcedureHistory();
+                    ValidProcedureTimeDAO procedureHistroyDAO = new ValidProcedureTimeDAO(daoFactory);
+                    for (ProcedureHistoryEntity procedureHistroy : procedureHistories) {
+                        if (procedureHistroy.getFormat().equals(procedureDescriptionFormat)
+                                && procedureHistroy.getEndTime() == null) {
+                            procedureHistroy.setEndTime(currentTime.toDate());
+                            procedureHistroyDAO.updateValidProcedureTime(procedureHistroy, session);
                         }
                     }
-                    validProcedureTimeDAO.insertValidProcedureTime(procedure, procedureDescriptionFormat,
+                    procedureHistroyDAO.insertValidProcedureTime(procedure, procedureDescriptionFormat,
                             getSensorDescriptionFromProcedureDescription(procedureDescription), currentTime, session);
-                }
             }
             session.flush();
             transaction.commit();
@@ -134,7 +131,7 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionH
 
     @Override
     public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
+        return HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class);
     }
 
     /**

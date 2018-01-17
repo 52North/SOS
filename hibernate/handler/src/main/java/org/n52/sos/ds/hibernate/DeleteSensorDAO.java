@@ -36,6 +36,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -45,10 +48,6 @@ import org.n52.sos.ds.AbstractDeleteSensorHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
@@ -102,7 +101,7 @@ public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
 
     @Override
     public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
+        return HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class);
     }
 
     /**
@@ -119,18 +118,13 @@ public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
      *             If the procedure is not contained in the database
      */
     private void setDeleteSensorFlag(String identifier, boolean deleteFlag, Session session) throws OwsExceptionReport {
-        Procedure procedure = daoFactory.getProcedureDAO().getProcedureForIdentifier(identifier, session);
+        ProcedureEntity procedure = daoFactory.getProcedureDAO().getProcedureForIdentifier(identifier, session);
         if (procedure != null) {
             procedure.setDeleted(deleteFlag);
             session.saveOrUpdate(procedure);
             session.flush();
-            // set deleted flag in ObservationConstellation table to true
-            if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
-                daoFactory.getObservationConstellationDAO().updateObservatioConstellationSetAsDeletedForProcedure(identifier,
-                        deleteFlag, session);
-            }
             // set deleted flag in Series and Observation table for series concept to true
-            List<Series> series =
+            List<DatasetEntity> series =
                     daoFactory.getSeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
                             session);
             getSeriesObservationDAO().updateObservationSetAsDeletedForSeries(series, deleteFlag, session);

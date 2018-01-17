@@ -45,6 +45,8 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NSettings;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -53,9 +55,6 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.TProcedure;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 
@@ -120,7 +119,7 @@ public class DescribeSensorDao
     private List<SosProcedureDescription<?>> queryDescriptions(DescribeSensorRequest request, Session session)
             throws OwsExceptionReport {
         List<SosProcedureDescription<?>> descriptions = new LinkedList<SosProcedureDescription<?>>();
-        if (HibernateHelper.isEntitySupported(ValidProcedureTime.class)) {
+        if (HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class)) {
             descriptions.addAll(getProcedureDescriptions(request, session));
         } else {
             descriptions.add(getProcedureDescription(request, session));
@@ -141,7 +140,7 @@ public class DescribeSensorDao
      */
     private SosProcedureDescription<?> getProcedureDescription(DescribeSensorRequest request, Session session)
             throws OwsExceptionReport {
-        final Procedure procedure =
+        final ProcedureEntity procedure =
                 new ProcedureDAO(daoFactory).getProcedureForIdentifier(request.getProcedure(), session);
         if (procedure == null) {
             throw new NoApplicableCodeException()
@@ -165,14 +164,14 @@ public class DescribeSensorDao
             throws OwsExceptionReport {
         Set<String> possibleProcedureDescriptionFormats =
                 getPossibleProcedureDescriptionFormats(request.getProcedureDescriptionFormat());
-        final TProcedure procedure = new ProcedureDAO(daoFactory).getTProcedureForIdentifier(request.getProcedure(),
+        final ProcedureEntity procedure = new ProcedureDAO(daoFactory).getProcedureForIdentifier(request.getProcedure(),
                 possibleProcedureDescriptionFormats, request.getValidTime(), session);
         List<SosProcedureDescription<?>> list = Lists.newLinkedList();
         if (procedure != null) {
-            List<ValidProcedureTime> validProcedureTimes =
+            List<ProcedureHistoryEntity> validProcedureTimes =
                     new ValidProcedureTimeDAO(daoFactory).getValidProcedureTimes(procedure,
                             possibleProcedureDescriptionFormats, request.getValidTime(), session);
-            for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
+            for (ProcedureHistoryEntity validProcedureTime : validProcedureTimes) {
                 SosProcedureDescription<?> sosProcedureDescription =
                         procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure,
                                 request.getProcedureDescriptionFormat(), validProcedureTime, request.getVersion(),

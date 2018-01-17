@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.mockito.Mockito;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
@@ -49,6 +53,7 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepositoryImpl;
 import org.n52.iceland.ogc.ows.OwsServiceProviderFactory;
 import org.n52.janmayen.event.EventBus;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -108,7 +113,6 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.GetObservationDao;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
@@ -128,9 +132,6 @@ import org.n52.svalbard.util.CodingHelper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 
 import net.opengis.sensorML.x101.SystemDocument;
 import net.opengis.swe.x20.DataRecordDocument;
@@ -408,7 +409,7 @@ public class InsertDAOTest
             String offeringId, String featureId, String obsType, Session session)
             throws OwsExceptionReport, ConverterException {
         OmObservationConstellation obsConst = new OmObservationConstellation();
-        Procedure procedure = daoFactory.getProcedureDAO().getProcedureForIdentifier(procedureId, session);
+        ProcedureEntity procedure = daoFactory.getProcedureDAO().getProcedureForIdentifier(procedureId, session);
         OwsServiceProviderFactory serviceProviderFactory = Mockito.mock(OwsServiceProviderFactory.class);
         SosProcedureDescription spd =
                 new HibernateProcedureConverter(ctx).createSosProcedureDescription(
@@ -574,7 +575,7 @@ public class InsertDAOTest
         returnSession(session);
 
         obs.setResultTime(new TimeInstant(OBS_TIME));
-        SingleObservationValue<Double> obsVal = new SingleObservationValue<Double>();
+        SingleObservationValue<BigDecimal> obsVal = new SingleObservationValue<BigDecimal>();
         obsVal.setPhenomenonTime(new TimeInstant(OBS_TIME));
         obsVal.setValue(new QuantityValue(Double.valueOf(OBS_VAL), TEMP_UNIT));
         obs.setValue(obsVal);
@@ -704,9 +705,9 @@ public class InsertDAOTest
         returnSession(session);
 
         obs.setResultTime(new TimeInstant(OBS_TIME_SP));
-        SingleObservationValue<Double> obsVal = new SingleObservationValue<Double>();
+        SingleObservationValue<BigDecimal> obsVal = new SingleObservationValue<BigDecimal>();
         obsVal.setPhenomenonTime(new TimeInstant(OBS_TIME_SP));
-        obsVal.setValue(new QuantityValue(Double.valueOf(OBS_VAL), TEMP_UNIT));
+        obsVal.setValue(new QuantityValue(BigDecimal.valueOf(OBS_VAL), TEMP_UNIT));
         obs.setValue(obsVal);
         req.setObservation(Lists.newArrayList(obs));
         obs.addParameter(createSamplingGeometry());
@@ -730,7 +731,7 @@ public class InsertDAOTest
         returnSession(session);
 
         obs.setResultTime(new TimeInstant(OBS_TIME_PARAM));
-        SingleObservationValue<Double> obsVal = new SingleObservationValue<Double>();
+        SingleObservationValue<BigDecimal> obsVal = new SingleObservationValue<BigDecimal>();
         obsVal.setPhenomenonTime(new TimeInstant(OBS_TIME_PARAM));
         obsVal.setValue(new QuantityValue(Double.valueOf(OBS_VAL), TEMP_UNIT));
         obs.setValue(obsVal);
@@ -756,7 +757,7 @@ public class InsertDAOTest
         returnSession(session);
 
         obs.setResultTime(new TimeInstant(OBS_TIME_HEIGHT));
-        SingleObservationValue<Double> obsVal = new SingleObservationValue<Double>();
+        SingleObservationValue<BigDecimal> obsVal = new SingleObservationValue<BigDecimal>();
         obsVal.setPhenomenonTime(new TimeInstant(OBS_TIME_HEIGHT));
         obsVal.setValue(new QuantityValue(Double.valueOf(OBS_VAL), TEMP_UNIT));
         obs.setValue(obsVal);
@@ -782,7 +783,7 @@ public class InsertDAOTest
         returnSession(session);
 
         obs.setResultTime(new TimeInstant(OBS_TIME_DEPTH));
-        SingleObservationValue<Double> obsVal = new SingleObservationValue<Double>();
+        SingleObservationValue<BigDecimal> obsVal = new SingleObservationValue<BigDecimal>();
         obsVal.setPhenomenonTime(new TimeInstant(OBS_TIME_DEPTH));
         obsVal.setValue(new QuantityValue(Double.valueOf(OBS_VAL), TEMP_UNIT));
         obs.setValue(obsVal);
@@ -808,7 +809,7 @@ public class InsertDAOTest
         returnSession(session);
 
         obs.setResultTime(new TimeInstant(OBS_TIME_DEPTH));
-        SingleObservationValue<Double> obsVal = new SingleObservationValue<Double>();
+        SingleObservationValue<BigDecimal> obsVal = new SingleObservationValue<BigDecimal>();
         obsVal.setPhenomenonTime(new TimeInstant(OBS_TIME_DEPTH));
         obsVal.setValue(new QuantityValue(Double.valueOf(OBS_VAL), TEMP_UNIT));
         obs.setValue(obsVal);
@@ -835,7 +836,7 @@ public class InsertDAOTest
         returnSession(session);
 
         obs.setResultTime(new TimeInstant(OBS_TIME_DEPTH));
-        SingleObservationValue<Double> obsVal = new SingleObservationValue<Double>();
+        SingleObservationValue<BigDecimal> obsVal = new SingleObservationValue<BigDecimal>();
         obsVal.setPhenomenonTime(new TimeInstant(OBS_TIME_DEPTH));
         obsVal.setValue(new QuantityValue(Double.valueOf(OBS_VAL), TEMP_UNIT));
         obs.setValue(obsVal);
@@ -863,7 +864,7 @@ public class InsertDAOTest
         returnSession(session);
 
         obs.setResultTime(new TimeInstant(OBS_TIME_HEIGHT));
-        SingleObservationValue<Double> obsVal = new SingleObservationValue<Double>();
+        SingleObservationValue<BigDecimal> obsVal = new SingleObservationValue<BigDecimal>();
         obsVal.setPhenomenonTime(new TimeInstant(OBS_TIME_HEIGHT));
         obsVal.setValue(new QuantityValue(Double.valueOf(OBS_VAL), TEMP_UNIT));
         obs.setValue(obsVal);
@@ -1105,7 +1106,7 @@ public class InsertDAOTest
     }
 
     private NamedValue<?> createQuantityParameter(String name, double value, String unit) {
-        final NamedValue<Double> namedValue = new NamedValue<Double>();
+        final NamedValue<BigDecimal> namedValue = new NamedValue<BigDecimal>();
         final ReferenceType referenceType = new ReferenceType(name);
         namedValue.setName(referenceType);
         namedValue.setValue(new QuantityValue(value, unit));

@@ -45,6 +45,11 @@ import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.CodespaceEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ProcedureHistoryEntity;
+import org.n52.series.db.beans.UnitEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.MultiObservationValues;
@@ -64,11 +69,6 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractInsertObservationHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.service.SosSettings;
 
@@ -180,7 +180,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
 
     @Override
     public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
+        return HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class);
     }
 
     private void insertObservation(OmObservation sosObservation,
@@ -196,19 +196,19 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         sosObsConst.setOfferings(offerings);
         cache.addOfferings(offerings);
 
-        Set<ObservationConstellation> hObservationConstellations = new HashSet<>();
-        AbstractFeatureOfInterest hFeature = null;
+        Set<DatasetEntity> datasets = new HashSet<>();
+        AbstractFeatureEntity hFeature = null;
 
         for (String offeringID : sosObsConst.getOfferings()) {
-            ObservationConstellation hObservationConstellation = cache.get(sosObsConst, offeringID);
-            if (hObservationConstellation == null) {
+            DatasetEntity hDataset = cache.get(sosObsConst, offeringID);
+            if (hDataset == null) {
                 if (!cache.isChecked(sosObsConst, offeringID)) {
                     try {
-                        hObservationConstellation =
-                                daoFactory.getObservationConstellationDAO().checkObservationConstellation(
+                        hDataset =
+                                daoFactory.getSeriesDAO().checkSeries(
                                         sosObsConst, offeringID, session, Sos2Constants.InsertObservationParams.observationType.name());
                         // add to cache table
-                        cache.putConstellation(sosObsConst, offeringID, hObservationConstellation);
+                        cache.putConstellation(sosObsConst, offeringID, hDataset);
                     } catch (OwsExceptionReport owse) {
                         exceptions.add(owse);
                     }
@@ -216,7 +216,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
                     cache.checkConstellation(sosObsConst, offeringID);
                 }
             }
-            if (hObservationConstellation != null) {
+            if (hDataset != null) {
                 // getFeature feature from local cache or create if necessary
                 hFeature = getFeature(sosObsConst.getFeatureOfInterest(), cache, session);
 
@@ -224,23 +224,23 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
                 // AbstractFeature/offering combo
                 if (!cache.isChecked(sosObsConst.getFeatureOfInterest(), offeringID)) {
                     daoFactory.getFeatureOfInterestDAO().checkOrInsertRelatedFeatureRelation(
-                            hFeature, hObservationConstellation.getOffering(), session);
+                            hFeature, hDataset.getOffering(), session);
                     cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
                 }
 
-                hObservationConstellations.add(hObservationConstellation);
+                datasets.add(hDataset);
             }
         }
 
-        if (!hObservationConstellations.isEmpty()) {
+        if (!datasets.isEmpty()) {
             AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             if (sosObservation.getValue() instanceof SingleObservationValue) {
                 observationDAO.insertObservationSingleValue(
-                        hObservationConstellations, hFeature, sosObservation,
+                        datasets, hFeature, sosObservation,
                         cache.getCodespaceCache(), cache.getUnitCache(), session);
             } else if (sosObservation.getValue() instanceof MultiObservationValues) {
                 observationDAO.insertObservationMultiValue(
-                        hObservationConstellations, hFeature, sosObservation,
+                        datasets, hFeature, sosObservation,
                         cache.getCodespaceCache(), cache.getUnitCache(), session);
             }
         }
@@ -325,9 +325,9 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
      * @return hibernet AbstractFeatureOfInterest
      * @throws OwsExceptionReport
      */
-    private AbstractFeatureOfInterest getFeature(AbstractFeature abstractFeature,
+    private AbstractFeatureEntity getFeature(AbstractFeature abstractFeature,
             InsertObservationCache cache, Session session) throws OwsExceptionReport {
-        AbstractFeatureOfInterest hFeature = cache.getFeature(abstractFeature);
+        AbstractFeatureEntity hFeature = cache.getFeature(abstractFeature);
         if (hFeature == null) {
             hFeature = daoFactory.getFeatureOfInterestDAO().checkOrInsert(abstractFeature, session);
             cache.putFeature(abstractFeature, hFeature);
@@ -376,18 +376,18 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
 
     private static class InsertObservationCache {
         private final Set<String> allOfferings = Sets.newHashSet();
-        private final Map<AbstractFeature, AbstractFeatureOfInterest> featureCache = Maps.newHashMap();
-        private final Table<OmObservationConstellation, String, ObservationConstellation> obsConstOfferingHibernateObsConstTable = HashBasedTable.create();
-        private final Map<String, Codespace> codespaceCache = Maps.newHashMap();
-        private final Map<UoM, Unit> unitCache = Maps.newHashMap();
+        private final Map<AbstractFeature, AbstractFeatureEntity> featureCache = Maps.newHashMap();
+        private final Table<OmObservationConstellation, String, DatasetEntity> obsConstOfferingHibernateObsConstTable = HashBasedTable.create();
+        private final Map<String, CodespaceEntity> codespaceCache = Maps.newHashMap();
+        private final Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
         private final HashMultimap<OmObservationConstellation, String> obsConstOfferingCheckedMap = HashMultimap.create();
         private final HashMultimap<AbstractFeature, String> relatedFeatureCheckedMap = HashMultimap.create();
 
 
-        public ObservationConstellation get(OmObservationConstellation oc, String offering) {
+        public DatasetEntity get(OmObservationConstellation oc, String offering) {
             return this.obsConstOfferingHibernateObsConstTable.get(oc, offering);
         }
-        public void putConstellation(OmObservationConstellation soc, String offering, ObservationConstellation hoc) {
+        public void putConstellation(OmObservationConstellation soc, String offering, DatasetEntity hoc) {
             this.obsConstOfferingHibernateObsConstTable.put(soc, offering, hoc);
         }
         public boolean isChecked(OmObservationConstellation oc, String offering) {
@@ -402,19 +402,19 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         public void checkFeature(AbstractFeature feature, String offering) {
             this.relatedFeatureCheckedMap.put(feature, offering);
         }
-        public void putFeature(AbstractFeature sfeature, AbstractFeatureOfInterest hfeature) {
+        public void putFeature(AbstractFeature sfeature, AbstractFeatureEntity hfeature) {
             getFeatureCache().put(sfeature, hfeature);
         }
-        public AbstractFeatureOfInterest getFeature(AbstractFeature sfeature) {
+        public AbstractFeatureEntity getFeature(AbstractFeature sfeature) {
             return getFeatureCache().get(sfeature);
         }
-        public Map<AbstractFeature, AbstractFeatureOfInterest> getFeatureCache() {
+        public Map<AbstractFeature, AbstractFeatureEntity> getFeatureCache() {
             return featureCache;
         }
-        public Map<String, Codespace> getCodespaceCache() {
+        public Map<String, CodespaceEntity> getCodespaceCache() {
             return codespaceCache;
         }
-        public Map<UoM, Unit> getUnitCache() {
+        public Map<UoM, UnitEntity> getUnitCache() {
             return unitCache;
         }
         public Set<String> getAllOfferings() {

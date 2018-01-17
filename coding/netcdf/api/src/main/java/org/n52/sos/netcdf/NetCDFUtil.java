@@ -189,15 +189,15 @@ public class NetCDFUtil {
                 OmObservableProperty phenomenon = phenomena.get(0);
                 // add dimensional values to procedure dimension tracking maps
                 if (isLng(phenomenon.getIdentifier())) {
-                    sensorLngs.get(sensor).add(quantityValue.getValue());
+                    sensorLngs.get(sensor).add(quantityValue.getValue().doubleValue());
                 }
 
                 if (isLat(phenomenon.getIdentifier())) {
-                    sensorLats.get(sensor).add(quantityValue.getValue());
+                    sensorLats.get(sensor).add(quantityValue.getValue().doubleValue());
                 }
 
                 if (isZ(phenomenon.getIdentifier())) {
-                    Double zValue = quantityValue.getValue();
+                    Double zValue = quantityValue.getValue().doubleValue();
 //                    if (isDepth(phenomenon.getIdentifier())) {
 //                        zValue = 0 - zValue;
 //                    }
@@ -209,9 +209,9 @@ public class NetCDFUtil {
             if (sosObs.isSetParameter()) {
                 if (sosObs.isSetHeightDepthParameter()) {
                     if (sosObs.isSetHeightParameter()) {
-                        sensorHeights.get(sensor).add(sosObs.getHeightParameter().getValue().getValue());
+                        sensorHeights.get(sensor).add(sosObs.getHeightParameter().getValue().getValue().doubleValue());
                     } else if (sosObs.isSetDepthParameter()) {
-                        sensorHeights.get(sensor).add(sosObs.getDepthParameter().getValue().getValue());
+                        sensorHeights.get(sensor).add(sosObs.getDepthParameter().getValue().getValue().doubleValue());
                     }
                 }
                 if (hasSamplingGeometry(sosObs)) {

@@ -47,6 +47,11 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NSettings;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.om.NamedValue;
@@ -57,11 +62,6 @@ import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
@@ -117,21 +117,22 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
         try {
             session = sessionHolder.getSession();
             Criteria c = getDefaultObservationInfoCriteria(session);
-            c.createCriteria(ContextualReferencedObservation.FEATURE_OF_INTEREST).add(
-                    Restrictions.eq(AbstractFeatureOfInterest.IDENTIFIER, dataAvailability.getFeatureOfInterest().getHref()));
-            c.createCriteria(ContextualReferencedObservation.PROCEDURE).add(
-                    Restrictions.eq(Procedure.IDENTIFIER, dataAvailability.getProcedure().getHref()));
-            c.createCriteria(ContextualReferencedObservation.OBSERVABLE_PROPERTY).add(
-                    Restrictions.eq(ObservableProperty.IDENTIFIER, dataAvailability.getObservedProperty().getHref()));
+            Criteria datasetCriteria = c.createCriteria(DataEntity.PROPERTY_DATASET);
+            datasetCriteria.createCriteria(DatasetEntity.PROPERTY_FEATURE).add(
+                    Restrictions.eq(DatasetEntity.IDENTIFIER, dataAvailability.getFeatureOfInterest().getHref()));
+            datasetCriteria.createCriteria( DatasetEntity.PROPERTY_PROCEDURE).add(
+                    Restrictions.eq(ProcedureEntity.IDENTIFIER, dataAvailability.getProcedure().getHref()));
+            datasetCriteria.createCriteria(DatasetEntity.PROPERTY_PHENOMENON).add(
+                    Restrictions.eq(PhenomenonEntity.IDENTIFIER, dataAvailability.getObservedProperty().getHref()));
             if (request.isSetOfferings()) {
-                c.createCriteria(ContextualReferencedObservation.OFFERINGS).add(
-                        Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+                c.createCriteria( DatasetEntity.PROPERTY_OFFERING).add(
+                        Restrictions.in(OfferingEntity.IDENTIFIER, request.getOfferings()));
             }
             if (hasPhenomenonTimeFilter(request.getExtensions())) {
                 c.add(SosTemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions())));
             }
-            c.setProjection(Projections.distinct(Projections.property(ContextualReferencedObservation.RESULT_TIME)));
-            c.addOrder(Order.asc(ContextualReferencedObservation.RESULT_TIME));
+            c.setProjection(Projections.distinct(Projections.property(DataEntity.PROPERTY_RESULT_TIME)));
+            c.addOrder(Order.asc(DataEntity.PROPERTY_RESULT_TIME));
             LOGGER.debug("QUERY getResultTimesFromObservation({}): {}", HibernateHelper.getSqlString(c));
             List<TimeInstant> resultTimes = Lists.newArrayList();
             for (Date date : (List<Date>) c.list()) {
@@ -147,8 +148,8 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
     }
 
     private Criteria getDefaultObservationInfoCriteria(Session session) {
-        return session.createCriteria(ContextualReferencedObservation.class)
-                .add(Restrictions.eq(ContextualReferencedObservation.DELETED, false))
+        return session.createCriteria(DataEntity.class)
+                .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 

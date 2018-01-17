@@ -30,10 +30,9 @@ package org.n52.sos.ds.hibernate.entities.feature.inspire;
 
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.FeatureVisitor;
+import org.n52.sos.ds.hibernate.GeometryVisitor;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureVisitor;
-import org.n52.sos.ds.hibernate.entities.feature.GeometryVisitor;
-
 import org.locationtech.jts.geom.Geometry;
 
 public class EnvironmentalMonitoringFacility extends FeatureOfInterest {

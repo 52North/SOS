@@ -28,18 +28,18 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
-import org.n52.series.db.beans.BlobDataEntity;
-import org.n52.series.db.beans.BooleanDataEntity;
-import org.n52.series.db.beans.CategoryDataEntity;
-import org.n52.series.db.beans.ComplexDataEntity;
-import org.n52.series.db.beans.CountDataEntity;
-import org.n52.series.db.beans.DataArrayDataEntity;
-import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.GeometryDataEntity;
-import org.n52.series.db.beans.ProfileDataEntity;
-import org.n52.series.db.beans.QuantityDataEntity;
-import org.n52.series.db.beans.ReferencedDataEntity;
-import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.data.Data.BlobData;
+import org.n52.series.db.beans.data.Data.BooleanData;
+import org.n52.series.db.beans.data.Data.CategoryData;
+import org.n52.series.db.beans.data.Data.ComplexData;
+import org.n52.series.db.beans.data.Data.CountData;
+import org.n52.series.db.beans.data.Data.DataArrayData;
+import org.n52.series.db.beans.data.Data.GeometryData;
+import org.n52.series.db.beans.data.Data.ProfileData;
+import org.n52.series.db.beans.data.Data.QuantityData;
+import org.n52.series.db.beans.data.Data.ReferencedData;
+import org.n52.series.db.beans.data.Data.TextData;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -47,86 +47,86 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 public abstract class ValuedObservationFactory {
 
     @SuppressWarnings("rawtypes")
-    public abstract Class<? extends DataEntity> valuedObservationClass();
+    public abstract Class<? extends Data> valuedObservationClass();
 
-    public abstract Class<? extends BlobDataEntity> blobClass();
+    public abstract Class<? extends BlobData> blobClass();
 
-    public BlobDataEntity blob()
+    public BlobData blob()
             throws OwsExceptionReport {
         return instantiate(blobClass());
     }
 
-    public abstract Class<? extends BooleanDataEntity> truthClass();
+    public abstract Class<? extends BooleanData> truthClass();
 
-    public BooleanDataEntity truth()
+    public BooleanData truth()
             throws OwsExceptionReport {
         return instantiate(truthClass());
     }
 
-    public abstract Class<? extends CategoryDataEntity> categoryClass();
+    public abstract Class<? extends CategoryData> categoryClass();
 
-    public CategoryDataEntity category()
+    public CategoryData category()
             throws OwsExceptionReport {
         return instantiate(categoryClass());
     }
 
-    public abstract Class<? extends CountDataEntity> countClass();
+    public abstract Class<? extends CountData> countClass();
 
-    public CountDataEntity count()
+    public CountData count()
             throws OwsExceptionReport {
         return instantiate(countClass());
     }
 
-    public abstract Class<? extends GeometryDataEntity> geometryClass();
+    public abstract Class<? extends GeometryData> geometryClass();
 
-    public GeometryDataEntity geometry()
+    public GeometryData geometry()
             throws OwsExceptionReport {
         return instantiate(geometryClass());
     }
 
-    public abstract Class<? extends QuantityDataEntity> numericClass();
+    public abstract Class<? extends QuantityData> numericClass();
 
-    public QuantityDataEntity numeric()
+    public QuantityData numeric()
             throws OwsExceptionReport {
         return instantiate(numericClass());
     }
 
-    public abstract Class<? extends DataArrayDataEntity> sweDataArrayClass();
+    public abstract Class<? extends DataArrayData> sweDataArrayClass();
 
-    public DataArrayDataEntity sweDataArray()
+    public DataArrayData sweDataArray()
             throws OwsExceptionReport {
         return instantiate(sweDataArrayClass());
     }
 
-    public abstract Class<? extends TextDataEntity> textClass();
+    public abstract Class<? extends TextData> textClass();
 
-    public TextDataEntity text()
+    public TextData text()
             throws OwsExceptionReport {
         return instantiate(textClass());
     }
 
-    public abstract Class<? extends ComplexDataEntity> complexClass();
+    public abstract Class<? extends ComplexData> complexClass();
 
-    public ComplexDataEntity complex()
+    public ComplexData complex()
             throws OwsExceptionReport {
         return instantiate(complexClass());
     }
 
-    public abstract Class<? extends ProfileDataEntity> profileClass();
+    public abstract Class<? extends ProfileData> profileClass();
 
-    public ProfileDataEntity profile()
+    public ProfileData profile()
             throws OwsExceptionReport {
         return instantiate(profileClass());
     }
 
-    public abstract Class<? extends ReferencedDataEntity> referenceClass();
+    public abstract Class<? extends ReferencedData> referenceClass();
 
-    public ReferencedDataEntity reference()
+    public ReferencedData reference()
             throws OwsExceptionReport {
         return instantiate(referenceClass());
     }
 
-    private <T extends DataEntity<?>> T instantiate(Class<T> c)
+    private <T extends Data<?>> T instantiate(Class<T> c)
             throws OwsExceptionReport {
         try {
             return c.newInstance();
@@ -137,7 +137,7 @@ public abstract class ValuedObservationFactory {
     }
 
     @SuppressWarnings("rawtypes")
-    public Class<? extends DataEntity> classForObservationType(
+    public Class<? extends Data> classForObservationType(
             String observationType) {
         if (observationType != null) {
             switch (observationType) {
@@ -166,7 +166,7 @@ public abstract class ValuedObservationFactory {
         return valuedObservationClass();
     }
 
-    public DataEntity<?> forObservationType(String observationType)
+    public Data<?> forObservationType(String observationType)
             throws OwsExceptionReport {
         return instantiate(classForObservationType(observationType));
     }

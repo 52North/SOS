@@ -36,12 +36,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.slf4j.Logger;
@@ -69,9 +67,9 @@ public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObser
         try {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
-            ScrollableIterable<Observation<?>> sr = ScrollableIterable.fromCriteria(getCriteria(session));
+            ScrollableIterable<DataEntity<?>> sr = ScrollableIterable.fromCriteria(getCriteria(session));
             try {
-                for (Observation<?> o : sr) {
+                for (DataEntity<?> o : sr) {
                     session.delete(o);
                 }
             } finally {
@@ -98,8 +96,8 @@ public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObser
      * @return Criteria to query deleted observations
      */
     private Criteria getCriteria(Session session) {
-        final Criteria criteria = session.createCriteria(AbstractSeriesObservation.class);
-        criteria.add(Restrictions.eq(AbstractObservation.DELETED, true));
+        final Criteria criteria = session.createCriteria(DataEntity.class);
+        criteria.add(Restrictions.eq(DataEntity.PROPERTY_DELETED, true));
         LOG.debug("QUERY getCriteria(): {}", HibernateHelper.getSqlString(criteria));
         return criteria;
     }

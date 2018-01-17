@@ -31,6 +31,10 @@ package org.n52.sos.ds.hibernate.create;
 import java.util.Set;
 
 import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
+import org.n52.series.db.beans.feature.inspire.MediaMonitored;
 import org.n52.shetland.inspire.base.Identifier;
 import org.n52.shetland.inspire.ef.ObservingCapability;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -40,31 +44,27 @@ import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
-import org.n52.sos.ds.hibernate.entities.feature.inspire.MediaMonitored;
 import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import org.locationtech.jts.geom.Geometry;
 
-public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreator<EnvironmentalMonitoringFacility> {
+public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreator<EnvironmentalMonitoringFacilityEntity> {
 
     public EnvironmentalMonitoringFacilityCreator(FeatureVisitorContext context) {
        super(context);
     }
 
     @Override
-    public AbstractFeature create(EnvironmentalMonitoringFacility f)
+    public AbstractFeature create(EnvironmentalMonitoringFacilityEntity f)
             throws OwsExceptionReport {
 //        if (f.isSetUrl()) {
 //            return new org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility(
 //                    new SimpleAttrs().setHref(f.getUrl()));
 //        }
-        if (f instanceof EnvironmentalMonitoringFacility) {
-            EnvironmentalMonitoringFacility emf = (EnvironmentalMonitoringFacility) f;
+        if (f instanceof EnvironmentalMonitoringFacilityEntity) {
+            EnvironmentalMonitoringFacilityEntity emf = (EnvironmentalMonitoringFacilityEntity) f;
             final CodeWithAuthority identifier = getContext().getDaoFactory().getFeatureDAO().getIdentifier(emf);
             if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(emf.getIdentifier(), getContext().getVersion())) {
                 identifier.setValue(null);
@@ -99,7 +99,7 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
     }
 
     @Override
-    public Geometry createGeometry(EnvironmentalMonitoringFacility feature)
+    public Geometry createGeometry(EnvironmentalMonitoringFacilityEntity feature)
             throws OwsExceptionReport {
         return createGeometryFrom(feature);
     }
@@ -113,10 +113,10 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
     }
 
     private void addObservingCapabilities(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature,
-            FeatureOfInterest feature) {
+            FeatureEntity feature) {
         emFeature.addObservingCapability(createObservingCapability(feature.getIdentifier()));
-        if (feature.hasChilds()) {
-            for (AbstractFeatureOfInterest child : feature.getChilds()) {
+        if (feature.hasChildren()) {
+            for (AbstractFeatureEntity child : feature.getChildren()) {
                 emFeature.addObservingCapability(createObservingCapability(child.getIdentifier()));
             }
         }

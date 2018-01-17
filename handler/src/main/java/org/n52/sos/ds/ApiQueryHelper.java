@@ -41,7 +41,7 @@ public interface ApiQueryHelper {
     default String listToString(Collection<String> values) {
         return Joiner.on(",").join(values);
     }
-    
+
     default Set<String> toStringSet(Collection<FormatEntity> formats) {
         Set<String> set = new HashSet<>();
         for (FormatEntity format : formats) {

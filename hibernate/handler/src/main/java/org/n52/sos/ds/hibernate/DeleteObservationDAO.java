@@ -41,6 +41,9 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.series.db.beans.CompositeDataEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -53,14 +56,8 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractDeleteObservationHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
@@ -136,14 +133,14 @@ public class DeleteObservationDAO
     private void deleteObservationsByIdentifier(DeleteObservationRequest request, DeleteObservationResponse response,
             Session session) throws OwsExceptionReport, ConverterException {
         Set<String> ids = request.getObservationIdentifiers();
-        List<Observation<?>> observations = daoFactory.getObservationDAO().getObservationByIdentifiers(ids, session);
+        List<DataEntity<?>> observations = daoFactory.getObservationDAO().getObservationByIdentifiers(ids, session);
         if (CollectionHelper.isNotEmpty(observations)) {
-            for (Observation<?> observation : observations) {
+            for (DataEntity<?> observation : observations) {
                 delete(observation, session);
             }
             if (DeleteObservationConstants.NS_SOSDO_1_0.equals(request.getResponseFormat())) {
-                Observation<?> observation = observations.iterator().next();
-                Set<Observation<?>> oberservations = Collections.singleton(observation);
+                DataEntity<?> observation = observations.iterator().next();
+                Set<DataEntity<?>> oberservations = Collections.singleton(observation);
                 OmObservation so = HibernateObservationUtilities.createSosObservationsFromObservations(oberservations,
                         getRequest(request), getRequestedLocale(request), null, observationCreatorContext, session).next();
                 response.setObservationId(request.getObservationIdentifiers().iterator().next());
@@ -167,18 +164,14 @@ public class DeleteObservationDAO
                 request.getObservedProperties(), request.getFeatureIdentifiers(), request.getOfferings(), filter,
                 session);
         while (result.next()) {
-            delete((Observation<?>) result.get()[0], session);
+            delete((DataEntity<?>) result.get()[0], session);
         }
     }
 
-    private void delete(Observation<?> observation, Session session) {
+    private void delete(DataEntity<?> observation, Session session) {
         if (observation != null) {
-            if (observation instanceof ComplexObservation) {
-                for (Observation<?> o : ((ComplexObservation) observation).getValue()) {
-                    delete(o, session);
-                }
-            } else if (observation instanceof ProfileObservation) {
-                for (Observation<?> o : ((ProfileObservation) observation).getValue()) {
+            if (observation instanceof CompositeDataEntity) {
+                for (DataEntity<?> o : ((CompositeDataEntity) observation).getValue()) {
                     delete(o, session);
                 }
             }
@@ -197,17 +190,17 @@ public class DeleteObservationDAO
      * @param session
      *            Hibernate session
      */
-    private void checkSeriesForFirstLatest(Observation<?> observation, Session session) {
-        if (observation instanceof SeriesObservation) {
-            Series series = ((SeriesObservation) observation).getSeries();
-            if ((series.isSetFirstTimeStamp()
-                    && series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart()))
-                    || (series.isSetLastTimeStamp()
-                            && series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd()))) {
-                new SeriesDAO(daoFactory).updateSeriesAfterObservationDeletion(series, (SeriesObservation) observation,
+    private void checkSeriesForFirstLatest(DataEntity<?> observation, Session session) {
+            DatasetEntity series = observation.getDataset();
+            if ((series.isSetFirstValueAt()
+                    && series.getFirstValueAt().equals(observation.getSamplingTimeStart()))
+                    || (series.isSetLastValueAt()
+                            && series.getLastValueAt().equals(observation.getSamplingTimeEnd()))) {
+                new SeriesDAO(daoFactory).updateSeriesAfterObservationDeletion(series, observation,
+                        session);
+                new OfferingDAO(daoFactory).updateAfterObservationDeletion(series.getOffering(), observation,
                         session);
             }
-        }
     }
 
 }

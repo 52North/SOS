@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -271,25 +272,25 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING,
                 session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING);
-            namedQuery.setParameter(DatasetEntity.OBSERVABLE_PROPERTY, oc.getObservableProperty()
+            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, oc.getObservableProperty()
                     .getIdentifier());
-            namedQuery.setParameter(DatasetEntity.PROCEDURE, oc.getProcedure().getIdentifier());
-            namedQuery.setParameter(DatasetEntity.OFFERING, oc.getOffering().getIdentifier());
+            namedQuery.setParameter( DatasetEntity.PROPERTY_PROCEDURE, oc.getProcedure().getIdentifier());
+            namedQuery.setParameter( DatasetEntity.PROPERTY_OFFERING, oc.getOffering().getIdentifier());
             LOGGER.debug("QUERY queryUnit(observationConstellation) with NamedQuery: {}",
                     SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_OFFERING);
             return (String) namedQuery.uniqueResult();
         } else if (HibernateHelper
                 .isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE);
-            namedQuery.setParameter(DatasetEntity.OBSERVABLE_PROPERTY, oc.getObservableProperty()
+            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, oc.getObservableProperty()
                     .getIdentifier());
-            namedQuery.setParameter(DatasetEntity.PROCEDURE, oc.getProcedure().getIdentifier());
+            namedQuery.setParameter( DatasetEntity.PROPERTY_PROCEDURE, oc.getProcedure().getIdentifier());
             LOGGER.debug("QUERY queryUnit(observationConstellation) with NamedQuery: {}",
                     SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE);
             return (String) namedQuery.uniqueResult();
         } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
-            namedQuery.setParameter(DatasetEntity.OBSERVABLE_PROPERTY, oc.getObservableProperty()
+            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, oc.getObservableProperty()
                     .getIdentifier());
             LOGGER.debug("QUERY queryUnit(observationConstellation) with NamedQuery: {}",
                     SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
@@ -371,10 +372,10 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
      *
      * @return List with SWE Coordinate
      */
-    private List<SweCoordinate<Double>> createCoordinatesForPosition(Object longitude, Object latitude, Object altitude) {
-        SweAbstractSimpleType<Double> yq = createSweQuantity(latitude, SweConstants.Y_AXIS, latLongUom);
-        SweAbstractSimpleType<Double> xq = createSweQuantity(longitude, SweConstants.X_AXIS, latLongUom);
-        SweAbstractSimpleType<Double> zq = createSweQuantity(altitude, SweConstants.Z_AXIS, altitudeUom);
+    private List<SweCoordinate<BigDecimal>> createCoordinatesForPosition(Object longitude, Object latitude, Object altitude) {
+        SweAbstractSimpleType<BigDecimal> yq = createSweQuantity(latitude, SweConstants.Y_AXIS, latLongUom);
+        SweAbstractSimpleType<BigDecimal> xq = createSweQuantity(longitude, SweConstants.X_AXIS, latLongUom);
+        SweAbstractSimpleType<BigDecimal> zq = createSweQuantity(altitude, SweConstants.Z_AXIS, altitudeUom);
         return Lists.newArrayList(
                 new SweCoordinate<>(SweCoordinateNames.NORTHING, yq),
                 new SweCoordinate<>(SweCoordinateNames.EASTING, xq),
@@ -394,7 +395,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
      * @return SWE Quantity
      */
     private SweQuantity createSweQuantity(Object value, String axis, String uom) {
-        return new SweQuantity().setAxisID(axis).setUom(uom).setValue(JavaHelper.asDouble(value));
+        return new SweQuantity().setAxisID(axis).setUom(uom).setValue(new BigDecimal(JavaHelper.asDouble(value)));
     }
 
     private List<SmlIdentifier> createIdentifications(String identifier) {

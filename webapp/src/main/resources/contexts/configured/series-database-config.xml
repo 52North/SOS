@@ -21,6 +21,7 @@
 
     <!-- ############################## JDBC MANAGED DATASOURCE ####################################### -->
 
+<!--
     <bean class="org.n52.series.db.SeriesHibernateSessionHolder" destroy-method="shutdown" />
 
     <bean id="seriesDatasource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
@@ -48,14 +49,16 @@
             </list>
         </property>
     </bean>
-
+ -->
 <!--
     <tx:annotation-driven />
 -->
+
+<!--
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="seriesSessionFactory" />
     </bean>
-
+ -->
     <!-- ############################## JTA JAVA EE MANAGED DATASOURCE ################################## -->
 
     <!--

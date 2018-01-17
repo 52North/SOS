@@ -50,7 +50,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     private static final String TN_FEATURE_OF_INTEREST = "featureOfInterest";
 
     private static final String TN_OBSERVATION = "observation";
-    
+
     private static final String TN_SERIES = "series";
 
     private static final String CN_IDENTIFIER = "identifier";

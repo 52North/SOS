@@ -28,8 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -44,23 +49,35 @@ import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.FormatEntity;
+import org.n52.series.db.beans.NotDefinedDatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.OmCompositePhenomenon;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.FormatDAO;
+import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -126,6 +143,8 @@ public abstract class AbstractSeriesDAO
     public abstract List<DatasetEntity> getSeries(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport;
 
+    public abstract List<DatasetEntity> getSeries(GetResultRequest request, Collection<String> featureIdentifiers,
+            Session session) throws OwsExceptionReport;
     /**
      * Query series for observedProiperty and featuresOfInterest
      *
@@ -219,6 +238,7 @@ public abstract class AbstractSeriesDAO
      *
      * @param identifiers
      *            identifiers object
+     * @param observation
      * @param session
      *            Hibernate session
      *
@@ -226,13 +246,15 @@ public abstract class AbstractSeriesDAO
      *
      * @throws OwsExceptionReport
      */
-    public abstract DatasetEntity getOrInsertSeries(ObservationContext identifiers, final Session session)
+    public abstract DatasetEntity getOrInsertSeries(ObservationContext identifiers, Data<?> observation, final Session session)
             throws OwsExceptionReport;
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request)
             throws OwsExceptionReport;
 
     public abstract ObservationFactory getObservationFactory();
+
+    public abstract DatasetFactory getDatasetFactory();
 
     protected DatasetEntity getOrInsert(ObservationContext ctx, final Session session) throws OwsExceptionReport {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
@@ -259,6 +281,40 @@ public abstract class AbstractSeriesDAO
 //            session.saveOrUpdate(series);
 //            session.flush();
 //            session.refresh(series);
+        }
+        return series;
+    }
+
+    protected DatasetEntity getOrInsert(ObservationContext ctx, Data<?> observation, Session session) throws OwsExceptionReport {
+        Criteria criteria = getDefaultAllSeriesCriteria(session);
+        ctx.addIdentifierRestrictionsToCritera(criteria);
+        LOGGER.debug("QUERY getOrInsertSeries(feature, observableProperty, procedure): {}",
+                HibernateHelper.getSqlString(criteria));
+        DatasetEntity series = (DatasetEntity) criteria.uniqueResult();
+        if (series == null) {
+            series = (DatasetEntity) getDatasetFactory().visit(observation);
+            ctx.addValuesToSeries(series);
+            series.setDeleted(false);
+            series.setPublished(true);
+            series.setHiddenChild(ctx.isHiddenChild());
+            session.saveOrUpdate(series);
+            session.flush();
+            session.refresh(series);
+        } else if (series instanceof NotDefinedDatasetEntity) {
+            Dataset visit = getDatasetFactory().visit(observation);
+            visit.add(series);
+            series = (DatasetEntity) visit;
+            series.setDeleted(false);
+            series.setPublished(true);
+            series.setHiddenChild(ctx.isHiddenChild());
+            session.saveOrUpdate(series);
+            session.flush();
+            session.refresh(series);
+        } else if (series.isDeleted()) {
+            series.setDeleted(false);
+            session.saveOrUpdate(series);
+            session.flush();
+            session.refresh(series);
         }
         return series;
     }
@@ -298,6 +354,15 @@ public abstract class AbstractSeriesDAO
         Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(), request.getFeaturesOfInterest(), request.getOfferings(), session);
         checkAndAddResultFilterCriterion(c, request, session);
         checkAndAddSpatialFilterCriterion(c, request, session);
+        LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
+        return c;
+    }
+
+    protected Criteria getSeriesCriteria(GetResultRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
+        final Criteria c = createCriteriaFor(request.getObservedProperty(), request.getOffering(), features,
+              session);
+//        checkAndAddResultFilterCriterion(c, request, session);
+//        checkAndAddSpatialFilterCriterion(c, request, session);
         LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
         return c;
     }
@@ -354,7 +419,7 @@ public abstract class AbstractSeriesDAO
                 HibernateHelper.getSqlString(c));
         return c;
     }
-    
+
     public Criteria getSeriesCriteriaFor(String procedure, String observableProperty,
             Session session) {
         final Criteria c = createCriteriaFor(procedure, observableProperty, session);
@@ -411,7 +476,7 @@ public abstract class AbstractSeriesDAO
      *            ObservableProperty identifier to add
      */
     public void addObservablePropertyToCriteria(Criteria c, String observedProperty) {
-        c.createCriteria(DatasetEntity.OBSERVABLE_PROPERTY)
+        c.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
                 .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
     }
 
@@ -424,7 +489,7 @@ public abstract class AbstractSeriesDAO
      *            ObservableProperty to add
      */
     public void addObservablePropertyToCriteria(Criteria c, PhenomenonEntity observedProperty) {
-        c.add(Restrictions.eq(DatasetEntity.OBSERVABLE_PROPERTY, observedProperty));
+        c.add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON, observedProperty));
     }
 
     /**
@@ -436,7 +501,7 @@ public abstract class AbstractSeriesDAO
      *            ObservableProperty identifiers to add
      */
     public void addObservablePropertyToCriteria(Criteria c, Collection<String> observedProperties) {
-        c.createCriteria(DatasetEntity.OBSERVABLE_PROPERTY)
+        c.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
                 .add(Restrictions.in(PhenomenonEntity.IDENTIFIER, observedProperties));
     }
 
@@ -449,7 +514,7 @@ public abstract class AbstractSeriesDAO
      *            Procedure identifier to add
      */
     public void addProcedureToCriteria(Criteria c, String procedure) {
-        c.createCriteria(DatasetEntity.PROCEDURE).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedure));
+        c.createCriteria( DatasetEntity.PROPERTY_PROCEDURE).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedure));
     }
 
     /**
@@ -461,7 +526,7 @@ public abstract class AbstractSeriesDAO
      *            Procedure to add
      */
     public void addProcedureToCriteria(Criteria c, ProcedureEntity procedure) {
-        c.add(Restrictions.eq(DatasetEntity.PROCEDURE, procedure));
+        c.add(Restrictions.eq( DatasetEntity.PROPERTY_PROCEDURE, procedure));
 
     }
 
@@ -474,7 +539,7 @@ public abstract class AbstractSeriesDAO
      *            Procedure identifiers to add
      */
     public void addProcedureToCriteria(Criteria c, Collection<String> procedures) {
-        c.createCriteria(DatasetEntity.PROCEDURE).add(Restrictions.in(ProcedureEntity.IDENTIFIER, procedures));
+        c.createCriteria( DatasetEntity.PROPERTY_PROCEDURE).add(Restrictions.in(ProcedureEntity.IDENTIFIER, procedures));
 
     }
 
@@ -488,20 +553,20 @@ public abstract class AbstractSeriesDAO
      * @throws OwsExceptionReport
      */
     public void addOfferingToCriteria(Criteria c, Collection<String> offerings) {
-        c.createAlias(DatasetEntity.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
-        c.add(Restrictions.or(Restrictions.isNull(DatasetEntity.OFFERING),
+        c.createAlias( DatasetEntity.PROPERTY_OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
+        c.add(Restrictions.or(Restrictions.isNull( DatasetEntity.PROPERTY_OFFERING),
                 Restrictions.in("off." + OfferingEntity.IDENTIFIER, offerings)));
 
     }
 
     public void addOfferingToCriteria(Criteria c, String offering) {
-        c.createAlias(DatasetEntity.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
-        c.add(Restrictions.or(Restrictions.isNull(DatasetEntity.OFFERING),
+        c.createAlias( DatasetEntity.PROPERTY_OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
+        c.add(Restrictions.or(Restrictions.isNull( DatasetEntity.PROPERTY_OFFERING),
                 Restrictions.eq("off." + OfferingEntity.IDENTIFIER, offering)));
     }
 
     public void addOfferingToCriteria(Criteria c, OfferingEntity offering) {
-        c.add(Restrictions.eq(DatasetEntity.PROCEDURE, offering));
+        c.add(Restrictions.eq( DatasetEntity.PROPERTY_PROCEDURE, offering));
     }
 
     /**
@@ -514,7 +579,7 @@ public abstract class AbstractSeriesDAO
      * @return Default criteria
      */
     public Criteria getDefaultSeriesCriteria(Session session) {
-        Criteria c = session.createCriteria(getSeriesClass()).add(Restrictions.eq(DatasetEntity.DELETED, false))
+        Criteria c = session.createCriteria(getSeriesClass()).add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false))
                 .add(Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, true)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         if (!isIncludeChildObservableProperties()) {
             c.add(Restrictions.eq(DatasetEntity.HIDDEN_CHILD, false));
@@ -589,10 +654,10 @@ public abstract class AbstractSeriesDAO
         }
         if (hObservation instanceof QuantityDataEntity) {
             if (minChanged) {
-                series.setFirstValue(((QuantityDataEntity) hObservation).getValue());
+                series.setFirstQuantityValue(((QuantityDataEntity) hObservation).getValue());
             }
             if (maxChanged) {
-                series.setLastValue(((QuantityDataEntity) hObservation).getValue());
+                series.setLastQuantityValue(((QuantityDataEntity) hObservation).getValue());
             }
         }
         session.saveOrUpdate(series);
@@ -600,7 +665,7 @@ public abstract class AbstractSeriesDAO
     }
 
     /**
-     * Check {@link Series} if the deleted observation time stamp corresponds to
+     * Check {@link DatasetEntity} if the deleted observation time stamp corresponds to
      * the first/last series time stamp
      *
      * @param series
@@ -618,13 +683,13 @@ public abstract class AbstractSeriesDAO
             if (firstDataEntity != null) {
                 series.setFirstValueAt(firstDataEntity.getPhenomenonTimeStart());
                 if (firstDataEntity instanceof QuantityDataEntity) {
-                    series.setFirstValue(((QuantityDataEntity) firstDataEntity).getValue());
+                    series.setFirstQuantityValue(((QuantityDataEntity) firstDataEntity).getValue());
                 }
                 series.setFirstObservation(firstDataEntity);
             } else {
                 series.setFirstValueAt(null);
                 if (observation instanceof QuantityDataEntity) {
-                    series.setFirstValue(null);
+                    series.setFirstQuantityValue(null);
                 }
             }
         }
@@ -633,13 +698,13 @@ public abstract class AbstractSeriesDAO
             if (latestDataEntity != null) {
                 series.setLastValueAt(latestDataEntity.getPhenomenonTimeEnd());
                 if (latestDataEntity instanceof QuantityDataEntity) {
-                    series.setLastValue(((QuantityDataEntity) latestDataEntity).getValue());
+                    series.setLastQuantityValue(((QuantityDataEntity) latestDataEntity).getValue());
                 }
                 series.setLastObservation(latestDataEntity);
             } else {
                 series.setLastValueAt(null);
                 if (observation instanceof QuantityDataEntity) {
-                    series.setLastValue(null);
+                    series.setLastQuantityValue(null);
                 }
             }
         }
@@ -733,7 +798,7 @@ public abstract class AbstractSeriesDAO
         }
         return c;
     }
-    
+
     private Criteria createCriteriaFor(String procedure, String observedProperty, Session session) {
         final Criteria c = getDefaultSeriesCriteria(session);
         if (Strings.isNullOrEmpty(observedProperty)) {
@@ -741,6 +806,21 @@ public abstract class AbstractSeriesDAO
         }
         if (Strings.isNullOrEmpty(procedure)) {
             addProcedureToCriteria(c, procedure);
+        }
+        return c;
+    }
+
+    private Criteria createCriteriaFor(String observedProperty, String offering, Collection<String> features,
+            Session session) {
+        final Criteria c = getDefaultSeriesCriteria(session);
+        if (CollectionHelper.isNotEmpty(features)) {
+            addFeatureOfInterestToCriteria(c, features);
+        }
+        if (Strings.isNullOrEmpty(observedProperty)) {
+            addObservablePropertyToCriteria(c, observedProperty);
+        }
+        if (Strings.isNullOrEmpty(offering)) {
+            addOfferingToCriteria(c, offering);
         }
         return c;
     }
@@ -814,13 +894,177 @@ public abstract class AbstractSeriesDAO
     }
 
     public DatasetEntity checkOrInsertSeries(ProcedureEntity procedure, PhenomenonEntity observableProperty,
-            OfferingEntity offering, boolean b, Session session) {
-        // TODO Auto-generated method stub
-        return null;
+            OfferingEntity offering, boolean hiddenChild, Session session) {
+        Criteria criteria = session.createCriteria(DatasetEntity.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                .add(Restrictions.eq( DatasetEntity.PROPERTY_OFFERING, offering))
+                .add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON, observableProperty))
+                .add(Restrictions.eq( DatasetEntity.PROPERTY_PROCEDURE, procedure));
+        LOGGER.debug(
+                "QUERY checkOrInsertObservationConstellation(procedure, observableProperty, offering, hiddenChild): {}",
+                HibernateHelper.getSqlString(criteria));
+        DatasetEntity dataset = (DatasetEntity) criteria.uniqueResult();
+        if (dataset == null) {
+            dataset = new NotDefinedDatasetEntity();
+            dataset.setObservableProperty(observableProperty);
+            dataset.setProcedure(procedure);
+            dataset.setOffering(offering);
+            dataset.setDeleted(false);
+            dataset.setHiddenChild(hiddenChild);
+            session.save(dataset);
+            session.flush();
+            session.refresh(dataset);
+        } else if (dataset.getDeleted()) {
+            dataset.setDeleted(false);
+            session.update(dataset);
+            session.flush();
+            session.refresh(dataset);
+        }
+        return dataset;
     }
 
-    public boolean checkObservationType(DatasetEntity oc, String observationType, Session session) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean checkObservationType(DatasetEntity dataset, String observationType, Session session) {
+        String hObservationType = dataset.getObservationType() == null ? null : dataset.getObservationType().getFormat();
+        if (hObservationType == null || hObservationType.isEmpty() || hObservationType.equals("NOT_DEFINED")) {
+            updateSeries(dataset, observationType, session);
+        } else  if (!hObservationType.equals(observationType)) {
+            return false;
+        }
+        return true;
     }
+
+    private void updateSeries(DatasetEntity dataset, String observationType, Session session) {
+        FormatEntity obsType = new FormatDAO().getFormatEntityObject(observationType, session);
+        dataset.setObservationType(obsType);
+        session.saveOrUpdate(dataset);
+
+        // update hidden child observation constellations
+        // TODO should hidden child observation constellations be restricted to
+        // the parent observation type?
+        Set<String> offerings =
+                dataset.getOffering().getChildren().stream().map(o -> o.getIdentifier()).collect(Collectors.toSet());
+
+        if (CollectionHelper.isNotEmpty(offerings)) {
+            Criteria c =
+                    session.createCriteria(DatasetEntity.class)
+                            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                            .add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON,
+                                    dataset.getObservableProperty()))
+                            .add(Restrictions.eq( DatasetEntity.PROPERTY_PROCEDURE,
+                                    dataset.getProcedure()))
+                            .add(Restrictions.eq(DatasetEntity.HIDDEN_CHILD, true));
+            c.createCriteria( DatasetEntity.PROPERTY_OFFERING).add(Restrictions.in(OfferingEntity.IDENTIFIER, offerings));
+            LOGGER.debug("QUERY updateSeries(observationConstellation, observationType): {}",
+                    HibernateHelper.getSqlString(c));
+            List<DatasetEntity> hiddenChildObsConsts = c.list();
+            for (DatasetEntity hiddenChildObsConst : hiddenChildObsConsts) {
+                hiddenChildObsConst.setObservationType(obsType);
+                session.saveOrUpdate(hiddenChildObsConst);
+            }
+        }
+
+    }
+
+    /**
+     * Check and Update and/or get observation constellation objects
+     *
+     * @param sosOC
+     *            SOS observation constellation
+     * @param offering
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @param parameterName
+     *            Parameter name for exception
+     * @return Observation constellation object
+     * @throws OwsExceptionReport
+     *             If the requested observation type is invalid
+     */
+    public DatasetEntity checkSeries(OmObservationConstellation sosOC, String offering,
+            Session session, String parameterName) throws OwsExceptionReport {
+        AbstractPhenomenon observableProperty = sosOC.getObservableProperty();
+        String observablePropertyIdentifier = observableProperty.getIdentifier();
+
+        Criteria c = session.createCriteria(DatasetEntity.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+        c.createCriteria( DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        c.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
+                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observablePropertyIdentifier));
+
+        if (sosOC.isSetProcedure()) {
+            c.createCriteria( DatasetEntity.PROPERTY_PROCEDURE)
+                    .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, sosOC.getProcedureIdentifier()));
+        }
+
+        LOGGER.debug("QUERY checkObservationConstellation(sosObservationConstellation, offering): {}",
+                HibernateHelper.getSqlString(c));
+        List<DatasetEntity> hocs = c.list();
+
+        if (hocs == null || hocs.isEmpty()) {
+            throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
+                    .withMessage(
+                            "The requested observation constellation (procedure=%s, observedProperty=%s and offering=%s) is invalid!",
+                            sosOC.getProcedureIdentifier(), observablePropertyIdentifier, sosOC.getOfferings());
+        }
+        String observationType = sosOC.getObservationType();
+
+        DatasetEntity hObsConst = null;
+        for (DatasetEntity hoc : hocs) {
+            if (!checkObservationType(hoc, observationType, session)) {
+                throw new InvalidParameterValueException().at(parameterName).withMessage(
+                        "The requested observationType (%s) is invalid for procedure = %s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
+                        observationType, sosOC.getProcedureIdentifier(), observablePropertyIdentifier,
+                        sosOC.getOfferings(), hoc.getObservationType().getFormat());
+            }
+            if (hObsConst == null) {
+                if (sosOC.isSetProcedure()) {
+                    if (hoc.getProcedure().getIdentifier().equals(sosOC.getProcedureIdentifier())) {
+                        hObsConst = hoc;
+                    }
+                } else {
+                    hObsConst = hoc;
+                }
+            }
+
+            // add parent/childs
+            if (observableProperty instanceof OmCompositePhenomenon) {
+                OmCompositePhenomenon omCompositePhenomenon = (OmCompositePhenomenon) observableProperty;
+                ObservablePropertyDAO dao = new ObservablePropertyDAO(getDaoFactory());
+                Map<String, PhenomenonEntity> obsprop =
+                        dao.getOrInsertObservablePropertyAsMap(Arrays.asList(observableProperty), false, session);
+                for (OmObservableProperty child : omCompositePhenomenon) {
+                    checkOrInsertSeries(hoc.getProcedure(), obsprop.get(child.getIdentifier()),
+                            hoc.getOffering(), true, session);
+                }
+            }
+        }
+        return hObsConst;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<DatasetEntity> getSeriesForOfferings(PhenomenonEntity phenomenon, HashSet<OfferingEntity> offerings,
+            Session session) throws OwsExceptionReport {
+        return session.createCriteria(getSeriesImpl().getClass())
+                .add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false))
+                .add(Restrictions.in( DatasetEntity.PROPERTY_OFFERING, offerings))
+                .add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON, phenomenon)).list();
+
+    }
+
+    public DatasetEntity getSeries(OmObservationConstellation omObsConst, Session session) throws OwsExceptionReport {
+        Criteria criteria =
+                session.createCriteria(getSeriesImpl().getClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.createCriteria( DatasetEntity.PROPERTY_PROCEDURE)
+                .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, omObsConst.getProcedureIdentifier()));
+        criteria.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
+                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, omObsConst.getObservablePropertyIdentifier()));
+        criteria.createAlias( DatasetEntity.PROPERTY_OFFERING, "o")
+                .add(Restrictions.in("o." + OfferingEntity.IDENTIFIER, omObsConst.getOfferings()))
+                .add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        LOGGER.debug("QUERY getObservationConstellation(omObservationConstellation): {}",
+                HibernateHelper.getSqlString(criteria));
+        return (DatasetEntity) criteria.uniqueResult();
+    }
+
 }

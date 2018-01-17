@@ -49,6 +49,8 @@ import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.service.MiscSettings;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -61,9 +63,6 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
@@ -185,7 +184,7 @@ public class GetObservationDao
         final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
 
         final List<OmObservation> result = new LinkedList<>();
-        Collection<SeriesObservation<?>> seriesObservations = Lists.newArrayList();
+        Collection<DataEntity<?>> seriesObservations = Lists.newArrayList();
 
         AbstractSeriesDAO seriesDAO = daoFactory.getSeriesDAO();
 
@@ -201,7 +200,7 @@ public class GetObservationDao
                     seriesObservations =
                             observationDAO.getSeriesObservationsFor(request, features, sosIndeterminateTime, session);
                 } else {
-                    for (Series series : seriesDAO.getSeries(request, features, session)) {
+                    for (DatasetEntity series : seriesDAO.getSeries(request, features, session)) {
                         seriesObservations.addAll(observationDAO.getSeriesObservationsFor(series, request,
                                 sosIndeterminateTime, session));
 
@@ -226,14 +225,14 @@ public class GetObservationDao
         if (profileHandler.getActiveProfile().isShowMetadataOfEmptyObservations()) {
             // create a map of series to check by id, so we don't need to fetch
             // each observation's series from the database
-            Map<Long, Series> seriesToCheckMap = Maps.newHashMap();
-            for (Series series : seriesDAO.getSeries(request, features, session)) {
-                seriesToCheckMap.put(series.getSeriesId(), series);
+            Map<Long, DatasetEntity> seriesToCheckMap = Maps.newHashMap();
+            for (DatasetEntity series : seriesDAO.getSeries(request, features, session)) {
+                seriesToCheckMap.put(series.getId(), series);
             }
 
             // check observations and remove any series found from the map
-            for (SeriesObservation<?> seriesObs : seriesObservations) {
-                long seriesId = seriesObs.getSeries().getSeriesId();
+            for (DataEntity<?> seriesObs : seriesObservations) {
+                long seriesId = seriesObs.getDataset().getId();
                 if (seriesToCheckMap.containsKey(seriesId)) {
                     seriesToCheckMap.remove(seriesId);
                 }
@@ -242,7 +241,7 @@ public class GetObservationDao
             // the check map,
             // add "result" observations for them
             metadataObservationsCount = seriesToCheckMap.size();
-            for (Series series : seriesToCheckMap.values()) {
+            for (DatasetEntity series : seriesToCheckMap.values()) {
                 HibernateObservationUtilities.createSosObservationFromSeries(series, request, requestedLocale, pdf,
                         observationCreatorContext, session).forEachRemaining(result::add);
             }
@@ -252,7 +251,7 @@ public class GetObservationDao
         HibernateGetObservationHelper.checkMaxNumberOfReturnedValues(seriesObservations.size());
 
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
-        Collection<Observation<?>> abstractObservations = Lists.newArrayList();
+        Collection<DataEntity<?>> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
         HibernateGetObservationHelper.toSosObservation(new ArrayList<>(seriesObservations), request, requestedLocale,
                 pdf, observationCreatorContext, session).forEachRemaining(result::add);
@@ -278,12 +277,12 @@ public class GetObservationDao
         final List<OmObservation> result = new LinkedList<OmObservation>();
         List<String> features = request.getFeatureIdentifiers();
         Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
-        List<Series> serieses = daoFactory.getSeriesDAO().getSeries(request, features, session);
+        List<DatasetEntity> serieses = daoFactory.getSeriesDAO().getSeries(request, features, session);
         HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
         int maxNumberOfValuesPerSeries = HibernateGetObservationHelper.getMaxNumberOfValuesPerSeries(serieses.size());
         checkSeriesOfferings(serieses, request);
-        Collection<Series> duplicated = checkAndGetDuplicatedtSeries(serieses, request);
-        for (Series series : serieses) {
+        Collection<DatasetEntity> duplicated = checkAndGetDuplicatedtSeries(serieses, request);
+        for (DatasetEntity series : serieses) {
             ObservationStream createSosObservationFromSeries =
                     HibernateObservationUtilities.createSosObservationFromSeries(series, request,
                             getRequestedLocale(request), getProcedureDescriptionFormat(request.getResponseFormat()),
@@ -291,7 +290,7 @@ public class GetObservationDao
             OmObservation observationTemplate = createSosObservationFromSeries.next();
             HibernateSeriesStreamingValue streamingValue =
                     new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series.getSeriesId(), duplicated.contains(series));
+                            series.getId(), duplicated.contains(series));
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
             streamingValue.setObservationTemplate(observationTemplate);
@@ -310,9 +309,9 @@ public class GetObservationDao
         return result;
     }
 
-    private void checkSeriesOfferings(List<Series> serieses, GetObservationRequest request) {
+    private void checkSeriesOfferings(List<DatasetEntity> serieses, GetObservationRequest request) {
         boolean allSeriesWithOfferings = true;
-        for (Series series : serieses) {
+        for (DatasetEntity series : serieses) {
             allSeriesWithOfferings = !series.isSetOffering() ? false : allSeriesWithOfferings;
         }
         if (allSeriesWithOfferings) {
@@ -320,13 +319,13 @@ public class GetObservationDao
         }
     }
 
-    private Collection<Series> checkAndGetDuplicatedtSeries(List<Series> serieses, GetObservationRequest request) {
+    private Collection<DatasetEntity> checkAndGetDuplicatedtSeries(List<DatasetEntity> serieses, GetObservationRequest request) {
         if (!request.isCheckForDuplicity()) {
             return Sets.newHashSet();
         }
-        Set<Series> single = Sets.newHashSet();
-        Set<Series> duplicated = Sets.newHashSet();
-        for (Series series : serieses) {
+        Set<DatasetEntity> single = Sets.newHashSet();
+        Set<DatasetEntity> duplicated = Sets.newHashSet();
+        for (DatasetEntity series : serieses) {
             if (!single.isEmpty()) {
                 if (isDuplicatedSeries(series, single)) {
                     duplicated.add(series);
@@ -338,35 +337,40 @@ public class GetObservationDao
         return duplicated;
     }
 
-    private boolean isDuplicatedSeries(Series series, Set<Series> serieses) {
-        for (Series s : serieses) {
-            if (series.hasSameObservationIdentifier(s)) {
+    private boolean isDuplicatedSeries(DatasetEntity series, Set<DatasetEntity> serieses) {
+        for (DatasetEntity s : serieses) {
+            if (hasSameObservationIdentifier(series, s)) {
                 return true;
             }
         }
         return false;
     }
 
-    private Collection<SeriesObservation<?>> checkObservationsForDuplicity(
-            Collection<SeriesObservation<?>> seriesObservations, GetObservationRequest request) {
+    public boolean hasSameObservationIdentifier(DatasetEntity toCheck, DatasetEntity s) {
+        return toCheck.getFeature().equals(s.getFeature()) && toCheck.getProcedure().equals(s.getProcedure())
+                && toCheck.getObservableProperty().equals(s.getObservableProperty());
+    }
+
+    private Collection<DataEntity<?>> checkObservationsForDuplicity(
+            Collection<DataEntity<?>> seriesObservations, GetObservationRequest request) {
         if (!request.isCheckForDuplicity()) {
             return seriesObservations;
         }
-        Collection<SeriesObservation<?>> checked = Lists.newArrayList();
-        Set<Series> serieses = Sets.newHashSet();
-        Set<Series> duplicated = Sets.newHashSet();
-        for (SeriesObservation<?> seriesObservation : seriesObservations) {
+        Collection<DataEntity<?>> checked = Lists.newArrayList();
+        Set<DatasetEntity> serieses = Sets.newHashSet();
+        Set<DatasetEntity> duplicated = Sets.newHashSet();
+        for (DataEntity<?> seriesObservation : seriesObservations) {
             if (serieses.isEmpty()) {
-                serieses.add(seriesObservation.getSeries());
+                serieses.add(seriesObservation.getDataset());
             } else {
-                if (!serieses.contains(seriesObservation.getSeries()) && !duplicated.contains(seriesObservation)
-                        && isDuplicatedSeries(seriesObservation.getSeries(), serieses)) {
-                    duplicated.add(seriesObservation.getSeries());
+                if (!serieses.contains(seriesObservation.getDataset()) && !duplicated.contains(seriesObservation)
+                        && isDuplicatedSeries(seriesObservation.getDataset(), serieses)) {
+                    duplicated.add(seriesObservation.getDataset());
                 }
             }
 
-            if (serieses.contains(seriesObservation.getSeries()) || (duplicated.contains(seriesObservation.getSeries())
-                    && seriesObservation.getOfferings().size() == 1)) {
+            if (serieses.contains(seriesObservation.getDataset()) || (duplicated.contains(seriesObservation.getDataset())
+                    && seriesObservation.getDataset().getOffering() != null)) {
                 checked.add(seriesObservation);
             }
         }

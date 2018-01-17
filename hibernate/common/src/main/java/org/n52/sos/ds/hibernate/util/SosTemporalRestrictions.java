@@ -86,7 +86,7 @@ public class SosTemporalRestrictions {
      * @see Observation#PHENOMENON_TIME_END
      */
     public static final TimePrimitiveFieldDescriptor PHENOMENON_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
-            DataEntity.PROPERTY_PHENOMENON_TIME_START, DataEntity.PROPERTY_PHENOMENON_TIME_END);
+            DataEntity.PROPERTY_SAMPLING_TIME_START, DataEntity.PROPERTY_SAMPLING_TIME_END);
 
     /**
      * Fields describing the result time of a {@code Observation}.

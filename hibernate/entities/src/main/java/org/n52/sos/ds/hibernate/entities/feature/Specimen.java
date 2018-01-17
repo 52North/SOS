@@ -32,6 +32,8 @@ import java.util.Date;
 
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.FeatureVisitor;
+import org.n52.sos.ds.hibernate.GeometryVisitor;
 import org.n52.sos.ds.hibernate.entities.Unit;
 
 import com.google.common.base.Strings;

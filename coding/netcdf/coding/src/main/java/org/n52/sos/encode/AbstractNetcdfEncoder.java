@@ -31,6 +31,7 @@ package org.n52.sos.encode;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -224,7 +225,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     private Version getVersion(AbstractObservationResponse aor) {
         MediaType contentType = getBestFitContentType(aor);
         if (contentType != null && contentType.hasParameter(NetcdfConstants.PARAM_VERSION)) {
-            List<String> parameter = contentType.getParameter(NetcdfConstants.PARAM_VERSION);
+            Collection<String> parameter = contentType.getParameter(NetcdfConstants.PARAM_VERSION);
             if (parameter.contains("3")) {
                 return Version.netcdf3;
             } else if (parameter.contains("4")) {

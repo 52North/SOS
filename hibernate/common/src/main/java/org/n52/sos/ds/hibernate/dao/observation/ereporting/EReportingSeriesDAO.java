@@ -36,9 +36,21 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
+import org.n52.series.db.beans.ereporting.EReportingBlobDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingBooleanDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingCategoryDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingComplexDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingCountDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingDataArrayDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingGeometryDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingQuantityDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingReferencedDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
+import org.n52.series.db.beans.ereporting.EReportingTextDatasetEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -47,11 +59,13 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.DatasetFactory;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 
 public class EReportingSeriesDAO extends AbstractSeriesDAO {
@@ -82,6 +96,13 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     public List<DatasetEntity> getSeries(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
         return getSeriesCriteria(request, session).list();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<DatasetEntity> getSeries(GetResultRequest request, Collection<String> featureIdentifiers,
+            Session session) throws OwsExceptionReport {
+        return getSeriesCriteria(request, featureIdentifiers, session).list();
     }
 
     @Override
@@ -154,8 +175,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public EReportingDatasetEntity getOrInsertSeries(ObservationContext identifiers, Session session) throws OwsExceptionReport {
-        return (EReportingDatasetEntity) super.getOrInsert(identifiers, session);
+    public EReportingDatasetEntity getOrInsertSeries(ObservationContext identifiers, Data<?> observation, Session session) throws OwsExceptionReport {
+        return (EReportingDatasetEntity) super.getOrInsert(identifiers, observation, session);
     }
 
     /**
@@ -225,6 +246,92 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     private void addAssessmentType(Criteria c, String assessmentType) {
         c.createCriteria(EReportingDatasetEntity.SAMPLING_POINT).createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE).
         add(Restrictions.ilike(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, assessmentType));
+    }
+
+
+    @Override
+    public DatasetFactory getDatasetFactory() {
+        return EReportingDatasetFactory.getInstance();
+    }
+
+    private static class EReportingDatasetFactory
+            extends
+            DatasetFactory {
+
+        protected EReportingDatasetFactory() {
+        }
+
+        @Override
+        public Class<? extends EReportingDatasetEntity> datasetClass() {
+            return EReportingDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends EReportingBlobDatasetEntity> blobClass() {
+            return EReportingBlobDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends EReportingBooleanDatasetEntity> truthClass() {
+            return EReportingBooleanDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends EReportingCategoryDatasetEntity> categoryClass() {
+            return EReportingCategoryDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends EReportingCountDatasetEntity> countClass() {
+            return EReportingCountDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends EReportingGeometryDatasetEntity> geometryClass() {
+            return EReportingGeometryDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends EReportingQuantityDatasetEntity> numericClass() {
+            return EReportingQuantityDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends EReportingDataArrayDatasetEntity> sweDataArrayClass() {
+            return EReportingDataArrayDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends EReportingTextDatasetEntity> textClass() {
+            return EReportingTextDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends EReportingComplexDatasetEntity> complexClass() {
+            return EReportingComplexDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends EReportingProfileDatasetEntity> profileClass() {
+            return EReportingProfileDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends EReportingReferencedDatasetEntity> referenceClass() {
+            return EReportingReferencedDatasetEntity.class;
+        }
+
+        public static EReportingDatasetFactory getInstance() {
+            return Holder.INSTANCE;
+        }
+
+        private static class Holder {
+            private static final EReportingDatasetFactory INSTANCE = new EReportingDatasetFactory();
+
+            private Holder() {
+            }
+        }
+
     }
 
 }

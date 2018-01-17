@@ -44,6 +44,8 @@ import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.convert.ConverterException;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.filter.BinaryLogicFilter;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.Filter;
@@ -62,11 +64,6 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
 import org.n52.svalbard.encode.Encoder;
@@ -100,13 +97,11 @@ public class HibernateGetObservationHelper {
      *                Hibernate session
      *
      * @return List of {@link ObservationConstellation}
-     *
-     * @throws CodedException
-     *                        If the size limit is exceeded
+     * @throws OwsExceptionReport
      */
-    public static List<ObservationConstellation> getAndCheckObservationConstellationSize(
-            GetObservationRequest request, DaoFactory daoFactory, Session session) throws CodedException {
-        List<ObservationConstellation> observationConstellations = getObservationConstellations(session, request, daoFactory);
+    public static List<DatasetEntity> getAndCheckObservationConstellationSize(
+            GetObservationRequest request, DaoFactory daoFactory, Session session) throws OwsExceptionReport {
+        List<DatasetEntity> observationConstellations = getObservationConstellations(session, request, daoFactory);
         checkMaxNumberOfReturnedSeriesSize(observationConstellations.size());
         return observationConstellations;
     }
@@ -122,11 +117,11 @@ public class HibernateGetObservationHelper {
      * @throws CodedException
      *                        If the size limit is exceeded
      */
-    public static void checkMaxNumberOfReturnedTimeSeries(Collection<? extends SeriesObservation<?>> seriesObservations,
+    public static void checkMaxNumberOfReturnedTimeSeries(Collection<? extends DataEntity<?>> seriesObservations,
                                                           int metadataObservationsCount) throws CodedException {
         if (getMaxNumberOfReturnedTimeSeriess() > 0) {
             Set<Long> seriesIds = seriesObservations.stream()
-                    .map(SeriesObservation::getSeries).map(Series::getSeriesId).collect(Collectors.toSet());
+                    .map(DataEntity::getDataset).map(DatasetEntity::getId).collect(Collectors.toSet());
             checkMaxNumberOfReturnedSeriesSize(seriesIds.size() + metadataObservationsCount);
         }
     }
@@ -170,7 +165,7 @@ public class HibernateGetObservationHelper {
         return getMaxNumberOfReturnedValues();
     }
 
-    public static List<String> getAndCheckFeatureOfInterest(ObservationConstellation observationConstellation,
+    public static List<String> getAndCheckFeatureOfInterest(DatasetEntity observationConstellation,
                                                             Set<String> featureIdentifier,
                                                             DaoFactory  daoFactory,
                                                             Session session)
@@ -185,7 +180,7 @@ public class HibernateGetObservationHelper {
         }
     }
 
-    public static ObservationStream toSosObservation(Collection<Observation<?>> observations,
+    public static ObservationStream toSosObservation(Collection<DataEntity<?>> observations,
                                                        AbstractObservationRequest request,
                                                        Locale language,
                                                        String pdf,
@@ -203,7 +198,7 @@ public class HibernateGetObservationHelper {
         return sosObservations;
     }
 
-    public static OmObservation toSosObservation(Observation<?> observation,
+    public static OmObservation toSosObservation(DataEntity<?> observation,
                                                  AbstractObservationRequest request,
                                                  Locale language,
                                                  String pdf,
@@ -280,10 +275,10 @@ public class HibernateGetObservationHelper {
         if (FilterConstants.ComparisonOperator.PropertyIsLike.equals(resultFilter.getOperator())) {
             checkValueReferenceForResultFilter(resultFilter.getValueReference());
             if (resultFilter.isSetEscapeString()) {
-                return HibernateCriterionHelper.getLikeExpression(AbstractObservation.DESCRIPTION,
+                return HibernateCriterionHelper.getLikeExpression(DatasetEntity.DESCRIPTION,
                                                                   checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE, '$', true);
             } else {
-                return Restrictions.like(AbstractObservation.DESCRIPTION,
+                return Restrictions.like(DatasetEntity.DESCRIPTION,
                                          checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE);
             }
         } else {
@@ -348,13 +343,12 @@ public class HibernateGetObservationHelper {
      *                GetObservation request
      *
      * @return Resulting ObservationConstellation entities
+     * @throws OwsExceptionReport
      */
-    public static List<ObservationConstellation> getObservationConstellations(final Session session,
+    public static List<DatasetEntity> getObservationConstellations(final Session session,
                                                                               final GetObservationRequest request,
-                                                                              DaoFactory daoFactory) {
-        return daoFactory.getObservationConstellationDAO().getObservationConstellations(request.getProcedures(),
-                                                                              request.getObservedProperties(), request
-                                                                              .getOfferings(), session);
+                                                                              DaoFactory daoFactory) throws OwsExceptionReport {
+        return daoFactory.getSeriesDAO().getSeries(request, request.getFeatureIdentifiers(), session);
     }
 
     /**

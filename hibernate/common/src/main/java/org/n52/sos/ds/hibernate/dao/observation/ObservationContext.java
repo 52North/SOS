@@ -144,16 +144,16 @@ public class ObservationContext {
         }
         if (isSetPhenomenon()) {
             c.add(Restrictions
-                    .eq(DatasetEntity.OBSERVABLE_PROPERTY,
+                    .eq(DatasetEntity.PROPERTY_PHENOMENON,
                         getPhenomenon()));
         }
         if (isSetProcedure()) {
             c.add(Restrictions
-                    .eq(DatasetEntity.PROCEDURE,
+                    .eq( DatasetEntity.PROPERTY_PROCEDURE,
                         getProcedure()));
         }
         if (isSetOffering()) {
-            c.add(Restrictions.eq(DatasetEntity.OFFERING, offering));
+            c.add(Restrictions.eq( DatasetEntity.PROPERTY_OFFERING, offering));
         }
     }
 

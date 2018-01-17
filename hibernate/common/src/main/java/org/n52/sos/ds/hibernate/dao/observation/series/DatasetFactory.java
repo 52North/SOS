@@ -26,8 +26,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.dao.observation;
+package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.data.Data.BlobData;
 import org.n52.series.db.beans.data.Data.BooleanData;
 import org.n52.series.db.beans.data.Data.CategoryData;
@@ -39,99 +40,109 @@ import org.n52.series.db.beans.data.Data.ProfileData;
 import org.n52.series.db.beans.data.Data.QuantityData;
 import org.n52.series.db.beans.data.Data.ReferencedData;
 import org.n52.series.db.beans.data.Data.TextData;
+import org.n52.series.db.beans.dataset.BlobDataset;
+import org.n52.series.db.beans.dataset.BooleanDataset;
+import org.n52.series.db.beans.dataset.CategoryDataset;
+import org.n52.series.db.beans.dataset.ComplexDataset;
+import org.n52.series.db.beans.dataset.CountDataset;
+import org.n52.series.db.beans.dataset.DataArrayDataset;
+import org.n52.series.db.beans.dataset.Dataset;
+import org.n52.series.db.beans.dataset.GeometryDataset;
+import org.n52.series.db.beans.dataset.ProfileDataset;
+import org.n52.series.db.beans.dataset.QuantityDataset;
+import org.n52.series.db.beans.dataset.ReferencedDataset;
+import org.n52.series.db.beans.dataset.TextDataset;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
-import org.n52.series.db.beans.data.Data;
+public abstract class DatasetFactory {
 
-public abstract class ObservationFactory {
+    public abstract Class<? extends Dataset> datasetClass();
 
-    @SuppressWarnings("rawtypes")
-    public abstract Class<? extends Data> observationClass();
+    private Dataset dataset()
+            throws OwsExceptionReport {
+        return instantiate(datasetClass());
+    }
 
-    public abstract Class<? extends Data> contextualReferencedClass();
+    public abstract Class<? extends BlobDataset> blobClass();
 
-    public abstract Class<? extends Data> temporalReferencedClass();
-
-    public abstract Class<? extends BlobData> blobClass();
-
-    public BlobData blob()
+    public BlobDataset blob()
             throws OwsExceptionReport {
         return instantiate(blobClass());
     }
 
-    public abstract Class<? extends BooleanData> truthClass();
+    public abstract Class<? extends BooleanDataset> truthClass();
 
-    public BooleanData truth()
+    public BooleanDataset truth()
             throws OwsExceptionReport {
         return instantiate(truthClass());
     }
 
-    public abstract Class<? extends CategoryData> categoryClass();
+    public abstract Class<? extends CategoryDataset> categoryClass();
 
-    public CategoryData category()
+    public CategoryDataset category()
             throws OwsExceptionReport {
         return instantiate(categoryClass());
     }
 
-    public abstract Class<? extends CountData> countClass();
+    public abstract Class<? extends CountDataset> countClass();
 
-    public CountData count()
+    public CountDataset count()
             throws OwsExceptionReport {
         return instantiate(countClass());
     }
 
-    public abstract Class<? extends GeometryData> geometryClass();
+    public abstract Class<? extends GeometryDataset> geometryClass();
 
-    public GeometryData geometry()
+    public GeometryDataset geometry()
             throws OwsExceptionReport {
         return instantiate(geometryClass());
     }
 
-    public abstract Class<? extends QuantityData> numericClass();
+    public abstract Class<? extends QuantityDataset> numericClass();
 
-    public QuantityData numeric()
+    public QuantityDataset numeric()
             throws OwsExceptionReport {
         return instantiate(numericClass());
     }
 
-    public abstract Class<? extends DataArrayData> sweDataArrayClass();
+    public abstract Class<? extends DataArrayDataset> sweDataArrayClass();
 
-    public DataArrayData sweDataArray()
+    public DataArrayDataset sweDataArray()
             throws OwsExceptionReport {
         return instantiate(sweDataArrayClass());
     }
 
-    public abstract Class<? extends TextData> textClass();
+    public abstract Class<? extends TextDataset> textClass();
 
-    public TextData text()
+    public TextDataset text()
             throws OwsExceptionReport {
         return instantiate(textClass());
     }
 
-    public abstract Class<? extends ComplexData> complexClass();
+    public abstract Class<? extends ComplexDataset> complexClass();
 
-    public ComplexData complex()
+    public ComplexDataset complex()
             throws OwsExceptionReport {
         return instantiate(complexClass());
     }
 
-    public abstract Class<? extends ProfileData> profileClass();
+    public abstract Class<? extends ProfileDataset> profileClass();
 
-    public ProfileData profile()
+    public ProfileDataset profile()
             throws OwsExceptionReport {
         return instantiate(profileClass());
     }
 
-    public abstract Class<? extends ReferencedData> referenceClass();
+    public abstract Class<? extends ReferencedDataset> referenceClass();
 
-    public ReferencedData reference()
+    public ReferencedDataset reference()
             throws OwsExceptionReport {
         return instantiate(referenceClass());
     }
 
-    private <T extends Data<?>> T instantiate(Class<T> c)
+    private <T extends Dataset> T instantiate(Class<T> c)
             throws OwsExceptionReport {
         try {
             return c.newInstance();
@@ -141,8 +152,7 @@ public abstract class ObservationFactory {
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    public Class<? extends Data> classForObservationType(
+    public Class<? extends Dataset> classForObservationType(
             String observationType) {
         if (observationType != null) {
             switch (observationType) {
@@ -167,14 +177,42 @@ public abstract class ObservationFactory {
                 case OmConstants.OBS_TYPE_UNKNOWN:
                     return blobClass();
                 default:
-                    return observationClass();
+                    return datasetClass();
             }
         }
-        return observationClass();
+        return datasetClass();
     }
 
-    public Data<?> forObservationType(String observationType)
+    public Dataset forObservationType(String observationType)
             throws OwsExceptionReport {
         return instantiate(classForObservationType(observationType));
+    }
+
+    public Dataset visit(Data<?> o) throws OwsExceptionReport {
+       if (o instanceof QuantityData) {
+           return numeric();
+       } else if (o instanceof BlobData) {
+           return blob();
+       } else if (o instanceof BooleanData) {
+           return truth();
+       } else if (o instanceof CategoryData) {
+           return category();
+       } else if (o instanceof CountData) {
+           return count();
+       } else if (o instanceof GeometryData) {
+           return geometry();
+       } else if (o instanceof DataArrayData) {
+           return sweDataArray();
+       } else if (o instanceof TextData) {
+           return text();
+       } else if (o instanceof ComplexData) {
+           return complex();
+       } else if (o instanceof ProfileData) {
+           return profile();
+       } else if (o instanceof ReferencedData) {
+           return reference();
+       }
+
+       return dataset();
     }
 }

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -382,7 +383,7 @@ public class ObservationUnfolder {
                 if (checkDefinitionForDephtHeight(field)) {
                     parseFieldAsParameter(field, token, parameterHolder);
                 } else {
-                    ((SweQuantity) field.getElement()).setValue(Double.parseDouble(token));
+                    ((SweQuantity) field.getElement()).setValue(new BigDecimal(token));
                 }
             } else if (field.getElement() instanceof SweBoolean) {
                 ((SweBoolean) field.getElement()).setValue(Boolean.parseBoolean(token));
@@ -563,7 +564,7 @@ public class ObservationUnfolder {
         return new ProfileValue("").addValue(profileLevel);
     }
 
-    private QuantityValue toQuantityValue(NamedValue<Double> parameter) {
+    private QuantityValue toQuantityValue(NamedValue<BigDecimal> parameter) {
         QuantityValue value = (QuantityValue) parameter.getValue();
         value.setDefinition(parameter.getName().getHref());
         return value;

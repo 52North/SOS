@@ -32,22 +32,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.FeatureEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameterAdder;
+import org.n52.sos.ds.hibernate.util.FeatureParameterAdder;
 import org.n52.sos.util.SosHelper;
 
-public abstract class AbstractFeatureOfInerestCreator<T extends FeatureOfInterest> extends AbstractFeatureCreator<T> {
+public abstract class AbstractFeatureOfInerestCreator<T extends FeatureEntity> extends AbstractFeatureCreator<T> {
 
         public AbstractFeatureOfInerestCreator(FeatureVisitorContext context) {
         super(context);
     }
 
-        public AbstractFeature createFeature(FeatureOfInterest f) throws OwsExceptionReport {
+        public AbstractFeature createFeature(FeatureEntity f) throws OwsExceptionReport {
             final CodeWithAuthority identifier = getIdentifier(f);
             if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(f.getIdentifier(), getContext().getVersion())) {
                 identifier.setValue(null);
@@ -57,17 +57,17 @@ public abstract class AbstractFeatureOfInerestCreator<T extends FeatureOfInteres
             if (absFeat instanceof AbstractSamplingFeature) {
                 AbstractSamplingFeature absSampFeat = (AbstractSamplingFeature) absFeat;
                 absSampFeat.setGeometry(createGeometryFrom(f));
-                absSampFeat.setFeatureType(f.getFeatureOfInterestType().getFeatureOfInterestType());
+                absSampFeat.setFeatureType(f.getFeatureType().getFormat());
                 absSampFeat.setUrl(f.getUrl());
-                if (f.isSetDescriptionXml()) {
-                    absSampFeat.setXml(f.getDescriptionXml());
+                if (f.isSetXml()) {
+                    absSampFeat.setXml(f.getXml());
                 }
                 addParameter(absSampFeat, f);
-                final Set<AbstractFeatureOfInterest> parentFeatures = f.getParents();
+                final Set<FeatureEntity> parentFeatures = f.getParents();
                 if (parentFeatures != null && !parentFeatures.isEmpty()) {
                     final List<AbstractFeature> sampledFeatures = new ArrayList<AbstractFeature>(parentFeatures.size());
-                    for (final AbstractFeatureOfInterest parentFeature : parentFeatures) {
-                        sampledFeatures.add(parentFeature.accept(new HibernateFeatureVisitor(getContext())));
+                    for (final AbstractFeatureEntity parentFeature : parentFeatures) {
+                        sampledFeatures.add(new HibernateFeatureVisitor(getContext()).visit(parentFeature));
                     }
                     absSampFeat.setSampledFeatures(sampledFeatures);
                 }
@@ -75,7 +75,7 @@ public abstract class AbstractFeatureOfInerestCreator<T extends FeatureOfInteres
             return absFeat;
         }
 
-        protected void addParameter(AbstractSamplingFeature absSampFeat,FeatureOfInterest f) throws OwsExceptionReport {
+        protected void addParameter(AbstractSamplingFeature absSampFeat, FeatureEntity f) throws OwsExceptionReport {
             new FeatureParameterAdder(absSampFeat, f).add();
         }
 

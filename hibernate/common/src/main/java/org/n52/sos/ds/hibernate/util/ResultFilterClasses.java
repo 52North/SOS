@@ -28,21 +28,21 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import org.n52.series.db.beans.CategoryDataEntity;
-import org.n52.series.db.beans.ComplexDataEntity;
-import org.n52.series.db.beans.CountDataEntity;
-import org.n52.series.db.beans.ProfileDataEntity;
-import org.n52.series.db.beans.QuantityDataEntity;
-import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.data.Data.CategoryData;
+import org.n52.series.db.beans.data.Data.ComplexData;
+import org.n52.series.db.beans.data.Data.CountData;
+import org.n52.series.db.beans.data.Data.ProfileData;
+import org.n52.series.db.beans.data.Data.QuantityData;
+import org.n52.series.db.beans.data.Data.TextData;
 
 public class ResultFilterClasses {
 
-    public Class<? extends QuantityDataEntity> numeric;
-    public Class<? extends CountDataEntity> count;
-    public Class<? extends TextDataEntity> text;
-    public Class<? extends CategoryDataEntity> category;
-    public Class<? extends ComplexDataEntity> complex;
-    public Class<? extends ProfileDataEntity> profile;
+    public Class<? extends QuantityData> numeric;
+    public Class<? extends CountData> count;
+    public Class<? extends TextData> text;
+    public Class<? extends CategoryData> category;
+    public Class<? extends ComplexData> complex;
+    public Class<? extends ProfileData> profile;
 
 
     /**
@@ -54,9 +54,9 @@ public class ResultFilterClasses {
      * @param profile
      */
     public ResultFilterClasses(
-            Class<? extends QuantityDataEntity> numeric, Class<? extends CountDataEntity> count,
-            Class<? extends TextDataEntity> text, Class<? extends CategoryDataEntity> category,
-            Class<? extends ComplexDataEntity> complex, Class<? extends ProfileDataEntity> profile) {
+            Class<? extends QuantityData> numeric, Class<? extends CountData> count,
+            Class<? extends TextData> text, Class<? extends CategoryData> category,
+            Class<? extends ComplexData> complex, Class<? extends ProfileData> profile) {
         this.numeric = numeric;
         this.count = count;
         this.text = text;
@@ -68,42 +68,42 @@ public class ResultFilterClasses {
     /**
      * @return the numeric
      */
-    public Class<? extends QuantityDataEntity> getNumeric() {
+    public Class<? extends QuantityData> getNumeric() {
         return numeric;
     }
 
     /**
      * @return the count
      */
-    public Class<? extends CountDataEntity> getCount() {
+    public Class<? extends CountData> getCount() {
         return count;
     }
 
     /**
      * @return the text
      */
-    public Class<? extends TextDataEntity> getText() {
+    public Class<? extends TextData> getText() {
         return text;
     }
 
     /**
      * @return the category
      */
-    public Class<? extends CategoryDataEntity> getCategory() {
+    public Class<? extends CategoryData> getCategory() {
         return category;
     }
 
     /**
      * @return the complex
      */
-    protected Class<? extends ComplexDataEntity> getComplex() {
+    protected Class<? extends ComplexData> getComplex() {
         return complex;
     }
 
     /**
      * @return the profile
      */
-    protected Class<? extends ProfileDataEntity> getProfile() {
+    protected Class<? extends ProfileData> getProfile() {
         return profile;
     }
 }

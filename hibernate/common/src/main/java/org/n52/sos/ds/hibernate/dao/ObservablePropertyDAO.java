@@ -384,11 +384,11 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     private DetachedCriteria getDetachedCriteriaObservablePropertyForProcedureFromDatasetEntity(
             String procedureIdentifier) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.DELETED, false));
-        detachedCriteria.createCriteria(DatasetEntity.PROCEDURE)
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.createCriteria( DatasetEntity.PROPERTY_PROCEDURE)
                 .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedureIdentifier));
         detachedCriteria.setProjection(Projections.distinct(Projections
-                .property(DatasetEntity.OBSERVABLE_PROPERTY)));
+                .property(DatasetEntity.PROPERTY_PHENOMENON)));
         return detachedCriteria;
     }
 
@@ -405,10 +405,10 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     private DetachedCriteria getDetachedCriteriaObservablePropertiesForProcedureFromSeries(String procedureIdentifier,
             Session session) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.DELETED, false));
-        detachedCriteria.createCriteria(DatasetEntity.PROCEDURE).add(
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.createCriteria( DatasetEntity.PROPERTY_PROCEDURE).add(
                 Restrictions.eq(ProcedureEntity.IDENTIFIER, procedureIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.OBSERVABLE_PROPERTY)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PHENOMENON)));
         return detachedCriteria;
     }
 
@@ -425,11 +425,11 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     private DetachedCriteria getDetachedCriteriaObservablePropertiesForOfferingFromDatasetEntity(
             String offeringIdentifier, Session session) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.DELETED, false));
-        detachedCriteria.createCriteria(DatasetEntity.OFFERING).add(
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.createCriteria( DatasetEntity.PROPERTY_OFFERING).add(
                 Restrictions.eq(OfferingEntity.IDENTIFIER, offeringIdentifier));
         detachedCriteria.setProjection(Projections.distinct(Projections
-                .property(DatasetEntity.OBSERVABLE_PROPERTY)));
+                .property(DatasetEntity.PROPERTY_PHENOMENON)));
         return detachedCriteria;
     }
 
@@ -445,8 +445,8 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
 
      private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
          final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
-         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.DELETED, true), Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
-         detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.OBSERVABLE_PROPERTY)));
+         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true), Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
+         detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PHENOMENON)));
          return detachedCriteria;
 }
 

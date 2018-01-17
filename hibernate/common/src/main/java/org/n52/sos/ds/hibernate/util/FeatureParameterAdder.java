@@ -26,20 +26,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.feature;
+package org.n52.sos.ds.hibernate.util;
 
-import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
-import org.n52.sos.ds.hibernate.entities.feature.wml.MonitoringPoint;
+import org.n52.sos.ds.hibernate.util.observation.ParameterVisitor;
 
-public interface FeatureVisitor<T extends AbstractFeature> {
+public class FeatureParameterAdder {
 
-    T visit(FeatureOfInterest f) throws OwsExceptionReport;
+    private ParameterVisitor visitor = new ParameterVisitor();
+    private AbstractSamplingFeature abstractSamplingFeature;
+    private FeatureEntity feature;
 
-    T visit(Specimen f) throws OwsExceptionReport;
+    public FeatureParameterAdder(AbstractSamplingFeature abstractSamplingFeature, FeatureEntity feature) {
+        this.abstractSamplingFeature = abstractSamplingFeature;
+        this.feature = feature;
+    }
 
-    T visit(EnvironmentalMonitoringFacility f) throws OwsExceptionReport;
+    public void add() throws OwsExceptionReport {
+        if (feature.hasParameters()) {
+            for (Parameter parameter : feature.getParameters()) {
+                abstractSamplingFeature.addParameter(visitor.visit(parameter));
+            }
+        }
+    }
 
-    T visit(MonitoringPoint f) throws OwsExceptionReport;
 }

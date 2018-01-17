@@ -83,8 +83,8 @@ public class SeriesObservationTimeDAO
             Session session) {
         Criteria criteria = createCriteriaFor(DataEntity.class, series, session);
         criteria.setProjection(Projections.projectionList()
-                .add(Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START))
-                .add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END)));
+                .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));
         return criteria;
     }
 
@@ -93,15 +93,15 @@ public class SeriesObservationTimeDAO
         Criteria criteria = createCriteriaFor(DataEntity.class, series, session);
         Criteria datasetCriteria = criteria.createCriteria(DataEntity.PROPERTY_DATASET, "ds");
         if (CollectionHelper.isNotEmpty(offerings)) {
-            datasetCriteria.createCriteria(DatasetEntity.OFFERING, "ds.off")
+            datasetCriteria.createCriteria(DatasetEntity.PROPERTY_OFFERING, "ds.off")
                     .add(Restrictions.in(OfferingEntity.IDENTIFIER, offerings));
         } else {
-            datasetCriteria.createAlias(DatasetEntity.OFFERING, "ds.off");
+            datasetCriteria.createAlias(DatasetEntity.PROPERTY_OFFERING, "ds.off");
         }
         criteria.setProjection(
                 Projections.projectionList().add(Projections.groupProperty("ds.off." + OfferingEntity.IDENTIFIER))
-                        .add(Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START))
-                        .add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END)));
+                        .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                        .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));
         return criteria;
     }
 

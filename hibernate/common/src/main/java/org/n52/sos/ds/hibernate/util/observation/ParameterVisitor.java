@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.math.BigDecimal;
+
 import org.n52.series.db.beans.HibernateRelations.HasUnit;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.parameter.Parameter;
@@ -51,7 +53,7 @@ public class ParameterVisitor {
 
    @SuppressWarnings("rawtypes")
     public NamedValue visit(ParameterQuantity p) throws OwsExceptionReport {
-        NamedValue<Double> namedValue = new NamedValue<>();
+        NamedValue<BigDecimal> namedValue = new NamedValue<>();
         addName(namedValue, p);
         namedValue.setValue(new QuantityValue(p.getValue()));
         addUnit(p, namedValue.getValue());

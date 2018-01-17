@@ -44,7 +44,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -252,8 +251,8 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     private void addPhenomenonTimeProjection(Criteria c) {
         ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END));
+        projectionList.add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START));
+        projectionList.add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END));
         c.setProjection(projectionList);
     }
 
@@ -272,8 +271,8 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     private void addMinMaxTimeProjection(Criteria c) {
         ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.min(DataEntity.PROPERTY_PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(DataEntity.PROPERTY_PHENOMENON_TIME_END));
+        projectionList.add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START));
+        projectionList.add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END));
         projectionList.add(Projections.max(DataEntity.PROPERTY_RESULT_TIME));
         if (HibernateHelper.isColumnSupported(getSeriesValueTimeClass(), DataEntity.PROPERTY_VALID_TIME_START)
                 && HibernateHelper

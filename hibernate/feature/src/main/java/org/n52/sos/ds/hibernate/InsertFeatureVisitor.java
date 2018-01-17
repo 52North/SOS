@@ -26,18 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.feature;
+package org.n52.sos.ds.hibernate;
 
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SfSpecimen;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 public interface InsertFeatureVisitor {
 
-    FeatureOfInterest visit(SamplingFeature value)
+    default FeatureEntity visit(AbstractFeature f) throws OwsExceptionReport {
+        if (f instanceof SamplingFeature) {
+            return visit((SamplingFeature) f);
+        } else if (f instanceof SfSpecimen) {
+            return visit((SfSpecimen) f);
+        }
+        return null;
+    }
+
+    FeatureEntity visit(SamplingFeature value)
             throws OwsExceptionReport;
 
-    FeatureOfInterest visit(SfSpecimen value)
+    FeatureEntity visit(SfSpecimen value)
             throws OwsExceptionReport;
 
 }

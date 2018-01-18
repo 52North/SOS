@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.datasource;
 
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
 /**
@@ -412,4 +413,9 @@ public class CustomConfiguration extends Configuration {
 //        }
 //        return script;
 //    }
+
+    @Override
+    public StandardServiceRegistryBuilder getStandardServiceRegistryBuilder() {
+        return super.getStandardServiceRegistryBuilder().applySettings(getProperties());
+    }
 }

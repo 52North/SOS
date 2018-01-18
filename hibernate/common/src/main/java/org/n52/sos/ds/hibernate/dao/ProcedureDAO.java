@@ -68,7 +68,6 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
-import org.n52.sos.ds.hibernate.util.EntitiyHelper;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.ProcedureTimeExtrema;
@@ -315,7 +314,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             results = namedQuery.list();
         } else {
             Criteria c = null;
-                c = session.createCriteria(EntitiyHelper.getInstance().getSeriesEntityClass())
+                c = session.createCriteria(getDaoFactory().getSeriesDAO().getSeriesClass())
                         .createAlias(DatasetEntity.PROPERTY_FEATURE, "f").createAlias( DatasetEntity.PROPERTY_PROCEDURE, "p")
                         .add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false))
                         .setProjection(Projections.distinct(Projections.projectionList()
@@ -921,7 +920,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     @SuppressWarnings("unchecked")
     protected Set<String> getObservationIdentifiers(Session session, String procedureIdentifier) {
             Criteria criteria =
-                    session.createCriteria(EntitiyHelper.getInstance().getObservationInfoEntityClass())
+                    session.createCriteria(DataEntity.class)
                             .setProjection(
                                     Projections.distinct(Projections.property(DataEntity.IDENTIFIER)))
                             .add(Restrictions.isNotNull(DataEntity.IDENTIFIER))

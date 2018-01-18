@@ -96,11 +96,11 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
 //            DatabaseInformationImpl databaseMetadata = new DatabaseInformationImpl(serviceRegistry, jdbcEnvironment, ddlTransactionIsolator, defaultNamespace);
 //            DatabaseMetadata databaseMetadata = new DatabaseInformationImpl(conn, dialect, configuration);
 //            String[] udpateSql = SchemaUpdateScript.toStringArray(configuration.generateSchemaUpdateScriptList(dialect, databaseMetadata));
-            SchemaUpdate schemaUpdate = new SchemaUpdate();
-            createTempFile = Files.createTempFile("update", "tmp");
-            schemaUpdate.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
-            Metadata metadata = new MetadataSources(sessionFactory.getSessionFactory().getServiceRegistry()).buildMetadata();
-            schemaUpdate.execute(EnumSet.of(TargetType.SCRIPT), metadata, sessionFactory.getSessionFactory().getServiceRegistry());
+//            SchemaUpdate schemaUpdate = new SchemaUpdate();
+//            createTempFile = Files.createTempFile("update", "tmp");
+//            schemaUpdate.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
+//            Metadata metadata = new MetadataSources(sessionFactory.getSessionFactory().getServiceRegistry()).buildMetadata();
+//            schemaUpdate.execute(EnumSet.of(TargetType.SCRIPT), metadata, sessionFactory.getSessionFactory().getServiceRegistry());
             returnConnection(session);
             StringBuilder updateSqlString = new StringBuilder();
             for (String sqlLine : Files.readAllLines(createTempFile)) {

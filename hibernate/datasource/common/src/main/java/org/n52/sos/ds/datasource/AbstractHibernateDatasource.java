@@ -30,14 +30,9 @@ package org.n52.sos.ds.datasource;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Driver;
@@ -52,34 +47,51 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.geotools.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.hibernate.HibernateException;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.model.naming.Identifier;
+import org.hibernate.boot.model.relational.Database;
+import org.hibernate.boot.model.relational.QualifiedTableName;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.boot.registry.internal.StandardServiceRegistryImpl;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
+import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
+import org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator;
+import org.hibernate.engine.jdbc.spi.JdbcServices;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
+import org.hibernate.engine.jdbc.spi.SqlStatementLogger;
 import org.hibernate.mapping.Table;
+import org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl;
+import org.hibernate.resource.transaction.backend.jta.internal.DdlTransactionIsolatorJtaImpl;
+import org.hibernate.service.ServiceRegistry;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
-import org.hibernate.tool.hbm2ddl.SchemaValidator;
 import org.hibernate.tool.hbm2ddl.SchemaExport.Action;
+import org.hibernate.tool.hbm2ddl.SchemaUpdate;
+import org.hibernate.tool.hbm2ddl.SchemaValidator;
 import org.hibernate.tool.schema.TargetType;
 import org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl;
-import org.hibernate.tool.schema.internal.Helper;
+import org.hibernate.tool.schema.extract.spi.TableInformation;
+import org.hibernate.tool.schema.internal.HibernateSchemaManagementTool;
+import org.hibernate.tool.schema.internal.exec.JdbcContext;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.BooleanSettingDefinition;
 import org.n52.faroe.settings.ChoiceSettingDefinition;
 import org.n52.faroe.settings.IntegerSettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
+import org.n52.hibernate.type.SmallBooleanType;
 import org.n52.iceland.ds.DatasourceCallback;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
+import org.n52.sos.ds.hibernate.util.DefaultHibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.util.SQLConstants;
 import org.slf4j.Logger;
@@ -337,11 +349,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         for (File path : getMappingPaths(settings)) {
             config.addDirectory(path);
         }
+        Properties properties = new Properties();
         if (isSetSchema(settings)) {
-            Properties properties = new Properties();
             properties.put(HibernateConstants.DEFAULT_SCHEMA, settings.get(HibernateConstants.DEFAULT_SCHEMA));
-            config.addProperties(properties);
         }
+        properties.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
+        properties.put(DefaultHibernateConstants.CONNECTION_STRING_PROPERTY, toURL(settings));
+        config.addProperties(properties);
+        config.registerTypeOverride(SmallBooleanType.INSTANCE);
         config.buildMappings();
         return config;
     }
@@ -474,10 +489,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public String[] createSchema(Map<String, Object> settings) {
         Path createTempFile = null;
         try {
-            createTempFile = Files.createTempFile("drop", "tmp");
+
+//            Metadata metadata = new MetadataSources(getConfig(settings).getStandardServiceRegistryBuilder().build()).buildMetadata();
+            Metadata metadata = getMetadata(settings);
+
+            createTempFile = Files.createTempFile("create", ".tmp");
             SchemaExport schemaExport = new SchemaExport();
             schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
-            Metadata metadata = new MetadataSources(getConfig(settings).getStandardServiceRegistryBuilder().build()).buildMetadata();
             schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, metadata);
             List<String> readAllLines = Files.readAllLines(createTempFile);
             String[] script = readAllLines.toArray(new String[readAllLines.size()]);
@@ -513,10 +531,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 //            String[] dropScript =
 //                    checkDropSchema(getConfig(settings).generateDropSchemaScript(getDialectInternal(), metadata));
 //            return dropScript;
+            Metadata metadata = getMetadata(settings);
+
             dropTempFile = Files.createTempFile("drop", "tmp");
             SchemaExport schemaExport = new SchemaExport();
             schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(dropTempFile.toString());
-            Metadata metadata = new MetadataSources(getConfig(settings).getStandardServiceRegistryBuilder().build()).buildMetadata();
             schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, metadata);
             List<String> readAllLines = Files.readAllLines(dropTempFile);
             return readAllLines.toArray(new String[readAllLines.size()]);
@@ -538,11 +557,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public String[] updateSchema(Map<String, Object> settings) {
         Path createTempFile = null;
         try {
-            createTempFile = Files.createTempFile("create", "tmp");
-            SchemaExport schemaExport = new SchemaExport();
-            schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
-            Metadata metadata = new MetadataSources(getConfig(settings).getStandardServiceRegistryBuilder().build()).buildMetadata();
-            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, metadata);
+            Metadata metadata = getMetadata(settings);
+            createTempFile = Files.createTempFile("update", "tmp");
+            SchemaUpdate schemaUpdate = new SchemaUpdate();
+            schemaUpdate.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
+            schemaUpdate.execute(EnumSet.of(TargetType.SCRIPT), metadata);
             Set<String> nonDublicated = Sets.newLinkedHashSet(Files.readAllLines(createTempFile));
             return nonDublicated.toArray(new String[nonDublicated.size()]);
         } catch (IOException ex) {
@@ -562,23 +581,25 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public void validateSchema(Map<String, Object> settings) {
         try {
             SchemaValidator schemaValidator = new SchemaValidator();
-            StandardServiceRegistry serviceRegistry = getConfig(settings).getStandardServiceRegistryBuilder().build();
-            Metadata metadata = new MetadataSources(serviceRegistry).buildMetadata();
+            StandardServiceRegistry serviceRegistry = getServiceRegistry(settings);
+            Metadata metadata = getMetadata(settings);
             schemaValidator.validate(metadata, serviceRegistry);
         } catch (HibernateException ex) {
             throw new ConfigurationError(ex);
         }
     }
 
-    protected Metadata getDatabaseMetadata(Connection conn, Map<String, Object> settings)
+    protected Metadata getMetadata(Connection conn, Map<String, Object> settings)
             throws SQLException {
+        return getMetadata(settings);
+    }
+
+    protected Metadata getMetadata(Map<String, Object> settings) {
         StandardServiceRegistry registry = null;
         try {
-            StandardServiceRegistryBuilder registryBuilder = new StandardServiceRegistryBuilder();
-            settings.put(HibernateConstants.DIALECT, getDialectInternal());
-            registryBuilder.applySettings(settings);
-            registry = registryBuilder.build();
+            registry = getServiceRegistry(settings);
             MetadataSources sources = new MetadataSources(registry);
+
             for (File dir : getMappingPaths(settings)) {
                 sources.addDirectory(dir);
             }
@@ -586,11 +607,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         } finally {
             StandardServiceRegistryBuilder.destroy(registry);
         }
-//        return new MetadataSources(configuration.getStandardServiceRegistryBuilder().applySettings(p).build()).buildMetadata();
-//        Helper.buildDatabaseInformation(serviceRegistry, ddlTransactionIsolator, defaultNamespace);
-//        new DatabaseInformationImpl(serviceRegistry, jdbcEnvironment, ddlTransactionIsolator, defaultNamespace);
-//        return new DatabaseMetadata(conn, getDialectInternal(), customConfiguration, true);
     }
+
+    protected StandardServiceRegistry getServiceRegistry(Map<String, Object> settings) {
+        CustomConfiguration config = getConfig(settings);
+        StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
+        settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
+        registryBuilder.applySettings(settings);
+        return registryBuilder.build();
+    }
+
 
     @Override
     public boolean checkIfSchemaExists(Map<String, Object> settings) {
@@ -598,16 +624,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         try {
             /* check if any of the needed tables is existing */
             conn = openConnection(settings);
-            Metadata metadata = getDatabaseMetadata(conn, settings);
+            Metadata metadata = getMetadata(conn, settings);
             Iterator<Table> iter = metadata.collectTableMappings().iterator();
-
             String catalog = checkCatalog(conn);
             String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
+            Set<String> tableNames = getTableNames(conn, catalog, schema);
             while (iter.hasNext()) {
                 Table table = iter.next();
-                if (table.isPhysicalTable()) {
-//                        && metadata.isTable(table.getQuotedName())
-//                        && metadata.getTableMetadata(table.getName(), schema, catalog, table.isQuoted()) != null) {
+                if (table.isPhysicalTable() && tableNames.contains(table.getName())) {
                     return true;
                 }
             }
@@ -617,6 +641,15 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         } finally {
             close(conn);
         }
+    }
+
+    protected Set<String> getTableNames(Connection conn, String catalog, String schema) throws SQLException {
+        Set<String> tableNames = new HashSet<>();
+        ResultSet rs = conn.getMetaData().getTables(catalog, schema, null, null);
+        while (rs.next()) {
+            tableNames.add(rs.getString("TABLE_NAME"));
+        }
+        return tableNames;
     }
 
     protected String checkSchema(String schema, String catalog, Connection conn) throws SQLException {
@@ -674,7 +707,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            Metadata metadata = getDatabaseMetadata(conn, settings);
+            Metadata metadata = getMetadata(conn, settings);
             validatePrerequisites(conn, metadata, settings);
         } catch (SQLException ex) {
             throw new ConfigurationError(ex);
@@ -1105,7 +1138,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         String catalog = checkCatalog(conn);
         String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
         CustomConfiguration config = getConfig(settings);
-        Iterator<Table> tables = getDatabaseMetadata(conn, settings).collectTableMappings().iterator();
+        Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
         List<String> names = new LinkedList<String>();
         while (tables.hasNext()) {
             Table table = tables.next();

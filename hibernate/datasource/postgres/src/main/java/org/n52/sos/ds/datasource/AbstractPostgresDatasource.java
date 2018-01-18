@@ -216,7 +216,7 @@ public abstract class AbstractPostgresDatasource
             conn = openConnection(settings);
             String catalog = checkCatalog(conn);
             String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
-            Iterator<Table> tables = getDatabaseMetadata(conn, settings).collectTableMappings().iterator();
+            Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
             List<String> names = new LinkedList<String>();
             while (tables.hasNext()) {
                 Table table = tables.next();

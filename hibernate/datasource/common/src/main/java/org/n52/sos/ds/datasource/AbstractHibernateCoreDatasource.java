@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.n52.faroe.AbstractSettingDefinition;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.BooleanSettingDefinition;
 import org.n52.faroe.settings.IntegerSettingDefinition;

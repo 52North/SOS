@@ -265,7 +265,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         Statement stmt = null;
         try {
             conn = openConnection(settings);
-            Iterator<Table> tables = getDatabaseMetadata(conn, settings).collectTableMappings().iterator();
+            Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
             List<String> names = new LinkedList<>();
             while (tables.hasNext()) {
                 Table table = tables.next();

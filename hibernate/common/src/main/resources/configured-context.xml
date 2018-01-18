@@ -32,5 +32,4 @@
     <bean class="org.n52.sos.ds.hibernate.InsertResultTemplateDAO"/>
     -->
 
-    <bean class="org.n52.sos.ds.hibernate.entities.EntitiyHelper" />
 </beans>

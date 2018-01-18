@@ -103,7 +103,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
         Statement stmt = null;
         try {
             conn = openConnection(settings);
-            Iterator<Table> tables = getDatabaseMetadata(conn, settings).collectTableMappings().iterator();
+            Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
             stmt = conn.createStatement();
             stmt.execute("set referential_integrity false");
             while (tables.hasNext()) {

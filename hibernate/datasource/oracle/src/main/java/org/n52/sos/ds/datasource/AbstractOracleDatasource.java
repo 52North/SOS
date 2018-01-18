@@ -220,7 +220,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
         String schema = null;
         try {
             conn = openConnection(settings);
-            Metadata metadata = getDatabaseMetadata(conn, settings);
+            Metadata metadata = getMetadata(conn, settings);
             // fix problem with quoted tables
             schema = (String)settings.get(SCHEMA_KEY);
             settings.put(SCHEMA_KEY, null);

@@ -28,18 +28,20 @@
  */
 package org.n52.sos.ds.datasource;
 
-import com.google.common.collect.Sets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.BooleanSettingDefinition;
 import org.n52.faroe.settings.IntegerSettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
+
+import com.google.common.collect.Sets;
 
 
 public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernateDatasource {

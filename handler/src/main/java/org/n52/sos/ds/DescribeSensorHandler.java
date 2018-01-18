@@ -121,7 +121,7 @@ public class DescribeSensorHandler
                 response.addSensorDescription(createSensorDescription(entity, request, session));
             }
             return response;
-        } catch (final HibernateException | DataAccessException e) {
+        } catch (final HibernateException e) {
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage("Error while querying data for DescribeSensor document!");
         } finally {

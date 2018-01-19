@@ -87,6 +87,7 @@
                         "<ul>" +
                         "<li>Insert up-to-date <a href='<c:url value="/admin/datasource/"/>'>sample data</a></li>" +
                         "<c:if test="${sos:hasClient()}"><li>Use the <a href='<c:url value="/client"/>'>test client</a> with the provided example requests</li></c:if>" +
+                        "<li>Finalize the configuration using the <a href='<c:url value="/admin/"/>'>admin interface</a>, e.g. en-/disable <a href='<c:url value="/admin/operations/"/>'>operations</a>, <a href='<c:url value="/admin/encodings/"/>'>encodings</a>, <a href='<c:url value="/admin/bindings/"/>'>bindings</a>, <a href='<c:url value="/admin/extensions/" />'>extensions</a></li>" +
                         "</ul>",
                         "success",
                         false);

@@ -56,20 +56,20 @@ import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class AbstractSensorML extends SosProcedureDescription {
     private static final long serialVersionUID = -5715790909736521952L;
-    private List<String> keywords = new ArrayList<String>(0);
-    private List<SmlIdentifier> identifications = new ArrayList<SmlIdentifier>(0);
-    private List<SmlClassifier> classifications = new ArrayList<SmlClassifier>(0);
-    private List<SmlCharacteristics> characteristics = new ArrayList<SmlCharacteristics>(0);
-    private final List<SmlCapabilities> capabilities = new ArrayList<SmlCapabilities>(0);
-    private List<SmlContact> contacts = new ArrayList<SmlContact>(0);
-    private final List<AbstractSmlDocumentation> documentations = new ArrayList<AbstractSmlDocumentation>(0);
+    private List<String> keywords = new ArrayList<>(0);
+    private List<SmlIdentifier> identifications = new ArrayList<>(0);
+    private List<SmlClassifier> classifications = new ArrayList<>(0);
+    private List<SmlCharacteristics> characteristics = new ArrayList<>(0);
+    private final List<SmlCapabilities> capabilities = new ArrayList<>(0);
+    private List<SmlContact> contacts = new ArrayList<>(0);
+    private final List<AbstractSmlDocumentation> documentations = new ArrayList<>(0);
     private String history;
     private String gmlId;
-    
+
     @Override
     public SosProcedureDescription setIdentifier(final String identifier) {
         super.setIdentifier(identifier);
@@ -84,7 +84,7 @@ public class AbstractSensorML extends SosProcedureDescription {
         this.keywords = keywords;
         return this;
     }
-    
+
     public AbstractSensorML addKeywords(final List<String> keywords) {
         if (isSetKeywords()) {
             this.keywords.addAll(keywords);
@@ -138,18 +138,18 @@ public class AbstractSensorML extends SosProcedureDescription {
 
     public Optional<SmlClassifier> findClassifier(Predicate<SmlClassifier> predicate) {
         if (isSetClassifications()) {
-            return Iterables.tryFind(this.classifications, predicate);
+            return Iterables.tryFind(classifications, predicate);
         } else {
             return Optional.absent();
         }
     }
-    
+
 
     public AbstractSensorML addClassification(final SmlClassifier classifier) {
         classifications.add(classifier);
         return this;
     }
-    
+
     @Override
     public AbstractSensorML setValidTime(final Time validTime) {
         super.setValidTime(validTime);
@@ -168,10 +168,10 @@ public class AbstractSensorML extends SosProcedureDescription {
         }
         return this;
     }
-    
+
     public Optional<SmlCharacteristics> findCharacteristics(Predicate<SmlCharacteristics> predicate) {
         if (isSetCharacteristics()) {
-            return Iterables.tryFind(this.characteristics, predicate);
+            return Iterables.tryFind(characteristics, predicate);
         } else {
             return Optional.absent();
         }
@@ -194,16 +194,16 @@ public class AbstractSensorML extends SosProcedureDescription {
     }
 
     public Optional<SmlCapabilities> findCapabilities(Predicate<SmlCapabilities> predicate) {
-        if (this.capabilities != null) {
-            return Iterables.tryFind(this.capabilities, predicate);
+        if (capabilities != null) {
+            return Iterables.tryFind(capabilities, predicate);
         } else {
             return Optional.absent();
         }
     }
-    
+
     public void removeCapabilities(SmlCapabilities caps) {
-        if (this.capabilities != null) {
-            this.capabilities.remove(caps);
+        if (capabilities != null) {
+            capabilities.remove(caps);
         }
     }
 
@@ -223,18 +223,18 @@ public class AbstractSensorML extends SosProcedureDescription {
         }
         return this;
     }
-    
+
     public AbstractSensorML addContact(final SmlContact contact) {
-        if (this.contacts == null) {
-            this.contacts = new LinkedList<SmlContact>();
+        if (contacts == null) {
+            contacts = new LinkedList<>();
         }
-        this.contacts.add(contact);
+        contacts.add(contact);
         return this;
     }
 
     /**
      * Get {@link SmlContact} for a specific role
-     * 
+     *
      * @param contactRole
      *            Role to get {@link SmlContact} for
      * @return The {@link SmlContact} or null if not defined
@@ -255,7 +255,7 @@ public class AbstractSensorML extends SosProcedureDescription {
                 }
             } else if (contact.getRole() != null && contact.getRole().equals(contactRole)
                     && contact instanceof SmlResponsibleParty) {
-                return (SmlResponsibleParty) contact;
+                return contact;
             }
         }
         return null;
@@ -316,15 +316,17 @@ public class AbstractSensorML extends SosProcedureDescription {
     public boolean isSetContact() {
         return contacts != null && !contacts.isEmpty();
     }
-    
+
     public boolean isSetHistory() {
         return history != null && !history.isEmpty();
     }
 
+    @Override
     public String getGmlId() {
         return gmlId;
     }
 
+    @Override
     public void setGmlId(String gmlId) {
         this.gmlId = gmlId;
     }
@@ -332,7 +334,7 @@ public class AbstractSensorML extends SosProcedureDescription {
     public boolean isSetGmlId() {
         return StringHelper.isNotEmpty(gmlId);
     }
-    
+
     protected Predicate<SmlIdentifier> createSmlIdentifierPredicate(String name) {
         return createSmlIdentifierPredicate(name, name);
     }
@@ -373,12 +375,12 @@ public class AbstractSensorML extends SosProcedureDescription {
         }
         return null;
     }
-    
+
     @Override
     public boolean isSetMobile() {
         return getSweBooleanFromCapabilitiesFor(Sets.newHashSet(SensorMLConstants.STATIONARY, SensorMLConstants.MOBILE)) == null ? false : true;
     }
-    
+
     @Override
     public boolean getMobile() {
         SweBoolean sweBoolean = getSweBooleanFromCapabilitiesFor(Sets.newHashSet(SensorMLConstants.STATIONARY, SensorMLConstants.MOBILE, SensorMLConstants.FIXED));
@@ -389,12 +391,12 @@ public class AbstractSensorML extends SosProcedureDescription {
         }
         return super.getMobile();
     }
-    
+
     @Override
     public boolean isSetInsitu() {
         return getSweBooleanFromCapabilitiesFor(Sets.newHashSet(Sets.newHashSet(SensorMLConstants.INSITU, SensorMLConstants.REMOTE))) == null ? false : true;
     }
-    
+
     @Override
     public boolean getInsitu() {
         SweBoolean sweBoolean = getSweBooleanFromCapabilitiesFor(Sets.newHashSet(Sets.newHashSet(SensorMLConstants.INSITU, SensorMLConstants.REMOTE)));
@@ -405,7 +407,7 @@ public class AbstractSensorML extends SosProcedureDescription {
         }
         return super.getInsitu();
     }
-    
+
     private SweBoolean getSweBooleanFromCapabilitiesFor(Set<String> definitions) {
         if (this instanceof SensorML && ((SensorML)this).isWrapper()) {
             for (AbstractProcess absProcess : ((SensorML)this).getMembers()) {

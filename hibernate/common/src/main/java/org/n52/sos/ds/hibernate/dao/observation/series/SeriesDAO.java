@@ -94,7 +94,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
             return getSeriesCriteria(procedures, observedProperties, features, session).list();
         }
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
@@ -123,7 +123,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
             return getSeriesCriteria(observedProperty, features, session).list();
         }
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
@@ -144,8 +144,8 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public Series getOrInsertSeries(ObservationContext identifiers, final Session session) throws CodedException {
-        return getOrInsert(identifiers, session);
+    public Series getOrInsertSeries(ObservationContext ctx, final Session session) throws CodedException {
+        return getOrInsert(ctx, session);
     }
 
     @Override

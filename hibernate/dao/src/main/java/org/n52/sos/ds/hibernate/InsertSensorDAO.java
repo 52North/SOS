@@ -77,6 +77,7 @@ import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
@@ -209,6 +210,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                                         SosProcedureDescription procedureReferenceSeries = new SosProcedureDescriptionUnknowType(identifier,
                                                 procedureDescriptionFormat.getProcedureDescriptionFormat(), "");
                                         procedureReferenceSeries.setReference(true);
+                                        procedureReferenceSeries.setName(new CodeType(referenceValue.getName()));
                                         Procedure hProcedureReferenceSeries = new ProcedureDAO().getOrInsertProcedure(
                                                 identifier,
                                                 procedureDescriptionFormat,

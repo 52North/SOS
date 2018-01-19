@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.SessionFactoryProvider;
 import org.n52.sos.util.StringHelper;
 
 /**
@@ -48,6 +50,8 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     private static final String TN_FEATURE_OF_INTEREST = "featureOfInterest";
 
     private static final String TN_OBSERVATION = "observation";
+    
+    private static final String TN_SERIES = "series";
 
     private static final String CN_IDENTIFIER = "identifier";
 
@@ -74,7 +78,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     @Override
     public void executePostCreateSchema(Map<String, Object> databaseSettings) {
         List<String> statements = new ArrayList<String>();
-        for (TableColumn tableColumn : getTableColumns()) {
+        for (TableColumn tableColumn : getTableColumns(databaseSettings)) {
             statements.add(getGetAndDropConstraint(tableColumn.getTable(), tableColumn.getColumn(), databaseSettings));
             statements
                     .add(getCreateUniqueConstraint(databaseSettings, tableColumn.getTable(), tableColumn.getColumn()));
@@ -91,11 +95,18 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
         return builder.toString();
     }
 
-    private Set<TableColumn> getTableColumns() {
+    private Set<TableColumn> getTableColumns(Map<String, Object> s) {
         Set<TableColumn> tableColumns = new HashSet<SqlServerDatasource.TableColumn>();
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_IDENTIFIER));
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_URL));
         tableColumns.add(new TableColumn(TN_OBSERVATION, CN_IDENTIFIER));
+        if (s.containsKey(SessionFactoryProvider.HIBERNATE_DIRECTORY)
+                && (((String) s.get(SessionFactoryProvider.HIBERNATE_DIRECTORY))
+                        .contains(HibernateDatasourceConstants.HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH)
+                        || ((String) s.get(SessionFactoryProvider.HIBERNATE_DIRECTORY)).contains(
+                                HibernateDatasourceConstants.HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH))) {
+            tableColumns.add(new TableColumn(TN_SERIES, CN_IDENTIFIER));
+        }
         return tableColumns;
     }
 

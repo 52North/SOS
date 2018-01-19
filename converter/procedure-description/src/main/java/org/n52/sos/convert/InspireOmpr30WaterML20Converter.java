@@ -35,15 +35,16 @@ import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
 import org.n52.shetland.inspire.ompr.InspireOMPRConstants;
+import org.n52.shetland.inspire.ompr.Process;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.series.wml.ObservationProcess;
 import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.shetland.inspire.ompr.Process;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Joiner;
 
 public class InspireOmpr30WaterML20Converter implements Converter<SosProcedureDescription, SosProcedureDescription> {

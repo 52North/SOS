@@ -32,8 +32,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
-
-import org.hibernate.Query;
+import org.hibernate.query.Query;;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.convert.ConverterException;

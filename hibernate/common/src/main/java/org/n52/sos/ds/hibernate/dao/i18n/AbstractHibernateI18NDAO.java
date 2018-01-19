@@ -165,7 +165,7 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     public S getMetadata(String id, Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ID)
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
                 .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
         List<H> list = criteria.list();
         return createSosObject(id, list);
@@ -176,7 +176,7 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     public Collection<S> getMetadata(Collection<String> id, Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ID)
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
                 .add(Restrictions.in(DescribableEntity.IDENTIFIER, id));
         List<H> list = criteria.list();
         return createSosObject(list);
@@ -187,9 +187,9 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     public S getMetadata(String id, Locale locale, Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ID)
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
                 .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
-        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale));
+        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale.toString()));
         List<H> list = criteria.list();
         return createSosObject(id, list);
     }
@@ -199,9 +199,9 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     public Collection<S> getMetadata(Collection<String> id, Locale locale, Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ID)
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
                 .add(Restrictions.in(DescribableEntity.IDENTIFIER, id));
-        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale));
+        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale.toString()));
         List<H> list = criteria.list();
         return createSosObject(list);
     }
@@ -268,7 +268,7 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
 
     protected void deleteOldValues(String id, Session session) {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(I18nEntity.PROPERTY_ID)
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
                 .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
         ScrollableResults scroll = null;
         try {

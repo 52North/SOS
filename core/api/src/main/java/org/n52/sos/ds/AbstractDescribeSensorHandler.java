@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 
 import static java.util.stream.Collectors.toSet;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -96,7 +97,7 @@ public abstract class AbstractDescribeSensorHandler extends AbstractOperationHan
         if (name == null) {
             return null;
         }
-        Set<String> pdfs = getCache().getRequestableProcedureDescriptionFormat();
+        Set<String> pdfs = new HashSet<>(getCache().getRequestableProcedureDescriptionFormat());
         pdfs.addAll(descriptionFormatRepository.getSupportedProcedureDescriptionFormats(service, version));
         if (pdfs.isEmpty()) {
             return new OwsDomain(name, OwsNoValues.instance());

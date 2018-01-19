@@ -36,7 +36,6 @@ import org.hibernate.Session;
 import org.n52.series.db.beans.HibernateRelations.HasUnit;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.parameter.Parameter;
-import org.n52.series.db.beans.parameter.Parameter;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.BooleanValue;

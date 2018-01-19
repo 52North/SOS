@@ -184,6 +184,7 @@ public class DaoFactory {
         return new FeatureOfInterestDAO(this);
     }
 
+    @Deprecated
     public ValidProcedureTimeDAO getValidProcedureTimeDAO() {
         return new ValidProcedureTimeDAO(this);
     }

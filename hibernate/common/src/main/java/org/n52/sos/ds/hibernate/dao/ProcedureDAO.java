@@ -36,7 +36,6 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -45,6 +44,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.query.Query;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
@@ -385,7 +385,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     private Criteria getDefaultCriteria(Session session) {
         Criteria c = session.createCriteria(ProcedureEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         try {
-            c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID, getDetachedCriteriaProceduresForFromSeries(session)));
+            c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
+                    getDetachedCriteriaProceduresForFromSeries(session)));
         } catch (OwsExceptionReport e) {
         }
         return c;
@@ -934,9 +935,25 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     }
 
     public Map<String, String> getProcedureFormatMap(Session session) {
-        if (HibernateHelper.isEntitySupported(ProcedureEntity.class)) {
-            // get the latest validProcedureTimes' procedureDescriptionFormats
-            return getDaoFactory().getValidProcedureTimeDAO().getTProcedureFormatMap(session);
+        if (HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class)) {
+            Criteria criteria = session.createCriteria(ProcedureEntity.class);
+            criteria.createAlias(ProcedureEntity.PROPERTY_VALID_PROCEDURE_TIME, "vpt");
+            criteria.createAlias(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
+            criteria.add(Restrictions.isNull("vpt." + ProcedureHistoryEntity.END_TIME));
+            criteria.setProjection(Projections.projectionList()
+                    .add(Projections.property(ProcedureEntity.IDENTIFIER))
+                    .add(Projections.property("pdf." + FormatEntity.FORMAT)));
+            criteria.addOrder(Order.asc(ProcedureEntity.IDENTIFIER));
+            LOGGER.debug("QUERY getTProcedureFormatMap(): {}", HibernateHelper.getSqlString(criteria));
+            @SuppressWarnings("unchecked")
+            List<Object[]> results = criteria.list();
+            Map<String,String> tProcedureFormatMap = Maps.newTreeMap();
+            for (Object[] result : results) {
+                String procedureIdentifier = (String) result[0];
+                String format = (String) result[1];
+                tProcedureFormatMap.put(procedureIdentifier, format);
+            }
+            return tProcedureFormatMap;
         } else {
             Criteria criteria = getDefaultCriteria(session);
             criteria.createAlias(ProcedureEntity.PROCEDURE_DESCRIPTION_FORMAT, "pdf");

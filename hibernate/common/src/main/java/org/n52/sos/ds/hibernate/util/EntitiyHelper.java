@@ -32,7 +32,6 @@ import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 public class EntitiyHelper {
 

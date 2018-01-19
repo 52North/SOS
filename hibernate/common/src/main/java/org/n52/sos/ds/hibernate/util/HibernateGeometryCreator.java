@@ -28,15 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
 import org.n52.series.db.beans.HibernateRelations.HasCoordinate;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.JTSHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.util.GeometryHandler;
-
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.io.ParseException;
 
 public class HibernateGeometryCreator {
 

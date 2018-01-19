@@ -91,6 +91,8 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+    
     /**
      * Get the defined cache thread count or the maximum connection count minus
      * one to avoid hanging threads during the cache update.

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.data.Data.BlobData;
 import org.n52.series.db.beans.data.Data.BooleanData;
 import org.n52.series.db.beans.data.Data.CategoryData;
@@ -39,7 +40,6 @@ import org.n52.series.db.beans.data.Data.ProfileData;
 import org.n52.series.db.beans.data.Data.QuantityData;
 import org.n52.series.db.beans.data.Data.ReferencedData;
 import org.n52.series.db.beans.data.Data.TextData;
-import org.n52.series.db.beans.data.Data;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**

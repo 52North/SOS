@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
+import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.data.Data.BlobData;
 import org.n52.series.db.beans.data.Data.BooleanData;
 import org.n52.series.db.beans.data.Data.CategoryData;
@@ -42,8 +43,6 @@ import org.n52.series.db.beans.data.Data.TextData;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-
-import org.n52.series.db.beans.data.Data;
 
 public abstract class ObservationFactory {
 

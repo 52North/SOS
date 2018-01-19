@@ -35,16 +35,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.series.db.beans.BlobDataEntity;
-import org.n52.series.db.beans.BooleanDataEntity;
-import org.n52.series.db.beans.CategoryDataEntity;
-import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.OGCConstants;
@@ -62,14 +58,12 @@ import org.n52.shetland.ogc.swe.SweCoordinate;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
-import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.util.EntitiyHelper;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.request.ProcedureRequestSettingProvider;
 import org.n52.sos.service.ProcedureDescriptionSettings;
@@ -82,7 +76,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * Abstract generator class for SensorML procedure descriptions
@@ -103,7 +96,6 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
     protected static final String POSITION_NAME = "sensorPosition";
 
     private final ProfileHandler profileHandler;
-    private final EntitiyHelper entitiyHelper;
     private final GeometryHandler geometryHandler;
 
     private String srsNamePrefixUrl;
@@ -112,14 +104,12 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
     private String altitudeUom;
 
     public AbstractHibernateProcedureDescriptionGeneratorSml(ProfileHandler profileHandler,
-                                                             EntitiyHelper entitiyHelper,
                                                              GeometryHandler geometryHandler,
                                                              DaoFactory daoFactory,
                                                              I18NDAORepository i18NDAORepository,
                                                              ContentCacheController cacheController) {
         super(daoFactory, i18NDAORepository, cacheController);
         this.profileHandler = profileHandler;
-        this.entitiyHelper = entitiyHelper;
         this.geometryHandler = geometryHandler;
     }
 
@@ -295,7 +285,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
             LOGGER.debug("QUERY queryUnit(observationConstellation) with NamedQuery: {}",
                     SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY);
             return (String) namedQuery.uniqueResult();
-        } else if (entitiyHelper.isSeriesSupported()) {
+        } else {
             List<DatasetEntity> series = getDaoFactory().getSeriesDAO().getSeries(Lists.newArrayList(oc.getProcedure().getIdentifier()), Lists.newArrayList(oc.getObservableProperty().getIdentifier()), Lists.<String>newArrayList(), session);
             if (series.iterator().hasNext()) {
                 DatasetEntity next = series.iterator().next();

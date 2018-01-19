@@ -50,7 +50,6 @@ import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.util.EntitiyHelper;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 
@@ -63,11 +62,11 @@ public class HibernateProcedureDescriptionGeneratorSml20 extends AbstractHiberna
             new HibernateProcedureDescriptionGeneratorKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
             new HibernateProcedureDescriptionGeneratorKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
 
-    public HibernateProcedureDescriptionGeneratorSml20(ProfileHandler profileHandler, EntitiyHelper entitiyHelper,
+    public HibernateProcedureDescriptionGeneratorSml20(ProfileHandler profileHandler,
                                                        GeometryHandler geometryHandler, DaoFactory daoFactory,
                                                        I18NDAORepository i18NDAORepository,
                                                        ContentCacheController cacheController) {
-        super(profileHandler, entitiyHelper, geometryHandler, daoFactory, i18NDAORepository, cacheController);
+        super(profileHandler, geometryHandler, daoFactory, i18NDAORepository, cacheController);
     }
 
     @Override

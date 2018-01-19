@@ -80,7 +80,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
     private HibernateSessionStore sessionStore;
 
     @Inject
-    public void setProxyConnectionProvider(HibernateSessionStore sessionStore) {
+    public void setConnectionProvider(HibernateSessionStore sessionStore) {
         this.sessionStore = sessionStore;
     }
 

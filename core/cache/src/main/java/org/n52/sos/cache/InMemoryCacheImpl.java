@@ -2094,28 +2094,47 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     @Override
     public void addFeatureOfInterestIdentifierHumanReadableName(String identifier, String humanReadableName) {
         if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
-            featureOfInterestIdentifierHumanReadableName.put(identifier, humanReadableName);
+            try {
+                featureOfInterestIdentifierHumanReadableName.put(identifier, humanReadableName);
+            } catch (IllegalArgumentException iae) {
+                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier, humanReadableName);
+            }
         }
     }
 
     @Override
     public void addObservablePropertyIdentifierHumanReadableName(String identifier, String humanReadableName) {
         if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
-            observablePropertyIdentifierHumanReadableName.put(identifier, humanReadableName);
+            try {
+                observablePropertyIdentifierHumanReadableName.put(identifier, humanReadableName);
+            } catch (IllegalArgumentException iae) {
+                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier,
+                        humanReadableName);
+            }
         }
     }
 
     @Override
     public void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName) {
         if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
-            procedureIdentifierHumanReadableName.put(identifier, humanReadableName);
+            try {
+                procedureIdentifierHumanReadableName.put(identifier, humanReadableName);
+            } catch (IllegalArgumentException iae) {
+                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier,
+                        humanReadableName);
+            }
         }
     }
 
     @Override
     public void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName) {
         if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
-            offeringIdentifierHumanReadableName.put(identifier, humanReadableName);
+            try {
+                offeringIdentifierHumanReadableName.put(identifier, humanReadableName);
+            } catch (IllegalArgumentException iae) {
+                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier,
+                        humanReadableName);
+            }
         }
     }
 

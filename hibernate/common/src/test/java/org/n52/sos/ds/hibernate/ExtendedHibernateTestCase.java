@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate;
 
 import org.hibernate.Session;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.data.Data;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;

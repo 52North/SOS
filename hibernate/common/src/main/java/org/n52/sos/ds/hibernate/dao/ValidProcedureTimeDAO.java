@@ -61,6 +61,7 @@ import com.google.common.collect.Maps;
  * @author CarstenHollmann
  * @since 4.0.0
  */
+@Deprecated
 public class ValidProcedureTimeDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidProcedureTimeDAO.class);

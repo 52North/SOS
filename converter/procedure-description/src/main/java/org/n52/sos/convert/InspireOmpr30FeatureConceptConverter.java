@@ -28,19 +28,17 @@
  */
 package org.n52.sos.convert;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
 import org.n52.shetland.inspire.ompr.InspireOMPRConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
-
-
-import java.util.Collections;
-import java.util.Set;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 

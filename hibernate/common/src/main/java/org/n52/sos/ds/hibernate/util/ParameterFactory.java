@@ -59,7 +59,6 @@ import org.n52.shetland.ogc.om.values.XmlValue;
 import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.opengis.annotation.XmlParameter;
 
 public class ParameterFactory implements ValueVisitor<Parameter<?>, OwsExceptionReport> {
 

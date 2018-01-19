@@ -36,9 +36,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
-import org.n52.series.db.beans.BooleanDataEntity;
 import org.n52.series.db.beans.CodespaceEntity;
-import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.FormatEntity;
@@ -60,7 +58,6 @@ import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationFactory;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 
 public class HibernateObservationBuilder {

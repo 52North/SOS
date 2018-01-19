@@ -51,7 +51,6 @@ import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.util.EntitiyHelper;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
@@ -71,10 +70,10 @@ public class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibern
     private String processMethodRulesDefinitionDescriptionTemplate;
 
     public HibernateProcedureDescriptionGeneratorSml101(ProfileHandler profileHandler,
-                                                        EntitiyHelper entitiyHelper, GeometryHandler geometryHandler,
+                                                        GeometryHandler geometryHandler,
                                                         DaoFactory daoFactory, I18NDAORepository i18NDAORepository,
                                                         ContentCacheController cacheController) {
-        super(profileHandler, entitiyHelper, geometryHandler, daoFactory, i18NDAORepository, cacheController);
+        super(profileHandler, geometryHandler, daoFactory, i18NDAORepository, cacheController);
     }
 
     @Setting(ProcedureDescriptionSettings.PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE)

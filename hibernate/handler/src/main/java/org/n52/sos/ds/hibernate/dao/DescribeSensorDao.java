@@ -168,15 +168,14 @@ public class DescribeSensorDao
                 possibleProcedureDescriptionFormats, request.getValidTime(), session);
         List<SosProcedureDescription<?>> list = Lists.newLinkedList();
         if (procedure != null) {
-            List<ProcedureHistoryEntity> validProcedureTimes =
-                    new ValidProcedureTimeDAO(daoFactory).getValidProcedureTimes(procedure,
-                            possibleProcedureDescriptionFormats, request.getValidTime(), session);
-            for (ProcedureHistoryEntity validProcedureTime : validProcedureTimes) {
-                SosProcedureDescription<?> sosProcedureDescription =
-                        procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure,
-                                request.getProcedureDescriptionFormat(), validProcedureTime, request.getVersion(),
-                                getRequestedLocale(request), session);
-                list.add(convertProcedureDescription(sosProcedureDescription, request));
+            if (procedure.hasProcedureHistory()) {
+                for (ProcedureHistoryEntity validProcedureTime : procedure.getProcedureHistory()) {
+                    SosProcedureDescription<?> sosProcedureDescription =
+                            procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure,
+                                    request.getProcedureDescriptionFormat(), validProcedureTime, request.getVersion(),
+                                    getRequestedLocale(request), session);
+                    list.add(convertProcedureDescription(sosProcedureDescription, request));
+                }
             }
         } else {
             SosProcedureDescription<?> procedureDescription = getProcedureDescription(request, session);

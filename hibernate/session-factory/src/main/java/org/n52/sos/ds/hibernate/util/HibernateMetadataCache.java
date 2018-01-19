@@ -73,7 +73,8 @@ public class HibernateMetadataCache {
     }
 
     public boolean isEntitySupported(Class<?> entityClass) {
-        return entityClass != null && isEntitySupported(entityClass.getName());
+        return entityClass != null
+                && (isEntitySupported(entityClass.getName()) || isEntitySupported(entityClass.getSimpleName()));
     }
 
     public boolean isEntitySupported(String entityClass) {

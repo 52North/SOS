@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.HibernateRelations.HasWriteableObservationContext;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.HasEReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;

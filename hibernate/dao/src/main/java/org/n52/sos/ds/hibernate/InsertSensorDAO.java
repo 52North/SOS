@@ -266,7 +266,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                                         ctx.setOffering(hOffering);
                                         ctx.setPublish(false);
                                         Series hSeries = seriesDAO.getOrInsertSeries(ctx, session);
-                                        hSeries.setReferenceValues(Collections.singleton(hReferenceSeries));
+                                        hSeries.setReferenceValues(Collections.singletonList(hReferenceSeries));
                                         session.update(hSeries);
                                     }
                                 }

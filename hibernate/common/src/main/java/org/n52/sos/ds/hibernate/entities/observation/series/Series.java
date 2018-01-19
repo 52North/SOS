@@ -29,8 +29,7 @@
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import java.util.Date;
-import java.util.Set;
-
+import java.util.List;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
@@ -89,7 +88,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     private Unit unit;
     private boolean hiddenChild;
     private String seriesType;
-    private Set<Series> referenceValues;
+    private List<Series> referenceValues;
     /**
      * Get series id
      *
@@ -318,11 +317,11 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
         return !Strings.isNullOrEmpty(getSeriesType());
     }
 
-    public Set<Series> getReferenceValues() {
+    public List<Series> getReferenceValues() {
         return referenceValues;
     }
 
-    public void setReferenceValues(Set<Series> referenceValues) {
+    public void setReferenceValues(List<Series> referenceValues) {
         this.referenceValues = referenceValues;
     }
 }

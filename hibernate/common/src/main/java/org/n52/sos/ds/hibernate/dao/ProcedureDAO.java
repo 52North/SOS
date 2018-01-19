@@ -133,7 +133,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     /**
      * Get map keyed by undeleted procedure identifiers with collections of
      * parent procedures (if supported) as values
-     * 
+     *
      * @param session
      * @return Map keyed by procedure identifier with values of parent procedure
      *         identifier collections
@@ -374,7 +374,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
             }
             LOGGER.debug("QUERY getProceduresForFeatureOfInterest(feature): {}", HibernateHelper.getSqlString(c));
-            return (List<String>) c.list();
+            return c.list();
         }
     }
 
@@ -843,6 +843,9 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @param session
      *            Hibernate session
      * @return Procedure object
+     *
+     * @deprecated use
+     *      {@link #getOrInsertProcedure(String, ProcedureDescriptionFormat, SosProcedureDescription, boolean, Session)}
      */
     @Deprecated
     public Procedure getOrInsertProcedure(final String identifier,
@@ -862,7 +865,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Procedure description format object
      * @param procedureDescription
      *            {@link SosProcedureDescription} to insert
-     * @param isType 
+     * @param isType
      * @param session
      *            Hibernate session
      * @return Procedure object
@@ -894,6 +897,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             if (procedureDescription.isSetInsitu()) {
                 tProcedure.setInsitu(procedureDescription.getInsitu());
             }
+            tProcedure.setReference(procedureDescription.isReference());
             procedure = tProcedure;
         }
         procedure.setDeleted(false);
@@ -1070,10 +1074,10 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             Criteria c = getDefaultCriteria(session);
             c.add(Subqueries.propertyNotIn(Procedure.ID, getDetachedCriteriaSeries(session)));
             return c.list();
-        } 
+        }
         return getProcedureObjects(session);
      }
-     
+
      private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
          final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
          detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(Series.DELETED, true), Restrictions.eq(Series.PUBLISHED, false)));
@@ -1083,7 +1087,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Procedure time extrema {@link ResultTransformer}
-     * 
+     *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.4.0
      *
@@ -1117,7 +1121,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     public Procedure updateProcedure(Procedure procedure, SosProcedureDescription procedureDescription, Session session) {
         if (procedureDescription.isSetProcedureName()) {
-            if (!procedure.isSetName() || (procedure.isSetName() && !procedureDescription.getProcedureName().equals(procedure.getName()))) {
+            if (!procedure.isSetName() || procedure.isSetName() && !procedureDescription.getProcedureName().equals(procedure.getName())) {
                 procedure.setName(procedureDescription.getProcedureName());
             }
             if (procedureDescription.isSetDescription() && !procedureDescription.getDescription().equals(procedure.getDescription())) {
@@ -1128,6 +1132,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         session.flush();
         session.refresh(procedure);
         return procedure;
-        
+
     }
 }

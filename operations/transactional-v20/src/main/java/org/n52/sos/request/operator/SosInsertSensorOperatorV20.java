@@ -294,7 +294,7 @@ public class SosInsertSensorOperatorV20 extends
 
     private void checkProcedureAndOfferingCombination(InsertSensorRequest request) throws OwsExceptionReport {
         for (SosOffering offering : request.getAssignedOfferings()) {
-            if (!offering.isParentOffering() && getCache().getPublishedFeatureOfInterest().contains(offering.getIdentifier())) {
+            if (!offering.isParentOffering() && getCache().getPublishedOfferings().contains(offering.getIdentifier())) {
                 throw new InvalidParameterValueException().at(Sos2Constants.InsertSensorParams.offeringIdentifier)
                         .withMessage(
                                 "The offering with the identifier '%s' still exists in this service and it is not allowed to insert more than one procedure to an offering!",

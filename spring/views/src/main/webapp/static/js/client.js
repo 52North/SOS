@@ -134,7 +134,7 @@ $(function() {
             e.preventDefault(); self.changeSyntax($(this).data("mode"));
         });
         $("#permalink").on("click", function() {
-            window.prompt("Permalink", self.createPermalink());
+            window.prompt("Permalink\n NOTE: Chrome is limited to 2000 chars. Please use another browser for large requests!", self.createPermalink());
         });
         this.createFilters("service", "version", "binding", "operation");
         this.updateExamples();
@@ -164,6 +164,7 @@ $(function() {
         },
         createPermalink: function() {
             var link = document.location.protocol
+            		+ "//"
                     +  document.location.host
                     +  document.location.pathname;
             link += "?method=" + encodeURIComponent(this.$method.val());

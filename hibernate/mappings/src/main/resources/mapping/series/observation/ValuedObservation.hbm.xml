@@ -422,7 +422,7 @@
                 </key>
                 <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
                               foreign-key="profileObsChildFk" >
-                    <column name="childObservationId not-null="true" index="profileobsididx">
+                    <column name="childObservationId" not-null="true" index="profileobsididx">
                         <comment>Foreign Key (FK) to the related child complex observation. Contains "observation".observationid</comment>
                     </column>
                 </many-to-many>

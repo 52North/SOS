@@ -14,7 +14,7 @@
             </generator>
         </id>
         <property name="seriesId" type="long" index="seriesmetadataseriesididx">
-            <column name="seriesId" not-null="true"
+            <column name="seriesId" not-null="true">
                 <comment>Foreign Key (FK) to the related series. Contains "series".seriesId</comment>
             </column>
         </property>

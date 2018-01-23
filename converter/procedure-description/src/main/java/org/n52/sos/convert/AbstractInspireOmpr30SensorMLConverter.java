@@ -31,7 +31,6 @@ package org.n52.sos.convert;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.iceland.convert.Converter;
 import org.n52.shetland.inspire.ad.AddressRepresentation;
 import org.n52.shetland.inspire.base.Identifier;
 import org.n52.shetland.inspire.base2.Contact;
@@ -52,19 +51,21 @@ import org.n52.shetland.ogc.sensorML.elements.SmlDocumentation;
 import org.n52.shetland.ogc.sensorML.elements.SmlDocumentationList;
 import org.n52.shetland.ogc.sensorML.elements.SmlDocumentationListMember;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.w3c.Nillable;
 import org.n52.shetland.w3c.xlink.Reference;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-public abstract class AbstractInspireOmpr30SensorMLConverter implements Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> {
+public abstract class AbstractInspireOmpr30SensorMLConverter
+        extends
+        ProcedureDescriptionConverter {
 
     private static final String PROCEDURE_NAME = "procedureName";
     private static final String INSPIRE_ID = "inspireId";
 
-    protected List<DocumentCitation> convertDocumentationToDocumentationCitation(List<AbstractSmlDocumentation> documentations) {
+    protected List<DocumentCitation> convertDocumentationToDocumentationCitation(
+            List<AbstractSmlDocumentation> documentations) {
         List<DocumentCitation> documentationCitations = Lists.newArrayList();
         for (AbstractSmlDocumentation documentation : documentations) {
             if (documentation instanceof SmlDocumentationList) {
@@ -72,7 +73,8 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
                     documentationCitations.add(convertDocumentationCitationToDocumentation(member.getDocumentation()));
                 }
             } else if (documentation instanceof SmlDocumentation) {
-                documentationCitations.add(convertDocumentationCitationToDocumentation((SmlDocumentation)documentation));
+                documentationCitations
+                        .add(convertDocumentationCitationToDocumentation((SmlDocumentation) documentation));
             }
         }
         return documentationCitations;
@@ -92,7 +94,8 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         return documentCitation;
     }
 
-    protected List<AbstractSmlDocumentation> convertDocumentationCitationToDocumentation(List<DocumentCitation> documentationCitations) {
+    protected List<AbstractSmlDocumentation> convertDocumentationCitationToDocumentation(
+            List<DocumentCitation> documentationCitations) {
         List<AbstractSmlDocumentation> smlDocumentations = Lists.newArrayList();
         for (DocumentCitation documentationCitation : documentationCitations) {
             SmlDocumentation smlDocumentation = new SmlDocumentation();
@@ -174,18 +177,22 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         }
         return processParameters;
     }
+
     protected List<SmlContact> convertResponsiblePartiesToContacts(List<RelatedParty> responsibleParties) {
         List<SmlContact> contacts = Lists.newArrayList();
         for (RelatedParty relatedParty : responsibleParties) {
             SmlResponsibleParty smlResponsibleParty = new SmlResponsibleParty();
             if (relatedParty.isSetIndividualName()) {
-                smlResponsibleParty.setIndividualName(relatedParty.getIndividualName().get().getTextGroup().iterator().next().getValue());
+                smlResponsibleParty.setIndividualName(
+                        relatedParty.getIndividualName().get().getTextGroup().iterator().next().getValue());
             }
             if (relatedParty.isSetOrganisationName()) {
-                smlResponsibleParty.setOrganizationName(relatedParty.getOrganisationName().get().getTextGroup().iterator().next().getValue());
+                smlResponsibleParty.setOrganizationName(
+                        relatedParty.getOrganisationName().get().getTextGroup().iterator().next().getValue());
             }
             if (relatedParty.isSetPositionName()) {
-                smlResponsibleParty.setPositionName(relatedParty.getPositionName().get().getTextGroup().iterator().next().getValue());
+                smlResponsibleParty.setPositionName(
+                        relatedParty.getPositionName().get().getTextGroup().iterator().next().getValue());
             }
             if (relatedParty.isSetRole()) {
                 Nillable<Reference> next = relatedParty.getRoles().iterator().next();
@@ -204,7 +211,8 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
                     // TODO
                 }
                 if (contact.getContactInstructions().isPresent()) {
-                    smlResponsibleParty.setContactInstructions(contact.getContactInstructions().get().getTextGroup().iterator().next().getValue());
+                    smlResponsibleParty.setContactInstructions(
+                            contact.getContactInstructions().get().getTextGroup().iterator().next().getValue());
                 }
                 if (contact.getElectronicMailAddress().isPresent()) {
                     smlResponsibleParty.setEmail(contact.getElectronicMailAddress().get());
@@ -213,7 +221,7 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
                     smlResponsibleParty.setPhoneFax(toList(contact.getTelephoneFacsimile().get()));
                 }
                 if (contact.getTelephoneVoice().isPresent()) {
-                   smlResponsibleParty.setPhoneVoice(toList(contact.getTelephoneVoice().get()));
+                    smlResponsibleParty.setPhoneVoice(toList(contact.getTelephoneVoice().get()));
                 }
                 if (contact.getWebsite().isPresent()) {
                     smlResponsibleParty.setOnlineResource(Lists.newArrayList(contact.getWebsite().get()));
@@ -224,12 +232,11 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         return contacts;
     }
 
-
     protected List<RelatedParty> convertContactsToResponsibleParties(List<SmlContact> contacts) {
         List<RelatedParty> relatedParties = Lists.newArrayList();
         for (SmlContact contact : contacts) {
             if (contact instanceof SmlResponsibleParty) {
-                SmlResponsibleParty smlResponsibleParty = (SmlResponsibleParty)contact;
+                SmlResponsibleParty smlResponsibleParty = (SmlResponsibleParty) contact;
                 RelatedParty relatedParty = new RelatedParty();
                 if (smlResponsibleParty.isSetIndividualName()) {
                     relatedParty.setIndividualName(getPTFreeText(smlResponsibleParty.getIndividualName()));
@@ -247,7 +254,8 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
                     Contact contactOmpr = new Contact();
                     contactOmpr.setAddress(checkAddressRepresentation(smlResponsibleParty));
                     if (smlResponsibleParty.isSetContactInstructions()) {
-                        contactOmpr.setContactInstructions(getPTFreeText(smlResponsibleParty.getContactInstructions()));
+                        contactOmpr
+                                .setContactInstructions(getPTFreeText(smlResponsibleParty.getContactInstructions()));
                     }
                     if (smlResponsibleParty.isSetEmail()) {
                         contactOmpr.setElectronicMailAddress(smlResponsibleParty.getEmail());
@@ -272,11 +280,11 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
     private Nillable<AddressRepresentation> checkAddressRepresentation(SmlResponsibleParty smlResponsibleParty) {
         AddressRepresentation addressRepresentation = new AddressRepresentation();
         // TODO
-        return Nillable.<AddressRepresentation>nil();
+        return Nillable.<AddressRepresentation> nil();
     }
 
     private PT_FreeText getPTFreeText(String value) {
-       return new PT_FreeText().addTextGroup(new LocalisedCharacterString(value));
+        return new PT_FreeText().addTextGroup(new LocalisedCharacterString(value));
     }
 
     private List<String> toList(List<Nillable<String>> list) {
@@ -293,7 +301,7 @@ public abstract class AbstractInspireOmpr30SensorMLConverter implements Converte
         List<Nillable<String>> l = new ArrayList<>();
         for (String s : list) {
             if (Strings.isNullOrEmpty(s)) {
-                l.add(Nillable.<String>nil());
+                l.add(Nillable.<String> nil());
             } else {
                 l.add(Nillable.of(s));
             }

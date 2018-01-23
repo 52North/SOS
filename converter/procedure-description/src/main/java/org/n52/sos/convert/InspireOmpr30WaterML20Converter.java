@@ -31,11 +31,11 @@ package org.n52.sos.convert;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
 import org.n52.shetland.inspire.ompr.InspireOMPRConstants;
 import org.n52.shetland.inspire.ompr.Process;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.series.wml.ObservationProcess;
 import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
@@ -47,17 +47,25 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
-public class InspireOmpr30WaterML20Converter implements Converter<SosProcedureDescription, SosProcedureDescription> {
+public class InspireOmpr30WaterML20Converter
+        extends
+        ProcedureDescriptionConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InspireOmpr30WaterML20Converter.class);
 
     private static final Set<ConverterKey> CONVERTER_KEY_TYPES = CollectionHelper.set(
-            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL),
-            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE),
-            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING),
-            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING),
-            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, InspireOMPRConstants.FEATURE_CONCEPT_PROCESS),
-            new ConverterKey(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
+            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING,
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL),
+            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING,
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE),
+            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL,
+                    WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING),
+            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
+                    WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING),
+            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING,
+                    InspireOMPRConstants.FEATURE_CONCEPT_PROCESS),
+            new ConverterKey(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS,
+                    WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
 
     public InspireOmpr30WaterML20Converter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
@@ -70,15 +78,22 @@ public class InspireOmpr30WaterML20Converter implements Converter<SosProcedureDe
     }
 
     @Override
-    public SosProcedureDescription convert(SosProcedureDescription objectToConvert) throws ConverterException {
-        if (objectToConvert.getDescriptionFormat().equals(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)) {
-            return convertWML2ObservationProcessToInspireProcess(objectToConvert);
-        } else if (objectToConvert.getDescriptionFormat().equals(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL)
-                || objectToConvert.getDescriptionFormat().equals(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE)
-                || objectToConvert.getDescriptionFormat().equals(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS)) {
-            return convertInspireProcessToWML2ObservationProcess(objectToConvert);
+    public SosProcedureDescription convert(AbstractFeature objectToConvert)
+            throws ConverterException {
+        if (objectToConvert instanceof SosProcedureDescription<?>) {
+            SosProcedureDescription<?> o = (SosProcedureDescription<?>) objectToConvert;
+            if (o.getDescriptionFormat().equals(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)) {
+                return convertWML2ObservationProcessToInspireProcess(o);
+            } else if (o.getDescriptionFormat().equals(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL)
+                    || o.getDescriptionFormat().equals(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE)
+                    || o.getDescriptionFormat().equals(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS)) {
+                return convertInspireProcessToWML2ObservationProcess(o);
+            }
+            return new SosProcedureDescriptionUnknownType(objectToConvert.getIdentifier(), o.getDescriptionFormat(),
+                    null);
         }
-        return new SosProcedureDescriptionUnknownType(objectToConvert.getIdentifier(), objectToConvert.getDescriptionFormat(), null);
+        return new SosProcedureDescriptionUnknownType(objectToConvert.getIdentifier(),
+                objectToConvert.getDefaultElementEncoding(), null);
     }
 
     private SosProcedureDescription convertWML2ObservationProcessToInspireProcess(

@@ -39,6 +39,7 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
@@ -237,10 +238,15 @@ public class ProcedureConverter
             SosProcedureDescription<?> description)
             throws OwsExceptionReport {
         try {
-            Converter<SosProcedureDescription<?>, Object> converter =
+            Converter<AbstractFeature, AbstractFeature> converter =
                     ctx.getConverterRepository().getConverter(fromFormat, toFormat);
             if (converter != null) {
-                return converter.convert(description);
+                AbstractFeature convert = converter.convert(description);
+                if (convert instanceof SosProcedureDescription) {
+                   return (SosProcedureDescription<?>) convert;
+                } else {
+                    return new SosProcedureDescription<AbstractFeature>(convert).add(description);
+                }
             }
             throw new ConverterException(
                     String.format("No converter available to convert from '%s' to '%s'", fromFormat, toFormat));

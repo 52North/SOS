@@ -34,8 +34,8 @@ import java.util.Set;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.sensorML.SensorML20Constants;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,14 +50,16 @@ import com.google.common.base.Joiner;
  * @since 4.2.0
  *
  */
-public class SensorML20UrlMimeTypeConverter implements Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> {
+public class SensorML20UrlMimeTypeConverter
+        extends
+        ProcedureDescriptionConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorML20UrlMimeTypeConverter.class);
 
     private static final Set<ConverterKey> CONVERTER_KEY_TYPES = CollectionHelper.set(
             new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL), new ConverterKey(
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL),
+            new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
                     SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE));
 
     public SensorML20UrlMimeTypeConverter() {
@@ -71,7 +73,8 @@ public class SensorML20UrlMimeTypeConverter implements Converter<SosProcedureDes
     }
 
     @Override
-    public SosProcedureDescription<?> convert(SosProcedureDescription<?> objectToConvert) throws ConverterException {
+    public AbstractFeature convert(AbstractFeature objectToConvert)
+            throws ConverterException {
         return objectToConvert;
     }
 

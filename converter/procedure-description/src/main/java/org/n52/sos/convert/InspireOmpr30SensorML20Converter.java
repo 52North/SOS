@@ -51,24 +51,29 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-public class InspireOmpr30SensorML20Converter extends AbstractInspireOmpr30SensorMLConverter {
+public class InspireOmpr30SensorML20Converter
+        extends
+        AbstractInspireOmpr30SensorMLConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InspireOmpr30SensorML20Converter.class);
 
-    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = CollectionHelper.set(new ConverterKey(
-            SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
-            InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE), new ConverterKey(
-            SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE),
+    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = CollectionHelper.set(
             new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
-                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL), new ConverterKey(
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL, InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL),
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE),
+            new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE),
+            new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL),
+            new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL),
             new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), new ConverterKey(
-                            InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), new ConverterKey(
-                            InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL), new ConverterKey(
-                            InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL, SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
+            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
+            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL),
+            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
 
     public InspireOmpr30SensorML20Converter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
@@ -81,47 +86,53 @@ public class InspireOmpr30SensorML20Converter extends AbstractInspireOmpr30Senso
     }
 
     @Override
-    public SosProcedureDescription<?> convert(SosProcedureDescription<?> objectToConvert) throws ConverterException {
-        if (SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL.equals(objectToConvert.getDescriptionFormat())
-                || SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE.equals(objectToConvert.getDescriptionFormat())) {
-            return convertSensorML20ToInspireOmpr30(objectToConvert);
-        } else if (InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL.equals(objectToConvert.getDescriptionFormat())
-                || InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE.equals(objectToConvert.getDescriptionFormat())) {
-            return convertInspireOmpr30ToSensorML20(objectToConvert);
+    public AbstractFeature convert(AbstractFeature objectToConvert)
+            throws ConverterException {
+        if (objectToConvert instanceof SosProcedureDescription<?>) {
+            SosProcedureDescription<?> o = (SosProcedureDescription<?>) objectToConvert;
+            if (SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL.equals(o.getDescriptionFormat())
+                    || SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE.equals(o.getDescriptionFormat())) {
+                return convertSensorML20ToInspireOmpr30(o);
+            } else if (InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL.equals(o.getDescriptionFormat())
+                    || InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE.equals(o.getDescriptionFormat())) {
+                return convertInspireOmpr30ToSensorML20(o);
+            }
+            throw new ConverterException(String.format("The procedure's description format %s is not supported!",
+                    o.getDescriptionFormat()));
         }
-        throw new ConverterException(String.format("The procedure's description format %s is not supported!",
-                objectToConvert.getDescriptionFormat()));
+        throw new ConverterException(String.format("The procedure's description %s is not supported!",
+                objectToConvert.getClass().getName()));
     }
 
     private SosProcedureDescription<?> convertInspireOmpr30ToSensorML20(SosProcedureDescription<?> objectToConvert) {
         if (objectToConvert.getProcedureDescription() instanceof Process) {
-        Process process = (Process) objectToConvert.getProcedureDescription();
-        PhysicalComponent component = new PhysicalComponent();
-        component.setIdentifier(process.getIdentifierCodeWithAuthority());
-        SmlIdentifier inspireIdIdentifier = convertInspireIdToIdentification(process.getInspireId());
-        if (component.isSetIdentifications()) {
-            component.getIdentifications().add(inspireIdIdentifier);
-        } else {
-            component.setIdentifications(Lists.newArrayList(inspireIdIdentifier));
-        }
-        if (process.isSetDocumentation()) {
-            component.setDocumentation(convertDocumentationCitationToDocumentation(process.getDocumentation()));
-        }
-        if (process.isSetName()) {
-            SmlIdentifier identifier = convertNameToIdentification(process.getFirstName());
+            Process process = (Process) objectToConvert.getProcedureDescription();
+            PhysicalComponent component = new PhysicalComponent();
+            component.setIdentifier(process.getIdentifierCodeWithAuthority());
+            SmlIdentifier inspireIdIdentifier = convertInspireIdToIdentification(process.getInspireId());
             if (component.isSetIdentifications()) {
-                component.getIdentifications().add(identifier);
+                component.getIdentifications().add(inspireIdIdentifier);
             } else {
-                component.setIdentifications(Lists.newArrayList(identifier));
+                component.setIdentifications(Lists.newArrayList(inspireIdIdentifier));
             }
-        }
-        if (process.isSetProcessParameter()) {
-            component.addClassifications(convertProcessParametersToClassifiers(process.getProcessParameter()));
-        }
-        if (process.isSetResponsibleParty()) {
-            component.setContact(convertResponsiblePartiesToContacts(process.getResponsibleParty()));
-        }
-        return new SosProcedureDescription<AbstractFeature>(component);
+            if (process.isSetDocumentation()) {
+                component.setDocumentation(convertDocumentationCitationToDocumentation(process.getDocumentation()));
+            }
+            if (process.isSetName()) {
+                SmlIdentifier identifier = convertNameToIdentification(process.getFirstName());
+                if (component.isSetIdentifications()) {
+                    component.getIdentifications().add(identifier);
+                } else {
+                    component.setIdentifications(Lists.newArrayList(identifier));
+                }
+            }
+            if (process.isSetProcessParameter()) {
+                component.addClassifications(convertProcessParametersToClassifiers(process.getProcessParameter()));
+            }
+            if (process.isSetResponsibleParty()) {
+                component.setContact(convertResponsiblePartiesToContacts(process.getResponsibleParty()));
+            }
+            return new SosProcedureDescription<AbstractFeature>(component);
         }
         return new SosProcedureDescriptionUnknownType(objectToConvert.getIdentifier());
     }
@@ -137,7 +148,8 @@ public class InspireOmpr30SensorML20Converter extends AbstractInspireOmpr30Senso
                 process.setIdentifier(abstractProcess.getIdentifierCodeWithAuthority());
             }
             if (abstractProcess.isSetDocumentation()) {
-                process.setDocumentation(convertDocumentationToDocumentationCitation(abstractProcess.getDocumentation()));
+                process.setDocumentation(
+                        convertDocumentationToDocumentationCitation(abstractProcess.getDocumentation()));
             }
             if (abstractProcess.isSetIdentifications()) {
                 CodeType name = convertIdentifierToName(abstractProcess.getIdentifications());
@@ -146,7 +158,8 @@ public class InspireOmpr30SensorML20Converter extends AbstractInspireOmpr30Senso
                 }
             }
             if (abstractProcess.isSetClassifications()) {
-                process.setProcessParameter(convertClassifiersToProcessParameters(abstractProcess.getClassifications()));
+                process.setProcessParameter(
+                        convertClassifiersToProcessParameters(abstractProcess.getClassifications()));
             }
             if (abstractProcess.isSetContact()) {
                 process.setResponsibleParty(convertContactsToResponsibleParties(abstractProcess.getContact()));

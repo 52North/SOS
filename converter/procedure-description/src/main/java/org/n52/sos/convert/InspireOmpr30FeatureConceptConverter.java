@@ -31,10 +31,10 @@ package org.n52.sos.convert;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
 import org.n52.shetland.inspire.ompr.InspireOMPRConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
 import org.slf4j.Logger;
@@ -42,15 +42,21 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
-public class InspireOmpr30FeatureConceptConverter implements Converter<SosProcedureDescription, SosProcedureDescription> {
+public class InspireOmpr30FeatureConceptConverter
+        extends
+        ProcedureDescriptionConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InspireOmpr30FeatureConceptConverter.class);
 
-    private static final Set <ConverterKey> CONVERTER_KEY_TYPES = CollectionHelper.set(
-            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL, InspireOMPRConstants.FEATURE_CONCEPT_PROCESS),
-            new ConverterKey(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS, InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL),
-            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE, InspireOMPRConstants.FEATURE_CONCEPT_PROCESS),
-            new ConverterKey(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS, InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE));
+    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = CollectionHelper.set(
+            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL,
+                    InspireOMPRConstants.FEATURE_CONCEPT_PROCESS),
+            new ConverterKey(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS,
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL),
+            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
+                    InspireOMPRConstants.FEATURE_CONCEPT_PROCESS),
+            new ConverterKey(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS,
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE));
 
     public InspireOmpr30FeatureConceptConverter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
@@ -63,8 +69,13 @@ public class InspireOmpr30FeatureConceptConverter implements Converter<SosProced
     }
 
     @Override
-    public SosProcedureDescription convert(SosProcedureDescription objectToConvert) throws ConverterException {
-        return objectToConvert.setDescriptionFormat(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL);
+    public AbstractFeature convert(AbstractFeature objectToConvert)
+            throws ConverterException {
+        if (objectToConvert instanceof SosProcedureDescription<?>) {
+            return ((SosProcedureDescription<?>) objectToConvert)
+                    .setDescriptionFormat(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL);
+        }
+        return objectToConvert;
     }
 
 }

@@ -53,23 +53,29 @@ import com.google.common.collect.ImmutableSet;
  * @since 4.0.0
  *
  */
-public class WaterMLv20SensorMLv101Converter extends AbstractWaterMLv20SensorMLConverter {
+public class WaterMLv20SensorMLv101Converter
+        extends
+        AbstractWaterMLv20SensorMLConverter {
 
     /*
      * TODO - Add function to read mapping information
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterMLv20SensorMLv101Converter.class);
 
-    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = ImmutableSet.<ConverterKey>builder()
-            .add(new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
-            .add(new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
-            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
-            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
+    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = ImmutableSet.<ConverterKey> builder()
+            .add(new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+            .add(new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
+                    WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
+                    WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
             .build();
 
     public WaterMLv20SensorMLv101Converter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
-                     Joiner.on(", ").join(CONVERTER_KEY_TYPES));
+                Joiner.on(", ").join(CONVERTER_KEY_TYPES));
     }
 
     @Override
@@ -78,20 +84,21 @@ public class WaterMLv20SensorMLv101Converter extends AbstractWaterMLv20SensorMLC
     }
 
     @Override
-    public AbstractFeature convert(AbstractFeature objectToConvert) throws ConverterException {
+    public AbstractFeature convert(AbstractFeature objectToConvert)
+            throws ConverterException {
         if (objectToConvert.getDefaultElementEncoding().equals(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)
                 && objectToConvert instanceof ObservationProcess) {
-            return convertWML2ObservationProcessToSensorML101((ObservationProcess)objectToConvert);
-        } else if ((objectToConvert.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL) ||
-                   objectToConvert.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
-                   && objectToConvert instanceof AbstractSensorML) {
-            return convertSensorML101ToWML2ObservationProcess((AbstractSensorML)objectToConvert);
+            return convertWML2ObservationProcessToSensorML101((ObservationProcess) objectToConvert);
+        } else if ((objectToConvert.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL)
+                || objectToConvert.getDefaultElementEncoding()
+                        .equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+                && objectToConvert instanceof AbstractSensorML) {
+            return convertSensorML101ToWML2ObservationProcess((AbstractSensorML) objectToConvert);
         }
         return null;
     }
 
-    private ObservationProcess convertSensorML101ToWML2ObservationProcess(
-            final AbstractSensorML abstractSensorML) {
+    private ObservationProcess convertSensorML101ToWML2ObservationProcess(final AbstractSensorML abstractSensorML) {
         ObservationProcess observationProcess = null;
         if (abstractSensorML instanceof SensorML) {
             final SensorML sensorML = (SensorML) abstractSensorML;
@@ -114,10 +121,9 @@ public class WaterMLv20SensorMLv101Converter extends AbstractWaterMLv20SensorMLC
         return observationProcess;
     }
 
-    private AbstractSensorML convertWML2ObservationProcessToSensorML101(
-            final ObservationProcess objectToConvert) {
+    private AbstractSensorML convertWML2ObservationProcessToSensorML101(final ObservationProcess objectToConvert) {
         AbstractProcess process = null;
-        ObservationProcess observationProcess = (ObservationProcess)objectToConvert;
+        ObservationProcess observationProcess = (ObservationProcess) objectToConvert;
         if (observationProcess.isSetProcessType()) {
             if (checkProcessType(observationProcess.getProcessType(), WaterMLConstants.PROCESS_TYPE_SENSOR)) {
                 process = new System();

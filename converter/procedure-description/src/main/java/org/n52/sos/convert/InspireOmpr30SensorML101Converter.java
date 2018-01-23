@@ -51,24 +51,29 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-public class InspireOmpr30SensorML101Converter extends AbstractInspireOmpr30SensorMLConverter {
+public class InspireOmpr30SensorML101Converter
+        extends
+        AbstractInspireOmpr30SensorMLConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InspireOmpr30SensorML101Converter.class);
 
-    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = CollectionHelper.set(new ConverterKey(
-            InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
-            SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), new ConverterKey(
-                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
+    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = CollectionHelper.set(
             new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
-                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL), new ConverterKey(
-                            InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL),
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
+            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
+            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL),
+            new ConverterKey(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL),
             new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
-                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE), new ConverterKey(
-                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
-                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE), new ConverterKey(
-                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
-                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL), new ConverterKey(
-                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL));
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE),
+            new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE),
+            new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL),
+            new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
+                    InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL));
 
     public InspireOmpr30SensorML101Converter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
@@ -81,20 +86,26 @@ public class InspireOmpr30SensorML101Converter extends AbstractInspireOmpr30Sens
     }
 
     @Override
-    public SosProcedureDescription<?> convert(SosProcedureDescription<?> objectToConvert) throws ConverterException {
-        if (InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL.equals(objectToConvert.getDescriptionFormat())
-                || InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE.equals(objectToConvert.getDescriptionFormat())) {
-            return convertInspireOmpr30ToSensorML101(objectToConvert);
-        } else if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL.equals(objectToConvert.getDescriptionFormat())
-                || SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE.equals(objectToConvert.getDescriptionFormat())) {
-            return convertSensorML101ToInspireOmpr30(objectToConvert);
+    public AbstractFeature convert(AbstractFeature objectToConvert)
+            throws ConverterException {
+        if (objectToConvert instanceof SosProcedureDescription<?>) {
+            SosProcedureDescription<?> o = (SosProcedureDescription<?>) objectToConvert;
+            if (InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL.equals(o.getDescriptionFormat())
+                    || InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE.equals(o.getDescriptionFormat())) {
+                return convertInspireOmpr30ToSensorML101(o);
+            } else if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL.equals(o.getDescriptionFormat())
+                    || SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE.equals(o.getDescriptionFormat())) {
+                return convertSensorML101ToInspireOmpr30(o);
+            }
+            throw new ConverterException(String.format("The procedure's description format %s is not supported!",
+                    o.getDescriptionFormat()));
         }
-        throw new ConverterException(String.format("The procedure's description format %s is not supported!",
-                objectToConvert.getDescriptionFormat()));
+        throw new ConverterException(String.format("The procedure's description %s is not supported!",
+                objectToConvert.getClass().getName()));
     }
 
     private SosProcedureDescription<?> convertInspireOmpr30ToSensorML101(SosProcedureDescription<?> objectToConvert) {
-        if (objectToConvert.getProcedureDescription() instanceof Process ) {
+        if (objectToConvert.getProcedureDescription() instanceof Process) {
             Process process = (Process) objectToConvert.getProcedureDescription();
             Component component = new Component();
             component.setIdentifier(process.getIdentifierCodeWithAuthority());
@@ -127,7 +138,7 @@ public class InspireOmpr30SensorML101Converter extends AbstractInspireOmpr30Sens
     }
 
     private SosProcedureDescription<?> convertSensorML101ToInspireOmpr30(SosProcedureDescription<?> objectToConvert) {
-        if (objectToConvert.getProcedureDescription() instanceof AbstractProcess ) {
+        if (objectToConvert.getProcedureDescription() instanceof AbstractProcess) {
             AbstractProcess abstractProcess = (AbstractProcess) objectToConvert.getProcedureDescription();
             Process process = new Process();
             CodeWithAuthority inspireId = convertIdentificationToInspireId(abstractProcess.getIdentifications());
@@ -137,7 +148,8 @@ public class InspireOmpr30SensorML101Converter extends AbstractInspireOmpr30Sens
                 process.setIdentifier(abstractProcess.getIdentifierCodeWithAuthority());
             }
             if (abstractProcess.isSetDocumentation()) {
-                process.setDocumentation(convertDocumentationToDocumentationCitation(abstractProcess.getDocumentation()));
+                process.setDocumentation(
+                        convertDocumentationToDocumentationCitation(abstractProcess.getDocumentation()));
             }
             if (abstractProcess.isSetIdentifications()) {
                 CodeType name = convertIdentifierToName(abstractProcess.getIdentifications());
@@ -146,7 +158,8 @@ public class InspireOmpr30SensorML101Converter extends AbstractInspireOmpr30Sens
                 }
             }
             if (abstractProcess.isSetClassifications()) {
-                process.setProcessParameter(convertClassifiersToProcessParameters(abstractProcess.getClassifications()));
+                process.setProcessParameter(
+                        convertClassifiersToProcessParameters(abstractProcess.getClassifications()));
             }
             if (abstractProcess.isSetContact()) {
                 process.setResponsibleParty(convertContactsToResponsibleParties(abstractProcess.getContact()));

@@ -43,6 +43,7 @@ import org.n52.series.db.beans.HibernateRelations.HasProcedureDescriptionFormat;
 import org.n52.series.db.beans.HibernateRelations.HasXml;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
@@ -171,15 +172,15 @@ public class HibernateProcedureConverter
         Optional<SosProcedureDescription<?>> description =
                 create(procedure, requestedDescriptionFormat, vpt, i18n, session);
         if (description.isPresent()) {
-            addHumanReadableName(description.get(), procedure);
-            enrich(description.get(), procedure, version, requestedDescriptionFormat, getValidTime(vpt), i18n,
-                    session);
             if (!requestedDescriptionFormat.equals(description.get().getDescriptionFormat())) {
                 SosProcedureDescription<?> converted = convert(description.get().getDescriptionFormat(),
                         requestedDescriptionFormat, description.get());
                 converted.setDescriptionFormat(requestedDescriptionFormat);
                 return converted;
             }
+            addHumanReadableName(description.get(), procedure);
+            enrich(description.get(), procedure, version, requestedDescriptionFormat, getValidTime(vpt), i18n,
+                    session);
         }
         return description.orNull();
     }
@@ -347,10 +348,15 @@ public class HibernateProcedureConverter
             SosProcedureDescription<?> description)
             throws OwsExceptionReport {
         try {
-            Converter<SosProcedureDescription<?>, Object> converter =
+            Converter<AbstractFeature, AbstractFeature> converter =
                     getConverterRepository().getConverter(fromFormat, toFormat);
             if (converter != null) {
-                return converter.convert(description);
+                AbstractFeature convert = converter.convert(description);
+                if (convert instanceof SosProcedureDescription) {
+                   return (SosProcedureDescription<?>) convert;
+                } else {
+                    return new SosProcedureDescription<AbstractFeature>(convert).add(description);
+                }
             }
             throw new ConverterException(
                     String.format("No converter available to convert from '%s' to '%s'", fromFormat, toFormat));

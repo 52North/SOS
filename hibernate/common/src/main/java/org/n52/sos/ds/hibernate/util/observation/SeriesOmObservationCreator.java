@@ -36,6 +36,7 @@ import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.parameter.SeriesParameterDAO;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameterAdder;
 import org.n52.sos.exception.CodedException;
@@ -93,10 +94,10 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
         final List<OmObservation> observations = Lists.newLinkedList();
         if (series != null) {
-            SosProcedureDescription procedure = createProcedure(series.getProcedure().getIdentifier());
+            SosProcedureDescription procedure = createProcedure(series.getProcedure());
             OmObservableProperty obsProp = createObservableProperty(series.getObservableProperty());
             obsProp.setUnit(queryUnit(getSeries()));
-            AbstractFeature feature = createFeatureOfInterest(series.getFeatureOfInterest().getIdentifier());
+            AbstractFeature feature = createFeatureOfInterest(series.getFeatureOfInterest());
 
             final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
             final OmObservation sosObservation = new OmObservation();

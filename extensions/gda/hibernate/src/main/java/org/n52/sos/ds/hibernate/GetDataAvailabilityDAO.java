@@ -817,7 +817,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         if (!featuresOfInterest.containsKey(identifier)) {
             ReferenceType referenceType = new ReferenceType(identifier);
             FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
-            queryObject.addFeatureIdentifier(identifier).setConnection(session)
+            queryObject.setFeature(series.getFeatureOfInterest()).setConnection(session)
                     .setVersion(Sos2Constants.SERVICEVERSION);
             AbstractFeature feature = Configurator.getInstance().getFeatureQueryHandler().getFeatureByID(queryObject);
             if (feature.isSetName() && feature.getFirstName().isSetValue()) {

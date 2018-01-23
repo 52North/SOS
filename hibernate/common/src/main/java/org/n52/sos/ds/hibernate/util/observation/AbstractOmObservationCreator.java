@@ -41,6 +41,7 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -206,14 +207,18 @@ public abstract class AbstractOmObservationCreator {
      *             If an error occurs
      */
     protected SosProcedureDescription createProcedure(String identifier) throws ConverterException, OwsExceptionReport {
-        Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(identifier, getSession());
+        return createProcedure(new ProcedureDAO().getProcedureForIdentifier(identifier, getSession()));
+    }
+    
+
+    protected SosProcedureDescription createProcedure(Procedure hProcedure) throws OwsExceptionReport {
         String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
         if (getActiveProfile().isEncodeProcedureInObservation()) {
             return new HibernateProcedureConverter().createSosProcedureDescription(hProcedure, pdf, getVersion(),
                     getSession());
         } else {
             SosProcedureDescriptionUnknowType sosProcedure =
-                    new SosProcedureDescriptionUnknowType(identifier, pdf, null);
+                    new SosProcedureDescriptionUnknowType(hProcedure.getIdentifier(), pdf, null);
             if (hProcedure.isSetName()) {
                 sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
                 addName(sosProcedure, hProcedure);
@@ -256,6 +261,14 @@ public abstract class AbstractOmObservationCreator {
     protected AbstractFeature createFeatureOfInterest(String identifier) throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
         queryObject.addFeatureIdentifier(identifier).setConnection(getSession()).setVersion(getVersion());
+        final AbstractFeature feature =
+                getFeatureQueryHandler().getFeatureByID(queryObject);
+        return feature;
+    }
+    
+    protected AbstractFeature createFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) throws OwsExceptionReport {
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
+        queryObject.setFeature(featureOfInterest).setConnection(getSession()).setVersion(getVersion());
         final AbstractFeature feature =
                 getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;

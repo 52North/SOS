@@ -74,6 +74,7 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
@@ -1212,10 +1213,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
     
     protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
-            Session session) throws OwsExceptionReport {
+            SubQueryIdentifier identifier, Session session)
+            throws OwsExceptionReport {
         if (request.hasResultFilter()) {
             ComparisonFilter resultFilter = request.getResultFilter();
-            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter, getResultFilterClasses(), BaseObservation.OBS_ID);
+            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
+                    getResultFilterClasses(), BaseObservation.OBS_ID, identifier);
             if (resultFilterExpression != null) {
                 c.add(resultFilterExpression);
             }

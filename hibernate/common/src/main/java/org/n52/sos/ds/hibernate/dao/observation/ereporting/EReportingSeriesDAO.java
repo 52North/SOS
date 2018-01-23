@@ -62,17 +62,16 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
+        List<Series> series = new ArrayList<>();
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
-                series.addAll(getSeriesCriteria(request, ids, session).list());
+                series.addAll(getSeriesSet(request, ids, session));
             }
-            return series;
         } else {
-            return getSeriesCriteria(request, features, session).list();
+            series.addAll(getSeriesSet(request, features, session));
         }
+        return series;
     }
 
     @SuppressWarnings("unchecked")
@@ -81,11 +80,10 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
         return getSeriesCriteria(request, session).list();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Series> getSeries(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
-        return getSeriesCriteria(request, session).list();
+        return new ArrayList<>(getSeriesCriteria(request, session));
     }
 
     @Override

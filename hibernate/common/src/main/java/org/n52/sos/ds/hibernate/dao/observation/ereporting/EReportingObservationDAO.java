@@ -121,7 +121,6 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
         return getSeriesObservationsFor(request, features, null, sosIndeterminateTime, session);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected List<SeriesObservation<?>> getSeriesObservationsFor(GetObservationRequest request,
             Collection<String> features, Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime,
@@ -129,19 +128,18 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
         if (CollectionHelper.isNotEmpty(features)) {
             List<SeriesObservation<?>> observations = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
-                observations.addAll(getSeriesObservationCriteriaFor(request, ids, filterCriterion, sosIndeterminateTime, session).list());
+                observations.addAll(getSeriesObservationCriteriaFor(request, ids, filterCriterion, sosIndeterminateTime, session));
             }
             return observations;
         } else {
-            return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
+            return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session);
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<SeriesObservation<?>> getSeriesObservationsFor(Series series, GetObservationRequest request,
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
-        return getSeriesObservationCriteriaFor(series, request, sosIndeterminateTime, session).list();
+        return getSeriesObservationCriteriaFor(series, request, sosIndeterminateTime, session);
     }
 
     @Override

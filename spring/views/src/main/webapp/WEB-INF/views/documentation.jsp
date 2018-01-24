@@ -47,15 +47,11 @@
 
 <h4>Other Documentations</h4>
 
-<p>Links to documentations of included independent software components:</p>
-<c:if test="${sos:documentExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
-    <li>
-    	Sensor Web Client REST-API
-        <a id="rest-menuitem" class="menu-item4" target="_blank" href="<c:url value="https://52north.github.io/series-rest-api/" />">
-            <span class="menu-title">documentation</span>
-        </a>
-    </li>
-</c:if>
+<p>Sensor Web Client REST-API
+	<a id="rest-menuitem" class="menu-item4" target="_blank" href="<c:url value="https://52north.github.io/series-rest-api/develop/" />">
+	    <span class="menu-title">documentation</span>
+	</a>
+</p>
 
 
 <jsp:include page="common/footer.jsp" />

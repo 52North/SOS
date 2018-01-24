@@ -45,6 +45,8 @@ import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSe
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.AbstractObservationRequest;
@@ -90,12 +92,22 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      */
     public ObservationTimeExtrema getTimeExtremaForSeries(AbstractObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
-        Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
-        addMinMaxTimeProjection(c);
-        LOGGER.debug("QUERY getTimeExtremaForSeries(request, series, temporalFilter): {}",
-                HibernateHelper.getSqlString(c));
-        return parseMinMaxTime((Object[]) c.uniqueResult());
-
+        if (request instanceof GetObservationRequest && ((GetObservationRequest) request).hasResultFilter()) {
+            ObservationTimeExtrema ote = new ObservationTimeExtrema();
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+                Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
+                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session);
+                addMinMaxTimeProjection(c);
+                ote.expand(parseMinMaxTime((Object[]) c.uniqueResult()));
+            }
+            return ote;
+        } else {
+            Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
+            addMinMaxTimeProjection(c);
+            LOGGER.debug("QUERY getTimeExtremaForSeries(request, series, temporalFilter): {}",
+                    HibernateHelper.getSqlString(c));
+            return parseMinMaxTime((Object[]) c.uniqueResult());
+        }
     }
     
     /**
@@ -116,12 +128,22 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      */
     public ObservationTimeExtrema getTimeExtremaForSeries(AbstractObservationRequest request, Set<Long> series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
-        Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
-        addMinMaxTimeProjection(c);
-        LOGGER.debug("QUERY getTimeExtremaForSeries(request, series, temporalFilter): {}",
-                HibernateHelper.getSqlString(c));
-        return parseMinMaxTime((Object[]) c.uniqueResult());
-
+        if (request instanceof GetObservationRequest && ((GetObservationRequest) request).hasResultFilter()) {
+            ObservationTimeExtrema ote = new ObservationTimeExtrema();
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+                Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
+                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session);
+                addMinMaxTimeProjection(c);
+                ote.expand(parseMinMaxTime((Object[]) c.uniqueResult()));
+            }
+            return ote;
+        } else {
+            Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
+            addMinMaxTimeProjection(c);
+            LOGGER.debug("QUERY getTimeExtremaForSeries(request, series, temporalFilter): {}",
+                    HibernateHelper.getSqlString(c));
+            return parseMinMaxTime((Object[]) c.uniqueResult());
+        }
     }
 
     /**
@@ -290,6 +312,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         if (request instanceof GetObservationRequest) {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
             checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
+            checkAndAddResultFilterCriterion(c, getObsReq, null, session);
             if (CollectionHelper.isNotEmpty(getObsReq.getOfferings())) {
                 c.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS).add(
                         Restrictions.in(Offering.IDENTIFIER, getObsReq.getOfferings()));

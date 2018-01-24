@@ -35,9 +35,11 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
+import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
@@ -52,23 +54,29 @@ import org.n52.sos.util.CollectionHelper;
 public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
+        List<Series> series = new ArrayList<>();
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
-                series.addAll(getSeriesCriteria(request, ids, session).list());
+                series.addAll(getSeriesSet(request, ids, session));
             }
-            return series;
+           
         } else {
-            return getSeriesCriteria(request, features, session).list();
+            series.addAll(getSeriesSet(request, features, session));
         }
+        return series;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<Series> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
         return getSeriesCriteria(request, session).list();
+    }
+
+    @Override
+    public List<Series> getSeries(GetDataAvailabilityRequest request, Session session)
+            throws OwsExceptionReport {
+        return  new ArrayList<>(getSeriesCriteria(request, session));
     }
 
     @Override
@@ -149,5 +157,8 @@ public class SeriesDAO extends AbstractSeriesDAO {
         // nothing to add
     }
 
+    public ObservationFactory getObservationFactory() {
+        return SeriesObservationFactory.getInstance();
+    }
 
 }

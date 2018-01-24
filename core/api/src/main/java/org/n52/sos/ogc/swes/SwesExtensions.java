@@ -106,6 +106,16 @@ public class SwesExtensions {
         return null;
     }
 
+    public int getExtensionCount(String identifier) {
+        int count = 0;
+        for (SwesExtension<?> extension : getExtensions()) {
+            if (isExtensionNameEquals(identifier, extension)) {
+               count++;
+            }
+        }
+        return count;
+    }
+
     public boolean isEmpty() {
         return extensions.isEmpty();
     }

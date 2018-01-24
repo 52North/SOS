@@ -28,6 +28,7 @@
  */
 package org.n52.sos.request;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -107,6 +108,15 @@ public abstract class AbstractServiceRequest<T extends AbstractServiceResponse> 
     }
     
     @Override
+    public AbstractServiceRequest addExtensions(final Collection<SwesExtension<?>> extensions) {
+        if (getExtensions() == null) {
+            setExtensions(new SwesExtensions());
+        }
+        getExtensions().addSwesExtension(extensions);
+        return this;
+    }
+    
+    @Override
     public boolean isSetExtensions() {
         return extensions != null && !extensions.isEmpty();
     }
@@ -142,6 +152,10 @@ public abstract class AbstractServiceRequest<T extends AbstractServiceResponse> 
         }
         return null;
     }
+    
+    public int getExtensionCount(String identifier) {
+        return getExtensions().getExtensionCount(identifier);
+    }
 
     public String getRequestedLanguage() {
         if (isSetExtensions()) {
@@ -175,7 +189,7 @@ public abstract class AbstractServiceRequest<T extends AbstractServiceResponse> 
     }
     
     public abstract T getResponse() throws OwsExceptionReport;
-
+    
     @Override
     public String toString() {
         return String.format("%s[service=%s, version=%s, operation=%s]", getClass().getName(), getService(),

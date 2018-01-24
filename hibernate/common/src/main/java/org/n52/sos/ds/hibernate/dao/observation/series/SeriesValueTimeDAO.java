@@ -33,6 +33,7 @@ import java.util.Collection;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
@@ -74,6 +75,11 @@ public class SeriesValueTimeDAO extends AbstractSeriesValueTimeDAO {
     public ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series, Criterion temporalFilter,
             Session session) throws OwsExceptionReport {
         return new ObservationTimeExtrema();
+    }
+
+    @Override
+    protected ValuedObservationFactory getValuedObservationFactory() {
+        return SeriesValuedObervationFactory.getInstance();
     }
 
 //    /**

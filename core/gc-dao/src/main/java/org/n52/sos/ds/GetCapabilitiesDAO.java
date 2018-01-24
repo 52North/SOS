@@ -64,6 +64,7 @@ import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.MergableExtension;
 import org.n52.sos.ogc.ows.OWSConstants;
+import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
 import org.n52.sos.ogc.ows.OfferingExtension;
 import org.n52.sos.ogc.ows.OwsDomainType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -75,7 +76,6 @@ import org.n52.sos.ogc.ows.OwsOperationsMetadata;
 import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.sos.ogc.ows.SosServiceIdentification;
 import org.n52.sos.ogc.ows.StaticCapabilities;
-import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
 import org.n52.sos.ogc.sos.CapabilitiesExtension;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionRepository;
@@ -97,7 +97,6 @@ import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.response.GetCapabilitiesResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.service.ServiceSettings;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
@@ -427,10 +426,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         if (Sos2Constants.SERVICEVERSION.equals(version)) {
             getConformance(filterCapabilities);
         }
-        // !!! Modify methods addicted to your implementation !!!
-        if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            getScalarFilterCapabilities(filterCapabilities);
-        }
+        getScalarFilterCapabilities(filterCapabilities, version);
         getSpatialFilterCapabilities(filterCapabilities, version);
         getTemporalFilterCapabilities(filterCapabilities, version);
 
@@ -840,13 +836,15 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
      * @param filterCapabilities
      *            FilterCapabilities
      */
-    private void getScalarFilterCapabilities(final FilterCapabilities filterCapabilities) {
+    private void getScalarFilterCapabilities(final FilterCapabilities filterCapabilities, String version) {
         // TODO PropertyIsNil, PropertyIsNull? better:
         // filterCapabilities.setComparisonOperators(Arrays.asList(ComparisonOperator.values()));
         final List<ComparisonOperator> comparisonOperators = new ArrayList<ComparisonOperator>(8);
         comparisonOperators.add(ComparisonOperator.PropertyIsBetween);
         comparisonOperators.add(ComparisonOperator.PropertyIsEqualTo);
-        comparisonOperators.add(ComparisonOperator.PropertyIsNotEqualTo);
+        if (version.equals(Sos1Constants.SERVICEVERSION)) {
+//            comparisonOperators.add(ComparisonOperator.PropertyIsNotEqualTo);
+        }
         comparisonOperators.add(ComparisonOperator.PropertyIsLessThan);
         comparisonOperators.add(ComparisonOperator.PropertyIsLessThanOrEqualTo);
         comparisonOperators.add(ComparisonOperator.PropertyIsGreaterThan);

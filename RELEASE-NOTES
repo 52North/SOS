@@ -11,19 +11,31 @@ RELEASE NOTES
  
   --- New features ---
 
-      * 
+      * Result filtering for GetObservation and GetDataAvailability
+      * Spatial filtering for GetDataAvailability
+      * Insertion of static reference values (stored as own procedure and series)
   
   --- Changes ---
   
-      * 
+      * Move REST-API and Helgoland Client to webapp module (included by default)
   
   --- Fixed issues ---
   
       * Issue #212: Allow sort by status in 52n-sos-webapp/admin/operations
+      * Issue #555:Wrong error code when sending plain SensorML and not a request
       * Issue #572: Fix NPE in InsertSensor when procedure description has invalid namespace declaration
       * Issue #574: Capabilities shows metadata and test client provides examples for not supported operations
       * Issue #575: HibernateMetadataCache not updated after resetting the SOS
       * Issue #581: Cache: loosing spatial information after manually triggered update
+      * Issue #584: responseFormat-Parameter "uvf" results in Java Exception
+      * Issue #590: Creating a permlink is not working for +2000 chars
+      * Issue #592: SQL Server datasource does not add null constraint to series.identifier
+      * Issue #596: InsertSensor does not check if offering is already related to another procedure
+      * Set vertical datum name from datasource entity (#585)
+      * Encode description element (#585)
+      * Fix issue when the cache thread cound is equal or greater than the max connection count
+      * Fix CRS and EPSG code settings (#579)
+      * Creation of LineString WKT in GmlDecoderv321
 
    Release 52n-sensorweb-sos-4.4.1
 ====================================

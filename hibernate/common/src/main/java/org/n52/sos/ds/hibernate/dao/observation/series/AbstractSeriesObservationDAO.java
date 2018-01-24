@@ -33,6 +33,7 @@ import static org.hibernate.criterion.Restrictions.eq;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -68,6 +69,8 @@ import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSe
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
 import org.n52.sos.exception.CodedException;
@@ -93,7 +96,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             Observation<?> observation, Session session) throws CodedException {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Series series = seriesDAO.getOrInsertSeries(ctx, session);
-        ((SeriesObservation) observation).setSeries(series);
+        ((AbstractSeriesObservation) observation).setSeries(series);
         seriesDAO.updateSeriesWithFirstLatestValues(series, observation, session);
     }
 
@@ -476,7 +479,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     public ScrollableResults getSeriesNotMatchingSeries(Set<Long> seriesIDs, GetObservationRequest request,
             Set<String> features, Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
-        Criteria c = getSeriesObservationCriteriaFor(request, features, temporalFilterCriterion, null, session);
+        Criteria c = getScrollableSeriesObservationCriteriaFor(request, features, temporalFilterCriterion, null, session);
         c.createCriteria(AbstractSeriesObservation.SERIES)
             .add(Restrictions.not(Restrictions.in(Series.ID, seriesIDs)));
         c.setProjection(Projections.property(AbstractSeriesObservation.SERIES));
@@ -509,7 +512,22 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      * @return Series observations {@link Criteria}
      * @throws OwsExceptionReport
      */
-    protected Criteria getSeriesObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
+    protected List<SeriesObservation<?>> getSeriesObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
+            Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session)
+                    throws OwsExceptionReport {
+        if (request.hasResultFilter()) {
+            List<SeriesObservation<?>> list = new LinkedList<>();
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+                Criteria c = getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session);
+                checkAndAddResultFilterCriterion(c, request, identifier, session);
+                list.addAll(c.list());
+            }
+            return list;
+        }
+        return getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
+    }
+    
+    private Criteria getDefaultSeriesObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
             Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session)
                     throws OwsExceptionReport {
         final Criteria observationCriteria = getDefaultObservationCriteria(session);
@@ -517,6 +535,55 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         Criteria seriesCriteria = observationCriteria.createCriteria(AbstractSeriesObservation.SERIES);
 
         checkAndAddSpatialFilteringProfileCriterion(observationCriteria, request, session);
+        
+        addSpecificRestrictions(seriesCriteria, request);
+        if (CollectionHelper.isNotEmpty(request.getProcedures())) {
+            seriesCriteria.createCriteria(Series.PROCEDURE)
+                    .add(Restrictions.in(Procedure.IDENTIFIER, request.getProcedures()));
+        }
+
+        if (CollectionHelper.isNotEmpty(request.getObservedProperties())) {
+            seriesCriteria.createCriteria(Series.OBSERVABLE_PROPERTY)
+                    .add(Restrictions.in(ObservableProperty.IDENTIFIER, request.getObservedProperties()));
+        }
+
+        if (CollectionHelper.isNotEmpty(features)) {
+            seriesCriteria.createCriteria(Series.FEATURE_OF_INTEREST)
+                    .add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
+        }
+
+        if (CollectionHelper.isNotEmpty(request.getOfferings())) {
+            observationCriteria.createCriteria(AbstractSeriesObservation.OFFERINGS)
+                    .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+        }
+
+        String logArgs = "request, features, offerings";
+        if (filterCriterion != null) {
+            logArgs += ", filterCriterion";
+            observationCriteria.add(filterCriterion);
+        }
+        if (sosIndeterminateTime != null) {
+            logArgs += ", sosIndeterminateTime";
+            addIndeterminateTimeRestriction(observationCriteria, sosIndeterminateTime);
+        }
+        if (request.isSetFesFilterExtension()) {
+            new ExtensionFesFilterCriteriaAdder(observationCriteria, request.getFesFilterExtensions()).add();
+        }
+        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs,
+                HibernateHelper.getSqlString(observationCriteria));
+        return observationCriteria;
+    }
+    
+    protected Criteria getScrollableSeriesObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
+            Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session)
+                    throws OwsExceptionReport {
+        final Criteria observationCriteria = getDefaultObservationCriteria(session);
+
+        Criteria seriesCriteria = observationCriteria.createCriteria(AbstractSeriesObservation.SERIES);
+
+        checkAndAddSpatialFilteringProfileCriterion(observationCriteria, request, session);
+        checkAndAddResultFilterCriterion(observationCriteria, request, null, session);
+        
         addSpecificRestrictions(seriesCriteria, request);
         if (CollectionHelper.isNotEmpty(request.getProcedures())) {
             seriesCriteria.createCriteria(Series.PROCEDURE)
@@ -626,7 +693,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     protected ScrollableResults getStreamingSeriesObservationsFor(GetObservationRequest request,
             Collection<String> features, Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime,
             Session session) throws OwsExceptionReport {
-        return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session)
+        return getScrollableSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session)
                 .setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
     }
 
@@ -804,8 +871,35 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
 
-    protected Criteria getSeriesObservationCriteriaFor(Series series, GetObservationRequest request,
+    protected List<SeriesObservation<?>> getSeriesObservationCriteriaFor(Series series, GetObservationRequest request,
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
+        if (request.hasResultFilter()) {
+            List<SeriesObservation<?>> list = new LinkedList<>();
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+                final Criteria c =
+                        getDefaultObservationCriteria(session).add(
+                                Restrictions.eq(AbstractSeriesObservation.SERIES, series));
+                checkAndAddSpatialFilteringProfileCriterion(c, request, session);
+                checkAndAddResultFilterCriterion(c, request, identifier, session);
+
+                if (request.isSetOffering()) {
+                    c.createCriteria(AbstractSeriesObservation.OFFERINGS).add(
+                            Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+                }
+                String logArgs = "request, features, offerings";
+                logArgs += ", sosIndeterminateTime";
+                if (series.isSetFirstTimeStamp() && sosIndeterminateTime.equals(SosIndeterminateTime.first)) {
+                    addIndeterminateTimeRestriction(c, sosIndeterminateTime, series.getFirstTimeStamp());
+                } else if (series.isSetLastTimeStamp() && sosIndeterminateTime.equals(SosIndeterminateTime.latest)) {
+                    addIndeterminateTimeRestriction(c, sosIndeterminateTime, series.getLastTimeStamp());
+                } else {
+                    addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+                }
+                LOGGER.debug("QUERY getSeriesObservationFor({}) and result filter sub query '{}': {}", logArgs, identifier.name(), HibernateHelper.getSqlString(c));
+                list.addAll(c.list());
+            }
+            return list;
+        }
         final Criteria c =
                 getDefaultObservationCriteria(session).add(
                         Restrictions.eq(AbstractSeriesObservation.SERIES, series));
@@ -825,7 +919,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             addIndeterminateTimeRestriction(c, sosIndeterminateTime);
         }
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
-        return c;
+        return c.list();
 
     }
 

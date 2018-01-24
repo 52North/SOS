@@ -105,6 +105,12 @@
                         <resource>
                             <directory>src/main/webapp</directory>
                             <filtering>true</filtering>
+                            <exclude>**/static/**</exclude>
+                        </resource>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>false</filtering>
+                            <include>**/static/**</include>
                         </resource>
                         <resource>
                             <directory>src/main/resources</directory>

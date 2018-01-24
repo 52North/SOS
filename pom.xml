@@ -1737,7 +1737,7 @@
     <scm>
         <url>https://github.com/52North/SOS</url>
         <connection>scm:git:https://github.com/52North/SOS.git</connection>
-        <developerConnection>scm:git:https://git@github.com/52North/SOS.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/52North/SOS.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
     <repositories>

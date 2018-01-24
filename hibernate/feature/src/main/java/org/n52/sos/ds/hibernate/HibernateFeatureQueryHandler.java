@@ -93,6 +93,9 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     public AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
         final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
         try {
+            if (queryObject.isSetFeature() && queryObject.getFeature() instanceof AbstractFeatureOfInterest) {
+                return createSosAbstractFeature((AbstractFeatureOfInterest) queryObject.getFeature(), queryObject);
+            }
             AbstractFeatureOfInterest feature = getFeatureDAO().getFeature(queryObject.getFeatureIdentifier(), session);
             return createSosAbstractFeature(feature, queryObject);
         } catch (final HibernateException he) {

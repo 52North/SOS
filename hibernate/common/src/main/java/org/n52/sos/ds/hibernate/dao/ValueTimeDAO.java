@@ -295,7 +295,7 @@ public class ValueTimeDAO extends AbstractValueDAO {
                 getDefaultObservationCriteria(TemporalReferencedLegacyObservation.class, session);
 
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
-        checkAndAddResultFilterCriterion(c, request, session);
+        checkAndAddResultFilterCriterion(c, request, null, session);
 
         if (CollectionHelper.isNotEmpty(procedure)) {
             c.createAlias(TemporalReferencedLegacyObservation.PROCEDURE, "p");

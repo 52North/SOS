@@ -368,7 +368,7 @@ public class ValueDAO extends AbstractValueDAO {
         c.addOrder(Order.asc(getOrderColumn(request)));
         
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
-        checkAndAddResultFilterCriterion(c, request, session);
+        checkAndAddResultFilterCriterion(c, request, null, session);
 
         if (CollectionHelper.isNotEmpty(procedure)) {
             c.createAlias(AbstractValuedLegacyObservation.PROCEDURE, "p");

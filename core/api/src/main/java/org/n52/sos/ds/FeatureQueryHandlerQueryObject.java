@@ -54,6 +54,8 @@ public class FeatureQueryHandlerQueryObject {
     private Set<String> featureIdentifiers = Sets.newHashSet();
 
     private String version;
+    
+    private Object feature;
 
     public Object getConnection() {
         return connection;
@@ -163,5 +165,24 @@ public class FeatureQueryHandlerQueryObject {
 
     public boolean isSetVersion() {
         return StringHelper.isNotEmpty(getVersion());
+    }
+
+    /**
+     * @return the feature
+     */
+    public Object getFeature() {
+        return feature;
+    }
+
+    /**
+     * @param feature the feature to set
+     */
+    public FeatureQueryHandlerQueryObject setFeature(Object feature) {
+        this.feature = feature;
+        return this;
+    }
+    
+    public boolean isSetFeature() {
+        return getFeature() != null;
     }
 }

@@ -181,12 +181,13 @@
                          table="blobvalue">
             <comment>Value table for blob observation</comment>
             <key foreign-key="observationBlobValueFk">
-                <column name="observationId" >
+                <column name="observationId" index="blobvalueobsididx">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
              <property name="value" 
-                       type="blob">
+                       type="blob"
+                       index="blobvalueidx">
                  <column name="value">
                      <comment>Blob observation value</comment>
                  </column>
@@ -198,13 +199,14 @@
                          check="value in ('T','F')">
             <comment>Value table for boolean observation</comment>
             <key foreign-key="observationBooleanValueFk">
-                <column name="observationId" >
+                <column name="observationId" index="booleanvalueobsididx">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
             <property name="value" 
                       type="org.hibernate.type.TrueFalseType">
-                 <column name="value">
+                 <column name="value"
+                         index="booleanvalueidx">
                      <comment>Boolean observation value</comment>
                  </column>
              </property>
@@ -214,12 +216,13 @@
                          table="categoryvalue">
             <comment>Value table for category observation</comment>
             <key foreign-key="observationCategoryValueFk">
-                <column name="observationId" >
+                <column name="observationId" index="categoryvalueobsididx">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
              <property name="value" 
-                       type="string">
+                       type="string"
+                       index="categoryvalueidx">
                  <column name="value">
                      <comment>Category observation value</comment>
                  </column>
@@ -248,12 +251,13 @@
                          table="countvalue">
             <comment>Value table for count observation</comment>
             <key foreign-key="observationCountValueFk">
-                <column name="observationId" >
+                <column name="observationId" index="countvalueobsididx">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
             <property name="value" 
-                      type="integer">
+                      type="integer"
+                      index="countvalueidx">
                  <column name="value">
                      <comment>Count observation value</comment>
                  </column>
@@ -264,12 +268,13 @@
                          table="geometryvalue">
             <comment>Value table for geometry observation</comment>
             <key foreign-key="observationGeometryValueFk">
-                <column name="observationId" >
+                <column name="observationId" index="geometryvalueobsididx">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
              <property name="value" 
-                       type="org.hibernate.spatial.GeometryType">
+                       type="org.hibernate.spatial.GeometryType"
+                       index="geometryvalueidx">
                  <column name="value">
                      <comment>Geometry observation value</comment>
                  </column>
@@ -280,12 +285,13 @@
                          table="numericvalue">
                     <comment>Value table for numeric/Measurment observation</comment>
             <key foreign-key="observationNumericValueFk">
-                 <column name="observationId" >
+                 <column name="observationId" index="numericvalueobsididx">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
             <property name="value" 
-                      type="double">
+                      type="double"
+                      index="numericvalueidx">
                  <column name="value">
                      <comment>Numeric/Measurment observation value</comment>
                  </column>
@@ -296,12 +302,13 @@
                          table="textvalue">
             <comment>Value table for text observation</comment>
             <key foreign-key="observationTextValueFk">
-                <column name="observationId" >
+                <column name="observationId" index="textvalueobsididx">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
             <property name="value" 
-                      type="org.hibernate.type.StringClobType">
+                      type="org.hibernate.type.StringClobType"
+                      index="textvalueidx">
                  <column name="value">
                      <comment>Text observation value</comment>
                  </column>
@@ -330,7 +337,7 @@
                          table="swedataarrayvalue">
             <comment>Value table for SweDataArray observation</comment>
             <key foreign-key="observationSweDataArrayValueFk">
-                <column name="observationId" >
+                <column name="observationId" index="swedataarryvalueobsididx">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
@@ -346,7 +353,7 @@
                          table="complexvalue">
             <comment>Value table for complex observation</comment>
             <key foreign-key="observationComplexValueFk">
-                <column name="observationId" >
+                <column name="observationId" index="complexvalueobsididx">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
@@ -357,13 +364,13 @@
                  cascade="delete-orphan">
                 <comment>Relation table for complex parent/child observations</comment>
                 <key foreign-key="observationParentFK" >
-                     <column name="observationId" not-null="true">
+                     <column name="observationId" not-null="true" index="complexobsididx">
                          <comment>Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid</comment>
                     </column>
                 </key>
                 <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
                               foreign-key="observationChildFk">
-                    <column name="childObservationId" not-null="true">
+                    <column name="childObservationId" not-null="true" index="complexchildobsididx">
                         <comment>Foreign Key (FK) to the related child complex observation. Contains "observation".observationid</comment>
                     </column>
                 </many-to-many>
@@ -374,7 +381,7 @@
                          table="profilevalue">
            <comment>Value table for profile observation</comment>
         	<key foreign-key="observationProfileValueFk">
-	        	<column name="observationId" >
+	        	<column name="observationId" index="profvalueobsididx">
 	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
 	        	</column>
         	</key>
@@ -409,13 +416,13 @@
                  cascade="delete-orphan">
                 <comment>Relation table for complex parent/child observations</comment>
                 <key foreign-key="profileObsParentFK" >
-                     <column name="observationId" not-null="true">
+                     <column name="observationId" not-null="true" index="profileobsididx">
                          <comment>Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid</comment>
                     </column>
                 </key>
                 <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
-                              foreign-key="profileObsChildFk">
-                    <column name="childObservationId" not-null="true">
+                              foreign-key="profileObsChildFk" >
+                    <column name="childObservationId" not-null="true" index="profileobsididx">
                         <comment>Foreign Key (FK) to the related child complex observation. Contains "observation".observationid</comment>
                     </column>
                 </many-to-many>
@@ -426,7 +433,7 @@
                          table="referencevalue">
             <comment>Value table for category observation</comment>
             <key foreign-key="observationRefValueFk">
-                <column name="observationId" >
+                <column name="observationId" index="referencevalueobsididx">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>

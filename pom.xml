@@ -1417,6 +1417,7 @@
         </dependencies>
     </dependencyManagement>
     <build>
+        <defaultGoal>install</defaultGoal>
         <plugins>
             <plugin>
                 <!-- execute "install" goal during release:prepare (instead 
@@ -1425,7 +1426,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.3</version>
                 <configuration>
-                    <preparationGoals>clean install</preparationGoals>
+                    <preparationGoals>clean</preparationGoals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                 </configuration>

@@ -35,7 +35,6 @@
         <module>spring</module>
         <module>third-party</module>
         <module>webapp</module>
-        <!-- <module>webapp-bundle</module> -->
     </modules>
     <licenses>
         <license>

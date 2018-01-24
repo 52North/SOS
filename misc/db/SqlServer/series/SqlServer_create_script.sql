@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -85,6 +85,7 @@ create table dbo.phonevoice (phoneId bigint not null, voice varchar(255) not nul
 create table dbo.proceduredescriptionformat (procedureDescriptionFormatId bigint identity not null, procedureDescriptionFormat varchar(255) not null, primary key (procedureDescriptionFormatId));
 create table dbo.profileobservation (observationId bigint not null, childObservationId bigint not null, primary key (observationId, childObservationId));
 create table dbo.profilevalue (observationId bigint not null, fromlevel double precision, tolevel double precision, levelunitid bigint, primary key (observationId));
+create table dbo.referencevalue (observationId bigint not null, href varchar(255), title varchar(255), role varchar(255), primary key (observationId));
 create table dbo.relatedfeature (relatedFeatureId bigint identity not null, featureOfInterestId bigint not null, primary key (relatedFeatureId));
 create table dbo.relatedfeaturehasrole (relatedFeatureId bigint not null, relatedFeatureRoleId bigint not null, primary key (relatedFeatureId, relatedFeatureRoleId));
 create table dbo.relatedfeaturerole (relatedFeatureRoleId bigint identity not null, relatedFeatureRole varchar(255) not null, primary key (relatedFeatureRoleId));
@@ -97,6 +98,7 @@ create table dbo.sensorsystem (parentSensorId bigint not null, childSensorId big
 create table dbo.series (seriesId bigint identity not null, featureOfInterestId bigint not null, observablePropertyId bigint not null, procedureId bigint not null, offeringId bigint not null, deleted char(1) default 'F' not null check (deleted in ('T','F')), published char(1) default 'T' not null check (published in ('T','F')), hiddenChild char(1) default 'F' not null check (hiddenChild in ('T','F')), firstTimeStamp datetime2 default NULL, lastTimeStamp datetime2 default NULL, firstNumericValue double precision, lastNumericValue double precision, unitId bigint, identifier varchar(255), codespace bigint, name varchar(255), codespaceName bigint, description varchar(255), seriesType varchar(255), primary key (seriesId));
 create table dbo.seriesmetadata (metadataId bigint identity not null, seriesId bigint not null, identifier varchar(255) not null, value varchar(255) not null, domain varchar(255) not null, primary key (metadataId));
 create table dbo.seriesparameter (parameterId bigint identity not null, seriesId bigint not null, name varchar(255) not null, primary key (parameterId));
+create table dbo.seriesreference (seriesid bigint not null, referenceseriesid bigint not null, sortorder int not null, primary key (seriesid, sortorder));
 create table dbo.specimen (featureOfInterestId bigint not null, materialClass varchar(255) not null, samplingTimeStart datetime2 not null, samplingTimeEnd datetime2 not null, samplingMethod varchar(255), size double precision, sizeUnitId bigint, currentLocation varchar(255), specimenType varchar(255), primary key (featureOfInterestId));
 create table dbo.swedataarrayvalue (observationId bigint not null, value varchar(MAX), primary key (observationId));
 create table dbo.telephone (pkid bigint identity not null, nilReason varchar(255), href varchar(255), type varchar(255), role varchar(255), arcrole varchar(255), title varchar(255), show varchar(255), actuate varchar(255), remoteSchema varchar(255), id varchar(255), uuid varchar(255), primary key (pkid));
@@ -121,23 +123,41 @@ create table dbo.xmlfeatparamvalue (parameterId bigint not null, value varchar(M
 create table dbo.xmlparametervalue (parameterId bigint not null, value varchar(MAX), primary key (parameterId));
 create table dbo.xmlseriesparamvalue (parameterId bigint not null, value varchar(MAX), primary key (parameterId));
 alter table dbo.[procedure] add constraint procIdentifierUK unique (identifier);
+create index blobvalueobsididx on dbo.blobvalue (observationId);
+create index blobvalueidx on dbo.blobvalue (value);
 create index booleanFeatParamIdx on dbo.booleanfeatparamvalue (value);
+create index booleanparamididx on dbo.booleanparametervalue (parameterId);
 create index booleanParamIdx on dbo.booleanparametervalue (value);
+create index booleanseriesparamididx on dbo.booleanseriesparamvalue (parameterId);
 create index seriesBooleanParamIdx on dbo.booleanseriesparamvalue (value);
+create index booleanvalueobsididx on dbo.booleanvalue (observationId);
+create index booleanvalueidx on dbo.booleanvalue (value);
 create index categoryFeatParamIdx on dbo.categoryfeatparamvalue (value);
+create index categoryparamididx on dbo.categoryparametervalue (parameterId);
 create index categoryParamIdx on dbo.categoryparametervalue (value);
+create index categoryseriesparamididx on dbo.categoryseriesparamvalue (parameterId);
 create index seriesCategoryParamIdx on dbo.categoryseriesparamvalue (value);
+create index categoryvalueobsididx on dbo.categoryvalue (observationId);
+create index categoryvalueidx on dbo.categoryvalue (value);
 alter table dbo.codespace add constraint codespaceUK unique (codespace);
+create index complexvalueobsididx on dbo.complexvalue (observationId);
+create index complexobsididx on dbo.compositeobservation (observationId);
+create index complexchildobsididx on dbo.compositeobservation (childObservationId);
 alter table dbo.coordinatesystemaxis add constraint csaIdentifierUK unique (identifier);
 create index countFeatParamIdx on dbo.countfeatparamvalue (value);
+create index countparamididx on dbo.countparametervalue (parameterId);
 create index countParamIdx on dbo.countparametervalue (value);
+create index countseriesparamididx on dbo.countseriesparamvalue (parameterId);
 create index seriesCountParamIdx on dbo.countseriesparamvalue (value);
+create index countvalueobsididx on dbo.countvalue (observationId);
+create index countvalueidx on dbo.countvalue (value);
 alter table dbo.domainofvalidity add constraint dovIdentifierUK unique (identifier);
 alter table dbo.featureofinterest add constraint foiIdentifierUK unique (identifier);
 alter table dbo.featureofinterest add constraint featureUrl unique (url);
 ;
 alter table dbo.featureofinteresttype add constraint featureTypeUK unique (featureOfInterestType);
 create index featParamNameIdx on dbo.featureparameter (name);
+create index geometryvalueobsididx on dbo.geometryvalue (observationId);
 alter table dbo.i18nfeatureofinterest add constraint i18nFeatureIdentity unique (objectId, locale);
 create index i18nFeatureIdx on dbo.i18nfeatureofinterest (objectId);
 alter table dbo.i18nobservableproperty add constraint i18nobsPropIdentity unique (objectId, locale);
@@ -147,8 +167,12 @@ create index i18nOfferingIdx on dbo.i18noffering (objectId);
 alter table dbo.i18nprocedure add constraint i18nProcedureIdentity unique (objectId, locale);
 create index i18nProcedureIdx on dbo.i18nprocedure (objectId);
 create index quantityFeatParamIdx on dbo.numericfeatparamvalue (value);
+create index numericparamididx on dbo.numericparametervalue (parameterId);
 create index quantityParamIdx on dbo.numericparametervalue (value);
+create index numericseriesparamididx on dbo.numericseriesparamvalue (parameterId);
 create index seriesQuantityParamIdx on dbo.numericseriesparamvalue (value);
+create index numericvalueobsididx on dbo.numericvalue (observationId);
+create index numericvalueidx on dbo.numericvalue (value);
 alter table dbo.observableproperty add constraint obsPropIdentifierUK unique (identifier);
 create index obsSeriesIdx on dbo.observation (seriesId);
 create index obsPhenTimeStartIdx on dbo.observation (phenomenonTimeStart);
@@ -164,7 +188,12 @@ alter table dbo.observationtype add constraint observationTypeUK unique (observa
 alter table dbo.offering add constraint offIdentifierUK unique (identifier);
 create index paramNameIdx on dbo.parameter (name);
 alter table dbo.proceduredescriptionformat add constraint procDescFormatUK unique (procedureDescriptionFormat);
+create index profileobsididx on dbo.profileobservation (observationId, childObservationId);
+create index profvalueobsididx on dbo.profilevalue (observationId);
+create index referencevalueobsididx on dbo.referencevalue (observationId);
 alter table dbo.relatedfeaturerole add constraint relFeatRoleUK unique (relatedFeatureRole);
+create index relobsobsididx on dbo.relatedobservation (observationId);
+create index relobsrelobsididx on dbo.relatedobservation (relatedObservation);
 create index relatedObsObsIdx on dbo.relatedobservation (observationId);
 create index seriesRelationIdx on dbo.relatedseries (seriesId);
 create index resultTempOfferingIdx on dbo.resulttemplate (offeringId);
@@ -177,10 +206,18 @@ create index seriesFeatureIdx on dbo.series (featureOfInterestId);
 create index seriesObsPropIdx on dbo.series (observablePropertyId);
 create index seriesProcedureIdx on dbo.series (procedureId);
 create index seriesOfferingIdx on dbo.series (offeringId);
+create index seriesmetadataseriesididx on dbo.seriesmetadata (seriesId);
 create index seriesParamNameIdx on dbo.seriesparameter (name);
+create index seriesididx on dbo.seriesreference (seriesid);
+create index referenceseriesididx on dbo.seriesreference (referenceseriesid);
+create index swedataarryvalueobsididx on dbo.swedataarrayvalue (observationId);
 create index textFeatParamIdx on dbo.textfeatparamvalue (value);
+create index textparamididx on dbo.textparametervalue (parameterId);
 create index textParamIdx on dbo.textparametervalue (value);
+create index textseriesparamididx on dbo.textseriesparamvalue (parameterId);
 create index seriesTextParamIdx on dbo.textseriesparamvalue (value);
+create index textvalueobsididx on dbo.textvalue (observationId);
+create index textvalueidx on dbo.textvalue (value);
 alter table dbo.unit add constraint unitUK unique (unit);
 create index validProcedureTimeStartTimeIdx on dbo.validproceduretime (startTime);
 create index validProcedureTimeEndTimeIdx on dbo.validproceduretime (endTime);
@@ -189,6 +226,8 @@ alter table dbo.verticalcs add constraint vcsIdentifierUK unique (identifier);
 alter table dbo.verticaldatum add constraint vdIdentifierUK unique (identifier);
 create index vddovIdx on dbo.verticaldatum (domainOfValidityId);
 create index vevcrsIdx on dbo.verticalexextent (verticalCRSId);
+create index xmlparamididx on dbo.xmlparametervalue (parameterId);
+create index xmlseriesparamididx on dbo.xmlseriesparamvalue (parameterId);
 create index seriesXmlParamIdx on dbo.xmlseriesparamvalue (value);
 alter table dbo.[procedure] add constraint procProcDescFormatFk foreign key (procedureDescriptionFormatId) references dbo.proceduredescriptionformat;
 alter table dbo.[procedure] add constraint procCodespaceIdentifierFk foreign key (codespace) references dbo.codespace;
@@ -278,6 +317,7 @@ alter table dbo.profileobservation add constraint profileObsChildFk foreign key 
 alter table dbo.profileobservation add constraint profileObsParentFK foreign key (observationId) references dbo.profilevalue;
 alter table dbo.profilevalue add constraint observationProfileValueFk foreign key (observationId) references dbo.observation;
 alter table dbo.profilevalue add constraint profileUnitFk foreign key (levelunitid) references dbo.unit;
+alter table dbo.referencevalue add constraint observationRefValueFk foreign key (observationId) references dbo.observation;
 alter table dbo.relatedfeature add constraint relatedFeatureFeatureFk foreign key (featureOfInterestId) references dbo.featureofinterest;
 alter table dbo.relatedfeaturehasrole add constraint relatedFeatRelatedFeatRoleFk foreign key (relatedFeatureRoleId) references dbo.relatedfeaturerole;
 alter table dbo.relatedfeaturehasrole add constraint FK_5fd921q6mnbkc57mgm5g4uyyn foreign key (relatedFeatureId) references dbo.relatedfeature;
@@ -299,6 +339,8 @@ alter table dbo.series add constraint seriesOfferingFk foreign key (offeringId) 
 alter table dbo.series add constraint seriesUnitFk foreign key (unitId) references dbo.unit;
 alter table dbo.series add constraint seriesCodespaceIdentifierFk foreign key (codespace) references dbo.codespace;
 alter table dbo.series add constraint seriesCodespaceNameFk foreign key (codespaceName) references dbo.codespace;
+alter table dbo.seriesreference add constraint seriesrefreffk foreign key (referenceseriesid) references dbo.series;
+alter table dbo.seriesreference add constraint seriesrefseriesfk foreign key (seriesid) references dbo.series;
 alter table dbo.specimen add constraint specimenFeatureFk foreign key (featureOfInterestId) references dbo.featureofinterest;
 alter table dbo.specimen add constraint observationUnitFk foreign key (sizeUnitId) references dbo.unit;
 alter table dbo.swedataarrayvalue add constraint observationSweDataArrayValueFk foreign key (observationId) references dbo.observation;

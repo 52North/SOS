@@ -1,0 +1,14 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="close();">&times;</button>
+        <div class="modal-title">
+            <span>{{header}}</span>
+        </div>
+    </div>
+    <div class="modal-body">
+        <swc-geometry-map-viewer map-id="profile-location" geometry="geometry"></swc-geometry-map-viewer>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" ng-click="close()" translate="close"></button>
+    </div>
+</div>

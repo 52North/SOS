@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -92,12 +92,16 @@ public class SwesExtensionDecoderv20 implements Decoder<SwesExtension<?>, XmlObj
 
             if (children.length == 1) {
                 final Object xmlObj = CodingHelper.decodeXmlElement(children[0]);
-                final SwesExtension<Object> extension = new SwesExtensionImpl<Object>();
-                extension.setValue(xmlObj);
-                if (isSweAbstractDataComponent(xmlObj)) {
-                    extension.setDefinition(((SweAbstractDataComponent) xmlObj).getDefinition());
+                if (xmlObj instanceof SwesExtension) {
+                    return (SwesExtension<?>) xmlObj;
+                } else {
+                    final SwesExtension<Object> extension = new SwesExtensionImpl<Object>();
+                    extension.setValue(xmlObj);
+                    if (isSweAbstractDataComponent(xmlObj)) {
+                        extension.setDefinition(((SweAbstractDataComponent) xmlObj).getDefinition());
+                    }
+                    return extension;
                 }
-                return extension;
             }
         }
         throw new UnsupportedDecoderInputException(this, xmlObject);

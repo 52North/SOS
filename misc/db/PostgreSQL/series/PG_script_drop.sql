@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -83,6 +83,7 @@ drop table if exists public.phonevoice cascade;
 drop table if exists public.proceduredescriptionformat cascade;
 drop table if exists public.profileobservation cascade;
 drop table if exists public.profilevalue cascade;
+drop table if exists public.referencevalue cascade;
 drop table if exists public.relatedfeature cascade;
 drop table if exists public.relatedfeaturehasrole cascade;
 drop table if exists public.relatedfeaturerole cascade;
@@ -95,6 +96,7 @@ drop table if exists public.sensorsystem cascade;
 drop table if exists public.series cascade;
 drop table if exists public.seriesmetadata cascade;
 drop table if exists public.seriesparameter cascade;
+drop table if exists public.seriesreference cascade;
 drop table if exists public.specimen cascade;
 drop table if exists public.swedataarrayvalue cascade;
 drop table if exists public.telephone cascade;

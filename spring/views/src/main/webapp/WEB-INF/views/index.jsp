@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -41,7 +41,7 @@
 
 <p>From the menu at the top you can access a basic form-based test client and the administrative backend.</p>
 
-<p>More information about the SOS and further software components, for example clients, can be found on the <a href="http://52north.org/communities/sensorweb/" title="52&deg;North Sensor Web Community Website">Sensor Web community homepage</a>.</p>
+<p>More information about the SOS and further software components, for example clients, can be found on the <a href="https://52north.org/research/research-labs/sensor-web/" title="52&deg;North Sensor Web Community Website">Sensor Web community homepage</a>.</p>
 
 <h4>Contributors</h4>
 <table border="1" style="background-color:white;border:1px black;width:50%;">
@@ -49,16 +49,16 @@
 	<th style="padding:3px;">Name</th><th style="padding:3px;">Organisation</th>
 </tr>
 <tr>
-	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/25-carsten-hollmann" title="52&deg;North Carsten Hollmann">Carsten Hollmann</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="https://52north.org/about-us/our-team/" title="52&deg;North Carsten Hollmann">Carsten Hollmann</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/14-eike-hinderk-juerrens" title="52&deg;North Eike Hinderk J&uuml;rrens">Eike Hinderk J&uuml;rrens</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="https://52north.org/about-us/our-team/" title="52&deg;North Eike Hinderk J&uuml;rrens">Eike Hinderk J&uuml;rrens</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/30-autermann-christian">Christian Autermann</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
+	<td style="padding:3px;"><a href="https://52north.org/about-us/our-team/">Christian Autermann</a></td><td style="padding:3px;"><a href="http://52north.org" title="52&deg;North">52&deg;North</a></td>
 </tr>
 <tr>
-	<td style="padding:3px;"><a href="http://52north.org/about/52-north-team/31-stasch-christoph" title="52&deg;North Christoph Stasch">Christoph Stasch</a></td><td style="padding:3px;"><a href="http://www.uni-muenster.de/Geoinformatics/en/index.html" title="IfGI">Institute for Geoinformatics (IfGI)</a></td>
+	<td style="padding:3px;"><a href="https://52north.org/about-us/our-team/" title="52&deg;North Christoph Stasch">Christoph Stasch</a></td><td style="padding:3px;"><a href="http://www.uni-muenster.de/Geoinformatics/en/index.html" title="IfGI">Institute for Geoinformatics (IfGI)</a></td>
 </tr>
 <tr>
 	<td style="padding:3px;">Shane StClair</td><td style="padding:3px;"><a href="http://www.axiomdatascience.com" title="Axiom Data Science">Axiom Data Science</a></td>
@@ -174,7 +174,6 @@
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.smart-project.info">SMART</a> Project, funded by the <a target="_blank" href="http://www.msi.govt.nz/">Ministry of Business, Innovation and Employment</a> (07/2011 &ndash; 06/2017): <br/> Experts in the Smart Project will develop, apply, and validate pioneering new techniques for understanding New Zealand&lsquo;s groundwater resources. Satellite and airborne remote sensing techniques and Sensor Observation Services including seismic signals from earthquakes are used for rapid and costeffective characterisation and mapping of New Zealand&lsquo;s aquifer systems. Together with a stakeholder network the research team will use new methods to overcome the current time- and resourceconsuming challenges of in-time data acquisition. Special spatial skills in hydrogeology, geology, satellite remote sensing, geophysics, seismology, uncertainty mathematics and spatial information technology will be developed to assist with improvement of New Zealand&lsquo;s freshwater management.</td>
 	</tr>
 	<tr>
-	| <a target="_blank" href="https://www.itzbund.de"><img alt="ITZBund" align="middle" width="140" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/funding/itzbund.png"/></a>| The <a target="_blank" href="https://www.itzbund.de">ITZBund</a> Information Technology Services Centre of the Federal Government (Germany) |
 		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://www.itzbund.de/"><img alt="ITZBund" align="middle" width="140" src="<c:url value="/static/images/funding/itzbund.png"/>"/></a></td>
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="https://www.itzbund.de">ITZBund</a> Information Technology Services Centre of the Federal Government (Germany)</td>
 	</tr>

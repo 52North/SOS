@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -83,6 +83,7 @@ drop table oracle.phonevoice cascade constraints;
 drop table oracle.proceduredescriptionformat cascade constraints;
 drop table oracle.profileobservation cascade constraints;
 drop table oracle.profilevalue cascade constraints;
+drop table oracle.referencevalue cascade constraints;
 drop table oracle.relatedfeature cascade constraints;
 drop table oracle.relatedfeaturehasrole cascade constraints;
 drop table oracle.relatedfeaturerole cascade constraints;
@@ -95,6 +96,7 @@ drop table oracle.sensorsystem cascade constraints;
 drop table oracle.series cascade constraints;
 drop table oracle.seriesmetadata cascade constraints;
 drop table oracle.seriesparameter cascade constraints;
+drop table oracle.seriesreference cascade constraints;
 drop table oracle.specimen cascade constraints;
 drop table oracle.swedataarrayvalue cascade constraints;
 drop table oracle.telephone cascade constraints;

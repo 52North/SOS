@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -64,6 +64,7 @@ import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.MergableExtension;
 import org.n52.sos.ogc.ows.OWSConstants;
+import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
 import org.n52.sos.ogc.ows.OfferingExtension;
 import org.n52.sos.ogc.ows.OwsDomainType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -75,7 +76,6 @@ import org.n52.sos.ogc.ows.OwsOperationsMetadata;
 import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.sos.ogc.ows.SosServiceIdentification;
 import org.n52.sos.ogc.ows.StaticCapabilities;
-import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
 import org.n52.sos.ogc.sos.CapabilitiesExtension;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionRepository;
@@ -97,7 +97,6 @@ import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.response.GetCapabilitiesResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.service.ServiceSettings;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
@@ -240,11 +239,11 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     private void addSectionSpecificContent(final SectionSpecificContentObject sectionSpecificContentObject,
             GetCapabilitiesRequest request) throws OwsExceptionReport {
-        String verion = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
+        String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
         String service = sectionSpecificContentObject.getGetCapabilitiesResponse().getService();
         if (isServiceIdentificationSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             sectionSpecificContentObject.getSosCapabilities().setServiceIdentification(
-                    getServiceIdentification(request, verion));
+                    getServiceIdentification(request, version));
         }
         if (isServiceProviderSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             sectionSpecificContentObject.getSosCapabilities().setServiceProvider(
@@ -252,10 +251,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         }
         if (isOperationsMetadataSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             sectionSpecificContentObject.getSosCapabilities().setOperationsMetadata(
-                    getOperationsMetadataForOperations(request, service, verion));
+                    getOperationsMetadataForOperations(request, service, version));
         }
         if (isFilterCapabilitiesSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
-            sectionSpecificContentObject.getSosCapabilities().setFilterCapabilities(getFilterCapabilities(verion));
+            sectionSpecificContentObject.getSosCapabilities().setFilterCapabilities(getFilterCapabilities(version));
         }
         if (isContentsSectionRequested(sectionSpecificContentObject.getRequestedSections())) {
             if (isVersionSos2(sectionSpecificContentObject.getGetCapabilitiesResponse())) {
@@ -269,10 +268,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
         if (isVersionSos2(sectionSpecificContentObject.getGetCapabilitiesResponse())) {
             if (sectionSpecificContentObject.getRequestedSections() == ALL) {
-                sectionSpecificContentObject.getSosCapabilities().setExensions(getAndMergeExtensions(service, verion));
+                sectionSpecificContentObject.getSosCapabilities().setExensions(getAndMergeExtensions(service, version));
             } else if (!sectionSpecificContentObject.getRequestedExtensionSesctions().isEmpty()) {
                 sectionSpecificContentObject.getSosCapabilities().setExensions(
-                        getExtensions(sectionSpecificContentObject.getRequestedExtensionSesctions(), service, verion));
+                        getExtensions(sectionSpecificContentObject.getRequestedExtensionSesctions(), service, version));
             }
         }
     }
@@ -427,10 +426,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         if (Sos2Constants.SERVICEVERSION.equals(version)) {
             getConformance(filterCapabilities);
         }
-        // !!! Modify methods addicted to your implementation !!!
-        if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            getScalarFilterCapabilities(filterCapabilities);
-        }
+        getScalarFilterCapabilities(filterCapabilities, version);
         getSpatialFilterCapabilities(filterCapabilities, version);
         getTemporalFilterCapabilities(filterCapabilities, version);
 
@@ -840,13 +836,15 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
      * @param filterCapabilities
      *            FilterCapabilities
      */
-    private void getScalarFilterCapabilities(final FilterCapabilities filterCapabilities) {
+    private void getScalarFilterCapabilities(final FilterCapabilities filterCapabilities, String version) {
         // TODO PropertyIsNil, PropertyIsNull? better:
         // filterCapabilities.setComparisonOperators(Arrays.asList(ComparisonOperator.values()));
         final List<ComparisonOperator> comparisonOperators = new ArrayList<ComparisonOperator>(8);
         comparisonOperators.add(ComparisonOperator.PropertyIsBetween);
         comparisonOperators.add(ComparisonOperator.PropertyIsEqualTo);
-        comparisonOperators.add(ComparisonOperator.PropertyIsNotEqualTo);
+        if (version.equals(Sos1Constants.SERVICEVERSION)) {
+//            comparisonOperators.add(ComparisonOperator.PropertyIsNotEqualTo);
+        }
         comparisonOperators.add(ComparisonOperator.PropertyIsLessThan);
         comparisonOperators.add(ComparisonOperator.PropertyIsLessThanOrEqualTo);
         comparisonOperators.add(ComparisonOperator.PropertyIsGreaterThan);
@@ -1255,5 +1253,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
     @Override
     public String getDatasourceDaoIdentifier() {
         return IDEPENDET_IDENTIFIER;
+    }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 }

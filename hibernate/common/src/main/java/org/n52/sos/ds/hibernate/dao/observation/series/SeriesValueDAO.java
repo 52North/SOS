@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import org.hibernate.Criteria;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.request.GetObservationRequest;
@@ -55,6 +56,11 @@ public class SeriesValueDAO extends AbstractSeriesValueDAO {
     @Override
     protected Class<?> getSeriesValueClass() {
         return AbstractValuedSeriesObservation.class;
+    }
+
+    @Override
+    protected ValuedObservationFactory getValuedObservationFactory() {
+        return SeriesValuedObervationFactory.getInstance();
     }
 
 }

@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -85,6 +85,7 @@ drop table dbo.phonevoice;
 drop table dbo.proceduredescriptionformat;
 drop table dbo.profileobservation;
 drop table dbo.profilevalue;
+drop table dbo.referencevalue;
 drop table dbo.relatedfeature;
 drop table dbo.relatedfeaturehasrole;
 drop table dbo.relatedfeaturerole;
@@ -97,6 +98,7 @@ drop table dbo.sensorsystem;
 drop table dbo.series;
 drop table dbo.seriesmetadata;
 drop table dbo.seriesparameter;
+drop table dbo.seriesreference;
 drop table dbo.specimen;
 drop table dbo.swedataarrayvalue;
 drop table dbo.telephone;

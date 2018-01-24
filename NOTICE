@@ -10,7 +10,11 @@ This project includes:
   52North SOS Integration and Compliance Common under Eclipse Public License 1.0
   52°North Aggregated Third Party modules under GPLv2
   52°North AQD - 1.0 XML Coding under GPLv2
+  52°North Faroe Annotations under The Apache Software License, Version 2.0
+  52°North Faroe Utilities under The Apache Software License, Version 2.0
+  52°North Jan Mayen under The Apache Software License, Version 2.0
   52°North Sensor Observation Service under GPLv2
+  52°North Shetland under The Apache Software License, Version 2.0
   52°North SOS -  GMLCOV 1.0 XML Request Coding under GPLv2
   52°North SOS - 2.0 XML Request Coding under GPLv2
   52°North SOS - Abstract Identifier Modifier Modules under GPLv2
@@ -109,7 +113,6 @@ This project includes:
   52°North SOS - Web Modules under GPLv2
   52°North SOS - Web Views under GPLv2
   52°North SOS - Webapp under GPLv2
-  52°North SOS - Webapp with Sensor Web REST API under GPLv2
   52°North Svalbard - CV for GML 3.2.1 XML Request Coding under GPLv2
   52°North Svalbard - Extension DeleteResultTemplate coding under GPLv2
   52°North Svalbard - Extension GetDataAvailability - SOS 2.0 coding under GPLv2
@@ -118,12 +121,19 @@ This project includes:
   52°North Svalbard - GWML 2.2 XML Coding under GPLv2
   52°North Svalbard - INSPIRE XML OMPR Coding under GPLv2
   52°North Svalbard - INSPIRE XML OMSO Coding under GPLv2
+  52°North Svalbard - SOS RF 1.0 XML Coding under GPLv2
+  52°North Svalbard - SOS SF 1.0 XML Coding under GPLv2
   52°North Svalbard - Svalbard Related Offering Coding extension under GPLv2
+  52°North Svalbard Core under The Apache Software License, Version 2.0
+  52°North Svalbard OData under The Apache Software License, Version 2.0
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
                 License
+  abego TreeLayout Core under BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)
+  ANTLR 4 Runtime under BSD 3-Clause License
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons Codec under Apache License, Version 2.0
+  Apache Commons Lang under The Apache Software License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
   Apache HttpClient Mime under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
@@ -210,6 +220,7 @@ This project includes:
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
+  javax.inject under The Apache Software License, Version 2.0
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging I18n Annotations under Public Domain
   JCL 1.1.1 implemented over SLF4J under MIT License
@@ -243,6 +254,10 @@ This project includes:
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0
   OASIS WS-Resources specification schemas v1.2 under The Apache Software License, Version 2.0
   Objenesis under MIT License
+  odata-commons-api under The Apache Software License, Version 2.0
+  odata-commons-core under The Apache Software License, Version 2.0
+  odata-server-api under The Apache Software License, Version 2.0
+  odata-server-core under The Apache Software License, Version 2.0
   OGC Filter schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC GML Coverage schema (spec. v1.0) under The Apache Software License, Version 2.0
   OGC GML schema (spec. v3.1.1) under The Apache Software License, Version 2.0
@@ -262,8 +277,10 @@ This project includes:
   OGC SOS DeleteResultTemplate schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS GetDataAvailability schema 1.0 (OGC Best Practice 14-004r1) under The Apache Software License, Version 2.0
   OGC SOS RelatedOfferings schema 1.0 under The Apache Software License, Version 2.0
+  OGC SOS Result Filtering schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC SOS Spatial Filtering schema 1.0 under The Apache Software License, Version 2.0
   OGC SWECommon schema (spec. v1.0.1) under The Apache Software License, Version 2.0
   OGC SWECommon schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SWES schema (spec. v2.0) under The Apache Software License, Version 2.0
@@ -271,6 +288,7 @@ This project includes:
   OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under GNU Lesser General Public License (LGPL) version 2.1
+  org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   Postgis JDBC Driver under GNU Lesser General Public License
   PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
@@ -281,6 +299,7 @@ This project includes:
   SaxonB under Mozilla Public License Version 1.0
   Series REST API - DAO Mappings module under GNU General Public License, Version 2.0
   Series REST API - DAO module under GNU General Public License, Version 2.0
+  Series REST API - DAO Webapp under GNU General Public License, Version 2.0
   Series REST API - IO module under GNU General Public License, Version 2.0
   Series REST API - REST module under GNU General Public License, Version 2.0
   Series REST API - SOS DAO module under GNU General Public License, Version 2.0

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -341,6 +341,9 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
         } else {
             throw new UnsupportedDecoderInputException(this, comparisonOpsType);
         }
+        if (comparisonOpsType.isSetMatchCase()) {
+            comparisonFilter.setMatchCase(comparisonOpsType.getMatchCase());
+        }
         parseExpressions(comparisonOpsType.getExpressionArray(), comparisonFilter);
         return comparisonFilter;
     }
@@ -367,10 +370,13 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
                 }
             } else if (xmlObject instanceof LiteralType) {
                 // TODO is this the best way?
-                LiteralType literalType = (LiteralType) xmlObject;
-                comparisonFilter.setValue(literalType.getDomNode().getFirstChild().getNodeValue());
+                comparisonFilter.setValue(parseLiteralValue((LiteralType) xmlObject));
             }
         }
+    }
+    
+    private String parseLiteralValue(LiteralType literalType) {
+        return literalType.getDomNode().getFirstChild().getNodeValue();
     }
 
     /**
@@ -464,9 +470,19 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
             throws OwsExceptionReport {
         ComparisonFilter comparisonFilter = new ComparisonFilter();
         comparisonFilter.setOperator(ComparisonOperator.PropertyIsBetween);
-        throw new UnsupportedDecoderInputException(this, comparisonOpsType);
-        // TODO get values
-        // return comparisonFilter;
+        try {
+            comparisonFilter.setValueReference(parseValueReference(comparisonOpsType.getExpression()));
+        } catch (XmlException xmle) {
+            throw new NoApplicableCodeException().causedBy(xmle).withMessage(
+                    "Error while parsing valueReference element!");
+        }
+        if (comparisonOpsType.getLowerBoundary().getExpression() instanceof LiteralType) {
+            comparisonFilter.setValue(parseLiteralValue((LiteralType) comparisonOpsType.getLowerBoundary().getExpression()));
+        }
+        if (comparisonOpsType.getUpperBoundary().getExpression() instanceof LiteralType) {
+            comparisonFilter.setValueUpper(parseLiteralValue((LiteralType) comparisonOpsType.getUpperBoundary().getExpression()));
+        }
+         return comparisonFilter;
     }
 
     /**

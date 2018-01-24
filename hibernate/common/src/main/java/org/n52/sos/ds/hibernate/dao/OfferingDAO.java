@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -168,7 +168,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         Criteria criteria =
                 getDefaultCriteria(session).add(Restrictions.in(Offering.IDENTIFIER, identifiers));
         LOGGER.debug("QUERY getOfferingsForIdentifiers(identifiers): {}", HibernateHelper.getSqlString(criteria));
-        return (List<Offering>) criteria.list();
+        return criteria.list();
     }
 
     /**
@@ -516,6 +516,9 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @param session
      *            Hibernate session
      * @return Offering object
+     *
+     * @deprecated
+     *          use {@link #getAndUpdateOrInsertNewOffering(SosOffering, List, List, List, Session)}
      */
     @Deprecated
     public Offering getAndUpdateOrInsertNewOffering(final String offeringIdentifier, final String offeringName,
@@ -619,7 +622,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
 
     /**
      * Query allowed FeatureOfInterestTypes for offering
-     * 
+     *
      * @param offeringIdentifier
      *            Offering identifier
      * @param session
@@ -646,7 +649,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
 
     /**
      * Offering time extrema {@link ResultTransformer}
-     * 
+     *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.4.0
      *
@@ -712,7 +715,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
 
     /**
      * Add offering identifier restriction to Hibernate Criteria
-     * 
+     *
      * @param criteria
      *            Hibernate Criteria to add restriction
      * @param offering
@@ -724,7 +727,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
 
     /**
      * Add offering identifier restriction to Hibernate Criteria
-     * 
+     *
      * @param criteria
      *            Hibernate Criteria to add restriction
      * @param offering
@@ -741,14 +744,14 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     public void addOfferingRestricionForObservation(DetachedCriteria dc, String offering) {
         dc.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<Offering> getPublishedOffering(Collection<String> identifiers, Session session) throws CodedException {
         if (HibernateHelper.isEntitySupported(Series.class)) {
             Criteria c = getDefaultCriteria(session);
             c.add(Subqueries.propertyNotIn(Offering.ID, getDetachedCriteriaSeries(session)));
             return c.list();
-        } 
+        }
         return getOfferingObjectsForCacheUpdate(identifiers, session);
      }
 
@@ -758,11 +761,11 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
          detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.OFFERING)));
          return detachedCriteria;
      }
-    
+
     protected Criteria getDefaultCriteria(Session session) {
         return session.createCriteria(Offering.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
-    
+
     protected Criteria getDefaultTransactionalCriteria(Session session) {
         return session.createCriteria(TOffering.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }

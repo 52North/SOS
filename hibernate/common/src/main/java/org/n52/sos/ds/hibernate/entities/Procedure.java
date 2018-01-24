@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,12 +45,9 @@ import org.n52.sos.util.StringHelper;
 import com.google.common.collect.Sets;
 
 /**
- * @since 4.0.0
- *
- */
-/**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since
+ *
+ * @since 4.0.0
  *
  */
 public class Procedure extends SpatialEntity implements Serializable, HasDeletedFlag, HasProcedureDescriptionFormat,
@@ -61,9 +58,9 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     public static final String ID = "procedureId";
 
     public static final String DESCRIPTION_URL = "descriptionUrl";
-    
+
     public static final String ALIAS = "proc";
-    
+
     public static final String ALIAS_DOT = ALIAS + Constants.DOT_STRING;
 
     private long procedureId;
@@ -77,23 +74,23 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     private boolean disabled;
 
     private boolean reference;
-    
+
     private Procedure typeOf;
-    
+
     private boolean isType;
-    
+
     private boolean isAggregation;
-    
+
     private boolean mobile = false;
-    
+
     private boolean insitu = true;
-    
+
     private Set<Procedure> childs = Sets.newHashSet();
 
     private Set<Procedure> parents = Sets.newHashSet();
-    
+
     public long getProcedureId() {
-        return this.procedureId;
+        return procedureId;
     }
 
     public void setProcedureId(long procedureId) {
@@ -102,7 +99,7 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
 
     @Override
     public ProcedureDescriptionFormat getProcedureDescriptionFormat() {
-        return this.procedureDescriptionFormat;
+        return procedureDescriptionFormat;
     }
 
     @Override
@@ -112,7 +109,7 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
 
     @Override
     public boolean isDeleted() {
-        return this.deleted;
+        return deleted;
     }
 
     @Override
@@ -121,13 +118,13 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     }
 
     public String getDescriptionFile() {
-        return this.descriptionFile;
+        return descriptionFile;
     }
 
     public void setDescriptionFile(String descriptionFile) {
         this.descriptionFile = descriptionFile;
     }
-    
+
     public boolean isSetDescriptionFile() {
         return StringHelper.isNotEmpty(descriptionFile);
     }
@@ -152,34 +149,22 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
         return deleted;
     }
 
-    /**
-     * @return the reference
-     */
     public boolean isReference() {
         return reference;
     }
 
-    /**
-     * @param reference the reference to set
-     */
     public void setReference(boolean reference) {
         this.reference = reference;
     }
 
-    /**
-     * @return the typeOf
-     */
     public Procedure getTypeOf() {
         return typeOf;
     }
 
-    /**
-     * @param typeOf the typeOf to set
-     */
     public void setTypeOf(Procedure typeOf) {
         this.typeOf = typeOf;
     }
-    
+
     /**
      * @return <code>true</code>, if is not null
      */
@@ -187,16 +172,10 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
         return getTypeOf() != null;
     }
 
-    /**
-     * @return the isType
-     */
     public boolean isType() {
         return isType;
     }
-    
-    /**
-     * @return the isType
-     */
+
     public boolean getIsType() {
         return isType;
     }
@@ -214,7 +193,7 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     public boolean isAggregation() {
         return isAggregation;
     }
-    
+
     /**
      * @return the isAggregation
      */
@@ -228,14 +207,14 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     public void setIsAggregation(boolean isAggregation) {
         this.isAggregation = isAggregation;
     }
-    
+
     /**
      * @return the mobile
      */
     public boolean isMobile() {
         return mobile;
     }
-    
+
     /**
      * @return the mobile
      */
@@ -249,14 +228,14 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     public void setMobile(boolean mobile) {
         this.mobile = mobile;
     }
-    
+
     /**
      * @return the insitu
      */
     public boolean isInsitu() {
         return insitu;
     }
-    
+
     /**
      * @return the insitu
      */
@@ -270,7 +249,7 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     public void setInsitu(boolean insitu) {
         this.insitu = insitu;
     }
-    
+
     @Override
     public Set<Procedure> getParents() {
         return parents;
@@ -296,10 +275,10 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
         if (parent == null) {
             return;
         }
-        if (this.parents == null) {
-            this.parents = new HashSet<>();
+        if (parents == null) {
+            parents = new HashSet<>();
         }
-        this.parents.add(parent);
+        parents.add(parent);
     }
 
     @Override
@@ -307,12 +286,12 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
         if (child == null) {
             return;
         }
-        if (this.childs == null) {
-            this.childs = new HashSet<>();
+        if (childs == null) {
+            childs = new HashSet<>();
         }
-        this.childs.add(child);
+        childs.add(child);
     }
-    
+
     @Override
     public boolean hasParents() {
         return CollectionHelper.isNotEmpty(getParents());

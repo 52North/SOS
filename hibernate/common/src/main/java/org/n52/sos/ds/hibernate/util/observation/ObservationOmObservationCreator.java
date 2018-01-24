@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -297,7 +297,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Procedure...");
         final String procedureId = hObservation.getProcedure().getIdentifier();
         if (!procedures.containsKey(procedureId)) {
-            final SosProcedureDescription procedure = createProcedure(procedureId);
+            final SosProcedureDescription procedure = createProcedure(hObservation.getProcedure());
             procedures.put(procedureId, procedure);
         }
         LOGGER.trace("Creating Procedure done.");
@@ -308,7 +308,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Feature...");
         final String foiID = hObservation.getFeatureOfInterest().getIdentifier();
         if (!features.containsKey(foiID)) {
-            final AbstractFeature featureByID = createFeatureOfInterest(foiID);
+            final AbstractFeature featureByID = createFeatureOfInterest(hObservation.getFeatureOfInterest());
             features.put(foiID, featureByID);
         }
         LOGGER.trace("Creating Feature done.");

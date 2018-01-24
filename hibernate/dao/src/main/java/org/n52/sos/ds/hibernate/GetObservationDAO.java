@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +74,7 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
+import org.n52.sos.ogc.sos.ResultFilterConstants;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
@@ -116,9 +118,9 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                 && sosRequest.getObservedProperties().isEmpty()) {
             throw new MissingObservedPropertyParameterException();
         }
-        if (sosRequest.isSetResultFilter()) {
-            throw new NotYetSupportedException("result filtering");
-        }
+//        if (sosRequest.isSetResultFilter()) {
+//            throw new NotYetSupportedException("result filtering");
+//        }
         final GetObservationResponse sosResponse = new GetObservationResponse();
         sosResponse.setService(sosRequest.getService());
         sosResponse.setVersion(sosRequest.getVersion());
@@ -171,10 +173,16 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
 
     @Override
     public Set<String> getConformanceClasses() {
+        HashSet<String> set = Sets.newHashSet(ResultFilterConstants.CONFORMANCE_CLASS_RF);
         if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
-            return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
+            set.add(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
         }
-        return super.getConformanceClasses();
+        return set;
+    }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
     /**
@@ -194,9 +202,6 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
     // TODO move this and associated methods to ObservationDAO
     protected List<OmObservation> queryObservation(final GetObservationRequest request, LegacyObservationDAO observationDAO, final Session session)
             throws OwsExceptionReport, ConverterException {
-        if (request.isSetResultFilter()) {
-            throw new NotYetSupportedException("result filtering");
-        }
 
         final long start = System.currentTimeMillis();
         // get valid featureOfInterest identifier
@@ -287,10 +292,6 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      */
     protected List<OmObservation> querySeriesObservation(GetObservationRequest request, AbstractSeriesObservationDAO observationDAO, Session session)
             throws OwsExceptionReport, ConverterException {
-        if (request.isSetResultFilter()) {
-            throw new NotYetSupportedException("result filtering");
-        }
-
         final long start = System.currentTimeMillis();
         // get valid featureOfInterest identifier
         final Set<String> features = QueryHelper.getFeatures(request, session);

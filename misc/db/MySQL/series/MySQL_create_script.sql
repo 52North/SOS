@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -83,6 +83,7 @@ create table sos.phonevoice (phoneId bigint not null, voice varchar(255) not nul
 create table sos.proceduredescriptionformat (procedureDescriptionFormatId bigint not null auto_increment comment 'Table primary key, used for relations', procedureDescriptionFormat varchar(255) not null comment 'The procedureDescriptionFormat value, e.g. http://www.opengis.net/sensorML/1.0.1 for procedures descriptions as specified in OGC SensorML 1.0.1', primary key (procedureDescriptionFormatId)) comment='Table to store the ProcedureDescriptionFormat information of procedures. Mapping file: mapping/core/ProcedureDescriptionFormat.hbm.xml' ENGINE=InnoDB;
 create table sos.profileobservation (observationId bigint not null comment 'Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid', childObservationId bigint not null comment 'Foreign Key (FK) to the related child complex observation. Contains "observation".observationid', primary key (observationId, childObservationId)) comment='Relation table for complex parent/child observations' ENGINE=InnoDB;
 create table sos.profilevalue (observationId bigint not null comment 'Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid', fromlevel double precision comment 'Value of fromLevel', tolevel double precision comment 'Value of toLevel', levelunitid bigint comment 'Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional', primary key (observationId)) comment='Value table for profile observation' ENGINE=InnoDB;
+create table sos.referencevalue (observationId bigint not null comment 'Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid', href varchar(255) comment 'href value', title varchar(255) comment 'title value', role varchar(255) comment 'role value', primary key (observationId)) comment='Value table for category observation' ENGINE=InnoDB;
 create table sos.relatedfeature (relatedFeatureId bigint not null auto_increment comment 'Table primary key, used for relations', featureOfInterestId bigint not null comment 'Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestid', primary key (relatedFeatureId)) comment='Table to store related feature information used in the OGC SOS 2.0 Capabilities (See also OGC SWES 2.0). Mapping file: mapping/transactionl/RelatedFeature.hbm.xml' ENGINE=InnoDB;
 create table sos.relatedfeaturehasrole (relatedFeatureId bigint not null comment 'Foreign Key (FK) to the related relatedFeature. Contains "relatedFeature".relatedFeatureid', relatedFeatureRoleId bigint not null comment 'Foreign Key (FK) to the related relatedFeatureRole. Contains "relatedFeatureRole".relatedFeatureRoleid', primary key (relatedFeatureId, relatedFeatureRoleId)) comment='Relation table to store relatedFeatures and their associated relatedFeatureRoles. Mapping file: mapping/transactionl/RelatedFeature.hbm.xml' ENGINE=InnoDB;
 create table sos.relatedfeaturerole (relatedFeatureRoleId bigint not null auto_increment comment 'Table primary key, used for relations', relatedFeatureRole varchar(255) not null comment 'The related feature role definition. See OGC SWES 2.0 specification', primary key (relatedFeatureRoleId)) comment='Table to store related feature role information used in the OGC SOS 2.0 Capabilities (See also OGC SWES 2.0). Mapping file: mapping/transactionl/RelatedFeatureRole.hbm.xml' ENGINE=InnoDB;
@@ -95,6 +96,7 @@ create table sos.sensorsystem (parentSensorId bigint not null comment 'Foreign K
 create table sos.series (seriesId bigint not null auto_increment comment 'Table primary key, used for relations', featureOfInterestId bigint not null comment 'Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestId', observablePropertyId bigint not null comment 'Foreign Key (FK) to the related observableProperty. Contains "observableproperty".observablepropertyid', procedureId bigint not null comment 'Foreign Key (FK) to the related procedure. Contains "procedure".procedureid', offeringId bigint not null comment 'Foreign Key (FK) to the related offering. Contains "offering".offeringid', deleted char(1) default 'F' not null comment 'Flag to indicate that this series is deleted or not. Set if the related procedure is deleted via DeleteSensor operation (OGC SWES 2.0 - DeleteSensor operation)', published char(1) default 'T' not null comment 'Flag to indicate that this series is published or not. A not published series is not contained in GetObservation and GetDataAvailability responses', hiddenChild char(1) default 'F' not null comment 'TODO', firstTimeStamp timestamp default NULL comment 'The time stamp of the first (temporal) observation associated to this series', lastTimeStamp timestamp default NULL comment 'The time stamp of the last (temporal) observation associated to this series', firstNumericValue double precision comment 'The value of the first (temporal) observation associated to this series', lastNumericValue double precision comment 'The value of the last (temporal) observation associated to this series', unitId bigint comment 'Foreign Key (FK) to the related unit of the first/last numeric values . Contains "unit".unitid', identifier varchar(255) comment 'The identifier of the series, gml:identifier. Unique', codespace bigint comment 'Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional', name varchar(255) comment 'The name of the series, gml:name. Optional', codespaceName bigint comment 'Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional', description varchar(255) comment 'Description of the series, gml:description. Optional', seriesType varchar(255) comment 'Definition of the series type, e.g. measurement for OM_Measurement. Optional', primary key (seriesId)) comment='Table to store a (time-) series which consists of featureOfInterest, observableProperty, and procedure. Mapping file: mapping/series/Series.hbm.xml' ENGINE=InnoDB;
 create table sos.seriesmetadata (metadataId bigint not null auto_increment comment 'Table primary key, used for relations', seriesId bigint not null comment 'Foreign Key (FK) to the related series. Contains "series".seriesId', identifier varchar(255) not null comment 'The identifier of the metadata value.', value varchar(255) not null comment 'The metadata value.', domain varchar(255) not null comment 'The metadata value domain.', primary key (metadataId)) ENGINE=InnoDB;
 create table sos.seriesparameter (parameterId bigint not null auto_increment comment 'Table primary key', seriesId bigint not null comment 'Foreign Key (FK) to the related series. Contains "series".seriesId', name varchar(255) not null comment 'Parameter name', primary key (parameterId)) comment='Table to store additional obervation information (om:parameter). Mapping file: mapping/series/metadata/SeriesParameter.hbm.xml' ENGINE=InnoDB;
+create table sos.seriesreference (seriesid bigint not null comment 'Foreign Key (FK) to link a series with a reference value series. Contains "series".seriesid', referenceseriesid bigint not null comment 'Foreign Key (FK) to the linked reference value series. Contains "series".seriesid', sortorder integer not null, primary key (seriesid, sortorder)) ENGINE=InnoDB;
 create table sos.specimen (featureOfInterestId bigint not null comment 'Foreign Key (FK) to the related featureOfInterest from the featureOfInterest table. Contains "featureOfInterest".featureOfInterestId', materialClass varchar(255) not null comment 'Material class', samplingTimeStart timestamp not null comment 'Time stamp when the specimen was started', samplingTimeEnd timestamp not null comment 'Time stamp when the specimen was stopped', samplingMethod varchar(255) comment 'Sampling method as referenced link', size double precision comment 'Sampling method as referenced link', sizeUnitId bigint comment 'Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional', currentLocation varchar(255) comment 'Sampling method as referenced link', specimenType varchar(255) comment 'Specimen type', primary key (featureOfInterestId)) ENGINE=InnoDB;
 create table sos.swedataarrayvalue (observationId bigint not null comment 'Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid', value longtext comment 'SweDataArray observation value', primary key (observationId)) comment='Value table for SweDataArray observation' ENGINE=InnoDB;
 create table sos.telephone (pkid bigint not null auto_increment comment 'Table primary key, used for relations', nilReason varchar(255), href varchar(255), type varchar(255), role varchar(255), arcrole varchar(255), title varchar(255), show varchar(255), actuate varchar(255), remoteSchema varchar(255), id varchar(255), uuid varchar(255), primary key (pkid)) ENGINE=InnoDB;
@@ -119,22 +121,41 @@ create table sos.xmlfeatparamvalue (parameterId bigint not null comment 'Foreign
 create table sos.xmlparametervalue (parameterId bigint not null comment 'Foreign Key (FK) to the related parameter from the parameter table. Contains "parameter".parameterid', value longtext comment 'XML parameter value', primary key (parameterId)) comment='Value table for XML parameter' ENGINE=InnoDB;
 create table sos.xmlseriesparamvalue (parameterId bigint not null comment 'Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid', value longtext comment 'XML parameter value', primary key (parameterId)) comment='Value table for XML parameter' ENGINE=InnoDB;
 alter table sos.`procedure` add constraint procIdentifierUK unique (identifier);
+create index blobvalueobsididx on sos.blobvalue (observationId);
+create index blobvalueidx on sos.blobvalue (value);
 create index booleanFeatParamIdx on sos.booleanfeatparamvalue (value);
+create index booleanparamididx on sos.booleanparametervalue (parameterId);
 create index booleanParamIdx on sos.booleanparametervalue (value);
+create index booleanseriesparamididx on sos.booleanseriesparamvalue (parameterId);
 create index seriesBooleanParamIdx on sos.booleanseriesparamvalue (value);
+create index booleanvalueobsididx on sos.booleanvalue (observationId);
+create index booleanvalueidx on sos.booleanvalue (value);
 create index categoryFeatParamIdx on sos.categoryfeatparamvalue (value);
+create index categoryparamididx on sos.categoryparametervalue (parameterId);
 create index categoryParamIdx on sos.categoryparametervalue (value);
+create index categoryseriesparamididx on sos.categoryseriesparamvalue (parameterId);
 create index seriesCategoryParamIdx on sos.categoryseriesparamvalue (value);
+create index categoryvalueobsididx on sos.categoryvalue (observationId);
+create index categoryvalueidx on sos.categoryvalue (value);
 alter table sos.codespace add constraint codespaceUK unique (codespace);
+create index complexvalueobsididx on sos.complexvalue (observationId);
+create index complexobsididx on sos.compositeobservation (observationId);
+create index complexchildobsididx on sos.compositeobservation (childObservationId);
 alter table sos.coordinatesystemaxis add constraint csaIdentifierUK unique (identifier);
 create index countFeatParamIdx on sos.countfeatparamvalue (value);
+create index countparamididx on sos.countparametervalue (parameterId);
 create index countParamIdx on sos.countparametervalue (value);
+create index countseriesparamididx on sos.countseriesparamvalue (parameterId);
 create index seriesCountParamIdx on sos.countseriesparamvalue (value);
+create index countvalueobsididx on sos.countvalue (observationId);
+create index countvalueidx on sos.countvalue (value);
 alter table sos.domainofvalidity add constraint dovIdentifierUK unique (identifier);
 alter table sos.featureofinterest add constraint foiIdentifierUK unique (identifier);
 alter table sos.featureofinterest add constraint featureUrl unique (url);
+;
 alter table sos.featureofinteresttype add constraint featureTypeUK unique (featureOfInterestType);
 create index featParamNameIdx on sos.featureparameter (name);
+create index geometryvalueobsididx on sos.geometryvalue (observationId);
 alter table sos.i18nfeatureofinterest add constraint i18nFeatureIdentity unique (objectId, locale);
 create index i18nFeatureIdx on sos.i18nfeatureofinterest (objectId);
 alter table sos.i18nobservableproperty add constraint i18nobsPropIdentity unique (objectId, locale);
@@ -144,8 +165,12 @@ create index i18nOfferingIdx on sos.i18noffering (objectId);
 alter table sos.i18nprocedure add constraint i18nProcedureIdentity unique (objectId, locale);
 create index i18nProcedureIdx on sos.i18nprocedure (objectId);
 create index quantityFeatParamIdx on sos.numericfeatparamvalue (value);
+create index numericparamididx on sos.numericparametervalue (parameterId);
 create index quantityParamIdx on sos.numericparametervalue (value);
+create index numericseriesparamididx on sos.numericseriesparamvalue (parameterId);
 create index seriesQuantityParamIdx on sos.numericseriesparamvalue (value);
+create index numericvalueobsididx on sos.numericvalue (observationId);
+create index numericvalueidx on sos.numericvalue (value);
 alter table sos.observableproperty add constraint obsPropIdentifierUK unique (identifier);
 create index obsSeriesIdx on sos.observation (seriesId);
 create index obsPhenTimeStartIdx on sos.observation (phenomenonTimeStart);
@@ -161,7 +186,12 @@ alter table sos.observationtype add constraint observationTypeUK unique (observa
 alter table sos.offering add constraint offIdentifierUK unique (identifier);
 create index paramNameIdx on sos.parameter (name);
 alter table sos.proceduredescriptionformat add constraint procDescFormatUK unique (procedureDescriptionFormat);
+create index profileobsididx on sos.profileobservation (observationId, childObservationId);
+create index profvalueobsididx on sos.profilevalue (observationId);
+create index referencevalueobsididx on sos.referencevalue (observationId);
 alter table sos.relatedfeaturerole add constraint relFeatRoleUK unique (relatedFeatureRole);
+create index relobsobsididx on sos.relatedobservation (observationId);
+create index relobsrelobsididx on sos.relatedobservation (relatedObservation);
 create index relatedObsObsIdx on sos.relatedobservation (observationId);
 create index seriesRelationIdx on sos.relatedseries (seriesId);
 create index resultTempOfferingIdx on sos.resulttemplate (offeringId);
@@ -174,10 +204,18 @@ create index seriesFeatureIdx on sos.series (featureOfInterestId);
 create index seriesObsPropIdx on sos.series (observablePropertyId);
 create index seriesProcedureIdx on sos.series (procedureId);
 create index seriesOfferingIdx on sos.series (offeringId);
+create index seriesmetadataseriesididx on sos.seriesmetadata (seriesId);
 create index seriesParamNameIdx on sos.seriesparameter (name);
+create index seriesididx on sos.seriesreference (seriesid);
+create index referenceseriesididx on sos.seriesreference (referenceseriesid);
+create index swedataarryvalueobsididx on sos.swedataarrayvalue (observationId);
 create index textFeatParamIdx on sos.textfeatparamvalue (value);
+create index textparamididx on sos.textparametervalue (parameterId);
 create index textParamIdx on sos.textparametervalue (value);
+create index textseriesparamididx on sos.textseriesparamvalue (parameterId);
 create index seriesTextParamIdx on sos.textseriesparamvalue (value);
+create index textvalueobsididx on sos.textvalue (observationId);
+create index textvalueidx on sos.textvalue (value);
 alter table sos.unit add constraint unitUK unique (unit);
 create index validProcedureTimeStartTimeIdx on sos.validproceduretime (startTime);
 create index validProcedureTimeEndTimeIdx on sos.validproceduretime (endTime);
@@ -186,6 +224,8 @@ alter table sos.verticalcs add constraint vcsIdentifierUK unique (identifier);
 alter table sos.verticaldatum add constraint vdIdentifierUK unique (identifier);
 create index vddovIdx on sos.verticaldatum (domainOfValidityId);
 create index vevcrsIdx on sos.verticalexextent (verticalCRSId);
+create index xmlparamididx on sos.xmlparametervalue (parameterId);
+create index xmlseriesparamididx on sos.xmlseriesparamvalue (parameterId);
 create index seriesXmlParamIdx on sos.xmlseriesparamvalue (value);
 alter table sos.`procedure` add constraint procProcDescFormatFk foreign key (procedureDescriptionFormatId) references sos.proceduredescriptionformat (procedureDescriptionFormatId);
 alter table sos.`procedure` add constraint procCodespaceIdentifierFk foreign key (codespace) references sos.codespace (codespaceId);
@@ -275,6 +315,7 @@ alter table sos.profileobservation add constraint profileObsChildFk foreign key 
 alter table sos.profileobservation add constraint profileObsParentFK foreign key (observationId) references sos.profilevalue (observationId);
 alter table sos.profilevalue add constraint observationProfileValueFk foreign key (observationId) references sos.observation (observationId);
 alter table sos.profilevalue add constraint profileUnitFk foreign key (levelunitid) references sos.unit (unitId);
+alter table sos.referencevalue add constraint observationRefValueFk foreign key (observationId) references sos.observation (observationId);
 alter table sos.relatedfeature add constraint relatedFeatureFeatureFk foreign key (featureOfInterestId) references sos.featureofinterest (featureOfInterestId);
 alter table sos.relatedfeaturehasrole add constraint relatedFeatRelatedFeatRoleFk foreign key (relatedFeatureRoleId) references sos.relatedfeaturerole (relatedFeatureRoleId);
 alter table sos.relatedfeaturehasrole add constraint FK_5fd921q6mnbkc57mgm5g4uyyn foreign key (relatedFeatureId) references sos.relatedfeature (relatedFeatureId);
@@ -296,6 +337,8 @@ alter table sos.series add constraint seriesOfferingFk foreign key (offeringId) 
 alter table sos.series add constraint seriesUnitFk foreign key (unitId) references sos.unit (unitId);
 alter table sos.series add constraint seriesCodespaceIdentifierFk foreign key (codespace) references sos.codespace (codespaceId);
 alter table sos.series add constraint seriesCodespaceNameFk foreign key (codespaceName) references sos.codespace (codespaceId);
+alter table sos.seriesreference add constraint seriesrefreffk foreign key (referenceseriesid) references sos.series (seriesId);
+alter table sos.seriesreference add constraint seriesrefseriesfk foreign key (seriesid) references sos.series (seriesId);
 alter table sos.specimen add constraint specimenFeatureFk foreign key (featureOfInterestId) references sos.featureofinterest (featureOfInterestId);
 alter table sos.specimen add constraint observationUnitFk foreign key (sizeUnitId) references sos.unit (unitId);
 alter table sos.swedataarrayvalue add constraint observationSweDataArrayValueFk foreign key (observationId) references sos.observation (observationId);

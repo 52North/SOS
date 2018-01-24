@@ -47,10 +47,6 @@ The Data Access Objects (DAO) layer would also be harmonized to provide a single
 
 In the [Sensor Web Suite database project](https://github.com/52North/series-hibernate) the harmonized database model and the DAO layer would be provided as a separate project that would be use in the future 52N SOS and 52N Sensor WEB REST-API implementations. Additionally the [52N SOS Proxy](https://github.com/52North/series-sos-proxy) will also use this project to persist the metadata of the harvested SOS services. 
 
-![Image of Sensor Web Suite](https://github.com/52North/SOS/tree/develop/misc/pics/sensor_web_db_dao.PNG)
-
-This figure shows the future relation between the 52N Sensor Web Suite database project, the SOS and the Sensor WEB REST-API.
-
 ## Quick Start
 
  Get started - the [installation guide](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#Installation) helps you install and configure the 52°North SOS.
@@ -73,7 +69,7 @@ This figure shows the future relation between the 52N Sensor Web Suite database 
 
 ## References
 
- - [IRCEL-CELINE](www.irceline.be/) (Belgium): *Current and archived air quality data for all of Belgium*
+ - [IRCEL-CELINE](http://www.irceline.be/) (Belgium): *Current and archived air quality data for all of Belgium*
  - [Wupperverband](https://www.wupperverband.de/) (Germnay): *Regional water board providing a multitude of hydrological measurment data with the help of SOS standards*
  - [Swedish EPA](http://www.swedishepa.se/)/[IVL](http://www.ivl.se/)/[SMHI](http://www.smhi.se/) (Schweden): *Current and archived air quality data for all of Sweden, as well as delivery this data to the European Protection Agency*
  - [RIVM](http://www.rivm.nl/) (Netherlands): *Current and archived air quality data for all of the Netherlands*

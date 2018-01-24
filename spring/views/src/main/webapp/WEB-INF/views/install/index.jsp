@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -65,10 +65,6 @@
 
 <p> If you like to use <strong>MySQL 5.6.x</strong> you can find here a detailed installation guide for the different platforms
 	in the <a target="_blank" href="http://dev.mysql.com/doc/">MySQL Documentation page</a>.
-</p>
-
-<p> If you like to use <strong>Microsoft SQL Server 2012</strong> you can find detailed installation information on the <a target="_blank" href="http://msdn.microsoft.com/en-us/library/bb545450%28v=sql.10%29.aspx">Microsoft SQL Server Developer Network page</a>.
-	How to install the 52&deg;North SOS with SQL Server is described in the <a target="_blank" href="https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#SQL_Server_installation">SOS wiki</a>
 </p>
 
 <div id="uploadForm">

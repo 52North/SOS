@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -57,7 +57,77 @@ public class HibernateCriterionHelper {
      */
     public static LikeExpression getLikeExpression(String propertyName, String value, MatchMode matchMode,
             Character escapeChar, boolean ignoreCase) {
-        return new LikeExpression(propertyName, value, MatchMode.ANYWHERE, Constants.DOLLAR_CHAR, ignoreCase);
+        return new LikeExpression(propertyName, value, matchMode, escapeChar, ignoreCase);
+    }
+    
+    /**
+     * Create Hibernate LikeExpression from values
+     * 
+     * @param propertyName
+     *            Property name
+     * @param value
+     *            Requested query value
+     * @return LikeExpression
+     */
+    public static LikeExpression getLikeExpression(String propertyName, String value) {
+        return new LikeExpression(propertyName, value);
+    }
+    
+    /**
+     * Create Hibernate LikeExpression from values
+     * 
+     * @param propertyName
+     *            Property name
+     * @param value
+     *            Requested query value
+     * @param matchMode
+     *            Match mode
+     * @return LikeExpression
+     */
+    public static LikeExpression getLikeExpression(String propertyName, String value, MatchMode matchMode) {
+        return new LikeExpression(propertyName, value, matchMode);
     }
 
+    /**
+     * Create Hibernate LikeExpression from values
+     * 
+     * @param propertyName
+     *            Property name
+     * @param value
+     *            Requested query value
+     * @param escapeChar
+     *            Escape char
+     * @param ignoreCase
+     *            Ignore case sensitivity
+     * @return LikeExpression
+     */
+    public static LikeExpression getLikeExpression(String propertyName, String value,
+            Character escapeChar, boolean ignoreCase) {
+        return new LikeExpression(propertyName, value, escapeChar, ignoreCase);
+    }
+    
+    /**
+     * Create Hibernate LikeExpression from values
+     * 
+     * @param propertyName
+     *            Property name
+     * @param value
+     *            Requested query value
+     * @param escapeChar
+     *            Escape char
+     * @param ignoreCase
+     *            Ignore case sensitivity
+     * @return LikeExpression
+     */
+    public static LikeExpression getLikeExpression(String propertyName, String value,
+            String escapeChar, boolean ignoreCase) {
+        if (escapeChar != null) {
+            if (escapeChar.length() > 1) {
+                value = value.replace(escapeChar, "\\");
+            }
+            return new LikeExpression(propertyName, value, escapeChar.charAt(0), ignoreCase);
+        }
+        return new LikeExpression(propertyName, value, null, ignoreCase);
+    }
+    
 }

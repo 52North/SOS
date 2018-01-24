@@ -8,7 +8,7 @@
         table="booleanparametervalue" check="value in ('T','F')">
         <comment>Value table for boolean parameter</comment>
         <key foreign-key="parameterBooleanValueFk">
-            <column name="parameterId">
+            <column name="parameterId" index="booleanparamididx">
                 <comment>Foreign Key (FK) to the related parameter from the
                     parameter table. Contains "parameter".parameterid</comment>
             </column>
@@ -25,7 +25,7 @@
         table="categoryparametervalue">
         <comment>Value table for category parameter</comment>
         <key foreign-key="parameterCategoryValueFk">
-            <column name="parameterId">
+            <column name="parameterId" index="categoryparamididx">
                 <comment>Foreign Key (FK) to the related parameter from the
                     parameter table. Contains "parameter".parameterid</comment>
             </column>
@@ -49,7 +49,7 @@
         table="countparametervalue">
         <comment>Value table for count parameter</comment>
         <key foreign-key="parameterCountValueFk">
-            <column name="parameterId">
+            <column name="parameterId" index="countparamididx">
                 <comment>Foreign Key (FK) to the related parameter from the
                     parameter table. Contains "parameter".parameterid</comment>
             </column>
@@ -66,7 +66,7 @@
         table="numericparametervalue">
         <comment>Value table for numeric/Measurment parameter</comment>
         <key foreign-key="parameterNumericValueFk">
-            <column name="parameterId">
+            <column name="parameterId" index="numericparamididx">
                 <comment>Foreign Key (FK) to the related parameter from the
                     parameter table. Contains "parameter".parameterid</comment>
             </column>
@@ -90,7 +90,7 @@
         table="textparametervalue">
         <comment>Value table for text parameter</comment>
         <key foreign-key="parameterTextValueFk">
-            <column name="parameterId">
+            <column name="parameterId" index="textparamididx">
                 <comment>Foreign Key (FK) to the related parameter from the
                     parameter table. Contains "parameter".parameterid</comment>
             </column>
@@ -107,7 +107,7 @@
         table="xmlparametervalue">
         <comment>Value table for XML parameter</comment>
         <key foreign-key="parameterXmlValueFk">
-            <column name="parameterId">
+            <column name="parameterId" index="xmlparamididx">
                 <comment>Foreign Key (FK) to the related parameter from the
                     parameter table. Contains "parameter".parameterid</comment>
             </column>

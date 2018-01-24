@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -68,8 +68,16 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
      */
     private int cacheThreadCount = 5;
 
+    /**
+     * Get the defined cache thread count or the maximum connection count minus
+     * one to avoid hanging threads during the cache update.
+     * 
+     * @return Defined cache thread count or the maximum connection count minus
+     *         one
+     */
     public int getCacheThreadCount() {
-        return cacheThreadCount;
+        int maxConnections = getConnectionProvider().getMaxConnections();
+        return maxConnections > 0 && cacheThreadCount >= maxConnections ? maxConnections - 1 : cacheThreadCount;
     }
 
     @Setting(CACHE_THREAD_COUNT)

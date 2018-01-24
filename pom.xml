@@ -78,8 +78,6 @@
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.4.0</n52.common.xml.version>
-        <!-- Remove third party ncname resolver from SOS and use OXF instead -->
-        <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
@@ -1669,8 +1667,6 @@
                     <artifactId>git-commit-id-plugin</artifactId>
                     <version>2.1.9</version>
                 </plugin>
-                <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>buildnumber-maven-plugin</artifactId> 
-                    <version>1.3</version> </plugin> -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>

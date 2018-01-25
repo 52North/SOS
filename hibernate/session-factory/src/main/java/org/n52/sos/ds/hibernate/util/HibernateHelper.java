@@ -63,6 +63,7 @@ import com.google.common.collect.Maps;
  *
  */
 public final class HibernateHelper {
+
     /**
      * Private constructor
      */
@@ -167,8 +168,8 @@ public final class HibernateHelper {
             int startIndex = 0;
             int endIndex = HibernateConstants.LIMIT_EXPRESSION_DEPTH - 1;
             while (startIndex < queryIdsList.size() - 1) {
-                if (endIndex > (queryIdsList.size())) {
-                    endIndex = (queryIdsList.size());
+                if (endIndex > queryIdsList.size()) {
+                    endIndex = queryIdsList.size();
                 }
                 lists.add(queryIdsList.subList(startIndex, endIndex));
                 startIndex = endIndex;

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <!-- Remove the parent in the case of 52°North repos are not available -->
     <parent>
@@ -66,7 +65,6 @@
         <module>spring</module>
         <module>statistics</module>
         <module>webapp</module>
-        <!-- <module>webapp-bundle</module> -->
     </modules>
     
     <properties>
@@ -1706,14 +1704,19 @@
     </dependencyManagement>
    
     <build>
+        <defaultGoal>install</defaultGoal>
         <plugins>
             <plugin>
                 <!-- execute "install" goal during release:prepare (instead 
                     of "integration-test") -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
                 <configuration>
-                    <preparationGoals>clean install</preparationGoals>
+                    <preparationGoals>clean</preparationGoals>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <releaseProfiles>oracle</releaseProfiles>
                 </configuration>
             </plugin>
             <plugin>
@@ -1978,12 +1981,6 @@
                     <version>2.20</version>
                 </plugin>
                 <plugin>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <configuration>
-                        <connectionUrl>scm:svn:https://svn.52north.org/svn/swe/main/SOS/Service/branches/52n-sos-400-refactored</connectionUrl>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>2.6</version>
@@ -2003,6 +2000,12 @@
             </extension>
         </extensions>
     </build>
+    <scm>
+        <url>https://github.com/52North/SOS</url>
+        <connection>scm:git:https://github.com/52North/SOS.git</connection>
+        <developerConnection>scm:git:https://github.com/52North/SOS.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
     <repositories>
         <repository>
             <id>n52-releases</id>
@@ -2020,7 +2023,6 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <!-- 
         <repository>
             <id>refractions</id>
             <name>Refractions repository</name>
@@ -2053,7 +2055,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <!-- 
         <repository>
             <id>unidata-releases</id>
             <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>

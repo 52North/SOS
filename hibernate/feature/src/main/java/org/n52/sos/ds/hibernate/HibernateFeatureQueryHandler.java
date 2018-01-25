@@ -125,6 +125,19 @@ public class HibernateFeatureQueryHandler
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
         this.i18NDAORepository = i18NDAORepository;
     }
+    @Override
+    public AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
+        final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
+        try {
+            if (queryObject.isSetFeature() && queryObject.getFeature() instanceof AbstractFeatureOfInterest) {
+                return createSosAbstractFeature((AbstractFeatureOfInterest) queryObject.getFeature(), queryObject);
+            }
+            AbstractFeatureOfInterest feature = getFeatureDAO().getFeature(queryObject.getFeatureIdentifier(), session);
+            return createSosAbstractFeature(feature, queryObject);
+        } catch (final HibernateException he) {
+            throw new NoApplicableCodeException().causedBy(he).withMessage(
+                    "An error occurred while querying feature data for a featureOfInterest identifier!");
+        }
 
     @Inject
     public void setGeometryHandler(GeometryHandler geometryHandler) {

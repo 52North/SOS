@@ -15,8 +15,8 @@
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
-        <series.api.version>2.0.0-SNAPSHOT</series.api.version>
-        <series.db.version>2.0.0-SNAPSHOT</series.db.version>
+        <series.api.version>2.0.0-alpha.6</series.api.version>
+        <series.db.version>2.0.0-alpha.3</series.db.version>
         <helgoland.version>1.0.0</helgoland.version>
         <jetty.port.http>9090</jetty.port.http>
         <jetty.port.stop>9091</jetty.port.stop>
@@ -135,6 +135,12 @@
                         <resource>
                             <directory>src/main/webapp</directory>
                             <filtering>true</filtering>
+                            <exclude>**/static/**</exclude>
+                        </resource>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>false</filtering>
+                            <include>**/static/**</include>
                         </resource>
                         <resource>
                             <directory>src/main/resources</directory>

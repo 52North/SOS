@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -48,7 +49,8 @@ import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,13 +86,13 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      */
     public ScrollableResults getStreamingSeriesValuesFor(AbstractObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
-        return getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session).scroll(
+        return getScrollableSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session).scroll(
                 ScrollMode.FORWARD_ONLY);
     }
 
     public ScrollableResults getStreamingSeriesValuesFor(AbstractObservationRequest request, Set<Long> series,
             Criterion temporalFilterCriterion, Session session) throws HibernateException, OwsExceptionReport {
-        return getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session).scroll(
+        return getScrollableSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session).scroll(
                 ScrollMode.FORWARD_ONLY);
     }
 
@@ -109,12 +111,12 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      */
     public ScrollableResults getStreamingSeriesValuesFor(AbstractObservationRequest request, long series, Session session)
             throws OwsExceptionReport {
-        return getSeriesValueCriteriaFor(request, series, null, session).scroll(ScrollMode.FORWARD_ONLY);
+        return getScrollableSeriesValueCriteriaFor(request, series, null, session).scroll(ScrollMode.FORWARD_ONLY);
     }
 
     public ScrollableResults getStreamingSeriesValuesFor(AbstractObservationRequest request, Set<Long> series,
             Session session) throws HibernateException, OwsExceptionReport {
-        return getSeriesValueCriteriaFor(request, series, null, session).scroll(ScrollMode.FORWARD_ONLY);
+        return getScrollableSeriesValueCriteriaFor(request, series, null, session).scroll(ScrollMode.FORWARD_ONLY);
     }
 
     /**
@@ -168,9 +170,20 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     public List<DataEntity<?>> getStreamingSeriesValuesFor(AbstractObservationRequest request, Set<Long> series,
             Criterion temporalFilterCriterion, int chunkSize, int currentRow, Session session)
             throws OwsExceptionReport {
-        Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session);
-        addChunkValuesToCriteria(c, chunkSize, currentRow, request);
-        return (List<DataEntity<?>>) c.list();
+        if (request instanceof GetObservationRequest && ((GetObservationRequest) request).hasResultFilter()) {
+            List<DataEntity<?>> list = new LinkedList<>();
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+                Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session);
+                addChunkValuesToCriteria(c, chunkSize, currentRow, request);
+                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session);
+                list.addAll(c.list());
+            }
+           return list;
+        } else {
+            Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session);
+            addChunkValuesToCriteria(c, chunkSize, currentRow, request);
+            return (List<DataEntity<?>>) c.list();
+        }
     }
 
     /**
@@ -193,9 +206,20 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     @SuppressWarnings("unchecked")
     public List<DataEntity<?>> getStreamingSeriesValuesFor(AbstractObservationRequest request, Set<Long> series, int chunkSize,
             int currentRow, Session session) throws OwsExceptionReport {
-        Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
-        addChunkValuesToCriteria(c, chunkSize, currentRow, request);
-        return (List<DataEntity<?>>) c.list();
+        if (request instanceof GetObservationRequest && ((GetObservationRequest) request).hasResultFilter()) {
+            List<DataEntity<?>> list = new LinkedList<>();
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+                Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
+                addChunkValuesToCriteria(c, chunkSize, currentRow, request);
+                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session);
+                list.addAll(c.list());
+            }
+           return list;
+        } else {
+            Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
+            addChunkValuesToCriteria(c, chunkSize, currentRow, request);
+            return (List<DataEntity<?>>) c.list();
+        }
     }
 
     /**
@@ -218,9 +242,20 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     @SuppressWarnings("unchecked")
     public List<DataEntity<?>> getStreamingSeriesValuesFor(AbstractObservationRequest request, long series, int chunkSize,
             int currentRow, Session session) throws OwsExceptionReport {
-        Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
-        addChunkValuesToCriteria(c, chunkSize, currentRow, request);
-        return (List<DataEntity<?>>) c.list();
+        if (request instanceof GetObservationRequest && ((GetObservationRequest) request).hasResultFilter()) {
+            List<DataEntity<?>> list = new LinkedList<>();
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+                Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
+                addChunkValuesToCriteria(c, chunkSize, currentRow, request);
+                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session);
+                list.addAll(c.list());
+            }
+           return list;
+        } else {
+            Criteria c = getSeriesValueCriteriaFor(request, series, null, session);
+            addChunkValuesToCriteria(c, chunkSize, currentRow, request);
+            return (List<DataEntity<?>>) c.list();
+        }
     }
 
     /**
@@ -241,26 +276,57 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      */
     private Criteria getSeriesValueCriteriaFor(AbstractObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
-        final Criteria c = getDefaultObservationCriteria(session).createAlias(DataEntity.PROPERTY_DATASET, "s");
-        c.addOrder(Order.asc(getOrderColumn(request)));
+        final Criteria c = getDefaultSeriesValueCriteriaFor(request, temporalFilterCriterion, session);
         c.add(Restrictions.eq("s." + DatasetEntity.PROPERTY_ID, series));
-        String logArgs = "request, series";
+        return c.setReadOnly(true);
+    }
+    
+    /**
+     * Get {@link Criteria} for parameter
+     * 
+     * @param request
+     *            {@link AbstractObservationRequest}
+     * @param series
+     *            Datasource series ids
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param session
+     *            Hibernate Session
+     * @return Resulting {@link Criteria}
+     * @throws OwsExceptionReport
+     *             If an error occurs when adding Spatial Filtering Profile
+     *             restrictions
+     */
+    private Criteria getSeriesValueCriteriaFor(AbstractObservationRequest request, Set<Long> series,
+            Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
+        final Criteria c = getDefaultSeriesValueCriteriaFor(request, temporalFilterCriterion, session);
+        c.add(Restrictions.in("s." + Series.ID, series));
+        return c.setReadOnly(true);
+    }
+    
+    /**
+     * Get {@link Criteria} for parameter
+     * 
+     * @param request
+     *            {@link AbstractObservationRequest}
+     * @param series
+     *            Datasource series id
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param session
+     *            Hibernate Session
+     * @return Resulting {@link Criteria}
+     * @throws OwsExceptionReport
+     *             If an error occurs when adding Spatial Filtering Profile
+     *             restrictions
+     */
+    private Criteria getScrollableSeriesValueCriteriaFor(AbstractObservationRequest request, long series,
+            Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
+        final Criteria c = getDefaultSeriesValueCriteriaFor(request, temporalFilterCriterion, session);
+        c.add(Restrictions.eq("s." + Series.ID, series));
         if (request instanceof GetObservationRequest) {
-            GetObservationRequest getObsReq = (GetObservationRequest)request;
-            checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
-            checkAndAddResultFilterCriterion(c, getObsReq, session);
-
-            logArgs += ", offerings";
-            if (temporalFilterCriterion != null) {
-                logArgs += ", filterCriterion";
-                c.add(temporalFilterCriterion);
-            }
-            addSpecificRestrictions(c, getObsReq);
-            if (getObsReq.isSetFesFilterExtension()) {
-                new ExtensionFesFilterCriteriaAdder(c, getObsReq.getFesFilterExtensions()).add();
-            }
+            checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, null, session);
         }
-        LOGGER.debug("QUERY getStreamingSeriesValuesFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c.setReadOnly(true);
     }
 
@@ -280,29 +346,25 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      *             If an error occurs when adding Spatial Filtering Profile
      *             restrictions
      */
-    private Criteria getSeriesValueCriteriaFor(AbstractObservationRequest request, Set<Long> series,
+    private Criteria getScrollableSeriesValueCriteriaFor(AbstractObservationRequest request, Set<Long> series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
-        final Criteria c = getDefaultObservationCriteria(session).createAlias(DataEntity.PROPERTY_DATASET, "s");
+        final Criteria c = getDefaultSeriesValueCriteriaFor(request, temporalFilterCriterion, session);
+        c.add(Restrictions.in("s." + Series.ID, series));
+        if (request instanceof GetObservationRequest) {
+            checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, null, session);
+        }
+        return c.setReadOnly(true);
+    }
+    
+    private Criteria getDefaultSeriesValueCriteriaFor(AbstractObservationRequest request,
+            Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
+        final Criteria c = getDefaultObservationCriteria(session).createAlias(AbstractValuedSeriesObservation.SERIES, "s");
         c.addOrder(Order.asc(getOrderColumn(request)));
         c.add(Restrictions.in("s." + DatasetEntity.PROPERTY_ID, series));
         String logArgs = "request, series";
-//
-//        HibernateHelper.getSqlString(DetachedCriteria.forClass(ProfileValuedSeriesObservation.class)
-//                .createCriteria("value", "v").add(Subqueries.in("v.observationId", DetachedCriteria.forClass(NumericValuedSeriesObservation.class).add(Restrictions.eq("child", true))))
-//                .getExecutableCriteria(session));
-//
-//        HibernateHelper.getSqlString(DetachedCriteria.forClass(ProfileValuedSeriesObservation.class)
-//                .createCriteria("value", "v").add(Restrictions.eq("child", true)).add(Restrictions.eq("class", NumericValuedSeriesObservation.class))
-//                .getExecutableCriteria(session));
-//
-//        HibernateHelper.getSqlString(DetachedCriteria.forClass(ProfileValuedSeriesObservation.class)
-//                .createCriteria("value", "v").add(Restrictions.eq("class", NumericValuedSeriesObservation.class))
-//                .getExecutableCriteria(session));
-
         if (request instanceof GetObservationRequest) {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
             checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
-            checkAndAddResultFilterCriterion(c, getObsReq, session);
 
             if (temporalFilterCriterion != null) {
                 logArgs += ", filterCriterion";

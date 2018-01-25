@@ -388,6 +388,14 @@ public abstract class AbstractOmObservationCreator {
         final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;
     }
+    
+    protected AbstractFeature createFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) throws OwsExceptionReport {
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
+        queryObject.setFeature(featureOfInterest).setConnection(getSession()).setVersion(getVersion());
+        final AbstractFeature feature =
+                getFeatureQueryHandler().getFeatureByID(queryObject);
+        return feature;
+    }
 
     protected void checkForAdditionalObservationCreator(DataEntity<?> hObservation, OmObservation sosObservation)
             throws CodedException {

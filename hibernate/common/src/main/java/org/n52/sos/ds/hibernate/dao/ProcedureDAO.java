@@ -353,7 +353,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                         getDetachedCriteriaProceduresForAbstractFeatureEntityFromSeries(feature, session)));
                 c.setProjection(Projections.distinct(Projections.property(ProcedureEntity.IDENTIFIER)));
             LOGGER.debug("QUERY getProceduresForAbstractFeatureEntity(feature): {}", HibernateHelper.getSqlString(c));
-            return (List<String>) c.list();
+            return c.list();
         }
     }
 
@@ -745,6 +745,31 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            ProcedureEntity identifier
      * @param procedureDescriptionFormat
      *            ProcedureEntity description format object
+     * @param parentProcedures
+     *            Parent procedure identifiers
+     * @param session
+     *            Hibernate session
+     * @return Procedure object
+     *
+     * @deprecated use
+     *      {@link #getOrInsertProcedure(String, ProcedureDescriptionFormat, SosProcedureDescription, boolean, Session)}
+     */
+    @Deprecated
+    public Procedure getOrInsertProcedure(final String identifier,
+            final ProcedureDescriptionFormat procedureDescriptionFormat, final Collection<String> parentProcedures,
+            final Session session) {
+        SosProcedureDescription procedure = new SosProcedureDescriptionUnknowType(identifier,
+                procedureDescriptionFormat.getProcedureDescriptionFormat(), "").setParentProcedures(parentProcedures);
+        return getOrInsertProcedure(identifier, procedureDescriptionFormat, procedure, false, session);
+    }
+
+    /**
+     * Insert and get procedure object
+     *
+     * @param identifier
+     *            Procedure identifier
+     * @param procedureDescriptionFormat
+     *            Procedure description format object
      * @param procedureDescription
      *            {@link SosProcedureDescription} to insert
      * @param isType
@@ -791,6 +816,11 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                     procedure.setInsitu(sml.getInsitu());
                 }
             }
+            if (procedureDescription.isSetInsitu()) {
+                tProcedure.setInsitu(procedureDescription.getInsitu());
+            }
+            tProcedure.setReference(procedureDescription.isReference());
+            procedure = tProcedure;
         }
         procedure.setDeleted(false);
         session.saveOrUpdate(procedure);

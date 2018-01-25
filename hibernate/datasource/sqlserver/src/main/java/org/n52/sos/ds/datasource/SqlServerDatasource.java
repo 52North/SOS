@@ -50,6 +50,8 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     private static final String TN_FEATURE_OF_INTEREST = "featureOfInterest";
 
     private static final String TN_OBSERVATION = "observation";
+    
+    private static final String TN_SERIES = "series";
 
     private static final String TN_SERIES = "series";
 
@@ -78,7 +80,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     @Override
     public void executePostCreateSchema(Map<String, Object> databaseSettings) {
         List<String> statements = new ArrayList<>();
-        for (TableColumn tableColumn : getTableColumns()) {
+        for (TableColumn tableColumn : getTableColumns(databaseSettings)) {
             statements.add(getGetAndDropConstraint(tableColumn.getTable(), tableColumn.getColumn(), databaseSettings));
             statements
                     .add(getCreateUniqueConstraint(databaseSettings, tableColumn.getTable(), tableColumn.getColumn()));
@@ -95,7 +97,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
         return builder.toString();
     }
 
-    private Set<TableColumn> getTableColumns() {
+    private Set<TableColumn> getTableColumns(Map<String, Object> s) {
         Set<TableColumn> tableColumns = new HashSet<>();
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_IDENTIFIER));
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_URL));

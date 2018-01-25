@@ -84,6 +84,7 @@ import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.util.GeometryHandler;
@@ -267,16 +268,10 @@ public abstract class AbstractSeriesDAO
             series = getSeriesImpl();
             ctx.addValuesToSeries(series);
             series.setDeleted(false);
-            series.setPublished(true);
+            series.setPublished(ctx.isPublish());
             series.setHiddenChild(ctx.isHiddenChild());
-            session.saveOrUpdate(series);
-            session.flush();
-            session.refresh(series);
         } else if (series.isDeleted()) {
             series.setDeleted(false);
-            session.saveOrUpdate(series);
-            session.flush();
-            session.refresh(series);
 //        } else if (ctx.isSetSeriesType() && !series.isSetSeriesType()) {
 //            ctx.addValuesToSeries(series);
 //            session.saveOrUpdate(series);
@@ -298,9 +293,9 @@ public abstract class AbstractSeriesDAO
             series.setDeleted(false);
             series.setPublished(true);
             series.setHiddenChild(ctx.isHiddenChild());
-            session.saveOrUpdate(series);
-            session.flush();
-            session.refresh(series);
+        } else if (ctx.isPublish() && !series.isPublished()) {
+            series.setPublished(true);
+
         } else if (series instanceof NotDefinedDatasetEntity) {
             Dataset visit = getDatasetFactory().visit(observation);
             visit.add(series);
@@ -308,15 +303,14 @@ public abstract class AbstractSeriesDAO
             series.setDeleted(false);
             series.setPublished(true);
             series.setHiddenChild(ctx.isHiddenChild());
-            session.saveOrUpdate(series);
-            session.flush();
-            session.refresh(series);
         } else if (series.isDeleted()) {
             series.setDeleted(false);
-            session.saveOrUpdate(series);
-            session.flush();
-            session.refresh(series);
+        } else {
+            return series;
         }
+        session.saveOrUpdate(series);
+        session.flush();
+        session.refresh(series);
         return series;
     }
 
@@ -332,38 +326,60 @@ public abstract class AbstractSeriesDAO
     public List<DatasetEntity> getSeries(Session session) {
         return getDefaultSeriesCriteria(session).list();
     }
-
-    public Criteria getSeriesCriteria(GetObservationRequest request, Collection<String> features, Session session)
+    @SuppressWarnings("unchecked")
+    public Set<DatasetEntity> getSeriesSet(GetObservationRequest request, Collection<String> features,
+            Session session)
             throws OwsExceptionReport {
-        final Criteria c = createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features,
-                request.getOfferings(), session);
-        addSpecificRestrictions(c, request);
-        checkAndAddResultFilterCriterion(c, request, session);
-        checkAndAddSpatialFilterCriterion(c, request, session);
-        LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
-        return c;
+        Set<DatasetEntity> set = new LinkedHashSet<>();
+        if (request.hasResultFilter()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+                final Criteria c = createCriteriaFor(request.getProcedures(), request.getObservedProperties(),
+                        features, request.getOfferings(), session);
+                addSpecificRestrictions(c, request);
+                checkAndAddResultFilterCriterion(c, request, identifier, session);
+                checkAndAddSpatialFilterCriterion(c, request, session);
+                LOGGER.debug("QUERY getSeries(request, features) and result filter sub query '{}': {}",
+                        identifier.name(), HibernateHelper.getSqlString(c));
+                set.addAll(c.list());
+            }
+        } else {
+            final Criteria c = createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features,
+                    request.getOfferings(), session);
+            addSpecificRestrictions(c, request);
+            checkAndAddSpatialFilterCriterion(c, request, session);
+            LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
+            set.addAll(c.list());
+        }
+        return set;
     }
 
-    public Criteria getSeriesCriteria(GetObservationByIdRequest request, Session session) {
+    @SuppressWarnings("unchecked")
+    protected Set<Series> getSeriesCriteria(GetDataAvailabilityRequest request, Session session)
+            throws OwsExceptionReport {
+        Set<DatasetEntity> set = new LinkedHashSet<>();
+        if (request.hasResultFilter()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+                Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(),
+                        request.getFeaturesOfInterest(), request.getOfferings(), session);
+                checkAndAddResultFilterCriterion(c, request, identifier, session);
+                checkAndAddSpatialFilterCriterion(c, request, session);
+                LOGGER.debug("QUERY getSeriesCriteria(request) and result filter sub query '{}': {}",
+                        identifier.name(), HibernateHelper.getSqlString(c));
+                set.addAll(c.list());
+            }
+        } else {
+            Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(),
+                    request.getFeaturesOfInterest(), request.getOfferings(), session);
+            checkAndAddSpatialFilterCriterion(c, request, session);
+            LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
+            set.addAll(c.list());
+        }
+        return set;
+    }
+
+    public Criteria  getSeriesCriteria(GetObservationByIdRequest request, Session session) {
         final Criteria c = getDefaultSeriesCriteria(session);
         c.add(Restrictions.in(DatasetEntity.IDENTIFIER, request.getObservationIdentifier()));
-        LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
-        return c;
-    }
-
-    protected Criteria getSeriesCriteria(GetDataAvailabilityRequest request, Session session) throws OwsExceptionReport {
-        Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(), request.getFeaturesOfInterest(), request.getOfferings(), session);
-        checkAndAddResultFilterCriterion(c, request, session);
-        checkAndAddSpatialFilterCriterion(c, request, session);
-        LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
-        return c;
-    }
-
-    protected Criteria getSeriesCriteria(GetResultRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
-        final Criteria c = createCriteriaFor(request.getObservedProperty(), request.getOffering(), features,
-              session);
-//        checkAndAddResultFilterCriterion(c, request, session);
-//        checkAndAddSpatialFilterCriterion(c, request, session);
         LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
         return c;
     }
@@ -826,23 +842,24 @@ public abstract class AbstractSeriesDAO
         return c;
     }
 
-    protected void checkAndAddResultFilterCriterion(Criteria c, GetDataAvailabilityRequest request, Session session)
+
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetDataAvailabilityRequest request, SubQueryIdentifier identifier, Session session)
             throws OwsExceptionReport {
         if (request.hasResultFilter()) {
-            addResultfilter(c, request.getResultFilter());
+            addResultfilter(c, request.getResultFilter(), identifier);
         }
     }
 
-    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, Session session)
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, SubQueryIdentifier identifier, Session session)
             throws OwsExceptionReport {
         if (request.hasResultFilter() && request.getResultFilter() instanceof ComparisonFilter) {
-            addResultfilter(c, (ComparisonFilter) request.getResultFilter());
+            addResultfilter(c, request.getResultFilter(), identifier);
         }
     }
 
-    private void addResultfilter(Criteria c, ComparisonFilter resultFilter) throws CodedException {
+    private void addResultfilter(Criteria c, ComparisonFilter resultFilter, SubQueryIdentifier identifier) throws CodedException {
         Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
-                getResultFilterClasses(), DatasetEntity.PROPERTY_ID, DataEntity.PROPERTY_DATASET);
+                getResultFilterClasses(), DatasetEntity.PROPERTY_ID, DataEntity.PROPERTY_DATASET, identifier);
         if (resultFilterExpression != null) {
             c.add(resultFilterExpression);
         }

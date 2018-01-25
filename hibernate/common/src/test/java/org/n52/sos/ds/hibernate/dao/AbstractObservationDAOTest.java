@@ -177,103 +177,87 @@ public class AbstractObservationDAOTest {
         @Override
         protected void addObservationContextToObservation(ObservationContext ctx,
                 Data<?> observation, Session session) throws CodedException {
-            // TODO Auto-generated method stub
         }
 
         @Override
         public Criteria getObservationInfoCriteriaForFeatureOfInterestAndProcedure(String feature, String procedure,
                 Session session) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationInfoCriteriaForFeatureOfInterestAndOffering(String feature, String offering,
                 Session session) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationCriteriaForProcedure(String procedure, Session session) throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationCriteriaForObservableProperty(String observableProperty, Session session)
                 throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationCriteriaForFeatureOfInterest(String featureOfInterest, Session session)
                 throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationCriteriaFor(String procedure, String observableProperty, Session session)
                 throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationCriteriaFor(String procedure, String observableProperty,
                 String featureOfInterest, Session session) throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Long getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation, DatasetEntity observationConstellation, Session session)
                 throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public ObservationFactory getObservationFactory() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public String addProcedureAlias(Criteria criteria) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation sosObservation) {
-            // TODO Auto-generated method stub
             return null;
         }
 

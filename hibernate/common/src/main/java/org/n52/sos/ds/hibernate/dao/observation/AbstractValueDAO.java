@@ -48,6 +48,7 @@ import org.n52.sos.ds.hibernate.dao.TimeCreator;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
@@ -96,11 +97,11 @@ public abstract class AbstractValueDAO extends TimeCreator {
         }
     }
 
-    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
-            Session session) throws OwsExceptionReport {
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, SubQueryIdentifier identifier, Session session)
+            throws OwsExceptionReport {
         if (request.hasResultFilter() && request.getResultFilter() instanceof ComparisonFilter) {
             ComparisonFilter resultFilter = (ComparisonFilter) request.getResultFilter();
-            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter, getResultFilterClasses(), DataEntity.PROPERTY_ID);
+            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter, getResultFilterClasses(), DataEntity.PROPERTY_ID, identifier);
             if (resultFilterExpression != null) {
                 c.add(resultFilterExpression);
             }

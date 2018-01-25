@@ -81,4 +81,22 @@ public class ObservationTimeExtrema extends TimeExtrema {
         return !isSetPhenomenonTimes() && !isSetResultTimes() && !isSetValidTime();
     }
 
+    public void expand(ObservationTimeExtrema ote) {
+        if (isEmpty() && !ote.isEmpty()) {
+            setMinPhenomenonTime(ote.getMinPhenomenonTime());
+            setMaxPhenomenonTime(ote.getMaxPhenomenonTime());
+            setMinResultTime(ote.getMinResultTime());
+            setMaxResultTime(ote.getMaxResultTime());
+            setMinValidTime(ote.getMinValidTime());
+            setMaxValidTime(ote.getMaxValidTime());
+        } else {
+            setMinPhenomenonTime(getMinPhenomenonTime().isAfter(ote.getMinPhenomenonTime()) ? ote.getMinPhenomenonTime() : getMinPhenomenonTime());
+            setMaxPhenomenonTime(getMaxPhenomenonTime().isBefore(ote.getMaxPhenomenonTime()) ? ote.getMaxPhenomenonTime() : getMaxPhenomenonTime());
+            setMinResultTime(getMinResultTime().isAfter(ote.getMinResultTime()) ? ote.getMinResultTime() : getMinResultTime());
+            setMaxResultTime(getMaxResultTime().isBefore(ote.getMaxResultTime()) ? ote.getMaxResultTime() : getMaxResultTime());
+            setMinValidTime(getMinValidTime().isAfter(ote.getMinValidTime()) ? ote.getMinValidTime() : getMinValidTime());
+            setMaxValidTime(getMaxValidTime().isBefore(ote.getMaxValidTime()) ? ote.getMaxValidTime() : getMaxValidTime());
+        }
+    }
+
 }

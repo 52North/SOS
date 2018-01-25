@@ -72,18 +72,19 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<DatasetEntity> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws
             OwsExceptionReport {
+        List<Series> series = new ArrayList<>();
         if (CollectionHelper.isNotEmpty(features)) {
             List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
-                series.addAll(getSeriesCriteria(request, ids, session).list());
+                series.addAll(getSeriesSet(request, ids, session));
             }
-            return series;
+           
         } else {
-            return getSeriesCriteria(request, features, session).list();
+            series.addAll(getSeriesSet(request, features, session));
         }
+        return series;
     }
 
     @SuppressWarnings("unchecked")
@@ -92,11 +93,10 @@ public class SeriesDAO extends AbstractSeriesDAO {
         return getSeriesCriteria(request, session).list();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<DatasetEntity> getSeries(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
-        return getSeriesCriteria(request, session).list();
+        return  new ArrayList<>(getSeriesCriteria(request, session));
     }
 
     @SuppressWarnings("unchecked")
@@ -170,6 +170,9 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
+    public DatasetEntity getOrInsertSeries(ObservationContext ctx, final Session session) throws CodedException {
+        return getOrInsert(ctx, session);
+
     public List<DatasetEntity> getSeries(String procedure, String observableProperty, Session session) {
         return (List<DatasetEntity>) getSeriesCriteriaFor(procedure, observableProperty, session).list();
     }

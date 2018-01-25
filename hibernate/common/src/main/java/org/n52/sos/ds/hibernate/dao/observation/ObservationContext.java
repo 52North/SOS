@@ -49,6 +49,7 @@ import com.google.common.base.Strings;
  * observableProperty, procedure).
  *
  * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  * @since 4.0.0
  *
  */
@@ -58,45 +59,39 @@ public class ObservationContext {
     private ProcedureEntity procedure;
     private OfferingEntity offering;
     private boolean hiddenChild = false;
+    private boolean publish = true;
 
     /**
-     * @return the featureOfInterest
+     * Indicates that the series of the observation should be published
      */
+    public boolean isPublish() {
+        return publish;
+    }
+
+    public void setPublish(boolean publish) {
+        this.publish = publish;
+    }
+
     public AbstractFeatureEntity getFeatureOfInterest() {
         return featureOfInterest;
     }
 
-    /**
-     * @param featureOfInterest
-     *                          the featureOfInterest to set
-     */
     public void setFeatureOfInterest(AbstractFeatureEntity featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
     }
 
-    /**
-     * @return the observableProperty
-     */
     public PhenomenonEntity getPhenomenon() {
         return observableProperty;
     }
 
-    /**
-     * @param observableProperty
-     *                           the observableProperty to set
-     */
     public void setPhenomenon(PhenomenonEntity observableProperty) {
         this.observableProperty = observableProperty;
     }
 
-    /**
-     * @return the procedure
-     */
     public ProcedureEntity getProcedure() {
         return procedure;
     }
 
-    private String seriesType;
 
     /**
      * @param procedure
@@ -125,9 +120,6 @@ public class ObservationContext {
         return offering;
     }
 
-    /**
-     * @param offering the offering to set
-     */
     public void setOffering(OfferingEntity offering) {
         this.offering = offering;
     }
@@ -180,7 +172,7 @@ public class ObservationContext {
     }
 
     public String getSeriesType() {
-        return this.seriesType;
+        return seriesType;
     }
 
     public boolean isSetSeriesType() {
@@ -192,7 +184,7 @@ public class ObservationContext {
     }
 
     public boolean isHiddenChild() {
-        return this.hiddenChild;
+        return hiddenChild;
     }
 
 }

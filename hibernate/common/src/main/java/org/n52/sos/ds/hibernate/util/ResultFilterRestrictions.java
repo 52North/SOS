@@ -55,28 +55,37 @@ public class ResultFilterRestrictions {
     public static Criterion getResultFilterExpression(ComparisonFilter resultFilter,
             ResultFilterClasses resultFilterClasses, String subqueryColumn, String column)
             throws CodedException {
+        return getResultFilterExpression(resultFilter, resultFilterClasses, subqueryColumn, column, null);
+    }
+    
+    public static Criterion getResultFilterExpression(ComparisonFilter resultFilter, ResultFilterClasses resultFilterClasses, String column, SubQueryIdentifier identifier) throws CodedException {
+        return getResultFilterExpression(resultFilter, resultFilterClasses, column, column, identifier);
+    }
+
+    public static Criterion getResultFilterExpression(ComparisonFilter resultFilter,
+            ResultFilterClasses resultFilterClasses, String subqueryColumn, String column, SubQueryIdentifier identifier) throws NoApplicableCodeException, InvalidParameterValueException {
         List<DetachedCriteria> list = new LinkedList<>();
-        List<DetachedCriteria> complexLlist = new LinkedList<>();
+        List<DetachedCriteria> complexList = new LinkedList<>();
         switch (resultFilter.getOperator()) {
             case PropertyIsEqualTo:
                 if (isNumeric(resultFilter.getValue())) {
                     list.add(createEqDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()), column));
-                    complexLlist.add(createEqDC(createDC(resultFilterClasses.getNumeric()),
+                    complexList.add(createEqDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()), DataEntity.PROPERTY_ID));
                 }
                 if (isCount(resultFilter.getValue())) {
                     list.add(createEqDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), column));
-                    complexLlist.add(createEqDC(createDC(resultFilterClasses.getCount()),
+                    complexList.add(createEqDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (!isNumeric(resultFilter.getValue()) && !isCount(resultFilter.getValue())) {
                     list.add(createEqDC(createDC(resultFilterClasses.getCategory()), resultFilter.getValue(), column));
                     list.add(createEqDC(createDC(resultFilterClasses.getText()), resultFilter.getValue(), column));
-                    complexLlist.add(createEqDC(createDC(resultFilterClasses.getCategory()), resultFilter.getValue(),
+                    complexList.add(createEqDC(createDC(resultFilterClasses.getCategory()), resultFilter.getValue(),
                            DataEntity.PROPERTY_ID));
-                    complexLlist.add(createEqDC(createDC(resultFilterClasses.getText()), resultFilter.getValue(),
+                    complexList.add(createEqDC(createDC(resultFilterClasses.getText()), resultFilter.getValue(),
                            DataEntity.PROPERTY_ID));
                 }
                 break;
@@ -85,7 +94,7 @@ public class ResultFilterRestrictions {
                     list.add(createBetweenDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), Integer.parseInt(resultFilter.getValueUpper()),
                             column));
-                    complexLlist.add(createBetweenDC(createDC(resultFilterClasses.getCount()),
+                    complexList.add(createBetweenDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), Integer.parseInt(resultFilter.getValueUpper()),
                            DataEntity.PROPERTY_ID));
                 }
@@ -93,7 +102,7 @@ public class ResultFilterRestrictions {
                     list.add(createBetweenDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()),
                             Double.parseDouble(resultFilter.getValueUpper()), column));
-                    complexLlist.add(createBetweenDC(createDC(resultFilterClasses.getNumeric()),
+                    complexList.add(createBetweenDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()),
                             Double.parseDouble(resultFilter.getValueUpper()),DataEntity.PROPERTY_ID));
                 }
@@ -105,13 +114,13 @@ public class ResultFilterRestrictions {
                 if (isCount(resultFilter.getValue())) {
                     list.add(createGtDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), column));
-                    complexLlist.add(createGtDC(createDC(resultFilterClasses.getCount()),
+                    complexList.add(createGtDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (isNumeric(resultFilter.getValue())) {
                     list.add(createGtDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()), column));
-                    complexLlist.add(createGtDC(createDC(resultFilterClasses.getNumeric()),
+                    complexList.add(createGtDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (!isNumeric(resultFilter.getValue()) && !isCount(resultFilter.getValue())) {
@@ -122,13 +131,13 @@ public class ResultFilterRestrictions {
                 if (isCount(resultFilter.getValue())) {
                     list.add(createGeDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), column));
-                    complexLlist.add(createGeDC(createDC(resultFilterClasses.getCount()),
+                    complexList.add(createGeDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (isNumeric(resultFilter.getValue())) {
                     list.add(createGeDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()), column));
-                    complexLlist.add(createGeDC(createDC(resultFilterClasses.getNumeric()),
+                    complexList.add(createGeDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (!isNumeric(resultFilter.getValue()) && !isCount(resultFilter.getValue())) {
@@ -139,13 +148,13 @@ public class ResultFilterRestrictions {
                 if (isCount(resultFilter.getValue())) {
                     list.add(createLtDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), column));
-                    complexLlist.add(createLtDC(createDC(resultFilterClasses.getCount()),
+                    complexList.add(createLtDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (isNumeric(resultFilter.getValue())) {
                     list.add(createLtDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()), column));
-                    complexLlist.add(createLtDC(createDC(resultFilterClasses.getNumeric()),
+                    complexList.add(createLtDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (!isNumeric(resultFilter.getValue()) && !isCount(resultFilter.getValue())) {
@@ -156,13 +165,13 @@ public class ResultFilterRestrictions {
                 if (isCount(resultFilter.getValue())) {
                     list.add(createLeDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), column));
-                    complexLlist.add(createLeDC(createDC(resultFilterClasses.getCount()),
+                    complexList.add(createLeDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (isNumeric(resultFilter.getValue())) {
                     list.add(createLeDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()), column));
-                    complexLlist.add(createLeDC(createDC(resultFilterClasses.getNumeric()),
+                    complexList.add(createLeDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (!isNumeric(resultFilter.getValue()) && !isCount(resultFilter.getValue())) {
@@ -172,18 +181,30 @@ public class ResultFilterRestrictions {
             case PropertyIsLike:
                 list.add(createLikeDC(createDC(resultFilterClasses.getCategory()), resultFilter, column));
                 list.add(createLikeDC(createDC(resultFilterClasses.getText()), resultFilter, column));
-                complexLlist.add(createLikeDC(createDC(resultFilterClasses.getCategory()), resultFilter,
+                complexList.add(createLikeDC(createDC(resultFilterClasses.getCategory()), resultFilter,
                        DataEntity.PROPERTY_ID));
-                complexLlist.add(
+                complexList.add(
                         createLikeDC(createDC(resultFilterClasses.getText()), resultFilter,DataEntity.PROPERTY_ID));
                 break;
             default:
                 throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER + ".operator",
                         resultFilter.getOperator().toString());
         }
-        if (!complexLlist.isEmpty()) {
-            list.add(createProfileDC(createDC(resultFilterClasses.getProfile(), "po"), complexLlist, column));
-            list.add(createComplexDC(createDC(resultFilterClasses.getComplex(), "co"), complexLlist, column));
+        if (!complexList.isEmpty()) {
+            if (identifier == null) {
+                if (HibernateHelper.isEntitySupported(resultFilterClasses.getProfile())) {
+                    list.add(createProfileDC(createDC(resultFilterClasses.getProfile(), "po"), complexList, column));
+                }
+                if (HibernateHelper.isEntitySupported(resultFilterClasses.getComplex())) {
+                    list.add(createComplexDC(createDC(resultFilterClasses.getComplex(), "co"), complexList, column));
+                }
+            } else if (identifier.equals(SubQueryIdentifier.Profile) && HibernateHelper.isEntitySupported(resultFilterClasses.getProfile())) {
+                list.clear();
+                list.add(createProfileDC(createDC(resultFilterClasses.getProfile(), "po"), complexList, column));
+            } else if (identifier.equals(SubQueryIdentifier.Complex) && HibernateHelper.isEntitySupported(resultFilterClasses.getComplex())) {
+                list.clear();
+                list.add(createComplexDC(createDC(resultFilterClasses.getComplex(), "co"), complexList, column));
+            }
         }
         if (!list.isEmpty()) {
             if (list.size() > 1) {
@@ -293,4 +314,8 @@ public class ResultFilterRestrictions {
         return complex;
     }
 
+    public enum SubQueryIdentifier {
+        Simple, Complex, Profile;
+    }
+    
 }

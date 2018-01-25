@@ -80,9 +80,16 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<DatasetEntity> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
-        return getSeriesCriteria(request, features, session).list();
+        List<DatasetEntity> series = new ArrayList<>();
+        if (CollectionHelper.isNotEmpty(features)) {
+            for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
+                series.addAll(getSeriesSet(request, ids, session));
+            }
+        } else {
+            series.addAll(getSeriesSet(request, features, session));
+        }
+        return series;
     }
 
     @SuppressWarnings("unchecked")
@@ -91,11 +98,10 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
         return getSeriesCriteria(request, session).list();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<DatasetEntity> getSeries(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
-        return getSeriesCriteria(request, session).list();
+        return new ArrayList<>(getSeriesCriteria(request, session));
     }
 
     @SuppressWarnings("unchecked")

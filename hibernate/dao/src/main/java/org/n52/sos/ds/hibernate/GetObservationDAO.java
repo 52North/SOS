@@ -256,9 +256,6 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     protected ObservationStream queryObservation(final GetObservationRequest request,
                                                    LegacyObservationDAO observationDAO, final Session session)
             throws OwsExceptionReport, ConverterException {
-        if (request.isSetResultFilter()) {
-            throw new NotYetSupportedException("result filtering");
-        }
 
         final long start = System.currentTimeMillis();
         // get valid featureOfInterest identifier
@@ -341,10 +338,6 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     protected ObservationStream querySeriesObservation(GetObservationRequest request,
                                                          AbstractSeriesObservationDAO observationDAO, Session session)
             throws OwsExceptionReport, ConverterException {
-        if (request.isSetResultFilter()) {
-            throw new NotYetSupportedException("result filtering");
-        }
-
         final long start = System.currentTimeMillis();
         // get valid featureOfInterest identifier
         final Set<String> features = getFeatures(request, session);

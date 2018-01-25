@@ -1,0 +1,21 @@
+<h4>
+  <div class="glyphicon glyphicon-refresh loading icon-spin" ng-hide="$ctrl.timeseries.id"></div>
+  <span ng-if="$ctrl.timeseries.id">
+    <swc-label-mapper label="$ctrl.timeseries.label"></swc-label-mapper>
+  </span>
+</h4>
+<div class="tsItem" ng-class="{selected : selected}">
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" ng-disabled="!$ctrl.timeseries.id" ng-model="$ctrl.timeseries.selected" ng-change="$ctrl.toggled()">
+            <swc-label-mapper label="$ctrl.timeseries.procedure.label"></swc-label-mapper>
+            <span ng-show="$ctrl.timeseries.category.label">(<swc-label-mapper label="$ctrl.timeseries.category.label"></swc-label-mapper>)</span>
+        </label>
+        <swc-favorite-add-star timeseries="$ctrl.timeseries"></swc-favorite-add-star>
+        <div class="additionalInfo" ng-show="$ctrl.timeseries.lastValue">
+            <span>{{$ctrl.timeseries.lastValue.value}}</span>
+            <swc-label-mapper ng-if="$ctrl.timeseries.uom" label="$ctrl.timeseries.uom"></swc-label-mapper>
+            <span>({{$ctrl.timeseries.lastValue.timestamp| date: 'dd.MM.yy HH:mm'}})</span>
+        </div>
+    </div>
+</div>

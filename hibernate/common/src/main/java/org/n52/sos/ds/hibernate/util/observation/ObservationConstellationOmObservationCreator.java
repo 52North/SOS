@@ -46,6 +46,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
+import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.generator.AbstractHibernateProcedureDescriptionGeneratorSml;
 import org.slf4j.Logger;

@@ -288,6 +288,7 @@ This project includes:
   OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under GNU Lesser General Public License (LGPL) version 2.1
+  org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   Postgis JDBC Driver under GNU Lesser General Public License
   PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License

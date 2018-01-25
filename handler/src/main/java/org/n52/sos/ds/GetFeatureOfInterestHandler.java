@@ -66,6 +66,7 @@ import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.sos.ds.dao.GetFeatureOfInterestDao;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSConverter;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -180,7 +181,8 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             sampFeat.setDescription(feature.getDescription());
         }
         if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
-            sampFeat.setGeometry(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(feature.getGeometryEntity().getGeometry()));
+            sampFeat.setGeometry(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
+                    JTSConverter.convert(feature.getGeometryEntity().getGeometry())));
         }
         final Set<FeatureEntity> parentFeatures = feature.getParents();
         if (parentFeatures != null && !parentFeatures.isEmpty()) {

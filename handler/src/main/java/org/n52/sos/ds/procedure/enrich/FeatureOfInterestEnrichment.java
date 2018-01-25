@@ -145,7 +145,9 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
         }
         if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
             if (getProcedureCreationContext().getGeometryHandler() != null) {
-            sampFeat.setGeometry(getProcedureCreationContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(feature.getGeometryEntity().getGeometry()));
+                sampFeat.setGeometry(getProcedureCreationContext().getGeometryHandler()
+                        .switchCoordinateAxisFromToDatasourceIfNeeded(
+                                JTSConverter.convert(feature.getGeometryEntity().getGeometry())));
             } else {
                 sampFeat.setGeometry(JTSConverter.convert(feature.getGeometryEntity().getGeometry()));
             }

@@ -33,6 +33,7 @@ import static org.hibernate.criterion.Restrictions.eq;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -78,6 +79,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+
+import org.locationtech.jts.geom.Geometry;
 
 public abstract class AbstractSeriesObservationDAO extends AbstractObservationDAO {
 
@@ -288,7 +291,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                 && HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), GeometryEntity.PROPERTY_LAT)) {
             criteria.add(Restrictions.and(Restrictions.isNotNull(GeometryEntity.PROPERTY_LAT),
                     Restrictions.isNotNull(GeometryEntity.PROPERTY_LON)));
-            List<org.locationtech.jts.geom.Geometry> samplingGeometries = Lists.newArrayList();
+            List<org.locationtech.jts.geom.Geometry> samplingGeometries = new LinkedList<>();
             LOGGER.debug("QUERY getSamplingGeometries(feature): {}", HibernateHelper.getSqlString(criteria));
             for (DataEntity element : (List<DataEntity>)criteria.list()) {
                 samplingGeometries.add(JTSConverter.convert(element.getGeometryEntity().getGeometry()));

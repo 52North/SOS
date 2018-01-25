@@ -42,7 +42,6 @@ import java.sql.SQLException;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
-
 import org.geotools.metadata.sql.MetadataSource;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -56,13 +55,12 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.hibernate.tool.schema.TargetType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.UpdateableConnectionProvider;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -74,7 +72,7 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
     private int maxConnections;
 
-
+    @Override
     public String getUpdateScript() throws ConnectionProviderException {
         Configuration configuration = getConfiguration();
         if (configuration == null) {

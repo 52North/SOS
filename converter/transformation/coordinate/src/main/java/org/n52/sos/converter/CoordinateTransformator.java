@@ -41,6 +41,12 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
@@ -65,7 +71,6 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
@@ -118,18 +123,11 @@ import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSConverter;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 
 /**
  * Class that transforms geometries in the requests to the stored EPSG code and
@@ -757,8 +755,8 @@ public class CoordinateTransformator
      *             If an error occurs when parsing the request
      */
     private int getCrsFrom(OwsServiceRequest request) throws OwsExceptionReport {
-        Optional<?> crsExtension =
-                request.getExtension(OWSConstants.AdditionalRequestParams.crs).map(Extension::getValue);
+        Optional<?> crsExtension = request.getExtension(OWSConstants.AdditionalRequestParams.crs).map((extension) ->
+                extension.getValue());
 
         if (crsExtension.isPresent()) {
             return getCrs(crsExtension.get());
@@ -872,7 +870,7 @@ public class CoordinateTransformator
      *             If the transformation fails
      */
     private void preProcessSpatialFilter(SpatialFilter spatialFilter) throws OwsExceptionReport {
-        spatialFilter.setGeometry(JTSConverter.convert(getGeomtryHandler().transformToStorageEpsg(spatialFilter.getGeometry())));
+        spatialFilter.setGeometry(getGeomtryHandler().transformToStorageEpsg(spatialFilter.getGeometry()));
 
     }
 

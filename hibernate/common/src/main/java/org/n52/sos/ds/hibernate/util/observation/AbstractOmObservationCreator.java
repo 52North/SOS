@@ -30,9 +30,10 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import org.hibernate.query.Query;;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.convert.ConverterException;
@@ -79,7 +80,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
@@ -411,7 +411,7 @@ public abstract class AbstractOmObservationCreator {
     }
 
     private List<AdditionalObservationCreatorKey> getAdditionalObservationCreatorKeys(DataEntity<?> hObservation) {
-        List<AdditionalObservationCreatorKey> keys = Lists.newArrayList();
+        List<AdditionalObservationCreatorKey> keys = new LinkedList<>();
         keys.add(new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass()));
         keys.add(new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass().getSuperclass()));
         keys.add(new AdditionalObservationCreatorKey(null, hObservation.getClass()));
@@ -421,7 +421,7 @@ public abstract class AbstractOmObservationCreator {
 
     private List<AdditionalObservationCreatorKey> getAdditionalObservationCreatorKeys(List<MediaType> acceptType,
             DataEntity<?> hObservation) {
-        List<AdditionalObservationCreatorKey> keys = Lists.newArrayList();
+        List<AdditionalObservationCreatorKey> keys = new LinkedList<>();
         for (MediaType mediaType : acceptType) {
             keys.add(new AdditionalObservationCreatorKey(mediaType.withoutParameters().toString(),
                     hObservation.getClass()));

@@ -45,6 +45,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.DataEntity;
@@ -86,11 +87,11 @@ import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class AbstractSeriesDAO
         extends AbstractIdentifierNameDescriptionDAO {
@@ -851,7 +852,7 @@ public abstract class AbstractSeriesDAO
             Session session) throws OwsExceptionReport {
         if (request.hasSpatialFilter()) {
             SpatialFilter filter = request.getSpatialFilter();
-            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(filter.getGeometry());
+            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
             if (filter.getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)) {
                 DetachedCriteria dc = DetachedCriteria.forClass(getObservationFactory().observationClass());
                 dc.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY, filter.getOperator(),
@@ -872,7 +873,7 @@ public abstract class AbstractSeriesDAO
             Session session) throws OwsExceptionReport {
         if (request.isSetSpatialFilter()) {
             SpatialFilter filter = request.getSpatialFilter();
-            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(filter.getGeometry());
+            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
             if (filter.getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)) {
                 DetachedCriteria dc = DetachedCriteria.forClass(getObservationFactory().observationClass());
                 dc.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY, filter.getOperator(),

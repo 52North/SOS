@@ -69,10 +69,7 @@ import org.n52.sos.util.IncDecInteger;
 import org.n52.sos.util.SweHelper;
 
 import com.google.common.base.Strings;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.io.WKTWriter;
+import org.locationtech.jts.io.WKTWriter;
 
 /**
  * @since 4.0.0

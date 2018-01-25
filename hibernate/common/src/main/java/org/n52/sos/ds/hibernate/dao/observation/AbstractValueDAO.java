@@ -86,7 +86,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
                     c.add(SpatialRestrictions.filter(
                             DataEntity.PROPERTY_GEOMETRY_ENTITY,
                             ((GetObservationRequest)request).getSpatialFilter().getOperator(),
-                            GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(
+                            GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
                                     ((GetObservationRequest)request).getSpatialFilter().getGeometry())));
                 } else {
                     // TODO add filter with lat/lon

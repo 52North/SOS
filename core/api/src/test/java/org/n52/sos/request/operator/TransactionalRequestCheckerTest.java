@@ -40,7 +40,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
-import com.vividsolutions.jts.io.ParseException;
+import org.locationtech.jts.io.ParseException;
 
 /**
  * @since 4.0.0

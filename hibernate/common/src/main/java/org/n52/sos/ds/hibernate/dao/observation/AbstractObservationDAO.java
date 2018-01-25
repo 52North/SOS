@@ -42,7 +42,6 @@ import java.util.TreeSet;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -53,6 +52,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.query.Query;
 import org.hibernate.spatial.criterion.SpatialProjections;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
@@ -154,8 +154,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-//import com.vividsolutions.jts.geom.Envelope;
-//import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract Hibernate data access class for observations.
@@ -1310,9 +1308,8 @@ public abstract class AbstractObservationDAO
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
             c.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY, request.getSpatialFilter().getOperator(),
                     getGeometryHandler()
-                            .switchCoordinateAxisFromToDatasourceIfNeededAndConvert(request.getSpatialFilter().getGeometry())));
+                            .switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter().getGeometry())));
         }
-
     }
 
     protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
@@ -1955,7 +1952,7 @@ public abstract class AbstractObservationDAO
             // check if flag is set and if this observation is not a child
             // observation
             if (samplingGeometry != null && isUpdateFeatureGeometry() && !childObservation) {
-                daos.feature.updateFeatureOfInterestGeometry(featureOfInterest, JTSConverter.convert(samplingGeometry), session);
+                daos.feature.updateFeatureOfInterestGeometry(featureOfInterest, samplingGeometry, session);
             }
         }
 

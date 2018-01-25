@@ -37,13 +37,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Criteria;import org.hibernate.query.Query;;
+import org.hibernate.Criteria;import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
+import org.locationtech.jts.geom.Point;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.janmayen.function.Suppliers;
 import org.n52.janmayen.http.HTTPStatus;
@@ -84,11 +85,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+
 
 /**
  * Hibernate data access class for featureOfInterest
@@ -485,7 +486,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             final String newId = value.getIdentifierCodeWithAuthority().getValue();
             Geometry geom = null;
             if (value instanceof FeatureWithGeometry) {
-                geom = JTSConverter.convert(((FeatureWithGeometry) value).getGeometry());
+                geom = ((FeatureWithGeometry) value).getGeometry();
 
             }
             return dao.getFeatureOfInterest(newId, geom, session);
@@ -496,21 +497,22 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
         if (featureOfInterest.isSetGeometry()) {
             if (geom instanceof Point) {
                 List<Coordinate> coords = Lists.newArrayList();
-                if (featureOfInterest.getGeometry() instanceof Point) {
-                    coords.add(featureOfInterest.getGeometry().getCoordinate());
-                } else if (featureOfInterest.getGeometry() instanceof LineString) {
-                    coords.addAll(Lists.newArrayList(featureOfInterest.getGeometry().getCoordinates()));
+                Geometry convert = JTSConverter.convert(featureOfInterest.getGeometry());
+                if (convert instanceof Point) {
+                    coords.add(convert.getCoordinate());
+                } else if (convert instanceof LineString) {
+                    coords.addAll(Lists.newArrayList(convert.getCoordinates()));
                 }
                 if (!coords.isEmpty()) {
                     coords.add(geom.getCoordinate());
                     Geometry newGeometry =
                             new GeometryFactory().createLineString(coords.toArray(new Coordinate[coords.size()]));
                     newGeometry.setSRID(featureOfInterest.getGeometry().getSRID());
-                    featureOfInterest.setGeometry(newGeometry);
+                    featureOfInterest.setGeometry(JTSConverter.convert(newGeometry));
                 }
             }
         } else {
-            featureOfInterest.setGeometry(geom);
+            featureOfInterest.setGeometry(JTSConverter.convert(geom));
         }
         session.saveOrUpdate(featureOfInterest);
     }

@@ -71,6 +71,7 @@ import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.service.SosSettings;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSConverter;
 import org.n52.svalbard.ConformanceClasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -282,8 +283,8 @@ public class GetResultDAO extends AbstractGetResultHandler {
                 criteria.add(SpatialRestrictions.filter(
                         DataEntity.PROPERTY_GEOMETRY_ENTITY,
                         request.getSpatialFilter().getOperator(),
-                        geometryHandler.switchCoordinateAxisFromToDatasourceIfNeededAndConvert(
-                                request.getSpatialFilter().getGeometry())));
+                        geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
+                                request.getSpatialFilter().getGeometry().toGeometry())));
         }
     }
 }

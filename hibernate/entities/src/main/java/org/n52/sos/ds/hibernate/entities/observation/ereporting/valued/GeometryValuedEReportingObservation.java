@@ -34,7 +34,7 @@ import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisito
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class GeometryValuedEReportingObservation
         extends AbstractValuedEReportingObservation<Geometry>

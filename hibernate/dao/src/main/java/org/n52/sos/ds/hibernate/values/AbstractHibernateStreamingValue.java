@@ -74,7 +74,7 @@ import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.util.GmlHelper;
 
 import com.google.common.collect.Maps;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * Abstract class for Hibernate streaming values

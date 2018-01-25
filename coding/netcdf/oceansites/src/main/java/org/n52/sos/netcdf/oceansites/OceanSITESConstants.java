@@ -28,8 +28,8 @@
  */
 package org.n52.sos.netcdf.oceansites;
 
-import org.n52.shetland.ogc.OGCConstants;
 import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.OGCConstants;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableListMultimap;

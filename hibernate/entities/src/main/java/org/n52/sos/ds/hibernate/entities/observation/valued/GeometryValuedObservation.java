@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.entities.observation.valued;
 
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * A {@link ValuedObservation} that holds a {@link Geometry} value.

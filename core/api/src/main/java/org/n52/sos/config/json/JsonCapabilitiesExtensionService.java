@@ -392,7 +392,7 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
     }
 
     private static <T extends Extension<?>> Collector<T, ?, Map<String, T>> swesExtensionCollector() {
-        return toMap(Extension<?>::getIdentifier, Function.identity());
+        return toMap(Extension::getIdentifier, Function.identity());
     }
 
     private static class StaticCapabilitiesImpl implements StaticCapabilities {

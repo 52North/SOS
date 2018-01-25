@@ -40,7 +40,6 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature
 import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosWritableContentCache;
 
-import com.google.common.collect.Lists;
 import org.locationtech.jts.geom.Envelope;
 
 /**

@@ -52,7 +52,7 @@ import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO implements HibernateSqlQueryConstants {
 
@@ -77,7 +77,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         final Criteria c = getDefaultCriteria(session)
                 .setProjection(Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
         if (filter != null && (filter.getGeometry().getGeometry().isPresent() || filter.getGeometry().getEnvelope().isPresent())) {
-                c.add(SpatialRestrictions.filter(AbstractFeatureEntity.GEOMETRY, filter.getOperator(), JTSConverter.convert(filter.getGeometry().toGeometry())));
+                c.add(SpatialRestrictions.filter(AbstractFeatureEntity.GEOMETRY, filter.getOperator(), filter.getGeometry().toGeometry()));
         }
         return c.list();
     }
@@ -184,12 +184,15 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         return c;
     }
 
-    private void addSpatialFilters(Criteria c, Collection<SpatialFilter> filters) throws OwsExceptionReport {
+    private void addSpatialFilters(Criteria c, Collection<SpatialFilter> filters)
+            throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(filters)) {
             final Disjunction disjunction = Restrictions.disjunction();
             for (final SpatialFilter filter : filters) {
-                if (filter != null && (filter.getGeometry().getGeometry().isPresent() || filter.getGeometry().getEnvelope().isPresent())) {
-                    disjunction.add(SpatialRestrictions.filter(AbstractFeatureEntity.GEOMETRY, filter.getOperator(), JTSConverter.convert(filter.getGeometry().toGeometry())));
+                if (filter != null && (filter.getGeometry().getGeometry().isPresent()
+                        || filter.getGeometry().getEnvelope().isPresent())) {
+                    disjunction.add(SpatialRestrictions.filter(AbstractFeatureEntity.GEOMETRY, filter.getOperator(),
+                            filter.getGeometry().toGeometry()));
                 }
             }
             c.add(disjunction);

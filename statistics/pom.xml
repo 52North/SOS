@@ -9,6 +9,7 @@
     <name>52°North SOS - OGC Statistics</name>
     <description>52°North SOS - OGC Statistics</description>
     <dependencies>
+        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
@@ -44,6 +45,7 @@
         <dependency>
             <groupId>com.vividsolutions</groupId>
             <artifactId>jts</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.locationtech.jts</groupId>

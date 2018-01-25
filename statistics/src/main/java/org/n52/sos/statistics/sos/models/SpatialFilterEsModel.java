@@ -32,17 +32,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.elasticsearch.common.geo.builders.PointBuilder;
 import org.elasticsearch.common.geo.builders.PolygonBuilder;
 import org.elasticsearch.common.geo.builders.ShapeBuilder;
+import org.locationtech.jts.geom.Coordinate;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.vividsolutions.jts.geom.Coordinate;
 
 public class SpatialFilterEsModel extends AbstractElasticsearchModel {
 
@@ -112,7 +111,7 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
     }
 
     private void createEquals(SpatialFilter filter) {
-        Coordinate[] points = JTSConverter.convert(filter.getGeometry().getCoordinates());
+        Coordinate[] points = filter.getGeometry().getCoordinates();
         if (points.length != 1) {
             throw new IllegalArgumentException("Invalid number of coordinates in geometry. It should be a point. Got " + points.length);
         }
@@ -128,8 +127,8 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
      */
     private void createBbox(SpatialFilter filter) {
         PolygonBuilder polygon = PolygonBuilder.newPolygon();
-        for (Coordinate coord : JTSConverter.convert(filter.getGeometry().getCoordinates())) {
-            polygon.point(coord);
+        for (Coordinate coord : filter.getGeometry().getCoordinates()) {
+            polygon.point(JTSConverter.convert(coord));
         }
 
         createSpatialFilter(filter, polygon);

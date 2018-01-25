@@ -37,7 +37,7 @@ import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public abstract class AbstractBaseObservation
         extends AbstractIdentifierNameDescriptionEntity

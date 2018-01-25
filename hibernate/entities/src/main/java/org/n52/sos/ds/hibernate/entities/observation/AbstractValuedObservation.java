@@ -65,6 +65,8 @@ import org.n52.sos.ds.hibernate.util.observation.RelatedObservationAdder;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSConverter;
 
+import org.locationtech.jts.geom.Geometry;
+
 /**
  * Abstract implementation of {@code ValuedLegacyObservation}.
  *

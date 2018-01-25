@@ -48,6 +48,7 @@ import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.util.JTSConverter;
 
 import com.google.common.collect.Lists;
 
@@ -148,7 +149,7 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity>
      */
     protected Geometry createGeometryFrom(FeatureEntity feature) throws OwsExceptionReport {
         if (feature.isSetGeometry()) {
-            return getContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeededAndConvert(feature.getGeometryEntity().getGeometry());
+            return getContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(JTSConverter.convert(feature.getGeometryEntity().getGeometry()));
         } else {
             if (!feature.isSetUrl() && getContext().getSession() != null) {
                 if (getContext().createFeatureGeometryFromSamplingGeometries()) {

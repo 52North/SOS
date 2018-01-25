@@ -53,6 +53,9 @@ import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSConverter;
 import org.n52.sos.util.builder.SamplingFeatureBuilder;
 
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+
 /**
  * TODO JavaDoc
  *

@@ -36,6 +36,10 @@ import java.util.TreeMap;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.io.WKTWriter;
 import org.n52.series.db.beans.BlobDataEntity;
 import org.n52.series.db.beans.BooleanDataEntity;
 import org.n52.series.db.beans.CategoryDataEntity;
@@ -66,13 +70,10 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.IncDecInteger;
+import org.n52.sos.util.JTSConverter;
 import org.n52.svalbard.util.SweHelper;
 
 import com.google.common.base.Strings;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.io.WKTWriter;
 
 /**
  * @since 4.0.0
@@ -120,8 +121,8 @@ public class ResultHandlingHelper {
                     final String definition = valueOrder.get(intger);
                     switch (definition) {
                         case PHENOMENON_TIME:
-                            builder.append(getTimeStringForPhenomenonTime(observation.getPhenomenonTimeStart(),
-                                                                          observation.getPhenomenonTimeEnd(), noDataPlaceholder));
+                            builder.append(getTimeStringForPhenomenonTime(observation.getSamplingTimeStart(),
+                                                                          observation.getSamplingTimeEnd(), noDataPlaceholder));
                             break;
                         case RESULT_TIME:
                             builder.append(getTimeStringForResultTime(observation.getResultTime(), noDataPlaceholder));
@@ -357,7 +358,7 @@ public class ResultHandlingHelper {
                 return String.valueOf(((TextDataEntity) observation).getValue());
             } else if (observation instanceof GeometryDataEntity) {
                 final WKTWriter writer = new WKTWriter();
-                return writer.write(((GeometryDataEntity) observation).getValue().getGeometry());
+                return writer.write(JTSConverter.convert(((GeometryDataEntity) observation).getValue().getGeometry()));
             } else if (observation instanceof BlobDataEntity) {
                 return String.valueOf(((BlobDataEntity) observation).getValue());
             }
@@ -365,7 +366,9 @@ public class ResultHandlingHelper {
         return "";
     }
 
-    private String getSamplingGeometry(DataEntity<?> observation, String tokenSeparator, SweAbstractDataComponent sweAbstractDataComponent, String noDataPlaceholder) throws OwsExceptionReport {
+    private String getSamplingGeometry(DataEntity<?> observation, String tokenSeparator,
+            SweAbstractDataComponent sweAbstractDataComponent, String noDataPlaceholder)
+            throws OwsExceptionReport {
         SweVector vector = getVector(sweAbstractDataComponent);
         if (vector != null && vector.isSetCoordinates()) {
             final Map<Integer, String> valueOrder = new HashMap<>(0);
@@ -373,7 +376,8 @@ public class ResultHandlingHelper {
             final StringBuilder builder = new StringBuilder();
             Geometry samplingGeometry = null;
             if (observation.isSetGeometryEntity()) {
-                samplingGeometry = getGeomtryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(observation.getGeometryEntity().getGeometry());
+                samplingGeometry = getGeomtryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
+                        JTSConverter.convert(observation.getGeometryEntity().getGeometry()));
             }
             for (final Integer intger : valueOrder.keySet()) {
                 final String definition = valueOrder.get(intger);

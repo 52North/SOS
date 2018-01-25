@@ -59,6 +59,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.sos.util.JTSConverter;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,7 +162,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             // add SpatialFilteringProfile
             if (hObservation.isSetGeometryEntity()) {
                 sosObservation.addSpatialFilteringProfileParameter(getGeometryHandler()
-                        .switchCoordinateAxisFromToDatasourceIfNeededAndConvert(hObservation.getGeometryEntity().getGeometry()));
+                        .switchCoordinateAxisFromToDatasourceIfNeeded(JTSConverter.convert(hObservation.getGeometryEntity().getGeometry())));
             }
             addRelatedObservations(sosObservation, hObservation);
             addParameter(sosObservation, hObservation);

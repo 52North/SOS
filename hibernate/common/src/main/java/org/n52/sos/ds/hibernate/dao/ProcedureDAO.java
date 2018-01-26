@@ -63,6 +63,7 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -742,31 +743,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * Insert and get procedure object
      *
      * @param identifier
-     *            ProcedureEntity identifier
-     * @param procedureDescriptionFormat
-     *            ProcedureEntity description format object
-     * @param parentProcedures
-     *            Parent procedure identifiers
-     * @param session
-     *            Hibernate session
-     * @return Procedure object
-     *
-     * @deprecated use
-     *      {@link #getOrInsertProcedure(String, ProcedureDescriptionFormat, SosProcedureDescription, boolean, Session)}
-     */
-    @Deprecated
-    public Procedure getOrInsertProcedure(final String identifier,
-            final ProcedureDescriptionFormat procedureDescriptionFormat, final Collection<String> parentProcedures,
-            final Session session) {
-        SosProcedureDescription procedure = new SosProcedureDescriptionUnknowType(identifier,
-                procedureDescriptionFormat.getProcedureDescriptionFormat(), "").setParentProcedures(parentProcedures);
-        return getOrInsertProcedure(identifier, procedureDescriptionFormat, procedure, false, session);
-    }
-
-    /**
-     * Insert and get procedure object
-     *
-     * @param identifier
      *            Procedure identifier
      * @param procedureDescriptionFormat
      *            Procedure description format object
@@ -816,11 +792,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                     procedure.setInsitu(sml.getInsitu());
                 }
             }
-            if (procedureDescription.isSetInsitu()) {
-                tProcedure.setInsitu(procedureDescription.getInsitu());
-            }
-            tProcedure.setReference(procedureDescription.isReference());
-            procedure = tProcedure;
+            procedure.setReference(procedureDescription.isReference());
         }
         procedure.setDeleted(false);
         session.saveOrUpdate(procedure);

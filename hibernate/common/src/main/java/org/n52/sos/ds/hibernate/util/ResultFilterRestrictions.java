@@ -57,7 +57,7 @@ public class ResultFilterRestrictions {
             throws CodedException {
         return getResultFilterExpression(resultFilter, resultFilterClasses, subqueryColumn, column, null);
     }
-    
+
     public static Criterion getResultFilterExpression(ComparisonFilter resultFilter, ResultFilterClasses resultFilterClasses, String column, SubQueryIdentifier identifier) throws CodedException {
         return getResultFilterExpression(resultFilter, resultFilterClasses, column, column, identifier);
     }
@@ -317,5 +317,5 @@ public class ResultFilterRestrictions {
     public enum SubQueryIdentifier {
         Simple, Complex, Profile;
     }
-    
+
 }

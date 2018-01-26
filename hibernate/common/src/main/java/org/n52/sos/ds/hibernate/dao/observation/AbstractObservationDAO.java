@@ -32,7 +32,6 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -50,7 +49,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.query.Query;
 import org.hibernate.spatial.criterion.SpatialProjections;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
@@ -61,14 +59,9 @@ import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.GeometryEntity;
 import org.n52.series.db.beans.OfferingEntity;
-import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.data.Data.ComplexData;
-import org.n52.series.db.beans.data.Data.ProfileData;
-import org.n52.series.db.beans.data.Data.ReferencedData;
 import org.n52.series.db.beans.parameter.Parameter;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
@@ -78,36 +71,9 @@ import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
-import org.n52.shetland.ogc.gwml.GWMLConstants;
 import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
-import org.n52.shetland.ogc.om.values.BooleanValue;
-import org.n52.shetland.ogc.om.values.CategoryValue;
-import org.n52.shetland.ogc.om.values.ComplexValue;
-import org.n52.shetland.ogc.om.values.CountValue;
-import org.n52.shetland.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.shetland.ogc.om.values.GeometryValue;
-import org.n52.shetland.ogc.om.values.HrefAttributeValue;
-import org.n52.shetland.ogc.om.values.MultiPointCoverage;
-import org.n52.shetland.ogc.om.values.NilTemplateValue;
-import org.n52.shetland.ogc.om.values.ProfileLevel;
-import org.n52.shetland.ogc.om.values.ProfileValue;
-import org.n52.shetland.ogc.om.values.QuantityRangeValue;
-import org.n52.shetland.ogc.om.values.QuantityValue;
-import org.n52.shetland.ogc.om.values.RectifiedGridCoverage;
-import org.n52.shetland.ogc.om.values.ReferenceValue;
-import org.n52.shetland.ogc.om.values.SweDataArrayValue;
-import org.n52.shetland.ogc.om.values.TLVTValue;
-import org.n52.shetland.ogc.om.values.TVPValue;
-import org.n52.shetland.ogc.om.values.TextValue;
-import org.n52.shetland.ogc.om.values.TimeRangeValue;
-import org.n52.shetland.ogc.om.values.UnknownValue;
-import org.n52.shetland.ogc.om.values.Value;
-import org.n52.shetland.ogc.om.values.XmlValue;
-import org.n52.shetland.ogc.om.values.visitor.ProfileLevelVisitor;
-import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
@@ -117,9 +83,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
-import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
-import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.JavaHelper;
@@ -127,12 +90,7 @@ import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.FormatDAO;
-import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
-import org.n52.sos.ds.hibernate.dao.ParameterDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
@@ -150,7 +108,6 @@ import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -1506,10 +1463,13 @@ public abstract class AbstractObservationDAO
         return ParameterFactory.getInstance();
     }
 
-        }
+    protected boolean isIncludeChildObservableProperties() {
+        return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
     }
 
-
+    private GeometryHandler getGeometryHandler() {
+        return GeometryHandler.getInstance();
+    }
 
     /**
      * Observation time extrema {@link ResultTransformer}

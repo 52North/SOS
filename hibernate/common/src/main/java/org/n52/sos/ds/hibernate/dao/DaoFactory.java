@@ -213,6 +213,10 @@ public class DaoFactory {
         return new FormatDAO();
     }
 
+    public FormatDAO getFeatureTypeDAO() {
+        return new FormatDAO();
+    }
+
     public OfferingDAO getOfferingDAO() {
         return new OfferingDAO(this);
     }

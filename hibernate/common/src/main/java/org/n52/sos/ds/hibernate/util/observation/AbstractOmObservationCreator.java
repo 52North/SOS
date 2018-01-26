@@ -33,7 +33,8 @@ import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import org.hibernate.query.Query;
+
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.convert.ConverterException;
@@ -343,7 +344,7 @@ public abstract class AbstractOmObservationCreator {
             throws OwsExceptionReport {
         if (getActiveProfile().isEncodeFeatureOfInterestInObservations()) {
             FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
-            queryObject.addFeatureIdentifier(foi.getIdentifier()).setVersion(getVersion());
+            queryObject.setFeatureObject(foi).addFeatureIdentifier(foi.getIdentifier()).setVersion(getVersion());
             final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
             if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null
                     && !feature.getDefaultElementEncoding()
@@ -386,14 +387,6 @@ public abstract class AbstractOmObservationCreator {
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
         queryObject.setFeatureObject(featureOfInterest).setVersion(getVersion());
         final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
-        return feature;
-    }
-    
-    protected AbstractFeature createFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) throws OwsExceptionReport {
-        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
-        queryObject.setFeature(featureOfInterest).setConnection(getSession()).setVersion(getVersion());
-        final AbstractFeature feature =
-                getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;
     }
 

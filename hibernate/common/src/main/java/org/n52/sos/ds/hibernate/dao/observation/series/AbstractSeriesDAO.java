@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.dao.observation.series;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -248,7 +249,7 @@ public abstract class AbstractSeriesDAO
      *
      * @throws OwsExceptionReport
      */
-    public abstract DatasetEntity getOrInsertSeries(ObservationContext identifiers, Data<?> observation, final Session session)
+    public abstract DatasetEntity getOrInsertSeries(ObservationContext ctx, Data<?> observation, final Session session)
             throws OwsExceptionReport;
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request)
@@ -354,7 +355,7 @@ public abstract class AbstractSeriesDAO
     }
 
     @SuppressWarnings("unchecked")
-    protected Set<Series> getSeriesCriteria(GetDataAvailabilityRequest request, Session session)
+    protected Set<DatasetEntity> getSeriesCriteria(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
         Set<DatasetEntity> set = new LinkedHashSet<>();
         if (request.hasResultFilter()) {
@@ -383,6 +384,16 @@ public abstract class AbstractSeriesDAO
         LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
         return c;
     }
+
+
+    protected Criteria getSeriesCriteria(GetResultRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
+        final Criteria c = createCriteriaFor(request.getObservedProperty(), request.getOffering(), features,
+              session);
+//        checkAndAddResultFilterCriterion(c, request, session);
+//        checkAndAddSpatialFilterCriterion(c, request, session);
+        LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
+        return c;
+}
 
     public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session) {
@@ -853,7 +864,7 @@ public abstract class AbstractSeriesDAO
     protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, SubQueryIdentifier identifier, Session session)
             throws OwsExceptionReport {
         if (request.hasResultFilter() && request.getResultFilter() instanceof ComparisonFilter) {
-            addResultfilter(c, request.getResultFilter(), identifier);
+            addResultfilter(c, (ComparisonFilter) request.getResultFilter(), identifier);
         }
     }
 

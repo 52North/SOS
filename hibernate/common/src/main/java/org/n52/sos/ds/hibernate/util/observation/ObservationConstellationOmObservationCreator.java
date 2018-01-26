@@ -30,8 +30,9 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.List;
 import java.util.Locale;
-import org.hibernate.query.Query;;
+
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -46,7 +47,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.generator.AbstractHibernateProcedureDescriptionGeneratorSml;
 import org.slf4j.Logger;

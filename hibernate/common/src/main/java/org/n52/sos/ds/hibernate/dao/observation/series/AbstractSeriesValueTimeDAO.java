@@ -49,6 +49,8 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

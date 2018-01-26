@@ -28,9 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,7 +36,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -48,12 +47,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.PrecisionModel;
-import org.locationtech.jts.io.ParseException;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
@@ -91,8 +86,8 @@ import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 @Configurable
 public class HibernateFeatureQueryHandler
@@ -125,19 +120,6 @@ public class HibernateFeatureQueryHandler
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
         this.i18NDAORepository = i18NDAORepository;
     }
-    @Override
-    public AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
-        final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
-        try {
-            if (queryObject.isSetFeature() && queryObject.getFeature() instanceof AbstractFeatureOfInterest) {
-                return createSosAbstractFeature((AbstractFeatureOfInterest) queryObject.getFeature(), queryObject);
-            }
-            AbstractFeatureOfInterest feature = getFeatureDAO().getFeature(queryObject.getFeatureIdentifier(), session);
-            return createSosAbstractFeature(feature, queryObject);
-        } catch (final HibernateException he) {
-            throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "An error occurred while querying feature data for a featureOfInterest identifier!");
-        }
 
     @Inject
     public void setGeometryHandler(GeometryHandler geometryHandler) {
@@ -161,19 +143,19 @@ public class HibernateFeatureQueryHandler
 
     @Override
     public AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
-        if (queryObject.isSetFeatureObject() && queryObject.getFeatureObject() instanceof FeatureEntity) {
-            return createSosAbstractFeature((FeatureEntity) queryObject.getFeatureObject(), queryObject);
+        AbstractFeatureEntity<?> feature = null;
+        if (queryObject.isSetFeatureObject() && queryObject.getFeatureObject() instanceof AbstractFeatureEntity) {
+            feature = (FeatureEntity) queryObject.getFeatureObject();
         } else {
             final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
             try {
-                Criteria c = session.createCriteria(FeatureEntity.class)
-                        .add(Restrictions.eq(FeatureEntity.IDENTIFIER, queryObject.getFeatureIdentifier()));
-                return createSosAbstractFeature((FeatureEntity) c.uniqueResult(), queryObject);
+                feature = daoFactory.getFeatureDAO().getFeature(queryObject.getFeatureIdentifier(), session);
             } catch (final HibernateException he) {
                 throw new NoApplicableCodeException().causedBy(he).withMessage(
                         "An error occurred while querying feature data for a featureOfInterest identifier!");
             }
         }
+        return createSosAbstractFeature(feature, queryObject);
     }
 
     @SuppressWarnings("unchecked")
@@ -386,7 +368,7 @@ public class HibernateFeatureQueryHandler
         }
     }
 
-    protected AbstractFeature createSosAbstractFeature(final FeatureEntity feature,
+    protected AbstractFeature createSosAbstractFeature(final AbstractFeatureEntity feature,
             final FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
         final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
         return createSosAbstractFeature(feature, queryObject, session);

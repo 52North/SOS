@@ -42,8 +42,6 @@ import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 
-import com.google.common.base.Strings;
-
 /**
  * Class to carry observation identifiers (featureOfInterest,
  * observableProperty, procedure).
@@ -162,21 +160,6 @@ public class ObservationContext {
         if (isSetOffering()) {
             contextual.setOffering(getOffering());
         }
-//        if (contextual instanceof HasSeriesType && isSetSeriesType()) {
-//            ((HasSeriesType)contextual).setSeriesType(getSeriesType());
-//        }
-    }
-
-    public void setSeriesType(String seriesType) {
-        this.seriesType = seriesType;
-    }
-
-    public String getSeriesType() {
-        return seriesType;
-    }
-
-    public boolean isSetSeriesType() {
-        return !Strings.isNullOrEmpty(getSeriesType());
     }
 
     public void setHiddenChild(boolean hiddenChild) {

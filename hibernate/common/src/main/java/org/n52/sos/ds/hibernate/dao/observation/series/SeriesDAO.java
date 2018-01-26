@@ -74,13 +74,12 @@ public class SeriesDAO extends AbstractSeriesDAO {
     @Override
     public List<DatasetEntity> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws
             OwsExceptionReport {
-        List<Series> series = new ArrayList<>();
+        List<DatasetEntity> series = new ArrayList<>();
         if (CollectionHelper.isNotEmpty(features)) {
-            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesSet(request, ids, session));
             }
-           
+
         } else {
             series.addAll(getSeriesSet(request, features, session));
         }
@@ -96,7 +95,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
     @Override
     public List<DatasetEntity> getSeries(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
-        return  new ArrayList<>(getSeriesCriteria(request, session));
+        return new ArrayList<>(getSeriesCriteria(request, session));
     }
 
     @SuppressWarnings("unchecked")
@@ -169,17 +168,13 @@ public class SeriesDAO extends AbstractSeriesDAO {
         return (DatasetEntity) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
     }
 
-    @Override
-    public DatasetEntity getOrInsertSeries(ObservationContext ctx, final Session session) throws CodedException {
-        return getOrInsert(ctx, session);
-
     public List<DatasetEntity> getSeries(String procedure, String observableProperty, Session session) {
         return (List<DatasetEntity>) getSeriesCriteriaFor(procedure, observableProperty, session).list();
     }
 
     @Override
-    public DatasetEntity getOrInsertSeries(ObservationContext identifiers, Data<?> observation, final Session session) throws OwsExceptionReport {
-        return getOrInsert(identifiers, observation, session);
+    public DatasetEntity getOrInsertSeries(ObservationContext ctx, Data<?> observation, final Session session) throws OwsExceptionReport {
+        return getOrInsert(ctx, observation, session);
     }
 
     @Override

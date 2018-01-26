@@ -18,8 +18,9 @@
     
     <scm>
         <url>https://github.com/52North/SOS</url>
-        <connection>scm:git:git://github.com/52North/SOS.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
+        <connection>scm:git:https://github.com/52North/SOS.git</connection>
+        <developerConnection>scm:git:https://github.com/52North/SOS.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
     
     <issueManagement>
@@ -2000,12 +2001,7 @@
             </extension>
         </extensions>
     </build>
-    <scm>
-        <url>https://github.com/52North/SOS</url>
-        <connection>scm:git:https://github.com/52North/SOS.git</connection>
-        <developerConnection>scm:git:https://github.com/52North/SOS.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
+    
     <repositories>
         <repository>
             <id>n52-releases</id>
@@ -2031,7 +2027,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-         -->
         <repository>
             <id>hibernate-spatial</id>
             <url>http://www.hibernatespatial.org/repository</url>
@@ -2062,7 +2057,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-         -->
         <repository>
             <id>boundlessgeo-releases</id>
             <url>https://repo.boundlessgeo.com/main</url>

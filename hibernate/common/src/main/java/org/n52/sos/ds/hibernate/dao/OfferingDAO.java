@@ -476,34 +476,6 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     /**
      * Insert or update and get offering
      *
-     * @param offeringIdentifier
-     *            Offering identifier
-     * @param offeringName
-     *            Offering name
-     * @param relatedFeatures
-     *            Related feature objects
-     * @param observationTypes
-     *            Allowed observation type objects
-     * @param featureOfInterestTypes
-     *            Allowed featureOfInterest type objects
-     * @param session
-     *            Hibernate session
-     * @return Offering object
-     *
-     * @deprecated
-     *          use {@link #getAndUpdateOrInsertNewOffering(SosOffering, List, List, List, Session)}
-     */
-    @Deprecated
-    public Offering getAndUpdateOrInsertNewOffering(final String offeringIdentifier, final String offeringName,
-            final List<RelatedFeature> relatedFeatures, final List<ObservationType> observationTypes,
-            final List<FeatureOfInterestType> featureOfInterestTypes, final Session session) {
-        return getAndUpdateOrInsertNewOffering(new SosOffering(offeringIdentifier, offeringName), relatedFeatures,
-                observationTypes, featureOfInterestTypes, session);
-    }
-
-    /**
-     * Insert or update and get offering
-     *
      * @param assignedOffering
      *            SosOffering to insert, update or get
      * @param relatedFeatures
@@ -517,8 +489,8 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @return Offering object
      */
     public OfferingEntity getAndUpdateOrInsert(SosOffering assignedOffering,
-            List<RelatedFeatureEntity> relatedFeatures, List<FormatEntity> observationTypes,
-            List<FormatEntity> featureOfInterestTypes, Session session) {
+            Collection<RelatedFeatureEntity> relatedFeatures, Collection<FormatEntity> observationTypes,
+            Collection<FormatEntity> featureOfInterestTypes, Session session) {
         OfferingEntity offering = getTOfferingForIdentifier(assignedOffering.getIdentifier(), session);
         if (offering == null) {
             offering = new OfferingEntity();

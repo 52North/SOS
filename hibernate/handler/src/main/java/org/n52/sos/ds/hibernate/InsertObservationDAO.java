@@ -192,9 +192,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         checkSpatialFilteringProfile(sosObservation);
 
         OmObservationConstellation sosObsConst = sosObservation.getObservationConstellation();
-        Set<String> offerings = getParentProcedureOfferings(sosObsConst);
-        sosObsConst.setOfferings(offerings);
-        cache.addOfferings(offerings);
+        cache.addOfferings(sosObsConst.getOfferings());
 
         Set<DatasetEntity> datasets = new HashSet<>();
         AbstractFeatureEntity hFeature = null;
@@ -333,45 +331,6 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
             cache.putFeature(abstractFeature, hFeature);
         }
         return hFeature;
-    }
-
-    /**
-     * Get parent offerings for requested procedure and observable property
-     *
-     * @param sosObsConst
-     *            Requested observation constellation
-     * @return Requested offering and valid parent procedure offerings.
-     */
-    private Set<String> getParentProcedureOfferings(OmObservationConstellation sosObsConst) {
-        Set<String> offerings = Sets.newHashSet(sosObsConst.getOfferings());
-        // getFeature parent procedures
-        Set<String> parentProcedures = getCache().getParentProcedures(sosObsConst.getProcedure().getIdentifier(), true, false);
-        if (CollectionHelper.isNotEmpty(parentProcedures)) {
-            for (String parentProcedure : parentProcedures) {
-                // getFeature offerings for parent procdure
-                Set<String> offeringsForParentProcedure = getCache().getOfferingsForProcedure(parentProcedure);
-                if (CollectionHelper.isNotEmpty(offeringsForParentProcedure)) {
-                    for (String offering : offeringsForParentProcedure) {
-                        /*
-                         * getFeature observable properties for offering and checkConstellation if
-                         * observable property is contained in request and if
-                         * parent procedure offering is contained in procedure
-                         * offerings. If true, add offering to set.
-                         */
-                        Set<String> observablePropertiesForOffering =
-                                getCache().getObservablePropertiesForOffering(offering);
-                        Set<String> offeringsForProcedure =
-                                getCache().getOfferingsForProcedure(sosObsConst.getProcedure().getIdentifier());
-                        if (CollectionHelper.isNotEmpty(observablePropertiesForOffering)
-                                && observablePropertiesForOffering.contains(sosObsConst.getObservableProperty()
-                                        .getIdentifier()) && offeringsForProcedure.contains(offering)) {
-                            offerings.add(offering);
-                        }
-                    }
-                }
-            }
-        }
-        return offerings;
     }
 
     private static class InsertObservationCache {

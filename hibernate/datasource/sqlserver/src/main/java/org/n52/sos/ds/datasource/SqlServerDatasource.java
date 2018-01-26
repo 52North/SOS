@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.shetland.util.StringHelper;
+import org.hibernate.boot.Metadata;
 
 import com.google.common.base.Strings;
 
@@ -47,13 +47,17 @@ import com.google.common.base.Strings;
  */
 public class SqlServerDatasource extends AbstractSqlServerDatasource {
 
-    private static final String TN_FEATURE_OF_INTEREST = "featureOfInterest";
+    private static final String TN_FEATURE_OF_INTEREST = "feature";
 
     private static final String TN_OBSERVATION = "observation";
 
     private static final String TN_SERIES = "series";
 
     private static final String CN_IDENTIFIER = "identifier";
+
+    private static final String CN_FROM_LEVEL_VALUE = "from_level";
+
+    private static final String CN_TO_LEVEL_VALUE = "to_level";
 
     private static final String CN_URL = "url";
 
@@ -100,6 +104,8 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_IDENTIFIER));
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_URL));
         tableColumns.add(new TableColumn(TN_OBSERVATION, CN_IDENTIFIER));
+        tableColumns.add(new TableColumn(TN_OBSERVATION, CN_FROM_LEVEL_VALUE));
+        tableColumns.add(new TableColumn(TN_OBSERVATION, CN_TO_LEVEL_VALUE));
         tableColumns.add(new TableColumn(TN_SERIES, CN_IDENTIFIER));
         return tableColumns;
     }

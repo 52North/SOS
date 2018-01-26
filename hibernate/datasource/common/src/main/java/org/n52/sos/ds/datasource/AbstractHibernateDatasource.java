@@ -489,10 +489,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public String[] createSchema(Map<String, Object> settings) {
         Path createTempFile = null;
         try {
-
-//            Metadata metadata = new MetadataSources(getConfig(settings).getStandardServiceRegistryBuilder().build()).buildMetadata();
             Metadata metadata = getMetadata(settings);
-
             createTempFile = Files.createTempFile("create", ".tmp");
             SchemaExport schemaExport = new SchemaExport();
             schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
@@ -523,26 +520,18 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     @Override
     public String[] dropSchema(Map<String, Object> settings) {
-        Connection conn = null;
         Path dropTempFile = null;
         try {
-            conn = openConnection(settings);
-//            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
-//            String[] dropScript =
-//                    checkDropSchema(getConfig(settings).generateDropSchemaScript(getDialectInternal(), metadata));
-//            return dropScript;
             Metadata metadata = getMetadata(settings);
-
             dropTempFile = Files.createTempFile("drop", "tmp");
             SchemaExport schemaExport = new SchemaExport();
             schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(dropTempFile.toString());
             schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, metadata);
             List<String> readAllLines = Files.readAllLines(dropTempFile);
             return readAllLines.toArray(new String[readAllLines.size()]);
-        } catch (SQLException | IOException ex) {
+        } catch (IOException ex) {
             throw new ConfigurationError(ex);
         } finally {
-            close(conn);
             try {
                 if (dropTempFile != null) {
                     Files.deleteIfExists(dropTempFile);
